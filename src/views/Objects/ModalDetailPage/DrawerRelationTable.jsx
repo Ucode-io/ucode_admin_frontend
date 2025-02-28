@@ -23,6 +23,7 @@ const DrawerRelationTable = ({
   getAllData,
   data,
   tableSlug: tableSlugFromProps,
+  handleMouseDown = () => {},
 }) => {
   const myRef = useRef();
   const {i18n} = useTranslation();
@@ -102,58 +103,72 @@ const DrawerRelationTable = ({
   );
 
   return (
-    <Box sx={{height: "100vh"}}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          justifyContent: "flex-end",
-          borderBottom: "1px solid #eee",
-        }}>
-        <FixColumnsRelationSection
-          relatedTable={getRelatedTabeSlug}
-          fieldsMap={fieldsMap}
-          getAllData={getAllData}
-        />
-        <Divider orientation="vertical" flexItem />
-        <VisibleColumnsButtonRelationSection
-          currentView={getRelatedTabeSlug}
-          fieldsMap={fieldsMap}
-          getAllData={getAllData}
-          // getLayoutList={getLayoutList}
+    <>
+      <Box sx={{height: "100vh"}}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            justifyContent: "flex-end",
+            borderBottom: "1px solid #eee",
+          }}>
+          <FixColumnsRelationSection
+            relatedTable={getRelatedTabeSlug}
+            fieldsMap={fieldsMap}
+            getAllData={getAllData}
+          />
+          <Divider orientation="vertical" flexItem />
+          <VisibleColumnsButtonRelationSection
+            currentView={getRelatedTabeSlug}
+            fieldsMap={fieldsMap}
+            getAllData={getAllData}
+            // getLayoutList={getLayoutList}
+            selectedTabIndex={selectedTabIndex}
+            data={data}
+          />
+        </Box>
+        <RelationTable
+          ref={myRef}
+          loader={loader}
+          remove={remove}
+          reset={reset}
           selectedTabIndex={selectedTabIndex}
-          data={data}
+          watch={watch}
+          selectedTab={selectedTab}
+          control={control}
+          setFormValue={setFormValue}
+          fields={fields}
+          setFormVisible={setFormVisible}
+          formVisible={formVisible}
+          key={selectedTab.id}
+          relation={relations}
+          getRelatedTabeSlug={getRelatedTabeSlug}
+          createFormVisible={relationsCreateFormVisible}
+          setCreateFormVisible={setCreateFormVisible}
+          selectedObjects={selectedObjects}
+          setSelectedObjects={setSelectedObjects}
+          tableSlug={tableSlug}
+          removableHeight={140}
+          id={id}
+          getAllData={getAllData}
+          type={type}
+          layoutData={data}
         />
       </Box>
-      <RelationTable
-        ref={myRef}
-        loader={loader}
-        remove={remove}
-        reset={reset}
-        selectedTabIndex={selectedTabIndex}
-        watch={watch}
-        selectedTab={selectedTab}
-        control={control}
-        setFormValue={setFormValue}
-        fields={fields}
-        setFormVisible={setFormVisible}
-        formVisible={formVisible}
-        key={selectedTab.id}
-        relation={relations}
-        getRelatedTabeSlug={getRelatedTabeSlug}
-        createFormVisible={relationsCreateFormVisible}
-        setCreateFormVisible={setCreateFormVisible}
-        selectedObjects={selectedObjects}
-        setSelectedObjects={setSelectedObjects}
-        tableSlug={tableSlug}
-        removableHeight={140}
-        id={id}
-        getAllData={getAllData}
-        type={type}
-        layoutData={data}
+
+      <Box
+        onMouseDown={handleMouseDown}
+        sx={{
+          position: "absolute",
+          height: "calc(100vh - 50px)",
+          width: "3px",
+          left: 0,
+          top: 0,
+          cursor: "col-resize",
+        }}
       />
-    </Box>
+    </>
   );
 };
 

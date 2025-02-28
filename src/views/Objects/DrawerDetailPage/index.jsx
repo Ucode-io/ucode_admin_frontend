@@ -74,6 +74,15 @@ function DrawerDetailPage({
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
 
+  const drawerRef = useRef(null);
+  const startX = useRef(0);
+  const startWidth = useRef(0);
+
+  const [drawerWidth, setDrawerWidth] = useState(() => {
+    const savedWidth = localStorage.getItem("drawerWidth");
+    return savedWidth ? parseInt(savedWidth, 10) : 650;
+  });
+
   const getAllData = async () => {
     setLoader(true);
     const getLayout = layoutService.getLayout(tableSlug, menuId, {
@@ -323,10 +332,50 @@ function DrawerDetailPage({
     else getFields();
   }, [id]);
 
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+
+    startX.current = e.clientX;
+    startWidth.current = drawerRef.current
+      ? drawerRef.current.offsetWidth
+      : drawerWidth;
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    const deltaX = e.clientX - startX.current;
+    let newWidth = startWidth.current - deltaX;
+
+    if (newWidth < 650) newWidth = 650;
+    if (newWidth > 1050) newWidth = 1050;
+
+    if (drawerRef.current) {
+      drawerRef.current.style.width = `${newWidth}px`;
+    }
+  };
+
+  const handleMouseUp = () => {
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+
+    const finalWidth = drawerRef.current.offsetWidth;
+    if (drawerRef.current) {
+      localStorage.setItem("drawerWidth", finalWidth);
+      setDrawerWidth(drawerRef.current.offsetWidth);
+    }
+  };
+
+  useEffect(() => {
+    if (drawerRef.current) {
+      drawerRef.current.style.width = `${drawerWidth}px`;
+    }
+  }, [drawerRef.current]);
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>
-        <Box position={"relative"} zIndex={9} maxW="850px">
+        <Box position={"relative"} zIndex={9}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <DrawerContent
               boxShadow="
@@ -335,8 +384,9 @@ function DrawerDetailPage({
         rgba(15, 15, 15, 0.06) 0px 9px 24px
       "
               zIndex={9}
+              ref={drawerRef}
               bg={"white"}
-              maxW="650px"
+              resize={"both"}
               position={"relative"}>
               <DrawerHeader
                 px="12px"
@@ -387,15 +437,6 @@ function DrawerDetailPage({
                     }}
                   />
 
-                  <Box
-                    sx={{
-                      width: "1px",
-                      height: "14px",
-                      margin: "0 6px",
-                      background: "rgba(55, 53, 47, 0.16)",
-                    }}
-                  />
-
                   <TabList style={{borderBottom: "none"}}>
                     {data?.tabs?.map((el, index) => (
                       <Tab
@@ -432,8 +473,12 @@ function DrawerDetailPage({
               </DrawerHeader>
 
               <TabPanel>
-                <DrawerBody p="0px 50px" overflow={"auto"}>
+                <DrawerBody
+                  position={"relative"}
+                  p="0px 50px"
+                  overflow={"auto"}>
                   <DrawerFormDetailPage
+                    handleMouseDown={handleMouseDown}
                     getValues={getValues}
                     setFormValue={setFormValue}
                     layout={layout}
@@ -460,6 +505,7 @@ function DrawerDetailPage({
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        handleMouseDown={handleMouseDown}
                         getAllData={getAllData}
                         selectedTabIndex={selectedTabIndex}
                         setSelectedTabIndex={setSelectedTabIndex}

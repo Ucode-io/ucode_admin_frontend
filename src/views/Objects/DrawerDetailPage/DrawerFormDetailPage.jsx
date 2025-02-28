@@ -21,10 +21,12 @@ function DrawerFormDetailPage({
   selectedTab = {},
   selectedRow,
   selectedTabIndex = 0,
+  handleMouseDown,
   setFormValue = () => {},
 }) {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
+  const [dragAction, setDragAction] = useState(false);
 
   const [sections, setSections] = useState(
     data?.tabs?.[selectedTabIndex]?.sections || []
@@ -92,10 +94,14 @@ function DrawerFormDetailPage({
         />
 
         {sections?.map((section, secIndex) => (
-          <Box sx={{margin: "12px 0 0 0"}} key={secIndex}>
+          <Box sx={{margin: "12px 0 0 0", overflow: "hidden"}} key={secIndex}>
             <Container
+              behaviour="contain"
               style={{width: "100%"}}
+              onDragStart={() => setDragAction(true)}
+              onDragEnd={() => setDragAction(false)}
               dragHandleSelector=".drag-handle"
+              dragClass="drag-item"
               lockAxis="y"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
               {section?.fields
@@ -105,11 +111,10 @@ function DrawerFormDetailPage({
                 .map((field, fieldIndex) => (
                   <Draggable className="drag-handle" key={field?.id}>
                     <Box
-                      className="rowColumn"
+                      className={dragAction ? "rowColumnDrag" : "rowColumn"}
                       key={fieldIndex}
                       display="flex"
                       alignItems="center"
-                      justifyContent="space-between"
                       {...(Boolean(field?.type === "MULTISELECT")
                         ? {minHeight: "30px"}
                         : {height: "34px"})}
@@ -120,7 +125,7 @@ function DrawerFormDetailPage({
                         justifyContent={"space-between"}
                         padding="5px"
                         borderRadius={"4px"}
-                        width="40%"
+                        width="150px"
                         sx={{
                           "&:hover": {
                             backgroundColor: "#F7F7F7",
@@ -139,7 +144,7 @@ function DrawerFormDetailPage({
                               style={{width: "16px", height: "16px"}}
                             />
                           </span>
-                          <span styley={{color: "#787774"}} className="icon">
+                          <span style={{color: "#787774"}} className="icon">
                             {getColumnIcon({
                               column: {
                                 type: field?.type ?? field?.relation_type,
@@ -149,7 +154,7 @@ function DrawerFormDetailPage({
                           </span>
                         </Box>
                         <Box
-                          fontSize="12px"
+                          fontSize="13px"
                           color="#787774"
                           fontWeight="500"
                           width="100%">
@@ -171,6 +176,18 @@ function DrawerFormDetailPage({
           </Box>
         ))}
       </Box>
+
+      <Box
+        onMouseDown={handleMouseDown}
+        sx={{
+          position: "absolute",
+          height: "calc(100vh - 50px)",
+          width: "3px",
+          left: 0,
+          top: 0,
+          cursor: "col-resize",
+        }}
+      />
     </>
   );
 }

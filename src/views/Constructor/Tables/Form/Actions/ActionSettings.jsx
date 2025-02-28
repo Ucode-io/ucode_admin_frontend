@@ -69,6 +69,7 @@ const ActionSettings = ({
     () => {
       return constructorFunctionService.getListV2({
         search: debounceValue,
+        function_id: action?.functions?.[0]?.id,
       });
     },
     {

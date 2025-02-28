@@ -44,6 +44,7 @@ import {
 } from "@mui/icons-material";
 import {AddIcon} from "@chakra-ui/icons";
 import HFCardField from "../../../../components/FormElements/HFCardField";
+import BillingTariffs from "./BillingTariffs";
 
 const tableHeads = [
   "Date",
@@ -99,9 +100,11 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
       return billingService.getTransactionList();
     },
     {
+      enabled: Boolean(!project?.fare_id),
       select: (res) => res?.transactions ?? [],
     }
   );
+
   const onSubmit = (values) => {
     setLoading(true);
     const data = {
@@ -121,193 +124,205 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
   };
 
   return (
-    <Box
-      id={"billingTable"}
-      sx={{p: 2, backgroundColor: "#f9f9f9", minHeight: "calc(100vh - 60px)"}}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} sm={4}>
-          <Card sx={{height: "118px"}}>
-            <CardContent>
-              <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                <AccountBalance color="primary" fontSize="large" />
-                <Box>
-                  <Typography variant="h5">Balance</Typography>
-                  <Typography variant="h5" color="primary">
-                    {numberWithSpaces(project?.balance)}{" "}
-                    {data?.currency?.toUpperCase()}
-                  </Typography>
-                  <Typography variant="subtitle1" color="error">
-                    (-{numberWithSpaces(project?.credit_limit)})
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card sx={{height: "118px"}}>
-            <CardContent
-              sx={{height: "100%", display: "flex", alignItems: "center"}}>
-              <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                <AttachMoney color="success" fontSize="large" />
-                <Box>
-                  <Typography variant="h5">Tariff</Typography>
-                  <Typography variant="h5" color="success.main">
-                    {data?.name}
-                    <Typography variant="h6" sx={{color: "#000"}}>
-                      {data?.price} {data?.currency.toUpperCase()}
-                    </Typography>
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card sx={{height: "118px"}}>
-            <CardContent
-              sx={{height: "100%", display: "flex", alignItems: "center"}}>
-              <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                <HourglassBottomIcon color="warning" fontSize="large" />
-                <Box>
-                  <Typography variant="h5">Expire Date</Typography>
-                  <Typography variant="h4" color="text.secondary">
-                    2025-12-31
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Box sx={{mt: 4}}>
-        <Typography variant="h6" sx={{mb: 2}}>
-          Transactions
-        </Typography>
-        <TableContainer
-          component={Paper}
+    <>
+      {project?.fare_id ? (
+        <Box
+          id={"billingTable"}
           sx={{
-            borderRadius: 1,
-            borderTop: "1px solid #eee",
-            borderBottom: "1px solid #eee",
-            height: "calc(100vh - 280px)",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+            minHeight: "calc(100vh - 60px)",
           }}>
-          <Table sx={{position: "relative"}} stickyHeader>
-            <TableHead>
-              <TableRow>
-                {tableHeads?.map((item) => (
-                  <TableHeadCell>{item}</TableHeadCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {Boolean(transactions?.length) ? (
-                transactions?.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      "&:nth-of-type(odd)": {backgroundColor: "#f9f9f9"},
-                    }}>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
-                    </TableCell>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {project?.title}
-                    </TableCell>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {row.payment_type ?? ""}
-                    </TableCell>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {row.transaction_type ?? ""}
-                    </TableCell>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {row.payment_status === "accepted" ? (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            color: "success.main",
-                            fontSize: "14px",
-                          }}>
-                          <Done /> Paid
-                        </Typography>
-                      ) : row?.payment_status === "cancelled" ? (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            color: "red",
-                            fontSize: "16px",
-                          }}>
-                          <BlockIcon /> Cancelled
-                        </Typography>
-                      ) : (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            color: "warning.main",
-                            fontSize: "14px",
-                          }}>
-                          <HourglassTop /> Pending
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {row?.currency?.code}
-                    </TableCell>
-                    <TableCell sx={{fontSize: "14px"}}>
-                      {numberWithSpaces(row.amount)}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "400px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    fontSize: "16px",
-                  }}>
-                  No transactions are found.
-                  <Box sx={{marginTop: "12px"}}>
-                    <BackupTableIcon style={{width: "40px", height: "30px"}} />
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={4}>
+              <Card sx={{height: "118px"}}>
+                <CardContent>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                    <AccountBalance color="primary" fontSize="large" />
+                    <Box>
+                      <Typography variant="h5">Balance</Typography>
+                      <Typography variant="h5" color="primary">
+                        {numberWithSpaces(project?.balance)}{" "}
+                        {data?.currency?.toUpperCase()}
+                      </Typography>
+                      <Typography variant="subtitle1" color="error">
+                        (-{numberWithSpaces(project?.credit_limit)})
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
+                </CardContent>
+              </Card>
+            </Grid>
 
-      <Modal
-        onClose={handCloseBalance}
-        open={addBalance}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-slide-description">
-        <TopUpBalance
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
-          control={control}
-          loading={loading}
-          watch={watch}
-          reset={reset}
-        />
-      </Modal>
-    </Box>
+            <Grid item xs={12} sm={4}>
+              <Card sx={{height: "118px"}}>
+                <CardContent
+                  sx={{height: "100%", display: "flex", alignItems: "center"}}>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                    <AttachMoney color="success" fontSize="large" />
+                    <Box>
+                      <Typography variant="h5">Tariff</Typography>
+                      <Typography variant="h5" color="success.main">
+                        {data?.name}
+                        <Typography variant="h6" sx={{color: "#000"}}>
+                          {data?.price} {data?.currency.toUpperCase()}
+                        </Typography>
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <Card sx={{height: "118px"}}>
+                <CardContent
+                  sx={{height: "100%", display: "flex", alignItems: "center"}}>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                    <HourglassBottomIcon color="warning" fontSize="large" />
+                    <Box>
+                      <Typography variant="h5">Expire Date</Typography>
+                      <Typography variant="h4" color="text.secondary">
+                        2025-12-31
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          <Box sx={{mt: 4}}>
+            <Typography variant="h6" sx={{mb: 2}}>
+              Transactions
+            </Typography>
+            <TableContainer
+              component={Paper}
+              sx={{
+                borderRadius: 1,
+                borderTop: "1px solid #eee",
+                borderBottom: "1px solid #eee",
+                height: "calc(100vh - 280px)",
+              }}>
+              <Table sx={{position: "relative"}} stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    {tableHeads?.map((item) => (
+                      <TableHeadCell>{item}</TableHeadCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Boolean(transactions?.length) ? (
+                    transactions?.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:nth-of-type(odd)": {backgroundColor: "#f9f9f9"},
+                        }}>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
+                        </TableCell>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {project?.title}
+                        </TableCell>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {row.payment_type ?? ""}
+                        </TableCell>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {row.transaction_type ?? ""}
+                        </TableCell>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {row.payment_status === "accepted" ? (
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                color: "success.main",
+                                fontSize: "14px",
+                              }}>
+                              <Done /> Paid
+                            </Typography>
+                          ) : row?.payment_status === "cancelled" ? (
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                color: "red",
+                                fontSize: "16px",
+                              }}>
+                              <BlockIcon /> Cancelled
+                            </Typography>
+                          ) : (
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                color: "warning.main",
+                                fontSize: "14px",
+                              }}>
+                              <HourglassTop /> Pending
+                            </Typography>
+                          )}
+                        </TableCell>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {row?.currency?.code}
+                        </TableCell>
+                        <TableCell sx={{fontSize: "14px"}}>
+                          {numberWithSpaces(row.amount)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "400px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        fontSize: "16px",
+                      }}>
+                      No transactions are found.
+                      <Box sx={{marginTop: "12px"}}>
+                        <BackupTableIcon
+                          style={{width: "40px", height: "30px"}}
+                        />
+                      </Box>
+                    </Box>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          <Modal
+            onClose={handCloseBalance}
+            open={addBalance}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-slide-description">
+            <TopUpBalance
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              control={control}
+              loading={loading}
+              watch={watch}
+              reset={reset}
+            />
+          </Modal>
+        </Box>
+      ) : (
+        <BillingTariffs data={data} />
+      )}
+    </>
   );
 };
 

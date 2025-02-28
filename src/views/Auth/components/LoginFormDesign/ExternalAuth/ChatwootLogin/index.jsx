@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
 import ChatwootLoginPage from "./ChatWootLoginPage";
 import PrimaryButton from "../../../../../../components/Buttons/PrimaryButton";
+import {useTranslation} from "react-i18next";
 
 function ChatwootLogin() {
   const [originalButtonFunction, setOriginalButtonFunction] = useState(null);
+  const {t} = useTranslation();
 
   useEffect(() => {
     let observer;
@@ -82,7 +84,7 @@ function ChatwootLogin() {
           justifyContent: "space-between",
         }}
         type="button">
-        <p style={{fontSize: "14px", color: "#344054"}}>Support</p>
+        <p style={{fontSize: "14px", color: "#344054"}}>{t("support")}</p>
         <div style={{display: "flex", alignItems: "center", gap: "15px"}}>
           <a
             onClick={(e) => e.stopPropagation()}

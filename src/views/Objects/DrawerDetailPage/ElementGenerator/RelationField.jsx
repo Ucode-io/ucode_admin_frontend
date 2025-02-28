@@ -131,12 +131,12 @@ const AutoCompleteElement = ({
       ...provided,
       margin: "0px",
       padding: "0px",
-      fontSize: "11px",
+      fontSize: "13px",
       color: "#787774",
     }),
     placeholder: (provided) => ({
       ...provided,
-      fontSize: "11px",
+      fontSize: "13px",
       color: "#787774",
     }),
     indicatorSeparator: () => ({

@@ -3,9 +3,11 @@ import React from "react";
 import GoogleAuthLogin from "./GoogleAuthLogin";
 import ChatwootLogin from "./ChatwootLogin";
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
   const navigate = useNavigate();
+  const {t} = useTranslation();
 
   return (
     <>
@@ -25,7 +27,7 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
             fontSize: "14px",
             color: "#475467",
           }}>
-          Or
+          {t("or")}
         </Box>
         <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
       </Box>
@@ -45,11 +47,11 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
           marginTop: "24px",
           justifyContent: "center",
         }}>
-        <p>Don't you have an account?</p>
+        <p>{t("account.not")}</p>
         <Box
           onClick={() => navigate("/registration")}
           sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
-          Create one
+          {t("create.account")}
         </Box>
       </Box>
     </>

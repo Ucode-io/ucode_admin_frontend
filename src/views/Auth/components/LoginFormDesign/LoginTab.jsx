@@ -20,7 +20,7 @@ function LoginTab({
   return (
     <>
       <div className={classes.formRow}>
-        <p className={classes.label}>{t("Login*")}</p>
+        <p className={classes.label}>{t("login")}</p>
         <HFTextFieldLogin
           required
           control={control}
@@ -38,7 +38,7 @@ function LoginTab({
         />
       </div>
       <div className={classes.formRow}>
-        <p className={classes.label}>{t("Password*")}</p>
+        <p className={classes.label}>{t("password")}</p>
         <HFTextFieldLogin
           required
           control={control}
@@ -90,7 +90,7 @@ function LoginTab({
           onClick={() => {
             setFormType("FORGOT_PASSWORD");
           }}>
-          Forgot password?
+          {t("forgot.password")}?
         </Button>
       </Box>
 

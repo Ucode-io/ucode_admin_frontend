@@ -9,8 +9,12 @@
 }
 
 .rowColumn {
+  margin-top: 4px;
+  cursor: pointer;
   .icon {
     display: block;
+    width: 16px;
+    height: 16px;
   }
   .drag {
     width: 16px;
@@ -31,8 +35,11 @@
 }
 
 .rowColumnDrag {
+  cursor: pointer;
   .icon {
     display: block;
+    width: 16px;
+    height: 16px;
   }
   .drag {
     width: 16px;
@@ -64,5 +71,16 @@
 
   .drag {
     display: block;
+  }
+}
+
+.layoutHeading {
+  .fieldChoose {
+    display: none;
+  }
+  &:hover {
+    .fieldChoose {
+      display: block;
+    }
   }
 }

@@ -570,7 +570,7 @@ const TableView = ({
           menuItem={menuItem}
           {...props}
         />
-
+        {/* 
         {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
@@ -600,9 +600,9 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null}
+        ) : null} */}
 
-        {/* {open && (
+        {open && (
           <ModalDetailPage
             open={open}
             setOpen={setOpen}
@@ -616,7 +616,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        )} */}
+        )}
 
         <Drawer
           open={drawerState}

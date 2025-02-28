@@ -94,7 +94,7 @@ function DrawerFormDetailPage({
         />
 
         {sections?.map((section, secIndex) => (
-          <Box sx={{margin: "12px 0 0 0", overflow: "hidden"}} key={secIndex}>
+          <Box sx={{margin: "8px 0 0 0", overflow: "hidden"}} key={secIndex}>
             <Container
               behaviour="contain"
               style={{width: "100%"}}
@@ -125,7 +125,7 @@ function DrawerFormDetailPage({
                         justifyContent={"space-between"}
                         padding="5px"
                         borderRadius={"4px"}
-                        width="150px"
+                        width="170px"
                         sx={{
                           "&:hover": {
                             backgroundColor: "#F7F7F7",
@@ -154,7 +154,7 @@ function DrawerFormDetailPage({
                           </span>
                         </Box>
                         <Box
-                          fontSize="13px"
+                          fontSize="14px"
                           color="#787774"
                           fontWeight="500"
                           width="100%">
@@ -236,27 +236,32 @@ const HeadingOptions = ({
   return (
     <>
       <Box
+        className="layoutHeading"
         sx={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           paddingLeft: "3px",
           gap: "10px",
         }}>
-        <span style={{cursor: "pointer"}} onClick={handleClick}>
-          <img
-            src="/img/text-column.svg"
-            width={"22px"}
-            height={"22px"}
-            alt="heading text"
-          />
-        </span>
-
         <CHTextField
           control={control}
           name={selectedField?.slug || ""}
           defaultValue={fieldValue}
           key={selectedField?.slug}
         />
+
+        <Box
+          className="fieldChoose"
+          sx={{cursor: "pointer"}}
+          onClick={handleClick}>
+          <img
+            src="/img/text-column.svg"
+            width={"22px"}
+            height={"22px"}
+            alt="heading text"
+          />
+        </Box>
       </Box>
 
       <Menu

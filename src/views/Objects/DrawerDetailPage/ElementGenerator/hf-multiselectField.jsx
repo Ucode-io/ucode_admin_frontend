@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   input: {
     "&::placeholder": {
       color: "#787774",
-      fontSize: "11px",
+      fontSize: "13px",
     },
   },
 }));
@@ -281,7 +281,7 @@ const AutoCompleteElement = ({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       borderRadius: "6px",
-                      fontSize: "11px",
+                      fontSize: "13px",
                       overflow: "hidden",
                     }}>
                     {el?.label ?? el?.value}

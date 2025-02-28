@@ -368,9 +368,9 @@ div {
 
   input {
     padding: 0 9.6px;
-
+    font-size: 13px;
     &::placeholder {
-      font-size: 11.5px;
+      font-size: 13px;
       color: #787774;
     }
   }
@@ -1024,7 +1024,7 @@ div:has(.chakra-tooltip) {
   input {
     &::placeholder {
       color: #787774;
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 }
@@ -1032,7 +1032,7 @@ div:has(.chakra-tooltip) {
 .formulaField {
   input {
     &::placeholder {
-      font-size: 11.5px;
+      font-size: 13px;
       color: #787774;
     }
 

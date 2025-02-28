@@ -1,6 +1,7 @@
 import {Box} from "@mui/material";
 import OtpInput from "react-otp-input";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
+import {useTranslation} from "react-i18next";
 
 function OtpComponent({
   otp,
@@ -8,6 +9,7 @@ function OtpComponent({
   verifyOtp = () => {},
   getOtpVal = () => {},
 }) {
+  const {t} = useTranslation();
   return (
     <Box>
       <Box
@@ -22,7 +24,8 @@ function OtpComponent({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Enter code
+          {t("enter.code")}
+          {/* Enter code */}
         </h3>
         <p
           style={{
@@ -30,9 +33,10 @@ function OtpComponent({
             color: "#101828",
             marginBottom: "8px",
           }}>
-          Sent to Email
+          {t("sent.email")}
+          {/* Sent to Email */}
         </p>
-        <p>ucodedllc@uc.com</p>
+        {/* <p>ucodedllc@uc.com</p> */}
       </Box>
       <Box
         sx={{
@@ -60,7 +64,8 @@ function OtpComponent({
         />
       </Box>
       <Box sx={{textAlign: "center", marginTop: "24px"}}>
-        <p>Sent code after 00:20</p>
+        <p>({t("sent.code.after")}) 00:20</p>
+        {/* Sent code after */}
         <PrimaryButton
           size="large"
           onClick={(e) => {
@@ -73,7 +78,7 @@ function OtpComponent({
             borderRadius: "8px",
           }}
           loader={loading}>
-          Confirm
+          {t("confirm")}
         </PrimaryButton>
       </Box>
     </Box>

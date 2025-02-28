@@ -11,7 +11,7 @@ function EmailAuth({control, setFormType = () => {}, loading = false}) {
   return (
     <>
       <div className={classes.formRow}>
-        <p className={classes.label}>{t("Email*")}</p>
+        <p className={classes.label}>{t("email")}</p>
         <HFTextFieldLogin
           required
           control={control}

@@ -55,7 +55,7 @@ function HFMoneyField({
             <NumericFormat
               style={{
                 height: "32px",
-                fontSize: "11px",
+                fontSize: "13px",
                 color: "#787774",
                 outline: "none",
               }}

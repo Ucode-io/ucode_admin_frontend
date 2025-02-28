@@ -39,6 +39,8 @@ export const HFDatePickerField = ({
                 "&:hover": {
                   background: "red",
                 },
+                fontSize: "13px",
+                color: "#787774",
               },
             }}
             highlightToday
@@ -85,7 +87,13 @@ export const HFDateTimePickerField = ({
               onChange(value);
             }}
             styles={{
-              input: {background: "inherit", border: "none", width: "330px"},
+              input: {
+                background: "inherit",
+                border: "none",
+                width: "330px",
+                fontSize: "13px",
+                color: "#787774",
+              },
             }}
             highlightToday
             disabled={disabled}
@@ -132,7 +140,13 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
               );
             }}
             styles={{
-              input: {background: "inherit", border: "none", width: "330px"},
+              input: {
+                background: "inherit",
+                border: "none",
+                width: "330px",
+                fontSize: "13px",
+                color: "#787774",
+              },
             }}
             highlightToday
             disabled={disabled}
@@ -170,7 +184,13 @@ export const HFTimePickerField = ({
               onChange(value);
             }}
             styles={{
-              input: {background: "inherit", border: "none", width: "330px"},
+              input: {
+                background: "inherit",
+                border: "none",
+                width: "330px",
+                fontSize: "13px",
+                color: "#787774",
+              },
             }}
             disabled={disabled}
           />

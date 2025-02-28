@@ -9,11 +9,10 @@ import {
   Dialog,
   Divider,
 } from "@mui/material";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import billingService from "../../../../services/billingService";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import {format} from "date-fns";
 import {store} from "../../../../store";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
@@ -22,7 +21,7 @@ const BillingTariffs = ({project}) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const {data: fares} = useQuery(
-    ["GET_BILLING_DATA", project],
+    ["GET_BILLING_DATA_FARES", project],
     () => billingService.getFareList(),
     {onSuccess: (res) => res?.fares}
   );
@@ -68,7 +67,7 @@ const BillingTariffs = ({project}) => {
           <Grid container spacing={3} justifyContent={"center"}>
             {fares?.fares?.map((plan, index) => (
               <BillingFares
-                tabs={discounts?.discounts?.[tabIndex]}
+                discounts={discounts?.discounts}
                 project={project}
                 key={index}
                 plan={plan}
@@ -82,7 +81,6 @@ const BillingTariffs = ({project}) => {
           <Grid container spacing={3}>
             {fares?.fares?.map((plan, index) => (
               <BillingFares
-                selectedTab={discounts?.discounts?.[tabIndex]}
                 project={project}
                 key={index}
                 plan={plan}
@@ -96,9 +94,10 @@ const BillingTariffs = ({project}) => {
   );
 };
 
-const BillingFares = ({plan, tabIndex, selectedTab}) => {
+const BillingFares = ({plan, tabIndex, discounts}) => {
   const isBestPlan = plan?.bestValue;
   const [open, setOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(discounts?.[tabIndex] ?? null);
   const [selectedFare, setSelectedFare] = useState(null);
   const [calculatedPrice, setCalculatedPrice] = useState(null);
   const projectId = store.getState().company.projectId;
@@ -120,6 +119,10 @@ const BillingFares = ({plan, tabIndex, selectedTab}) => {
         handleClick();
       });
   };
+
+  useEffect(() => {
+    setSelectedTab(discounts?.[tabIndex]);
+  }, [tabIndex, discounts]);
 
   return (
     <Grid item xs={10} sm={6} md={4}>
@@ -157,7 +160,7 @@ const BillingFares = ({plan, tabIndex, selectedTab}) => {
           )}
 
           <Typography sx={{fontWeight: "bold", fontSize: "14px"}}>
-            {plan?.name?.toUpperCase()}
+            {plan?.name && plan?.name}
           </Typography>
 
           <Typography sx={{fontWeight: "bold", fontSize: "22px"}}>
@@ -212,6 +215,7 @@ const PaymentDialog = ({
   selectedTab,
 }) => {
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const handleClose = () => setOpen(false);
   const projectId = store.getState().company.projectId;
@@ -227,6 +231,7 @@ const PaymentDialog = ({
       .then((res) => {
         dispatch(showAlert("Successfully paid!", "success"));
         handleClose();
+        queryClient.refetchQueries(["PROJECT"]);
       })
       .finally(() => {
         setLoading(false);

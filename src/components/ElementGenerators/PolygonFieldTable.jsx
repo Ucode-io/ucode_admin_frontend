@@ -50,7 +50,9 @@ function PolygonFieldTable({
           },
         }}
         onClick={handleOpen}>
-        <Box sx={{fontSize: "11px", color: "#787774"}}>Polygon</Box>
+        <Box sx={{fontSize: drawerDetail ? "13px" : "11px", color: "#787774"}}>
+          Polygon
+        </Box>
         <img src="/table-icons/polygon.svg" alt="Polygon" />
       </Box>
       <Modal open={open} onClose={handleClose}>

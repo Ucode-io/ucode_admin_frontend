@@ -13,14 +13,14 @@ function PhoneLogin({control, loading = false, setFormType = () => {}}) {
     <>
       <Box>
         <div className={classes.formRow}>
-          <p className={classes.label}>{"Phone number *"}</p>
+          <p className={classes.label}>{t("phone")}</p>
           <HFPhoneLoginField
             required
             control={control}
             name="phone"
             size="large"
             fullWidth
-            placeholder="Enter phone number"
+            placeholder={t("enter.phone")}
             autoFocus
           />
         </div>

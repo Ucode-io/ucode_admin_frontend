@@ -37,6 +37,8 @@
   "email": "Эл. адрес",
   "enter.email": "Введите Эл. адрес",
   "password": "Пароль",
+  "forgot.password": "Забыли пароль",
+  "account.not": "У вас нет аккаунта?",
   "enter.password": "Введите пароль",
   "sms.code": "Смс код",
   "enter.sms.code": "Введите смс код",
@@ -208,5 +210,17 @@
   "select.environment": "Select environment",
   "register.form": "Регистрация",
   "register.form.desc": "Заполните данные для регистрации",
-  "enter.role": "Выберите роль"
+  "enter.role": "Выберите роль",
+  "or": "или",
+  "create.account": "Создать аккаунт",
+  "google.continue": "Продолжить с Google",
+  "fill.out.info": "Заполните всю информацию, чтобы продолжить",
+  "company.name": "Название компании",
+  "enter.company.name": "Enter company name",
+  "create.login": "Создайте логин",
+  "create.password": "Создайте логин",
+  "register.with.google": "Зарегистрироваться через Google",
+  "already.have.account": "У вас уже есть аккаунт?",
+  "signin": "Sign In",
+  "support": "Поддержка"
 }

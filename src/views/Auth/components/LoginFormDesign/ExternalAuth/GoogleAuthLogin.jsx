@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import {useGoogleLogin} from "@react-oauth/google";
+import {useTranslation} from "react-i18next";
 
 function GoogleAuthLogin({
   getCompany = () => {},
@@ -10,6 +11,7 @@ function GoogleAuthLogin({
 }) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
+  const {t} = useTranslation();
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
@@ -48,7 +50,7 @@ function GoogleAuthLogin({
         type={"button"}
         loading={loading}>
         <img src="/img/google.svg" alt="" />
-        {text ? text : "Continue with Google"}
+        {text ? text : t("google.continue")}
       </PrimaryButton>
     </>
   );

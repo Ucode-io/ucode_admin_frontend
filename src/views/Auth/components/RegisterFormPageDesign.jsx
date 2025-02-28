@@ -58,21 +58,19 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
     <div className={classes.outlet}>
       <div className={classes.form}>
         <Box sx={{width: "100%", textAlign: "center"}}>
-          <h1 className={classes.titleDesign}>Registration</h1>
-          <p className={classes.subtitleDesign}>
-            Fill out all the information to proceed
-          </p>
+          <h1 className={classes.titleDesign}>{t("register.form")}</h1>
+          <p className={classes.subtitleDesign}>{t("fill.out.info")}</p>
         </Box>
 
         <form style={{marginTop: "25px"}} onSubmit={handleSubmit(onSubmit)}>
           <Box className="" h="calc(100vh - 300px)" overflow="auto">
             <div className={classes.formRow}>
-              <p className={classes.label}>{"Company name*"}</p>
+              <p className={classes.label}>{t("company.name")}</p>
               <HFTextFieldLogin
                 name="name"
                 control={control}
                 fullWidth
-                placeholder="Enter company name"
+                placeholder={t("enter.company.name")}
                 required
                 InputProps={{
                   startAdornment: (
@@ -85,13 +83,13 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             </div>
             {!watch("googleToken") && (
               <div className={classes.formRow}>
-                <p className={classes.label}>{"Email*"}</p>
+                <p className={classes.label}>{t("email")}</p>
                 <HFTextFieldLogin
                   name="user_info.email"
                   control={control}
                   required
                   fullWidth
-                  placeholder="Enter email address"
+                  placeholder={t("enter.email.address")}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -104,13 +102,13 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             )}
 
             <div className={classes.formRow}>
-              <p className={classes.label}>{"Login*"}</p>
+              <p className={classes.label}>{t("login")}</p>
               <HFTextFieldLogin
                 required
                 name="user_info.login"
                 control={control}
                 fullWidth
-                placeholder="Create login"
+                placeholder={t("create.login")}
                 rules={loginRules}
                 InputProps={{
                   startAdornment: (
@@ -122,14 +120,14 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               />
             </div>
             <div className={classes.formRow}>
-              <p className={classes.label}>{"Password*"}</p>
+              <p className={classes.label}>{t("password")}</p>
               <HFTextFieldPassword
                 required
                 name="user_info.password"
                 control={control}
                 fullWidth
                 type={"password"}
-                placeholder="Create password"
+                placeholder={t("create.password")}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -151,7 +149,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             <GoogleAuthLogin
               watch={watch}
               setValue={setValue}
-              text="Register with Google"
+              text={t("register.with.google")}
             />
           </Box>
         </Tooltip>
@@ -162,7 +160,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             size="large"
             loader={loading}
             style={{borderRadius: "8px", fontSize: "16px", margin: "0 0"}}>
-            {t("Registration")}
+            {t("register.form")}
           </PrimaryButton>
         </div>
         <Box
@@ -173,11 +171,11 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             marginTop: "16px",
             justifyContent: "center",
           }}>
-          <p>Already have an account?</p>
+          <p>{t("already.have.account")}</p>
           <Box
             onClick={() => navigate("/login")}
             sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
-            Sign In
+            {t("enter")}
           </Box>
         </Box>
       </div>

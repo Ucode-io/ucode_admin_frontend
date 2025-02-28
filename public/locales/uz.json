@@ -38,6 +38,8 @@
   "enter.email": "Введите Эл. адрес",
   "password": "Пароль",
   "enter.password": "Введите пароль",
+  "forgot.password": "Parolingiz esingizdan chiqdimi",
+  "account.not": "Don't you have an account?",
   "sms.code": "Смс код",
   "enter.sms.code": "Введите смс код",
   "enter.to.system": "Вход в систему",

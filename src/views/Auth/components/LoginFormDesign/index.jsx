@@ -455,17 +455,17 @@ const LoginFormDesign = ({
                   <Tab
                     onClick={() => setFormType("LOGIN")}
                     style={{padding: "10px 8px 10px 8px"}}>
-                    {t("Login")}
+                    {t("login")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("phone")}
                     style={{padding: "10px 12px 10px 12px"}}>
-                    {t("Phone number")}
+                    {t("phone")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("email")}
                     style={{padding: "10px 12px 10px 12px"}}>
-                    {t("Email")}
+                    {t("email.address")}
                   </Tab>
                 </TabList>
 

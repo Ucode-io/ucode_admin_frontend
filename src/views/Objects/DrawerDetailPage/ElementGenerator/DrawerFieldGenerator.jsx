@@ -260,7 +260,7 @@ const InputField = ({control, name = "", type = "text"}) => {
             onChange={(e) => onChange(e.target.value)}
             placeholder="Empty"
             height="30px"
-            fontSize="11px"
+            fontSize="13px"
             px={"9.6px"}
             width="100%"
             border="none"
@@ -322,7 +322,7 @@ const NumberField = ({
                 padding: "0 9.6px",
                 outline: "none",
                 color: "#787774",
-                fontSize: "11px",
+                fontSize: "13px",
               }}
               value={typeof value === "number" ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
@@ -381,7 +381,7 @@ const MultiLineInput = ({
           },
         }}>
         <Box
-          sx={{width: "100%", fontSize: "11px"}}
+          sx={{width: "100%", fontSize: "14px"}}
           id="textAreaInput"
           onClick={(e) => {
             !isDisabled && handleClick(e);

@@ -2,6 +2,10 @@ import request from "../utils/request";
 
 const billingService = {
   getList: (id) => request.get(`/fare/${id}`),
+  getFareList: (id) => request.get(`/fare`),
+  getDiscounts: () => request.get("/discounts"),
+  calculateFarePrice: (data) => request.post("fare/calculate-price", data),
+  makePayment: (data) => request.patch("/company/project/attach-fare", data),
   getCardList: (params) => request.get("/payme/card-list", {params}),
   getTransactionList: () => request.get("/transaction"),
   fillBalance: (data) => request.post("/transaction", data),

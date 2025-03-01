@@ -254,8 +254,7 @@ const ObjectDataTable = ({
       navigateToEditPage={navigateToEditPage}
       parentRef={parentRef}
       getAllData={getAllData}
-      control={control}
-    >
+      control={control}>
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -429,9 +428,9 @@ const ObjectDataTable = ({
           </CTableCell>
         </CTableRow>
 
-        {!!summaries?.length && (
+        {/* {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
-        )}
+        )} */}
         {additionalRow}
       </CTableBody>
     </CTable>

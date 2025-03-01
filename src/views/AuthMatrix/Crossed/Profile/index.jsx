@@ -160,9 +160,9 @@ const UsersForm = () => {
                 </Button>
               )
             }>
-            <TabList>
-              <Tab>Profile</Tab>
-              <Tab>Billing</Tab>
+            <TabList style={{border: "none"}}>
+              <Tab style={{border: "none"}}>Profile</Tab>
+              <Tab style={{border: "none"}}>Billing</Tab>
             </TabList>
           </Header>
 

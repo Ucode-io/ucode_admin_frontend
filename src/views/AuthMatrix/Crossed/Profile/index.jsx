@@ -18,8 +18,11 @@ import {showAlert} from "../../../../store/alert/alert.thunk";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import BillingComponent from "./BillingComponent";
 import AddIcon from "@mui/icons-material/Add";
+import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
 
 const UsersForm = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isUserInfo = useSelector((state) => state?.auth?.userInfo);
   const envId = useSelector((state) => state?.auth);
@@ -68,7 +71,7 @@ const UsersForm = () => {
       });
   };
 
-  const {control, handleSubmit, reset, watch} = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       name: "",
       email: "",
@@ -135,14 +138,17 @@ const UsersForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Tabs onSelect={setSelectedTab}>
           <Header
-            styles={{height: "50px"}}
-            title="Profile"
+            styles={{ height: "50px" }}
+            title={t("profile")}
             backButtonLink={-1}
             extra={
               selectedTab === 0 ? (
                 <>
-                  <CancelButton onClick={() => navigate(-1)} />
-                  <SaveButton type="submit" />
+                  <CancelButton
+                    title={t("cancel")}
+                    onClick={() => navigate(-1)}
+                  />
+                  <SaveButton type="submit" title={t("save")} />
                 </>
               ) : (
                 <Button
@@ -154,12 +160,14 @@ const UsersForm = () => {
                     height: "30px",
                     display: "flex",
                     gap: "5px",
-                  }}>
+                  }}
+                >
                   <AddIcon />
                   <Typography variant="h6">Top Up</Typography>
                 </Button>
               )
-            }>
+            }
+          >
             <TabList>
               <Tab>Profile</Tab>
               <Tab>Billing</Tab>
@@ -167,15 +175,19 @@ const UsersForm = () => {
           </Header>
 
           <TabPanel>
-            <FormCard title="Main info" className="UsersForm p-2">
+            <FormCard
+              // title={generateLangaugeText() ||"Main info"}
+              title={t("main.info")}
+              className="UsersForm p-2"
+            >
               <div>
                 <HFAvatarUpload control={control} name="photo_url" />
               </div>
 
               <div className="side">
-                <FRow label="Name">
+                <FRow label={t("name")}>
                   <HFTextField
-                    placeholder="Enter name"
+                    placeholder={t("enter_name")}
                     fullWidth
                     control={control}
                     autoFocus
@@ -183,36 +195,36 @@ const UsersForm = () => {
                   />
                 </FRow>
 
-                <FRow label="Email">
+                <FRow label={t("email")}>
                   <HFTextField
-                    placeholder="Enter email"
+                    placeholder={t("enter.email")}
                     fullWidth
                     control={control}
                     name="email"
                   />
                 </FRow>
 
-                <FRow label="Phone">
+                <FRow label={t("phone")}>
                   <HFTextField
-                    placeholder="Enter phone"
+                    placeholder={t("enter.phone")}
                     fullWidth
                     control={control}
                     name="phone"
                   />
                 </FRow>
 
-                <FRow label="Login">
+                <FRow label={t("login")}>
                   <HFTextField
-                    placeholder="Enter login"
+                    placeholder={t("enter.login")}
                     fullWidth
                     control={control}
                     name="login"
                   />
                 </FRow>
 
-                <FRow label="Type">
+                <FRow label={t("type")}>
                   <HFTextField
-                    placeholder="Type"
+                    placeholder={t("type")}
                     fullWidth
                     control={control}
                     name="client_type_id"
@@ -221,9 +233,9 @@ const UsersForm = () => {
                   />
                 </FRow>
 
-                <FRow label="Role">
+                <FRow label={t("role")}>
                   <HFTextField
-                    placeholder="Role"
+                    placeholder={t("role")}
                     fullWidth
                     control={control}
                     name="role_id"
@@ -232,18 +244,21 @@ const UsersForm = () => {
                   />
                 </FRow>
 
-                <FRow label="Old Password">
+                <FRow label={t("old.password")}>
                   <HFTextField
-                    placeholder="password"
+                    placeholder={t("old.password")}
                     fullWidth
                     control={control}
                     name="old_password"
                   />
                 </FRow>
 
-                <FRow style={{position: "relative"}} label="New Password">
+                <FRow
+                  style={{ position: "relative" }}
+                  label={t("new.password")}
+                >
                   <HFTextField
-                    placeholder="New Password"
+                    placeholder={t("new.password")}
                     fullWidth
                     control={control}
                     name="new_password"
@@ -257,19 +272,25 @@ const UsersForm = () => {
                       right: "15px",
                       bottom: "5px",
                       cursor: "pointer",
-                    }}>
+                    }}
+                  >
                     {inputType ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </Box>
                 </FRow>
 
-                <FRow style={{position: "relative"}} label="Confirm password">
+                <FRow
+                  style={{ position: "relative" }}
+                  label={t("confirm.password")}
+                >
                   <HFTextField
-                    placeholder="confirm password"
+                    placeholder={t("confirm.password")}
                     fullWidth
                     control={control}
                     name="confirm_password"
                     type={passwordType ? "password" : "text"}
-                    style={{border: `1px solid ${inputMatch ? "red" : "#eee"}`}}
+                    style={{
+                      border: `1px solid ${inputMatch ? "red" : "#eee"}`,
+                    }}
                   />
 
                   <Box
@@ -279,7 +300,8 @@ const UsersForm = () => {
                       right: "15px",
                       bottom: "5px",
                       cursor: "pointer",
-                    }}>
+                    }}
+                  >
                     {passwordType ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </Box>
                 </FRow>

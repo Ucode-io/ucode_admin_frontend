@@ -14,21 +14,23 @@ import RingLoader from "../../../../components/Loaders/RingLoader";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import {useQueryClient} from "react-query";
 import HFSelectField from "../../../../components/FormElements/HFSelectField";
+import { useTranslation } from "react-i18next";
 
-const ExcelUploadModal = ({fieldsMap, handleClose}) => {
+const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const inputFIle = useRef();
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const [rows, setRows] = useState();
   const [fileName, setFileName] = useState("");
   const [tabIndex, setTabIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
+  const { t } = useTranslation();
   const excelFieldOptions = useMemo(() => {
-    return rows?.map((el) => ({label: el, value: el}));
+    return rows?.map((el) => ({ label: el, value: el }));
   }, [rows]);
 
-  const {reset, control, watch, handleSubmit} = useForm();
+  const { reset, control, watch, handleSubmit } = useForm();
 
   const fields = watch("fields");
 
@@ -75,7 +77,7 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
         table_slug: tableSlug,
       })
       .then((res) => {
-        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
       })
       .catch((err) => {
         console.log("onSubmit error", err);
@@ -111,13 +113,13 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
         <Tabs className={styles.tabs_head} selectedIndex={tabIndex}>
           <TabList className={styles.tabs_list}>
             <Tab className={styles.tabs_item}>
-              <span>Загрузить файл</span>
+              <span>{t("upload_file")}</span>
             </Tab>
             <Tab className={styles.tabs_item}>
-              <span>Подтверждения</span>
+              <span>{t("confirm_tab")}</span>
             </Tab>
             <button onClick={handleClose} className={styles.tabs_close}>
-              <CloseIcon style={{color: "#6E8BB7"}} />
+              <CloseIcon style={{ color: "#6E8BB7" }} />
             </button>
           </TabList>
 
@@ -129,19 +131,19 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
                 </div>
               ) : (
                 <div className={styles.dialog_upload_section}>
-                  <div style={{display: "flex", justifyContent: "center"}}>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
                     <UploadIcon />
                   </div>
-                  <p>Drag and drop files here</p>
+                  <p>{t("drag_and_drop_files")}</p>
                   <input
                     type="file"
                     id="file"
                     ref={inputFIle}
-                    style={{display: "none"}}
+                    style={{ display: "none" }}
                     onChange={onUpload}
                   />
-                  <button onClick={fileUpload} style={{width: "fit-content"}}>
-                    Browse
+                  <button onClick={fileUpload} style={{ width: "fit-content" }}>
+                    {t("browse")}
                   </button>
                 </div>
               )}
@@ -151,9 +153,9 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
             <div className={styles.tabs_select}>
               <div className={styles.upload_select}>
                 <div className={styles.upload_select_item}>
-                  <h2>Экспорт загаловка столбца</h2>
+                  <h2>{t("export_column_header")}</h2>
                   <h2 className={styles.excel_title}>
-                    Excel заголовка столбца
+                    {t("excel_column_header")}
                   </h2>
                 </div>
                 <div className={styles.select_body_content}>
@@ -216,12 +218,14 @@ const ExcelUploadModal = ({fieldsMap, handleClose}) => {
                 <div className={styles.control_btns}>
                   <button
                     className={styles.control_clear}
-                    onClick={() => clearBtn()}>
-                    Сбросить
+                    onClick={() => clearBtn()}
+                  >
+                    {t("reset")}
                   </button>
                   <button
                     className={styles.control_upload}
-                    onClick={handleSubmit(onSubmit)}>
+                    onClick={handleSubmit(onSubmit)}
+                  >
                     {btnLoader ? (
                       <span className={styles.btn_loader}>
                         <RippleLoader size="btn_size" height="20px" />

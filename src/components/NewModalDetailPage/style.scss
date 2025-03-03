@@ -1,0 +1,86 @@
+@mixin flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-handle {
+  left: 80px !important;
+}
+
+.rowColumn {
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+
+  &:hover {
+    .icon {
+      display: none;
+    }
+
+    .drag {
+      display: block;
+    }
+  }
+}
+
+.rowColumnDrag {
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+}
+
+.headingText {
+  div {
+    fieldset {
+      display: none;
+    }
+  }
+
+  input {
+    font-weight: 700;
+    height: 25px;
+    font-size: 32px;
+    padding-left: 0;
+  }
+}
+
+.drag-item {
+  .icon {
+    display: none;
+  }
+
+  .drag {
+    display: block;
+  }
+}
+
+.layoutHeading {
+  .fieldChoose {
+    display: none;
+  }
+  &:hover {
+    .fieldChoose {
+      display: block;
+    }
+  }
+}

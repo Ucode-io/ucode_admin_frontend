@@ -156,7 +156,7 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
                   <Typography variant="h5" color="success.main">
                     {data?.name}
                     <Typography variant="h6" sx={{color: "#000"}}>
-                      {data?.price} {data?.currency.toUpperCase()}
+                      {data?.price} {data?.currency?.toUpperCase()}
                     </Typography>
                   </Typography>
                 </Box>

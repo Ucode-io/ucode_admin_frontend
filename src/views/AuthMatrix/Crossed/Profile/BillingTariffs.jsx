@@ -8,6 +8,7 @@ import {
   Button,
   Dialog,
   Divider,
+  Modal,
 } from "@mui/material";
 import {useQuery, useQueryClient} from "react-query";
 import billingService from "../../../../services/billingService";
@@ -17,8 +18,19 @@ import {store} from "../../../../store";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {numberWithSpaces} from "../../../../utils/formatNumbers";
+import TopUpBalance from "./TopupBalance";
 
-const BillingTariffs = ({project}) => {
+const BillingTariffs = ({
+  project,
+  addBalance,
+  setAddBalance,
+  handleSubmit = () => {},
+  onSubmit = () => {},
+  control,
+  loading = false,
+  watch,
+  reset,
+}) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const {data: fares} = useQuery(
@@ -102,6 +114,23 @@ const BillingTariffs = ({project}) => {
           </TabPanel>
         ))}
       </Tabs>
+
+      <Modal
+        onClose={() => {
+          reset({}), setAddBalance(false);
+        }}
+        open={addBalance}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-slide-description">
+        <TopUpBalance
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          control={control}
+          loading={loading}
+          watch={watch}
+          reset={reset}
+        />
+      </Modal>
     </Box>
   );
 };
@@ -140,6 +169,7 @@ const BillingFares = ({plan, tabIndex, discounts, element}) => {
     <Grid item xs={10} sm={6} md={4}>
       <Card
         sx={{
+          maxHeight: "330px",
           borderRadius: "12px",
           textAlign: "center",
           padding: "20px",
@@ -170,15 +200,17 @@ const BillingFares = ({plan, tabIndex, discounts, element}) => {
               }}>
               {plan?.name === "Enterprise"
                 ? "Custom"
-                : `$${calculateDiscountPrice(plan, element)}`}
+                : plan?.name === "Open Source"
+                  ? "Free"
+                  : `$${calculateDiscountPrice(plan, element)}`}
             </Typography>
           )}
 
-          <Typography sx={{fontWeight: "bold", fontSize: "28px"}}>
+          <Typography sx={{fontWeight: "bold", fontSize: "22px"}}>
             {plan?.name && plan?.name}
           </Typography>
 
-          <Typography sx={{fontWeight: "bold", fontSize: "22px"}}>
+          <Typography sx={{fontWeight: "bold", fontSize: "18px"}}>
             {plan?.name === "Enterprise" ? (
               <Box
                 sx={{
@@ -190,6 +222,8 @@ const BillingFares = ({plan, tabIndex, discounts, element}) => {
                 <span>Custom</span>
                 <span style={{fontSize: "14px"}}> (Contact us)</span>
               </Box>
+            ) : plan?.name === "Open Source" ? (
+              <span> Free</span>
             ) : (
               <>
                 <span>
@@ -198,16 +232,16 @@ const BillingFares = ({plan, tabIndex, discounts, element}) => {
                     Number(element?.months)}{" "}
                   / monthly
                 </span>
-                <Typography
-                  sx={{
-                    fontSize: "12px",
-                    mb: 2,
-                  }}>
-                  Billed Every: {element?.months} Month
-                </Typography>
               </>
             )}
             <span style={{fontSize: "26px"}}></span>
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "12px",
+              mb: 2,
+            }}>
+            Billed Every: {element?.months} Month
           </Typography>
 
           <Typography
@@ -250,7 +284,9 @@ const BillingFares = ({plan, tabIndex, discounts, element}) => {
             open={open}
           />
         </CardContent>
-        {element?.value && <DiscountRate element={element} />}
+        {element?.value &&
+          plan?.name !== "Enterprise" &&
+          plan?.name !== "Open Source" && <DiscountRate element={element} />}
       </Card>
     </Grid>
   );

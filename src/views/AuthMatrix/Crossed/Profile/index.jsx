@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
@@ -18,9 +18,11 @@ import {showAlert} from "../../../../store/alert/alert.thunk";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import BillingComponent from "./BillingComponent";
 import AddIcon from "@mui/icons-material/Add";
+import BillingTariffs from "./BillingTariffs";
 
 const UsersForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isUserInfo = useSelector((state) => state?.auth?.userInfo);
   const envId = useSelector((state) => state?.auth);
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -31,7 +33,7 @@ const UsersForm = () => {
   const [passwordType, setPasswordType] = useState(true);
   const dispatch = useDispatch();
   const [inputMatch, setInputMatch] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(location?.state?.tab ?? 0);
   const [addBalance, setAddBalance] = useState(false);
 
   const handClickBalance = () => setAddBalance(true);
@@ -133,7 +135,7 @@ const UsersForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Tabs onSelect={setSelectedTab}>
+        <Tabs selectedIndex={selectedTab} onSelect={setSelectedTab}>
           <Header
             sticky={true}
             styles={{height: "50px"}}
@@ -171,6 +173,7 @@ const UsersForm = () => {
               }}>
               <Tab style={{border: "none"}}>Profile</Tab>
               <Tab style={{border: "none"}}>Billing</Tab>
+              <Tab style={{border: "none"}}>Tariffs</Tab>
             </TabList>
           </Header>
 
@@ -299,6 +302,18 @@ const UsersForm = () => {
             <BillingComponent
               setAddBalance={setAddBalance}
               addBalance={addBalance}
+            />
+          </TabPanel>
+
+          <TabPanel>
+            <BillingTariffs
+              setAddBalance={setAddBalance}
+              addBalance={addBalance}
+              watch={watch}
+              control={control}
+              reset={reset}
+              onSubmit={onSubmit}
+              handleSubmit={handleSubmit}
             />
           </TabPanel>
         </Tabs>

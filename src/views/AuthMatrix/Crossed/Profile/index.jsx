@@ -18,6 +18,7 @@ import {showAlert} from "../../../../store/alert/alert.thunk";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import BillingComponent from "./BillingComponent";
 import AddIcon from "@mui/icons-material/Add";
+import BillingTariffs from "./BillingTariffs";
 
 const UsersForm = () => {
   const navigate = useNavigate();
@@ -172,6 +173,7 @@ const UsersForm = () => {
               }}>
               <Tab style={{border: "none"}}>Profile</Tab>
               <Tab style={{border: "none"}}>Billing</Tab>
+              <Tab style={{border: "none"}}>Tariffs</Tab>
             </TabList>
           </Header>
 
@@ -300,6 +302,18 @@ const UsersForm = () => {
             <BillingComponent
               setAddBalance={setAddBalance}
               addBalance={addBalance}
+            />
+          </TabPanel>
+
+          <TabPanel>
+            <BillingTariffs
+              setAddBalance={setAddBalance}
+              addBalance={addBalance}
+              watch={watch}
+              control={control}
+              reset={reset}
+              onSubmit={onSubmit}
+              handleSubmit={handleSubmit}
             />
           </TabPanel>
         </Tabs>

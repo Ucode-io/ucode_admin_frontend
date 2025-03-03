@@ -78,7 +78,7 @@ const MainLayout = ({setFavicon, favicon}) => {
                 onClick={() =>
                   navigate(`/settings/auth/matrix/profile/crossed`, {
                     state: {
-                      tab: 1,
+                      tab: 2,
                     },
                   })
                 }

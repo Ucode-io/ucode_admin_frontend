@@ -22,9 +22,10 @@ const paperSizes = [
     height: 283,
   },
   {
-    name: "Сash receipt",
+    name: "Cash receipt",
     width: 220,
     height: 1000,
+    withTranslation: true,
   },
 ];
 

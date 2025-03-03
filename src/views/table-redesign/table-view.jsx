@@ -24,6 +24,7 @@ import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import NewModalDetailPage from "../../components/NewModalDetailPage";
 
 const TableView = ({
   filterVisible,
@@ -570,7 +571,7 @@ const TableView = ({
           menuItem={menuItem}
           {...props}
         />
-        {/* 
+
         {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
@@ -587,8 +588,9 @@ const TableView = ({
             navigateToEditPage={navigateToDetailPage}
           />
         ) : selectedViewType?.icon === "CenterPeek" ? (
-          <ModalDetailPage
+          <NewModalDetailPage
             open={open}
+            setFormValue={setFormValue}
             setOpen={setOpen}
             selectedRow={selectedRow}
             menuItem={menuItem}
@@ -600,9 +602,9 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null} */}
+        ) : null}
 
-        {open && (
+        {/* {open && (
           <ModalDetailPage
             open={open}
             setOpen={setOpen}
@@ -616,7 +618,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        )}
+        )} */}
 
         <Drawer
           open={drawerState}

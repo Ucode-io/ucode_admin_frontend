@@ -663,7 +663,7 @@ const FieldButton = ({
       table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
       label: values?.table_from,
-      type: "Many2One",
+      type: values?.relation_type,
       required: false,
       multiple_insert: false,
       show_label: true,
@@ -672,17 +672,17 @@ const FieldButton = ({
 
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
+        createField({ data, tableSlug });
       }
       if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
+        createRelation({ data: relationData, tableSlug });
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
+        updateRelation({ data: values, tableSlug });
       } else {
-        updateField({data, tableSlug});
+        updateField({ data, tableSlug });
       }
     }
   };

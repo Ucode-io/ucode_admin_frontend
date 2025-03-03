@@ -11,6 +11,10 @@ import {useQuery} from "react-query";
 import HFMultipleSelect from "../FormElements/HFMultipleSelect";
 import {useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { useGetLang } from "../../hooks/useGetLang";
+import { useTranslation } from "react-i18next";
+import { relationTyes } from "../../utils/constants/relationTypes";
 
 export default function RelationFieldForm({
   control,
@@ -19,7 +23,7 @@ export default function RelationFieldForm({
   fieldWatch,
   relatedTableSlug,
 }) {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const envId = store.getState().company.environmentId;
   const menuItem = useSelector((state) => state.menu.menuItem);
 
@@ -27,8 +31,8 @@ export default function RelationFieldForm({
     setValue("table_from", menuItem?.data.table?.slug);
   }, []);
 
-  const {data: tables} = useTablesListQuery({
-    params: {envId: envId},
+  const { data: tables } = useTablesListQuery({
+    params: { envId: envId },
     queryParams: {
       select: (res) => {
         return res?.tables?.map((el) => ({
@@ -39,17 +43,17 @@ export default function RelationFieldForm({
     },
   });
 
-  const {data: relatedTableFields} = useQuery(
+  const { data: relatedTableFields } = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return [];
       return constructorFieldService.getList(
-        {table_slug: relatedTableSlug},
+        { table_slug: relatedTableSlug },
         relatedTableSlug
       );
     },
     {
-      select: ({fields}) => {
+      select: ({ fields }) => {
         return listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",
@@ -58,6 +62,9 @@ export default function RelationFieldForm({
       },
     }
   );
+
+  const lang = useGetLang("Table");
+  const { i18n } = useTranslation();
 
   return (
     <Box className={style.relation}>
@@ -104,6 +111,21 @@ export default function RelationFieldForm({
             isClearable
             required
             placeholder="View fields"
+            className={style.input}
+          />
+          <HFSelect
+            disabledHelperText
+            options={relationTyes
+              .slice(0, 3)
+              .map((option) => ({ label: option, value: option }))}
+            name="relation_type"
+            control={control}
+            required
+            fullWidth
+            placeholder={
+              generateLangaugeText(lang, i18n?.language, "Relation type") ||
+              "Relation type"
+            }
             className={style.input}
           />
         </>

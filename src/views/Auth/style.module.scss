@@ -198,3 +198,9 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.errorMessage {
+  color: colors.$error;
+  font-size: 12px;
+  margin-top: 5px;
+}

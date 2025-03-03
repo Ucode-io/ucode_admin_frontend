@@ -125,7 +125,7 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
 
   return (
     <>
-      {project?.fare_id ? (
+      {!project?.fare_id ? (
         <Box
           id={"billingTable"}
           sx={{

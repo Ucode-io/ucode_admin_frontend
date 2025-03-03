@@ -281,9 +281,9 @@ export const NewUiViewsWithGroups = ({
   const [authInfo, setAuthInfo] = useState(null);
 
   const { isLoading } = useTableByIdQuery({
-    id: id,
+    id: menuItem?.table_id,
     queryParams: {
-      enabled: !!id,
+      enabled: !!menuItem?.table_id,
       onSuccess: (res) => {
         setAuthInfo(res?.attributes?.auth_info);
         mainForm.reset(res);
@@ -439,10 +439,11 @@ export const NewUiViewsWithGroups = ({
   }
 
   const tableName = menuItem?.label ?? menuItem?.title;
-  const viewName =
-    (view.attributes?.[`name_${i18n.language}`]
-      ? view.attributes?.[`name_${i18n.language}`]
-      : view.type) ?? view?.name;
+  // const viewName =
+  //   (view.attributes?.[`name_${i18n.language}`]
+  //     ? view.attributes?.[`name_${i18n.language}`]
+  //     : view.type) ?? view?.name;
+  const viewName = view?.attributes?.name_en || view?.name || view.type;
 
   return (
     <>
@@ -569,7 +570,7 @@ export const NewUiViewsWithGroups = ({
                   setSelectedTabIndex(index);
                 }}
               >
-                {viewName}
+                {view?.attributes?.name_en || view?.name || view.type}
               </Button>
             ))}
 
@@ -896,6 +897,7 @@ export const NewUiViewsWithGroups = ({
         onClose={handleClosePopup}
         authData={authInfo}
         control={mainForm.control}
+        handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
       />
     </>
@@ -1343,7 +1345,6 @@ const ViewOptions = ({
                   )}
                 </InputGroup>
               </Flex>
-              {/* TODO: add layout */}
               <Flex
                 color="#475467"
                 mt="4px"

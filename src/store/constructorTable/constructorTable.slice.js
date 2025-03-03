@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+// import { updateConstructorTableAction } from "./constructorTable.thunk";
 
 export const {
   actions: constructorTableActions,
@@ -31,6 +32,13 @@ export const {
     setLoader: (state, { payload }) => {
       state.loader = payload;
     },
+  },
+  extraReducers: {
+    // [updateConstructorTableAction.fulfilled]: (state, { payload }) => {
+    //   console.log({state, payload})
+    //   // const index = state.list.findIndex((item) => item.id === payload.id);
+    //   // state.list[index] = payload;
+    // }
   },
   // extraReducers: {
   //   [fetchConstructorTableListAction.fulfilled]: (state, { payload }) => {

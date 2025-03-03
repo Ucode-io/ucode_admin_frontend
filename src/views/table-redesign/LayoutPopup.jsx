@@ -9,29 +9,36 @@ import HFSelect from "../../components/FormElements/HFSelect";
 import HFMultipleSelect from "../../components/FormElements/HFMultipleSelect";
 import { useTranslation } from "react-i18next";
 import style from "./popup.module.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFieldArray, useWatch } from "react-hook-form";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import { LoginStrategy } from "../../mock/FolderSettings";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import constructorTableService from "../../services/constructorTableService";
+import { constructorTableActions } from "../../store/constructorTable/constructorTable.slice";
 
 export const LayoutPopup = ({
   onClose = () => {},
   open = false,
   tableLan,
   control,
-  exist,
   authData,
+  handleSubmit,
 }) => {
   const { i18n, t } = useTranslation();
 
   const languages = useSelector((state) => state.languages.list);
 
   const { tableSlug } = useParams();
+
+  const [btnLoader, setBtnLoader] = useState(false);
+  const projectId = useSelector((state) => state.auth.projectId);
+
+  const dispatch = useDispatch();
 
   const params = {
     language_setting: i18n?.language,
@@ -41,8 +48,29 @@ export const LayoutPopup = ({
     onClose();
   };
 
-  const handleListItemClick = () => {
-    onClose();
+  const updateConstructorTable = (data) => {
+    setBtnLoader(true);
+    const updateTableData = constructorTableService.update(data, projectId);
+
+    Promise.all([updateTableData])
+      .then(() => {
+        dispatch(constructorTableActions.setDataById(data));
+        handleClose();
+        setBtnLoader(false);
+      })
+      .catch(() => setBtnLoader(false));
+  };
+
+  const onSubmit = async (data) => {
+    const computedData = {
+      ...data,
+      id: data?.id,
+      show_in_menu: true,
+    };
+
+    if (data?.id) {
+      updateConstructorTable(computedData);
+    }
   };
 
   const tableName = useWatch({
@@ -113,7 +141,7 @@ export const LayoutPopup = ({
   }, [computedTableFields]);
 
   return (
-    <Dialog maxWidth="md" fullWidth open={open} onClose={handleClose}>
+    <Dialog maxWidth="sm" fullWidth open={open} onClose={handleClose}>
       <DialogContent>
         <FormCard
           maxWidth="100%"
@@ -147,7 +175,6 @@ export const LayoutPopup = ({
             <HFTextField
               control={control}
               name="slug"
-              exist={exist}
               fullWidth
               placeholder="KEY"
               required
@@ -385,7 +412,13 @@ export const LayoutPopup = ({
       </DialogContent>
       <DialogActions>
         <SecondaryButton onClick={handleClose}>{t("cancel")}</SecondaryButton>
-        <PrimaryButton onClick={handleClose}>{t("save")}</PrimaryButton>
+        <PrimaryButton
+          loader={btnLoader}
+          loading={btnLoader}
+          onClick={handleSubmit(onSubmit)}
+        >
+          {t("save")}
+        </PrimaryButton>
       </DialogActions>
     </Dialog>
   );

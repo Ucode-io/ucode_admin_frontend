@@ -15,6 +15,8 @@ import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import {useQueryClient} from "react-query";
 import HFSelectField from "../../../../components/FormElements/HFSelectField";
 import { useTranslation } from "react-i18next";
+import { useGetLang } from "../../../../hooks/useGetLang";
+import { generateLangaugeText } from "../../../../utils/generateLanguageText";
 
 const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const inputFIle = useRef();
@@ -25,10 +27,12 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const excelFieldOptions = useMemo(() => {
     return rows?.map((el) => ({ label: el, value: el }));
   }, [rows]);
+
+  const lang = useGetLang("Table");
 
   const { reset, control, watch, handleSubmit } = useForm();
 
@@ -134,7 +138,13 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                   <div style={{ display: "flex", justifyContent: "center" }}>
                     <UploadIcon />
                   </div>
-                  <p>{t("drag_and_drop_files")}</p>
+                  <p>
+                    {generateLangaugeText(
+                      lang,
+                      i18n.language,
+                      "Import pop-up content"
+                    )}
+                  </p>
                   <input
                     type="file"
                     id="file"

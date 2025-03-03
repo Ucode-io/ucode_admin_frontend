@@ -39,6 +39,7 @@ import "./style.scss";
 const tableHeads = [
   "Date",
   "Project",
+  "Fare",
   "Payment Type",
   "Type",
   "Status",
@@ -172,7 +173,7 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
                   <Box>
                     <Typography variant="h5">Expire Date</Typography>
                     <Typography variant="h4" color="text.secondary">
-                      2025-12-31
+                      {data?.subscription?.end_date}
                     </Typography>
                   </Box>
                 </Box>
@@ -214,6 +215,9 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
                       </TableCell>
                       <TableCell sx={{fontSize: "14px"}}>
                         {project?.title}
+                      </TableCell>
+                      <TableCell sx={{fontSize: "14px"}}>
+                        {row.fare?.name ?? ""}
                       </TableCell>
                       <TableCell sx={{fontSize: "14px"}}>
                         {row.payment_type ?? ""}
@@ -308,19 +312,6 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
           />
         </Modal>
       </Box>
-      {/* ) : (
-        <BillingTariffs
-          setAddBalance={setAddBalance}
-          onClose={handCloseBalance}
-          addBalance={addBalance}
-          watch={watch}
-          control={control}
-          reset={reset}
-          onSubmit={onSubmit}
-          handleSubmit={handleSubmit}
-          data={data}
-        />
-      )} */}
     </>
   );
 };

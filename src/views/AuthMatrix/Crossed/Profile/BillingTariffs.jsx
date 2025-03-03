@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
   Box,
   Grid,
@@ -8,6 +8,7 @@ import {
   Button,
   Dialog,
   Divider,
+  Modal,
 } from "@mui/material";
 import {useQuery, useQueryClient} from "react-query";
 import billingService from "../../../../services/billingService";
@@ -16,8 +17,20 @@ import "react-tabs/style/react-tabs.css";
 import {store} from "../../../../store";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
+import {numberWithSpaces} from "../../../../utils/formatNumbers";
+import TopUpBalance from "./TopupBalance";
 
-const BillingTariffs = ({project}) => {
+const BillingTariffs = ({
+  project,
+  addBalance,
+  setAddBalance,
+  handleSubmit = () => {},
+  onSubmit = () => {},
+  control,
+  loading = false,
+  watch,
+  reset,
+}) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const {data: fares} = useQuery(
@@ -32,69 +45,97 @@ const BillingTariffs = ({project}) => {
     {onSuccess: (res) => res?.discounts}
   );
 
+  const tabWidth = 120;
+  const tabListWidth = useMemo(() => {
+    return discounts?.discounts?.length * tabWidth;
+  }, [discounts?.discounts]);
+
   return (
     <Box
       id="billingTariff"
       sx={{
         margin: "auto",
         padding: "30px 20px",
-        backgroundColor: "#F8FAFC",
         borderRadius: "12px",
         boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
       }}>
       <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
-        <TabList style={{display: "flex", borderBottom: "none"}}>
+        <TabList
+          style={{
+            display: "flex",
+            borderBottom: "none",
+            background: "#eeee",
+            borderRadius: "12px",
+            padding: "3px 3px 4px",
+            width: `${tabListWidth ?? 0}px`,
+            borderBottom: "none",
+          }}>
           {discounts?.discounts?.map((el, index) => (
             <Tab
               key={el?.id}
               style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                padding: "4px 10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                fontSize: "14px",
                 cursor: "pointer",
                 border: "none",
-                borderRadius: "8px",
-                marginRight: "10px",
+                borderRadius: "10px",
                 transition: "0.3s ease",
-                color: tabIndex === index ? "#000" : "#787774",
+                color: "#000",
+                width: "120px",
+                backgroundColor: tabIndex === index ? "#fff" : "transparent",
+                boxShadow:
+                  tabIndex === index
+                    ? "0px 4px 12px rgba(0, 0, 0, 0.1)"
+                    : "none",
+                position: "relative",
               }}>
-              {el?.months} Month
+              {el?.months} {el?.months === 1 ? "Month" : "Months"}
             </Tab>
           ))}
         </TabList>
 
-        <TabPanel style={{marginTop: "40px"}}>
-          <Grid container spacing={3} justifyContent={"center"}>
-            {fares?.fares?.map((plan, index) => (
-              <BillingFares
-                discounts={discounts?.discounts}
-                project={project}
-                key={index}
-                plan={plan}
-                tabIndex={tabIndex}
-              />
-            ))}
-          </Grid>
-        </TabPanel>
-
-        <TabPanel style={{marginTop: "20px"}}>
-          <Grid container spacing={3}>
-            {fares?.fares?.map((plan, index) => (
-              <BillingFares
-                project={project}
-                key={index}
-                plan={plan}
-                tabIndex={tabIndex}
-              />
-            ))}
-          </Grid>
-        </TabPanel>
+        {discounts?.discounts?.map((element, index) => (
+          <TabPanel key={index} style={{marginTop: "40px"}}>
+            <Grid container spacing={3} justifyContent={"center"}>
+              {fares?.fares?.map((plan, index) => (
+                <BillingFares
+                  element={element}
+                  discounts={discounts?.discounts}
+                  project={project}
+                  key={index}
+                  plan={plan}
+                  tabIndex={tabIndex}
+                />
+              ))}
+            </Grid>
+          </TabPanel>
+        ))}
       </Tabs>
+
+      <Modal
+        onClose={() => {
+          reset({}), setAddBalance(false);
+        }}
+        open={addBalance}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-slide-description">
+        <TopUpBalance
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          control={control}
+          loading={loading}
+          watch={watch}
+          reset={reset}
+        />
+      </Modal>
     </Box>
   );
 };
 
-const BillingFares = ({plan, tabIndex, discounts}) => {
+const BillingFares = ({plan, tabIndex, discounts, element}) => {
   const isBestPlan = plan?.bestValue;
   const [open, setOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState(discounts?.[tabIndex] ?? null);
@@ -128,9 +169,10 @@ const BillingFares = ({plan, tabIndex, discounts}) => {
     <Grid item xs={10} sm={6} md={4}>
       <Card
         sx={{
+          maxHeight: "330px",
           borderRadius: "12px",
-          padding: "20px",
           textAlign: "center",
+          padding: "20px",
           border: isBestPlan ? "2px solid #4F46E5" : "1px solid #E2E8F0",
           boxShadow: isBestPlan
             ? "0px 4px 15px rgba(79, 70, 229, 0.3)"
@@ -141,13 +183,14 @@ const BillingFares = ({plan, tabIndex, discounts}) => {
             transform: "scale(1.02)",
             boxShadow: "0px 6px 20px rgba(0,0,0,0.1)",
           },
+          position: "relative",
         }}>
         <CardContent>
-          {isBestPlan && (
+          {Boolean(!isBestPlan && element?.value) && (
             <Typography
               sx={{
-                backgroundColor: "#4F46E5",
-                color: "white",
+                backgroundColor: "#004eea",
+                color: "#fff",
                 padding: "5px 10px",
                 borderRadius: "20px",
                 fontSize: "12px",
@@ -155,23 +198,60 @@ const BillingFares = ({plan, tabIndex, discounts}) => {
                 display: "inline-block",
                 marginBottom: "8px",
               }}>
-              Best Value
+              {plan?.name === "Enterprise"
+                ? "Custom"
+                : plan?.name === "Open Source"
+                  ? "Free"
+                  : `$${calculateDiscountPrice(plan, element)}`}
             </Typography>
           )}
 
-          <Typography sx={{fontWeight: "bold", fontSize: "14px"}}>
+          <Typography sx={{fontWeight: "bold", fontSize: "22px"}}>
             {plan?.name && plan?.name}
           </Typography>
 
-          <Typography sx={{fontWeight: "bold", fontSize: "22px"}}>
-            USD {plan?.price} / {tabIndex === 0 ? "monthly" : "Yearly"}
+          <Typography sx={{fontWeight: "bold", fontSize: "18px"}}>
+            {plan?.name === "Enterprise" ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}>
+                <span>Custom</span>
+                <span style={{fontSize: "14px"}}> (Contact us)</span>
+              </Box>
+            ) : plan?.name === "Open Source" ? (
+              <span> Free</span>
+            ) : (
+              <>
+                <span>
+                  $
+                  {Number(calculateDiscountPrice(plan, element)) /
+                    Number(element?.months)}{" "}
+                  / monthly
+                </span>
+              </>
+            )}
+            <span style={{fontSize: "26px"}}></span>
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "12px",
+              mb: 2,
+            }}>
+            Billed Every: {element?.months} Month
           </Typography>
 
-          <Typography sx={{fontSize: "14px", color: "#64748B", mb: 2}}>
-            Billed {tabIndex === 0 ? "monthly" : "Yearly"}
-          </Typography>
-
-          <Typography sx={{color: "#64748B", fontSize: "14px", mb: 2}}>
+          <Typography
+            sx={{
+              color: "#64748B",
+              fontSize: "14px",
+              mb: 2,
+              maxWidth: "250px",
+              mx: "auto",
+            }}>
             {plan?.description}
           </Typography>
 
@@ -182,11 +262,13 @@ const BillingFares = ({plan, tabIndex, discounts}) => {
             }}
             variant="outlined"
             sx={{
-              color: isBestPlan ? "white" : "black",
+              width: "100%",
               fontWeight: "bold",
               borderRadius: "8px",
               padding: "10px 20px",
+              bgcolor: "#004eea",
               fontSize: "16px",
+              color: "#fff",
               "&:hover": {
                 backgroundColor: "#007aff",
                 color: "#fff",
@@ -202,6 +284,9 @@ const BillingFares = ({plan, tabIndex, discounts}) => {
             open={open}
           />
         </CardContent>
+        {element?.value &&
+          plan?.name !== "Enterprise" &&
+          plan?.name !== "Open Source" && <DiscountRate element={element} />}
       </Card>
     </Grid>
   );
@@ -254,7 +339,17 @@ const PaymentDialog = ({
             textAlign="center"
             gutterBottom>
             Upgrade your plan to{" "}
-            <span style={{color: "#007aff"}}>{selectedFare?.name}</span>
+            <span
+              style={{
+                color: "#007aff",
+                background: "#e1ecf5",
+                padding: "3px 8px",
+                borderRadius: "4px",
+                fontSize: "14px",
+                color: "#175CD3",
+              }}>
+              {selectedFare?.name}
+            </span>
           </Typography>
           <Typography
             variant="body2"
@@ -271,42 +366,90 @@ const PaymentDialog = ({
               borderRadius: "8px",
               boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
             }}>
-            <Typography variant="body2" fontWeight="bold">
-              Your Balance: <span>{calculatedPrice?.project_balance} UZS</span>
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+              <Typography sx={{fontSize: "12px", color: "#787774"}}>
+                Your Balance:
+              </Typography>{" "}
+              <Typography fontSize={"12px"} variant="h6">
+                {numberWithSpaces(
+                  Number(calculatedPrice?.project_balance ?? 0)
+                )}{" "}
+                UZS
+              </Typography>
+            </Box>
 
             <Divider sx={{my: 1}} />
 
-            <Typography variant="body2" fontWeight="bold">
-              Plan:
-            </Typography>
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              {selectedFare?.name} x {selectedFare?.seats || "1 Seat"} (Monthly)
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+              <Typography variant="body2" sx={{color: "#787774"}}>
+                Plan:
+              </Typography>
+              <Typography variant="body2" sx={{color: "#212b36"}}>
+                {selectedFare?.name}
+              </Typography>
+            </Box>
 
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                my: "10px",
+              }}>
+              <Typography variant="body2" sx={{color: "#787774"}}>
+                Date:
+              </Typography>
+              <Typography variant="body2" sx={{color: "#212b36"}}>
+                {calculatedPrice?.start_date} / {calculatedPrice?.end_date}
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+              <Typography variant="body2" sx={{color: "#787774"}}>
+                Price:
+              </Typography>
+              <Typography variant="body2" sx={{color: "#212b36"}}>
+                {numberWithSpaces(
+                  Number(calculatedPrice?.calculated_price ?? 0)
+                )}{" "}
+                UZS
+              </Typography>
+            </Box>
             <Divider sx={{my: 1}} />
 
-            <Typography variant="body2" fontWeight="bold">
-              Date:
-            </Typography>
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              {calculatedPrice?.start_date} / {calculatedPrice?.end_date}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+              <Typography variant="body2" sx={{color: "#787774"}}>
+                Total:{" "}
+              </Typography>
 
-            <Typography variant="body2" fontWeight="bold">
-              Price:
-            </Typography>
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              {calculatedPrice?.calculated_price} UZS
-            </Typography>
-            <Divider sx={{my: 1}} />
+              <Typography fontWeight="bold" textAlign="center" mt={1}>
+                {numberWithSpaces(
+                  Number(calculatedPrice?.calculated_price ?? 0)
+                )}{" "}
+                UZS
+              </Typography>
+            </Box>
           </Box>
-          <Typography variant="h6" fontWeight="bold" textAlign="center" mt={1}>
-            Total:{" "}
-            <span style={{color: "#000"}}>
-              {calculatedPrice?.calculated_price} UZS
-            </span>
-          </Typography>
 
           <Box sx={{display: "flex", justifyContent: "space-between", mt: 3}}>
             <Button
@@ -330,6 +473,58 @@ const PaymentDialog = ({
       </Dialog>
     </>
   );
+};
+
+const DiscountRate = ({text = "10% OFF"}) => {
+  return (
+    <Box
+      sx={{
+        position: "absolute",
+        top: "15px",
+        left: "-30px",
+        background: "red",
+        color: "white",
+        fontSize: "12px",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        padding: "5px 15px",
+        transform: "rotate(-45deg)",
+        width: "120px",
+        textAlign: "center",
+        zIndex: 10,
+        "&::before, &::after": {
+          content: '""',
+          position: "absolute",
+          borderStyle: "solid",
+          borderWidth: "5px",
+          display: "block",
+        },
+        "&::before": {
+          top: "100%",
+          left: 0,
+          borderColor: "red transparent transparent transparent",
+        },
+        "&::after": {
+          top: "100%",
+          right: 0,
+          borderColor: "red transparent transparent transparent",
+        },
+      }}>
+      {text}
+    </Box>
+  );
+};
+
+const calculateDiscountPrice = (plan, element) => {
+  if (!plan?.price || !element?.months) return 0;
+
+  const monthlyPrice = Number(plan.price);
+  const duration = Number(element.months);
+  const discount = element.value ? Number(element.value) : 0;
+
+  const totalPrice = monthlyPrice * duration;
+  const discountedPrice = totalPrice - (totalPrice * discount) / 100;
+  return discountedPrice;
 };
 
 export default BillingTariffs;

@@ -6,6 +6,7 @@ import {store} from "../../../../../../../store";
 import {useRelationsListQuery} from "../../../../../../../services/relationService";
 import {useObjectsListQuery} from "../../../../../../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 
 const AutoFilterModal = ({
   control,
@@ -102,7 +103,7 @@ const AutoFilterModal = ({
           <div className="modal-header silver-bottom-border">
             <Typography variant="h4">
               {generateLangaugeText(
-                projectSettingLan,
+                permissionLan,
                 i18n?.language,
                 "Relation permissions"
               ) ?? "Relation permissions"}
@@ -133,7 +134,7 @@ const AutoFilterModal = ({
             <Box p={1}>
               <Button onClick={addFilter} variant="contained" fullWidth>
                 {generateLangaugeText(
-                  projectSettingLan,
+                  permissionLan,
                   i18n?.language,
                   "Add filter"
                 ) ?? "Add filter"}
@@ -142,11 +143,8 @@ const AutoFilterModal = ({
             <div className="modal-header silver-bottom-border">
               <div></div>
               <Button variant="contained" onClick={closeModal}>
-                {generateLangaugeText(
-                  projectSettingLan,
-                  i18n?.language,
-                  "Save"
-                ) ?? "Save"}
+                {generateLangaugeText(permissionLan, i18n?.language, "Save") ??
+                  "Save"}
               </Button>
             </div>
           </Box>

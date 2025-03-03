@@ -135,6 +135,7 @@ const UsersForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Tabs onSelect={setSelectedTab}>
           <Header
+            sticky={true}
             styles={{height: "50px"}}
             title="Profile"
             backButtonLink={-1}
@@ -160,7 +161,14 @@ const UsersForm = () => {
                 </Button>
               )
             }>
-            <TabList style={{border: "none"}}>
+            <TabList
+              style={{
+                border: "none",
+                height: "40px",
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "0",
+              }}>
               <Tab style={{border: "none"}}>Profile</Tab>
               <Tab style={{border: "none"}}>Billing</Tab>
             </TabList>

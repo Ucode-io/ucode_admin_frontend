@@ -152,7 +152,7 @@ const ScreenOptions = ({
 };
 
 export const getColumnIcon = (column) => {
-  if (column.icon === "SidePeek") {
+  if (column?.icon === "SidePeek") {
     return (
       <img
         src="/img/drawerPeek.svg"

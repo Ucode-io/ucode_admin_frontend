@@ -16,7 +16,7 @@ export const GreyLoader = ({ size = "120px" }) => {
         }}
       >
         <DotLottieReact
-          src="https://lottie.host/46bb4df5-f100-4dcd-966b-5cd6d1aec871/Tl9PuY8xNO.lottie"
+          src="https://lottie.host/5a23815c-b901-47ea-8032-249540761d63/eOUFfHsp4r.json"
           loop
           autoplay
         />

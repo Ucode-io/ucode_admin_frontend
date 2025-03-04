@@ -245,5 +245,7 @@
   "browse": "Выбрать",
   "reset": "Сбросить",
   "export_column_header": "Экспорт загаловка столбца",
-  "excel_column_header": "Excel заголовка столбца"
+  "excel_column_header": "Excel заголовка столбца",
+  "view_options": "Посмотреть варианты",
+  "view_name": "Посмотреть название"
 }

@@ -201,6 +201,10 @@ export default function FieldCreateModal({
   );
 
   const handleClose = () => {
+    setValue("relation_type", "");
+    setValue("view_fields", "");
+    setValue("table_to", "");
+
     setAnchorEl(null);
     !fieldData && setValue("type", "");
   };
@@ -215,6 +219,7 @@ export default function FieldCreateModal({
 
   const handleClick = () => {
     setAnchorEl(null);
+    handleClose();
     if (!fieldData) {
       setValue("type", "");
       setFieldOptionAnchor(target);
@@ -255,8 +260,12 @@ export default function FieldCreateModal({
       }}
     >
       <div className={style.field}>
-        <Typography variant="h6" className={style.title}>
-          {generateLangaugeText(tableLan, i18n?.language, "ADD COLUMN") ||
+        <Typography
+          variant="h6"
+          textTransform="uppercase"
+          className={style.title}
+        >
+          {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
             "ADD COLUMN"}
         </Typography>
 

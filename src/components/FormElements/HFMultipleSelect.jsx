@@ -75,9 +75,21 @@ const HFMultipleSelect = ({
               }
 
               return (
-                <Box sx={{display: "flex", alignItems: "center"}}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    position: "relative",
+                  }}
+                >
                   <Box
-                    sx={{display: "flex", flexWrap: "wrap", gap: 0.5, flex: 1}}>
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                      flex: 1,
+                    }}
+                  >
                     {selected?.map((value) => (
                       <div key={value} className={styles.tag}>
                         {optionsMap[value]?.label ?? value}
@@ -85,11 +97,18 @@ const HFMultipleSelect = ({
                     ))}
                   </Box>
                   <IconButton
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
                     size="small"
                     onMouseDown={(e) => {
                       e.stopPropagation();
                       onChange([]);
-                    }}>
+                    }}
+                  >
                     <ClearIcon fontSize="small" />
                   </IconButton>
                 </Box>

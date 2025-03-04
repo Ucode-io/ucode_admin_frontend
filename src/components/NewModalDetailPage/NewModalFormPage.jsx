@@ -18,10 +18,9 @@ function NewModalFormPage({
   data,
   layout,
   fieldsMap,
-  selectedTab = {},
   selectedRow,
+  selectedTab = {},
   selectedTabIndex = 0,
-  handleMouseDown,
   setFormValue = () => {},
 }) {
   const {i18n} = useTranslation();
@@ -79,7 +78,7 @@ function NewModalFormPage({
 
   return (
     <>
-      <Box mt="10px" pb={"10px"} overflow={"auto"}>
+      <Box mt="10px" pb={"10px"}>
         <HeadingOptions
           selectedRow={selectedRow}
           watch={watch}
@@ -92,12 +91,15 @@ function NewModalFormPage({
         {sections?.map((section, secIndex) => (
           <Box sx={{margin: "8px 0 0 0"}} key={secIndex}>
             <Container
-              behaviour="contain"
-              //   style={{width: "100%"}}
+              style={{position: "relative"}}
               onDragStart={() => setDragAction(true)}
               onDragEnd={() => setDragAction(false)}
-              dragHandleSelector=".drag-handle"
-              dragClass="drag-item"
+              dragHandleSelector=".drag_handles"
+              dropPlaceholder={{
+                animationDuration: 150,
+                className: "drop-preview",
+              }}
+              dragClass="drag-items"
               lockAxis="y"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
               {section?.fields
@@ -105,9 +107,9 @@ function NewModalFormPage({
                   (el) => el?.slug !== watch("attributes.layout_heading")
                 )
                 .map((field, fieldIndex) => (
-                  <Draggable className="drag-handle" key={field?.id}>
+                  <Draggable key={field?.id} className={`drag_handles`}>
                     <Box
-                      className={dragAction ? "rowColumnDrag" : "rowColumn"}
+                      className={dragAction ? "rowDragCol" : "rowCol"}
                       key={fieldIndex}
                       display="flex"
                       alignItems="center"
@@ -135,12 +137,12 @@ function NewModalFormPage({
                           alignItems="center"
                           justifyContent="center"
                           sx={{color: "#787774"}}>
-                          <span className="drag">
+                          <span className={"drag"}>
                             <DragIndicatorIcon
                               style={{width: "16px", height: "16px"}}
                             />
                           </span>
-                          <span style={{color: "#787774"}} className="icon">
+                          <span style={{color: "#787774"}} className={"icon"}>
                             {getColumnIcon({
                               column: {
                                 type: field?.type ?? field?.relation_type,
@@ -158,7 +160,7 @@ function NewModalFormPage({
                             field?.label}
                         </Box>
                       </Box>
-                      <Box sx={{width: "60%"}}>
+                      <Box sx={{width: "100%"}}>
                         <DrawerFieldGenerator
                           control={control}
                           field={field}
@@ -172,18 +174,6 @@ function NewModalFormPage({
           </Box>
         ))}
       </Box>
-
-      <Box
-        onMouseDown={handleMouseDown}
-        sx={{
-          position: "absolute",
-          height: "calc(100vh - 50px)",
-          width: "3px",
-          left: 0,
-          top: 0,
-          cursor: "col-resize",
-        }}
-      />
     </>
   );
 }
@@ -232,7 +222,7 @@ const HeadingOptions = ({
   return (
     <>
       <Box
-        className="layoutHeading"
+        className={"layoutHeading"}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -248,7 +238,7 @@ const HeadingOptions = ({
         />
 
         <Box
-          className="fieldChoose"
+          className={"fieldChoose"}
           sx={{cursor: "pointer"}}
           onClick={handleClick}>
           <img

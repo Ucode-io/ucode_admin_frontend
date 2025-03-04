@@ -126,46 +126,36 @@ const NewModalRelationTable = ({
             data={data}
           />
         </Box>
-        <RelationTable
-          ref={myRef}
-          loader={loader}
-          remove={remove}
-          reset={reset}
-          selectedTabIndex={selectedTabIndex}
-          watch={watch}
-          selectedTab={selectedTab}
-          control={control}
-          setFormValue={setFormValue}
-          fields={fields}
-          setFormVisible={setFormVisible}
-          formVisible={formVisible}
-          key={selectedTab.id}
-          relation={relations}
-          getRelatedTabeSlug={getRelatedTabeSlug}
-          createFormVisible={relationsCreateFormVisible}
-          setCreateFormVisible={setCreateFormVisible}
-          selectedObjects={selectedObjects}
-          setSelectedObjects={setSelectedObjects}
-          tableSlug={tableSlug}
-          removableHeight={140}
-          id={id}
-          getAllData={getAllData}
-          type={type}
-          layoutData={data}
-        />
+        <Box>
+          <RelationTable
+            ref={myRef}
+            loader={loader}
+            remove={remove}
+            reset={reset}
+            selectedTabIndex={selectedTabIndex}
+            watch={watch}
+            selectedTab={selectedTab}
+            control={control}
+            setFormValue={setFormValue}
+            fields={fields}
+            setFormVisible={setFormVisible}
+            formVisible={formVisible}
+            key={selectedTab.id}
+            relation={relations}
+            getRelatedTabeSlug={getRelatedTabeSlug}
+            createFormVisible={relationsCreateFormVisible}
+            setCreateFormVisible={setCreateFormVisible}
+            selectedObjects={selectedObjects}
+            setSelectedObjects={setSelectedObjects}
+            tableSlug={tableSlug}
+            removableHeight={140}
+            id={id}
+            getAllData={getAllData}
+            type={type}
+            layoutData={data}
+          />
+        </Box>
       </Box>
-
-      {/* <Box
-        onMouseDown={handleMouseDown}
-        sx={{
-          position: "absolute",
-          height: "calc(100vh - 50px)",
-          width: "3px",
-          left: 0,
-          top: 0,
-          cursor: "col-resize",
-        }}
-      /> */}
     </>
   );
 };

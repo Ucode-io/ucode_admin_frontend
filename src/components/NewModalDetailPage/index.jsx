@@ -1,7 +1,6 @@
 import {Box, Button, Flex} from "@chakra-ui/react";
 import {Check} from "@mui/icons-material";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {Menu, MenuItem, Modal} from "@mui/material";
+import {Dialog, Menu, MenuItem, Modal} from "@mui/material";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -19,22 +18,8 @@ import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
 import {store} from "../../store";
 import {sortSections} from "../../utils/sectionsOrderNumber";
-import DrawerFormDetailPage from "../../views/Objects/DrawerDetailPage/DrawerFormDetailPage";
-import DrawerRelationTable from "../../views/Objects/ModalDetailPage/DrawerRelationTable";
-import NewModalRelationTable from "./NewModalRelationTable";
 import NewModalFormPage from "./NewModalFormPage";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  bgcolor: "#fff",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import NewModalRelationTable from "./NewModalRelationTable";
 
 function NewModalDetailPage({
   open,
@@ -378,14 +363,16 @@ function NewModalDetailPage({
     }
   }, [drawerRef.current]);
   return (
-    <Modal open={open} placement="right" onClose={handleClose} size="md">
-      <Box
-        bg={"#fff"}
-        height={"500px"}
-        borderRadius={"8px"}
-        border={"none"}
-        overflow={"auto"}
-        style={style}>
+    <Dialog
+      disablePortal
+      open={open}
+      PaperProps={{
+        sx: {
+          maxWidth: "1000px",
+        },
+      }}
+      onClose={handleClose}>
+      <Box w={"950px"} borderRadius={"8px"} border={"none"}>
         <Tabs selectedIndex={selectedTabIndex}>
           <Box position={"relative"} zIndex={9}>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -439,7 +426,7 @@ function NewModalDetailPage({
               </Flex>
 
               <TabPanel>
-                <Box position={"relative"} p="0px 80px">
+                <Box overflow={"auto"} h={"600px"} p="0px 80px">
                   <NewModalFormPage
                     handleMouseDown={handleMouseDown}
                     getValues={getValues}
@@ -466,7 +453,7 @@ function NewModalDetailPage({
                 ?.filter((tab) => tab?.type !== "section")
                 .map(() => (
                   <TabPanel>
-                    <Box p="0px 0px" bg={"red"}>
+                    <Box id="modalTable" p="0px 0px" h={550}>
                       <NewModalRelationTable
                         handleMouseDown={handleMouseDown}
                         getAllData={getAllData}
@@ -499,7 +486,7 @@ function NewModalDetailPage({
           </Box>
         </Tabs>
       </Box>
-    </Modal>
+    </Dialog>
   );
 }
 

@@ -18,10 +18,9 @@ function NewModalFormPage({
   data,
   layout,
   fieldsMap,
-  selectedTab = {},
   selectedRow,
+  selectedTab = {},
   selectedTabIndex = 0,
-  handleMouseDown,
   setFormValue = () => {},
 }) {
   const {i18n} = useTranslation();
@@ -79,7 +78,7 @@ function NewModalFormPage({
 
   return (
     <>
-      <Box mt="10px" pb={"10px"} overflow={"auto"}>
+      <Box mt="10px" pb={"10px"}>
         <HeadingOptions
           selectedRow={selectedRow}
           watch={watch}
@@ -90,100 +89,82 @@ function NewModalFormPage({
         />
 
         {sections?.map((section, secIndex) => (
-          <Box sx={{margin: "8px 0 0 0"}} key={secIndex}>
-            <Container
-              behaviour="contain"
-              //   style={{width: "100%"}}
-              onDragStart={() => setDragAction(true)}
-              onDragEnd={() => setDragAction(false)}
-              dragHandleSelector=".drag-handle"
-              dragClass="drag-item"
-              lockAxis="y"
-              onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-              {section?.fields
-                ?.filter(
-                  (el) => el?.slug !== watch("attributes.layout_heading")
-                )
-                .map((field, fieldIndex) => (
-                  <Draggable className="drag-handle" key={field?.id}>
+          <Container
+            behaviour="contain"
+            onDragStart={() => setDragAction(true)}
+            onDragEnd={() => setDragAction(false)}
+            dragHandleSelector=".drag-handles"
+            dragClass="drag-item"
+            onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
+            {section?.fields
+              ?.filter((el) => el?.slug !== watch("attributes.layout_heading"))
+              .map((field, fieldIndex) => (
+                <Draggable key={field} className={`drag-handles`}>
+                  <Box
+                    className={dragAction ? "rowDragCol" : "rowCol"}
+                    key={fieldIndex}
+                    display="flex"
+                    alignItems="center"
+                    {...(Boolean(field?.type === "MULTISELECT")
+                      ? {minHeight: "30px"}
+                      : {height: "34px"})}
+                    py="8px">
                     <Box
-                      className={dragAction ? "rowColumnDrag" : "rowColumn"}
-                      key={fieldIndex}
                       display="flex"
                       alignItems="center"
-                      {...(Boolean(field?.type === "MULTISELECT")
-                        ? {minHeight: "30px"}
-                        : {height: "34px"})}
-                      py="8px">
+                      justifyContent={"space-between"}
+                      padding="5px"
+                      borderRadius={"4px"}
+                      width="200px"
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#F7F7F7",
+                        },
+                      }}>
                       <Box
+                        width="18px"
+                        height="16px"
+                        mr="8px"
                         display="flex"
                         alignItems="center"
-                        justifyContent={"space-between"}
-                        padding="5px"
-                        borderRadius={"4px"}
-                        width="170px"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: "#F7F7F7",
-                          },
-                        }}>
-                        <Box
-                          width="18px"
-                          height="16px"
-                          mr="8px"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          sx={{color: "#787774"}}>
-                          <span className="drag">
-                            <DragIndicatorIcon
-                              style={{width: "16px", height: "16px"}}
-                            />
-                          </span>
-                          <span style={{color: "#787774"}} className="icon">
-                            {getColumnIcon({
-                              column: {
-                                type: field?.type ?? field?.relation_type,
-                                table_slug: field?.table_slug ?? field?.slug,
-                              },
-                            })}
-                          </span>
-                        </Box>
-                        <Box
-                          fontSize="14px"
-                          color="#787774"
-                          fontWeight="500"
-                          width="100%">
-                          {field?.attributes?.[`label_${i18n?.language}`] ||
-                            field?.label}
-                        </Box>
+                        justifyContent="center"
+                        sx={{color: "#787774"}}>
+                        <span className={"drag"}>
+                          <DragIndicatorIcon
+                            style={{width: "16px", height: "16px"}}
+                          />
+                        </span>
+                        <span style={{color: "#787774"}} className={"icon"}>
+                          {getColumnIcon({
+                            column: {
+                              type: field?.type ?? field?.relation_type,
+                              table_slug: field?.table_slug ?? field?.slug,
+                            },
+                          })}
+                        </span>
                       </Box>
-                      <Box sx={{width: "60%"}}>
-                        <DrawerFieldGenerator
-                          control={control}
-                          field={field}
-                          watch={watch}
-                        />
+                      <Box
+                        fontSize="14px"
+                        color="#787774"
+                        fontWeight="500"
+                        width="100%">
+                        {field?.attributes?.[`label_${i18n?.language}`] ||
+                          field?.label}
                       </Box>
                     </Box>
-                  </Draggable>
-                ))}
-            </Container>
-          </Box>
+                    <Box sx={{width: "100%"}}>
+                      <DrawerFieldGenerator
+                        control={control}
+                        field={field}
+                        watch={watch}
+                      />
+                    </Box>
+                  </Box>
+                </Draggable>
+              ))}
+          </Container>
         ))}
       </Box>
-
-      <Box
-        onMouseDown={handleMouseDown}
-        sx={{
-          position: "absolute",
-          height: "calc(100vh - 50px)",
-          width: "3px",
-          left: 0,
-          top: 0,
-          cursor: "col-resize",
-        }}
-      />
     </>
   );
 }
@@ -232,7 +213,7 @@ const HeadingOptions = ({
   return (
     <>
       <Box
-        className="layoutHeading"
+        className={"layoutHeading"}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -248,7 +229,7 @@ const HeadingOptions = ({
         />
 
         <Box
-          className="fieldChoose"
+          className={"fieldChoose"}
           sx={{cursor: "pointer"}}
           onClick={handleClick}>
           <img

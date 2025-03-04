@@ -247,5 +247,10 @@
   "export_column_header": "Экспорт загаловка столбца",
   "excel_column_header": "Excel заголовка столбца",
   "view_options": "Посмотреть варианты",
-  "view_name": "Посмотреть название"
+  "view_name": "Посмотреть название",
+  "This is a required field": "Это обязательное поле",
+  "Password must be at least 6 characters long": "Пароль должен быть не менее 6 символов",
+  "Password must have at least one capital letter": "Пароль должен содержать хотя бы одну заглавную букву",
+  "Password must have at least one number": "Пароль должен содержать хотя бы одну цифру",
+  "Password must have at least one special character": "Пароль должен содержать хотя бы один специальный символ"
 }

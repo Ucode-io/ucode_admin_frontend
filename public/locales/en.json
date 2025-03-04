@@ -215,5 +215,10 @@
   "export_column_header": "Export column header",
   "excel_column_header": "Excel column header",
   "view_options": "View options",
-  "view_name": "View name"
+  "view_name": "View name",
+  "This is a required field": "This is a required field",
+  "Password must be at least 6 characters long": "Password must be at least 6 characters long",
+  "Password must have at least one capital letter": "Password must have at least one capital letter",
+  "Password must have at least one number": "Password must have at least one number",
+  "Password must have at least one special character": "Password must have at least one special character"
 }

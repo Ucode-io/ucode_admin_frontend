@@ -208,9 +208,7 @@ const SubMenu = ({
         >
           <div>
             {isLoading ? (
-              <Box minHeight="40vh">
-                <GreyLoader size="80px" />
-              </Box>
+              <GreyLoader size="100px" />
             ) : (
               <Box className="nav-block">
                 {selectedApp?.id === adminId && (

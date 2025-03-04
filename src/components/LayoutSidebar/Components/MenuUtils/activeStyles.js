@@ -2,7 +2,7 @@ import {updateLevel} from "../../../../utils/level";
 
 export default function activeStyles({menuItem, element, menuStyle, level}) {
   return {
-    height: "40px",
+    height: "32px",
     backgroundColor:
       menuItem?.id === element?.id
         ? menuStyle?.active_background || "#007AFF"

@@ -149,6 +149,8 @@ const ConstructorTablesFormPage = () => {
     }
   };
 
+  console.log("---------> ", mainForm?.getValues());
+
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
@@ -165,7 +167,7 @@ const ConstructorTablesFormPage = () => {
         },
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -295,7 +297,7 @@ const ConstructorTablesFormPage = () => {
   };
 
   const setPermission = (permission, table_slug) => {
-    const newPermission = {table_slug, ...permission};
+    const newPermission = { table_slug, ...permission };
     const res = [...permissions, newPermission];
 
     dispatch(permissionsActions.setPermissions(res));
@@ -340,7 +342,8 @@ const ConstructorTablesFormPage = () => {
                 subtitle={id ? mainForm.getValues("label") : "Add"}
                 icon={mainForm.getValues("icon")}
                 backButtonLink={-1}
-                sticky>
+                sticky
+              >
                 <TabList>
                   <Tab onClick={() => setSelectedTab(0)}>
                     {generateLangaugeText(
@@ -446,7 +449,8 @@ const ConstructorTablesFormPage = () => {
               title={id ? mainForm.getValues("label") : "Create table"}
               icon={mainForm.getValues("icon")}
               backButtonLink={-1}
-              sticky></HeaderSettings>
+              sticky
+            ></HeaderSettings>
 
             <MainInfo
               control={mainForm.control}
@@ -472,7 +476,8 @@ const ConstructorTablesFormPage = () => {
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
-                loading={btnLoader}>
+                loading={btnLoader}
+              >
                 <Save />{" "}
                 {generateLangaugeText(tableLan, i18n?.language, "Save") ||
                   "Save"}

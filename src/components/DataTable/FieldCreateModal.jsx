@@ -239,7 +239,7 @@ export default function FieldCreateModal({
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{top: 450, left: 900}}
+      anchorPosition={{ top: 450, left: 900 }}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -252,7 +252,8 @@ export default function FieldCreateModal({
       transformOrigin={{
         vertical: "bottom",
         horizontal: "left",
-      }}>
+      }}
+    >
       <div className={style.field}>
         <Typography variant="h6" className={style.title}>
           {generateLangaugeText(tableLan, i18n?.language, "ADD COLUMN") ||
@@ -265,11 +266,13 @@ export default function FieldCreateModal({
             style={{
               display: "flex",
               flexDirection: "column",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 width: "100%",
-              }}>
+              }}
+            >
               {!ValueTypes(values?.type) && !FormatTypes(format) ? (
                 <FRow
                   label={
@@ -277,8 +280,9 @@ export default function FieldCreateModal({
                     "Label"
                   }
                   classname={style.custom_label}
-                  required>
-                  <Box style={{display: "flex", gap: "6px"}}>
+                  required
+                >
+                  <Box style={{ display: "flex", gap: "6px" }}>
                     <HFTextFieldWithMultiLanguage
                       control={control}
                       name="attributes.label"
@@ -298,7 +302,8 @@ export default function FieldCreateModal({
               }
               componentClassName="flex gap-2 align-center"
               required
-              classname={style.custom_label}>
+              classname={style.custom_label}
+            >
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -325,7 +330,7 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          <Box sx={{padding: "0 5px"}}>
+          <Box sx={{ padding: "0 5px" }}>
             {formatIncludes?.includes(format) ? (
               <FRow
                 label={
@@ -334,7 +339,8 @@ export default function FieldCreateModal({
                 }
                 componentClassName="flex gap-2 align-center"
                 required
-                classname={style.custom_label}>
+                classname={style.custom_label}
+              >
                 <HFSelect
                   className={style.input}
                   disabledHelperText
@@ -361,7 +367,8 @@ export default function FieldCreateModal({
                 onClick={() => {
                   handleOpenFieldDrawer(fieldData);
                   closeAllDrawer();
-                }}>
+                }}
+              >
                 <SettingsIcon />
                 {generateLangaugeText(
                   tableLan,
@@ -378,7 +385,8 @@ export default function FieldCreateModal({
                   lockAxis="y"
                   orientation="vertical"
                   onDrop={onDrop}
-                  dragHandleSelector=".column-drag-handle">
+                  dragHandleSelector=".column-drag-handle"
+                >
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
@@ -387,17 +395,20 @@ export default function FieldCreateModal({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-around",
-                          }}>
+                          }}
+                        >
                           <FRow
                             label={`Option ${index + 1}`}
-                            className={style.option}>
+                            className={style.option}
+                          >
                             <span
                               className={style.startAdornment}
                               style={{
                                 background: watch(
                                   `attributes.options.${index}.color`
                                 ),
-                              }}></span>
+                              }}
+                            ></span>
 
                             <HFTextField
                               disabledHelperText
@@ -425,7 +436,8 @@ export default function FieldCreateModal({
                           </FRow>
                           <FRow
                             label={`Value ${index + 1}`}
-                            className={style.option}>
+                            className={style.option}
+                          >
                             <HFTextField
                               disabledHelperText
                               name={`attributes.options.${index}.value`}
@@ -456,13 +468,14 @@ export default function FieldCreateModal({
                         transformOrigin={{
                           vertical: "top",
                           horizontal: "left",
-                        }}>
+                        }}
+                      >
                         <Card elevation={12} className="ColorPickerPopup">
                           {colorList.map((color, colorIndex) => (
                             <div
                               className="round"
                               key={colorIndex}
-                              style={{backgroundColor: color}}
+                              style={{ backgroundColor: color }}
                               onClick={() => {
                                 setValue(
                                   `attributes.options.${idx}.color`,
@@ -485,7 +498,8 @@ export default function FieldCreateModal({
                         label: "",
                         value: "",
                       });
-                    }}>
+                    }}
+                  >
                     +
                     {generateLangaugeText(
                       tableLan,
@@ -560,7 +574,8 @@ export default function FieldCreateModal({
                   <span
                     id={`math_plus`}
                     className={`math_${mathType?.label}`}
-                    onClick={(e) => setMathEl(e.currentTarget)}>
+                    onClick={(e) => setMathEl(e.currentTarget)}
+                  >
                     {mathType?.value}
                   </span>
                   <HFSelect
@@ -592,7 +607,8 @@ export default function FieldCreateModal({
                     transformOrigin={{
                       vertical: "top",
                       horizontal: "right",
-                    }}>
+                    }}
+                  >
                     <Box className="math">
                       {math.map((item) => {
                         return (
@@ -602,7 +618,8 @@ export default function FieldCreateModal({
                             onClick={() => {
                               setValue("attributes.math", item);
                               setMathEl(null);
-                            }}>
+                            }}
+                          >
                             {item?.value}
                           </span>
                         );
@@ -618,7 +635,8 @@ export default function FieldCreateModal({
                   display: "flex",
                   alignItems: "baseline",
                   columnGap: "5px",
-                }}>
+                }}
+              >
                 <HFSwitch
                   id="advanced_switch"
                   control={control}
@@ -632,7 +650,6 @@ export default function FieldCreateModal({
               </Box>
             </>
           )}
-
           {format === "RELATION" && !fieldData ? (
             <RelationFieldForm
               control={control}
@@ -642,7 +659,7 @@ export default function FieldCreateModal({
               relatedTableSlug={relatedTableSlug}
             />
           ) : null}
-          <Box className={style.button_group} sx={{padding: "0 5px"}}>
+          <Box className={style.button_group} sx={{ padding: "0 5px" }}>
             <Button variant="contained" color="error" onClick={handleClick}>
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}

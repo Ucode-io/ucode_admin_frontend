@@ -262,7 +262,8 @@ export const DynamicTable = ({
           flexGrow: 1,
           backgroundColor: "#fff",
           height: `calc(100vh - ${(tableViewFiltersOpen ? 35 : 0) + tabHeight + 130}px)`,
-        }}>
+        }}
+      >
         <table id="resizeMe">
           <thead
             style={{
@@ -270,7 +271,8 @@ export const DynamicTable = ({
               position: "sticky",
               top: 0,
               zIndex: 2,
-            }}>
+            }}
+          >
             <tr>
               <IndexTh
                 items={isRelationTable ? fields : data}
@@ -306,7 +308,8 @@ export const DynamicTable = ({
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
                   type="add_field"
-                  id="addField">
+                  id="addField"
+                >
                   <FieldButton
                     tableLan={tableLan}
                     openFieldSettings={openFieldSettings}
@@ -407,7 +410,8 @@ export const DynamicTable = ({
                     zIndex: "1",
                     width: "45px",
                     color: "#007aff",
-                  }}>
+                  }}
+                >
                   <Flex
                     id="addRowBtn"
                     h="30px"
@@ -415,8 +419,9 @@ export const DynamicTable = ({
                     justifyContent="center"
                     transition="background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
                     cursor="pointer"
-                    _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
-                    onClick={() => setAddNewRow(true)}>
+                    _hover={{ bg: "rgba(0, 122, 255, 0.08)" }}
+                    onClick={() => setAddNewRow(true)}
+                  >
                     <AddRoundedIcon fill="#007aff" />
                   </Flex>
                 </td>
@@ -436,13 +441,15 @@ export const DynamicTable = ({
         py="6px"
         borderTop="1px solid #EAECF0"
         justifyContent="space-between"
-        bg="#fff">
+        bg="#fff"
+      >
         <Flex
           columnGap="16px"
           alignItems="center"
           fontSize={14}
           fontWeight={600}
-          color="#344054">
+          color="#344054"
+        >
           {generateLangaugeText(tableLan, i18n?.language, "Show") || "Show"}
           <ChakraProvider>
             <CreatableSelect
@@ -454,11 +461,14 @@ export const DynamicTable = ({
               }}
               value={{
                 value: limit,
-                label: `${limit} rows`,
+                label: `${limit} ${
+                  generateLangaugeText(tableLan, i18n?.language, "Show") ||
+                  "Show"
+                }`,
               }}
               options={limitOptions}
               menuPlacement="top"
-              onChange={({value}) => getLimitValue(value)}
+              onChange={({ value }) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
@@ -653,7 +663,7 @@ const FieldButton = ({
       table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
       label: values?.table_from,
-      type: "Many2One",
+      type: values?.relation_type,
       required: false,
       multiple_insert: false,
       show_label: true,
@@ -662,17 +672,17 @@ const FieldButton = ({
 
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
+        createField({ data, tableSlug });
       }
       if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
+        createRelation({ data: relationData, tableSlug });
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
+        updateRelation({ data: values, tableSlug });
       } else {
-        updateField({data, tableSlug});
+        updateField({ data, tableSlug });
       }
     }
   };

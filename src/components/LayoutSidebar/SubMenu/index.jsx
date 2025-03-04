@@ -38,7 +38,7 @@ const SubMenu = ({
   setElement,
   selectedApp,
   isLoading,
-  menuStyle,
+  menuStyle: menuStyles,
   setSelectedApp,
   setLinkedTableModal,
   menuItem,
@@ -124,7 +124,7 @@ const SubMenu = ({
           {subMenuIsOpen && (
             <h2
               style={{
-                color: menuStyle?.text || "#000",
+                color: "#000",
                 fontSize: 14,
                 marginLeft: 8,
                 width: 120,
@@ -142,7 +142,7 @@ const SubMenu = ({
                 (isCopied ? (
                   <DoneIcon
                     style={{
-                      color: menuStyle?.text,
+                      color: menuStyles?.text,
                     }}
                     size={13}
                   />
@@ -151,7 +151,7 @@ const SubMenu = ({
                     size={13}
                     onClick={handleClick}
                     style={{
-                      color: menuStyle?.text,
+                      color: menuStyles?.text,
                     }}
                   />
                 ))}
@@ -165,7 +165,7 @@ const SubMenu = ({
                     setElement(selectedApp);
                   }}
                   style={{
-                    color: menuStyle?.text,
+                    color: menuStyles?.text,
                   }}
                 />
               )}
@@ -178,7 +178,7 @@ const SubMenu = ({
                 }}
                 style={{
                   rotate: pinIsEnabled ? "" : "-45deg",
-                  color: menuStyle?.text,
+                  color: menuStyles?.text,
                 }}
               />
             </div>
@@ -219,7 +219,7 @@ const SubMenu = ({
                   <Permissions
                     projectSettingLan={projectSettingLan}
                     menuStyle={{
-                      ...menuStyle,
+                      ...menuStyles,
                       background: "#fff",
                     }}
                     setElement={setElement}
@@ -271,7 +271,7 @@ const SubMenu = ({
                           handleOpenNotify={handleOpenNotify}
                           setElement={setElement}
                           setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={{...menuStyle, background: "#f2f4f7"}}
+                          menuStyle={menuStyleNew}
                           menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}
@@ -289,7 +289,6 @@ const SubMenu = ({
                       level={2}
                     />
                   )}
-
                   {selectedApp?.id === adminId && (
                     <ActivityFeedButton
                       projectSettingLan={projectSettingLan}
@@ -318,6 +317,7 @@ const SubMenu = ({
                     alignItems: "center",
                     justifyContent: "flex-start",
                     borderRadius: 6,
+                    height: "32px",
                   }}>
                   <div
                     style={{

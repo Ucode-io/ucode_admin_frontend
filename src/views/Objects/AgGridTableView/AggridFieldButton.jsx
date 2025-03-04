@@ -60,7 +60,7 @@ export default function AggridFieldButton({
       });
   };
 
-  const {mutate: createField, isLoading: createLoading} =
+  const { mutate: createField, isLoading: createLoading } =
     useFieldCreateMutation({
       onSuccess: (res) => {
         reset({});
@@ -71,7 +71,7 @@ export default function AggridFieldButton({
       },
     });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldUpdateMutation({
       onSuccess: (res) => {
         reset({});
@@ -82,7 +82,7 @@ export default function AggridFieldButton({
       },
     });
 
-  const {mutate: createRelation, isLoading: realationLoading} =
+  const { mutate: createRelation, isLoading: realationLoading } =
     useRelationsCreateMutation({
       onSuccess: (res) => {
         reset({});
@@ -93,7 +93,7 @@ export default function AggridFieldButton({
       },
     });
 
-  const {mutate: updateRelation, isLoading: realationUpdateLoading} =
+  const { mutate: updateRelation, isLoading: realationUpdateLoading } =
     useRelationFieldUpdateMutation({
       onSuccess: (res) => {
         reset({});
@@ -136,17 +136,17 @@ export default function AggridFieldButton({
     };
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
+        createField({ data, tableSlug });
       }
       if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
+        createRelation({ data: relationData, tableSlug });
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
+        updateRelation({ data: values, tableSlug });
       } else {
-        updateField({data, tableSlug});
+        updateField({ data, tableSlug });
       }
     }
   };
@@ -163,7 +163,7 @@ export default function AggridFieldButton({
     } else {
       reset({
         attributes: {
-          math: {label: "plus", value: "+"},
+          math: { label: "plus", value: "+" },
         },
       });
     }
@@ -178,7 +178,8 @@ export default function AggridFieldButton({
             setFieldOptionAnchor(e.currentTarget);
             setTarget(e.currentTarget);
             setFieldData(null);
-          }}>
+          }}
+        >
           <AddIcon />
         </button>
       </Tooltip>

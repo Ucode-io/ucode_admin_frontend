@@ -4,6 +4,9 @@ import {useState} from "react";
 import ObjectsFormPageForModal from "../ObjectsFormpageForModal";
 import styles from "./style.module.scss";
 import {Button} from "@chakra-ui/react";
+import { useGetLang } from "../../../hooks/useGetLang";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
 
 export default function ModalDetailPage({
   open,
@@ -26,26 +29,35 @@ export default function ModalDetailPage({
     setFullScreen(false);
   };
 
+  const lang = useGetLang("Layout");
+  const { i18n } = useTranslation();
+
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      sx={{width: "1120px", margin: "0 auto"}}
-      className="child-position-center">
+      sx={{ width: "1120px", margin: "0 auto" }}
+      className="child-position-center"
+    >
       <Card
-        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}>
+        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}
+      >
         <div className={styles.header}>
           <div
-            style={{display: " flex", alignItems: "center", gap: "5px"}}
-            className={styles.cardTitle}>
-            <span>Detailed</span>
+            style={{ display: " flex", alignItems: "center", gap: "5px" }}
+            className={styles.cardTitle}
+          >
+            <span>
+              {generateLangaugeText(lang, i18n?.language, "Detailed")}
+            </span>
             <Box
               sx={{
                 width: "1px",
                 height: "14px",
                 margin: "0 6px",
                 background: "rgba(55, 53, 47, 0.16)",
-              }}></Box>
+              }}
+            ></Box>
             <ScreenOptions
               selectedViewType={selectedViewType}
               setSelectedViewType={setSelectedViewType}
@@ -59,7 +71,8 @@ export default function ModalDetailPage({
             onClick={() => {
               setFullScreen((prev) => !prev);
               handleClose();
-            }}>
+            }}
+          >
             <Close className={styles.closeIcon} />
           </IconButton>
         </div>

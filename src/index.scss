@@ -1049,3 +1049,9 @@ div:has(.chakra-tooltip) {
     border: none !important;
   }
 }
+
+#billingTariff {
+  .react-tabs__tab::after {
+    content: none !important;
+  }
+}

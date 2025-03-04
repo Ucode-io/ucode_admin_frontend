@@ -1,5 +1,5 @@
 import {Controller} from "react-hook-form";
-import {NumericFormat, PatternFormat} from "react-number-format";
+import {PatternFormat} from "react-number-format";
 import style from "./style.module.scss";
 import {Box, FormHelperText} from "@mui/material";
 import {Lock} from "@mui/icons-material";

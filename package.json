@@ -46,6 +46,7 @@
     "@hammaadhrasheedh/editorjs-iframe": "^1.0.21",
     "@iconify/react": "^3.1.0",
     "@lokeshpahal/editorjs-columns-imp": "^0.2.5",
+    "@lottiefiles/dotlottie-react": "^0.13.0",
     "@mantine/core": "^7.16.2",
     "@mantine/dates": "^7.16.2",
     "@mantine/hooks": "^7.16.2",

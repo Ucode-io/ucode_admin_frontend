@@ -19,6 +19,7 @@ import RingLoader from "../Loaders/RingLoader";
 import {useDispatch} from "react-redux";
 import {menuActions} from "../../store/menuItem/menuItem.slice";
 import {useMenuUpdateMutation} from "../../services/menuService";
+import { GreyLoader } from "../Loaders/GreyLoader";
 
 const MenuSettingTheme = ({
   setModalType,
@@ -34,14 +35,14 @@ const MenuSettingTheme = ({
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
   };
-  const {mutate: deleteCustomError, isLoading: deleteLoading} =
+  const { mutate: deleteCustomError, isLoading: deleteLoading } =
     useMenuTemplateDeleteMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["MENU_TEMPLATE"]);
       },
     });
 
-  const {mutateAsync: updateMenu, isLoading: createLoading} =
+  const { mutateAsync: updateMenu, isLoading: createLoading } =
     useMenuUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(
@@ -65,7 +66,7 @@ const MenuSettingTheme = ({
     deleteCustomError(id);
   };
 
-  const {data: templates, isLoading} = useMenuTemplateListQuery({});
+  const { data: templates, isLoading } = useMenuTemplateListQuery({});
   useEffect(() => {
     if (check) {
       setTemplate(check?.id);
@@ -88,7 +89,8 @@ const MenuSettingTheme = ({
       </div>
       <div className={styles.block}>
         {isLoading ? (
-          <RingLoader />
+          // <RingLoader />
+          <GreyLoader />
         ) : (
           <Box className={styles.radio}>
             <RadioGroup

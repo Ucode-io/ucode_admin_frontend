@@ -3,8 +3,9 @@ import {useDropzone} from "react-dropzone";
 import "./index.module.scss";
 import RingLoader from "../../../Loaders/RingLoader";
 import {useCallback, useRef} from "react";
+import { GreyLoader } from "../../../Loaders/GreyLoader";
 
-const FileUploadWithDraggable = ({setData, loader, data}) => {
+const FileUploadWithDraggable = ({ setData, loader, data }) => {
   const inputRef = useRef(null);
 
   const onDrop = useCallback((files) => {
@@ -15,7 +16,7 @@ const FileUploadWithDraggable = ({setData, loader, data}) => {
     setData(data);
   }, []);
 
-  const {getRootProps, getInputProps} = useDropzone({onDrop});
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <div className="FileUploadWithDrag">
@@ -23,7 +24,8 @@ const FileUploadWithDraggable = ({setData, loader, data}) => {
         {...getRootProps()}
         className="dropzone"
         ref={inputRef}
-        style={{height: 164}}>
+        style={{ height: 164 }}
+      >
         <input {...getInputProps()} />
         {!loader ? (
           <>
@@ -32,7 +34,8 @@ const FileUploadWithDraggable = ({setData, loader, data}) => {
             <p>{data?.get("file")?.name}</p>
           </>
         ) : (
-          <RingLoader />
+          // <RingLoader />
+          <GreyLoader size="40px" />
         )}
       </div>
     </div>

@@ -126,7 +126,7 @@ const NewModalRelationTable = ({
             data={data}
           />
         </Box>
-        <Box sx={{background: "red"}}>
+        <Box>
           <RelationTable
             ref={myRef}
             loader={loader}

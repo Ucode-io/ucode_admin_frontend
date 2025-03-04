@@ -4,58 +4,55 @@
   justify-content: center;
 }
 
-// .drag_handles {
-//   left: 80px !important;
-// }
+.rowCol {
+  input {
+    height: 30px !important;
 
-// .rowCol {
-//   input {
-//     height: 30px !important;
+    &:hover {
+      background: #f7f7f7;
+      border-radius: 4px;
+    }
+  }
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
 
-//     &:hover {
-//       background: #f7f7f7;
-//       border-radius: 4px;
-//     }
-//   }
-//   margin-top: 4px;
-//   cursor: pointer;
-//   .icon {
-//     display: block;
-//     width: 16px;
-//     height: 16px;
-//   }
-//   .drag {
-//     width: 16px;
-//     height: 16px;
-//     display: none;
-//     cursor: grab;
-//   }
+  &:hover {
+    .icon {
+      display: none;
+    }
 
-//   &:hover {
-//     .icon {
-//       display: none;
-//     }
+    .drag {
+      display: block;
+    }
+  }
+}
 
-//     .drag {
-//       display: block;
-//     }
-//   }
-// }
-
-// .rowDragCol {
-//   cursor: pointer;
-//   .icon {
-//     display: block;
-//     width: 16px;
-//     height: 16px;
-//   }
-//   .drag {
-//     width: 16px;
-//     height: 16px;
-//     display: none;
-//     cursor: grab;
-//   }
-// }
+.rowDragCol {
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+}
 
 .headingText {
   div {
@@ -72,14 +69,7 @@
   }
 }
 
-.drag-items {
-  position: absolute !important;
-  pointer-events: none;
-  z-index: 1000;
-  background: white;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-
+.drag-item {
   .icon {
     display: none;
   }
@@ -98,10 +88,4 @@
       display: block;
     }
   }
-}
-
-.drop-preview {
-  background-color: rgba(0, 0, 255, 0.1);
-  border: 2px dashed blue;
-  min-height: 34px;
 }

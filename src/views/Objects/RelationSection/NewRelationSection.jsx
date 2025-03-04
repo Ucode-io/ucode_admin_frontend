@@ -24,6 +24,7 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
+import FullpagePeekMaininfo from "../FullpagePeekMaininfo";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -411,19 +412,36 @@ const NewRelationSection = ({
               data?.tabs?.map((el, index) => (
                 <TabPanel key={el.id}>
                   {selectedTab?.type === "section" ? (
-                    <NewMainInfo
-                      control={control}
-                      loader={loader}
-                      isMultiLanguage={isMultiLanguage}
-                      computedSections={computedSections}
-                      setFormValue={setFormValue}
-                      relatedTable={relatedTable}
-                      relation={data}
-                      selectedIndex={selectedIndex}
-                      errors={errors}
-                      watch={watch}
-                      getValues={getValues}
-                    />
+                    <>
+                      <FullpagePeekMaininfo
+                        control={control}
+                        loader={loader}
+                        isMultiLanguage={isMultiLanguage}
+                        computedSections={computedSections}
+                        setFormValue={setFormValue}
+                        relatedTable={relatedTable}
+                        relation={data}
+                        selectedIndex={selectedIndex}
+                        errors={errors}
+                        watch={watch}
+                        fieldsMap={fieldsMap}
+                        getValues={getValues}
+                        selectedTab={selectedTab}
+                      />
+                      {/* <NewMainInfo
+                        control={control}
+                        loader={loader}
+                        isMultiLanguage={isMultiLanguage}
+                        computedSections={computedSections}
+                        setFormValue={setFormValue}
+                        relatedTable={relatedTable}
+                        relation={data}
+                        selectedIndex={selectedIndex}
+                        errors={errors}
+                        watch={watch}
+                        getValues={getValues}
+                      /> */}
+                    </>
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection
                       setFormValue={setFormValue}

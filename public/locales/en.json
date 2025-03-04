@@ -213,5 +213,7 @@
   "browse": "Browse",
   "reset": "Reset",
   "export_column_header": "Export column header",
-  "excel_column_header": "Excel column header"
+  "excel_column_header": "Excel column header",
+  "view_options": "View options",
+  "view_name": "View name"
 }

@@ -219,5 +219,7 @@
   "browse": "Tanlash",
   "reset": "Bekor qilish",
   "export_column_header": "Ustunning sarlavhasini eksport qilish",
-  "excel_column_header": "Excel ustun sarlavhasi"
+  "excel_column_header": "Excel ustun sarlavhasi",
+  "view_options": "Variantlarni ko'rish",
+  "view_name": "Nomini ko'rish"
 }

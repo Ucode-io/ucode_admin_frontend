@@ -17,6 +17,9 @@ import { useForm } from "react-hook-form";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import Variables from "../components/Variables";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useGetLang } from "../../../hooks/useGetLang";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
 
 
 const breadCrumbItems = [
@@ -35,6 +38,9 @@ const DocumentTemplateDetail = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const [btnIsLoading, setBtnIsLoading] = useState(false);
+
+  const { i18n } = useTranslation();
+  const lang = useGetLang("Table");
 
   const onSaveClick = () => {
     setBtnIsLoading(true);
@@ -124,11 +130,11 @@ const DocumentTemplateDetail = () => {
       </div>
 
       <div className={styles.titleBlock}>
-        <div className={styles.leftSide} >
+        <div className={styles.leftSide}>
           <IconButton
             onClick={() =>
               navigate(
-                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
+                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get("menuId")}&id=${searchParams.get("id")}`,
                 { replace: true }
               )
             }
@@ -150,19 +156,19 @@ const DocumentTemplateDetail = () => {
             loading={btnIsLoading}
             className={styles.primaryButton}
           >
-            Сохранить
+            {generateLangaugeText(lang, i18n.lang, "Save") || "Save"}
           </LoadingButton>
           <Button
             variant="outlined"
             className={styles.secondaryButton}
             onClick={() =>
               navigate(
-                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
+                `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get("menuId")}&id=${searchParams.get("id")}`,
                 { replace: true }
               )
             }
           >
-            Отменить
+            {generateLangaugeText(lang, i18n.lang, "Cancel") || "Cancel"}
           </Button>
         </div>
       </div>

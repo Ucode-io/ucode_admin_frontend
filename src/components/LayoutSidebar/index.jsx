@@ -886,9 +886,10 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
+  const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
@@ -939,9 +940,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    clearDB();
-    store.dispatch(authActions.logout());
-    dispatch(companyActions.setCompanies([]));
+    authService.sendAccessToken({ access_token: accessToken }).then((res) => {
+      clearDB();
+      store.dispatch(authActions.logout());
+      dispatch(companyActions.setCompanies([]));
+    });
   };
 
   const changeLanguage = (lang) => {

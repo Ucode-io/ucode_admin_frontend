@@ -1698,7 +1698,7 @@ const ColumnsVisibility = ({
           w="fit-content"
           onClick={onBackClick}
         >
-          <Box color="#475467" fontSize={16} fontWeight={600}>
+          <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
               i18n?.language,
@@ -1724,7 +1724,7 @@ const ColumnsVisibility = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -1841,7 +1841,7 @@ const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -1954,7 +1954,7 @@ const TabGroup = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}

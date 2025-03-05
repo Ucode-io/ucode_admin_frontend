@@ -141,9 +141,20 @@ export const LayoutPopup = ({
   }, [computedTableFields]);
 
   return (
-    <Dialog maxWidth="sm" fullWidth open={open} onClose={handleClose}>
-      <DialogContent>
+    <Dialog
+      sx={{
+        "& .MuiPaper-root": {
+          width: "100%",
+          maxWidth: "520px",
+        },
+      }}
+      fullWidth
+      open={open}
+      onClose={handleClose}
+    >
+      <DialogContent style={{ padding: "0px" }}>
         <FormCard
+          contentStyle={{ paddingBottom: "0px" }}
           maxWidth="100%"
           title={
             generateLangaugeText(tableLan, i18n?.language, "General") ||
@@ -184,7 +195,7 @@ export const LayoutPopup = ({
           </FRow>
 
           <Box
-            sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}
+            sx={{ display: "flex", alignItems: "center", marginTop: "30px" }}
             className={style.checkbox}
           >
             <HFCheckbox
@@ -201,7 +212,10 @@ export const LayoutPopup = ({
               control={control}
               name="is_cached"
               required
-              label="Cache"
+              label={
+                generateLangaugeText(tableLan, i18n?.language, "Cache") ||
+                "Cache"
+              }
             />
             <HFCheckbox
               control={control}
@@ -216,7 +230,9 @@ export const LayoutPopup = ({
               control={control}
               name="order_by"
               required
-              label="Sort"
+              label={
+                generateLangaugeText(tableLan, i18n?.language, "Sort") || "Sort"
+              }
             />
           </Box>
 
@@ -383,9 +399,10 @@ export const LayoutPopup = ({
               <Box
                 sx={{
                   display: "flex",
-                  width: "500px",
+                  width: "100%",
+                  maxWidth: "500px",
                   alignItems: "center",
-                  margin: "10px 0",
+                  marginTop: "30px",
                 }}
               >
                 <FRow

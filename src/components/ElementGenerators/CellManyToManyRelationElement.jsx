@@ -278,7 +278,7 @@ const AutoCompleteElement = ({
   //     setAllOptions(matchingOption.response);
   //   }
   // }, [relOptions, field]);
-  console.log("optionsFromLocale", optionsFromLocale);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete

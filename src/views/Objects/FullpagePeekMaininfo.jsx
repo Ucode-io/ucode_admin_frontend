@@ -1,38 +1,40 @@
-import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
+import "./style.scss";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
-import PageFallback from "../../components/PageFallback";
-import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
-import {getColumnIcon} from "../table-redesign/icons";
-import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import styles from "./style.module.scss";
-import "./style.scss";
 import {Controller} from "react-hook-form";
 import {Check} from "@mui/icons-material";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {applyDrag} from "../../utils/applyDrag";
+import {getColumnIcon} from "../table-redesign/icons";
+import {Container, Draggable} from "react-smooth-dnd";
+import PageFallback from "../../components/PageFallback";
+import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
+import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
+import {useNavigate, useParams} from "react-router-dom";
 
 const FullpagePeekMaininfo = ({
-  computedSections,
   control,
   loader,
   relation,
-  isMultiLanguage,
   watch,
-  fieldsMap = {},
   selectedTab,
-  setFormValue = () => {},
+  isMultiLanguage,
+  computedSections = [],
   updateCurrentLayout = () => {},
 }) => {
-  const {tableSlug} = useParams();
+  const {tableSlug, appId, id} = useParams();
+  const test = useParams();
+  const {i18n} = useTranslation();
+  const navigate = useNavigate();
   const [isShow, setIsShow] = useState(true);
-  const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
   const [dragAction, setDragAction] = useState(false);
+  const projectId = store.getState().company.projectId;
   const [sections, setSections] = useState(computedSections ?? []);
 
   const fieldsList = useMemo(() => {
@@ -55,12 +57,11 @@ const FullpagePeekMaininfo = ({
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
-  const {i18n} = useTranslation();
 
   const onDrop = (secIndex, dropResult) => {
     if (!dropResult.removedIndex && !dropResult.addedIndex) return;
 
-    const newSections = [...computedSections];
+    const newSections = [...sections];
     newSections[secIndex].fields = applyDrag(
       newSections[secIndex].fields,
       dropResult
@@ -88,7 +89,37 @@ const FullpagePeekMaininfo = ({
             </div>
           )}
 
-          <Box sx={{padding: "0 15px 0 40px"}}>
+          <Box
+            sx={{
+              padding: "10px 15px 10px 40px",
+            }}>
+            {/* <Box
+              sx={{
+                height: "32px",
+                margin: "5px 5px 0",
+                "&:hover": {
+                  button: {
+                    display: "flex",
+                  },
+                },
+              }}>
+              <Button
+                onClick={() =>
+                  navigate(`/main/${appId}/layout-settings/${tableSlug}/${id}`)
+                }
+                sx={{
+                  display: "none",
+                  alignItems: "center",
+                  gap: "5px",
+                  paddingLeft: "3px",
+                  color: "rgba(55, 53, 47, 0.5)",
+                  "&:hover": {
+                    background: "rgba(55, 53, 47, 0.06)",
+                  },
+                }}>
+                <SpaceDashboardIcon /> Customize layout
+              </Button>
+            </Box> */}
             <HeadingOptions
               control={control}
               watch={watch}
@@ -110,7 +141,7 @@ const FullpagePeekMaininfo = ({
                   onDragStart={() => setDragAction(true)}
                   onDragEnd={() => setDragAction(false)}
                   dragHandleSelector=".drag-handle-item"
-                  dragClass="drag-item"
+                  dragClass="dragging_preview"
                   lockAxis="y"
                   onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
                   {section?.fields

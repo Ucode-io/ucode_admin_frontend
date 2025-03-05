@@ -74,6 +74,7 @@ import WebPage from "../views/WebPage";
 import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDesign";
 import {ClientTypes} from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
+import LayoutSettings from "../views/Objects/LayoutSettings";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -116,12 +117,6 @@ const Router = () => {
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
   const redirectLink = useMemo(() => {
-    // if (location.pathname.includes("settings"))
-    //   return "/settings/constructor/apps";
-    // if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
-    // if (!applications.length || !applications[0].permission?.read)
-    //   return "/settings/constructor/apps";
-    // return "/settings/constructor/apps";
     return (
       auth?.clientType?.default_page?.length
         ? auth?.clientType?.default_page?.length
@@ -192,8 +187,6 @@ const Router = () => {
 
   return (
     <Routes>
-      {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
-
       <Route
         path="/"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
@@ -282,12 +275,6 @@ const Router = () => {
             <Route path="role/:roleId" element={<RoleDetail />} />
           </Route>
 
-          {/* <Route path="constructor/microfrontend">
-          <Route index element={<MicrofrontendPage />} />
-          <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
-        </Route> */}
-
           <Route path=":appId/microfrontend">
             <Route index element={<MicrofrontendPage />} />
             <Route path="create" element={<MicrofrontendForm />} />
@@ -309,7 +296,6 @@ const Router = () => {
           <Route path=":appId/tables">
             <Route index element={<TablesPage />} />
             <Route path="create" element={<MicrofrontendForm />} />
-            {/* <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
           </Route>
 
           <Route path=":appId/resources">
@@ -322,19 +308,7 @@ const Router = () => {
             <Route path="elt">
               <Route path="connections">
                 <Route index element={<Connections />} />
-                {/* <Route path="create" element={<ConnectionCreate />} /> */}
-                {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
               </Route>
-              {/* <Route path="sources">
-                <Route index element={<Sources />} />
-                <Route path="create" element={<SourceDetail />} />
-                <Route path=":sourceId" element={<SourceDetail />} />
-              </Route>
-              <Route path="destinations">
-                <Route index element={<Destinations />} />
-                <Route path="create" element={<DestinationDetail />} />
-                <Route path=":destinationId" element={<DestinationDetail />} />
-              </Route> */}
             </Route>
           </Route>
 
@@ -435,6 +409,15 @@ const Router = () => {
             }
           />
 
+          <Route
+            path=":appId/layout-settings/:tableSlug/:id"
+            element={
+              <KeepAliveWrapper>
+                <LayoutSettings />
+              </KeepAliveWrapper>
+            }
+          />
+
           <Route path="*" element={<Navigate to={redirectLink} />} />
         </Route>
 
@@ -446,20 +429,11 @@ const Router = () => {
           <Route path="constructor/apps" element={<AppsPage />} />
           <Route path="constructor/apps/create" element={<AppsForm />} />
           <Route path="constructor/apps/:appId" element={<AppsForm />} />
-          {/* 
-        <Route path="constructor/microfrontend">
-          <Route index element={<MicrofrontendPage />} />
-          <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
-        </Route> */}
 
           <Route path="constructor/tables">
             <Route index element={<TablesPage />} />
-            {/* <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
           </Route>
 
-          {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
           <Route
             path="constructor/apps/:appId/objects/create"
             element={<ConstructorTablesFormPage />}
@@ -629,77 +603,6 @@ const Router = () => {
           />
         </Route>
       </Route>
-
-      {/* <Route path="analytics" element={<AnalyticsLayout />}>
-        <Route index element={<Navigate to={"/analytics/dashboard"} />} />
-
-        <Route path="dashboard" element={<DashboardList />} />
-
-        <Route
-          path="dashboard/create/:formId"
-          element={
-            <KeepAliveWrapper>
-              <DashboardCreatePage />
-            </KeepAliveWrapper>
-          }
-        />
-        <Route path="dashboard/:id" element={<DashboardDetailPage />} />
-
-        <Route path="dashboard/:id/panel">
-          <Route path=":panelId" element={<PanelCreateForm />} />
-          <Route path="create" element={<PanelCreateForm />} />
-        </Route>
-
-        <Route path="dashboard/:id/settings" element={<DashboardSettings />}>
-          <Route path="main" element={<DashboardMainInfo />} />
-          <Route path="variables" element={<Variables />} />
-          <Route path="variables/create" element={<VariableCreateForm />} />
-          <Route
-            path="variables/:variableId"
-            element={<VariableCreateForm />}
-          />
-        </Route>
-
-        <Route path="*" element={<Navigate to={"/analytics/dashboard"} />} />
-      </Route>
-
-      <Route path="/cashbox" element={<CashboxLayout />}>
-        <Route
-          index
-          element={
-            <Navigate
-              to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"}
-            />
-          }
-        />
-
-        {cashboxIsOpen ? (
-          <>
-            <Route path="closing" element={<CashboxClosing />} />
-
-            <Route path="appointments" element={<CashboxAppointments />} />
-            <Route
-              path="appointments/:type/:id"
-              element={
-                <KeepAliveWrapper>
-                  <AppointmentsForm />
-                </KeepAliveWrapper>
-              }
-            />
-          </>
-        ) : (
-          <Route path="opening" element={<CashboxOpening />} />
-        )}
-
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"}
-            />
-          }
-        />
-      </Route> */}
 
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />

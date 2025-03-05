@@ -4,6 +4,8 @@ import SouthWestIcon from "@mui/icons-material/SouthWest";
 import {Container} from "react-smooth-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import {Menu, MenuItem} from "@mui/material";
+import SouthIcon from "@mui/icons-material/South";
 
 function LayoutSections() {
   const [selectedSection, setSelectedSection] = useState();
@@ -124,19 +126,67 @@ const MainSection = ({selectedSection, setSelectedSection, index = 1}) => {
               Section Name
             </Text>
           </Button>
-
-          <Button cursor={"pointer"} bg={"none"} border={"none"}>
-            <MoreHorizIcon
-              style={{
-                color: "rgb(35, 131, 226)",
-                width: "18px",
-                height: "18px",
-              }}
-            />
-          </Button>
+          <PositionUpDown />
         </Flex>
       </Box>
     </Box>
+  );
+};
+
+const PositionUpDown = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+  return (
+    <>
+      <Button
+        onClick={(e) => {
+          e.stopPropagation();
+          handleClick(e);
+        }}
+        _hover={{
+          background: "#2383E224",
+        }}
+        p={3}
+        borderRadius={4}
+        cursor={"pointer"}
+        bg={"none"}
+        border={"none"}>
+        <MoreHorizIcon
+          style={{
+            color: "rgb(35, 131, 226)",
+            width: "18px",
+            height: "18px",
+          }}
+        />
+      </Button>
+
+      <Menu
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}>
+        <Box p={4}>
+          <Flex w={170}>
+            <SouthIcon style={{width: "16px", height: "16px"}} />
+            Move down
+          </Flex>
+          <Flex>
+            <SouthIcon />
+            Move down
+          </Flex>
+        </Box>
+      </Menu>
+    </>
   );
 };
 

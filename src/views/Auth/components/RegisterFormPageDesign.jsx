@@ -60,7 +60,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
       },
     });
   };
-  console.log({ errors });
+
   return (
     <div className={classes.outlet}>
       <div className={classes.form}>
@@ -149,7 +149,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               />
               {errors["user_info"]?.password && (
                 <span className={classes.errorMessage}>
-                  {errors["user_info"]?.password?.message}
+                  {t(errors["user_info"]?.password?.message)}
                 </span>
               )}
             </div>

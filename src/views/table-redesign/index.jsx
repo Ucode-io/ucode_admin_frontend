@@ -102,7 +102,7 @@ export const DynamicTable = ({
   menuItem,
   getAllData = () => {},
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -118,10 +118,22 @@ export const DynamicTable = ({
 
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const [limitOptions, setLimitOptions] = useState([
-    {value: 10, label: "10 rows"},
-    {value: 20, label: "20 rows"},
-    {value: 30, label: "30 rows"},
-    {value: 40, label: "40 rows"},
+    {
+      value: 10,
+      label: `10`,
+    },
+    {
+      value: 20,
+      label: `20`,
+    },
+    {
+      value: 30,
+      label: `30`,
+    },
+    {
+      value: 40,
+      label: `40`,
+    },
   ]);
 
   const pageName =
@@ -163,7 +175,7 @@ export const DynamicTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -237,7 +249,10 @@ export const DynamicTable = ({
     }
     setLimitOptions([
       ...limitOptions,
-      {value: Number(value), label: `${value} rows`},
+      {
+        value: Number(value),
+        label: `${value}`,
+      },
     ]);
     setLimit(Number(value));
   };
@@ -466,7 +481,10 @@ export const DynamicTable = ({
                   "Show"
                 }`,
               }}
-              options={limitOptions}
+              options={limitOptions?.map((option) => ({
+                ...option,
+                label: `${option.value} ${generateLangaugeText(tableLan, i18n?.language, "rows") || "rows"}`,
+              }))}
               menuPlacement="top"
               onChange={({ value }) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}

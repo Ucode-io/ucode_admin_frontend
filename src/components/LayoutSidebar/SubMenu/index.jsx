@@ -24,6 +24,7 @@ import ActivityFeedButton from "../Components/ActivityFeedButton";
 import ProjectSettings from "../Components/ProjectSettings";
 import ApiMenu from "../Components/ApiMenu/Index";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import { GreyLoader } from "../../Loaders/GreyLoader";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -48,7 +49,7 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -118,9 +119,10 @@ const SubMenu = ({
       style={{
         background: "#fff",
         position: "relative",
-      }}>
+      }}
+    >
       <div className="body">
-        <div className="header" onClick={() => {}} style={{height: 45}}>
+        <div className="header" onClick={() => {}} style={{ height: 45 }}>
           {subMenuIsOpen && (
             <h2
               style={{
@@ -131,7 +133,8 @@ const SubMenu = ({
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-              }}>
+              }}
+            >
               {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
                 selectedApp?.label}
             </h2>
@@ -187,7 +190,8 @@ const SubMenu = ({
               onClick={() => {
                 setSelectedApp({});
                 setSubMenuIsOpen(false);
-              }}>
+              }}
+            >
               <img src="/img/close-icon.svg" alt="close" />
             </div>
           </Box>
@@ -200,10 +204,11 @@ const SubMenu = ({
             justifyContent: "space-between",
             height: "calc(100% - 56px)",
             // paddingTop: "20px"
-          }}>
+          }}
+        >
           <div>
             {isLoading ? (
-              <RingLoaderWithWrapper />
+              <GreyLoader size="100px" />
             ) : (
               <Box className="nav-block">
                 {selectedApp?.id === adminId && (
@@ -257,7 +262,8 @@ const SubMenu = ({
                   child?.length ? (
                     <Container
                       dragHandleSelector=".column-drag-handle"
-                      onDrop={onDrop}>
+                      onDrop={onDrop}
+                    >
                       {child?.map((element, index) => (
                         <RecursiveBlock
                           projectSettingLan={projectSettingLan}
@@ -275,7 +281,7 @@ const SubMenu = ({
                           menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}
-                          buttonProps={{className: "highlight-on-hover"}}
+                          buttonProps={{ className: "highlight-on-hover" }}
                         />
                       ))}
                     </Container>
@@ -318,7 +324,8 @@ const SubMenu = ({
                     justifyContent: "flex-start",
                     borderRadius: 6,
                     height: "32px",
-                  }}>
+                  }}
+                >
                   <div
                     style={{
                       display: "flex",
@@ -331,7 +338,8 @@ const SubMenu = ({
                       columnGap: "8px",
                       color: "#475467",
                       cursor: "pointer",
-                    }}>
+                    }}
+                  >
                     <img src="/img/plus-icon.svg" alt="Add" />
                     {generateLangaugeText(
                       menuLanguages,

@@ -90,6 +90,7 @@ import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { LayoutPopup } from "./LayoutPopup";
 import { useTableByIdQuery } from "../../services/constructorTableService";
 import { generateGUID } from "../../utils/generateID";
+import { useGetLang } from "../../hooks/useGetLang";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -126,7 +127,7 @@ export const NewUiViewsWithGroups = ({
   const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
-  const [tableLan, setTableLan] = useState();
+  // const [tableLan, setTableLan] = useState();
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -300,23 +301,25 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
-  useEffect(() => {
-    let isMounted = true;
+  const tableLan = useGetLang("Table");
 
-    getAllFromDB().then((storedData) => {
-      if (isMounted && storedData && Array.isArray(storedData)) {
-        const formattedData = storedData.map((item) => ({
-          ...item,
-          translations: item.translations || {},
-        }));
-        setTableLan(formattedData?.find((item) => item?.key === "Table"));
-      }
-    });
+  // useEffect(() => {
+  //   let isMounted = true;
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  //   getAllFromDB().then((storedData) => {
+  //     if (isMounted && storedData && Array.isArray(storedData)) {
+  //       const formattedData = storedData.map((item) => ({
+  //         ...item,
+  //         translations: item.translations || {},
+  //       }));
+  //       setTableLan(formattedData?.find((item) => item?.key === "Table"));
+  //     }
+  //   });
+
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, []);
 
   if (view?.type === "WEBSITE") {
     return (
@@ -438,7 +441,8 @@ export const NewUiViewsWithGroups = ({
     );
   }
 
-  const tableName = menuItem?.label ?? menuItem?.title;
+  const tableName =
+    menuItem?.attributes?.[`label_${i18n.language}`] ?? menuItem?.title;
   // const viewName =
   //   (view.attributes?.[`name_${i18n.language}`]
   //     ? view.attributes?.[`name_${i18n.language}`]
@@ -979,7 +983,7 @@ const FilterPopover = ({
               generateLangaugeText(
                 tableLan,
                 i18n?.language,
-                "Search by filled name"
+                "Seaarch by filled name"
               ) || "Search by filled name"
             }
             value={search}
@@ -1235,7 +1239,7 @@ const ViewOptions = ({
   handleOpenPopup,
 }) => {
   const { appId, tableSlug } = useParams();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1310,11 +1314,7 @@ const ViewOptions = ({
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
               <Box color="#475467" fontSize={16} fontWeight={600}>
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "View options"
-                ) || "View options"}
+                {t("view_options")}
               </Box>
               <Flex mt="12px" columnGap="4px">
                 <Flex
@@ -1334,7 +1334,7 @@ const ViewOptions = ({
                 <InputGroup>
                   <Input
                     h="26px"
-                    placeholder="View name"
+                    placeholder={t("view_name")}
                     defaultValue={viewName}
                     onChange={onViewNameChange}
                   />
@@ -1369,7 +1369,7 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layout") ||
+                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
                     "Layout"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
@@ -1404,12 +1404,7 @@ const ViewOptions = ({
                     {Boolean(visibleColumnsCount) &&
                       visibleColumnsCount > 0 && (
                         <ViewOptionSubtitle>
-                          {visibleColumnsCount}{" "}
-                          {generateLangaugeText(
-                            tableLan,
-                            i18n?.language,
-                            "Shown"
-                          ) || "Shown"}
+                          {visibleColumnsCount} {t("shown")}
                         </ViewOptionSubtitle>
                       )}
                     <ChevronRightIcon fontSize={22} />
@@ -1498,8 +1493,8 @@ const ViewOptions = ({
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Fix Column"
-                    ) || "Fix Column"}
+                      "Fix columns"
+                    ) || "Fix columns"}
                   </ViewOptionTitle>
                   <Flex ml="auto" alignItems="center" columnGap="8px">
                     {Boolean(fixedColumnsCount) && (
@@ -1605,8 +1600,8 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n, t } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1701,8 +1696,9 @@ const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}>
-          <Box color="#475467" fontSize={16} fontWeight={600}>
+          onClick={onBackClick}
+        >
+          <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
               i18n?.language,
@@ -1716,8 +1712,7 @@ const ColumnsVisibility = ({
             isChecked={allColumns?.length === visibleFields?.length}
             onChange={(ev) => onShowAllChange(ev.target.checked)}
           />
-          {generateLangaugeText(tableLan, i18n?.language, "Show all") ||
-            "Show all"}
+          {t("show_all")}
         </Flex>
       </Flex>
       <InputGroup mt="10px">
@@ -1729,7 +1724,7 @@ const ColumnsVisibility = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -1747,10 +1742,11 @@ const ColumnsVisibility = ({
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                zIndex={999999}>
-                {column?.type && getColumnIcon({column})}
+                zIndex={999999}
+              >
+                {column?.type && getColumnIcon({ column })}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Switch
                   ml="auto"
@@ -1770,9 +1766,9 @@ const ColumnsVisibility = ({
   );
 };
 
-const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1829,7 +1825,8 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
             "Group columns"}
@@ -1844,7 +1841,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -1860,9 +1857,10 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -1888,8 +1886,8 @@ const TabGroup = ({
   onBackClick,
   tableLan,
 }) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1937,7 +1935,8 @@ const TabGroup = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(
             tableLan,
@@ -1955,7 +1954,7 @@ const TabGroup = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -1971,9 +1970,10 @@ const TabGroup = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -1991,10 +1991,16 @@ const TabGroup = ({
   );
 };
 
-const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {tableSlug} = useParams();
+const FixColumns = ({
+  view,
+  fieldsMap,
+  refetchViews,
+  onBackClick,
+  tableLan,
+}) => {
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -2050,7 +2056,8 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Fix columns") ||
             "Fix columns"}
@@ -2065,7 +2072,7 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -2081,9 +2088,10 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{column?.label}</ViewOptionTitle>
             <Switch
               ml="auto"

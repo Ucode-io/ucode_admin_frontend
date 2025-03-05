@@ -4,11 +4,15 @@
   justify-content: center;
 }
 
-.drag-handle {
-  left: 80px !important;
-}
+.rowCol {
+  input {
+    height: 30px !important;
 
-.rowColumn {
+    &:hover {
+      background: #f7f7f7;
+      border-radius: 4px;
+    }
+  }
   margin-top: 4px;
   cursor: pointer;
   .icon {
@@ -34,7 +38,8 @@
   }
 }
 
-.rowColumnDrag {
+.rowDragCol {
+  margin-top: 4px;
   cursor: pointer;
   .icon {
     display: block;

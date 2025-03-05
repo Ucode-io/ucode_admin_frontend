@@ -318,10 +318,10 @@ const NumberField = ({
               id={"numberField"}
               allowNegative
               style={{
-                width: "320px",
+                width: "100%",
                 padding: "0 9.6px",
                 outline: "none",
-                color: "#787774",
+                color: "#212b36",
                 fontSize: "13px",
               }}
               value={typeof value === "number" ? value : ""}

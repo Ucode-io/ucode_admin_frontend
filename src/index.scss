@@ -1050,8 +1050,8 @@ div:has(.chakra-tooltip) {
   }
 }
 
-#billingTariff {
-  .react-tabs__tab::after {
-    content: none !important;
+#modalTable {
+  .table {
+    height: calc(100vh - 320px) !important;
   }
 }

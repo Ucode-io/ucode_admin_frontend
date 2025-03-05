@@ -33,7 +33,7 @@ export default function AggridFieldButton({
   const languages = useSelector((state) => state.languages.list);
   const {tableSlug} = useParams();
   const dispatch = useDispatch();
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const { control, watch, setValue, reset, handleSubmit } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);

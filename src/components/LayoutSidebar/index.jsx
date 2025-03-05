@@ -69,11 +69,12 @@ import {Modal} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { GreyLoader } from "../Loaders/GreyLoader";
 
-const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
+const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
   console.log("appIdappId", appId);
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -99,23 +100,23 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  const [menu, setMenu] = useState({event: "", type: "", root: false});
+  const [menu, setMenu] = useState({ event: "", type: "", root: false });
   const openSidebarMenu = Boolean(menu?.event);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
   };
 
-  const {data: menuById} = useMenuGetByIdQuery({
+  const { data: menuById } = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
+  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
     params: {
       template_id:
         menuById?.attributes?.menu_settings_id ||
@@ -128,13 +129,13 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
   const handleOpenNotify = (event, type, root) => {
-    setMenu({event: event?.currentTarget, type: type, root: root});
+    setMenu({ event: event?.currentTarget, type: type, root: root });
   };
   const handleCloseNotify = () => {
     setMenu(null);
   };
 
-  const {isLoading} = useMenuListQuery({
+  const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId || menuItem?.id,
       search: subSearchText,
@@ -221,7 +222,7 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
       });
   };
 
-  const {isLoadingUser} = useQuery(
+  const { isLoadingUser } = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -290,7 +291,7 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -345,7 +346,8 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
         flexDirection="column"
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
-        bg={menuStyle?.background ?? "#fff"}>
+        bg={menuStyle?.background ?? "#fff"}
+      >
         <Flex
           position="absolute"
           zIndex={999}
@@ -362,11 +364,12 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
           cursor="pointer"
           onClick={() =>
             dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))
-          }>
+          }
+        >
           {sidebarIsOpen ? (
-            <KeyboardDoubleArrowLeftIcon style={{color: "#007aff"}} />
+            <KeyboardDoubleArrowLeftIcon style={{ color: "#007aff" }} />
           ) : (
-            <KeyboardDoubleArrowRightIcon style={{color: "#007aff"}} />
+            <KeyboardDoubleArrowRightIcon style={{ color: "#007aff" }} />
           )}
         </Flex>
 
@@ -375,7 +378,8 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
           py={10}
           h={45}
           borderBottom="1px solid #EAECF0"
-          alignItems="center">
+          alignItems="center"
+        >
           <Header
             sidebarIsOpen={sidebarIsOpen}
             toggleDarkMode={toggleDarkMode}
@@ -390,18 +394,24 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
           pt={8}
           maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`}
           overflowY="auto"
-          overflowX="hidden">
-          {!menuList && <RingLoaderWithWrapper style={{height: "100%"}} />}
+          overflowX="hidden"
+        >
+          {!menuList && (
+            <GreyLoader size="80px" />
+            // <RingLoaderWithWrapper style={{height: "100%"}} />
+          )}
 
           {Array.isArray(menuList) && (
             <div
               className="menu-element"
               onMouseLeave={() =>
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
-              }>
+              }
+            >
               <Container
                 dragHandleSelector=".column-drag-handle"
-                onDrop={onDrop}>
+                onDrop={onDrop}
+              >
                 {menuList.map((element, index) => (
                   <AppSidebar
                     key={index}
@@ -426,20 +436,22 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
                     h={32}
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
                     mx={8}
                     onClick={(e) => {
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
                     }}
-                    {...itemConditionalProps}>
+                    {...itemConditionalProps}
+                  >
                     <Flex
                       position="absolute"
                       w={36}
                       h={36}
                       alignItems="center"
-                      justifyContent="center">
+                      justifyContent="center"
+                    >
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
@@ -450,7 +462,8 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
                         "#475467"
                       }
                       pl={48}
-                      fontSize={14}>
+                      fontSize={14}
+                    >
                       {generateLangaugeText(
                         menuLanguages,
                         i18n?.language,
@@ -476,7 +489,8 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
             sidebarIsOpen
               ? undefined
               : () => dispatch(mainActions.setSidebarHighlightedAction(null))
-          }>
+          }
+        >
           <SidebarActionTooltip id="documentation" title="Documentation">
             <Flex
               as="a"
@@ -487,10 +501,11 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
               alignItems="center"
               justifyContent="center"
               borderRadius={6}
-              _hover={{bg: "#EAECF0"}}
+              _hover={{ bg: "#EAECF0" }}
               cursor="pointer"
               mb={sidebarIsOpen ? 0 : 4}
-              {...getActionProps("documentation")}>
+              {...getActionProps("documentation")}
+            >
               <img src="/img/documentation.svg" alt="merge" />
             </Flex>
           </SidebarActionTooltip>
@@ -871,9 +886,10 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
+  const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
@@ -924,9 +940,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    clearDB();
-    store.dispatch(authActions.logout());
-    dispatch(companyActions.setCompanies([]));
+    authService.sendAccessToken({ access_token: accessToken }).then((res) => {
+      clearDB();
+      store.dispatch(authActions.logout());
+      dispatch(companyActions.setCompanies([]));
+    });
   };
 
   const changeLanguage = (lang) => {

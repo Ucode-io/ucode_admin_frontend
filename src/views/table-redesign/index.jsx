@@ -53,6 +53,7 @@ import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { TableDataSkeleton } from "../../components/TableDataSkeleton";
 
 export const DynamicTable = ({
   tableLan,
@@ -267,6 +268,8 @@ export const DynamicTable = ({
     );
   };
 
+  const showSkeleton = isRelationTable ? !fields.length : !data.length;
+  console.log({ showSkeleton });
   return (
     <div className="CTableContainer">
       <div
@@ -344,46 +347,54 @@ export const DynamicTable = ({
             </tr>
           </thead>
           <tbody>
-            {(isRelationTable ? fields : data).map(
-              (virtualRowObject, index) => (
-                <TableRow
-                  key={isRelationTable ? virtualRowObject?.id : index}
-                  tableView={tableView}
-                  width={"40px"}
-                  remove={remove}
-                  watch={watch}
-                  getValues={getValues}
-                  control={control}
-                  row={virtualRowObject}
-                  mainForm={mainForm}
-                  formVisible={formVisible}
-                  rowIndex={index}
-                  isTableView={isTableView}
-                  selectedObjectsForDelete={selectedObjectsForDelete}
-                  setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                  isRelationTable={isRelationTable}
-                  relatedTableSlug={relatedTableSlug}
-                  onRowClick={onRowClick}
-                  isChecked={isChecked}
-                  calculateWidthFixedColumn={calculateWidthFixedColumn}
-                  onCheckboxChange={onCheckboxChange}
-                  currentPage={currentPage}
-                  limit={limit}
-                  setFormValue={setFormValue}
-                  columns={columns}
-                  tableHeight={tableHeight}
-                  tableSettings={tableSettings}
-                  pageName={pageName}
-                  calculateWidth={calculateWidth}
-                  tableSlug={tableSlug}
-                  onDeleteClick={onDeleteClick}
-                  relationAction={relationAction}
-                  onChecked={onChecked}
-                  relationFields={fields?.length}
-                  data={data}
-                  view={view}
-                  firstRowWidth={45}
-                />
+            {showSkeleton ? (
+              <TableDataSkeleton
+                colLength={columns.length + (!isRelationTable ? 2 : 1)}
+              />
+            ) : (
+              (isRelationTable ? fields : data).map(
+                (virtualRowObject, index) => {
+                  return (
+                    <TableRow
+                      key={isRelationTable ? virtualRowObject?.id : index}
+                      tableView={tableView}
+                      width={"40px"}
+                      remove={remove}
+                      watch={watch}
+                      getValues={getValues}
+                      control={control}
+                      row={virtualRowObject}
+                      mainForm={mainForm}
+                      formVisible={formVisible}
+                      rowIndex={index}
+                      isTableView={isTableView}
+                      selectedObjectsForDelete={selectedObjectsForDelete}
+                      setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                      isRelationTable={isRelationTable}
+                      relatedTableSlug={relatedTableSlug}
+                      onRowClick={onRowClick}
+                      isChecked={isChecked}
+                      calculateWidthFixedColumn={calculateWidthFixedColumn}
+                      onCheckboxChange={onCheckboxChange}
+                      currentPage={currentPage}
+                      limit={limit}
+                      setFormValue={setFormValue}
+                      columns={columns}
+                      tableHeight={tableHeight}
+                      tableSettings={tableSettings}
+                      pageName={pageName}
+                      calculateWidth={calculateWidth}
+                      tableSlug={tableSlug}
+                      onDeleteClick={onDeleteClick}
+                      relationAction={relationAction}
+                      onChecked={onChecked}
+                      relationFields={fields?.length}
+                      data={data}
+                      view={view}
+                      firstRowWidth={45}
+                    />
+                  );
+                }
               )
             )}
 

@@ -10,9 +10,11 @@ import {store} from "../../store";
 import {getColumnIcon} from "../table-redesign/icons";
 import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import styles from "./style.module.scss";
+import "./style.scss";
 import {Controller} from "react-hook-form";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import {applyDrag} from "../../utils/applyDrag";
 
 const FullpagePeekMaininfo = ({
   computedSections,
@@ -24,11 +26,14 @@ const FullpagePeekMaininfo = ({
   fieldsMap = {},
   selectedTab,
   setFormValue = () => {},
+  updateCurrentLayout = () => {},
 }) => {
   const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
+  const [dragAction, setDragAction] = useState(false);
+  const [sections, setSections] = useState(computedSections ?? []);
 
   const fieldsList = useMemo(() => {
     const fields = [];
@@ -45,41 +50,6 @@ const FullpagePeekMaininfo = ({
 
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
-  const filterFields = (element, control, watch) => {
-    if (element?.attributes?.hide_path_field) {
-      if (Array.isArray(element?.attributes?.hide_path)) {
-        const hidePathArray = element?.attributes?.hide_path;
-        const watchArray = watch(element?.attributes?.hide_path_field, control);
-
-        if (hidePathArray?.length !== watchArray?.length) {
-          return false;
-        }
-        return hidePathArray?.every((el, index) => el === watchArray?.[index]);
-      }
-      if (element?.attributes?.type) {
-        const hidePathArray = element?.attributes?.hide_path;
-        const watchArray = watch(element?.attributes?.hide_path_field, control);
-        if (element?.attributes?.type === "min") {
-          if (watchArray > Number(hidePathArray)) {
-            return true;
-          } else return false;
-        } else if (element?.attributes?.type === "max") {
-          if (watchArray < Number(hidePathArray)) {
-            return true;
-          } else return false;
-        }
-      }
-
-      const isHidden =
-        element?.attributes?.hide_path ===
-        watch(element?.attributes?.hide_path_field, control);
-
-      return isHidden;
-    }
-
-    return true;
-  };
-
   useEffect(() => {
     if (isMultiLanguage) {
       setActiveLang(projectInfo?.language?.[0]?.short_name);
@@ -87,12 +57,21 @@ const FullpagePeekMaininfo = ({
   }, [isMultiLanguage, projectInfo]);
   const {i18n} = useTranslation();
 
-  const onDrop = () => {
-    console.log("sss");
+  const onDrop = (secIndex, dropResult) => {
+    if (!dropResult.removedIndex && !dropResult.addedIndex) return;
+
+    const newSections = [...computedSections];
+    newSections[secIndex].fields = applyDrag(
+      newSections[secIndex].fields,
+      dropResult
+    );
+
+    setSections(newSections);
+    updateCurrentLayout(newSections);
   };
 
   if (loader) return <PageFallback />;
-  console.log("selectedTabselectedTab", selectedTab);
+
   return (
     <div className={styles.newcontainer}>
       {isShow ? (
@@ -121,17 +100,16 @@ const FullpagePeekMaininfo = ({
 
           <div
             style={{padding: "0 40px"}}
-            className={styles.newMainInfoSections}>
-            {computedSections?.map((section, secIndex) => (
-              <Box
-                sx={{margin: "8px 0 0 0", overflow: "hidden"}}
-                key={secIndex}>
+            className={styles.newMainInfoSectionsFullpage}>
+            {sections?.map((section, secIndex) => (
+              <Box sx={{margin: "8px 0 0 0"}} key={secIndex}>
                 <Container
+                  key={section?.id}
                   behaviour="contain"
                   style={{width: "100%"}}
-                  // onDragStart={() => setDragAction(true)}
-                  // onDragEnd={() => setDragAction(false)}
-                  dragHandleSelector=".drag-handle"
+                  onDragStart={() => setDragAction(true)}
+                  onDragEnd={() => setDragAction(false)}
+                  dragHandleSelector=".drag-handle-item"
                   dragClass="drag-item"
                   lockAxis="y"
                   onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
@@ -140,9 +118,9 @@ const FullpagePeekMaininfo = ({
                       (el) => el?.slug !== watch("attributes.layout_heading")
                     )
                     .map((field, fieldIndex) => (
-                      <Draggable className="drag-handle" key={field?.id}>
+                      <Draggable className="drag-handle-item" key={field?.id}>
                         <Box
-                          // className={dragAction ? "rowColumnDrag" : "rowColumn"}
+                          className={dragAction ? "rowColumnDrag" : "rowColumn"}
                           key={fieldIndex}
                           display="flex"
                           alignItems="center"
@@ -171,9 +149,9 @@ const FullpagePeekMaininfo = ({
                               justifyContent="center"
                               sx={{color: "#787774"}}>
                               <span className="drag">
-                                {/* <DragIndicatorIcon
+                                <DragIndicatorIcon
                                   style={{width: "16px", height: "16px"}}
-                                /> */}
+                                />
                               </span>
                               <span style={{color: "#787774"}} className="icon">
                                 {getColumnIcon({
@@ -194,7 +172,7 @@ const FullpagePeekMaininfo = ({
                                 field?.label}
                             </Box>
                           </Box>
-                          <Box sx={{width: "60%"}}>
+                          <Box sx={{width: "70%"}}>
                             <DrawerFieldGenerator
                               control={control}
                               field={field}
@@ -233,9 +211,9 @@ const HeadingOptions = ({
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const selectedFieldSlug =
-    watch("attributes.layout_heading") ||
-    selectedTab?.attributes?.layout_heading;
+  const [selectedFieldSlug, setSelectedFieldSlug] = useState(
+    selectedTab?.attributes?.layout_heading
+  );
 
   const selectedField = fields.find(
     (field) => field?.slug === selectedFieldSlug
@@ -258,7 +236,7 @@ const HeadingOptions = ({
 
   const handleClose = (option) => {
     if (option) {
-      setFormValue("attributes.layout_heading", option.table_slug);
+      setSelectedFieldSlug(option.table_slug);
     }
     setAnchorEl(null);
   };
@@ -281,7 +259,7 @@ const HeadingOptions = ({
           key={selectedField?.slug}
         />
 
-        <Box
+        {/* <Box
           className="fieldChoose"
           sx={{cursor: "pointer"}}
           onClick={handleClick}>
@@ -291,7 +269,7 @@ const HeadingOptions = ({
             height={"22px"}
             alt="heading text"
           />
-        </Box>
+        </Box> */}
       </Box>
 
       <Menu

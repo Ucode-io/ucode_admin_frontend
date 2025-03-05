@@ -48,7 +48,7 @@ function NewModalFormPage({
     updateCurrentLayout(newSections);
   };
 
-  const updateCurrentLayout = (newSections) => {
+  const updateCurrentLayout = async (newSections) => {
     const updatedTabs = layout.tabs.map((tab, index) =>
       index === selectedTabIndex
         ? {
@@ -66,7 +66,7 @@ function NewModalFormPage({
       tabs: updatedTabs,
     };
 
-    layoutService.update(currentUpdatedLayout, tableSlug);
+    await layoutService.update(currentUpdatedLayout, tableSlug);
   };
 
   useEffect(() => {
@@ -78,7 +78,7 @@ function NewModalFormPage({
 
   return (
     <>
-      <Box mt="10px" pb={"10px"}>
+      <Box id="newModalDetail" mt="10px" pb={"10px"}>
         <HeadingOptions
           selectedRow={selectedRow}
           watch={watch}
@@ -90,20 +90,21 @@ function NewModalFormPage({
 
         {sections?.map((section, secIndex) => (
           <Container
+            key={section?.id}
             behaviour="contain"
             onDragStart={() => setDragAction(true)}
             onDragEnd={() => setDragAction(false)}
             dragHandleSelector=".drag-handles"
             dragClass="drag-item"
             onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-            {section?.fields
-              ?.filter((el) => el?.slug !== watch("attributes.layout_heading"))
-              .map((field, fieldIndex) => (
-                <Draggable key={field} className={`drag-handles`}>
+            {section?.fields.map((field, fieldIndex) => {
+              const isHidden =
+                field?.slug === watch("attributes.layout_heading");
+              return (
+                <Draggable key={fieldIndex} className={`drag-handles`}>
                   <Box
                     className={dragAction ? "rowDragCol" : "rowCol"}
-                    key={fieldIndex}
-                    display="flex"
+                    display={isHidden ? "none" : "flex"}
                     alignItems="center"
                     {...(Boolean(field?.type === "MULTISELECT")
                       ? {minHeight: "30px"}
@@ -127,7 +128,6 @@ function NewModalFormPage({
                         mr="8px"
                         display="flex"
                         alignItems="center"
-                        justifyContent="center"
                         sx={{color: "#787774"}}>
                         <span className={"drag"}>
                           <DragIndicatorIcon
@@ -152,7 +152,7 @@ function NewModalFormPage({
                           field?.label}
                       </Box>
                     </Box>
-                    <Box sx={{width: "100%"}}>
+                    <Box sx={{minWidth: "500px"}}>
                       <DrawerFieldGenerator
                         control={control}
                         field={field}
@@ -161,7 +161,8 @@ function NewModalFormPage({
                     </Box>
                   </Box>
                 </Draggable>
-              ))}
+              );
+            })}
           </Container>
         ))}
       </Box>

@@ -25,6 +25,7 @@ import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
 import FullpagePeekMaininfo from "../FullpagePeekMaininfo";
+import layoutService from "../../../services/layoutService";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -292,6 +293,27 @@ const NewRelationSection = ({
     selectedTab?.attributes?.columns?.length,
   ]);
 
+  const updateCurrentLayout = (newSections) => {
+    const updatedTabs = data.tabs.map((tab, index) =>
+      index === selectedTabIndex
+        ? {
+            ...tab,
+            sections: newSections,
+            attributes: {
+              ...tab?.attributes,
+            },
+          }
+        : tab
+    );
+
+    const currentUpdatedLayout = {
+      ...data,
+      tabs: updatedTabs,
+    };
+
+    layoutService.update(currentUpdatedLayout, tableSlug);
+  };
+
   return (
     <>
       {selectedManyToManyRelation && (
@@ -414,6 +436,7 @@ const NewRelationSection = ({
                   {selectedTab?.type === "section" ? (
                     <>
                       <FullpagePeekMaininfo
+                        updateCurrentLayout={updateCurrentLayout}
                         control={control}
                         loader={loader}
                         isMultiLanguage={isMultiLanguage}

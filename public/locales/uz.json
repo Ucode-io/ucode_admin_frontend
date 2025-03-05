@@ -228,5 +228,6 @@
   "Password must have at least one number": "Parolda kamida bitta raqam bo'lishi kerak",
   "Password must have at least one special character": "Parolda kamida bitta mahsus belgi bo'lishi kerak",
   "shown": "Ko'rsatilgan",
-  "show_all": "Hammasini ko'rsatish"
+  "show_all": "Hammasini ko'rsatish",
+  "add_filter": "Filter qo'shish"
 }

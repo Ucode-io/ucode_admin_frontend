@@ -435,7 +435,7 @@ const NewRelationSection = ({
                 <TabPanel key={el.id}>
                   {selectedTab?.type === "section" ? (
                     <>
-                      <FullpagePeekMaininfo
+                      {/* <FullpagePeekMaininfo
                         updateCurrentLayout={updateCurrentLayout}
                         control={control}
                         loader={loader}
@@ -450,8 +450,8 @@ const NewRelationSection = ({
                         fieldsMap={fieldsMap}
                         getValues={getValues}
                         selectedTab={selectedTab}
-                      />
-                      {/* <NewMainInfo
+                      /> */}
+                      <NewMainInfo
                         control={control}
                         loader={loader}
                         isMultiLanguage={isMultiLanguage}
@@ -463,7 +463,7 @@ const NewRelationSection = ({
                         errors={errors}
                         watch={watch}
                         getValues={getValues}
-                      /> */}
+                      />
                     </>
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection

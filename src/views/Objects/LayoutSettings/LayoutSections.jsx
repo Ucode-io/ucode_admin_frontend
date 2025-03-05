@@ -105,12 +105,12 @@ const MainSection = ({selectedSection, setSelectedSection, index = 1}) => {
         minH={220}>
         <Flex
           p={8}
-          alignItems={"center"}
           h={32}
-          color="rgb(35, 131, 226)"
-          fontWeight={500}
-          fontSize={14}
           gap={2}
+          fontSize={14}
+          fontWeight={500}
+          alignItems={"center"}
+          justifyContent={"space-between"}
           bg={"rgba(35, 131, 226, 0.07)"}>
           <Button cursor={"grab"} bg={"none"} border="none">
             <DragIndicatorIcon
@@ -120,8 +120,20 @@ const MainSection = ({selectedSection, setSelectedSection, index = 1}) => {
                 height: "18px",
               }}
             />
+            <Text fontSize={14} color="rgb(35, 131, 226)">
+              Section Name
+            </Text>
           </Button>
-          Section Name
+
+          <Button cursor={"pointer"} bg={"none"} border={"none"}>
+            <MoreHorizIcon
+              style={{
+                color: "rgb(35, 131, 226)",
+                width: "18px",
+                height: "18px",
+              }}
+            />
+          </Button>
         </Flex>
       </Box>
     </Box>

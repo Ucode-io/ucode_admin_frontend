@@ -93,7 +93,7 @@ const FullpagePeekMaininfo = ({
             sx={{
               padding: "10px 15px 10px 40px",
             }}>
-            {/* <Box
+            <Box
               sx={{
                 height: "32px",
                 margin: "5px 5px 0",
@@ -119,7 +119,7 @@ const FullpagePeekMaininfo = ({
                 }}>
                 <SpaceDashboardIcon /> Customize layout
               </Button>
-            </Box> */}
+            </Box>
             <HeadingOptions
               control={control}
               watch={watch}

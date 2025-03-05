@@ -11,6 +11,7 @@ import {
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
 import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 
 const FieldPermissions = ({
   closeModal,

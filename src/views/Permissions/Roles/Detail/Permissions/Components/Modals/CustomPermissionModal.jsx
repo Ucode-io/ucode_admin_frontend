@@ -10,6 +10,7 @@ import {
 } from "../../../../../../../components/CTable";
 import PermissionCheckbox from "../PermissionCheckbox";
 import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 const CustomPermissionModal = ({
   closeModal,

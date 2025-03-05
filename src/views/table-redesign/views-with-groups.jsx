@@ -442,7 +442,9 @@ export const NewUiViewsWithGroups = ({
   }
 
   const tableName =
-    menuItem?.attributes?.[`label_${i18n.language}`] ?? menuItem?.title;
+    menuItem?.attributes?.[`label_${i18n.language}`] ??
+    menuItem?.label ??
+    menuItem?.title;
   // const viewName =
   //   (view.attributes?.[`name_${i18n.language}`]
   //     ? view.attributes?.[`name_${i18n.language}`]

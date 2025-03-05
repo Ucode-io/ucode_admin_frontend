@@ -220,5 +220,7 @@
   "Password must be at least 6 characters long": "Password must be at least 6 characters long",
   "Password must have at least one capital letter": "Password must have at least one capital letter",
   "Password must have at least one number": "Password must have at least one number",
-  "Password must have at least one special character": "Password must have at least one special character"
+  "Password must have at least one special character": "Password must have at least one special character",
+  "shown": "Shown",
+  "show_all": "Show all"
 }

@@ -1404,12 +1404,7 @@ const ViewOptions = ({
                     {Boolean(visibleColumnsCount) &&
                       visibleColumnsCount > 0 && (
                         <ViewOptionSubtitle>
-                          {visibleColumnsCount}{" "}
-                          {generateLangaugeText(
-                            tableLan,
-                            i18n?.language,
-                            "Shown"
-                          ) || "Shown"}
+                          {visibleColumnsCount} {t("shown")}
                         </ViewOptionSubtitle>
                       )}
                     <ChevronRightIcon fontSize={22} />
@@ -1605,7 +1600,7 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
@@ -1717,8 +1712,7 @@ const ColumnsVisibility = ({
             isChecked={allColumns?.length === visibleFields?.length}
             onChange={(ev) => onShowAllChange(ev.target.checked)}
           />
-          {generateLangaugeText(tableLan, i18n?.language, "Show all") ||
-            "Show all"}
+          {t("show_all")}
         </Flex>
       </Flex>
       <InputGroup mt="10px">

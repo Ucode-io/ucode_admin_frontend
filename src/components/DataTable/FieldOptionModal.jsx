@@ -96,7 +96,8 @@ export default function FieldOptionModal({
               zIndex: 0,
             },
           },
-        }}>
+        }}
+      >
         <div className={style.field}>
           <Typography variant="h6" className={style.title}>
             {generateLangaugeText(
@@ -114,14 +115,14 @@ export default function FieldOptionModal({
                 generateLangaugeText(
                   tableLan,
                   i18n?.language,
-                  "Search by filled name"
+                  "Seaarch by filled name"
                 ) || "Search by filled name"
               }
               value={searchValue}
               onChange={(ev) => setSearchValue(ev.target.value)}
             />
           </InputGroup>
-          <Box sx={{overflow: "auto", height: "400px"}}>
+          <Box sx={{ overflow: "auto", height: "400px" }}>
             {newFieldTypes
               ?.filter((el) =>
                 searchValue
@@ -135,7 +136,8 @@ export default function FieldOptionModal({
                   className={style.button}
                   onClick={(e) => {
                     handleChange(e, field?.value);
-                  }}>
+                  }}
+                >
                   {field?.value &&
                     getColumnIcon({
                       column: {
@@ -143,7 +145,7 @@ export default function FieldOptionModal({
                         table_slug: field?.table_slug,
                       },
                     })}
-                  <p>{field?.label}</p>
+                  <p>{field?.[`label_${i18n?.language}`] || field?.label}</p>
                 </Button>
               ))}
           </Box>

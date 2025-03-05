@@ -252,5 +252,7 @@
   "Password must be at least 6 characters long": "Пароль должен быть не менее 6 символов",
   "Password must have at least one capital letter": "Пароль должен содержать хотя бы одну заглавную букву",
   "Password must have at least one number": "Пароль должен содержать хотя бы одну цифру",
-  "Password must have at least one special character": "Пароль должен содержать хотя бы один специальный символ"
+  "Password must have at least one special character": "Пароль должен содержать хотя бы один специальный символ",
+  "shown": "Показано",
+  "show_all": "Показать все"
 }

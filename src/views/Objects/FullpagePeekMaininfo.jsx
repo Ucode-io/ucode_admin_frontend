@@ -1,34 +1,41 @@
-import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
+import "./style.scss";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
-import PageFallback from "../../components/PageFallback";
-import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
-import {getColumnIcon} from "../table-redesign/icons";
-import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import styles from "./style.module.scss";
 import {Controller} from "react-hook-form";
 import {Check} from "@mui/icons-material";
+import {applyDrag} from "../../utils/applyDrag";
+import {getColumnIcon} from "../table-redesign/icons";
+import {Container, Draggable} from "react-smooth-dnd";
+import PageFallback from "../../components/PageFallback";
+import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
+import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
+import {useNavigate, useParams} from "react-router-dom";
 
 const FullpagePeekMaininfo = ({
-  computedSections,
   control,
   loader,
   relation,
-  isMultiLanguage,
   watch,
-  fieldsMap = {},
   selectedTab,
-  setFormValue = () => {},
+  isMultiLanguage,
+  computedSections = [],
+  updateCurrentLayout = () => {},
 }) => {
-  const {tableSlug} = useParams();
+  const {tableSlug, appId, id} = useParams();
+  const test = useParams();
+  const {i18n} = useTranslation();
+  const navigate = useNavigate();
   const [isShow, setIsShow] = useState(true);
-  const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
+  const [dragAction, setDragAction] = useState(false);
+  const projectId = store.getState().company.projectId;
+  const [sections, setSections] = useState(computedSections ?? []);
 
   const fieldsList = useMemo(() => {
     const fields = [];
@@ -45,54 +52,27 @@ const FullpagePeekMaininfo = ({
 
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
-  const filterFields = (element, control, watch) => {
-    if (element?.attributes?.hide_path_field) {
-      if (Array.isArray(element?.attributes?.hide_path)) {
-        const hidePathArray = element?.attributes?.hide_path;
-        const watchArray = watch(element?.attributes?.hide_path_field, control);
-
-        if (hidePathArray?.length !== watchArray?.length) {
-          return false;
-        }
-        return hidePathArray?.every((el, index) => el === watchArray?.[index]);
-      }
-      if (element?.attributes?.type) {
-        const hidePathArray = element?.attributes?.hide_path;
-        const watchArray = watch(element?.attributes?.hide_path_field, control);
-        if (element?.attributes?.type === "min") {
-          if (watchArray > Number(hidePathArray)) {
-            return true;
-          } else return false;
-        } else if (element?.attributes?.type === "max") {
-          if (watchArray < Number(hidePathArray)) {
-            return true;
-          } else return false;
-        }
-      }
-
-      const isHidden =
-        element?.attributes?.hide_path ===
-        watch(element?.attributes?.hide_path_field, control);
-
-      return isHidden;
-    }
-
-    return true;
-  };
-
   useEffect(() => {
     if (isMultiLanguage) {
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
-  const {i18n} = useTranslation();
 
-  const onDrop = () => {
-    console.log("sss");
+  const onDrop = (secIndex, dropResult) => {
+    if (!dropResult.removedIndex && !dropResult.addedIndex) return;
+
+    const newSections = [...sections];
+    newSections[secIndex].fields = applyDrag(
+      newSections[secIndex].fields,
+      dropResult
+    );
+
+    setSections(newSections);
+    updateCurrentLayout(newSections);
   };
 
   if (loader) return <PageFallback />;
-  console.log("selectedTabselectedTab", selectedTab);
+
   return (
     <div className={styles.newcontainer}>
       {isShow ? (
@@ -109,7 +89,37 @@ const FullpagePeekMaininfo = ({
             </div>
           )}
 
-          <Box sx={{padding: "0 15px 0 40px"}}>
+          <Box
+            sx={{
+              padding: "10px 15px 10px 40px",
+            }}>
+            {/* <Box
+              sx={{
+                height: "32px",
+                margin: "5px 5px 0",
+                "&:hover": {
+                  button: {
+                    display: "flex",
+                  },
+                },
+              }}>
+              <Button
+                onClick={() =>
+                  navigate(`/main/${appId}/layout-settings/${tableSlug}/${id}`)
+                }
+                sx={{
+                  display: "none",
+                  alignItems: "center",
+                  gap: "5px",
+                  paddingLeft: "3px",
+                  color: "rgba(55, 53, 47, 0.5)",
+                  "&:hover": {
+                    background: "rgba(55, 53, 47, 0.06)",
+                  },
+                }}>
+                <SpaceDashboardIcon /> Customize layout
+              </Button>
+            </Box> */}
             <HeadingOptions
               control={control}
               watch={watch}
@@ -121,18 +131,17 @@ const FullpagePeekMaininfo = ({
 
           <div
             style={{padding: "0 40px"}}
-            className={styles.newMainInfoSections}>
-            {computedSections?.map((section, secIndex) => (
-              <Box
-                sx={{margin: "8px 0 0 0", overflow: "hidden"}}
-                key={secIndex}>
+            className={styles.newMainInfoSectionsFullpage}>
+            {sections?.map((section, secIndex) => (
+              <Box sx={{margin: "8px 0 0 0"}} key={secIndex}>
                 <Container
+                  key={section?.id}
                   behaviour="contain"
                   style={{width: "100%"}}
-                  // onDragStart={() => setDragAction(true)}
-                  // onDragEnd={() => setDragAction(false)}
-                  dragHandleSelector=".drag-handle"
-                  dragClass="drag-item"
+                  onDragStart={() => setDragAction(true)}
+                  onDragEnd={() => setDragAction(false)}
+                  dragHandleSelector=".drag-handle-item"
+                  dragClass="dragging_preview"
                   lockAxis="y"
                   onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
                   {section?.fields
@@ -140,9 +149,9 @@ const FullpagePeekMaininfo = ({
                       (el) => el?.slug !== watch("attributes.layout_heading")
                     )
                     .map((field, fieldIndex) => (
-                      <Draggable className="drag-handle" key={field?.id}>
+                      <Draggable className="drag-handle-item" key={field?.id}>
                         <Box
-                          // className={dragAction ? "rowColumnDrag" : "rowColumn"}
+                          className={dragAction ? "rowColumnDrag" : "rowColumn"}
                           key={fieldIndex}
                           display="flex"
                           alignItems="center"
@@ -171,9 +180,9 @@ const FullpagePeekMaininfo = ({
                               justifyContent="center"
                               sx={{color: "#787774"}}>
                               <span className="drag">
-                                {/* <DragIndicatorIcon
+                                <DragIndicatorIcon
                                   style={{width: "16px", height: "16px"}}
-                                /> */}
+                                />
                               </span>
                               <span style={{color: "#787774"}} className="icon">
                                 {getColumnIcon({
@@ -194,7 +203,7 @@ const FullpagePeekMaininfo = ({
                                 field?.label}
                             </Box>
                           </Box>
-                          <Box sx={{width: "60%"}}>
+                          <Box sx={{width: "70%"}}>
                             <DrawerFieldGenerator
                               control={control}
                               field={field}
@@ -233,9 +242,9 @@ const HeadingOptions = ({
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const selectedFieldSlug =
-    watch("attributes.layout_heading") ||
-    selectedTab?.attributes?.layout_heading;
+  const [selectedFieldSlug, setSelectedFieldSlug] = useState(
+    selectedTab?.attributes?.layout_heading
+  );
 
   const selectedField = fields.find(
     (field) => field?.slug === selectedFieldSlug
@@ -258,7 +267,7 @@ const HeadingOptions = ({
 
   const handleClose = (option) => {
     if (option) {
-      setFormValue("attributes.layout_heading", option.table_slug);
+      setSelectedFieldSlug(option.table_slug);
     }
     setAnchorEl(null);
   };
@@ -281,7 +290,7 @@ const HeadingOptions = ({
           key={selectedField?.slug}
         />
 
-        <Box
+        {/* <Box
           className="fieldChoose"
           sx={{cursor: "pointer"}}
           onClick={handleClick}>
@@ -291,7 +300,7 @@ const HeadingOptions = ({
             height={"22px"}
             alt="heading text"
           />
-        </Box>
+        </Box> */}
       </Box>
 
       <Menu

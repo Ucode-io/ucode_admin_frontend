@@ -1,29 +1,29 @@
-import {Box, Button} from "@mui/material";
+import { Box, Button, Skeleton } from "@mui/material";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
-import {useTranslation} from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+import { useTranslation } from "react-i18next";
 import Permissions from "../Components/Permission";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Users from "../Components/Users";
 import Resources from "../Components/Resources";
-import {Container} from "react-smooth-dnd";
-import {applyDrag} from "../../../utils/applyDrag";
+import { Container } from "react-smooth-dnd";
+import { applyDrag } from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
-import {useState} from "react";
-import {useQueryClient} from "react-query";
-import {showAlert} from "../../../store/alert/alert.thunk";
+import { useState } from "react";
+import { useQueryClient } from "react-query";
+import { showAlert } from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DoneIcon from "@mui/icons-material/Done";
-import {store} from "../../../store";
-import {menuActions} from "../../../store/menuItem/menuItem.slice";
-import {useSearchParams} from "react-router-dom";
+import { store } from "../../../store";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import { useSearchParams } from "react-router-dom";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
 import ProjectSettings from "../Components/ProjectSettings";
 import ApiMenu from "../Components/ApiMenu/Index";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
 import { GreyLoader } from "../../Loaders/GreyLoader";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
@@ -207,108 +207,109 @@ const SubMenu = ({
           }}
         >
           <div>
-            {isLoading ? (
-              <GreyLoader size="100px" />
-            ) : (
-              <Box className="nav-block">
-                {selectedApp?.id === adminId && (
-                  <ProjectSettings
-                    handleOpenNotify={handleOpenNotify}
+            {/* // <GreyLoader size="100px" /> */}
+            <Box className="nav-block">
+              {selectedApp?.id === adminId && (
+                <ProjectSettings
+                  handleOpenNotify={handleOpenNotify}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  pinIsEnabled={pinIsEnabled}
+                  projectSettingLan={projectSettingLan}
+                />
+              )}
+              {selectedApp?.id === adminId && (
+                <Permissions
+                  projectSettingLan={projectSettingLan}
+                  menuStyle={{
+                    ...menuStyles,
+                    background: "#fff",
+                  }}
+                  setElement={setElement}
+                />
+              )}
+              {selectedApp?.id === adminId && (
+                <Resources
+                  projectSettingLan={projectSettingLan}
+                  handleOpenNotify={handleOpenNotify}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  pinIsEnabled={pinIsEnabled}
+                />
+              )}
+              {selectedApp?.id === adminId && (
+                <ApiMenu
+                  projectSettingLan={projectSettingLan}
+                  handleOpenNotify={handleOpenNotify}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  pinIsEnabled={pinIsEnabled}
+                />
+              )}
+              {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                <Users
+                  projectSettingLan={projectSettingLan}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  child={child}
+                  selectedApp={selectedApp}
+                />
+              )}
+              <div className="menu-element">
+                {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
+                isLoading ? (
+                  <>
+                    <Skeleton height={42} />
+                    <Skeleton height={42} />
+                    <Skeleton height={42} />
+                  </>
+                ) : child?.length ? (
+                  <Container
+                    dragHandleSelector=".column-drag-handle"
+                    onDrop={onDrop}
+                  >
+                    {child?.map((element, index) => (
+                      <RecursiveBlock
+                        projectSettingLan={projectSettingLan}
+                        key={element.id}
+                        element={element}
+                        openFolderCreateModal={openFolderCreateModal}
+                        setFolderModalType={setFolderModalType}
+                        sidebarIsOpen={subMenuIsOpen}
+                        setTableModal={setTableModal}
+                        setLinkedTableModal={setLinkedTableModal}
+                        handleOpenNotify={handleOpenNotify}
+                        setElement={setElement}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuStyle={menuStyleNew}
+                        menuItemId={searchParams.get("menuId")}
+                        index={index}
+                        selectedApp={selectedApp}
+                        buttonProps={{ className: "highlight-on-hover" }}
+                      />
+                    ))}
+                  </Container>
+                ) : null}
+                {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                  <DocumentsSidebar
                     menuStyle={menuStyleNew}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    menuItem={menuItem}
+                    level={2}
+                  />
+                )}
+                {selectedApp?.id === adminId && (
+                  <ActivityFeedButton
+                    projectSettingLan={projectSettingLan}
+                    menuStyle={menuStyleNew}
+                    menuItem={menuItem}
+                    level={2}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
-                    projectSettingLan={projectSettingLan}
                   />
                 )}
-                {selectedApp?.id === adminId && (
-                  <Permissions
-                    projectSettingLan={projectSettingLan}
-                    menuStyle={{
-                      ...menuStyles,
-                      background: "#fff",
-                    }}
-                    setElement={setElement}
-                  />
-                )}
-                {selectedApp?.id === adminId && (
-                  <Resources
-                    projectSettingLan={projectSettingLan}
-                    handleOpenNotify={handleOpenNotify}
-                    menuStyle={menuStyleNew}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    pinIsEnabled={pinIsEnabled}
-                  />
-                )}
-                {selectedApp?.id === adminId && (
-                  <ApiMenu
-                    projectSettingLan={projectSettingLan}
-                    handleOpenNotify={handleOpenNotify}
-                    menuStyle={menuStyleNew}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    pinIsEnabled={pinIsEnabled}
-                  />
-                )}
-                {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
-                  <Users
-                    projectSettingLan={projectSettingLan}
-                    menuStyle={menuStyleNew}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    child={child}
-                    selectedApp={selectedApp}
-                  />
-                )}
-                <div className="menu-element">
-                  {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
-                  child?.length ? (
-                    <Container
-                      dragHandleSelector=".column-drag-handle"
-                      onDrop={onDrop}
-                    >
-                      {child?.map((element, index) => (
-                        <RecursiveBlock
-                          projectSettingLan={projectSettingLan}
-                          key={element.id}
-                          element={element}
-                          openFolderCreateModal={openFolderCreateModal}
-                          setFolderModalType={setFolderModalType}
-                          sidebarIsOpen={subMenuIsOpen}
-                          setTableModal={setTableModal}
-                          setLinkedTableModal={setLinkedTableModal}
-                          handleOpenNotify={handleOpenNotify}
-                          setElement={setElement}
-                          setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={menuStyleNew}
-                          menuItemId={searchParams.get("menuId")}
-                          index={index}
-                          selectedApp={selectedApp}
-                          buttonProps={{ className: "highlight-on-hover" }}
-                        />
-                      ))}
-                    </Container>
-                  ) : null}
-                  {selectedApp?.id ===
-                    "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                    <DocumentsSidebar
-                      menuStyle={menuStyleNew}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      menuItem={menuItem}
-                      level={2}
-                    />
-                  )}
-                  {selectedApp?.id === adminId && (
-                    <ActivityFeedButton
-                      projectSettingLan={projectSettingLan}
-                      menuStyle={menuStyleNew}
-                      menuItem={menuItem}
-                      level={2}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      pinIsEnabled={pinIsEnabled}
-                    />
-                  )}
-                </div>
-              </Box>
-            )}
-
+              </div>
+            </Box>
             {selectedApp?.data?.permission?.write && exception && (
               <div>
                 <Button

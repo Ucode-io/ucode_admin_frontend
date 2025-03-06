@@ -24,6 +24,7 @@ const FullpagePeekMaininfo = ({
   watch,
   selectedTab,
   isMultiLanguage,
+  getValues = () => {},
   computedSections = [],
   updateCurrentLayout = () => {},
 }) => {
@@ -36,6 +37,7 @@ const FullpagePeekMaininfo = ({
   const [dragAction, setDragAction] = useState(false);
   const projectId = store.getState().company.projectId;
   const [sections, setSections] = useState(computedSections ?? []);
+  const rowData = watch();
 
   const fieldsList = useMemo(() => {
     const fields = [];
@@ -105,7 +107,14 @@ const FullpagePeekMaininfo = ({
               }}>
               <Button
                 onClick={() =>
-                  navigate(`/main/${appId}/layout-settings/${tableSlug}/${id}`)
+                  navigate(
+                    `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                    {
+                      state: {
+                        ...rowData,
+                      },
+                    }
+                  )
                 }
                 sx={{
                   display: "none",

@@ -1,14 +1,64 @@
-import React from "react";
+import React, {useState} from "react";
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import TuneIcon from "@mui/icons-material/Tune";
 import DoneIcon from "@mui/icons-material/Done";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import ClearIcon from "@mui/icons-material/Clear";
 import LayoutSections from "./LayoutSections";
+import PageSettings from "./PageSettings";
+import {useLocation, useParams} from "react-router-dom";
+import {useQuery} from "react-query";
+import layoutService from "../../../services/layoutService";
 
 function LayoutSettings() {
+  const location = useLocation();
+  const {tableSlug, appId} = useParams();
+  const [sectionIndex, setSectionIndex] = useState();
+  const [selectedSection, setSelectedSection] = useState();
+  const [sections, setSections] = useState();
+  const selectedRow = location?.state;
+
+  const {
+    data: {layout} = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+    onSuccess: (data) => {
+      setSections(data?.layout?.tabs?.[0]?.sections);
+    },
+  });
+
+  const updateSectionFields = (newFields) => {
+    const updatedSection = sections.map((section, index) =>
+      index === sectionIndex ? {...section, fields: newFields} : section
+    );
+
+    setSections(updatedSection);
+  };
+
+  const applyAllChanges = () => {
+    console.log("layoutttttttttt");
+  };
+
   return (
-    <Box>
+    <Box bg={"#F8F8F7"}>
       <Header />
 
       <Flex pl={24}>
@@ -19,10 +69,23 @@ function LayoutSettings() {
           borderRadius={12}
           borderBottomRadius={0}
           bg={"#fff"}>
-          <LayoutSections />
+          <LayoutSections
+            sections={sections}
+            setSections={setSections}
+            selectedRow={selectedRow}
+            sectionIndex={sectionIndex}
+            setSectionIndex={setSectionIndex}
+            setSelectedSection={setSelectedSection}
+          />
         </Box>
 
-        <Box width={"290px"}>Settings</Box>
+        <Box width={"290px"}>
+          <PageSettings
+            updateSectionFields={updateSectionFields}
+            selectedSection={selectedSection}
+            setSelectedSection={setSelectedSection}
+          />
+        </Box>
       </Flex>
     </Box>
   );

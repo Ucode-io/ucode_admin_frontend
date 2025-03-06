@@ -259,9 +259,9 @@ const SubMenu = ({
                 {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
                 isLoading ? (
                   <Box px="5px">
-                    <Skeleton height={42} />
-                    <Skeleton height={42} />
-                    <Skeleton height={42} />
+                    <Skeleton height={42} animation="wave" />
+                    <Skeleton height={42} animation="wave" />
+                    <Skeleton height={42} animation="wave" />
                   </Box>
                 ) : child?.length ? (
                   <Container

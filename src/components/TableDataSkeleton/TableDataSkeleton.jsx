@@ -9,7 +9,12 @@ export const TableDataSkeleton = ({ colLength = 10 }) => {
           {Array.from({ length: colLength })?.map(() => {
             return (
               <CTableCell>
-                <Skeleton variant="rounded" height={22} width="100%" />
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  height={22}
+                  width="100%"
+                />
               </CTableCell>
             );
           })}

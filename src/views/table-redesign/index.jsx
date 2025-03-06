@@ -101,6 +101,7 @@ export const DynamicTable = ({
   view,
   refetch,
   menuItem,
+  loader,
   getAllData = () => {},
 }) => {
   const { i18n } = useTranslation();
@@ -268,8 +269,8 @@ export const DynamicTable = ({
     );
   };
 
-  const showSkeleton = isRelationTable ? !fields.length : !data.length;
-  console.log({ showSkeleton });
+  const showSkeleton = loader;
+
   return (
     <div className="CTableContainer">
       <div

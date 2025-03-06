@@ -222,5 +222,6 @@
   "Password must have at least one number": "Password must have at least one number",
   "Password must have at least one special character": "Password must have at least one special character",
   "shown": "Shown",
-  "show_all": "Show all"
+  "show_all": "Show all",
+  "add_filter": "Add filter"
 }

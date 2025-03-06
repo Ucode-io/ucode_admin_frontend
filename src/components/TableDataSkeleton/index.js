@@ -1,0 +1,1 @@
+export { TableDataSkeleton } from './TableDataSkeleton'

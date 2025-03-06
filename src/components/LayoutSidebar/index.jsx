@@ -397,7 +397,14 @@ const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
           overflowX="hidden"
         >
           {!menuList && (
-            <GreyLoader size="80px" />
+            <Box
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform={"translate(-50%, -50%)"}
+            >
+              <GreyLoader />
+            </Box>
             // <RingLoaderWithWrapper style={{height: "100%"}} />
           )}
 

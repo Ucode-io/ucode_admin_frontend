@@ -16,8 +16,8 @@ const RippleLoader = ({ size = "120px", height = "80px" }) => {
         }}
       >
         <DotLottieReact
-          width={size}
-          height={size}
+          width={"30px"}
+          height={"30px"}
           src="https://lottie.host/5a23815c-b901-47ea-8032-249540761d63/eOUFfHsp4r.json"
           loop
           autoplay

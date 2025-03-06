@@ -254,5 +254,6 @@
   "Password must have at least one number": "Пароль должен содержать хотя бы одну цифру",
   "Password must have at least one special character": "Пароль должен содержать хотя бы один специальный символ",
   "shown": "Показано",
-  "show_all": "Показать все"
+  "show_all": "Показать все",
+  "add_filter": "Добавить фильтр"
 }

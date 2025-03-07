@@ -29,16 +29,11 @@ import {
 import chakraUITheme from "@/theme/chakraUITheme";
 import {endOfMonth, startOfMonth} from "date-fns";
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {useFieldArray, useForm, useWatch} from "react-hook-form";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
@@ -46,13 +41,13 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import InlineSVG from "react-inlinesvg";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import { useFieldSearchUpdateMutation } from "@/services/constructorFieldService";
+import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
 import {
   getSearchText,
   openDB,
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
-import { queryGenerator } from "@/utils/queryGenerator";
+import {queryGenerator} from "@/utils/queryGenerator";
 import TableView from "./table-view";
 import style from "@/views/Objects/style.module.scss";
 import {
@@ -61,36 +56,44 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import SVG from "react-inlinesvg";
-import { viewsActions } from "@/store/views/view.slice";
+import {viewsActions} from "@/store/views/view.slice";
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
-import { computedViewTypes } from "@/utils/constants/viewTypes";
-import { filterActions } from "@/store/filter/filter.slice";
-import { Filter } from "./FilterGenerator";
+import {computedViewTypes} from "@/utils/constants/viewTypes";
+import {filterActions} from "@/store/filter/filter.slice";
+import {Filter} from "./FilterGenerator";
 import constructorViewService from "@/services/constructorViewService";
-import { quickFiltersActions } from "@/store/filter/quick_filter";
+import {quickFiltersActions} from "@/store/filter/quick_filter";
 import useTabRouter from "@/hooks/useTabRouter";
 import layoutService from "@/services/layoutService";
 import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploadModal";
 import constructorObjectService from "@/services/constructorObjectService";
 import useDownloader from "@/hooks/useDownloader";
-import { getColumnIcon } from "@/views/table-redesign/icons";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "@/utils/applyDrag";
-import { mainActions } from "@/store/main/main.slice";
+import {getColumnIcon} from "@/views/table-redesign/icons";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "@/utils/applyDrag";
+import {mainActions} from "@/store/main/main.slice";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
 import ShareModal from "@/views/Objects/ShareModal/ShareModal";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
+<<<<<<< HEAD
 import { getAllFromDB } from "../../utils/languageDB";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { LayoutPopup } from "./LayoutPopup";
 import { useTableByIdQuery } from "../../services/constructorTableService";
 import { generateGUID } from "../../utils/generateID";
 import { useGetLang } from "../../hooks/useGetLang";
+=======
+import {getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {LayoutPopup} from "./LayoutPopup";
+import {useTableByIdQuery} from "../../services/constructorTableService";
+import {generateGUID} from "../../utils/generateID";
+>>>>>>> express_bugs
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -111,20 +114,20 @@ export const NewUiViewsWithGroups = ({
   visibleColumns,
   refetchViews,
 }) => {
-  const { tableSlug, id } = useParams();
+  const {tableSlug, id} = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
   // const [tableLan, setTableLan] = useState();
@@ -136,7 +139,7 @@ export const NewUiViewsWithGroups = ({
 
   const [isPopupOpen, setPopupOpen] = useState(false);
 
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -196,12 +199,12 @@ export const NewUiViewsWithGroups = ({
     control: mainForm?.control,
   });
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "multi",
   });
 
-  const { mutate: updateField, isLoading: updateLoading } =
+  const {mutate: updateField, isLoading: updateLoading} =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -211,7 +214,7 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
@@ -281,7 +284,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const { isLoading } = useTableByIdQuery({
+  const {isLoading} = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -341,8 +344,7 @@ export const NewUiViewsWithGroups = ({
                     height: "35px",
                     padding: "0px",
                     minWidth: "35px",
-                  }}
-                >
+                  }}>
                   <SettingsIcon
                     style={{
                       color: "#A8A8A8",
@@ -351,8 +353,7 @@ export const NewUiViewsWithGroups = ({
                 </MuiButton>
               </PermissionWrapperV2>
             </>
-          }
-        >
+          }>
           <ViewTabSelector
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
@@ -394,8 +395,7 @@ export const NewUiViewsWithGroups = ({
                     height: "35px",
                     padding: "0px",
                     minWidth: "35px",
-                  }}
-                >
+                  }}>
                   <SettingsIcon
                     style={{
                       color: "#A8A8A8",
@@ -404,8 +404,7 @@ export const NewUiViewsWithGroups = ({
                 </MuiButton>
               </PermissionWrapperV2>
             </>
-          }
-        >
+          }>
           <ViewTabSelector
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
@@ -457,9 +456,8 @@ export const NewUiViewsWithGroups = ({
         <Flex h="100vh" flexDirection="column" bg={"white"}>
           {updateLoading && (
             <Backdrop
-              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
-              open={true}
-            >
+              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
+              open={true}>
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -471,8 +469,7 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="8px"
-          >
+            columnGap="8px">
             <IconButton
               aria-label="back"
               icon={<ArrowBackIcon fontSize={20} color="#344054" />}
@@ -499,8 +496,7 @@ export const NewUiViewsWithGroups = ({
               color="#344054"
               fontWeight={500}
               alignItems="center"
-              columnGap="8px"
-            >
+              columnGap="8px">
               <Flex
                 w="16px"
                 h="16px"
@@ -511,8 +507,7 @@ export const NewUiViewsWithGroups = ({
                 fontWeight={500}
                 fontSize={11}
                 justifyContent="center"
-                alignItems="center"
-              >
+                alignItems="center">
                 {tableName?.[0]}
               </Flex>
               {tableName}
@@ -528,8 +523,7 @@ export const NewUiViewsWithGroups = ({
                 borderColor="#D0D5DD"
                 color="#344054"
                 leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                borderRadius="8px"
-              >
+                borderRadius="8px">
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -546,8 +540,7 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="5px"
-          >
+            columnGap="5px">
             {(views ?? []).map((view, index) => (
               <Button
                 key={view.id}
@@ -567,15 +560,14 @@ export const NewUiViewsWithGroups = ({
                 color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                 bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
                 _hover={
-                  selectedTabIndex === index ? { bg: "#D1E9FF" } : undefined
+                  selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
                   dispatch(
-                    viewsActions.setViewTab({ tableSlug, tabIndex: index })
+                    viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
                   setSelectedTabIndex(index);
-                }}
-              >
+                }}>
                 {view?.attributes?.name_en || view?.name || view.type}
               </Button>
             ))}
@@ -586,8 +578,7 @@ export const NewUiViewsWithGroups = ({
                 variant="ghost"
                 colorScheme="gray"
                 color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}
-              >
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
                 {generateLangaugeText(tableLan, i18n?.language, "View") ||
                   "View"}
               </Button>
@@ -604,8 +595,7 @@ export const NewUiViewsWithGroups = ({
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
-              }}
-            >
+              }}>
               <ViewTypeList
                 views={views}
                 computedViewTypes={computedViewTypes}
@@ -657,8 +647,7 @@ export const NewUiViewsWithGroups = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto"
-              >
+                overflow="auto">
                 {columnsForSearch.map((column) => (
                   <Flex
                     key={column.id}
@@ -667,10 +656,9 @@ export const NewUiViewsWithGroups = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
-                    cursor="pointer"
-                  >
-                    {getColumnIcon({ column })}
+                    _hover={{bg: "#EAECF0"}}
+                    cursor="pointer">
+                    {getColumnIcon({column})}
                     <ViewOptionTitle>{column.label}</ViewOptionTitle>
                     <Switch
                       ml="auto"
@@ -680,7 +668,7 @@ export const NewUiViewsWithGroups = ({
                           data: {
                             fields: columnsForSearch.map((c) =>
                               c.id === column.id
-                                ? { ...c, is_search: e.target.checked }
+                                ? {...c, is_search: e.target.checked}
                                 : c
                             ),
                           },
@@ -697,8 +685,7 @@ export const NewUiViewsWithGroups = ({
               tableLan={tableLan}
               view={view}
               visibleColumns={visibleColumns}
-              refetchViews={refetchViews}
-            >
+              refetchViews={refetchViews}>
               <FilterButton view={view} />
             </FilterPopover>
 
@@ -711,11 +698,10 @@ export const NewUiViewsWithGroups = ({
                     tableSlug,
                     "CREATE",
                     {},
-                    { id },
+                    {id},
                     searchParams.get("menuId")
                   )
-                }
-              >
+                }>
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -752,17 +738,16 @@ export const NewUiViewsWithGroups = ({
           <Tabs direction={"ltr"} defaultIndex={0}>
             {tabs?.length > 0 && (
               <div id="tabsHeight" className={style.tableCardHeader}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div className="title" style={{ marginRight: "20px" }}>
+                <div style={{display: "flex", alignItems: "center"}}>
+                  <div className="title" style={{marginRight: "20px"}}>
                     <h3>{view.table_label}</h3>
                   </div>
-                  <TabList style={{ border: "none" }}>
+                  <TabList style={{border: "none"}}>
                     {tabs?.map((tab) => (
                       <Tab
                         key={tab.value}
                         selectedClassName={style.activeTab}
-                        className={`${style.disableTab} react-tabs__tab`}
-                      >
+                        className={`${style.disableTab} react-tabs__tab`}>
                         {tab.label}
                       </Tab>
                     ))}
@@ -910,7 +895,7 @@ export const NewUiViewsWithGroups = ({
   );
 };
 
-const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
+const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
@@ -952,8 +937,7 @@ const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
           justifyContent="center"
           color="#fff"
           borderRadius="50%"
-          fontSize="10px"
-        >
+          fontSize="10px">
           {view?.attributes?.quick_filters?.length}
         </Flex>
       )}
@@ -970,7 +954,7 @@ const FilterPopover = ({
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   return (
     <Popover>
@@ -1010,13 +994,13 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const { tableSlug } = useParams();
-  const { new_list } = useSelector((state) => state.filter);
+  const {tableSlug} = useParams();
+  const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const { filters } = useFilters(tableSlug, view?.id);
+  const {filters} = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -1083,14 +1067,12 @@ const FiltersList = ({
       gap="6px"
       borderBottom="1px solid #EAECF0"
       flexWrap="wrap"
-      id="filterHeight"
-    >
+      id="filterHeight">
       <FilterPopover
         tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
-        refetchViews={refetchViews}
-      >
+        refetchViews={refetchViews}>
         <Flex
           alignItems="center"
           columnGap="4px"
@@ -1100,8 +1082,7 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
-          _hover={{ bg: "#f3f3f3" }}
-        >
+          _hover={{bg: "#f3f3f3"}}>
           <InlineSVG
             src="/img/plus-icon.svg"
             width={14}
@@ -1130,9 +1111,9 @@ const FiltersList = ({
   );
 };
 
-const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
-  const { tableSlug } = useParams();
-  const { i18n } = useTranslation();
+const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
+  const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
 
   const columnsIds = visibleColumns?.map((item) => item?.id);
@@ -1155,8 +1136,8 @@ const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
-    ...checkedColumns.map((c) => ({ ...c, checked: true })),
-    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
+    ...checkedColumns.map((c) => ({...c, checked: true})),
+    ...unCheckedColumns.map((c) => ({...c, checked: false})),
   ].filter((column) =>
     search === ""
       ? true
@@ -1181,7 +1162,7 @@ const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
 
     await mutation.mutateAsync({
       ...view,
-      attributes: { ...view?.attributes, quick_filters: result },
+      attributes: {...view?.attributes, quick_filters: result},
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -1211,10 +1192,9 @@ const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{ bg: "#EAECF0" }}
-          cursor="pointer"
-        >
-          {column?.type && getColumnIcon({ column })}
+          _hover={{bg: "#EAECF0"}}
+          cursor="pointer">
+          {column?.type && getColumnIcon({column})}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -1240,8 +1220,13 @@ const ViewOptions = ({
   tableLan,
   handleOpenPopup,
 }) => {
+<<<<<<< HEAD
   const { appId, tableSlug } = useParams();
   const { i18n, t } = useTranslation();
+=======
+  const {appId, tableSlug} = useParams();
+  const {i18n} = useTranslation();
+>>>>>>> express_bugs
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1259,16 +1244,17 @@ const ViewOptions = ({
   }, [openedMenu]);
 
   const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", { tableSlug }],
+    queryKey: ["GET_LAYOUT", {tableSlug}],
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
   const updateView = useMutation({
     mutationFn: async (value) => {
       await constructorViewService.update(tableSlug, {
+        ...view,
         id: view.id,
         columns: view.columns,
-        attributes: { name_en: value },
+        attributes: {name_en: value},
       });
       return await refetchViews();
     },
@@ -1297,8 +1283,7 @@ const ViewOptions = ({
             adaptive: false,
           },
         },
-      ]}
-    >
+      ]}>
       <PopoverTrigger>
         <IconButton
           aria-label="more"
@@ -1310,8 +1295,7 @@ const ViewOptions = ({
       <PopoverContent
         ref={ref}
         w="320px"
-        p={openedMenu === null ? "0px" : "8px"}
-      >
+        p={openedMenu === null ? "0px" : "8px"}>
         {openedMenu === null && (
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
@@ -1325,8 +1309,7 @@ const ViewOptions = ({
                   borderRadius={6}
                   border="1px solid #D0D5DD"
                   alignItems="center"
-                  justifyContent="center"
-                >
+                  justifyContent="center">
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -1353,7 +1336,7 @@ const ViewOptions = ({
                 columnGap="4px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{ bg: "#EAECF0" }}
+                _hover={{bg: "#EAECF0"}}
                 as="span"
                 onClick={handleOpenPopup}
                 // to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}
@@ -1362,8 +1345,7 @@ const ViewOptions = ({
                   minW="36px"
                   h="28px"
                   alignItems="center"
-                  justifyContent="center"
-                >
+                  justifyContent="center">
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -1390,10 +1372,9 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{ bg: "#EAECF0" }}
+                  _hover={{bg: "#EAECF0"}}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("columns-visibility")}
-                >
+                  onClick={() => setOpenedMenu("columns-visibility")}>
                   <Image src="/img/eye.svg" alt="Visibility" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -1421,10 +1402,9 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{ bg: "#EAECF0" }}
+                  _hover={{bg: "#EAECF0"}}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("group")}
-                >
+                  onClick={() => setOpenedMenu("group")}>
                   <Image src="/img/copy-01.svg" alt="Group by" />
                   <ViewOptionTitle>
                     {generateLangaugeText(tableLan, i18n?.language, "Group") ||
@@ -1452,10 +1432,9 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{ bg: "#EAECF0" }}
+                  _hover={{bg: "#EAECF0"}}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("tab-group")}
-                >
+                  onClick={() => setOpenedMenu("tab-group")}>
                   <Image src="/img/browser.svg" alt="Group by" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -1486,10 +1465,9 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{ bg: "#EAECF0" }}
+                  _hover={{bg: "#EAECF0"}}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("fix-column")}
-                >
+                  onClick={() => setOpenedMenu("fix-column")}>
                   <Image src="/img/layout-left.svg" alt="Fix columns" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -1521,10 +1499,9 @@ const ViewOptions = ({
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{ bg: "#EAECF0" }}
+                _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
-                onClick={onDocsClick}
-              >
+                onClick={onDocsClick}>
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||

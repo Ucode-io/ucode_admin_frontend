@@ -23,7 +23,7 @@ import {
   Typography,
 } from "@mui/material";
 import {format} from "date-fns";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -113,6 +113,10 @@ const BillingComponent = ({addBalance = false, setAddBalance = () => {}}) => {
       })
       .finally(() => setLoading(false));
   };
+
+  useEffect(() => {
+    localStorage.setItem("project_status", project?.status);
+  }, []);
 
   return (
     <>

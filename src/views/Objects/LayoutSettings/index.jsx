@@ -1,15 +1,85 @@
-import React from "react";
+import React, {useState} from "react";
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
 import TuneIcon from "@mui/icons-material/Tune";
 import DoneIcon from "@mui/icons-material/Done";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import ClearIcon from "@mui/icons-material/Clear";
 import LayoutSections from "./LayoutSections";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useQuery} from "react-query";
+import layoutService from "../../../services/layoutService";
+import PageSettings from "../../../components/PageSettings";
 
 function LayoutSettings() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const {tableSlug, appId} = useParams();
+  const [sectionIndex, setSectionIndex] = useState(null);
+  const [selectedSection, setSelectedSection] = useState();
+  const [sections, setSections] = useState();
+  const selectedRow = location?.state;
+  const [loader, setLoader] = useState(false);
+
+  const {
+    data: {layout} = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+    onSuccess: (data) => {
+      setSections(data?.layout?.tabs?.[0]?.sections);
+    },
+  });
+
+  const updateSectionFields = (newFields) => {
+    const updatedSection = sections.map((section, index) =>
+      index === sectionIndex ? {...section, fields: newFields} : section
+    );
+
+    setSections(updatedSection);
+  };
+
+  const applyAllChanges = () => {
+    setLoader(true);
+    const updatedTabs = layout.tabs.map((tab, index) =>
+      index === 0
+        ? {
+            ...tab,
+            sections: sections,
+          }
+        : tab
+    );
+
+    const currentUpdatedLayout = {
+      ...layout,
+      tabs: updatedTabs,
+    };
+
+    layoutService
+      .update(currentUpdatedLayout, tableSlug)
+      .then(() => navigate(-1))
+      .finally(() => setLoader(false));
+  };
+  console.log("sectionssections====>>--====", sections);
   return (
-    <Box>
-      <Header />
+    <Box bg={"#F8F8F7"}>
+      <Header loader={loader} applyAllChanges={applyAllChanges} />
 
       <Flex pl={24}>
         <Box
@@ -19,16 +89,32 @@ function LayoutSettings() {
           borderRadius={12}
           borderBottomRadius={0}
           bg={"#fff"}>
-          <LayoutSections />
+          <LayoutSections
+            sections={sections}
+            setSections={setSections}
+            selectedTab={layout?.tabs?.[0]}
+            selectedRow={selectedRow}
+            sectionIndex={sectionIndex}
+            setSectionIndex={setSectionIndex}
+            setSelectedSection={setSelectedSection}
+          />
         </Box>
 
-        <Box width={"290px"}>Settings</Box>
+        <Box width={"290px"}>
+          <PageSettings
+            setSections={setSections}
+            updateSectionFields={updateSectionFields}
+            selectedSection={selectedSection}
+            setSelectedSection={setSelectedSection}
+          />
+        </Box>
       </Flex>
     </Box>
   );
 }
 
-const Header = () => {
+const Header = ({loader = false, applyAllChanges = () => {}}) => {
+  const navigate = useNavigate();
   return (
     <Flex alignItems={"center"} justifyContent={"space-between"} h={60} px={20}>
       <Button
@@ -70,6 +156,7 @@ const Header = () => {
 
       <Flex gap={8}>
         <Button
+          onClick={() => navigate(-1)}
           cursor={"pointer"}
           borderRadius={6}
           border={"none"}
@@ -82,6 +169,8 @@ const Header = () => {
           Cancel
         </Button>
         <Button
+          isLoading={loader}
+          onClick={applyAllChanges}
           borderRadius={6}
           border={"none"}
           bg={"#2383e2"}

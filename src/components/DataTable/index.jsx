@@ -188,7 +188,7 @@ const DataTable = ({
 
   const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
-  console.log("datadatadata", data);
+
   return (
     <CTable
       disablePagination={disablePagination}

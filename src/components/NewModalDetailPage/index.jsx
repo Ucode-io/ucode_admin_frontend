@@ -20,6 +20,7 @@ import {store} from "../../store";
 import {sortSections} from "../../utils/sectionsOrderNumber";
 import NewModalFormPage from "./NewModalFormPage";
 import NewModalRelationTable from "./NewModalRelationTable";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 
 function NewModalDetailPage({
   open,
@@ -229,6 +230,8 @@ function NewModalDetailPage({
     },
   });
 
+  const rowData = watch();
+
   const update = (data) => {
     delete data.invite;
     setBtnLoader(true);
@@ -244,6 +247,7 @@ function NewModalDetailPage({
         setBtnLoader(false);
       });
   };
+
   const create = (data) => {
     setBtnLoader(true);
 
@@ -381,13 +385,50 @@ function NewModalDetailPage({
                 h={"44px"}
                 align="center"
                 justifyContent={"space-between"}>
-                <Flex alignItems={"center"} gap="10px">
+                <Flex alignItems={"center"} gap="5px">
                   <ScreenOptions
                     selectedViewType={selectedViewType}
                     setSelectedViewType={setSelectedViewType}
                     setLayoutType={setLayoutType}
                     selectedRow={selectedRow}
                     navigateToEditPage={navigateToEditPage}
+                  />
+
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
+                  />
+
+                  <Button
+                    onClick={() =>
+                      navigate(
+                        `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                        {
+                          state: {
+                            ...rowData,
+                          },
+                        }
+                      )
+                    }
+                    w={18}
+                    h={18}
+                    display={"flex"}
+                    alignItems={"center"}
+                    variant="outlined">
+                    <SpaceDashboardIcon style={{color: "#808080"}} />
+                  </Button>
+
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
                   />
 
                   <TabList style={{borderBottom: "none"}}>

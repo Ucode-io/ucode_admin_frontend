@@ -30,6 +30,7 @@ import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {useTranslation} from "react-i18next";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 
 function DrawerDetailPage({
   open,
@@ -427,6 +428,34 @@ function DrawerDetailPage({
                       navigateToEditPage={navigateToEditPage}
                     />
                   </Box>
+
+                  <Box
+                    sx={{
+                      width: "1px",
+                      height: "14px",
+                      margin: "0 6px",
+                      background: "rgba(55, 53, 47, 0.16)",
+                    }}
+                  />
+
+                  <Button
+                    onClick={() =>
+                      navigate(
+                        `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                        {
+                          state: {
+                            ...selectedRow,
+                          },
+                        }
+                      )
+                    }
+                    w={18}
+                    h={18}
+                    display={"flex"}
+                    alignItems={"center"}
+                    variant="outlined">
+                    <SpaceDashboardIcon style={{color: "#808080"}} />
+                  </Button>
 
                   <Box
                     sx={{

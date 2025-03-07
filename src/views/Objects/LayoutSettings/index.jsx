@@ -9,10 +9,13 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import layoutService from "../../../services/layoutService";
 import PageSettings from "../../../components/PageSettings";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 function LayoutSettings() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {tableSlug, appId} = useParams();
   const [sectionIndex, setSectionIndex] = useState(null);
   const [selectedSection, setSelectedSection] = useState();
@@ -73,7 +76,10 @@ function LayoutSettings() {
 
     layoutService
       .update(currentUpdatedLayout, tableSlug)
-      .then(() => navigate(-1))
+      .then(() => {
+        dispatch(showAlert("Layout successfully updated!", "success"));
+        navigate(-1);
+      })
       .finally(() => setLoader(false));
   };
 

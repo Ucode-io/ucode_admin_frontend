@@ -23,7 +23,7 @@ function LayoutSections({
     const newSections = applyDrag(sections, dropResult);
     setSections(newSections);
   };
-  console.log("sectionssss= ====>", sections);
+
   return (
     <Flex>
       <Box

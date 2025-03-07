@@ -1,4 +1,4 @@
-import {Box, Menu, MenuItem, TextField} from "@mui/material";
+import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
@@ -11,6 +11,7 @@ import {useParams} from "react-router-dom";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {Controller} from "react-hook-form";
+import {Flex} from "@chakra-ui/react";
 
 function DrawerFormDetailPage({
   control,
@@ -244,12 +245,14 @@ const HeadingOptions = ({
           paddingLeft: "3px",
           gap: "10px",
         }}>
-        <CHTextField
-          control={control}
-          name={selectedField?.slug || ""}
-          defaultValue={fieldValue}
-          key={selectedField?.slug}
-        />
+        <Flex flexDirection={"column"} justifyContent={"flex-start"}>
+          <CHTextField
+            control={control}
+            name={selectedField?.slug || ""}
+            defaultValue={fieldValue}
+            key={selectedField?.slug}
+          />
+        </Flex>
 
         <Box
           className="fieldChoose"

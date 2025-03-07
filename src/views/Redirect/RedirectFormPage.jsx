@@ -1,6 +1,6 @@
-import { Save } from "@mui/icons-material";
-import { useForm, useWatch } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import {Save} from "@mui/icons-material";
+import {useForm, useWatch} from "react-hook-form";
+import {useNavigate, useParams} from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
@@ -10,37 +10,37 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import PageFallback from "../../components/PageFallback";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import { useQueryClient } from "react-query";
-import { store } from "../../store";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {useQueryClient} from "react-query";
+import {store} from "../../store";
+import {showAlert} from "../../store/alert/alert.thunk";
 import {
   useRedirectCreateMutation,
   useRedirectGetByIdQuery,
   useRedirectListQuery,
   useRedirectUpdateMutation,
 } from "../../services/redirectService";
-import { useState } from "react";
+import {useState} from "react";
 
 const RedirectFormPage = () => {
-  const { redirectId } = useParams();
+  const {redirectId} = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [computedData, setComputedData] = useState()
+  const [computedData, setComputedData] = useState();
 
   const mainForm = useForm({
     defaultValues: {
-      defaultFrom: "/api/",
+      defaultFrom: "/x-api/",
       defaultTo: "/",
     },
   });
-  
-  const { isLoading: redirectLoading } = useRedirectListQuery({
+
+  const {isLoading: redirectLoading} = useRedirectListQuery({
     queryParams: {
       onSuccess: (res) => setComputedData(res?.redirect_urls?.length),
     },
   });
 
-  const { isLoading } = useRedirectGetByIdQuery({
+  const {isLoading} = useRedirectGetByIdQuery({
     redirectId: redirectId,
     queryParams: {
       enabled: Boolean(redirectId),
@@ -49,14 +49,14 @@ const RedirectFormPage = () => {
           ...res,
           from: res.from.slice(5),
           to: res.to.slice(1),
-          defaultFrom: "/api/",
+          defaultFrom: "/x-api/",
           defaultTo: "/",
         });
       },
     },
   });
 
-  const { mutateAsync: createRedirect, isLoading: createLoading } =
+  const {mutateAsync: createRedirect, isLoading: createLoading} =
     useRedirectCreateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["REDIRECT"]);
@@ -64,7 +64,7 @@ const RedirectFormPage = () => {
         navigate(-1);
       },
     });
-  const { mutateAsync: updateRedirect, isLoading: updateLoading } =
+  const {mutateAsync: updateRedirect, isLoading: updateLoading} =
     useRedirectUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["REDIRECT"]);
@@ -85,7 +85,7 @@ const RedirectFormPage = () => {
         ...data,
         from: data.defaultFrom + data.from,
         to: data.defaultTo + data.to,
-        order: computedData + 1
+        order: computedData + 1,
       });
   };
 
@@ -96,20 +96,19 @@ const RedirectFormPage = () => {
       <HeaderSettings
         title="Redirects"
         backButtonLink={-1}
-        subtitle={redirectId ? mainForm.watch("name") : "Новый"}
-      ></HeaderSettings>
+        subtitle={
+          redirectId ? mainForm.watch("name") : "Новый"
+        }></HeaderSettings>
 
       <form
         onSubmit={mainForm.handleSubmit(onSubmit)}
         className="p-2"
-        style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
-      >
+        style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
         <FormCard title="Детали" maxWidth={500}>
           <FRow
             label={"From"}
             componentClassName="flex gap-2 align-center"
-            required
-          >
+            required>
             <HFTextField
               disabledHelperText
               name="defaultFrom"
@@ -132,8 +131,7 @@ const RedirectFormPage = () => {
           <FRow
             label={"To"}
             componentClassName="flex gap-2 align-center"
-            required
-          >
+            required>
             <HFTextField
               disabledHelperText
               name="defaultTo"
@@ -165,8 +163,7 @@ const RedirectFormPage = () => {
             <PermissionWrapperV2 tabelSlug="app" type="update">
               <PrimaryButton
                 loader={createLoading || updateLoading}
-                onClick={mainForm.handleSubmit(onSubmit)}
-              >
+                onClick={mainForm.handleSubmit(onSubmit)}>
                 <Save /> Save
               </PrimaryButton>
             </PermissionWrapperV2>

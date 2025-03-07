@@ -23,6 +23,7 @@ const MainLayout = ({setFavicon, favicon}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const project_status = localStorage.getItem("project_status");
 
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
@@ -34,21 +35,8 @@ const MainLayout = ({setFavicon, favicon}) => {
   }, [projectInfo]);
 
   useEffect(() => {
-    const handleOnline = () => {
-      dispatch(isOnlineReducerAction.setisOnline(true));
-    };
-    const handleOffline = () => {
-      dispatch(isOnlineReducerAction.setisOnline(false));
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+    localStorage.setItem("project_status", projectInfo?.status);
+  }, [projectInfo]);
 
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);
@@ -73,7 +61,7 @@ const MainLayout = ({setFavicon, favicon}) => {
             toggleDarkMode={toggleDarkMode}
           />
           <div className={styles.content}>
-            {projectInfo?.status === "insufficient_funds" && (
+            {project_status === "insufficient_funds" && (
               <Box
                 onClick={() =>
                   navigate(`/settings/auth/matrix/profile/crossed`, {

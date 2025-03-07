@@ -902,16 +902,20 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     if (languages?.length) {
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+        localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
         i18n.changeLanguage(languages?.[0]?.slug);
       } else if (languages?.length > 1) {
         if (!defaultLanguage) {
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
           i18n.changeLanguage(languages?.[0]?.slug);
         } else if (defaultLanguage && isLanguageExist) {
           dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          localStorage.setItem("defaultLanguage", defaultLanguage);
           i18n.changeLanguage(defaultLanguage);
         } else {
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
           i18n.changeLanguage(languages?.[0]?.slug);
         }
       }
@@ -931,6 +935,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
+    localStorage.setItem("defaultLanguage", lang);
     onClose();
   };
 

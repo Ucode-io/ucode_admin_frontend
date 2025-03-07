@@ -11,6 +11,7 @@ import FieldGenerator from "./FieldGenerator";
 import {applyDrag} from "../../../utils/applyDrag";
 
 function LayoutSections({
+  selectedTab,
   selectedRow,
   sections,
   sectionIndex,
@@ -22,7 +23,7 @@ function LayoutSections({
     const newSections = applyDrag(sections, dropResult);
     setSections(newSections);
   };
-
+  console.log("sectionssss= ====>", sections);
   return (
     <Flex>
       <Box
@@ -39,8 +40,11 @@ function LayoutSections({
         borderRight={"1px solid #E2EDFB"}>
         <Box pt={24} px={20}>
           <LayoutHeading
+            selectedTab={selectedTab}
+            selectedRow={selectedRow}
             sectionIndex={sectionIndex}
             setSectionIndex={setSectionIndex}
+            setSelectedSection={setSelectedSection}
           />
 
           <Container onDrop={onDrop} behaviour="contain">
@@ -66,27 +70,37 @@ function LayoutSections({
   );
 }
 
-const LayoutHeading = ({sectionIndex, setSectionIndex}) => {
+const LayoutHeading = ({
+  selectedTab,
+  selectedRow,
+  sectionIndex,
+  setSectionIndex = () => {},
+  setSelectedSection = () => {},
+}) => {
   return (
     <Box
-      onClick={() => setSectionIndex(0)}
+      onClick={() => {
+        setSelectedSection({fields: [], label: "Heading"});
+        setSectionIndex(101);
+      }}
       cursor={"pointer"}
       width={"99%"}
       mx={"auto"}
       mb={"10px"}
       outline={
-        sectionIndex === 10
+        sectionIndex === 101
           ? "3px solid rgb(35, 131, 226)"
           : "1px solid #E2EDFB"
       }
       _hover={{
         outline:
-          sectionIndex === 10
+          sectionIndex === 101
             ? "3px solid rgb(35, 131, 226)"
             : "2px solid #d2e4fb",
       }}
       borderRadius={8}
-      h={220}>
+      minH={150}
+      maxH={250}>
       <Flex
         p={8}
         alignItems={"center"}
@@ -106,7 +120,8 @@ const LayoutHeading = ({sectionIndex, setSectionIndex}) => {
         </Button>
 
         <Text fontSize={34} fontWeight={700}>
-          (Layout) Input fields need to be disabled
+          {selectedRow?.[selectedTab?.attributes?.layout_heading] ?? ""}
+          {/* (Layout) Input fields need to be disabled */}
         </Text>
 
         <Button
@@ -176,9 +191,11 @@ const MainSection = ({
           <PositionUpDown />
         </Flex>
         <Box p={15}>
-          {section?.fields?.map((field) => (
-            <FieldGenerator field={field} selectedRow={selectedRow} />
-          ))}
+          {section?.fields
+            ?.filter((el) => !el?.attributes?.field_hide_layout)
+            ?.map((field) => (
+              <FieldGenerator field={field} selectedRow={selectedRow} />
+            ))}
         </Box>
       </Box>
     </Box>

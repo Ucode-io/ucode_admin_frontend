@@ -1,0 +1,43 @@
+.fieldRow {
+  .fieldIcon {
+    display: flex;
+  }
+
+  .fieldDragIcon {
+    cursor: grab;
+    display: none;
+  }
+
+  &:hover {
+    .fieldIcon {
+      display: none;
+    }
+
+    .fieldDragIcon {
+      display: flex;
+    }
+  }
+}
+
+.fieldRowDrag {
+  cursor: pointer;
+  .fieldIcon {
+    display: flex;
+  }
+  .fieldDragIcon {
+    display: none;
+    cursor: grab;
+  }
+}
+
+.field-drag {
+  background: #f8f8f7;
+  .fieldIcon {
+    background: #000;
+    display: none !important;
+  }
+
+  .fieldDragIcon {
+    display: flex !important;
+  }
+}

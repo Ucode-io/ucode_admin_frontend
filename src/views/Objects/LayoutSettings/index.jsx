@@ -76,7 +76,7 @@ function LayoutSettings() {
       .then(() => navigate(-1))
       .finally(() => setLoader(false));
   };
-  console.log("sectionssections====>>--====", sections);
+
   return (
     <Box bg={"#F8F8F7"}>
       <Header loader={loader} applyAllChanges={applyAllChanges} />

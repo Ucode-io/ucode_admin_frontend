@@ -571,7 +571,7 @@ const TableView = ({
           menuItem={menuItem}
           {...props}
         />
-        {/* 
+
         {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
@@ -602,8 +602,8 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null} */}
-
+        ) : null}
+        {/* 
         {open && (
           <ModalDetailPage
             open={open}
@@ -618,14 +618,13 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        )}
+        )} */}
 
         <Drawer
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -644,8 +643,7 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

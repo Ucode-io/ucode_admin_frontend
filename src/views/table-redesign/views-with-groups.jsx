@@ -80,20 +80,12 @@ import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
-<<<<<<< HEAD
-import { getAllFromDB } from "../../utils/languageDB";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { LayoutPopup } from "./LayoutPopup";
-import { useTableByIdQuery } from "../../services/constructorTableService";
-import { generateGUID } from "../../utils/generateID";
-import { useGetLang } from "../../hooks/useGetLang";
-=======
+import {useGetLang} from "../../hooks/useGetLang";
 import {getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {LayoutPopup} from "./LayoutPopup";
 import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
->>>>>>> express_bugs
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -1220,13 +1212,8 @@ const ViewOptions = ({
   tableLan,
   handleOpenPopup,
 }) => {
-<<<<<<< HEAD
-  const { appId, tableSlug } = useParams();
-  const { i18n, t } = useTranslation();
-=======
   const {appId, tableSlug} = useParams();
-  const {i18n} = useTranslation();
->>>>>>> express_bugs
+  const {i18n, t} = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1579,8 +1566,8 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const { i18n, t } = useTranslation();
-  const { tableSlug } = useParams();
+  const {i18n, t} = useTranslation();
+  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1675,8 +1662,7 @@ const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}
-        >
+          onClick={onBackClick}>
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
@@ -1721,11 +1707,10 @@ const ColumnsVisibility = ({
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
-                _hover={{ bg: "#EAECF0" }}
+                _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
-                zIndex={999999}
-              >
-                {column?.type && getColumnIcon({ column })}
+                zIndex={999999}>
+                {column?.type && getColumnIcon({column})}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Switch
                   ml="auto"
@@ -1745,9 +1730,9 @@ const ColumnsVisibility = ({
   );
 };
 
-const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
-  const { i18n } = useTranslation();
-  const { tableSlug } = useParams();
+const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
+  const {i18n} = useTranslation();
+  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1804,8 +1789,7 @@ const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}
-      >
+        onClick={onBackClick}>
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
             "Group columns"}
@@ -1836,10 +1820,9 @@ const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{ bg: "#EAECF0" }}
-            cursor="pointer"
-          >
-            {column?.type && getColumnIcon({ column })}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer">
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -1865,8 +1848,8 @@ const TabGroup = ({
   onBackClick,
   tableLan,
 }) => {
-  const { i18n } = useTranslation();
-  const { tableSlug } = useParams();
+  const {i18n} = useTranslation();
+  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1914,8 +1897,7 @@ const TabGroup = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}
-      >
+        onClick={onBackClick}>
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(
             tableLan,
@@ -1949,10 +1931,9 @@ const TabGroup = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{ bg: "#EAECF0" }}
-            cursor="pointer"
-          >
-            {column?.type && getColumnIcon({ column })}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer">
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -1970,16 +1951,10 @@ const TabGroup = ({
   );
 };
 
-const FixColumns = ({
-  view,
-  fieldsMap,
-  refetchViews,
-  onBackClick,
-  tableLan,
-}) => {
-  const { tableSlug } = useParams();
+const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
+  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -2035,8 +2010,7 @@ const FixColumns = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}
-      >
+        onClick={onBackClick}>
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Fix columns") ||
             "Fix columns"}
@@ -2067,10 +2041,9 @@ const FixColumns = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{ bg: "#EAECF0" }}
-            cursor="pointer"
-          >
-            {column?.type && getColumnIcon({ column })}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer">
+            {column?.type && getColumnIcon({column})}
             <ViewOptionTitle>{column?.label}</ViewOptionTitle>
             <Switch
               ml="auto"

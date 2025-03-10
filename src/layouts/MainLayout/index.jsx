@@ -17,9 +17,10 @@ import {
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {differenceInDays, parseISO} from "date-fns";
+import { SettingsPopup } from "../../views/SettingsPopup";
 
-const MainLayout = ({setFavicon, favicon}) => {
-  const {appId} = useParams();
+const MainLayout = ({ setFavicon, favicon }) => {
+  const { appId } = useParams();
   const projectId = store.getState().company.projectId;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -71,6 +72,10 @@ const MainLayout = ({setFavicon, favicon}) => {
 
     return differenceInDays(expiration, today);
   };
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+
+  const handleOpenProfileModal = () => setOpenProfileModal(true);
+  const handleCloseProfileModal = () => setOpenProfileModal(false);
 
   return (
     <>
@@ -82,6 +87,7 @@ const MainLayout = ({setFavicon, favicon}) => {
             appId={appId}
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
+            handleOpenProfileModal={handleOpenProfileModal}
           />
           <div className={styles.content}>
             {project_status === "insufficient_funds" && (
@@ -107,9 +113,10 @@ const MainLayout = ({setFavicon, favicon}) => {
                   zIndex: 9,
                   gap: "30px",
                   cursor: "pointer",
-                }}>
-                <Box sx={{display: "flex", alignItems: "center"}}>
-                  <WarningAmberIcon sx={{color: "#000", fontSize: 20}} />
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <WarningAmberIcon sx={{ color: "#000", fontSize: 20 }} />
                   <Typography
                     sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
                     Your subscription will expire in{" "}
@@ -126,6 +133,10 @@ const MainLayout = ({setFavicon, favicon}) => {
             <Outlet />
           </div>
         </div>
+        <SettingsPopup
+          open={openProfileModal}
+          onClose={handleCloseProfileModal}
+        />
       </ThemeProvider>
     </>
   );

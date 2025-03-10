@@ -8,7 +8,13 @@ import "./style.scss";
 import { CircularProgress, IconButton } from "@mui/material";
 import fileService from "../../services/fileService";
 
-const AvatarUpload = ({ value, onChange, size = "medium", ...props }) => {
+const AvatarUpload = ({
+  value,
+  onChange,
+  size = "medium",
+  defaultImage,
+  ...props
+}) => {
   const inputRef = useRef();
 
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -32,14 +38,23 @@ const AvatarUpload = ({ value, onChange, size = "medium", ...props }) => {
   return (
     <div className={`AvatarUpload ${size}`} {...props}>
       {!value ? (
-        <div className="round-block" onClick={() => inputRef.current.click()}>
-          {loader ? <CircularProgress /> : <FileUploadIcon fontSize="50" />}
+        <div
+          className={`round-block ${size}`}
+          onClick={() => inputRef.current.click()}
+        >
+          {loader ? (
+            <CircularProgress />
+          ) : defaultImage ? (
+            defaultImage
+          ) : (
+            <FileUploadIcon fontSize={size === "xs" ? "medium" : "50"} />
+          )}
         </div>
       ) : (
         <>
           <img
             src={value}
-            className="round-block"
+            className={`round-block ${size}`}
             alt="avatart"
             onClick={() => inputRef.current.click()}
           />

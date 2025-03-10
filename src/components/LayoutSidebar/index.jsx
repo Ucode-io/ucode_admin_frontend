@@ -71,11 +71,15 @@ import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import { GreyLoader } from "../Loaders/GreyLoader";
 
-const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
+const LayoutSidebar = ({
+  toggleDarkMode = () => {},
+  darkMode,
+  handleOpenProfileModal = () => {},
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const { appId } = useParams();
-  console.log("appIdappId", appId);
+
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -90,6 +94,7 @@ const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
+  const [isMenuListLoading, setIsMenuListLoading] = useState(false);
   const [tableModal, setTableModalOpen] = useState(false);
   const [linkTableModal, setLinkTableModal] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
@@ -210,15 +215,23 @@ const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
   };
 
   const getMenuList = () => {
+    setIsMenuListLoading(true);
+
     menuSettingsService
       .getList({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
         setMenuList(res.menus);
+        setIsMenuListLoading(false);
+        console.log({ menu: res.menus });
       })
       .catch((error) => {
+        setIsMenuListLoading(false);
         console.log("error", error);
+      })
+      .finally(() => {
+        setIsMenuListLoading(false);
       });
   };
 
@@ -387,6 +400,7 @@ const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
             projectInfo={projectInfo}
             menuLanguages={menuLanguages}
             profileSettingLan={profileSettingLan}
+            handleOpenProfileModal={handleOpenProfileModal}
           />
         </Flex>
 
@@ -396,7 +410,7 @@ const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
           overflowY="auto"
           overflowX="hidden"
         >
-          {!menuList && (
+          {isMenuListLoading && (
             <Box
               position="absolute"
               top="50%"
@@ -648,8 +662,8 @@ const LayoutSidebar = ({ toggleDarkMode = () => {}, darkMode }) => {
   );
 };
 
-const Chatwoot = forwardRef(({open, ...props}, ref) => {
-  const {originalButtonFunction} = useChatwoot();
+const Chatwoot = forwardRef(({ open, ...props }, ref) => {
+  const { originalButtonFunction } = useChatwoot();
 
   return (
     <Flex
@@ -659,17 +673,18 @@ const Chatwoot = forwardRef(({open, ...props}, ref) => {
       alignItems="center"
       justifyContent="center"
       borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
+      _hover={{ bg: "#EAECF0" }}
       cursor="pointer"
       mb={open ? 0 : 4}
       {...props}
-      onClick={originalButtonFunction}>
+      onClick={originalButtonFunction}
+    >
       <img src="/img/message-text-square.svg" alt="chat" />
     </Flex>
   );
 });
 
-const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
+const AIChat = forwardRef(({ sidebarOpen, ...props }, ref) => {
   const {
     open,
     anchorEl,
@@ -693,12 +708,13 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
         alignItems="center"
         justifyContent="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        _hover={{ bg: "#EAECF0" }}
         cursor="pointer"
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         <img src="/img/magic-wand.svg" alt="magic" />
       </Flex>
 
@@ -724,10 +740,11 @@ const Header = ({
   projectInfo,
   menuLanguages,
   profileSettingLan,
+  handleOpenProfileModal,
 }) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleClose = () => {
     onClose();
@@ -744,7 +761,7 @@ const Header = ({
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
     authService
-      .updateToken({...params, env_id: environment.id}, {...params})
+      .updateToken({ ...params, env_id: environment.id }, { ...params })
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
@@ -759,7 +776,8 @@ const Header = ({
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      onClose={handleClose}>
+      onClose={handleClose}
+    >
       <PopoverTrigger>
         <Flex
           w="calc(100% - 8px)"
@@ -770,16 +788,18 @@ const Header = ({
           p={5}
           borderRadius={8}
           bg="#fff"
-          _hover={{bg: "#EAECF0"}}
+          _hover={{ bg: "#EAECF0" }}
           cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}>
+          onClick={() => (!isOpen ? onOpen() : null)}
+        >
           <Flex
             w={36}
             h={36}
             position="absolute"
             left={0}
             alignItems="center"
-            justifyContent="center">
+            justifyContent="center"
+          >
             {Boolean(projectInfo?.logo) && (
               <img src={projectInfo?.logo} alt="" width={20} height={20} />
             )}
@@ -794,7 +814,8 @@ const Header = ({
                 alignItems="center"
                 justifyContent="center"
                 fontSize={14}
-                fontWeight={500}>
+                fontWeight={500}
+              >
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             )}
@@ -807,10 +828,11 @@ const Header = ({
             fontSize={13}
             fontWeight={500}
             overflow="hidden"
-            textOverflow="ellipsis">
+            textOverflow="ellipsis"
+          >
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
+          <KeyboardArrowDownIcon style={{ marginLeft: "auto", fontSize: 20 }} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent
@@ -820,9 +842,14 @@ const Header = ({
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}>
+        zIndex={999}
+      >
         <>
-          <ProfilePanel menuLanguages={menuLanguages} onClose={onClose} />
+          <ProfilePanel
+            menuLanguages={menuLanguages}
+            handleOpenProfileModal={handleOpenProfileModal}
+            onClose={onClose}
+          />
           <Companies onSelectEnvironment={onSelectEnvironment} />
           <ProfileBottom
             projectInfo={projectInfo}
@@ -834,10 +861,14 @@ const Header = ({
   );
 };
 
-const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
+const ProfilePanel = ({
+  onClose = () => {},
+  menuLanguages,
+  handleOpenProfileModal,
+}) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
@@ -848,10 +879,11 @@ const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
           justifyContent={"center"}
           w={36}
           h={36}
-          style={{border: "1px solid #eee", fontSize: "24px"}}
+          style={{ border: "1px solid #eee", fontSize: "24px" }}
           borderRadius={"5px"}
           bg={"#04ADD4"}
-          color={"white"}>
+          color={"white"}
+        >
           {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
@@ -865,7 +897,7 @@ const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
       </Flex>
 
       <Flex
-        _hover={{background: "#eeee"}}
+        _hover={{ background: "#eeee" }}
         alignItems={"center"}
         h={25}
         minW={86}
@@ -876,11 +908,13 @@ const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
         gap={5}
         mt={10}
         cursor={"pointer"}
-        onClick={() => {
-          navigate(`/settings/auth/matrix/profile/crossed`);
-          onClose();
-        }}>
-        <SettingsIcon style={{color: "#475467"}} />
+        onClick={handleOpenProfileModal}
+        // onClick={() => {
+        //   navigate(`/settings/auth/matrix/profile/crossed`);
+        //   onClose();
+        // }}
+      >
+        <SettingsIcon style={{ color: "#475467" }} />
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
         </Box>

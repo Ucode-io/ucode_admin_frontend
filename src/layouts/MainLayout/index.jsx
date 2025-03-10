@@ -16,13 +16,23 @@ import {
   createTheme,
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import {differenceInDays, parseISO} from "date-fns";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const {data: projectInfo} = useProjectGetByIdQuery({
+    projectId,
+    queryParams: {
+      onSuccess: (data) => {
+        localStorage.setItem("project_status", data?.status);
+      },
+    },
+  });
+
+  const project_status = localStorage.getItem("project_status");
 
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
@@ -61,6 +71,13 @@ const MainLayout = ({setFavicon, favicon}) => {
     },
   });
 
+  const getDaysLeft = (expireDate) => {
+    const today = new Date();
+    const expiration = parseISO(expireDate);
+
+    return differenceInDays(expiration, today);
+  };
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -73,7 +90,7 @@ const MainLayout = ({setFavicon, favicon}) => {
             toggleDarkMode={toggleDarkMode}
           />
           <div className={styles.content}>
-            {projectInfo?.status === "insufficient_funds" && (
+            {project_status === "insufficient_funds" && (
               <Box
                 onClick={() =>
                   navigate(`/settings/auth/matrix/profile/crossed`, {
@@ -101,12 +118,14 @@ const MainLayout = ({setFavicon, favicon}) => {
                   <WarningAmberIcon sx={{color: "#000", fontSize: 20}} />
                   <Typography
                     sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
-                    Your invoice is past due
+                    Your subscription will expire in{" "}
+                    <strong>{getDaysLeft(projectInfo?.expire_date)}</strong>{" "}
+                    days.
                   </Typography>
                 </Box>
                 <Typography sx={{fontSize: "12px", color: "#000"}}>
-                  Please pay your invoice before your team is locked and your
-                  subscription is downgraded.
+                  Please <strong>Click here</strong> to avoid service
+                  interruptions, to upgrade your plan.
                 </Typography>
               </Box>
             )}

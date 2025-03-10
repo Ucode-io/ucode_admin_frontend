@@ -1,5 +1,5 @@
 import {Box, Button, Flex, Text} from "@chakra-ui/react";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import SouthWestIcon from "@mui/icons-material/SouthWest";
 import {Container, Draggable} from "react-smooth-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -177,6 +177,7 @@ const MainSection = ({
     );
     setSections(updatedSection);
   };
+
   return (
     <Box bg={"#fff"} w={"99%"} my={"10px"} mx={"auto"}>
       <Box
@@ -223,7 +224,7 @@ const MainSection = ({
         </Flex>
         <Box p={15}>
           {section?.fields
-            ?.filter((el) => !el?.attributes?.field_hide_layout)
+            ?.filter((el) => el?.attributes?.field_hide_layout !== false)
             ?.map((field) => (
               <FieldGenerator field={field} selectedRow={selectedRow} />
             ))}

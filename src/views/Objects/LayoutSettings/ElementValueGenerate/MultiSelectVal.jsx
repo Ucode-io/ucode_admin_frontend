@@ -8,8 +8,9 @@ const MultiSelectVal = ({field, value = [], style, resize, ...props}) => {
   const {i18n} = useTranslation();
 
   const getFieldLabel = (field) => {
-    return field?.attributes?.[`label_${i18n?.language}`] ?? field?.label;
+    return field?.attributes?.[`label_${i18n?.language}`] || field?.label;
   };
+
   const tags = useMemo(() => {
     if (typeof value === "string" || typeof value === "number")
       return [
@@ -29,7 +30,6 @@ const MultiSelectVal = ({field, value = [], style, resize, ...props}) => {
   const hasColor = field?.attributes?.has_color;
   const hasIcon = field?.attributes?.has_icon;
 
-  if (!value?.length) return "";
   return (
     <Flex h={32} alignItems="center" mt={3}>
       <Flex w={170} h={8} alignItems="center" gap={2}>

@@ -75,7 +75,7 @@ function NewModalFormPage({
       selectedTab?.attributes?.layout_heading
     );
   }, [selectedTab, selectedRow]);
-
+  console.log("wathchchchchchhchc", watch());
   return (
     <>
       <Box id="newModalDetail" mt="10px" pb={"10px"}>

@@ -1,0 +1,31 @@
+.button {
+  height: 32px;
+  border-radius: 6px;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  border: 1px solid rgba(55, 53, 47, 0.16);
+  background-color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.08);
+  }
+}
+
+.button.primary {
+  color: #fff;
+  background-color: rgb(35, 131, 226);
+  border-color: transparent;
+
+  &:hover {
+    background-color: rgba(35, 131, 226, 0.8);
+  }
+}
+
+.button.loading {
+  cursor: wait;
+  pointer-events: none;
+}

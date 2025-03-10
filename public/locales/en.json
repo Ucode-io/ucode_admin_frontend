@@ -47,6 +47,9 @@
   "repeat.password": "Repeat password",
   "email.address": "Email address",
   "enter.email.address": "Enter email address",
+  "change.email": "Change email",
+  "change.phone": "Change phone",
+  "change.login": "Change login",
   "public.offer": "Public offer",
   "accept.terms.of.public.offer": "I accept the terms of the public offer",
   "continue": "Continue",
@@ -223,5 +226,8 @@
   "Password must have at least one special character": "Password must have at least one special character",
   "shown": "Shown",
   "show_all": "Show all",
-  "add_filter": "Add filter"
+  "add_filter": "Add filter",
+  "account": "Account",
+  "account_security": "Account security",
+  "advanced_settings": "Advanced settings"
 }

@@ -16,13 +16,14 @@ import {
   createTheme,
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { SettingsPopup } from "../../views/SettingsPopup";
 
-const MainLayout = ({setFavicon, favicon}) => {
-  const {appId} = useParams();
+const MainLayout = ({ setFavicon, favicon }) => {
+  const { appId } = useParams();
   const projectId = store.getState().company.projectId;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
@@ -61,6 +62,11 @@ const MainLayout = ({setFavicon, favicon}) => {
     },
   });
 
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+
+  const handleOpenProfileModal = () => setOpenProfileModal(true);
+  const handleCloseProfileModal = () => setOpenProfileModal(false);
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -71,6 +77,7 @@ const MainLayout = ({setFavicon, favicon}) => {
             appId={appId}
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
+            handleOpenProfileModal={handleOpenProfileModal}
           />
           <div className={styles.content}>
             {projectInfo?.status === "insufficient_funds" && (
@@ -96,15 +103,17 @@ const MainLayout = ({setFavicon, favicon}) => {
                   zIndex: 9,
                   gap: "30px",
                   cursor: "pointer",
-                }}>
-                <Box sx={{display: "flex", alignItems: "center"}}>
-                  <WarningAmberIcon sx={{color: "#000", fontSize: 20}} />
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <WarningAmberIcon sx={{ color: "#000", fontSize: 20 }} />
                   <Typography
-                    sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+                    sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+                  >
                     Your invoice is past due
                   </Typography>
                 </Box>
-                <Typography sx={{fontSize: "12px", color: "#000"}}>
+                <Typography sx={{ fontSize: "12px", color: "#000" }}>
                   Please pay your invoice before your team is locked and your
                   subscription is downgraded.
                 </Typography>
@@ -113,6 +122,10 @@ const MainLayout = ({setFavicon, favicon}) => {
             <Outlet />
           </div>
         </div>
+        <SettingsPopup
+          open={openProfileModal}
+          onClose={handleCloseProfileModal}
+        />
       </ThemeProvider>
     </>
   );

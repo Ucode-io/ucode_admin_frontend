@@ -14,7 +14,7 @@ const FieldGenerator = ({field, selectedRow}) => {
   const getFieldLabel = (field) => {
     return field?.attributes?.[`label_${i18n?.language}`] ?? field?.label;
   };
-  console.log("fieldddddddddddddd", selectedRow);
+
   switch (field.type) {
     case "DATE":
       return (
@@ -307,7 +307,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text ml={"-10px"} fontSize={14} color="#000000">
-            <Switch disabled isChecked={selectedRow?.[field?.slug]} />
+            <Switch disabled checked={selectedRow?.[field?.slug]} />
           </Text>
         </Flex>
       );

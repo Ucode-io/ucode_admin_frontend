@@ -222,7 +222,7 @@ const SettingFields = ({
           <AddIcon
             style={{width: "20px", height: "20px", marginRight: "4px"}}
           />
-          <Text fontWeight={400}>Add Property</Text>
+          <Text fontWeight={400}>Add Field</Text>
         </Button>
       )}
 

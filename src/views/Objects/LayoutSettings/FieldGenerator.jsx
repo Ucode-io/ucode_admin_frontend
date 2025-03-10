@@ -57,6 +57,26 @@ const FieldGenerator = ({field, selectedRow}) => {
         </Flex>
       );
 
+    case "MULTI_LINE":
+      return (
+        <Flex h={32} alignItems="center" mt={3}>
+          <Flex w={170} h={8} alignItems="center" gap={2}>
+            {getColumnIcon({
+              column: {
+                type: field?.type,
+                table_slug: field?.table_slug,
+              },
+            })}
+            <Text color="#787773" fontSize={14}>
+              {getFieldLabel(field)}
+            </Text>
+          </Flex>
+          <Text fontSize={14} color="#000000">
+            {`${selectedRow?.[field?.slug]?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
+          </Text>
+        </Flex>
+      );
+
     case "PASSWORD":
       return (
         <Flex h={32} alignItems="center" mt={3}>

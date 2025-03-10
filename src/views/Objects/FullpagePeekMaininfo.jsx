@@ -214,6 +214,7 @@ const FullpagePeekMaininfo = ({
                           </Box>
                           <Box sx={{width: "70%"}}>
                             <DrawerFieldGenerator
+                              drawerDetail={true}
                               control={control}
                               field={field}
                               watch={watch}

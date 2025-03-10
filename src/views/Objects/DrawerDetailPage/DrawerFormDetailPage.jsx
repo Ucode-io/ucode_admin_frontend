@@ -183,6 +183,7 @@ function DrawerFormDetailPage({
                     </Box>
                     <Box sx={{width: "60%"}}>
                       <DrawerFieldGenerator
+                        drawerDetail={true}
                         control={control}
                         field={field}
                         watch={watch}

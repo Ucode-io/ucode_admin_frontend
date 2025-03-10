@@ -75,7 +75,7 @@ function NewModalFormPage({
       selectedTab?.attributes?.layout_heading
     );
   }, [selectedTab, selectedRow]);
-  console.log("wathchchchchchhchc", watch());
+
   return (
     <>
       <Box id="newModalDetail" mt="10px" pb={"10px"}>
@@ -106,9 +106,10 @@ function NewModalFormPage({
                     className={dragAction ? "rowDragCol" : "rowCol"}
                     display={isHidden ? "none" : "flex"}
                     alignItems="center"
-                    {...(Boolean(field?.type === "MULTISELECT")
-                      ? {minHeight: "30px"}
-                      : {height: "34px"})}
+                    height={"34px"}
+                    // {...(Boolean(field?.type === "MULTISELECT")
+                    //   ? {minHeight: "30px"}
+                    //   : {height: "34px"})}
                     py="8px">
                     <Box
                       display="flex"
@@ -154,6 +155,7 @@ function NewModalFormPage({
                     </Box>
                     <Box sx={{minWidth: "500px"}}>
                       <DrawerFieldGenerator
+                        drawerDetail={true}
                         control={control}
                         field={field}
                         watch={watch}

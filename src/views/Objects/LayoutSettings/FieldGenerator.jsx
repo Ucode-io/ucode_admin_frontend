@@ -31,7 +31,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {formatDate(selectedRow?.[field?.slug])}
+            {formatDate(selectedRow?.[field?.slug]) ?? ""}
           </Text>
         </Flex>
       );
@@ -51,8 +51,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {numberWithSpaces(selectedRow?.[field?.slug])}
-            {/* February 19, 2025 */}
+            {numberWithSpaces(selectedRow?.[field?.slug]) ?? ""}
           </Text>
         </Flex>
       );
@@ -72,7 +71,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {`${selectedRow?.[field?.slug]?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
+            {`${(selectedRow?.[field?.slug] ? selectedRow?.[field?.slug] : "")?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
           </Text>
         </Flex>
       );
@@ -122,9 +121,6 @@ const FieldGenerator = ({field, selectedRow}) => {
         </Flex>
       );
 
-    // case "FORMULA":
-    //   return <span className="text-nowrap">{value ?? 0}</span>;
-
     case "MULTISELECT":
       return (
         <MultiSelectVal
@@ -172,7 +168,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {`${selectedRow?.[field?.slug]?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
+            {`${(selectedRow?.[field?.slug] ? selectedRow?.[field?.slug] : "")?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
           </Text>
         </Flex>
       );
@@ -192,7 +188,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {`${selectedRow?.[field?.slug]?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
+            {`${selectedRow?.[field?.slug] ? selectedRow?.[field?.slug]?.slice(0, 30) : ""} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
           </Text>
         </Flex>
       );
@@ -212,7 +208,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {`${selectedRow?.[field?.slug]?.length} Images`}
+            {`${selectedRow?.[field?.slug]?.length ?? 0} Images`}
           </Text>
         </Flex>
       );
@@ -232,7 +228,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            {`${selectedRow?.[field?.slug]}`}
+            {`${selectedRow?.[field?.slug] ?? ""}`}
           </Text>
         </Flex>
       );
@@ -248,7 +244,7 @@ const FieldGenerator = ({field, selectedRow}) => {
               },
             })}
             <Text color="#787773" fontSize={14}>
-              {getFieldLabel(field)}
+              {getFieldLabel(field) ?? ""}
             </Text>
           </Flex>
           <Box
@@ -257,34 +253,6 @@ const FieldGenerator = ({field, selectedRow}) => {
             borderRadius={"50%"}
             background={selectedRow?.[field?.slug] ?? "#eee"}
             color="#000000"></Box>
-        </Flex>
-      );
-
-    case "MULTI_LINE":
-      return (
-        <Flex h={32} alignItems="center" mt={3}>
-          <Flex
-            w={170}
-            borderRight="1px solid #E0E0E0"
-            h={8}
-            alignItems="center"
-            gap={2}>
-            {getColumnIcon({
-              column: {
-                type: field?.type,
-                table_slug: field?.table_slug,
-              },
-            })}
-            <Text color="#787773" fontSize={14}>
-              {getFieldLabel(field)}
-            </Text>
-          </Flex>
-          <Text fontSize={14} color="#000000">
-            <span
-              dangerouslySetInnerHTML={{
-                __html: selectedRow?.[field?.slug],
-              }}></span>
-          </Text>
         </Flex>
       );
 
@@ -357,9 +325,6 @@ const FieldGenerator = ({field, selectedRow}) => {
         </Flex>
       );
 
-    // case "FORMULA_FRONTEND":
-    //   return <FormulaCell field={field} row={row} />;
-
     case "ICON":
       return (
         <Flex h={32} alignItems="center" mt={3}>
@@ -401,7 +366,11 @@ const FieldGenerator = ({field, selectedRow}) => {
                 alignItems: "center",
                 justifyContent: "center",
               }}>
-              <LogoDisplay url={selectedRow?.[field?.slug]} />
+              {selectedRow?.[field?.slug] ? (
+                <LogoDisplay url={selectedRow?.[field?.slug]} />
+              ) : (
+                ""
+              )}
             </span>
           </Text>
         </Flex>
@@ -448,31 +417,6 @@ const FieldGenerator = ({field, selectedRow}) => {
         </Flex>
       );
   }
-
-  //   <Flex h={32} alignItems="center">
-  //          <Flex
-  //             w={170}
-  //             borderRight="1px solid #E0E0E0"
-  //             h={8}
-  //             alignItems="center"
-  //             gap={4}>
-  //             <AutorenewIcon style={{color: "#787773"}} />
-  //             <Text color="#787773" fontSize={14}>
-  //               Status
-  //             </Text>
-  //           </Flex>
-  //           <Flex
-  //             px={10}
-  //             borderRadius={12}
-  //             alignItems="center"
-  //             gap={5}
-  //             bg="#F8E6BA">
-  //             <Box w={8} h={8} borderRadius={"50%"} bg={"#C99032"}></Box>
-  //             <Text fontSize={14} color="#402C1C">
-  //               In sprint
-  //             </Text>
-  //           </Flex>
-  //         </Flex>
 };
 
 export default FieldGenerator;

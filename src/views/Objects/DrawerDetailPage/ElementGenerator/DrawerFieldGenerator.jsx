@@ -37,7 +37,7 @@ import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import {Lock} from "@mui/icons-material";
 
-function DrawerFieldGenerator({field, control, watch}) {
+function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
       return (
@@ -59,7 +59,7 @@ function DrawerFieldGenerator({field, control, watch}) {
           field={field}
           control={control}
           name={field?.slug}
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
         />
       );
 
@@ -69,7 +69,7 @@ function DrawerFieldGenerator({field, control, watch}) {
           field={field}
           control={control}
           name={field?.slug}
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
         />
       );
     case "DATE_TIME_WITHOUT_TIME_ZONE":
@@ -87,7 +87,7 @@ function DrawerFieldGenerator({field, control, watch}) {
           control={control}
           name={field?.slug}
           field={field}
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
         />
       );
 
@@ -98,13 +98,17 @@ function DrawerFieldGenerator({field, control, watch}) {
 
     case "SWITCH":
       return (
-        <HFSwitch drawerDetail={true} control={control} name={field?.slug} />
+        <HFSwitch
+          drawerDetail={drawerDetail}
+          control={control}
+          name={field?.slug}
+        />
       );
 
     case "VIDEO":
       return (
         <HFVideoUpload
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
         />
@@ -112,13 +116,17 @@ function DrawerFieldGenerator({field, control, watch}) {
 
     case "CHECKBOX":
       return (
-        <HFCheckbox drawerDetail={true} control={control} name={field?.slug} />
+        <HFCheckbox
+          drawerDetail={drawerDetail}
+          control={control}
+          name={field?.slug}
+        />
       );
 
     case "STATUS":
       return (
         <HFStatusField
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -138,7 +146,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "PHOTO":
       return (
         <HFPhotoUpload
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -148,7 +156,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "MULTI_IMAGE":
       return (
         <HFMultiImage
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           isTableView={true}
           control={control}
           name={field?.slug}
@@ -159,7 +167,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "LINK":
       return (
         <HFLinkField
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -181,7 +189,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "FILE":
       return (
         <HFFileUpload
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -191,7 +199,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "MONEY":
       return (
         <HFMoneyField
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -201,7 +209,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "MAP":
       return (
         <HFModalMap
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -211,7 +219,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "POLYGON":
       return (
         <PolygonFieldTable
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           computedSlug={field?.slug}
           field={field}
@@ -221,7 +229,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "ICON":
       return (
         <HFIconPicker
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}
@@ -230,7 +238,7 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "COLOR":
       return (
         <HFColorPicker
-          drawerDetail={true}
+          drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
           field={field}

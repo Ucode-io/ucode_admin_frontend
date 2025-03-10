@@ -127,7 +127,7 @@ const VideoUpload = ({
               alignItems: "center",
               columnGap: 5,
               width: drawerDetail ? "310px" : "100%",
-              margin: drawerDetail ? "0 auto" : "0",
+              margin: drawerDetail ? "0 0 0 10px" : "0",
             }}>
             <div className="video-block">
               <video ref={videoRef} src={value} />

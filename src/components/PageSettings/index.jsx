@@ -205,22 +205,26 @@ const SettingFields = ({
           ))}
       </Container>
 
-      <Button
-        onClick={handleClick}
-        mt={"5px"}
-        h={"34px"}
-        bg={"none"}
-        border={"none"}
-        px={5}
-        color="#787774"
-        borderRadius={6}
-        fontSize={"14px"}
-        _hover={{
-          background: "rgba(55, 53, 47, 0.09)",
-        }}>
-        <AddIcon style={{width: "20px", height: "20px", marginRight: "4px"}} />
-        <Text fontWeight={400}>Add Property</Text>
-      </Button>
+      {selectedSection?.label !== "Heading" && (
+        <Button
+          onClick={handleClick}
+          mt={"5px"}
+          h={"34px"}
+          bg={"none"}
+          border={"none"}
+          px={5}
+          color="#787774"
+          borderRadius={6}
+          fontSize={"14px"}
+          _hover={{
+            background: "rgba(55, 53, 47, 0.09)",
+          }}>
+          <AddIcon
+            style={{width: "20px", height: "20px", marginRight: "4px"}}
+          />
+          <Text fontWeight={400}>Add Property</Text>
+        </Button>
+      )}
 
       <FieldsList
         addFieldSections={addFieldSections}

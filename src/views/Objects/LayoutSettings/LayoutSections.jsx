@@ -4,11 +4,14 @@ import SouthWestIcon from "@mui/icons-material/SouthWest";
 import {Container, Draggable} from "react-smooth-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import {Menu} from "@mui/material";
+import {Dialog, Menu} from "@mui/material";
 import SouthIcon from "@mui/icons-material/South";
 import EastIcon from "@mui/icons-material/East";
 import FieldGenerator from "./FieldGenerator";
 import {applyDrag} from "../../../utils/applyDrag";
+import AddIcon from "@mui/icons-material/Add";
+import {generateID} from "../../../utils/generateID";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 function LayoutSections({
   selectedTab,
@@ -24,9 +27,15 @@ function LayoutSections({
     setSections(newSections);
   };
 
+  const addSections = () => {
+    const updatedSections = [...sections, {id: generateID(), fields: []}];
+    setSections(updatedSections);
+  };
+
   return (
     <Flex>
       <Box
+        pb={20}
         css={{
           "&::-webkit-scrollbar": {
             display: "none",
@@ -53,6 +62,8 @@ function LayoutSections({
                 style={{width: "100%", overflow: "auto"}}
                 key={section?.id}>
                 <MainSection
+                  setSections={setSections}
+                  sections={sections}
                   selectedRow={selectedRow}
                   index={sectIndex}
                   section={section}
@@ -63,6 +74,18 @@ function LayoutSections({
               </Draggable>
             ))}
           </Container>
+
+          <Box mt={20} w={"100%"} textAlign={"center"}>
+            <Button
+              onClick={addSections}
+              w={32}
+              h={32}
+              mx={"0 auto"}
+              borderRadius={"50%"}
+              bg={"rgba(35, 131, 226, 0.07)"}>
+              <AddIcon style={{color: "#2383E2"}} />
+            </Button>
+          </Box>
         </Box>
       </Box>
       <Box w={"35%"}></Box>
@@ -139,13 +162,21 @@ const LayoutHeading = ({
 };
 
 const MainSection = ({
+  sections,
   sectionIndex,
   index,
   section,
   selectedRow,
+  setSections = () => {},
   setSectionIndex = () => {},
   setSelectedSection = () => {},
 }) => {
+  const removeSection = (sectionIndex) => {
+    const updatedSection = sections?.filter(
+      (_, index) => index !== sectionIndex
+    );
+    setSections(updatedSection);
+  };
   return (
     <Box bg={"#fff"} w={"99%"} my={"10px"} mx={"auto"}>
       <Box
@@ -188,7 +219,7 @@ const MainSection = ({
               Section {index + 1}
             </Text>
           </Button>
-          <PositionUpDown />
+          <PositionUpDown index={index} removeSection={removeSection} />
         </Flex>
         <Box p={15}>
           {section?.fields
@@ -202,12 +233,18 @@ const MainSection = ({
   );
 };
 
-const PositionUpDown = () => {
+const PositionUpDown = ({index, removeSection = () => {}}) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
+  const handleOpen = () => {
+    handleClose();
+    setOpenDialog(true);
+  };
+  const onCloseDialog = () => setOpenDialog(false);
   return (
     <>
       <Button
@@ -226,8 +263,8 @@ const PositionUpDown = () => {
         <MoreHorizIcon
           style={{
             color: "rgb(35, 131, 226)",
-            width: "18px",
-            height: "18px",
+            width: "22px",
+            height: "22px",
           }}
         />
       </Button>
@@ -272,8 +309,63 @@ const PositionUpDown = () => {
             <EastIcon style={{width: "14px", height: "16px"}} />
             <Text fontSize={14}> Move to panel</Text>
           </Flex>
+
+          <Flex
+            onClick={handleOpen}
+            borderRadius={6}
+            _hover={{
+              background: "rgba(55, 53, 47, 0.06)",
+              color: "red",
+            }}
+            alignItems={"center"}
+            px={8}
+            gap={10}
+            h={28}
+            cursor={"pointer"}>
+            <DeleteOutlineIcon style={{width: "16px", height: "16px"}} />
+            <Text fontSize={14}> Delete section</Text>
+          </Flex>
         </Box>
       </Menu>
+
+      <Dialog open={openDialog} onClose={onCloseDialog}>
+        <Box w={"400px"} height={"200px"} p={15}>
+          <Flex textAlign={"center"} flexDirection={"column"}>
+            <DeleteOutlineIcon
+              style={{fontSize: "50px", margin: "0 auto", color: "#91908F"}}
+            />
+            <Text fontSize={"16px"}>Remove property from layout?</Text>
+          </Flex>
+
+          <Flex
+            mt={20}
+            w={"100%"}
+            flexDirection={"column"}
+            justifyContent={"space-between"}>
+            <Button
+              onClick={() => {
+                removeSection(index);
+                onCloseDialog();
+              }}
+              fontSize={14}
+              borderRadius={6}
+              color={"#fff"}
+              h={32}
+              bg={"#EB5756"}>
+              Remove
+            </Button>
+            <Button
+              onClick={onCloseDialog}
+              borderRadius={6}
+              mt={8}
+              fontSize={14}
+              border="1px solid rgba(55, 53, 47, 0.16)"
+              h={32}>
+              Cancel
+            </Button>
+          </Flex>
+        </Box>
+      </Dialog>
     </>
   );
 };

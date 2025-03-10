@@ -45,6 +45,7 @@ const MultiSelectVal = ({field, value = [], style, resize, ...props}) => {
       </Flex>
       {tags?.map((el) => (
         <Flex
+          mx={4}
           key={el?.value}
           borderRadius={4}
           px={5}

@@ -1017,6 +1017,9 @@ div:has(.chakra-tooltip) {
 }
 
 #multiselectField {
+  &:hover {
+    background: transparent;
+  }
   padding-left: 0px !important;
 }
 

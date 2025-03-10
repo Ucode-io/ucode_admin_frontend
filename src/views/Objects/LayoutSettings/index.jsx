@@ -11,6 +11,8 @@ import layoutService from "../../../services/layoutService";
 import PageSettings from "../../../components/PageSettings";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {Dialog} from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 function LayoutSettings() {
   const location = useLocation();
@@ -121,6 +123,12 @@ function LayoutSettings() {
 
 const Header = ({loader = false, applyAllChanges = () => {}}) => {
   const navigate = useNavigate();
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleClick = () => setOpenDialog(true);
+  const onCloseDialog = () => setOpenDialog(false);
+
   return (
     <Flex alignItems={"center"} justifyContent={"space-between"} h={60} px={20}>
       <Button
@@ -162,7 +170,7 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
 
       <Flex gap={8}>
         <Button
-          onClick={() => navigate(-1)}
+          onClick={handleClick}
           cursor={"pointer"}
           borderRadius={6}
           border={"none"}
@@ -191,6 +199,41 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
           Apply to all changes
         </Button>
       </Flex>
+      <Dialog open={openDialog} onClose={onCloseDialog}>
+        <Box w={"400px"} height={"150px"} p={15}>
+          <Flex textAlign={"center"} flexDirection={"column"}>
+            <Text fontSize={"16px"}>Discard all layout changes?</Text>
+          </Flex>
+
+          <Flex
+            mt={20}
+            w={"100%"}
+            flexDirection={"column"}
+            justifyContent={"space-between"}>
+            <Button
+              onClick={() => {
+                navigate(-1);
+                onCloseDialog();
+              }}
+              fontSize={14}
+              borderRadius={6}
+              color={"#fff"}
+              h={32}
+              bg={"#EB5756"}>
+              Discard
+            </Button>
+            <Button
+              onClick={onCloseDialog}
+              borderRadius={6}
+              mt={8}
+              fontSize={14}
+              border="1px solid rgba(55, 53, 47, 0.16)"
+              h={32}>
+              Cancel
+            </Button>
+          </Flex>
+        </Box>
+      </Dialog>
     </Flex>
   );
 };

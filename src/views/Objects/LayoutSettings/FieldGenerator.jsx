@@ -14,7 +14,7 @@ const FieldGenerator = ({field, selectedRow}) => {
   const getFieldLabel = (field) => {
     return field?.attributes?.[`label_${i18n?.language}`] ?? field?.label;
   };
-  console.log("fieldddddddddddddd", selectedRow);
+
   switch (field.type) {
     case "DATE":
       return (
@@ -53,6 +53,26 @@ const FieldGenerator = ({field, selectedRow}) => {
           <Text fontSize={14} color="#000000">
             {numberWithSpaces(selectedRow?.[field?.slug])}
             {/* February 19, 2025 */}
+          </Text>
+        </Flex>
+      );
+
+    case "MULTI_LINE":
+      return (
+        <Flex h={32} alignItems="center" mt={3}>
+          <Flex w={170} h={8} alignItems="center" gap={2}>
+            {getColumnIcon({
+              column: {
+                type: field?.type,
+                table_slug: field?.table_slug,
+              },
+            })}
+            <Text color="#787773" fontSize={14}>
+              {getFieldLabel(field)}
+            </Text>
+          </Flex>
+          <Text fontSize={14} color="#000000">
+            {`${selectedRow?.[field?.slug]?.slice(0, 30)} ${selectedRow?.[field?.slug]?.length > 30 ? "..." : ""}`}
           </Text>
         </Flex>
       );
@@ -307,7 +327,7 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text ml={"-10px"} fontSize={14} color="#000000">
-            <Switch disabled isChecked={selectedRow?.[field?.slug]} />
+            <Switch disabled checked={selectedRow?.[field?.slug]} />
           </Text>
         </Flex>
       );

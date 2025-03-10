@@ -16,6 +16,10 @@ import {useProjectGetByIdQuery} from "../../services/projectService";
 import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
 import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import {useNavigate, useParams} from "react-router-dom";
+import {Flex, Text} from "@chakra-ui/react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import layoutService from "../../services/layoutService";
 
 const FullpagePeekMaininfo = ({
   control,
@@ -134,7 +138,7 @@ const FullpagePeekMaininfo = ({
               watch={watch}
               fields={fieldsList}
               selectedTab={selectedTab}
-              selectedRow={relation}
+              layoutData={relation}
             />
           </Box>
 
@@ -246,9 +250,10 @@ const HeadingOptions = ({
   control,
   fields,
   selectedTab,
-  selectedRow,
+  layoutData,
   setFormValue = () => {},
 }) => {
+  const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -261,7 +266,7 @@ const HeadingOptions = ({
   );
 
   const fieldValue = selectedField
-    ? (selectedRow?.[selectedField.slug] ?? "")
+    ? (layoutData?.[selectedField.slug] ?? "")
     : "";
 
   const fieldsList = fields.map((field) => ({
@@ -277,10 +282,36 @@ const HeadingOptions = ({
 
   const handleClose = (option) => {
     if (option) {
+      updateLayout(option?.value);
       setSelectedFieldSlug(option.table_slug);
     }
     setAnchorEl(null);
   };
+
+  function updateLayout(fieldSlug) {
+    const updatedTabs = layoutData.tabs.map((tab, index) =>
+      index === 0
+        ? {
+            ...tab,
+            attributes: {
+              ...tab?.attributes,
+              layout_heading: fieldSlug,
+            },
+          }
+        : tab
+    );
+
+    const currentUpdatedLayout = {
+      ...layoutData,
+      tabs: updatedTabs,
+    };
+
+    layoutService.update(currentUpdatedLayout, tableSlug);
+  }
+
+  useEffect(() => {
+    setSelectedFieldSlug(selectedTab?.attributes?.layout_heading);
+  }, [selectedTab, layoutData]);
 
   return (
     <>
@@ -294,23 +325,29 @@ const HeadingOptions = ({
           gap: "10px",
         }}>
         <CHTextField
+          placeholder={selectedFieldSlug?.slug ? "" : "Select field"}
           control={control}
           name={selectedField?.slug || ""}
           defaultValue={fieldValue}
           key={selectedField?.slug}
         />
 
-        {/* <Box
-          className="fieldChoose"
-          sx={{cursor: "pointer"}}
-          onClick={handleClick}>
-          <img
-            src="/img/text-column.svg"
-            width={"22px"}
-            height={"22px"}
-            alt="heading text"
-          />
-        </Box> */}
+        <Box sx={{cursor: "pointer"}}>
+          <Flex
+            p={"5px"}
+            borderRadius={6}
+            onClick={handleClick}
+            gap={2}
+            alignItems={"center"}>
+            <Text>
+              {
+                fieldsList?.find((field) => field?.value === selectedFieldSlug)
+                  ?.label
+              }
+            </Text>
+            {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </Flex>
+        </Box>
       </Box>
 
       <Menu
@@ -362,7 +399,12 @@ const HeadingOptions = ({
   );
 };
 
-const CHTextField = ({control, name = "", defaultValue = ""}) => {
+const CHTextField = ({
+  control,
+  name = "",
+  defaultValue = "",
+  placeholder = "",
+}) => {
   return (
     <Controller
       control={control}
@@ -370,6 +412,7 @@ const CHTextField = ({control, name = "", defaultValue = ""}) => {
       defaultValue={defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
+          placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
           className="headingText"
           value={value ?? ""}

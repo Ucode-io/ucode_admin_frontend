@@ -11,6 +11,9 @@ import layoutService from "../../services/layoutService";
 import {applyDrag} from "../../utils/applyDrag";
 import {getColumnIcon} from "../../views/table-redesign/icons";
 import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import {Flex, Text} from "@chakra-ui/react";
 
 function NewModalFormPage({
   control,
@@ -224,23 +227,37 @@ const HeadingOptions = ({
           paddingLeft: "3px",
           gap: "10px",
         }}>
-        <CHTextField
-          control={control}
-          name={selectedField?.slug || ""}
-          defaultValue={fieldValue}
-          key={selectedField?.slug}
-        />
-
         <Box
-          className={"fieldChoose"}
-          sx={{cursor: "pointer"}}
-          onClick={handleClick}>
-          <img
-            src="/img/text-column.svg"
-            width={"22px"}
-            height={"22px"}
-            alt="heading text"
+          onClick={(e) =>
+            !Boolean(watch("attributes.layout_heading")) && handleClick(e)
+          }>
+          <CHTextField
+            placeholder={
+              Boolean(watch("attributes.layout_heading")) ? "" : "Select field"
+            }
+            control={control}
+            name={selectedField?.slug || ""}
+            defaultValue={fieldValue}
+            key={selectedField?.slug}
           />
+        </Box>
+
+        <Box sx={{cursor: "pointer"}}>
+          <Flex
+            p={"5px"}
+            borderRadius={6}
+            onClick={handleClick}
+            gap={2}
+            alignItems={"center"}>
+            <Text>
+              {
+                fieldsList?.find(
+                  (field) => field?.value === watch("attributes.layout_heading")
+                )?.label
+              }
+            </Text>
+            {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </Flex>
         </Box>
       </Box>
 
@@ -293,7 +310,12 @@ const HeadingOptions = ({
   );
 };
 
-const CHTextField = ({control, name = "", defaultValue = ""}) => {
+const CHTextField = ({
+  control,
+  name = "",
+  defaultValue = "",
+  placeholder = "",
+}) => {
   return (
     <Controller
       control={control}
@@ -301,6 +323,7 @@ const CHTextField = ({control, name = "", defaultValue = ""}) => {
       defaultValue={defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
+          placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
           className="headingText"
           value={value ?? ""}

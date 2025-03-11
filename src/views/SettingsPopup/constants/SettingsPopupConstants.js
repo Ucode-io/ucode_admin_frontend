@@ -13,5 +13,9 @@ export const TAB_COMPONENTS = {
     PERMISSIONS: "permissions",
     PERMISSIONS_DETAIL: "permissionsDetail",
     PERMISSIONS_ROLE_DETAIL: "permissionsRoleDetail",
+  },
+  RESOURCES: {
+    RESOURCES: "resources",
+    RESOURCES_DETAIL: "resourcesDetail",
   }
 }

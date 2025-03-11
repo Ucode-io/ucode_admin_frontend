@@ -128,7 +128,7 @@ const DrawerRelationTable = ({
             data={data}
           />
         </Box>
-        <RelationTable
+        {/* <RelationTable
           ref={myRef}
           loader={loader}
           remove={remove}
@@ -154,7 +154,7 @@ const DrawerRelationTable = ({
           getAllData={getAllData}
           type={type}
           layoutData={data}
-        />
+        /> */}
       </Box>
 
       <Box

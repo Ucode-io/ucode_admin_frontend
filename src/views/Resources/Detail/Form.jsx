@@ -450,6 +450,29 @@ const Form = ({
                     placeholder: "Token",
                   }}
                 />
+
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Base URL"
+                  ) || "Base URL"}
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled={Boolean(token)}
+                  name="base_url"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Base URL",
+                  }}
+                />
               </>
             ) : null}
           </Box>

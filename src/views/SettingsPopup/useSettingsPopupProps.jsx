@@ -7,12 +7,12 @@ import useSearchParams from "../../hooks/useSearchParams";
 import { Environment } from "./modules/Environment";
 import { EnvironmentDetail } from "./modules/EnvironmentDetail";
 import { useSelector } from "react-redux";
-import BillingIcon from "@/assets/icons/bill-receipt-icon.png"
-import TariffsIcon from "@/assets/icons/tariffs.png"
-import ProjectSettingsIcon from "@/assets/icons/project-settings.png"
-import EnvironmentsIcon from "@/assets/icons/environments.png"
-import LanguageIcon from "@/assets/icons/language.png"
-import cls from './styles.module.scss';
+import BillingIcon from "@/assets/icons/billing.svg";
+import TariffsIcon from "@/assets/icons/fares.svg";
+import ProjectSettingsIcon from "@/assets/icons/setting.svg";
+import EnvironmentsIcon from "@/assets/icons/environment.svg";
+import LanguageIcon from "@/assets/icons/language.svg";
+import cls from "./styles.module.scss";
 import { Fares } from "./modules/Fares";
 import { Account } from "./modules/Account";
 import { Billing } from "./modules/Billing";
@@ -20,6 +20,9 @@ import LanguageControl from "../../components/LayoutSidebar/Components/LanguageC
 import { Permissions } from "./modules/Permissions";
 import { PermissionsDetail } from "./modules/PermissionsDetail";
 import { PermissionsRoleDetail } from "./modules/PermissionsRoleDetail";
+import { Resources } from "./modules/Resources";
+import { ResourcesDetail } from "./modules/ResourcesDetail";
+import { Storage } from "@mui/icons-material";
 
 export const useSettingsPopupProps = ({ onClose }) => {
   const { t, i18n } = useTranslation();
@@ -27,10 +30,10 @@ export const useSettingsPopupProps = ({ onClose }) => {
   const userInfo = useSelector((state) => state?.auth?.userInfo);
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
-  
-  const [activeTab, setActiveTab] = useState("profile")
 
-  const lang = useGetLang("Setting")
+  const [activeTab, setActiveTab] = useState("profile");
+
+  const lang = useGetLang("Setting");
 
   const tabs = [
     {
@@ -40,53 +43,75 @@ export const useSettingsPopupProps = ({ onClose }) => {
         {
           key: "profile",
           title: userInfo?.email || t("profile"),
-          icon: <div className={cls.profileIcon}>{userInfo?.email?.[0]}</div>,
+          icon: <div className={cls.profileIcon}>{userInfo?.login?.[0]}</div>,
         },
         {
           key: "billing",
           title: "Billing",
-          icon: <img src={BillingIcon} alt="" width={20} height={20} />
+          icon: <img src={BillingIcon} alt="" width={20} height={20} />,
         },
         {
           key: "fares",
           title: "Fares",
-          icon: <img src={TariffsIcon} alt="" width={20} height={20} />
+          icon: <img src={TariffsIcon} alt="" width={20} height={20} />,
         },
-      ]
+      ],
     },
     {
       key: "advancedSettings",
-      title: generateLangaugeText(lang, i18n?.language, "Project Settings") || "Project Settings",
+      title:
+        generateLangaugeText(lang, i18n?.language, "Project Settings") ||
+        "Project Settings",
       tabs: [
         {
           key: "projectSettings",
-          title: generateLangaugeText(lang, i18n?.language, "Project Settings") || "Project Settings",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />
+          title:
+            generateLangaugeText(lang, i18n?.language, "Project Settings") ||
+            "Project Settings",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
         },
         {
           key: "environments",
-          title: generateLangaugeText(lang, i18n?.language, "Environments") || "Environments",
-          icon: <img src={EnvironmentsIcon} alt="" width={20} height={20} />
+          title:
+            generateLangaugeText(lang, i18n?.language, "Environments") ||
+            "Environments",
+          icon: <img src={EnvironmentsIcon} alt="" width={20} height={20} />,
         },
         {
           key: "languageControl",
-          title: generateLangaugeText(lang, i18n?.language, "Language Control") || "Language Control",
-          icon: <img src={LanguageIcon} alt="" width={20} height={20} />
+          title:
+            generateLangaugeText(lang, i18n?.language, "Language Control") ||
+            "Language Control",
+          icon: <img src={LanguageIcon} alt="" width={20} height={20} />,
         },
-      ]
+      ],
     },
     {
       key: "permissions",
-      title: generateLangaugeText(lang, i18n?.language, "Permissions") || "Permissions",
+      title: t("advanced_settings"),
       tabs: [
         {
           key: "permissions",
-          title: generateLangaugeText(lang, i18n?.language, "Permissions") || "Permissions",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />
+          title:
+            generateLangaugeText(lang, i18n?.language, "Permissions") ||
+            "Permissions",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
         },
-      ]
-    }
-  ]
+        {
+          key: "resources",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Resources") ||
+            "Resources",
+          icon: (
+            <Storage
+              sx={{ width: 20, height: 20 }}
+              color="rgba(55, 53, 47, 0.85)"
+            />
+          ),
+        },
+      ],
+    },
+  ];
 
   const handleClose = () => {
     onClose();
@@ -95,11 +120,11 @@ export const useSettingsPopupProps = ({ onClose }) => {
   };
 
   const handleChangeTab = (key) => {
-    setSearchParams({})
-    if(key !== activeTab) {
-      setActiveTab(key)
+    setSearchParams({});
+    if (key !== activeTab) {
+      setActiveTab(key);
     }
-  }
+  };
 
   const tabComponents = {
     profile: <Account handleClose={handleClose} />,
@@ -117,7 +142,11 @@ export const useSettingsPopupProps = ({ onClose }) => {
       permissionsDetail: <PermissionsDetail />,
       permissionsRoleDetail: <PermissionsRoleDetail />,
     },
-  }
+    resources: {
+      resources: <Resources />,
+      resourcesDetail: <ResourcesDetail />,
+    },
+  };
 
   return {
     handleClose,
@@ -129,5 +158,5 @@ export const useSettingsPopupProps = ({ onClose }) => {
     searchParams,
     setSearchParams,
     updateSearchParam,
-  }
-}
+  };
+};

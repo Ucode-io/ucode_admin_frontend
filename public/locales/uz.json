@@ -235,5 +235,6 @@
   "add_filter": "Filter qo'shish",
   "account": "Akkaunt",
   "account_security": "Akkaunt havfsizligi",
-  "advanced_settings": "Kengaytirilgan sozlamalar"
+  "advanced_settings": "Kengaytirilgan sozlamalar",
+  "add_resource": "Resurs qo'shish"
 }

@@ -39,10 +39,11 @@ export const usePermissionsProps = () => {
   const {i18n} = useTranslation();
 
   const [child, setChild] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedUserFolder, setSelectedUserFolder] = useState(null);
   const [userFolderModalType, setUserFolderModalType] = useState(null);
 
-  const {setSearchParams} = useSettingsPopupContext()
+  const { setSearchParams } = useSettingsPopupContext();
 
   const closeUserFolderModal = () => setSelectedUserFolder(null);
 
@@ -57,15 +58,17 @@ export const usePermissionsProps = () => {
     dispatch(menuActions.setMenuItem(element));
   };
 
-  const {isLoading} = useQuery(
+  const permissionData = useQuery(
     ["GET_CLIENT_TYPE_PERMISSION", permissionFolder],
     () => {
+      setIsLoading(true);
       return clientTypeServiceV2.getList();
     },
     {
       cacheTime: 10,
       enabled: Boolean(permissionFolder),
       onSuccess: (res) => {
+        setIsLoading(false);
         setChild(
           res.data.response?.map((row) => ({
             ...row,
@@ -80,6 +83,9 @@ export const usePermissionsProps = () => {
           }))
         );
       },
+      onError: () => {
+        setIsLoading(false);
+      },
     }
   );
 
@@ -91,6 +97,7 @@ export const usePermissionsProps = () => {
       });
 
   const deleteRole = async (element) => {
+    console.log(element);
     if (element?.guid) {
       await deleteClientType({
         id: element?.guid,

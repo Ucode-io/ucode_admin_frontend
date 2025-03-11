@@ -261,5 +261,6 @@
   "add_filter": "Добавить фильтр",
   "account": "Аккаунт",
   "account_security": "Безопасность аккаунта",
-  "advanced_settings": "Расширенные настройки"
+  "advanced_settings": "Расширенные настройки",
+  "add_resource": "Добавить ресурс"
 }

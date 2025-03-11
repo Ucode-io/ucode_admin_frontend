@@ -49,7 +49,6 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = () => {
-    console.log("eeeentered", element);
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }

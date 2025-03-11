@@ -290,12 +290,6 @@ const HeadingOptions = ({
             onClick={handleClick}
             gap={2}
             alignItems={"center"}>
-            {/* <img
-              src="/img/text-column.svg"
-              width={"22px"}
-              height={"22px"}
-              alt="heading text"
-            /> */}
             <Text>
               {
                 fieldsList?.find(

@@ -6,7 +6,7 @@ import { store } from "../../../../store";
 import { useEnvironmentDeleteMutation, useEnvironmentListQuery } from "../../../../services/environmentService";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import { useSettingsPopupContext } from "../../providers";
-import { TAB_COMPONENTS } from "../../constants";
+import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 
 export const useEnvironmentProps = () => {
   const { i18n } = useTranslation();

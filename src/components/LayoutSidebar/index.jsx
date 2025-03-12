@@ -65,10 +65,10 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {Modal} from "@mui/material";
+import { Modal, Skeleton } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {clearDB, getAllFromDB} from "../../utils/languageDB";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { clearDB, getAllFromDB } from "../../utils/languageDB";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { GreyLoader } from "../Loaders/GreyLoader";
 
 const LayoutSidebar = ({
@@ -411,14 +411,36 @@ const LayoutSidebar = ({
           overflowX="hidden"
         >
           {isMenuListLoading && (
-            <Box
-              position="absolute"
-              top="50%"
-              left="50%"
-              transform={"translate(-50%, -50%)"}
-            >
-              <GreyLoader />
+            <Box mx="8px">
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
             </Box>
+            // <Box
+            //   position="absolute"
+            //   top="50%"
+            //   left="50%"
+            //   transform={"translate(-50%, -50%)"}
+            // >
+            //   <GreyLoader />
+            // </Box>
             // <RingLoaderWithWrapper style={{height: "100%"}} />
           )}
 

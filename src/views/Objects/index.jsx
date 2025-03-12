@@ -26,17 +26,27 @@ import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
 
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
+import {
+  Box,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { TableDataSkeleton } from "../../components/TableDataSkeleton";
 
 const ObjectsPage = () => {
-  const {tableSlug} = useParams();
-  const {state} = useLocation();
+  const { tableSlug } = useParams();
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -59,32 +69,34 @@ const ObjectsPage = () => {
   const resultDefaultLink =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
-  const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
-    projectId: projectId,
-    roleId: roleId,
-    parentId: appId,
-    queryParams: {
-      enabled: Boolean(menuId),
-      onSuccess: (res) => {
-        if (
-          !res?.menus
-            ?.filter((item) => item?.permission?.read)
-            ?.some((el) => el?.id === menuId)
-        ) {
-          console.log("object");
-          navigate(resultDefaultLink);
-        }
+  const { isLoading: permissionGetByIdLoading } = useMenuPermissionGetByIdQuery(
+    {
+      projectId: projectId,
+      roleId: roleId,
+      parentId: appId,
+      queryParams: {
+        enabled: Boolean(menuId),
+        onSuccess: (res) => {
+          if (
+            !res?.menus
+              ?.filter((item) => item?.permission?.read)
+              ?.some((el) => el?.id === menuId)
+          ) {
+            console.log("object");
+            navigate(resultDefaultLink);
+          }
+        },
+        cacheTime: false,
       },
-      cacheTime: false,
-    },
-  });
+    }
+  );
 
   const params = {
     language_setting: i18n?.language,
   };
 
   const {
-    data: {views, fieldsMap, visibleColumns, visibleRelationColumns} = {
+    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -107,7 +119,7 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -122,7 +134,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -134,7 +146,7 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -145,7 +157,6 @@ const ObjectsPage = () => {
   });
 
   const setViews = () => {};
-  if (isLoading) return <PageFallback />;
 
   const storageItem = localStorage.getItem("newUi");
   const newUi = JSON.parse(
@@ -154,6 +165,54 @@ const ObjectsPage = () => {
       : "true"
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
+
+  // if (isLoading) return <PageFallback />;
+  if (isLoading) {
+    return (
+      <Box bgcolor="#fff" height="100%">
+        <Box paddingX={"16px"} borderBottom="1px solid #EAECF0">
+          <Skeleton height="45px" width="100%" />
+        </Box>
+        <Box paddingX={"16px"} borderBottom="1px solid #EAECF0">
+          <Skeleton height="40px" width="100%" />
+        </Box>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <Box display="flex" paddingX="16px">
+                <Skeleton width="80px" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <Box display="flex" paddingX="16px">
+                <Skeleton width="80px" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" paddingX="16px">
+                <Skeleton width="80px" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" paddingX="16px">
+                <Skeleton width="80px" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Box>
+    );
+  }
 
   return (
     <>

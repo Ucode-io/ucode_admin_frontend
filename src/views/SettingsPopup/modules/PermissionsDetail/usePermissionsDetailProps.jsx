@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
 import { useGetLang } from "../../../../hooks/useGetLang";
 import { useSettingsPopupContext } from "../../providers";
-import { TAB_COMPONENTS } from "../../constants";
+import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 
 export const usePermissionsDetailProps = () => {
 

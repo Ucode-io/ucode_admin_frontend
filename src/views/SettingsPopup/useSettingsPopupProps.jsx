@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGetLang } from "../../hooks/useGetLang";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
@@ -32,6 +32,8 @@ export const useSettingsPopupProps = ({ onClose }) => {
   const userInfo = useSelector((state) => state?.auth?.userInfo);
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
+
+  const defaultTab = searchParams.get("activeTab");
 
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -160,6 +162,12 @@ export const useSettingsPopupProps = ({ onClose }) => {
       apiKeysDetail: <ApiKeysDetail />,
     },
   };
+
+  useEffect(() => {
+    if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab]);
 
   return {
     handleClose,

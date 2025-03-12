@@ -43,7 +43,7 @@ function LayoutSections({
           "-ms-overflow-style": "none",
           "scrollbar-width": "none",
         }}
-        w={"65%"}
+        w={"100%"}
         h={"calc(100vh - 60px)"}
         overflow={"auto"}
         borderRight={"1px solid #E2EDFB"}>
@@ -78,8 +78,8 @@ function LayoutSections({
           <Box mt={20} w={"100%"} textAlign={"center"}>
             <Button
               onClick={addSections}
-              w={32}
-              h={32}
+              w={42}
+              h={42}
               mx={"0 auto"}
               borderRadius={"50%"}
               bg={"rgba(35, 131, 226, 0.07)"}>
@@ -88,7 +88,7 @@ function LayoutSections({
           </Box>
         </Box>
       </Box>
-      <Box w={"35%"}></Box>
+      {/* <Box w={"35%"}></Box> */}
     </Flex>
   );
 }
@@ -143,7 +143,8 @@ const LayoutHeading = ({
         </Button>
 
         <Text fontSize={34} fontWeight={700}>
-          {selectedRow?.[selectedTab?.attributes?.layout_heading] ?? ""}
+          {selectedRow?.[selectedTab?.attributes?.layout_heading] ??
+            "Select field for title"}
           {/* (Layout) Input fields need to be disabled */}
         </Text>
 
@@ -207,7 +208,8 @@ const MainSection = ({
           fontWeight={500}
           alignItems={"center"}
           justifyContent={"space-between"}
-          bg={"rgba(35, 131, 226, 0.07)"}>
+          bg={"rgba(35, 131, 226, 0.07)"}
+          borderTopRadius={6}>
           <Button cursor={"grab"} bg={"none"} border="none">
             <DragIndicatorIcon
               style={{

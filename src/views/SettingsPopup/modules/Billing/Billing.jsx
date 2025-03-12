@@ -1,9 +1,7 @@
 import { AccountBalance, AttachMoney, HourglassBottom } from "@mui/icons-material"
-import { Box, Card, CardContent, Grid, Modal, Typography } from "@mui/material"
-import { AddIcon } from "@chakra-ui/icons"
+import { Box, Card, CardContent, Grid, Modal, Typography } from "@mui/material";
 import { useBillingProps } from "./useBillingProps"
-import { Button } from "../../components/Button"
-import { numberWithSpaces } from "../../../../utils/formatNumbers"
+import { numberWithSpaces } from "@/utils/formatNumbers";
 import { BillingTable } from "../../components/BillingTable"
 import { TopUpBalance } from "../../components/TopUpBalance"
 

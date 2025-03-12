@@ -25,6 +25,8 @@ import { ResourcesDetail } from "./modules/ResourcesDetail";
 import { Storage } from "@mui/icons-material";
 import { ApiKeys } from "./modules/ApiKeys";
 import { ApiKeysDetail } from "./modules/ApiKeysDetail";
+import { Redirect } from "./modules/Redirect";
+import { RedirectForm } from "./modules/RedirectForm";
 
 export const useSettingsPopupProps = ({ onClose }) => {
   const { t, i18n } = useTranslation();
@@ -120,6 +122,13 @@ export const useSettingsPopupProps = ({ onClose }) => {
             "API Keys",
           icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
         },
+        {
+          key: "redirect",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Custom endpoint") ||
+            "Custom endpoint",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
       ],
     },
   ];
@@ -160,6 +169,10 @@ export const useSettingsPopupProps = ({ onClose }) => {
     apiKeys: {
       apiKeys: <ApiKeys />,
       apiKeysDetail: <ApiKeysDetail />,
+    },
+    redirect: {
+      redirect: <Redirect />,
+      redirectForm: <RedirectForm />,
     },
   };
 

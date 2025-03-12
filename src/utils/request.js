@@ -79,7 +79,8 @@ const customMessageHandler = (res) => {
   if (res.data.custom_message?.length && res.status < 400) {
     store.dispatch(showAlert(res.data.custom_message, "success"));
   } else if (res.data.custom_message?.length) {
-    store.dispatch(showAlert(res.data.custom_message, "error"));
+    handleError(res.data.custom_message);
+    // store.dispatch(showAlert(res.data.custom_message, "error"));
   }
 };
 

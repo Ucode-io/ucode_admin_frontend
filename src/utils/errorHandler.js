@@ -6,15 +6,16 @@ const shownErrors = new Set();
 export const handleError = (error) => {
   const errorMessage = error || "An unexpected error occurred";
 
-  console.log("Current Errors:", shownErrors);
+  console.log("Current Errors:", Array.from(shownErrors));
 
   if (!shownErrors.has(errorMessage)) {
     shownErrors.add(errorMessage);
+    store.dispatch(showAlert(errorMessage));
   }
 
-  Array.from(shownErrors).forEach((err) => store.dispatch(showAlert(err)));
-
-  setTimeout(() => {
-    shownErrors.clear();
-  }, 5000);
+  if (shownErrors.size === 1) {
+    setTimeout(() => {
+      shownErrors.clear();
+    }, 5000);
+  }
 };

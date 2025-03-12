@@ -1,8 +1,9 @@
 import axios from "axios";
-import { store } from "../store/index";
-import { showAlert } from "../store/alert/alert.thunk";
+import {store} from "../store/index";
+import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
-import { authActions } from "../store/auth/auth.slice";
+import {authActions} from "../store/auth/auth.slice";
+import {handleError} from "./errorHandler";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}`;
 
 const httpRequestLogin = axios.create({
@@ -19,11 +20,6 @@ const httpRequestLogin = axios.create({
 // }
 
 const errorHandler = (error, hooks) => {
-  const token = store.getState().auth.token;
-  // const logoutParams = {
-  //   access_token: token,
-  // };
-
   if (error?.response?.status === 401) {
     const refreshToken = store.getState().auth.refreshToken;
 
@@ -51,7 +47,8 @@ const errorHandler = (error, hooks) => {
           error.response.data.data !==
           "rpc error: code = Internal desc = member group is required to add new member"
         ) {
-          store.dispatch(showAlert(error.response.data.data));
+          handleError(error.response.data.data);
+          // store.dispatch(showAlert(error.response.data.data));
         }
       }
       if (error?.response?.status === 403) {
@@ -68,6 +65,7 @@ const customMessageHandler = (res) => {
   if (res.data.custom_message?.length && res.status < 400) {
     store.dispatch(showAlert(res.data.custom_message, "success"));
   } else if (res.data.custom_message?.length) {
+    handleError(res.data.custom_message);
     store.dispatch(showAlert(res.data.custom_message, "error"));
   }
 };

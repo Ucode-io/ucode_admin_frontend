@@ -3,6 +3,7 @@ import {store} from "../store/index";
 import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import {authActions} from "../store/auth/auth.slice";
+import {handleError} from "./errorHandler";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}/v1`;
 
 const request = axios.create({
@@ -23,8 +24,6 @@ const errorHandler = (error, hooks) => {
   // const logoutParams = {
   //   access_token: token,
   // };
-
-  const isOnline = store.getState().isOnline;
 
   if (
     error?.response?.status === 401 &&
@@ -60,11 +59,11 @@ const errorHandler = (error, hooks) => {
           error.response.data.data !==
           "rpc error: code = Internal desc = member group is required to add new member"
         ) {
-          // isOnline?.isOnline &&
-          store.dispatch(showAlert(error.response.data.data));
+          handleError(error?.response?.data?.data);
         }
       }
       if (error?.response?.status === 403) {
+        handleError(error?.response?.data?.data);
         // store.dispatch(authActions.logout());
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }

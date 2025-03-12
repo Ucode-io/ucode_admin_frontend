@@ -17,10 +17,10 @@ import {
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {differenceInDays, parseISO} from "date-fns";
-import { SettingsPopup } from "../../views/SettingsPopup";
+import {SettingsPopup} from "../../views/SettingsPopup";
 
-const MainLayout = ({ setFavicon, favicon }) => {
-  const { appId } = useParams();
+const MainLayout = ({setFavicon, favicon}) => {
+  const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -81,6 +81,21 @@ const MainLayout = ({ setFavicon, favicon }) => {
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
         <CssBaseline />
+        {getDaysLeft(projectInfo?.expire_date) <= 5 &&
+          (project_status === "insufficient_funds" ? (
+            <SubscriptionError
+              projectInfo={projectInfo}
+              getDaysLeft={getDaysLeft}
+            />
+          ) : project_status === "inactive" ? (
+            <SubscriptionWarning
+              projectInfo={projectInfo}
+              getDaysLeft={getDaysLeft}
+            />
+          ) : (
+            ""
+          ))}
+
         <div className={`${styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
@@ -90,46 +105,6 @@ const MainLayout = ({ setFavicon, favicon }) => {
             handleOpenProfileModal={handleOpenProfileModal}
           />
           <div className={styles.content}>
-            {project_status === "insufficient_funds" && (
-              <Box
-                onClick={() =>
-                  navigate(`/settings/auth/matrix/profile/crossed`, {
-                    state: {
-                      tab: 2,
-                    },
-                  })
-                }
-                sx={{
-                  position: "sticky",
-                  top: 0,
-                  height: "45px",
-                  width: "100%",
-                  background: "rgb(255, 244, 180)",
-                  left: 0,
-                  padding: "10px 10px 10px 20px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  zIndex: 9,
-                  gap: "30px",
-                  cursor: "pointer",
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <WarningAmberIcon sx={{ color: "#000", fontSize: 20 }} />
-                  <Typography
-                    sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
-                    Your subscription will expire in{" "}
-                    <strong>{getDaysLeft(projectInfo?.expire_date)}</strong>{" "}
-                    days.
-                  </Typography>
-                </Box>
-                <Typography sx={{fontSize: "12px", color: "#000"}}>
-                  Please <strong>Click here</strong> to avoid service
-                  interruptions, to upgrade your plan.
-                </Typography>
-              </Box>
-            )}
             <Outlet />
           </div>
         </div>
@@ -139,6 +114,92 @@ const MainLayout = ({ setFavicon, favicon }) => {
         />
       </ThemeProvider>
     </>
+  );
+};
+
+const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
+  const navigate = useNavigate();
+  return (
+    <Box
+      onClick={() =>
+        navigate(`/settings/auth/matrix/profile/crossed`, {
+          state: {
+            tab: 2,
+          },
+        })
+      }
+      sx={{
+        position: "sticky",
+        top: 0,
+        height: "32px",
+        width: "100%",
+        background: "rgb(255, 244, 180)",
+        left: 0,
+        padding: "10px 10px 10px 20px",
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        zIndex: 9,
+        // gap: "30px",
+        cursor: "pointer",
+      }}>
+      <Box sx={{display: "flex", alignItems: "center"}}>
+        <WarningAmberIcon
+          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+        />
+        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+          Your subscription will expire in{" "}
+          <strong>{getDaysLeft(projectInfo?.expire_date)}</strong> days.
+        </Typography>
+      </Box>
+      <Typography sx={{fontSize: "12px", color: "#000"}}>
+        Please <strong>Click here</strong> to avoid service interruptions, to
+        upgrade your plan.
+      </Typography>
+    </Box>
+  );
+};
+
+const SubscriptionWarning = (projectInfo, getDaysLeft = () => {}) => {
+  const navigate = useNavigate();
+  return (
+    <Box
+      onClick={() =>
+        navigate(`/settings/auth/matrix/profile/crossed`, {
+          state: {
+            tab: 2,
+          },
+        })
+      }
+      sx={{
+        position: "sticky",
+        top: 0,
+        height: "32px",
+        width: "100%",
+        background: "#FFBDB8",
+        left: 0,
+        padding: "10px 10px 10px 20px",
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        zIndex: 9,
+        cursor: "pointer",
+      }}>
+      <Box sx={{display: "flex", alignItems: "center"}}>
+        <WarningAmberIcon
+          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+        />
+        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+          Your subscription has expired.
+        </Typography>
+      </Box>
+      <Typography sx={{fontSize: "12px", color: "#000"}}>
+        Please renew to continue accessing our services.{" "}
+        <strong style={{textDecoration: "underline"}}>
+          Click here to upgrade your plan
+        </strong>
+      </Typography>
+    </Box>
   );
 };
 

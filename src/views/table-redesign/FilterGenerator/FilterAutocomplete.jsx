@@ -6,15 +6,14 @@ import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
 
 const FilterAutoComplete = ({
-                              options = [],
-                              setSearchText,
-                              value = [],
-                              onChange,
-                              label,
-                              field,
-                              setChosenField = () => {
-                              },
-                            }) => {
+  options = [],
+  setSearchText,
+  value = [],
+  onChange,
+  label,
+  field,
+  setChosenField = () => {},
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
 
@@ -39,7 +38,6 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
-    closeMenu();
     if (value?.includes(option.value)) {
       onChange(value.filter((item) => item !== option.value));
     } else {
@@ -60,7 +58,9 @@ const FilterAutoComplete = ({
         onClearButtonClick={onClearButtonClick}
         showCloseIcon={value?.length ?? 0}>
         {computedValue?.[0]?.label ?? (field?.attributes?.label_en || value[0])}
-        {(value?.length ?? 0) > 1 && <span style={{color: "#6d757e"}}>{` +${value.length - 1}`}</span>}
+        {(value?.length ?? 0) > 1 && (
+          <span style={{color: "#6d757e"}}>{` +${value.length - 1}`}</span>
+        )}
       </Chip>
 
       <Menu
@@ -78,7 +78,7 @@ const FilterAutoComplete = ({
         />
 
         <div className={styles.scrollBlock}>
-          <Divider/>
+          <Divider />
 
           {options?.map((option) => (
             <div
@@ -88,9 +88,9 @@ const FilterAutoComplete = ({
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (
-                <Checkbox id="filter_checkbox" checked/>
+                <Checkbox id="filter_checkbox" checked />
               ) : (
-                <Checkbox id="filter_checkbox"/>
+                <Checkbox id="filter_checkbox" />
               )}
 
               <p className={styles.label}>{option.label}</p>

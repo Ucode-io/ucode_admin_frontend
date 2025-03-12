@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import { useGetLang } from "../../../../hooks/useGetLang";
 import { useTranslation } from "react-i18next";
 import { useSettingsPopupContext } from "../../providers";
-import { TAB_COMPONENTS } from "../../constants";
+import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 
 export const useResourcesProps = () => {
 

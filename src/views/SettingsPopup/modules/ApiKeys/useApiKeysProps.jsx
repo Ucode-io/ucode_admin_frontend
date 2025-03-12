@@ -5,7 +5,7 @@ import apiKeyService from "@/services/apiKey.service";
 import fileService from "@/services/fileService";
 import exportToJsonService from "@/services/exportToJson";
 import { useSettingsPopupContext } from "../../providers";
-import { TAB_COMPONENTS } from "../../constants";
+import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 
 export const useApiKeysProps = () => {
 

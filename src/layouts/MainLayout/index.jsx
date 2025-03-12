@@ -18,13 +18,17 @@ import {
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {differenceInDays, parseISO} from "date-fns";
 import { SettingsPopup } from "../../views/SettingsPopup";
+import useSearchParams from "../../hooks/useSearchParams";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
 const MainLayout = ({ setFavicon, favicon }) => {
   const { appId } = useParams();
   const projectId = store.getState().company.projectId;
+  const updateSearchParam = useSearchParams()[2];
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {data: projectInfo} = useProjectGetByIdQuery({
+  const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
     queryParams: {
       onSuccess: (data) => {
@@ -92,12 +96,16 @@ const MainLayout = ({ setFavicon, favicon }) => {
           <div className={styles.content}>
             {project_status === "insufficient_funds" && (
               <Box
-                onClick={() =>
-                  navigate(`/settings/auth/matrix/profile/crossed`, {
-                    state: {
-                      tab: 2,
-                    },
-                  })
+                onClick={
+                  () => {
+                    updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
+                    handleOpenProfileModal();
+                  }
+                  // navigate(`/settings/auth/matrix/profile/crossed`, {
+                  //   state: {
+                  //     tab: 2,
+                  //   },
+                  // })
                 }
                 sx={{
                   position: "sticky",
@@ -118,13 +126,14 @@ const MainLayout = ({ setFavicon, favicon }) => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <WarningAmberIcon sx={{ color: "#000", fontSize: 20 }} />
                   <Typography
-                    sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+                    sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+                  >
                     Your subscription will expire in{" "}
                     <strong>{getDaysLeft(projectInfo?.expire_date)}</strong>{" "}
                     days.
                   </Typography>
                 </Box>
-                <Typography sx={{fontSize: "12px", color: "#000"}}>
+                <Typography sx={{ fontSize: "12px", color: "#000" }}>
                   Please <strong>Click here</strong> to avoid service
                   interruptions, to upgrade your plan.
                 </Typography>

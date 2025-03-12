@@ -161,11 +161,7 @@ export const LayoutPopup = ({
             "General"
           }
         >
-          <FRow
-            label={
-              generateLangaugeText(tableLan, i18n?.language, "Name") || "Name"
-            }
-          >
+          <Box display="flex" flexDirection="column" gap="16px">
             <Box style={{ display: "flex", gap: "6px" }}>
               <HFTextFieldWithMultiLanguage
                 control={control}
@@ -177,12 +173,6 @@ export const LayoutPopup = ({
                 id={"create_table_name"}
               />
             </Box>
-          </FRow>
-          <FRow
-            label={
-              generateLangaugeText(tableLan, i18n?.language, "Key") || "Key"
-            }
-          >
             <HFTextField
               control={control}
               name="slug"
@@ -192,12 +182,9 @@ export const LayoutPopup = ({
               withTrim
               id={"create_table_key"}
             />
-          </FRow>
+          </Box>
 
-          <Box
-            sx={{ display: "flex", alignItems: "center", marginTop: "30px" }}
-            className={style.checkbox}
-          >
+          <Box className={style.checkbox}>
             <HFCheckbox
               id="login_table_check"
               control={control}
@@ -428,11 +415,12 @@ export const LayoutPopup = ({
         </FormCard>
       </DialogContent>
       <DialogActions>
-        <SecondaryButton onClick={handleClose}>{t("cancel")}</SecondaryButton>
         <PrimaryButton
+          size="large"
           loader={btnLoader}
           loading={btnLoader}
           onClick={handleSubmit(onSubmit)}
+          fullWidth
         >
           {t("save")}
         </PrimaryButton>

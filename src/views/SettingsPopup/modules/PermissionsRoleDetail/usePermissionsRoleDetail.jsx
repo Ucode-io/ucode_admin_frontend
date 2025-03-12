@@ -7,7 +7,7 @@ import { useMenuPermissionGetByIdQuery, useMenuPermissionUpdateMutation, useRole
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import queryClient from "../../../../queries";
 import { useSettingsPopupContext } from "../../providers";
-import { TAB_COMPONENTS } from "../../constants";
+import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 
 export const usePermissionsRoleDetail = () => {
 

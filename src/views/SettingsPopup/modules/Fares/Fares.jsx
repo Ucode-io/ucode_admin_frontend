@@ -15,10 +15,10 @@ export const Fares = () => {
     activeTab,
   } = useFaresProps()
 
-  return <Box>
+  return (
     <Box>
-      {
-        discounts?.discounts?.map((el, index) => (
+      <Box>
+        {discounts?.discounts?.map((el, index) => (
           <Button
             className={cls.btn}
             key={index}
@@ -27,19 +27,19 @@ export const Fares = () => {
           >
             {el?.months} {el?.months === 1 ? "Month" : "Months"}
           </Button>
-        ))
-      }
+        ))}
+      </Box>
+      <Flex columnGap="12px" mt="86px" justifyContent="center">
+        {fares?.fares?.map((plan, index) => (
+          <BillingFares
+            element={activeTab}
+            discounts={discounts?.discounts}
+            key={index}
+            plan={plan}
+            tabIndex={tabIndex}
+          />
+        ))}
+      </Flex>
     </Box>
-    <Flex columnGap="12px" mt="86px">
-      {fares?.fares?.map((plan, index) => (
-        <BillingFares
-          element={activeTab}
-          discounts={discounts?.discounts}
-          key={index}
-          plan={plan}
-          tabIndex={tabIndex}
-        />
-      ))}
-    </Flex>
-  </Box>
+  );
 }

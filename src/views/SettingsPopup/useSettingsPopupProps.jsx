@@ -23,6 +23,8 @@ import { PermissionsRoleDetail } from "./modules/PermissionsRoleDetail";
 import { Resources } from "./modules/Resources";
 import { ResourcesDetail } from "./modules/ResourcesDetail";
 import { Storage } from "@mui/icons-material";
+import { ApiKeys } from "./modules/ApiKeys";
+import { ApiKeysDetail } from "./modules/ApiKeysDetail";
 
 export const useSettingsPopupProps = ({ onClose }) => {
   const { t, i18n } = useTranslation();
@@ -109,6 +111,13 @@ export const useSettingsPopupProps = ({ onClose }) => {
             />
           ),
         },
+        {
+          key: "apiKeys",
+          title:
+            generateLangaugeText(lang, i18n?.language, "API Keys") ||
+            "API Keys",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
       ],
     },
   ];
@@ -145,6 +154,10 @@ export const useSettingsPopupProps = ({ onClose }) => {
     resources: {
       resources: <Resources />,
       resourcesDetail: <ResourcesDetail />,
+    },
+    apiKeys: {
+      apiKeys: <ApiKeys />,
+      apiKeysDetail: <ApiKeysDetail />,
     },
   };
 

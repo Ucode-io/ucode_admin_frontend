@@ -17,5 +17,9 @@ export const TAB_COMPONENTS = {
   RESOURCES: {
     RESOURCES: "resources",
     RESOURCES_DETAIL: "resourcesDetail",
+  },
+  API_KEYS: {
+    API_KEYS: "apiKeys",
+    API_KEYS_DETAIL: "apiKeysDetail",
   }
 }

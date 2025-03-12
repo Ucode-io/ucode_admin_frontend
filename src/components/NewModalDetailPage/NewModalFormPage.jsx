@@ -265,7 +265,7 @@ const HeadingOptions = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={() => handleClose(null)}>
-        <Box sx={{width: "220px", padding: "4px 0"}}>
+        <Box sx={{width: "180px", padding: "4px 0"}}>
           {fieldsList
             .filter(
               (field) => field?.type === "SINGLE_LINE" || field?.type === "TEXT"
@@ -279,6 +279,7 @@ const HeadingOptions = ({
                   justifyContent: "space-between",
                   gap: "6px",
                   color: "#37352f",
+                  height: "32px",
                 }}
                 key={option.label}
                 onClick={() => handleClose(option)}>
@@ -288,14 +289,14 @@ const HeadingOptions = ({
                     alignItems: "center",
                     gap: "5px",
                   }}>
-                  <span>
+                  {/* <span>
                     {getColumnIcon({
                       column: {
                         type: option?.type ?? option?.relation_type,
                         table_slug: "field",
                       },
                     })}
-                  </span>
+                  </span> */}
                   {option.label}
                 </Box>
 

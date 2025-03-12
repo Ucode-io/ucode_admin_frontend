@@ -9,6 +9,27 @@ import RelationTable from "../RelationSection/RelationTable";
 import constructorTableService from "../../../services/constructorTableService";
 import FixColumnsRelationSection from "../RelationSection/FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "../RelationSection/VisibleColumnsButtonRelationSection";
+import RelationTableDrawer from "./RelationTableDrawer";
+import chakraUITheme from "@/theme/chakraUITheme";
+import {
+  Button,
+  ChakraProvider,
+  Flex,
+  IconButton,
+  Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@chakra-ui/react";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {getColumnIcon} from "../../table-redesign/icons";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import {ChevronDownIcon} from "@chakra-ui/icons";
+import ViewOptions from "./ViewOptions";
 
 const DrawerRelationTable = ({
   selectedTabIndex,
@@ -22,6 +43,7 @@ const DrawerRelationTable = ({
   selectedTab,
   getAllData,
   data,
+  tableLan = {},
   tableSlug: tableSlugFromProps,
   handleMouseDown = () => {},
 }) => {
@@ -104,31 +126,125 @@ const DrawerRelationTable = ({
 
   return (
     <>
-      <Box sx={{height: "100vh"}}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            justifyContent: "flex-end",
-            borderBottom: "1px solid #eee",
-          }}>
-          <FixColumnsRelationSection
-            relatedTable={getRelatedTabeSlug}
-            fieldsMap={fieldsMap}
-            getAllData={getAllData}
-          />
-          <Divider orientation="vertical" flexItem />
-          <VisibleColumnsButtonRelationSection
-            currentView={getRelatedTabeSlug}
-            fieldsMap={fieldsMap}
-            getAllData={getAllData}
-            // getLayoutList={getLayoutList}
-            selectedTabIndex={selectedTabIndex}
-            data={data}
-          />
-        </Box>
-        {/* <RelationTable
+      <Box py={"5px"} sx={{height: "100vh"}}>
+        <ChakraProvider theme={chakraUITheme}>
+          <Flex gap={"10px"}>
+            <Popover>
+              <InputGroup ml="auto" w="320px">
+                <InputLeftElement>
+                  <Image src="/img/search-lg.svg" alt="search" />
+                </InputLeftElement>
+                <Input
+                  placeholder="Search"
+                  id="search_input"
+                  // defaultValue={searchText}
+                  // placeholder={
+                  //   generateLangaugeText(tableLan, i18n?.language, "Search") ||
+                  //   "Search"
+                  // }
+                  // onChange={(ev) => inputChangeHandler(ev.target.value)}
+                />
+
+                <PopoverTrigger>
+                  <InputRightElement>
+                    <IconButton
+                      w="24px"
+                      h="24px"
+                      aria-label="more"
+                      icon={<Image src="/img/dots-vertical.svg" alt="more" />}
+                      variant="ghost"
+                      colorScheme="gray"
+                      size="xs"
+                    />
+                  </InputRightElement>
+                </PopoverTrigger>
+              </InputGroup>
+
+              <PopoverContent
+                w="280px"
+                p="8px"
+                display="flex"
+                flexDirection="column"
+                maxH="300px"
+                overflow="auto">
+                {/* {columnsForSearch.map((column) => (
+                  <Flex
+                    key={column.id}
+                    as="label"
+                    p="8px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{bg: "#EAECF0"}}
+                    cursor="pointer">
+                    {getColumnIcon({column})}
+                    <ViewOptionTitle>{column.label}</ViewOptionTitle>
+                    <Switch
+                      ml="auto"
+                      isChecked={column.is_search}
+                      onChange={(e) =>
+                        updateField({
+                          data: {
+                            fields: columnsForSearch.map((c) =>
+                              c.id === column.id
+                                ? {...c, is_search: e.target.checked}
+                                : c
+                            ),
+                          },
+                          tableSlug,
+                        })
+                      }
+                    />
+                  </Flex>
+                ))} */}
+              </PopoverContent>
+            </Popover>
+            <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+              <Button
+                h={"30px"}
+                rightIcon={<ChevronDownIcon fontSize={18} />}
+                // onClick={() =>
+                //   navigateToForm(
+                //     tableSlug,
+                //     "CREATE",
+                //     {},
+                //     {id},
+                //     searchParams.get("menuId")
+                //   )
+                // }
+              >
+                {/* {generateLangaugeText(tableLan, i18n?.language, "Create item") ||
+                "Create item"} */}
+                Create item
+              </Button>
+            </PermissionWrapperV2>
+
+            {/* <IconButton
+              aria-label="more"
+              icon={<Image src="/img/dots-vertical.svg" alt="more" />}
+              variant="ghost"
+              colorScheme="gray"
+            /> */}
+
+            <ViewOptions
+              selectedTab={selectedTab}
+              data={data}
+              selectedTabIndex={selectedTabIndex}
+              // view={view}
+              // viewName={viewName}
+              // refetchViews={refetchViews}
+              fieldsMap={fieldsMap}
+              // visibleRelationColumns={visibleRelationColumns}
+              // searchText={searchText}
+              // checkedColumns={checkedColumns}
+              // onDocsClick={onDocsClick}
+              // computedVisibleFields={computedVisibleFields}
+              // tableLan={tableLan}
+            />
+          </Flex>
+        </ChakraProvider>
+
+        <RelationTableDrawer
           ref={myRef}
           loader={loader}
           remove={remove}
@@ -154,7 +270,7 @@ const DrawerRelationTable = ({
           getAllData={getAllData}
           type={type}
           layoutData={data}
-        /> */}
+        />
       </Box>
 
       <Box

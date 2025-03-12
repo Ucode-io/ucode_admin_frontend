@@ -21,5 +21,9 @@ export const TAB_COMPONENTS = {
   API_KEYS: {
     API_KEYS: "apiKeys",
     API_KEYS_DETAIL: "apiKeysDetail",
-  }
+  },
+  REDIRECT: {
+    REDIRECT: "redirect",
+    REDIRECT_FORM: "redirectForm",
+  },
 }

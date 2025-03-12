@@ -38,7 +38,7 @@ export const BillingTable = ({ handClickBalance }) => {
   const { transactions, project, isLoading } = useBillingTableProps();
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 2 }}>
       <Typography
         variant="h6"
         sx={{

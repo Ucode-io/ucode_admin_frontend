@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { useApiKeysProps } from "./useApiKeysProps";
-import {Delete, Edit} from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import HeaderSettings from "@/components/HeaderSettings";
 import { DownloadIcon } from "@chakra-ui/icons";
 import {
@@ -15,9 +15,9 @@ import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import TableRowButton from "@/components/TableRowButton";
 import { numberWithSpaces } from "@/utils/formatNumbers";
+import { ContentTitle } from "../../components/ContentTitle";
 
 export const ApiKeys = () => {
-
   const {
     downloadUrl,
     URLFILE,
@@ -31,26 +31,34 @@ export const ApiKeys = () => {
 
   return (
     <div>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          background: "#fff",
-          height: "56px",
-          borderBottom: "1px solid #eee",
-        }}>
-        <HeaderSettings title={"Api keys"} sticky line={false} />
-        <Box onClick={() => downloadUrl(URLFILE)} sx={{width: "300px"}}>
-          <a
-            target="_blank"
-            style={{display: "inline-flex", alignItems: "center"}}
-            href="apikeys.zip"
-            download>
-            <DownloadIcon style={{background: "#007af"}} />
-            Download api documentation
-          </a>
+      <ContentTitle>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span>Api keys</span>
+          <Box onClick={() => downloadUrl(URLFILE)}>
+            <a
+              target="_blank"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                fontSize: "14px",
+              }}
+              href="apikeys.zip"
+              download
+            >
+              <DownloadIcon style={{ background: "#007af" }} />
+              Download api documentation
+            </a>
+          </Box>
         </Box>
-      </Box>
+      </ContentTitle>
+      {/* <HeaderSettings title={"Api keys"} sticky line={false} /> */}
+
       <Box marginTop="36px">
         <CTable loader={false} disablePagination removableHeight={false}>
           <CTableHead>
@@ -69,7 +77,8 @@ export const ApiKeys = () => {
             {apiKeys?.map((element, index) => (
               <CTableRow
                 onClick={() => navigateToForm(element?.id)}
-                key={element.id}>
+                key={element.id}
+              >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.app_id}</CTableCell>
@@ -91,22 +100,25 @@ export const ApiKeys = () => {
                         }}
                         color="success"
                         className="mr-1"
-                        size="small">
-                        <Edit style={{color: "#8888"}} color="success" />
+                        size="small"
+                      >
+                        <Edit style={{ color: "#8888" }} color="success" />
                       </RectangleIconButton>
                     ) : (
                       <RectangleIconButton
                         color="success"
                         className="mr-1"
                         size="small"
-                        onClick={() => navigateToEditForm(element.id)}>
+                        onClick={() => navigateToEditForm(element.id)}
+                      >
                         <Edit color="success" />
                       </RectangleIconButton>
                     )}
                     {element?.disable ? null : (
                       <RectangleIconButton
                         color="error"
-                        onClick={() => deleteTable(element?.id)}>
+                        onClick={() => deleteTable(element?.id)}
+                      >
                         <Delete color="error" />
                       </RectangleIconButton>
                     )}
@@ -121,5 +133,5 @@ export const ApiKeys = () => {
         </CTable>
       </Box>
     </div>
-  )
-}
+  );
+};

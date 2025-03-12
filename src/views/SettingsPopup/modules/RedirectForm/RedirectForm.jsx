@@ -1,29 +1,14 @@
-import {Save} from "@mui/icons-material";
-import PrimaryButton from "@/components/Buttons/PrimaryButton";
-import SecondaryButton from "@/components/Buttons/SecondaryButton";
-import Footer from "@/components/Footer";
-import FormCard from "@/components/FormCard";
 import FRow from "@/components/FormElements/FRow";
 import HFTextField from "@/components/FormElements/HFTextField";
-import HeaderSettings from "@/components/HeaderSettings";
 import PageFallback from "@/components/PageFallback";
-import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import { useRedirectFormProps } from "./useRedirectFormProps";
 import { ContentTitle } from "../../components/ContentTitle";
 import { Box } from "@mui/material";
 import { SaveCancelBtns } from "../../components/SaveCancelBtns";
 
 export const RedirectForm = () => {
-  const {
-    isLoading,
-    redirectId,
-    mainForm,
-    onSubmit,
-    navigate,
-    createLoading,
-    updateLoading,
-    onBackClick,
-  } = useRedirectFormProps();
+  const { isLoading, redirectId, mainForm, onSubmit, navigate, onBackClick } =
+    useRedirectFormProps();
 
   if (isLoading) return <PageFallback />;
 

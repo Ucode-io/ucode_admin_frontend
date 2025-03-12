@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { store } from "../../../../store";
-import billingService from "../../../../services/billingService";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import { store } from "@/store";
+import billingService from "@/services/billingService";
+import { showAlert } from "@/store/alert/alert.thunk";
 import { Box, Button, Dialog, Divider, Typography } from "@mui/material";
-import { numberWithSpaces } from "../../../../utils/formatNumbers";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 
 
 export const PaymentDialog = ({

@@ -21,8 +21,8 @@ import { SettingsPopup } from "../../views/SettingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
 import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
-const MainLayout = ({setFavicon, favicon}) => {
-  const {appId} = useParams();
+const MainLayout = ({ setFavicon, favicon }) => {
+  const { appId } = useParams();
   const projectId = store.getState().company.projectId;
   const updateSearchParam = useSearchParams()[2];
 
@@ -81,6 +81,11 @@ const MainLayout = ({setFavicon, favicon}) => {
   const handleOpenProfileModal = () => setOpenProfileModal(true);
   const handleCloseProfileModal = () => setOpenProfileModal(false);
 
+  const handleOpenBilling = () => {
+    handleOpenProfileModal();
+    updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
+  };
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -88,11 +93,13 @@ const MainLayout = ({setFavicon, favicon}) => {
         {getDaysLeft(projectInfo?.expire_date) <= 5 &&
           (project_status === "insufficient_funds" ? (
             <SubscriptionError
+              onClick={handleOpenBilling}
               projectInfo={projectInfo}
               getDaysLeft={getDaysLeft}
             />
           ) : project_status === "inactive" ? (
             <SubscriptionWarning
+              onClick={handleOpenBilling}
               projectInfo={projectInfo}
               getDaysLeft={getDaysLeft}
             />
@@ -109,51 +116,6 @@ const MainLayout = ({setFavicon, favicon}) => {
             handleOpenProfileModal={handleOpenProfileModal}
           />
           <div className={styles.content}>
-            {project_status === "insufficient_funds" && (
-              <Box
-                onClick={
-                  () => {
-                    updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
-                    handleOpenProfileModal();
-                  }
-                  // navigate(`/settings/auth/matrix/profile/crossed`, {
-                  //   state: {
-                  //     tab: 2,
-                  //   },
-                  // })
-                }
-                sx={{
-                  position: "sticky",
-                  top: 0,
-                  height: "45px",
-                  width: "100%",
-                  background: "rgb(255, 244, 180)",
-                  left: 0,
-                  padding: "10px 10px 10px 20px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  zIndex: 9,
-                  gap: "30px",
-                  cursor: "pointer",
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <WarningAmberIcon sx={{ color: "#000", fontSize: 20 }} />
-                  <Typography
-                    sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
-                  >
-                    Your subscription will expire in{" "}
-                    <strong>{getDaysLeft(projectInfo?.expire_date)}</strong>{" "}
-                    days.
-                  </Typography>
-                </Box>
-                <Typography sx={{ fontSize: "12px", color: "#000" }}>
-                  Please <strong>Click here</strong> to avoid service
-                  interruptions, to upgrade your plan.
-                </Typography>
-              </Box>
-            )}
             <Outlet />
           </div>
         </div>
@@ -166,17 +128,14 @@ const MainLayout = ({setFavicon, favicon}) => {
   );
 };
 
-const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
-  const navigate = useNavigate();
+const SubscriptionError = ({
+  projectInfo,
+  getDaysLeft = () => {},
+  onClick = () => {},
+}) => {
   return (
     <Box
-      onClick={() =>
-        navigate(`/settings/auth/matrix/profile/crossed`, {
-          state: {
-            tab: 2,
-          },
-        })
-      }
+      onClick={onClick}
       sx={{
         position: "sticky",
         top: 0,
@@ -191,17 +150,20 @@ const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
         zIndex: 9,
         // gap: "30px",
         cursor: "pointer",
-      }}>
-      <Box sx={{display: "flex", alignItems: "center"}}>
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <WarningAmberIcon
-          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
         />
-        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+        <Typography
+          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+        >
           Your subscription will expire in{" "}
           <strong>{getDaysLeft(projectInfo?.expire_date)}</strong> days.
         </Typography>
       </Box>
-      <Typography sx={{fontSize: "12px", color: "#000"}}>
+      <Typography sx={{ fontSize: "12px", color: "#000" }}>
         Please <strong>Click here</strong> to avoid service interruptions, to
         upgrade your plan.
       </Typography>
@@ -209,17 +171,14 @@ const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
   );
 };
 
-const SubscriptionWarning = (projectInfo, getDaysLeft = () => {}) => {
-  const navigate = useNavigate();
+const SubscriptionWarning = (
+  projectInfo,
+  getDaysLeft = () => {},
+  onClick = () => {}
+) => {
   return (
     <Box
-      onClick={() =>
-        navigate(`/settings/auth/matrix/profile/crossed`, {
-          state: {
-            tab: 2,
-          },
-        })
-      }
+      onClick={onClick}
       sx={{
         position: "sticky",
         top: 0,
@@ -233,18 +192,21 @@ const SubscriptionWarning = (projectInfo, getDaysLeft = () => {}) => {
         gap: "10px",
         zIndex: 9,
         cursor: "pointer",
-      }}>
-      <Box sx={{display: "flex", alignItems: "center"}}>
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <WarningAmberIcon
-          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
         />
-        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+        <Typography
+          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+        >
           Your subscription has expired.
         </Typography>
       </Box>
-      <Typography sx={{fontSize: "12px", color: "#000"}}>
+      <Typography sx={{ fontSize: "12px", color: "#000" }}>
         Please renew to continue accessing our services.{" "}
-        <strong style={{textDecoration: "underline"}}>
+        <strong style={{ textDecoration: "underline" }}>
           Click here to upgrade your plan
         </strong>
       </Typography>

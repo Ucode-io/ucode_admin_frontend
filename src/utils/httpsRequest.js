@@ -3,6 +3,7 @@ import {store} from "../store/index";
 import {showAlert} from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import {authActions} from "../store/auth/auth.slice";
+import {handleError} from "./errorHandler";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}`;
 
 const httpsRequest = axios.create({
@@ -19,11 +20,6 @@ const httpsRequest = axios.create({
 // }
 
 const errorHandler = (error, hooks) => {
-  // const token = store.getState().auth.token;
-  // const logoutParams = {
-  //   access_token: token,
-  // };
-  const isOnline = store.getState().isOnline;
   if (
     error?.response?.status === 401 &&
     error?.response?.data?.data ===
@@ -57,17 +53,14 @@ const errorHandler = (error, hooks) => {
           error.response.data.data !==
           "rpc error: code = Internal desc = member group is required to add new member"
         ) {
-          // isOnline?.isOnline &&
-          store.dispatch(showAlert(error.response.data.data));
+          handleError(error.response.data.data);
+          // store.dispatch(showAlert(error.response.data.data));
         }
       }
       if (error?.response?.status === 403) {
         store.dispatch(authActions.logout());
-        // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
-    }
-    // isOnline?.isOnline &&
-    else store.dispatch(showAlert("No connection to the server, try again"));
+    } else store.dispatch(showAlert("No connection to the server, try again"));
 
     return Promise.reject(error.response);
   }

@@ -466,7 +466,6 @@ const Form = ({
                 <HFTextField
                   control={control}
                   required
-                  disabled={Boolean(token)}
                   name="base_url"
                   fullWidth
                   inputProps={{

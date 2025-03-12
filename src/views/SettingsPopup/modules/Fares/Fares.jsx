@@ -1,19 +1,14 @@
 import { Box } from "@mui/material"
 import { useFaresProps } from "./useFaresProps"
 import cls from './styles.module.scss'
-import { Button } from "../../components/Button"
-import { BillingFares } from "../../components/BillingFares"
+import { Button } from "../../components/Button";
 import { Flex } from "@chakra-ui/react"
+import { FaresTable } from "./components/FaresTable";
+import { BillingFares } from "./components/BillingFares";
 
 export const Fares = () => {
-
-  const { 
-    discounts,
-    tabIndex,
-    setTabIndex,
-    fares,
-    activeTab,
-  } = useFaresProps()
+  const { discounts, tabIndex, setTabIndex, fares, faresArr, activeTab } =
+    useFaresProps();
 
   return (
     <Box>
@@ -29,7 +24,7 @@ export const Fares = () => {
           </Button>
         ))}
       </Box>
-      <Flex columnGap="12px" mt="86px" justifyContent="center">
+      <Flex columnGap="12px" mt="60px" justifyContent="center">
         {fares?.fares?.map((plan, index) => (
           <BillingFares
             element={activeTab}
@@ -40,6 +35,9 @@ export const Fares = () => {
           />
         ))}
       </Flex>
+      <Box mt={2}>
+        <FaresTable headData={faresArr} columns={fares?.fares} />
+      </Box>
     </Box>
   );
-}
+};

@@ -78,7 +78,7 @@ const LayoutSidebar = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen

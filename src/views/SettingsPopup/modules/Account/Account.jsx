@@ -21,12 +21,10 @@ export const Account = ({ handleClose = () => {} }) => {
     userInfo,
     sessions,
     deleteSession,
+    handleSubmit,
+    onSubmit,
+    isDirty,
   } = useAccountProps();
-
-  const mockData = [
-    { name: "Device 1", ip: "192.168.0.1", createdAt: "2025-03-13 10:00 AM" },
-    { name: "Device 2", ip: "192.168.0.2", createdAt: "2025-03-13 11:00 AM" },
-  ];
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -138,7 +136,8 @@ export const Account = ({ handleClose = () => {} }) => {
           onClick: handleClose,
         }}
         saveProps={{
-          onClick: handleClose,
+          onClick: handleSubmit(onSubmit),
+          disabled: isDirty,
         }}
         marginTop="auto"
         paddingBottom="24px"

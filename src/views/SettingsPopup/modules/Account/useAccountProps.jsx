@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next"
 import { useDispatch, useSelector } from "react-redux";
-import authService from "../../../../services/auth/authService";
-import { showAlert } from "../../../../store/alert/alert.thunk";
-import userService from "../../../../services/auth/userService";
-import sessionService from "../../../../services/sessionService";
+import authService from "@/services/auth/authService";
+import { showAlert } from "@/store/alert/alert.thunk";
+import userService from "@/services/auth/userService";
+import sessionService from "@/services/sessionService";
 
 export const useAccountProps = () => {
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ export const useAccountProps = () => {
         user_id: envId?.userId,
         client_type_id: envId?.clientType?.id,
         limit: 50,
-        offset: 1,
+        offset: 0,
       })
       .then((res) => {
         setSessions(res?.sessions);
@@ -102,10 +102,11 @@ export const useAccountProps = () => {
         } else {
           delete requestData.confirm_password;
         }
+        dispatch(showAlert("Successfully updated", "success"));
       });
   };
 
-  const { control, register, handleSubmit, reset, watch } = useForm({
+  const { control, register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
       name: "",
       email: "",
@@ -117,18 +118,23 @@ export const useAccountProps = () => {
     },
   });
 
+  const { dirtyFields } = formState;
+
   const onSubmit = (values) => {
-    if (values?.new_password && values?.old_password) {
-      if (values?.new_password !== values?.confirm_password) {
-        dispatch(showAlert("Confirm Password fields do not match"));
-        setInputMatch(true);
+    if (Object.keys(dirtyFields).length > 0) {
+      if (values?.new_password && values?.old_password) {
+        if (values?.new_password !== values?.confirm_password) {
+          dispatch(showAlert("Confirm Password fields do not match"));
+          setInputMatch(true);
+        } else if (userInfo) {
+          update(values);
+          setInputMatch(false);
+        }
       } else if (userInfo) {
         update(values);
         setInputMatch(false);
       }
-    } else if (userInfo) {
-      update(values);
-      setInputMatch(false);
+      reset(values);
     }
   };
 
@@ -162,5 +168,8 @@ export const useAccountProps = () => {
     userInfo,
     sessions,
     deleteSession,
+    handleSubmit,
+    onSubmit,
+    isDirty: !(Object.keys(dirtyFields).length > 0),
   };
 };

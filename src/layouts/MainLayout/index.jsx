@@ -10,10 +10,10 @@ import {useDispatch} from "react-redux";
 import {ThemeProvider} from "@mui/styles";
 import {Box, CssBaseline, Typography, createTheme} from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import {SettingsPopup} from "../../views/SettingsPopup";
-import useSearchParams from "../../hooks/useSearchParams";
-import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import {differenceInCalendarDays, differenceInDays, parseISO} from "date-fns";
+import { SettingsPopup } from "../../views/SettingsPopup";
+import useSearchParams from "../../hooks/useSearchParams";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
@@ -22,7 +22,7 @@ const MainLayout = ({setFavicon, favicon}) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {data: projectInfo} = useProjectGetByIdQuery({
+  const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
     queryParams: {
       onSuccess: (data) => {
@@ -162,11 +162,11 @@ const SubscriptionError = ({
   );
 };
 
-const SubscriptionWarning = (
+const SubscriptionWarning = ({
   projectInfo,
   getDaysLeft = () => {},
   onClick = () => {}
-) => {
+}) => {
   return (
     <Box
       onClick={onClick}

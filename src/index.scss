@@ -74,6 +74,7 @@ div {
     gap: 6px;
     border: none;
     position: relative;
+    white-space: nowrap;
 
     padding: 16px 16px;
     cursor: pointer;
@@ -541,13 +542,13 @@ div {
   }
 }
 
-.custom-tabs .react-tabs__tab-list {
-  padding: 5px 16px 10px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-}
+// .custom-tabs .react-tabs__tab-list {
+//   padding: 5px 16px 10px;
+//   border-bottom: 1px solid #eee;
+//   margin-bottom: 5px;
+//   display: flex;
+//   align-items: center;
+// }
 
 .detail_selected_tab {
   background-color: #0e73f626;
@@ -565,13 +566,13 @@ div {
   }
 }
 
-.detail_custom_tabs .react-tabs__tab-list {
-  padding: 5px 16px 10px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-}
+// .detail_custom_tabs .react-tabs__tab-list {
+//   padding: 5px 16px 10px;
+//   border-bottom: 1px solid #eee;
+//   margin-bottom: 5px;
+//   display: flex;
+//   align-items: center;
+// }
 
 .ce-toolbar__actions {
   left: -55px !important;
@@ -715,12 +716,12 @@ u {
   }
 }
 
-#detailPageTabs {
-  .react-tabs__tab--selected {
-    color: #449424;
-    border-bottom: 2px solid #449424;
-  }
-}
+// #detailPageTabs {
+//   .react-tabs__tab--selected {
+//     color: #449424;
+//     border-bottom: 2px solid #449424;
+//   }
+// }
 
 #hcTextfield {
   .MuiFormHelperText-root {
@@ -774,12 +775,12 @@ u {
   display: none;
 }
 
-#oneCTabs {
-  .react-tabs__tab--selected {
-    border-color: #449424;
-    color: #449424;
-  }
-}
+// #oneCTabs {
+//   .react-tabs__tab--selected {
+//     border-color: #449424;
+//     color: #449424;
+//   }
+// }
 
 .loginField {
   border-radius: 8px;

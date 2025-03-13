@@ -167,11 +167,7 @@ export const fieldTypesOptions = [
         label: "Photo",
         value: "PHOTO",
       },
-      {
-        icon: "image.svg",
-        label: "Multi Image",
-        value: "MULTI_IMAGE",
-      },
+
       {
         icon: "video.svg",
         label: "Video",
@@ -181,6 +177,17 @@ export const fieldTypesOptions = [
         icon: "file.svg",
         label: "File",
         value: "FILE",
+      },
+
+      {
+        icon: "image.svg",
+        label: "Multi Image",
+        value: "MULTI_IMAGE",
+      },
+      {
+        icon: "image.svg",
+        label: "Multi File",
+        value: "MULTI_FILE",
       },
     ],
   },
@@ -501,11 +508,6 @@ export const fileFieldFormats = [
     value: "PHOTO",
   },
   {
-    icon: "image.svg",
-    label: "Multiple photo",
-    value: "MULTI_IMAGE",
-  },
-  {
     icon: "video.svg",
     label: "Video",
     value: "VIDEO",
@@ -514,6 +516,16 @@ export const fileFieldFormats = [
     icon: "file.svg",
     label: "File",
     value: "FILE",
+  },
+  {
+    icon: "image.svg",
+    label: "Multiple photo",
+    value: "MULTI_IMAGE",
+  },
+  {
+    icon: "image.svg",
+    label: "Multi File",
+    value: "MULTI_FILE",
   },
 ];
 
@@ -911,6 +923,7 @@ export const formatIncludes = [
   "TIME",
   "PHOTO",
   "MULTI_IMAGE",
+  "MULTI_FILE",
   "VIDEO",
   "MULTI_LINE",
   "INCREMENT",

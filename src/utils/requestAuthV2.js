@@ -1,6 +1,7 @@
 import axios from "axios";
 import {store} from "../store/index";
 import {showAlert} from "../store/alert/alert.thunk";
+import {handleError} from "./errorHandler";
 export const baseURL = import.meta.env.VITE_AUTH_BASE_URL_V2;
 
 const requestAuthV2 = axios.create({
@@ -9,18 +10,17 @@ const requestAuthV2 = axios.create({
 });
 
 const errorHandler = (error, hooks) => {
-  const isOnline = store.getState().isOnline;
   if (error?.response) {
     if (error.response?.data?.data) {
-      isOnline?.isOnline &&
-        store.dispatch(
-          showAlert(
-            error.response.data.data?.replace(
-              "rpc error: code = InvalidArgument desc = ",
-              ""
-            )
-          )
-        );
+      handleError(error?.response?.data?.data);
+      // store.dispatch(
+      //   showAlert(
+      //     error.response.data.data?.replace(
+      //       "rpc error: code = InvalidArgument desc = ",
+      //       ""
+      //     )
+      //   )
+      // );
     }
 
     if (error?.response?.status === 403) {

@@ -16,7 +16,7 @@ import {
   createTheme,
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import {differenceInDays, parseISO} from "date-fns";
+import {differenceInCalendarDays, differenceInDays, parseISO} from "date-fns";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
@@ -75,7 +75,7 @@ const MainLayout = ({setFavicon, favicon}) => {
     const today = new Date();
     const expiration = parseISO(expireDate);
 
-    return differenceInDays(expiration, today);
+    return differenceInCalendarDays(expiration, today) + 1;
   };
 
   return (
@@ -156,7 +156,7 @@ const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
   );
 };
 
-const SubscriptionWarning = (projectInfo, getDaysLeft = () => {}) => {
+const SubscriptionWarning = () => {
   const navigate = useNavigate();
   return (
     <Box

@@ -74,7 +74,7 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const {appId} = useParams();
-  console.log("appIdappId", appId);
+
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -387,8 +387,9 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
         </Flex>
 
         <Box
+          className="scrollbarNone"
           pt={8}
-          maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`}
+          maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
           {!menuList && <RingLoaderWithWrapper style={{height: "100%"}} />}

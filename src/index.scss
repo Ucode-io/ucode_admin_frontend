@@ -1055,3 +1055,11 @@ div:has(.chakra-tooltip) {
     content: none !important;
   }
 }
+
+.scrollbarNone {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

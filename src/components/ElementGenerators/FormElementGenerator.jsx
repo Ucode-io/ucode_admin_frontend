@@ -39,6 +39,7 @@ import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
 import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
 import HFTimePicker from "../FormElements/HFTimePicker";
+import HFMultiFile from "../FormElements/HFMultiFile";
 
 const parser = new Parser();
 
@@ -727,6 +728,23 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFMultiImage
+            control={control}
+            name={computedSlug}
+            key={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "MULTI_FILE":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFMultiFile
             control={control}
             name={computedSlug}
             key={computedSlug}

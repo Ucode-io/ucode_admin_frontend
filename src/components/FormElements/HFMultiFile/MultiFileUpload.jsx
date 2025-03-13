@@ -1,13 +1,14 @@
-import {Box, Button, Modal} from "@mui/material";
+import {Box, Button, Modal, Typography} from "@mui/material";
 import React, {useRef, useState} from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./styles.module.scss";
 import UploadIcon from "@mui/icons-material/Upload";
 import fileService from "../../../services/fileService";
-import DeleteIcon from "@mui/icons-material/Delete";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import {Flex} from "@chakra-ui/react";
+import {DeleteIcon} from "@chakra-ui/icons";
+import useDownloader from "../../../hooks/useDownloader";
 
 const style = {
   position: "absolute",
@@ -23,7 +24,7 @@ const style = {
   boxShadow: 24,
 };
 
-function MultiImageUpload({
+function MultiFileUpload({
   value = [],
   field,
   tabIndex,
@@ -35,7 +36,6 @@ function MultiImageUpload({
   drawerDetail = false,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
-  const [fullScreen, setFullScreen] = useState("");
 
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -43,13 +43,8 @@ function MultiImageUpload({
 
   const handleClick = () => setUploadImg(true);
   const handleClose = () => setUploadImg(false);
+  const {download} = useDownloader();
 
-  const handleFullScreen = (imgSrc) => {
-    handleClick();
-    setFullScreen(imgSrc);
-  };
-
-  const handleCloseFullScreen = () => setFullScreen(null);
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -76,13 +71,21 @@ function MultiImageUpload({
   const removeImage = (imgLink) => {
     if (value) {
       onChange(value?.filter((item) => item !== imgLink));
+      setImageList(value?.filter((item) => item !== imgLink));
     }
   };
 
-  const parseImgPhoto = (item) => {
-    const parts = item?.split("/");
-    const photoName = parts[parts.length - 1];
-    return photoName?.slice(0, 30);
+  const valueGenerate = (value, separator = "_") => {
+    const splitted = value?.split(separator)?.slice(1);
+
+    return splitted?.join(separator);
+  };
+
+  const fileDownload = (fileLink) => {
+    download({
+      link: fileLink,
+      fileName: fileLink.split("_").pop(),
+    });
   };
 
   return (
@@ -111,17 +114,10 @@ function MultiImageUpload({
                   overflow: "hidden",
                   padding: "0 0 0 0",
                 }}>
-                <img
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                  src={value?.[0]}
-                />
+                <AttachFileIcon />
               </Box>
               <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
-                {parseImgPhoto(value?.[0])}
+                {valueGenerate(value?.[0])}
               </Box>
             </Box>
           ) : (
@@ -199,13 +195,6 @@ function MultiImageUpload({
                   alt="Upload"
                   style={{width: 22, height: 22}}
                 />
-                {/* <UploadFileIcon
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    color: "rgb(116, 116, 116)",
-                  }}
-                /> */}
               </Box>
             </Box>
           ) : (
@@ -270,9 +259,22 @@ function MultiImageUpload({
                   className={styles.ImageItem}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleFullScreen(item);
+                    fileDownload(item);
                   }}>
-                  <img src={item} alt="photo" />
+                  <Flex
+                    textAlign={"center"}
+                    w={"100%"}
+                    h={"100%"}
+                    fontSize={"11px"}
+                    flexDirection={"column"}
+                    justifyContent={"center"}
+                    color="#787774"
+                    alignItems={"center"}>
+                    <AttachFileIcon style={{width: "32px", height: "32px"}} />
+                    {valueGenerate(item)?.length > 30
+                      ? `${valueGenerate(item)?.slice(0, 25)}...`
+                      : valueGenerate(item)}
+                  </Flex>
 
                   <button
                     variant="outlined"
@@ -283,9 +285,6 @@ function MultiImageUpload({
                     className={styles.clearBtn}>
                     <DeleteIcon style={{color: "red"}} />
                   </button>
-                  <Button className={styles.fullBtn} onClick={handleClose}>
-                    <FullscreenIcon style={{width: "35px", height: "35px"}} />
-                  </Button>
                 </div>
               ))}
             <Box
@@ -311,7 +310,7 @@ function MultiImageUpload({
                 style={{
                   display: "none",
                 }}
-                accept=".jpg, .jpeg, .png, .gif"
+                accept=".pdf, .doc, .docx, .xls, .xlsx, .csv, .ppt, .pptx, .txt, .rtf, .odt, .ods, .odp"
                 className="hidden"
                 ref={inputRef}
                 tabIndex={tabIndex}
@@ -347,37 +346,8 @@ function MultiImageUpload({
           </Box>
         </Box>
       </Modal>
-
-      <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCloseFullScreen();
-            }}
-            sx={{position: "absolute", top: 10, right: 10, color: "white"}}>
-            <CloseIcon />
-          </Button>
-          <img
-            src={fullScreen}
-            alt="Fullscreen"
-            style={{maxWidth: "100%", maxHeight: "100%"}}
-          />
-        </Box>
-      </Modal>
     </>
   );
 }
 
-export default MultiImageUpload;
+export default MultiFileUpload;

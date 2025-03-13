@@ -36,6 +36,7 @@ import {Parser} from "hot-formula-parser";
 import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import {Lock} from "@mui/icons-material";
+import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
 
 function DrawerFieldGenerator({field, control, watch}) {
   switch (field?.relation_type ?? field?.type) {
@@ -148,6 +149,17 @@ function DrawerFieldGenerator({field, control, watch}) {
     case "MULTI_IMAGE":
       return (
         <HFMultiImage
+          drawerDetail={true}
+          isTableView={true}
+          control={control}
+          name={field?.slug}
+          field={field}
+        />
+      );
+
+    case "MULTI_FILE":
+      return (
+        <HFMultiFile
           drawerDetail={true}
           isTableView={true}
           control={control}

@@ -6,6 +6,7 @@ import authService from "@/services/auth/authService";
 import { showAlert } from "@/store/alert/alert.thunk";
 import userService from "@/services/auth/userService";
 import sessionService from "@/services/sessionService";
+import { authActions } from "../../../../store/auth/auth.slice";
 
 export const useAccountProps = () => {
   const { t } = useTranslation();
@@ -102,6 +103,7 @@ export const useAccountProps = () => {
         } else {
           delete requestData.confirm_password;
         }
+        dispatch(authActions.updateUser({ key: "email", value: data?.email }));
         dispatch(showAlert("Successfully updated", "success"));
       });
   };

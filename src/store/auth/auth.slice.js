@@ -108,6 +108,9 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
           return acc;
         }, {}) || [];
     },
+    updateUser(state, { payload }) {
+      state.userInfo[payload.key] = payload.value
+    },
     logout: (state) => initialState,
     setStatus(state, payload) {
       state.access_type = payload;

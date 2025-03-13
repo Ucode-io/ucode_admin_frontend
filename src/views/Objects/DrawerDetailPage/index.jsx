@@ -373,7 +373,7 @@ function DrawerDetailPage({
       drawerRef.current.style.width = `${drawerWidth}px`;
     }
   }, [drawerRef.current]);
-
+  console.log("drawerWidth", drawerWidth);
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>
@@ -396,7 +396,7 @@ function DrawerDetailPage({
                 display={"flex"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                pr={10}>
+                pr={6}>
                 <Flex h={"44px"} align="center" justify="space-between">
                   <Box
                     onClick={handleClose}
@@ -467,7 +467,11 @@ function DrawerDetailPage({
                     }}
                   />
 
-                  <TabList style={{borderBottom: "none"}}>
+                  <TabList
+                    style={{
+                      borderBottom: "none",
+                      overflowX: "auto",
+                    }}>
                     {data?.tabs?.map((el, index) => (
                       <Tab
                         onClick={(e) => {
@@ -476,6 +480,7 @@ function DrawerDetailPage({
                         }}
                         key={index}
                         style={{
+                          whiteSpace: "nowrap",
                           height: "24px",
                           padding: "0 10px",
                           fontSize: "11px",

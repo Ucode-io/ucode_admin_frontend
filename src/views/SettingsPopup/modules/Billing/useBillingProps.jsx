@@ -1,28 +1,44 @@
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import billingService from "../../../../services/billingService";
+import billingService from "@/services/billingService";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import { showAlert } from "@/store/alert/alert.thunk";
+import { useProjectListQuery } from "@/services/companyService";
+import { store } from "@/store";
+import { companyActions } from "@/store/company/company.slice";
 
 export const useBillingProps = () => {
-
   const dispatch = useDispatch();
   const project = useSelector((state) => state?.company?.projectItem);
+  const company = store.getState().company;
   const queryClient = useQueryClient();
 
   const [addBalance, setAddBalance] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const {control, handleSubmit, watch, reset} = useForm();
+  const { control, handleSubmit, watch, reset } = useForm();
 
-  
   const handClickBalance = () => setAddBalance(true);
   const handCloseBalance = () => {
     reset({});
     setAddBalance(false);
   };
-  
+
+  const { isLoading: projectLoading } = useProjectListQuery({
+    params: {
+      company_id: company.companyId,
+    },
+    queryParams: {
+      enabled: Boolean(company.companyId),
+      onSuccess: (res) => {
+        dispatch(companyActions.setProjects(res.projects));
+        dispatch(companyActions.setProjectItem(res.projects[0]));
+        dispatch(companyActions.setProjectId(res.projects[0].project_id));
+      },
+    },
+  });
+
   const { data } = useQuery(
     ["GET_BILLING_DATA", project],
     () => {
@@ -34,7 +50,7 @@ export const useBillingProps = () => {
     }
   );
 
-  const {data: transactions, refetch} = useQuery(
+  const { data: transactions, refetch } = useQuery(
     ["GET_TRANSACTION_LIST", project],
     () => {
       return billingService.getTransactionList();
@@ -53,7 +69,7 @@ export const useBillingProps = () => {
     };
 
     billingService
-      .receiptPay(data, {limit: 10})
+      .receiptPay(data, { limit: 10 })
       .then(() => {
         dispatch(showAlert("Transaction successfully created!", "success"));
         refetch();
@@ -75,5 +91,5 @@ export const useBillingProps = () => {
     onSubmit,
     loading,
     reset,
-  }
-}
+  };
+};

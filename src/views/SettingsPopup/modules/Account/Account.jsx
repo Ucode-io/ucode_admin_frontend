@@ -124,7 +124,7 @@ export const Account = ({ handleClose = () => {} }) => {
         gap={2}
         marginBottom={2}
       >
-        {sessions.map((device, index) => (
+        {sessions?.map((device, index) => (
           <DeviceCard
             key={device.id}
             onDeleteClick={deleteSession}

@@ -314,7 +314,7 @@ const TableView = ({
     detectStringType(searchText) === "number"
       ? parseInt(searchText)
       : searchText;
-  console.log("filtersfilters", filters);
+
   const {
     data: {tableData, pageCount, dataCount} = {
       tableData: [],

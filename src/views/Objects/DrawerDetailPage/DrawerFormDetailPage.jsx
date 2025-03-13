@@ -87,7 +87,7 @@ function DrawerFormDetailPage({
 
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
-      fields: section.fields.filter(
+      fields: section?.fields?.filter(
         (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
       ),
     }));
@@ -96,7 +96,7 @@ function DrawerFormDetailPage({
       isEqual(prevSections, updatedSections) ? prevSections : updatedSections
     );
   }, [data, watch("attributes.layout_heading")]);
-
+  console.log("sectedTab", selectedTab);
   return (
     <>
       <Box
@@ -131,7 +131,7 @@ function DrawerFormDetailPage({
               dragClass="drag-item"
               lockAxis="y"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-              {section?.fields.map((field, fieldIndex) => (
+              {section?.fields?.map((field, fieldIndex) => (
                 <Draggable
                   className="drag-handle"
                   key={field?.id ?? fieldIndex}>
@@ -183,7 +183,8 @@ function DrawerFormDetailPage({
                         fontWeight="500"
                         width="100%">
                         {field?.attributes?.[`label_${i18n?.language}`] ||
-                          field?.label}
+                          field?.label ||
+                          field?.attributes?.label}
                       </Box>
                     </Box>
                     <Box sx={{width: "60%"}}>

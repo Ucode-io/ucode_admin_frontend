@@ -15,6 +15,7 @@ import {Flex, Text} from "@chakra-ui/react";
 import {applyDrag} from "../../../utils/applyDrag";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import {isEqual} from "lodash";
 
 function DrawerFormDetailPage({
   control,
@@ -87,11 +88,13 @@ function DrawerFormDetailPage({
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
       fields: section.fields.filter(
-        (el) => el?.slug !== watch("attributes.layout_heading")
+        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
       ),
     }));
 
-    setSections(updatedSections);
+    setSections((prevSections) =>
+      isEqual(prevSections, updatedSections) ? prevSections : updatedSections
+    );
   }, [data, watch("attributes.layout_heading")]);
 
   return (

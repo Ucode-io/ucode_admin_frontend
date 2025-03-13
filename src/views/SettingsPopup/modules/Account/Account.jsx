@@ -7,6 +7,7 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import { SaveCancelBtns } from "../../components/SaveCancelBtns";
 import { Field } from "../../components/Field";
 import { ContentTitle } from "../../components/ContentTitle";
+import { DeviceCard } from "./components/DeviceCard";
 
 export const Account = ({ handleClose = () => {} }) => {
   const {
@@ -18,7 +19,14 @@ export const Account = ({ handleClose = () => {} }) => {
     handleProfilePhotoUpload,
     photoUrl,
     userInfo,
+    sessions,
+    deleteSession,
   } = useAccountProps();
+
+  const mockData = [
+    { name: "Device 1", ip: "192.168.0.1", createdAt: "2025-03-13 10:00 AM" },
+    { name: "Device 2", ip: "192.168.0.2", createdAt: "2025-03-13 11:00 AM" },
+  ];
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -109,69 +117,21 @@ export const Account = ({ handleClose = () => {} }) => {
         <Box flex="1"></Box>
       </Flex>
 
-      {/* <ContentTitle>{t("account_security")}</ContentTitle>
-
-  <Flex gap="24px" mb="24px">
-    <Box flex="1">
-      <span className={cls.label}>{t("old.password")}</span>
-      <HFTextField
-        placeholder={t("old.password")}
-        fullWidth
-        control={control}
-        name="old_password"
-      />
-    </Box>
-
-    <Box position="relative" flex="1">
-      <span className={cls.label}>{t("new.password")}</span>
-      <HFTextField
-        placeholder={t("new.password")}
-        fullWidth
-        control={control}
-        name="new_password"
-        type={inputType ? "password" : "text"}
-      />
-        <Box
-          onClick={() => setInputType(!inputType)}
-          sx={{
-            position: "absolute",
-            right: "15px",
-            bottom: "5px",
-            cursor: "pointer",
-          }}
-        >
-          {inputType ? <VisibilityIcon /> : <VisibilityOffIcon />}
-        </Box>
-    </Box>
-  </Flex>
-
-  <Flex gap="24px">
-    <Box position="relative" flex="1">
-      <span className={cls.label}>{t("confirm.password")}</span>
-      <HFTextField
-        placeholder={t("confirm.password")}
-        fullWidth
-        control={control}
-        name="confirm_password"
-        type={passwordType ? "password" : "text"}
-        style={{
-          border: `1px solid ${inputMatch ? "red" : "#eee"}`,
-        }}
-      />
+      <ContentTitle>{t("sessions")}</ContentTitle>
       <Box
-        onClick={() => setPasswordType(!passwordType)}
-        sx={{
-          position: "absolute",
-          right: "15px",
-          bottom: "5px",
-          cursor: "pointer",
-        }}
+        display="grid"
+        gridTemplateColumns={"1fr 1fr"}
+        gap={2}
+        marginBottom={2}
       >
-        {passwordType ? <VisibilityIcon /> : <VisibilityOffIcon />}
+        {sessions.map((device, index) => (
+          <DeviceCard
+            key={device.id}
+            onDeleteClick={deleteSession}
+            device={device}
+          />
+        ))}
       </Box>
-    </Box>
-    <Box flex="1"></Box>
-  </Flex> */}
 
       <SaveCancelBtns
         cancelProps={{

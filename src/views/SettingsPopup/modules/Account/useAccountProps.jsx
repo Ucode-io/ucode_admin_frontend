@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import authService from "../../../../services/auth/authService";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import userService from "../../../../services/auth/userService";
+import sessionService from "../../../../services/sessionService";
 
 export const useAccountProps = () => {
   const { t } = useTranslation();
@@ -14,20 +15,39 @@ export const useAccountProps = () => {
   const role = useSelector((state) => state?.auth?.roleInfo);
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userId = useSelector((state) => state?.auth?.userId);
+
   const projectId = useSelector((state) => state?.auth?.projectId);
   const userInfo = useSelector((state) => state?.auth?.userInfo);
   const envId = useSelector((state) => state?.auth);
 
-  console.log({  envId  })
-
   const [inputType, setInputType] = useState(true);
   const [passwordType, setPasswordType] = useState(true);
+
   const [inputMatch, setInputMatch] = useState(false);
   const [photoUrl, setPhotoUrl] = useState(false);
 
+  const [sessions, setSessions] = useState([]);
+
+  const getSessions = () => {
+    sessionService
+      .getList({
+        user_id: envId?.userId,
+        client_type_id: envId?.clientType?.id,
+        limit: 50,
+        offset: 1,
+      })
+      .then((res) => {
+        setSessions(res?.sessions);
+      });
+  };
+
+  const deleteSession = (id) => {
+    sessionService.delete(id).then(() => getSessions());
+  };
+
   const handleProfilePhotoUpload = (photoUrl) => {
     setPhotoUrl(photoUrl);
-  }
+  };
 
   const resetPasswordV2 = (
     oldPassword,
@@ -98,21 +118,23 @@ export const useAccountProps = () => {
   });
 
   const onSubmit = (values) => {
-      if (values?.new_password && values?.old_password) {
-        if (values?.new_password !== values?.confirm_password) {
-          dispatch(showAlert("Confirm Password fields do not match"));
-          setInputMatch(true);
-        } else if (userInfo) {
-          update(values);
-          setInputMatch(false);
-        }
+    if (values?.new_password && values?.old_password) {
+      if (values?.new_password !== values?.confirm_password) {
+        dispatch(showAlert("Confirm Password fields do not match"));
+        setInputMatch(true);
       } else if (userInfo) {
         update(values);
         setInputMatch(false);
       }
-    };
+    } else if (userInfo) {
+      update(values);
+      setInputMatch(false);
+    }
+  };
 
   useEffect(() => {
+    getSessions();
+
     authService
       .getUserById(userId, {
         "project-id": projectId,
@@ -138,5 +160,7 @@ export const useAccountProps = () => {
     handleProfilePhotoUpload,
     photoUrl,
     userInfo,
-  }
-}
+    sessions,
+    deleteSession,
+  };
+};

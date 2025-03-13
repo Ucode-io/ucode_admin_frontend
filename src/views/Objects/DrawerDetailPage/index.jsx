@@ -373,7 +373,7 @@ function DrawerDetailPage({
       drawerRef.current.style.width = `${drawerWidth}px`;
     }
   }, [drawerRef.current]);
-  console.log("drawerWidth", drawerWidth);
+
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>

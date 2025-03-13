@@ -65,11 +65,11 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import { Modal, Skeleton } from "@mui/material";
+import {Modal, Skeleton} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { clearDB, getAllFromDB } from "../../utils/languageDB";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { GreyLoader } from "../Loaders/GreyLoader";
+import {clearDB, getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {GreyLoader} from "../Loaders/GreyLoader";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -78,7 +78,7 @@ const LayoutSidebar = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const { appId } = useParams();
+  const {appId} = useParams();
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -105,23 +105,23 @@ const LayoutSidebar = ({
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  const [menu, setMenu] = useState({ event: "", type: "", root: false });
+  const [menu, setMenu] = useState({event: "", type: "", root: false});
   const openSidebarMenu = Boolean(menu?.event);
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
   };
 
-  const { data: menuById } = useMenuGetByIdQuery({
+  const {data: menuById} = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
       template_id:
         menuById?.attributes?.menu_settings_id ||
@@ -134,13 +134,13 @@ const LayoutSidebar = ({
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
   const handleOpenNotify = (event, type, root) => {
-    setMenu({ event: event?.currentTarget, type: type, root: root });
+    setMenu({event: event?.currentTarget, type: type, root: root});
   };
   const handleCloseNotify = () => {
     setMenu(null);
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: appId || menuItem?.id,
       search: subSearchText,
@@ -224,7 +224,7 @@ const LayoutSidebar = ({
       .then((res) => {
         setMenuList(res.menus);
         setIsMenuListLoading(false);
-        console.log({ menu: res.menus });
+        console.log({menu: res.menus});
       })
       .catch((error) => {
         setIsMenuListLoading(false);
@@ -235,7 +235,7 @@ const LayoutSidebar = ({
       });
   };
 
-  const { isLoadingUser } = useQuery(
+  const {isLoadingUser} = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -304,7 +304,7 @@ const LayoutSidebar = ({
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -359,8 +359,7 @@ const LayoutSidebar = ({
         flexDirection="column"
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
-        bg={menuStyle?.background ?? "#fff"}
-      >
+        bg={menuStyle?.background ?? "#fff"}>
         <Flex
           position="absolute"
           zIndex={999}
@@ -377,12 +376,11 @@ const LayoutSidebar = ({
           cursor="pointer"
           onClick={() =>
             dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))
-          }
-        >
+          }>
           {sidebarIsOpen ? (
-            <KeyboardDoubleArrowLeftIcon style={{ color: "#007aff" }} />
+            <KeyboardDoubleArrowLeftIcon style={{color: "#007aff"}} />
           ) : (
-            <KeyboardDoubleArrowRightIcon style={{ color: "#007aff" }} />
+            <KeyboardDoubleArrowRightIcon style={{color: "#007aff"}} />
           )}
         </Flex>
 
@@ -391,8 +389,7 @@ const LayoutSidebar = ({
           py={10}
           h={45}
           borderBottom="1px solid #EAECF0"
-          alignItems="center"
-        >
+          alignItems="center">
           <Header
             sidebarIsOpen={sidebarIsOpen}
             toggleDarkMode={toggleDarkMode}
@@ -405,11 +402,11 @@ const LayoutSidebar = ({
         </Flex>
 
         <Box
+          className="scrollbarNone"
           pt={8}
-          maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`}
+          maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
-          overflowX="hidden"
-        >
+          overflowX="hidden">
           {isMenuListLoading && (
             <Box mx="8px">
               <Box display="flex" columnGap="8px">
@@ -449,12 +446,10 @@ const LayoutSidebar = ({
               className="menu-element"
               onMouseLeave={() =>
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
-              }
-            >
+              }>
               <Container
                 dragHandleSelector=".column-drag-handle"
-                onDrop={onDrop}
-              >
+                onDrop={onDrop}>
                 {menuList.map((element, index) => (
                   <AppSidebar
                     key={index}
@@ -479,22 +474,20 @@ const LayoutSidebar = ({
                     h={32}
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
+                    _hover={{bg: "#EAECF0"}}
                     cursor="pointer"
                     mx={8}
                     onClick={(e) => {
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
                     }}
-                    {...itemConditionalProps}
-                  >
+                    {...itemConditionalProps}>
                     <Flex
                       position="absolute"
                       w={36}
                       h={36}
                       alignItems="center"
-                      justifyContent="center"
-                    >
+                      justifyContent="center">
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
@@ -505,8 +498,7 @@ const LayoutSidebar = ({
                         "#475467"
                       }
                       pl={48}
-                      fontSize={14}
-                    >
+                      fontSize={14}>
                       {generateLangaugeText(
                         menuLanguages,
                         i18n?.language,
@@ -532,8 +524,7 @@ const LayoutSidebar = ({
             sidebarIsOpen
               ? undefined
               : () => dispatch(mainActions.setSidebarHighlightedAction(null))
-          }
-        >
+          }>
           <SidebarActionTooltip id="documentation" title="Documentation">
             <Flex
               as="a"
@@ -544,11 +535,10 @@ const LayoutSidebar = ({
               alignItems="center"
               justifyContent="center"
               borderRadius={6}
-              _hover={{ bg: "#EAECF0" }}
+              _hover={{bg: "#EAECF0"}}
               cursor="pointer"
               mb={sidebarIsOpen ? 0 : 4}
-              {...getActionProps("documentation")}
-            >
+              {...getActionProps("documentation")}>
               <img src="/img/documentation.svg" alt="merge" />
             </Flex>
           </SidebarActionTooltip>
@@ -684,8 +674,8 @@ const LayoutSidebar = ({
   );
 };
 
-const Chatwoot = forwardRef(({ open, ...props }, ref) => {
-  const { originalButtonFunction } = useChatwoot();
+const Chatwoot = forwardRef(({open, ...props}, ref) => {
+  const {originalButtonFunction} = useChatwoot();
 
   return (
     <Flex
@@ -695,18 +685,17 @@ const Chatwoot = forwardRef(({ open, ...props }, ref) => {
       alignItems="center"
       justifyContent="center"
       borderRadius={6}
-      _hover={{ bg: "#EAECF0" }}
+      _hover={{bg: "#EAECF0"}}
       cursor="pointer"
       mb={open ? 0 : 4}
       {...props}
-      onClick={originalButtonFunction}
-    >
+      onClick={originalButtonFunction}>
       <img src="/img/message-text-square.svg" alt="chat" />
     </Flex>
   );
 });
 
-const AIChat = forwardRef(({ sidebarOpen, ...props }, ref) => {
+const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -730,13 +719,12 @@ const AIChat = forwardRef(({ sidebarOpen, ...props }, ref) => {
         alignItems="center"
         justifyContent="center"
         borderRadius={6}
-        _hover={{ bg: "#EAECF0" }}
+        _hover={{bg: "#EAECF0"}}
         cursor="pointer"
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <img src="/img/magic-wand.svg" alt="magic" />
       </Flex>
 
@@ -766,7 +754,7 @@ const Header = ({
 }) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen, onOpen, onClose} = useDisclosure();
 
   const handleClose = () => {
     onClose();
@@ -783,7 +771,7 @@ const Header = ({
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
     authService
-      .updateToken({ ...params, env_id: environment.id }, { ...params })
+      .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
@@ -798,8 +786,7 @@ const Header = ({
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      onClose={handleClose}
-    >
+      onClose={handleClose}>
       <PopoverTrigger>
         <Flex
           w="calc(100% - 8px)"
@@ -810,18 +797,16 @@ const Header = ({
           p={5}
           borderRadius={8}
           bg="#fff"
-          _hover={{ bg: "#EAECF0" }}
+          _hover={{bg: "#EAECF0"}}
           cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}
-        >
+          onClick={() => (!isOpen ? onOpen() : null)}>
           <Flex
             w={36}
             h={36}
             position="absolute"
             left={0}
             alignItems="center"
-            justifyContent="center"
-          >
+            justifyContent="center">
             {Boolean(projectInfo?.logo) && (
               <img src={projectInfo?.logo} alt="" width={20} height={20} />
             )}
@@ -836,8 +821,7 @@ const Header = ({
                 alignItems="center"
                 justifyContent="center"
                 fontSize={14}
-                fontWeight={500}
-              >
+                fontWeight={500}>
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             )}
@@ -850,11 +834,10 @@ const Header = ({
             fontSize={13}
             fontWeight={500}
             overflow="hidden"
-            textOverflow="ellipsis"
-          >
+            textOverflow="ellipsis">
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{ marginLeft: "auto", fontSize: 20 }} />
+          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent
@@ -864,8 +847,7 @@ const Header = ({
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}
-      >
+        zIndex={999}>
         <>
           <ProfilePanel
             menuLanguages={menuLanguages}
@@ -890,7 +872,7 @@ const ProfilePanel = ({
 }) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
@@ -901,11 +883,10 @@ const ProfilePanel = ({
           justifyContent={"center"}
           w={36}
           h={36}
-          style={{ border: "1px solid #eee", fontSize: "24px" }}
+          style={{border: "1px solid #eee", fontSize: "24px"}}
           borderRadius={"5px"}
           bg={"#04ADD4"}
-          color={"white"}
-        >
+          color={"white"}>
           {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
@@ -919,7 +900,7 @@ const ProfilePanel = ({
       </Flex>
 
       <Flex
-        _hover={{ background: "#eeee" }}
+        _hover={{background: "#eeee"}}
         alignItems={"center"}
         h={25}
         minW={86}
@@ -936,7 +917,7 @@ const ProfilePanel = ({
         //   onClose();
         // }}
       >
-        <SettingsIcon style={{ color: "#475467" }} />
+        <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
         </Box>
@@ -952,7 +933,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
@@ -1007,7 +988,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    authService.sendAccessToken({ access_token: accessToken }).then((res) => {
+    authService.sendAccessToken({access_token: accessToken}).then((res) => {
       clearDB();
       store.dispatch(authActions.logout());
       dispatch(companyActions.setCompanies([]));

@@ -1059,3 +1059,11 @@ div:has(.chakra-tooltip) {
     height: calc(100vh - 320px) !important;
   }
 }
+
+.scrollbarNone {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

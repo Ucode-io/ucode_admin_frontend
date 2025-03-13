@@ -8,27 +8,21 @@ import {store} from "../../store";
 import {isOnlineReducerAction} from "../../store/isOnline/isOnline.slice";
 import {useDispatch} from "react-redux";
 import {ThemeProvider} from "@mui/styles";
-import {
-  Box,
-  CssBaseline,
-  Typography,
-  createMuiTheme,
-  createTheme,
-} from "@mui/material";
+import {Box, CssBaseline, Typography, createTheme} from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import {differenceInDays, parseISO} from "date-fns";
-import { SettingsPopup } from "../../views/SettingsPopup";
+import {SettingsPopup} from "../../views/SettingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
-import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
+import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
+import {differenceInCalendarDays, differenceInDays, parseISO} from "date-fns";
 
-const MainLayout = ({ setFavicon, favicon }) => {
-  const { appId } = useParams();
+const MainLayout = ({setFavicon, favicon}) => {
+  const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const updateSearchParam = useSearchParams()[2];
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data: projectInfo } = useProjectGetByIdQuery({
+  const {data: projectInfo} = useProjectGetByIdQuery({
     projectId,
     queryParams: {
       onSuccess: (data) => {
@@ -74,7 +68,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
     const today = new Date();
     const expiration = parseISO(expireDate);
 
-    return differenceInDays(expiration, today);
+    return differenceInCalendarDays(expiration, today) + 1;
   };
   const [openProfileModal, setOpenProfileModal] = useState(false);
 
@@ -150,20 +144,17 @@ const SubscriptionError = ({
         zIndex: 9,
         // gap: "30px",
         cursor: "pointer",
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      }}>
+      <Box sx={{display: "flex", alignItems: "center"}}>
         <WarningAmberIcon
-          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
+          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
         />
-        <Typography
-          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
-        >
+        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
           Your subscription will expire in{" "}
           <strong>{getDaysLeft(projectInfo?.expire_date)}</strong> days.
         </Typography>
       </Box>
-      <Typography sx={{ fontSize: "12px", color: "#000" }}>
+      <Typography sx={{fontSize: "12px", color: "#000"}}>
         Please <strong>Click here</strong> to avoid service interruptions, to
         upgrade your plan.
       </Typography>
@@ -192,21 +183,18 @@ const SubscriptionWarning = (
         gap: "10px",
         zIndex: 9,
         cursor: "pointer",
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      }}>
+      <Box sx={{display: "flex", alignItems: "center"}}>
         <WarningAmberIcon
-          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
+          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
         />
-        <Typography
-          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
-        >
+        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
           Your subscription has expired.
         </Typography>
       </Box>
-      <Typography sx={{ fontSize: "12px", color: "#000" }}>
+      <Typography sx={{fontSize: "12px", color: "#000"}}>
         Please renew to continue accessing our services.{" "}
-        <strong style={{ textDecoration: "underline" }}>
+        <strong style={{textDecoration: "underline"}}>
           Click here to upgrade your plan
         </strong>
       </Typography>

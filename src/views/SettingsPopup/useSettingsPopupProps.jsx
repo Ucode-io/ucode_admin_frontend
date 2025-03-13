@@ -92,45 +92,45 @@ export const useSettingsPopupProps = ({ onClose }) => {
         },
       ],
     },
-    {
-      key: "permissions",
-      title: t("advanced_settings"),
-      tabs: [
-        {
-          key: "permissions",
-          title:
-            generateLangaugeText(lang, i18n?.language, "Permissions") ||
-            "Permissions",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
-        },
-        {
-          key: "resources",
-          title:
-            generateLangaugeText(lang, i18n?.language, "Resources") ||
-            "Resources",
-          icon: (
-            <Storage
-              sx={{ width: 20, height: 20 }}
-              color="rgba(55, 53, 47, 0.85)"
-            />
-          ),
-        },
-        {
-          key: "apiKeys",
-          title:
-            generateLangaugeText(lang, i18n?.language, "API Keys") ||
-            "API Keys",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
-        },
-        {
-          key: "redirect",
-          title:
-            generateLangaugeText(lang, i18n?.language, "Custom endpoint") ||
-            "Custom endpoint",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
-        },
-      ],
-    },
+    // {
+    //   key: "permissions",
+    //   title: t("advanced_settings"),
+    //   tabs: [
+    //     {
+    //       key: "permissions",
+    //       title:
+    //         generateLangaugeText(lang, i18n?.language, "Permissions") ||
+    //         "Permissions",
+    //       icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+    //     },
+    //     {
+    //       key: "resources",
+    //       title:
+    //         generateLangaugeText(lang, i18n?.language, "Resources") ||
+    //         "Resources",
+    //       icon: (
+    //         <Storage
+    //           sx={{ width: 20, height: 20 }}
+    //           color="rgba(55, 53, 47, 0.85)"
+    //         />
+    //       ),
+    //     },
+    //     {
+    //       key: "apiKeys",
+    //       title:
+    //         generateLangaugeText(lang, i18n?.language, "API Keys") ||
+    //         "API Keys",
+    //       icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+    //     },
+    //     {
+    //       key: "redirect",
+    //       title:
+    //         generateLangaugeText(lang, i18n?.language, "Custom endpoint") ||
+    //         "Custom endpoint",
+    //       icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+    //     },
+    //   ],
+    // },
   ];
 
   const handleClose = () => {

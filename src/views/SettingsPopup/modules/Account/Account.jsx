@@ -141,6 +141,7 @@ export const Account = ({ handleClose = () => {} }) => {
           onClick: handleClose,
         }}
         marginTop="auto"
+        paddingBottom="24px"
       />
     </Box>
   );

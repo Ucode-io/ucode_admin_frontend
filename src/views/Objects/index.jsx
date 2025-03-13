@@ -36,6 +36,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { TableDataSkeleton } from "../../components/TableDataSkeleton";
+import { DynamicTable } from "../table-redesign";
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams();
@@ -176,7 +177,8 @@ const ObjectsPage = () => {
         <Box paddingX={"16px"} borderBottom="1px solid #EAECF0">
           <Skeleton height="40px" width="100%" />
         </Box>
-        <Table>
+        <DynamicTable loader={true} />
+        {/* <Table>
           <TableHead>
             <TableRow>
               <Box display="flex" paddingX="16px">
@@ -209,7 +211,7 @@ const ObjectsPage = () => {
               </Box>
             </TableRow>
           </TableBody>
-        </Table>
+        </Table> */}
       </Box>
     );
   }

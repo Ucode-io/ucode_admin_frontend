@@ -117,7 +117,7 @@ const ApiKeyPage = () => {
     aTag.click();
     aTag.remove();
   };
-  console.log("elementelement", apiKeys);
+
   return (
     <div>
       <Box

@@ -39,6 +39,7 @@ import HFButtonField from "../FormElements/HFButtonField";
 import HFTextComponent from "../FormElements/HFTextComponent";
 import HFStatusField from "../FormElements/HFStatusField";
 import HFMoneyField from "../FormElements/HFMoneyField";
+import HFMultiFile from "../FormElements/HFMultiFile";
 
 const parser = new Parser();
 
@@ -302,6 +303,27 @@ const CellElementGeneratorForTableView = ({
     case "MULTI_IMAGE":
       return (
         <HFMultiImage
+          disabled={isDisabled}
+          isFormEdit
+          field={field}
+          isTableView={true}
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          isTransparent={true}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          newUi={newUi}
+        />
+      );
+
+    case "MULTI_FILE":
+      return (
+        <HFMultiFile
           disabled={isDisabled}
           isFormEdit
           field={field}

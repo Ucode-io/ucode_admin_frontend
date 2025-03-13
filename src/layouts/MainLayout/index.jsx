@@ -47,6 +47,13 @@ const MainLayout = ({setFavicon, favicon}) => {
     palette: {
       mode: "light",
     },
+    components: {
+      MuiPaper: {
+        defaultProps: {
+          elevation: 4,
+        },
+      },
+    },
   });
 
   return (

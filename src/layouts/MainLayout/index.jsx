@@ -17,13 +17,18 @@ import {
 } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {differenceInCalendarDays, differenceInDays, parseISO} from "date-fns";
+import { SettingsPopup } from "../../views/SettingsPopup";
+import useSearchParams from "../../hooks/useSearchParams";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
-const MainLayout = ({setFavicon, favicon}) => {
-  const {appId} = useParams();
+const MainLayout = ({ setFavicon, favicon }) => {
+  const { appId } = useParams();
   const projectId = store.getState().company.projectId;
+  const updateSearchParam = useSearchParams()[2];
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {data: projectInfo} = useProjectGetByIdQuery({
+  const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
     queryParams: {
       onSuccess: (data) => {
@@ -71,6 +76,15 @@ const MainLayout = ({setFavicon, favicon}) => {
 
     return differenceInCalendarDays(expiration, today) + 1;
   };
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+
+  const handleOpenProfileModal = () => setOpenProfileModal(true);
+  const handleCloseProfileModal = () => setOpenProfileModal(false);
+
+  const handleOpenBilling = () => {
+    handleOpenProfileModal();
+    updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
+  };
 
   return (
     <>
@@ -79,11 +93,13 @@ const MainLayout = ({setFavicon, favicon}) => {
         {getDaysLeft(projectInfo?.expire_date) <= 5 &&
           (project_status === "insufficient_funds" ? (
             <SubscriptionError
+              onClick={handleOpenBilling}
               projectInfo={projectInfo}
               getDaysLeft={getDaysLeft}
             />
           ) : project_status === "inactive" ? (
             <SubscriptionWarning
+              onClick={handleOpenBilling}
               projectInfo={projectInfo}
               getDaysLeft={getDaysLeft}
             />
@@ -97,27 +113,29 @@ const MainLayout = ({setFavicon, favicon}) => {
             appId={appId}
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
+            handleOpenProfileModal={handleOpenProfileModal}
           />
           <div className={styles.content}>
             <Outlet />
           </div>
         </div>
+        <SettingsPopup
+          open={openProfileModal}
+          onClose={handleCloseProfileModal}
+        />
       </ThemeProvider>
     </>
   );
 };
 
-const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
-  const navigate = useNavigate();
+const SubscriptionError = ({
+  projectInfo,
+  getDaysLeft = () => {},
+  onClick = () => {},
+}) => {
   return (
     <Box
-      onClick={() =>
-        navigate(`/settings/auth/matrix/profile/crossed`, {
-          state: {
-            tab: 2,
-          },
-        })
-      }
+      onClick={onClick}
       sx={{
         position: "sticky",
         top: 0,
@@ -132,17 +150,20 @@ const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
         zIndex: 9,
         // gap: "30px",
         cursor: "pointer",
-      }}>
-      <Box sx={{display: "flex", alignItems: "center"}}>
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <WarningAmberIcon
-          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
         />
-        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+        <Typography
+          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+        >
           Your subscription will expire in{" "}
           <strong>{getDaysLeft(projectInfo?.expire_date)}</strong> days.
         </Typography>
       </Box>
-      <Typography sx={{fontSize: "12px", color: "#000"}}>
+      <Typography sx={{ fontSize: "12px", color: "#000" }}>
         Please <strong>Click here</strong> to avoid service interruptions, to
         upgrade your plan.
       </Typography>
@@ -150,17 +171,14 @@ const SubscriptionError = ({projectInfo, getDaysLeft = () => {}}) => {
   );
 };
 
-const SubscriptionWarning = () => {
-  const navigate = useNavigate();
+const SubscriptionWarning = ({
+  projectInfo,
+  getDaysLeft = () => {},
+  onClick = () => {}
+}) => {
   return (
     <Box
-      onClick={() =>
-        navigate(`/settings/auth/matrix/profile/crossed`, {
-          state: {
-            tab: 2,
-          },
-        })
-      }
+      onClick={onClick}
       sx={{
         position: "sticky",
         top: 0,
@@ -174,18 +192,21 @@ const SubscriptionWarning = () => {
         gap: "10px",
         zIndex: 9,
         cursor: "pointer",
-      }}>
-      <Box sx={{display: "flex", alignItems: "center"}}>
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <WarningAmberIcon
-          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
         />
-        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+        <Typography
+          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+        >
           Your subscription has expired.
         </Typography>
       </Box>
-      <Typography sx={{fontSize: "12px", color: "#000"}}>
+      <Typography sx={{ fontSize: "12px", color: "#000" }}>
         Please renew to continue accessing our services.{" "}
-        <strong style={{textDecoration: "underline"}}>
+        <strong style={{ textDecoration: "underline" }}>
           Click here to upgrade your plan
         </strong>
       </Typography>

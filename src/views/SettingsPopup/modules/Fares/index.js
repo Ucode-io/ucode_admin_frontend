@@ -1,0 +1,1 @@
+export { Fares } from './Fares';

@@ -80,12 +80,12 @@ import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
+import {useGetLang} from "../../hooks/useGetLang";
 import {getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {LayoutPopup} from "./LayoutPopup";
 import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
-import {useGetLang} from "../../hooks/useGetLang";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",

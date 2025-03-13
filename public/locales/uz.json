@@ -34,6 +34,9 @@
   "enter.login": "Loginni kiriting",
   "phone": "Telefon",
   "enter.phone": "Telefon raqamini kiriting",
+  "change.email": "Elektron pochta manzilini o'zgartirish",
+  "change.phone": "Telefon raqamini o'zgartirish",
+  "change.login": "Loginni o'zgartirish",
   "email": "E-pochta manzili",
   "enter.email": "E-pochta manzilini kiriting",
   "password": "Parol",
@@ -60,7 +63,7 @@
   "create.role": "Создать роль",
   "roles": "Роли",
   "create.new.sessions": "Создание новых сеансов",
-  "sessions": "Сессии",
+  "sessions": "Sessiyalar",
   "fio": "ФИО",
   "enter.fio": "Введите ФИО",
   "integrations": "Интеграции",
@@ -229,5 +232,9 @@
   "Password must have at least one special character": "Parolda kamida bitta mahsus belgi bo'lishi kerak",
   "shown": "Ko'rsatilgan",
   "show_all": "Hammasini ko'rsatish",
-  "add_filter": "Filter qo'shish"
+  "add_filter": "Filter qo'shish",
+  "account": "Akkaunt",
+  "account_security": "Akkaunt havfsizligi",
+  "advanced_settings": "Kengaytirilgan sozlamalar",
+  "add_resource": "Resurs qo'shish"
 }

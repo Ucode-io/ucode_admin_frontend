@@ -1,0 +1,30 @@
+.title {
+  width: 100%;
+  margin-top: 0px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgb(55, 53, 47);
+}
+
+.subtitle {
+  font-size: 14px;
+  color: rgb(120, 119, 116);
+}
+
+.wrapper {
+  width: auto;
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+  margin-bottom: 16px;
+}
+
+.btn {
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}

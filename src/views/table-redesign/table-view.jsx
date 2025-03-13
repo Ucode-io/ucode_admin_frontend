@@ -571,8 +571,8 @@ const TableView = ({
           menuItem={menuItem}
           {...props}
         />
-        {/* 
-        {open && selectedViewType?.icon === "SidePeek" ? (
+
+        {/* {open && selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
             setFormValue={setFormValue}

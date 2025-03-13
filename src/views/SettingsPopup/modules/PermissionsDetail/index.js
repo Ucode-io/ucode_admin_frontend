@@ -1,0 +1,1 @@
+export { PermissionsDetail }  from "./PermissionsDetail"

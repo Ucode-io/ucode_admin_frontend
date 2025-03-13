@@ -37,23 +37,90 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import {Menu, Checkbox, Pagination, Button} from "@mui/material";
+import { Menu, Checkbox, Pagination, Button, Skeleton } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-import {useForm} from "react-hook-form";
-import {transliterate} from "@/utils/textTranslater";
-import {showAlert} from "@/store/alert/alert.thunk";
-import {generateGUID} from "@/utils/generateID";
+import { useForm } from "react-hook-form";
+import { transliterate } from "@/utils/textTranslater";
+import { showAlert } from "@/store/alert/alert.thunk";
+import { generateGUID } from "@/utils/generateID";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import FieldOptionModal from "@/components/DataTable/FieldOptionModal";
 import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import TableRow from "./table-row";
 import AddDataColumn from "./AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
-import {CreatableSelect} from "chakra-react-select";
+import { CreatableSelect } from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { TableDataSkeleton } from "../../components/TableDataSkeleton";
+
+const mockColumns = Array.from({ length: 5 }, (_, index) => ({
+  attributes: {
+    field_permission: {
+      edit_permission: true,
+      field_id: "231442e6-4395-4232-910f-56419049340d",
+      guid: "12f68b6d-5e1e-4399-82c0-ce8f3aa0bff1",
+      label: "Name",
+      role_id: "c06ce3e5-e8f0-4cb6-9afe-6456cd105334",
+      table_slug: "time-line_test",
+      view_permission: true,
+    },
+    format: "SINGLE_LINE",
+    formula: "undefined + undefined",
+    label: "",
+    label_undefined: "   ",
+    math: {
+      label: "plus",
+      value: "+",
+    },
+    options: [],
+  },
+  autofill_field: "",
+  autofill_table: "",
+  automatic: false,
+  column: 0,
+  default: "",
+  enable_multilanguage: false,
+  id: index,
+  index: "string",
+  is_editable: false,
+  is_search: true,
+  is_visible: false,
+  is_visible_layout: false,
+  label: "Name",
+  order: 0,
+  path_slug: "",
+  relation_data: {
+    auto_filters: null,
+    cascading_tree_field_slug: "",
+    cascading_tree_table_slug: "",
+    commit_id: "",
+    editable: false,
+    field_from: "",
+    field_to: "",
+    id: "",
+    is_system: false,
+    is_user_id_default: false,
+    object_id_from_jwt: false,
+    relation_buttons: false,
+    relation_field_slug: "",
+    table_from: "",
+    table_to: "",
+    type: "",
+    view_fields: null,
+  },
+  relation_id: "",
+  relation_type: "",
+  required: false,
+  show_label: false,
+  slug: "name",
+  table_id: "ef3d73fa-c486-4ac2-a5a0-f32671ba80a7",
+  table_slug: "",
+  type: "SINGLE_LINE",
+  unique: false,
+  view_fields: null,
+}));
 
 export const DynamicTable = ({
   tableLan,
@@ -303,26 +370,47 @@ export const DynamicTable = ({
                   )
                 }
               />
-              {renderColumns.map((column) => (
-                <Th
-                  key={column.id}
-                  tableSlug={tableSlug}
-                  columns={renderColumns}
-                  column={column}
-                  view={view}
-                  tableSettings={tableSettings}
-                  tableSize={tableSize}
-                  pageName={pageName}
-                  sortedDatas={sortedDatas}
-                  setSortedDatas={setSortedDatas}
-                  relationAction={relationAction}
-                  isRelationTable={isRelationTable}
-                  setFieldCreateAnchor={setFieldCreateAnchor}
-                  setFieldData={setFieldData}
-                  getAllData={getAllData}
-                  setCurrentColumnWidth={setCurrentColumnWidth}
-                />
-              ))}
+              {showSkeleton
+                ? mockColumns.map((column) => (
+                    <Th
+                      key={column.id}
+                      tableSlug={tableSlug}
+                      columns={renderColumns}
+                      column={column}
+                      view={view}
+                      tableSettings={tableSettings}
+                      tableSize={tableSize}
+                      pageName={pageName}
+                      sortedDatas={sortedDatas}
+                      setSortedDatas={setSortedDatas}
+                      relationAction={relationAction}
+                      isRelationTable={isRelationTable}
+                      setFieldCreateAnchor={setFieldCreateAnchor}
+                      setFieldData={setFieldData}
+                      getAllData={getAllData}
+                      setCurrentColumnWidth={setCurrentColumnWidth}
+                    />
+                  ))
+                : renderColumns.map((column) => (
+                    <Th
+                      key={column.id}
+                      tableSlug={tableSlug}
+                      columns={renderColumns}
+                      column={column}
+                      view={view}
+                      tableSettings={tableSettings}
+                      tableSize={tableSize}
+                      pageName={pageName}
+                      sortedDatas={sortedDatas}
+                      setSortedDatas={setSortedDatas}
+                      relationAction={relationAction}
+                      isRelationTable={isRelationTable}
+                      setFieldCreateAnchor={setFieldCreateAnchor}
+                      setFieldData={setFieldData}
+                      getAllData={getAllData}
+                      setCurrentColumnWidth={setCurrentColumnWidth}
+                    />
+                  ))}
               {!isRelationTable && (
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
@@ -349,9 +437,7 @@ export const DynamicTable = ({
           </thead>
           <tbody>
             {showSkeleton ? (
-              <TableDataSkeleton
-                colLength={columns.length + (!isRelationTable ? 2 : 1)}
-              />
+              <TableDataSkeleton colLength={5 + (!isRelationTable ? 2 : 1)} />
             ) : (
               (isRelationTable ? fields : data).map(
                 (virtualRowObject, index) => {

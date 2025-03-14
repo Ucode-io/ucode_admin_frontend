@@ -25,11 +25,6 @@ const HFTextEditor = ({
   drawerDetail = false,
   ...props
 }) => {
-  const value = useWatch({
-    control,
-    name,
-  });
-
   useEffect(() => {
     const Font = Quill.import("formats/font");
     Font.whitelist = [
@@ -75,22 +70,23 @@ const HFTextEditor = ({
       <Controller
         control={control}
         name={name}
-        defaultValue=""
         rules={{
-          required: required ? "This is required field" : false,
+          required: required ? "This is a required field" : false,
           ...rules,
         }}
-        render={({field: {onChange}, fieldState: {error}}) => (
+        render={({field: {onChange, value}, fieldState: {error}}) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
               id={drawerDetail ? "drawerMultiLine" : "multilineField"}
               theme="snow"
-              value={value}
-              modules={modules}
               defaultValue={value}
+              // value={value || ""}
+              modules={modules}
               onChange={(val) => {
-                onChange(val);
-                isNewTableView && updateObject();
+                if (val !== "<p><br></p>") {
+                  onChange(val);
+                  isNewTableView && updateObject();
+                }
               }}
               tabIndex={tabIndex}
               autoFocus={false}

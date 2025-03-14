@@ -105,7 +105,7 @@ function LayoutTabs({
   }, [mainForm, selectedLayout]);
 
   const {i18n} = useTranslation();
-
+  console.log("allTabsallTabs", allTabs);
   return (
     <>
       <div className={"custom-tabs"} style={{width: "100%"}}>
@@ -156,7 +156,7 @@ function LayoutTabs({
                             `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_to_${i18n.language}`
                           ) ||
                           mainForm.watch(
-                            `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
                           ) ||
                           mainForm.watch(
                             `layouts.${selectedLayoutIndex}.tabs.${index}.label`

@@ -1,11 +1,10 @@
 import {useQuery} from "react-query";
 import {Box, Divider} from "@mui/material";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {useFieldArray} from "react-hook-form";
 import {listToMap} from "../../../utils/listToMap";
 import {useEffect, useMemo, useRef, useState} from "react";
-import RelationTable from "../RelationSection/RelationTable";
 import constructorTableService from "../../../services/constructorTableService";
 import FixColumnsRelationSection from "../RelationSection/FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "../RelationSection/VisibleColumnsButtonRelationSection";
@@ -25,11 +24,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@chakra-ui/react";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
-import {getColumnIcon} from "../../table-redesign/icons";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import ViewOptions from "./ViewOptions";
+import useTabRouter from "../../../hooks/useTabRouter";
 
 const DrawerRelationTable = ({
   selectedTabIndex,
@@ -41,15 +39,19 @@ const DrawerRelationTable = ({
   setFormValue,
   watch,
   selectedTab,
-  getAllData,
+  getAllData = () => {},
   data,
   tableLan = {},
+  relatedTable,
   tableSlug: tableSlugFromProps,
+  getValues = () => {},
   handleMouseDown = () => {},
 }) => {
   const myRef = useRef();
   const {i18n} = useTranslation();
   const [type, setType] = useState(null);
+  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
@@ -101,7 +103,7 @@ const DrawerRelationTable = ({
       visibleRelationColumns: [],
     },
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language, selectedTab],
     () => {
       return constructorTableService.getTableInfo(
         relatedTableSlug,
@@ -128,7 +130,7 @@ const DrawerRelationTable = ({
     <>
       <Box py={"5px"} sx={{height: "100vh"}}>
         <ChakraProvider theme={chakraUITheme}>
-          <Flex gap={"10px"}>
+          <Flex mb={"10px"} gap={"10px"} justifyContent={"space-between"}>
             <Popover>
               <InputGroup ml="auto" w="320px">
                 <InputLeftElement>
@@ -203,34 +205,24 @@ const DrawerRelationTable = ({
               <Button
                 h={"30px"}
                 rightIcon={<ChevronDownIcon fontSize={18} />}
-                // onClick={() =>
-                //   navigateToForm(
-                //     tableSlug,
-                //     "CREATE",
-                //     {},
-                //     {id},
-                //     searchParams.get("menuId")
-                //   )
-                // }
-              >
-                {/* {generateLangaugeText(tableLan, i18n?.language, "Create item") ||
-                "Create item"} */}
+                onClick={() =>
+                  navigateToForm(
+                    selectedTab?.relation?.relation_table_slug,
+                    "CREATE",
+                    {},
+                    {id: idFromParams},
+                    searchParams.get("menuId")
+                  )
+                }>
                 Create item
               </Button>
             </PermissionWrapperV2>
-
-            {/* <IconButton
-              aria-label="more"
-              icon={<Image src="/img/dots-vertical.svg" alt="more" />}
-              variant="ghost"
-              colorScheme="gray"
-            /> */}
 
             <ViewOptions
               selectedTab={selectedTab}
               data={data}
               selectedTabIndex={selectedTabIndex}
-              // view={view}
+              getAllData={getAllData}
               // viewName={viewName}
               // refetchViews={refetchViews}
               fieldsMap={fieldsMap}
@@ -267,8 +259,11 @@ const DrawerRelationTable = ({
           tableSlug={tableSlug}
           removableHeight={140}
           id={id}
+          getValues={getValues}
           getAllData={getAllData}
-          type={type}
+          relatedTable={relatedTable}
+          fieldsMap={fieldsMap}
+          type={"relation"}
           layoutData={data}
         />
       </Box>

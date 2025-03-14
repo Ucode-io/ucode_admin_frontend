@@ -23,6 +23,7 @@ const ViewOptions = ({
   selectedTab,
   data,
   refetchViews = () => {},
+  getAllData = () => {},
   fieldsMap,
   selectedTabIndex,
   tableLan,
@@ -183,11 +184,11 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
+            getAllData={getAllData}
             data={data}
             selectedTabIndex={selectedTabIndex}
             selectedTab={selectedTab}
             // tableLan={tableLan}
-
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
             onBackClick={() => setOpenedMenu(null)}

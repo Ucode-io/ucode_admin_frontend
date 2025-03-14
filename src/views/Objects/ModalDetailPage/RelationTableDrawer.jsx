@@ -443,7 +443,7 @@ const RelationTableDrawer = forwardRef(
       {
         onSuccess: (a, b) => {
           remove(tableData.findIndex((i) => i.guid === b.guid));
-          // queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+          queryClient.refetchQueries(["GET_OBJECT_LIST"]);
           refetch();
         },
       }
@@ -503,9 +503,10 @@ const RelationTableDrawer = forwardRef(
               data={tableData}
               view={getRelatedTabeSlug}
               isResizeble={true}
-              fields={columns}
+              fields={fields}
               setDrawerState={setDrawerState}
               columns={columns}
+              layoutData={layoutData}
               setFormValue={setFormValue}
               control={control}
               relatedTableSlug={relatedTableSlug}

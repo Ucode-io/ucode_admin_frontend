@@ -26,4 +26,8 @@ export const TAB_COMPONENTS = {
     REDIRECT: "redirect",
     REDIRECT_FORM: "redirectForm",
   },
+  ACTIVITY_LOGS: {
+    ACTIVITY_LOGS: "activityLogs",
+    ACTIVITY_LOGS_DETAIL: "activityLogsDetail",
+  }
 }

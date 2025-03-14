@@ -14,23 +14,23 @@ import {CTableCell, CTableRow} from "@/components/CTable";
 
 const AddDataColumn = React.memo(
   ({
-     columns,
-     getValues,
-     mainForm,
-     relationfields,
-     data,
-     onRowClick,
-     width,
-     rows,
-     setAddNewRow,
-     refetch,
-     view,
-     isRelationTable,
-     pageName,
-     tableSettings,
-     calculateWidthFixedColumn,
-     firstRowWidth=45,
-   }) => {
+    columns,
+    getValues,
+    mainForm,
+    relationfields,
+    data,
+    onRowClick,
+    width,
+    rows,
+    setAddNewRow,
+    refetch,
+    view,
+    isRelationTable,
+    pageName,
+    tableSettings,
+    calculateWidthFixedColumn,
+    firstRowWidth = 45,
+  }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
     const [isLoading, setIsLoading] = useState();
@@ -69,8 +69,7 @@ const AddDataColumn = React.memo(
           setIsLoading(false);
           console.log("ERROR: ", e);
         })
-        .finally(() => {
-        });
+        .finally(() => {});
     };
 
     return (
@@ -83,7 +82,7 @@ const AddDataColumn = React.memo(
             left: "0",
             backgroundColor: "#F6F6F6",
             zIndex: "2",
-            textAlign: "center"
+            textAlign: "center",
           }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
@@ -96,32 +95,31 @@ const AddDataColumn = React.memo(
               position: `${
                 tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
-                )?.isStiky ||
-                view?.attributes?.fixedColumns?.[column?.id]
+                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                   ? "sticky"
                   : "relative"
               }`,
               left: view?.attributes?.fixedColumns?.[column?.id]
-                ? `${
-                  calculateWidthFixedColumn(column.id) + firstRowWidth
-                }px`
+                ? `${calculateWidthFixedColumn(column.id) + firstRowWidth}px`
                 : "0",
               backgroundColor: `${
                 tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
-                )?.isStiky ||
-                view?.attributes?.fixedColumns?.[column?.id]
+                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                   ? "#F6F6F6"
-                  : ((column.attributes?.disabled || !column.attributes?.field_permission?.edit_permission) ? "#f8f8f8" : "#fff")
+                  : column.attributes?.disabled ||
+                      !column.attributes?.field_permission?.edit_permission
+                    ? "#f8f8f8"
+                    : "#fff"
               }`,
               zIndex: `${
                 tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
-                )?.isStiky ||
-                view?.attributes?.fixedColumns?.[column?.id]
+                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                   ? "1"
                   : "0"
               }`,
+              overflow: "hidden",
             }}>
             <NewTableDataForm
               tableSlug={tableSlug}
@@ -140,20 +138,22 @@ const AddDataColumn = React.memo(
               newUi={true}
             />
 
-            {(column.attributes?.disabled || !column.attributes?.field_permission?.edit_permission) &&
-              <div style={{
-                position: "absolute",
-                top: '50%',
-                transform: "translateY(-50%)",
-                right: 4,
-                backgroundColor: "inherit",
-                padding: 4,
-                borderRadius: 6,
-                zIndex: 1
-              }}>
-                <img src="/table-icons/lock.svg" alt="lock"/>
+            {(column.attributes?.disabled ||
+              !column.attributes?.field_permission?.edit_permission) && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: 4,
+                  backgroundColor: "inherit",
+                  padding: 4,
+                  borderRadius: 6,
+                  zIndex: 1,
+                }}>
+                <img src="/table-icons/lock.svg" alt="lock" />
               </div>
-            }
+            )}
           </CTableCell>
         ))}
         <CTableCell
@@ -169,19 +169,33 @@ const AddDataColumn = React.memo(
             padding: "0 5px",
             right: "0",
             borderLeft: "1px solid #eee",
-            backgroundColor: "#fff"
+            backgroundColor: "#fff",
           }}>
-          <Box className='group' position="relative" h='25px' w='25px'>
-            <Image ml='3px' src="/table-icons/save-delete.svg" alt="More" w='25px' h='25px' _groupHover={{display: "none"}} />
+          <Box className="group" position="relative" h="25px" w="25px">
+            <Image
+              ml="3px"
+              src="/table-icons/save-delete.svg"
+              alt="More"
+              w="25px"
+              h="25px"
+              _groupHover={{display: "none"}}
+            />
 
-            <Flex columnGap='3px' display="none" _groupHover={{ display: "flex" }} position='absolute' top={0} right='-3px' bg='#fff' borderRadius={4}>
+            <Flex
+              columnGap="3px"
+              display="none"
+              _groupHover={{display: "flex"}}
+              position="absolute"
+              top={0}
+              right="-3px"
+              bg="#fff"
+              borderRadius={4}>
               <RectangleIconButton
                 id="cancel-row"
                 color="error"
                 onClick={() => setAddNewRow(false)}
-                style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
-              >
-                <ClearIcon color="error"/>
+                style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}>
+                <ClearIcon color="error" />
               </RectangleIconButton>
 
               {isLoading ? (
@@ -193,9 +207,8 @@ const AddDataColumn = React.memo(
                   id="confirm-row"
                   color="success"
                   onClick={handleSubmit(onSubmit)}
-                  style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
-                >
-                  <DoneIcon color="success"/>
+                  style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}>
+                  <DoneIcon color="success" />
                 </RectangleIconButton>
               )}
             </Flex>

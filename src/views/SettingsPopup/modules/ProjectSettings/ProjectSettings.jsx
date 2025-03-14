@@ -6,7 +6,13 @@ import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
 import { SaveCancelBtns } from "../../components/SaveCancelBtns";
-import { Box, FormControlLabel, FormGroup, Grid, Switch } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+} from "@mui/material";
 import { ContentTitle } from "../../components/ContentTitle";
 import { Field } from "../../components/Field";
 import { Flex } from "@chakra-ui/react";
@@ -25,6 +31,7 @@ export const ProjectSettings = () => {
     timezoneOptions,
     currencyOptions,
     btnLoading,
+    setValue,
   } = useProjectSettings();
 
   return (
@@ -103,37 +110,34 @@ export const ProjectSettings = () => {
               />
             </FRow>
           </Grid>
-          <Grid item xs={6} alignSelf="flex-end">
-            <FormGroup
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={watch("new_design")}
-                    {...register("new_design")}
-                    color="primary"
-                  />
-                }
-                label={<span style={{ fontWeight: "bold" }}>New Design</span>}
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={watch("new_layout")}
-                    {...register("new_layout")}
-                    color="primary"
-                  />
-                }
-                label={<span style={{ fontWeight: "bold" }}>New Layout</span>}
-              />
-            </FormGroup>
-          </Grid>
         </Grid>
+        <FormGroup style={{ alignItems: "flex-start", marginTop: "16px" }}>
+          <FormControlLabel
+            style={{ marginLeft: "0" }}
+            labelPlacement="start"
+            label={<span style={{ fontWeight: "bold" }}>New Design</span>}
+            control={
+              <Checkbox
+                checked={watch("new_design")}
+                onChange={() => setValue("new_design", !watch("new_design"))}
+                {...register("new_design")}
+                color="primary"
+              />
+            }
+          />
+          <FormControlLabel
+            style={{ marginLeft: "0" }}
+            labelPlacement="start"
+            label={<span style={{ fontWeight: "bold" }}>New Layout</span>}
+            control={
+              <Checkbox
+                checked={watch("new_layout")}
+                onChange={() => setValue("new_layout", !watch("new_layout"))}
+                color="primary"
+              />
+            }
+          />
+        </FormGroup>
       </form>
 
       <SaveCancelBtns

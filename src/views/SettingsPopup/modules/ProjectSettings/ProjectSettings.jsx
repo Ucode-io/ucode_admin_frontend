@@ -6,10 +6,10 @@ import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
 import { SaveCancelBtns } from "../../components/SaveCancelBtns";
-import { Box, Grid } from "@mui/material";
+import { Box, FormControlLabel, FormGroup, Grid, Switch } from "@mui/material";
 import { ContentTitle } from "../../components/ContentTitle";
 import { Field } from "../../components/Field";
-import { Flex } from '@chakra-ui/react';
+import { Flex } from "@chakra-ui/react";
 
 export const ProjectSettings = () => {
   const {
@@ -30,23 +30,21 @@ export const ProjectSettings = () => {
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <ContentTitle subtitle={watch("title")}>
-        {
-          generateLangaugeText(
-            lang,
-            i18n?.language,
-            "Project Settings"
-          ) || "Project settings"
-        }
+        {generateLangaugeText(lang, i18n?.language, "Project Settings") ||
+          "Project settings"}
       </ContentTitle>
       <Flex alignItems="flex-end" mb="48px">
-        <HFAvatarUpload size="xs" defaultImage={<div className={cls.avatar}>Logo</div>} control={control} name="logo" />
+        <HFAvatarUpload
+          size="xs"
+          defaultImage={<div className={cls.avatar}>Logo</div>}
+          control={control}
+          name="logo"
+        />
         <Box className={cls.nameWrapper}>
-          <p className={cls.name}>{generateLangaugeText(lang, i18n?.language, "Name") || "Name"}</p>
-          <Field
-            register={register} 
-            name="title"
-            type="text"
-          />
+          <p className={cls.name}>
+            {generateLangaugeText(lang, i18n?.language, "Name") || "Name"}
+          </p>
+          <Field register={register} name="title" type="text" />
         </Box>
       </Flex>
 
@@ -105,22 +103,49 @@ export const ProjectSettings = () => {
               />
             </FRow>
           </Grid>
-          {/* <Grid item xs={6}>
-            <HFAvatarUpload control={control} name="logo" />
-          </Grid> */}
+          <Grid item xs={6} alignSelf="flex-end">
+            <FormGroup
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={watch("new_design")}
+                    {...register("new_design")}
+                    color="primary"
+                  />
+                }
+                label={<span style={{ fontWeight: "bold" }}>New Design</span>}
+              />
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={watch("new_layout")}
+                    {...register("new_layout")}
+                    color="primary"
+                  />
+                }
+                label={<span style={{ fontWeight: "bold" }}>New Layout</span>}
+              />
+            </FormGroup>
+          </Grid>
         </Grid>
       </form>
 
       <SaveCancelBtns
         cancelProps={{
-          onClick: () => navigate(-1)
+          onClick: () => navigate(-1),
         }}
         saveProps={{
           loading: btnLoading,
-          onClick: handleSubmit(onSubmit)
+          onClick: handleSubmit(onSubmit),
         }}
         marginTop="auto"
       />
     </Box>
   );
-}
+};

@@ -7,6 +7,7 @@ const environmentService = {
   getList: (params) => requestAuth.get("/resource-environment", { params }),
   getVersionHistoryList: (envId, params) => requestV2.get(`/version/history/${envId}`, { params }),
   getVersionHistoryById: (envId, id, params) => requestV2.get(`/version/history/${envId}/${id}`, { params }),
+  getVersionHistoryExcel: (envId, params) => requestV2.get(`/version/history/${envId}/excel`, { params }),
   getEnvironments: (envId) => {
     return request.get(`/environment/${envId}`);
   },
@@ -101,5 +102,14 @@ export const useEnvironmentCreateMutation = (mutationSettings) => {
 export const useEnvironmentDeleteMutation = (mutationSettings) => {
   return useMutation((id) => environmentService.delete(id), mutationSettings);
 };
+
+export const useVersionHistoryExcel = (params) => {
+  return useQuery(
+    ["VERSION_HISTORY_EXCEL", params],
+    () => {
+      return environmentService.getVersionHistoryExcel(params.envId, params);
+    }
+  );
+}
 
 export default environmentService;

@@ -1,0 +1,72 @@
+.tag {
+  padding: 4px 0;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 22px;
+  position: relative;
+  color: #fff;
+
+  span {
+    position: absolute;
+    right: 5%;
+    bottom: 0;
+  }
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+
+  h6 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 19px;
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19px;
+  }
+
+  .promise {
+    display: flex;
+    align-items: start;
+    column-gap: 24px;
+
+    .promiseCard {
+      position: relative;
+
+      .copy {
+        position: absolute;
+        z-index: 9999999;
+        right: 10px;
+        top: 40px;
+
+        &:hover {
+          border-color: #fff !important;
+        }
+
+        svg {
+          fill: #fff;
+        }
+      }
+    }
+
+    h6 {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 19px;
+      margin-bottom: 12px;
+    }
+  }
+}

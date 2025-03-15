@@ -448,8 +448,9 @@ export const NewUiViewsWithGroups = ({
         <Flex h="100vh" flexDirection="column" bg={"white"}>
           {updateLoading && (
             <Backdrop
-              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-              open={true}>
+              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+              open={true}
+            >
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -461,7 +462,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="8px">
+            columnGap="8px"
+          >
             <IconButton
               aria-label="back"
               icon={<ArrowBackIcon fontSize={20} color="#344054" />}
@@ -488,7 +490,8 @@ export const NewUiViewsWithGroups = ({
               color="#344054"
               fontWeight={500}
               alignItems="center"
-              columnGap="8px">
+              columnGap="8px"
+            >
               <Flex
                 w="16px"
                 h="16px"
@@ -499,7 +502,8 @@ export const NewUiViewsWithGroups = ({
                 fontWeight={500}
                 fontSize={11}
                 justifyContent="center"
-                alignItems="center">
+                alignItems="center"
+              >
                 {tableName?.[0]}
               </Flex>
               {tableName}
@@ -515,7 +519,8 @@ export const NewUiViewsWithGroups = ({
                 borderColor="#D0D5DD"
                 color="#344054"
                 leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                borderRadius="8px">
+                borderRadius="8px"
+              >
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -532,7 +537,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="5px">
+            columnGap="5px"
+          >
             {(views ?? []).map((view, index) => (
               <Button
                 key={view.id}
@@ -552,14 +558,15 @@ export const NewUiViewsWithGroups = ({
                 color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                 bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
                 _hover={
-                  selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
+                  selectedTabIndex === index ? { bg: "#D1E9FF" } : undefined
                 }
                 onClick={() => {
                   dispatch(
-                    viewsActions.setViewTab({tableSlug, tabIndex: index})
+                    viewsActions.setViewTab({ tableSlug, tabIndex: index })
                   );
                   setSelectedTabIndex(index);
-                }}>
+                }}
+              >
                 {view?.attributes?.name_en || view?.name || view.type}
               </Button>
             ))}
@@ -570,7 +577,8 @@ export const NewUiViewsWithGroups = ({
                 variant="ghost"
                 colorScheme="gray"
                 color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}
+              >
                 {generateLangaugeText(tableLan, i18n?.language, "View") ||
                   "View"}
               </Button>
@@ -587,7 +595,8 @@ export const NewUiViewsWithGroups = ({
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
-              }}>
+              }}
+            >
               <ViewTypeList
                 views={views}
                 computedViewTypes={computedViewTypes}
@@ -639,7 +648,8 @@ export const NewUiViewsWithGroups = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto">
+                overflow="auto"
+              >
                 {columnsForSearch.map((column) => (
                   <Flex
                     key={column.id}
@@ -648,9 +658,10 @@ export const NewUiViewsWithGroups = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
-                    cursor="pointer">
-                    {getColumnIcon({column})}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                  >
+                    {getColumnIcon({ column })}
                     <ViewOptionTitle>{column.label}</ViewOptionTitle>
                     <Switch
                       ml="auto"
@@ -660,7 +671,7 @@ export const NewUiViewsWithGroups = ({
                           data: {
                             fields: columnsForSearch.map((c) =>
                               c.id === column.id
-                                ? {...c, is_search: e.target.checked}
+                                ? { ...c, is_search: e.target.checked }
                                 : c
                             ),
                           },
@@ -677,7 +688,8 @@ export const NewUiViewsWithGroups = ({
               tableLan={tableLan}
               view={view}
               visibleColumns={visibleColumns}
-              refetchViews={refetchViews}>
+              refetchViews={refetchViews}
+            >
               <FilterButton view={view} />
             </FilterPopover>
 
@@ -690,10 +702,11 @@ export const NewUiViewsWithGroups = ({
                     tableSlug,
                     "CREATE",
                     {},
-                    {id},
+                    { id },
                     searchParams.get("menuId")
                   )
-                }>
+                }
+              >
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -730,16 +743,17 @@ export const NewUiViewsWithGroups = ({
           <Tabs direction={"ltr"} defaultIndex={0}>
             {tabs?.length > 0 && (
               <div id="tabsHeight" className={style.tableCardHeader}>
-                <div style={{display: "flex", alignItems: "center"}}>
-                  <div className="title" style={{marginRight: "20px"}}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className="title" style={{ marginRight: "20px" }}>
                     <h3>{view.table_label}</h3>
                   </div>
-                  <TabList style={{border: "none"}}>
+                  <TabList style={{ border: "none" }}>
                     {tabs?.map((tab) => (
                       <Tab
                         key={tab.value}
                         selectedClassName={style.activeTab}
-                        className={`${style.disableTab} react-tabs__tab`}>
+                        className={`${style.disableTab} react-tabs__tab`}
+                      >
                         {tab.label}
                       </Tab>
                     ))}

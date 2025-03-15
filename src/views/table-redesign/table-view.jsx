@@ -65,11 +65,11 @@ const TableView = ({
   tableLan,
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug, appId} = useParams();
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const { id, slug, tableSlug, appId } = useParams();
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -114,7 +114,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const {update} = useFieldArray({
+  const { update } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -139,7 +139,7 @@ const TableView = ({
         },
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -204,7 +204,7 @@ const TableView = ({
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+          result.push({ id: key, value: view.attributes.fixedColumns[key] });
         }
       }
     }
@@ -253,7 +253,7 @@ const TableView = ({
       );
 
       if (matchingSort) {
-        const {field, order} = matchingSort;
+        const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -280,7 +280,7 @@ const TableView = ({
   }, [filters]);
 
   const {
-    data: {fiedlsarray, fieldView, custom_events} = {
+    data: { fiedlsarray, fieldView, custom_events } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -316,7 +316,7 @@ const TableView = ({
       : searchText;
 
   const {
-    data: {tableData, pageCount, dataCount} = {
+    data: { tableData, pageCount, dataCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -334,7 +334,7 @@ const TableView = ({
         sortedDatas,
         currentPage,
         limit,
-        filters: {...filters, [tab?.slug]: tab?.value},
+        filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
         paginiation,
         // currentView,
@@ -381,7 +381,7 @@ const TableView = ({
   });
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({

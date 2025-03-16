@@ -119,6 +119,7 @@ const AddDataColumn = React.memo(
                   ? "1"
                   : "0"
               }`,
+              overflow: "hidden",
             }}>
             <NewTableDataForm
               tableSlug={tableSlug}

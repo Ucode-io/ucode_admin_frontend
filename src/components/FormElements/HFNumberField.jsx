@@ -52,7 +52,11 @@ const HFNumberField = ({
         outline: "none",
       }
     : disabled
-      ? {background: "#c0c0c039", borderRight: 0, outline: "none"}
+      ? {
+          background: "#c0c0c039",
+          borderRight: 0,
+          outline: "none",
+        }
       : {
           background: isBlackBg ? "#2A2D34" : "",
           color: isBlackBg ? "#fff" : "",
@@ -76,32 +80,7 @@ const HFNumberField = ({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
-          <Box
-            style={
-              isTransparent
-                ? {
-                    background: "transparent",
-                    border: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    position: "relative",
-                  }
-                : disabled
-                  ? {
-                      background: "#DEDEDE",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRadius: "4px",
-                      position: "relative",
-                    }
-                  : {
-                      background: isBlackBg ? "#2A2D34" : "",
-                      color: isBlackBg ? "#fff" : "",
-                      display: "flex",
-                      alignItems: "center",
-                      position: "relative",
-                    }
-            }>
+          <Box>
             <NumericFormat
               maxLength={19}
               format="#### #### #### ####"
@@ -117,12 +96,17 @@ const HFNumberField = ({
               fullWidth={fullWidth}
               value={typeof value === "number" ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${
-                style.numberField
-              }`}
+              className={"custom_textfield"}
               name={name}
               readOnly={disabled}
-              style={{...styles, height: newUi ? "25px" : undefined}}
+              style={{
+                ...styles,
+                height: newUi ? "25px" : "38px",
+                width: "100%",
+                border: isNewTableView ? "none" : "1px solid #D4D2D2",
+                borderRadius: "4px",
+                paddingLeft: "8px",
+              }}
               {...props}
             />
             {!disabledHelperText && error?.message && (

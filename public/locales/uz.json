@@ -219,5 +219,8 @@
   "browse": "Tanlash",
   "reset": "Bekor qilish",
   "export_column_header": "Ustunning sarlavhasini eksport qilish",
-  "excel_column_header": "Excel ustun sarlavhasi"
+  "excel_column_header": "Excel ustun sarlavhasi",
+  "public_offer": "Tasdiqlash tugmasini bosish orqali siz",
+  "public_link": "Ommaviy oferta shartlariga rozilik bildirasiz.",
+  "select_tariff": "Tarifni tanlang"
 }

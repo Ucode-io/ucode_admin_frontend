@@ -245,5 +245,8 @@
   "browse": "Выбрать",
   "reset": "Сбросить",
   "export_column_header": "Экспорт загаловка столбца",
-  "excel_column_header": "Excel заголовка столбца"
+  "excel_column_header": "Excel заголовка столбца",
+  "public_offer": "Нажимая кнопку подтвердить, вы соглашаетесь с условиями  ",
+  "public_link": "Публичной оферты",
+  "select_tariff": "Выбрать тарифф"
 }

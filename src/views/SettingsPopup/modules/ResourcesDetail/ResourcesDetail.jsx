@@ -58,6 +58,7 @@ export const ResourcesDetail = () => {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
+    updateSearchParam,
   } = useSettingsPopupContext();
   const [searchParams, setSearchParams] = useSearchParams();
 

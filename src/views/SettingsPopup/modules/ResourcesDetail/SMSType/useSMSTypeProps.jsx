@@ -8,8 +8,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import useFilters from "../../../../../hooks/useFilters";
 
 export const useSMSTypeProps = ({ i18n }) => {
-
-  const tableLan = useGetLang("Table")
+  const tableLan = useGetLang("Table");
 
   const tableSlug = "sms_template";
 
@@ -31,7 +30,7 @@ export const useSMSTypeProps = ({ i18n }) => {
     },
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
@@ -41,11 +40,9 @@ export const useSMSTypeProps = ({ i18n }) => {
   );
 
   const paginiationCount = useMemo(() => {
-
     const getObject = paginationCount.find((el) => el?.tableSlug === tableSlug);
 
     return getObject?.pageCount ?? 1;
-
   }, [paginationCount, tableSlug]);
 
   const [currentPage, setCurrentPage] = useState(paginiationCount);
@@ -59,48 +56,48 @@ export const useSMSTypeProps = ({ i18n }) => {
   const [selectedView, setSelectedView] = useState(null);
 
   const {
-      data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
-        views: [],
-        fieldsMap: {},
-        visibleColumns: [],
-        visibleRelationColumns: [],
-      },
-      isLoading,
-      refetch,
-    } = useQuery(
-      ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
-      () => {
-        if (Boolean(!tableSlug)) return [];
-        return constructorTableService.getTableInfo(
-          tableSlug,
-          {
-            data: {},
-          },
-          params
-        );
-      },
-      {
-        enabled: Boolean(tableSlug),
-  
-        select: ({ data }) => {
-          return {
-            views:
-              data?.views?.filter(
-                (view) => view?.attributes?.view_permission?.view === true
-              ) ?? [],
-            fieldsMap: listToMap(data?.fields),
-            visibleColumns: data?.fields ?? [],
-            visibleRelationColumns:
-              data?.relation_fields?.map((el) => ({
-                ...el,
-                label: `${el.label} (${el.table_label})`,
-              })) ?? [],
-          };
+    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
+      views: [],
+      fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+    isLoading,
+    refetch,
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
+    () => {
+      if (Boolean(!tableSlug)) return [];
+      return constructorTableService.getTableInfo(
+        tableSlug,
+        {
+          data: {},
         },
-      }
-    );
+        params
+      );
+    },
+    {
+      enabled: Boolean(tableSlug),
 
-  const {filters} = useFilters(tableSlug, views[0]?.id);
+      select: ({ data }) => {
+        return {
+          views:
+            data?.views?.filter(
+              (view) => view?.attributes?.view_permission?.view === true
+            ) ?? [],
+          fieldsMap: listToMap(data?.fields),
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
+        };
+      },
+    }
+  );
+
+  const { filters } = useFilters(tableSlug, views[0]?.id);
 
   return {
     visibleColumns,
@@ -131,5 +128,5 @@ export const useSMSTypeProps = ({ i18n }) => {
     selectedObjects,
     setSelectedObjects,
     selectedView,
-  }
+  };
 }

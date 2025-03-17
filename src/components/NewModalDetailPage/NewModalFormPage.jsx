@@ -30,9 +30,7 @@ function NewModalFormPage({
   const {tableSlug} = useParams();
   const [dragAction, setDragAction] = useState(false);
 
-  const [sections, setSections] = useState(
-    data?.tabs?.[selectedTabIndex]?.sections || []
-  );
+  const [sections, setSections] = useState(data?.tabs?.[0]?.sections || []);
 
   useEffect(() => {
     setSections(data?.tabs?.[0]?.sections || []);
@@ -91,85 +89,87 @@ function NewModalFormPage({
           setFormValue={setFormValue}
         />
 
-        {sections?.map((section, secIndex) => (
-          <Container
-            key={section?.id}
-            behaviour="contain"
-            onDragStart={() => setDragAction(true)}
-            onDragEnd={() => setDragAction(false)}
-            dragHandleSelector=".drag-handles"
-            dragClass="drag-item"
-            onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-            {section?.fields.map((field, fieldIndex) => {
-              const isHidden =
-                field?.slug === watch("attributes.layout_heading");
-              return (
-                <Draggable key={fieldIndex} className={`drag-handles`}>
-                  <Box
-                    className={dragAction ? "rowDragCol" : "rowCol"}
-                    display={isHidden ? "none" : "flex"}
-                    alignItems="center"
-                    height={"34px"}
-                    // {...(Boolean(field?.type === "MULTISELECT")
-                    //   ? {minHeight: "30px"}
-                    //   : {height: "34px"})}
-                    py="8px">
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent={"space-between"}
-                      padding="5px"
-                      borderRadius={"4px"}
-                      width="200px"
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "#F7F7F7",
-                        },
-                      }}>
+        {sections?.length &&
+          sections?.map((section, secIndex) => (
+            <Container
+              key={section?.id}
+              behaviour="contain"
+              onDragStart={() => setDragAction(true)}
+              onDragEnd={() => setDragAction(false)}
+              dragHandleSelector=".drag-handles"
+              dragClass="drag-item"
+              onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
+              {section?.fields?.length &&
+                section?.fields.map((field, fieldIndex) => {
+                  const isHidden =
+                    field?.slug === watch("attributes.layout_heading");
+                  return (
+                    <Draggable key={fieldIndex} className={`drag-handles`}>
                       <Box
-                        width="18px"
-                        height="16px"
-                        mr="8px"
-                        display="flex"
+                        className={dragAction ? "rowDragCol" : "rowCol"}
+                        display={isHidden ? "none" : "flex"}
                         alignItems="center"
-                        sx={{color: "#787774"}}>
-                        <span className={"drag"}>
-                          <DragIndicatorIcon
-                            style={{width: "16px", height: "16px"}}
-                          />
-                        </span>
-                        <span style={{color: "#787774"}} className={"icon"}>
-                          {getColumnIcon({
-                            column: {
-                              type: field?.type ?? field?.relation_type,
-                              table_slug: field?.table_slug ?? field?.slug,
+                        height={"34px"}
+                        // {...(Boolean(field?.type === "MULTISELECT")
+                        //   ? {minHeight: "30px"}
+                        //   : {height: "34px"})}
+                        py="8px">
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent={"space-between"}
+                          padding="5px"
+                          borderRadius={"4px"}
+                          width="200px"
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: "#F7F7F7",
                             },
-                          })}
-                        </span>
+                          }}>
+                          <Box
+                            width="18px"
+                            height="16px"
+                            mr="8px"
+                            display="flex"
+                            alignItems="center"
+                            sx={{color: "#787774"}}>
+                            <span className={"drag"}>
+                              <DragIndicatorIcon
+                                style={{width: "16px", height: "16px"}}
+                              />
+                            </span>
+                            <span style={{color: "#787774"}} className={"icon"}>
+                              {getColumnIcon({
+                                column: {
+                                  type: field?.type ?? field?.relation_type,
+                                  table_slug: field?.table_slug ?? field?.slug,
+                                },
+                              })}
+                            </span>
+                          </Box>
+                          <Box
+                            fontSize="14px"
+                            color="#787774"
+                            fontWeight="500"
+                            width="100%">
+                            {field?.attributes?.[`label_${i18n?.language}`] ||
+                              field?.label}
+                          </Box>
+                        </Box>
+                        <Box sx={{minWidth: "500px"}}>
+                          <DrawerFieldGenerator
+                            drawerDetail={true}
+                            control={control}
+                            field={field}
+                            watch={watch}
+                          />
+                        </Box>
                       </Box>
-                      <Box
-                        fontSize="14px"
-                        color="#787774"
-                        fontWeight="500"
-                        width="100%">
-                        {field?.attributes?.[`label_${i18n?.language}`] ||
-                          field?.label}
-                      </Box>
-                    </Box>
-                    <Box sx={{minWidth: "500px"}}>
-                      <DrawerFieldGenerator
-                        drawerDetail={true}
-                        control={control}
-                        field={field}
-                        watch={watch}
-                      />
-                    </Box>
-                  </Box>
-                </Draggable>
-              );
-            })}
-          </Container>
-        ))}
+                    </Draggable>
+                  );
+                })}
+            </Container>
+          ))}
       </Box>
     </>
   );

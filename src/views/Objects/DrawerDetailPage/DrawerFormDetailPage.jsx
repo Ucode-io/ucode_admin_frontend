@@ -1,21 +1,21 @@
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
+import {Box, Menu, MenuItem, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
 import {getColumnIcon} from "../../table-redesign/icons";
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
 
-import "./style.scss";
-import layoutService from "../../../services/layoutService";
-import {useParams} from "react-router-dom";
+import {Flex, Text} from "@chakra-ui/react";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import {Controller} from "react-hook-form";
-import {Flex, Text} from "@chakra-ui/react";
-import {applyDrag} from "../../../utils/applyDrag";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {isEqual} from "lodash";
+import {Controller} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import layoutService from "../../../services/layoutService";
+import {applyDrag} from "../../../utils/applyDrag";
+import "./style.scss";
 
 function DrawerFormDetailPage({
   control,
@@ -96,7 +96,7 @@ function DrawerFormDetailPage({
       isEqual(prevSections, updatedSections) ? prevSections : updatedSections
     );
   }, [data, watch("attributes.layout_heading")]);
-  console.log("sectedTab", selectedTab);
+
   return (
     <>
       <Box

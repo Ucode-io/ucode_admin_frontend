@@ -28,6 +28,7 @@ const AddDataColumn = React.memo(
     isRelationTable,
     pageName,
     tableSettings,
+    relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
   }) => {
@@ -35,11 +36,7 @@ const AddDataColumn = React.memo(
     const {tableSlug, id} = useParams();
     const [isLoading, setIsLoading] = useState();
 
-    const computedSlug = isRelationTable
-      ? view?.type === "Many2One"
-        ? `${tableSlug}_id`
-        : `${tableSlug}_ids`
-      : tableSlug;
+    const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
 
     const computedTableSlug = isRelationTable ? view?.relatedTable : tableSlug;
 

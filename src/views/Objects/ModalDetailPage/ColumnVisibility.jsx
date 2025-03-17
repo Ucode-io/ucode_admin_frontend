@@ -1,8 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useMutation} from "react-query";
-import {useParams, useSearchParams} from "react-router-dom";
-import constructorViewService from "../../../services/constructorViewService";
+import {ChevronLeftIcon} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -13,100 +9,77 @@ import {
   InputLeftElement,
   Spinner,
 } from "@chakra-ui/react";
-import {ChevronLeftIcon} from "@chakra-ui/icons";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import {Switch} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useParams, useSearchParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
+import layoutService from "../../../services/layoutService";
 import menuService from "../../../services/menuService";
+import {columnIcons} from "../../../utils/constants/columnIcons";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {useMutation} from "react-query";
 
 const ColumnsVisibility = ({
   data,
   fieldsMap,
-  refetchViews,
   onBackClick,
   tableLan,
-  selectedTab,
   selectedTabIndex,
+  getAllData = () => {},
+  setOpenedMenu = () => {},
 }) => {
   const {tableSlug} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {i18n} = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [menuItem, setMenuItem] = useState(null);
+  const [computedColumns, setComputedColumns] = useState(
+    data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? []
+  );
+
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const updateView = async (datas) => {
-    setIsLoading(true);
-
-    const result = data?.tabs;
-
-    if (!result) {
-      setIsLoading(false);
-      return;
-    }
-
-    const computeTabs = result.map((item, index) => {
-      if (index === selectedTabIndex) {
-        return {
-          ...item,
-          attributes: {
-            ...item.attributes,
-            columns: [...datas],
-          },
-        };
-      } else {
-        return {
-          ...item,
-          attributes: {
-            ...item.attributes,
-            columns: Array.isArray(item?.attributes?.columns)
-              ? [...item?.attributes?.columns]
-              : [],
-          },
-        };
-      }
-    });
-
-    try {
+  const mutation = useMutation(
+    async (updatedColumns) => {
       await layoutService.update(
         {
           ...data,
-          tabs: computeTabs,
+          tabs: data.tabs.map((item, index) =>
+            index === selectedTabIndex
+              ? {
+                  ...item,
+                  attributes: {...item.attributes, columns: updatedColumns},
+                }
+              : item
+          ),
         },
         tableSlug
       );
+    },
+    {
+      onMutate: async (updatedColumns) => {
+        const previousColumns = computedColumns;
+        setComputedColumns(updatedColumns);
 
-      await getAllData();
-    } catch (error) {
-      console.error("Error updating layout:", error);
-    } finally {
-      setIsLoading(false);
+        return () => setComputedColumns(previousColumns);
+      },
+      onSuccess: () => {
+        getAllData();
+      },
+      onError: (err, _, rollback) => {
+        if (rollback) rollback();
+      },
     }
+  );
+
+  const updateView = (newColumns) => {
+    mutation.mutate(newColumns);
   };
-
-  const computedColumns = useMemo(() => {
-    if (Array.isArray(data?.tabs?.[selectedTabIndex]?.attributes?.columns)) {
-      return (
-        data?.tabs?.[selectedTabIndex]?.attributes?.columns ??
-        data?.tabs?.[selectedTabIndex]?.relation?.columns
-      );
-    } else {
-      return [];
-    }
-  }, [data?.tabs, selectedTabIndex]);
 
   const visibleFields = useMemo(() => {
     return (
@@ -151,14 +124,15 @@ const ColumnsVisibility = ({
         });
     }
   }, []);
+
   return (
     <Box>
       <Flex justifyContent="space-between" alignItems="center">
         <Button
           leftIcon={<ChevronLeftIcon fontSize={22} />}
-          //   rightIcon={
-          //     mutation.isLoading ? <Spinner color="#475467" /> : undefined
-          //   }
+          rightIcon={
+            mutation.isLoading ? <Spinner color="#475467" /> : undefined
+          }
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
@@ -197,44 +171,176 @@ const ColumnsVisibility = ({
           onChange={(ev) => setSearch(ev.target.value)}
         />
       </InputGroup>
-      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+      <Flex
+        mx={"10px"}
+        flexDirection="column"
+        mt="8px"
+        maxHeight="300px"
+        overflow="auto">
         <Container onDrop={onDrop}>
-          {computedColumns?.map((column) => (
-            <Draggable key={column.id}>
-              <Flex
-                as="label"
-                p="8px"
-                columnGap="8px"
-                alignItems="center"
-                borderRadius={6}
-                bg="#fff"
-                _hover={{bg: "#EAECF0"}}
-                cursor="pointer"
-                zIndex={999999}>
-                {column?.type && getColumnIcon({column})}
-                <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-                <Switch
-                  ml="auto"
-                  onChange={(ev) => onChange(column, ev.target.checked)}
-                  isChecked={selectedTab?.columns?.includes(
-                    column?.type === "LOOKUP" || column?.type === "LOOKUPS"
-                      ? column?.relation_id
-                      : column?.id
+          {visibleFields?.map((column, index) => (
+            <Draggable key={column?.id}>
+              <div
+                key={column?.id}
+                style={{
+                  display: "flex",
+                  backgroundColor: "#fff",
+                }}>
+                <div
+                  style={{
+                    flex: 1,
+                    border: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "8px 0px",
+                    margin: "-1px -1px 0 0",
+                  }}>
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      marginRight: 5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    {column?.type ? columnIcons(column?.type) : <LinkIcon />}
+                  </div>
+                  <p
+                    style={{
+                      textWrap: "nowrap",
+                    }}>
+                    {column?.attributes?.[`label_${i18n.language}`] ??
+                      column?.label}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    padding: "8px 16px",
+                    margin: "-1px -1px 0 0",
+                    width: 70,
+                    border: 0,
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}>
+                  {column.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                    <Switch
+                      size="small"
+                      checked={computedColumns?.includes(column?.relation_id)}
+                      onChange={(e) => {
+                        updateView(
+                          e.target.checked
+                            ? [...computedColumns, column.relation_id]
+                            : computedColumns.filter(
+                                (el) => el !== column.relation_id
+                              )
+                        );
+                      }}
+                    />
+                  ) : (
+                    <Switch
+                      size="small"
+                      checked={computedColumns?.includes(column?.id)}
+                      onChange={(e) => {
+                        updateView(
+                          e.target.checked
+                            ? [...computedColumns, column.id]
+                            : computedColumns.filter((el) => el !== column.id)
+                        );
+                      }}
+                    />
                   )}
-                />
-              </Flex>
+                </div>
+              </div>
             </Draggable>
+          ))}
+
+          {unVisibleFields?.map((column, index) => (
+            <div
+              key={column.id}
+              style={{
+                display: "flex",
+                backgroundColor: "#fff",
+              }}>
+              <div
+                style={{
+                  flex: 1,
+                  border: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 0px",
+                  margin: "-1px -1px 0 0",
+                }}>
+                <div
+                  style={{
+                    width: 20,
+                    height: 20,
+                    marginRight: 5,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}>
+                  {column.type ? columnIcons(column.type) : <LinkIcon />}
+                </div>
+                <p
+                  style={{
+                    textWrap: "nowrap",
+                  }}>
+                  {column?.attributes?.[`label_${i18n.language}`] ??
+                    column?.label}
+                </p>
+              </div>
+              <div
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  padding: "8px 16px",
+                  margin: "-1px -1px 0 0",
+                  width: 70,
+                  border: 0,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}>
+                {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                  <Switch
+                    size="small"
+                    checked={computedColumns?.includes(column?.relation_id)}
+                    onChange={(e) => {
+                      updateView(
+                        e.target.checked
+                          ? [...computedColumns, column.relation_id]
+                          : computedColumns.filter(
+                              (el) => el !== column.relation_id
+                            )
+                      );
+                    }}
+                  />
+                ) : (
+                  <Switch
+                    size="small"
+                    checked={computedColumns?.includes(column?.id)}
+                    onChange={(e) => {
+                      updateView(
+                        e.target.checked
+                          ? [...computedColumns, column.id]
+                          : computedColumns.filter((el) => el !== column.id)
+                      );
+                    }}
+                  />
+                )}
+              </div>
+            </div>
           ))}
         </Container>
       </Flex>
     </Box>
   );
 };
-
-const ViewOptionTitle = ({children}) => (
-  <Box color="#475467" fontWeight={500} fontSize={14}>
-    {children}
-  </Box>
-);
 
 export default ColumnsVisibility;

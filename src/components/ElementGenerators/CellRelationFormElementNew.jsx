@@ -175,7 +175,7 @@ const AutoCompleteElement = ({
       border: "0px solid #fff",
       outline: "none",
       minHeight: newUi ? "25px" : undefined,
-      height: newUi ? "25px" : undefined
+      height: newUi ? "25px" : undefined,
     }),
     input: (provided) => ({
       ...provided,
@@ -195,6 +195,10 @@ const AutoCompleteElement = ({
     menu: (provided) => ({
       ...provided,
       zIndex: 9999,
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999, // Ensures the dropdown appears on top of the drawer
     }),
   };
 

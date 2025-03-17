@@ -486,25 +486,30 @@ function DrawerDetailPage({
                           fontSize: "11px",
                           fontWeight: "500",
                         }}>
-                        {el?.label}
+                        {el?.type === "relation"
+                          ? el?.relation?.attributes?.[
+                              `label_to_${i18n?.language}`
+                            ]
+                          : el?.attributes?.[`label_${i18n?.language}`] ||
+                            el?.label}
                       </Tab>
                     ))}
                   </TabList>
                 </Flex>
 
-                {selectedTabIndex === 0 && (
-                  <Button
-                    isLoading={btnLoader}
-                    disabled={btnLoader}
-                    type="submit"
-                    rounded={4}
-                    bg={"#007aff"}
-                    color={"#fff"}
-                    w={100}
-                    h={10}>
-                    Save
-                  </Button>
-                )}
+                {/* {selectedTabIndex === 0 && ( */}
+                <Button
+                  isLoading={btnLoader}
+                  disabled={btnLoader}
+                  type="submit"
+                  rounded={4}
+                  bg={"#007aff"}
+                  color={"#fff"}
+                  w={100}
+                  h={10}>
+                  Save
+                </Button>
+                {/* )} */}
               </DrawerHeader>
 
               <TabPanel>
@@ -540,6 +545,8 @@ function DrawerDetailPage({
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        selectedTab={selectedTab}
+                        getValues={getValues}
                         handleMouseDown={handleMouseDown}
                         getAllData={getAllData}
                         selectedTabIndex={selectedTabIndex}
@@ -554,7 +561,6 @@ function DrawerDetailPage({
                         watch={watch}
                         loader={loader}
                         setSelectTab={setSelectTab}
-                        selectedTab={selectedTab}
                         errors={errors}
                         relatedTable={
                           tableRelations[selectedTabIndex]?.relatedTable

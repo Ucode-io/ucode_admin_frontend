@@ -29,5 +29,13 @@ export const TAB_COMPONENTS = {
   ACTIVITY_LOGS: {
     ACTIVITY_LOGS: "activityLogs",
     ACTIVITY_LOGS_DETAIL: "activityLogsDetail",
-  }
+  },
+  FUNCTIONS: {
+    FUNCTIONS: "functions",
+    FUNCTIONS_DETAIL: "functionsDetail",
+  },
+  MICROFRONTEND: {
+    MICROFRONTEND: "microFrontend",
+    MICROFRONTEND_DETAIL: "microFrontendDetail",
+  },
 }

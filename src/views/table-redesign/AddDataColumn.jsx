@@ -3,14 +3,14 @@ import DoneIcon from "@mui/icons-material/Done";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import { useParams, useSearchParams } from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import { showAlert } from "@/store/alert/alert.thunk";
+import {showAlert} from "@/store/alert/alert.thunk";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import { CircularProgress } from "@mui/material";
-import { Box, Flex, Image } from "@chakra-ui/react";
+import {CircularProgress} from "@mui/material";
+import {Box, Flex, Image} from "@chakra-ui/react";
 import NewTableDataForm from "@/components/ElementGenerators/NewTableDataForm";
-import { CTableCell, CTableRow } from "@/components/CTable";
+import {CTableCell, CTableRow} from "@/components/CTable";
 
 const AddDataColumn = React.memo(
   ({
@@ -33,9 +33,8 @@ const AddDataColumn = React.memo(
     firstRowWidth = 45,
     tableSlugProp = "",
   }) => {
-
     const dispatch = useDispatch();
-    const { tableSlug: tableSlugParams, id } = useParams();
+    const {tableSlug: tableSlugParams, id} = useParams();
     const [isLoading, setIsLoading] = useState();
 
     const computedSlug = isRelationTable
@@ -50,7 +49,7 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      formState: { errors },
+      formState: {errors},
     } = useForm({});
 
     const onSubmit = (values) => {
@@ -86,8 +85,7 @@ const AddDataColumn = React.memo(
             backgroundColor: "#F6F6F6",
             zIndex: "2",
             textAlign: "center",
-          }}
-        >
+          }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column, index) => (
@@ -123,8 +121,7 @@ const AddDataColumn = React.memo(
                   ? "1"
                   : "0"
               }`,
-            }}
-          >
+            }}>
             <NewTableDataForm
               tableSlug={tableSlugProp}
               fields={columns}
@@ -154,8 +151,7 @@ const AddDataColumn = React.memo(
                   padding: 4,
                   borderRadius: 6,
                   zIndex: 1,
-                }}
-              >
+                }}>
                 <img src="/table-icons/lock.svg" alt="lock" />
               </div>
             )}
@@ -175,8 +171,7 @@ const AddDataColumn = React.memo(
             right: "0",
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
-          }}
-        >
+          }}>
           <Box className="group" position="relative" h="25px" w="25px">
             <Image
               ml="3px"
@@ -184,39 +179,36 @@ const AddDataColumn = React.memo(
               alt="More"
               w="25px"
               h="25px"
-              _groupHover={{ display: "none" }}
+              _groupHover={{display: "none"}}
             />
 
             <Flex
               columnGap="3px"
               display="none"
-              _groupHover={{ display: "flex" }}
+              _groupHover={{display: "flex"}}
               position="absolute"
               top={0}
               right="-3px"
               bg="#fff"
-              borderRadius={4}
-            >
+              borderRadius={4}>
               <RectangleIconButton
                 id="cancel-row"
                 color="error"
                 onClick={() => setAddNewRow(false)}
-                style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
-              >
+                style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}>
                 <ClearIcon color="error" />
               </RectangleIconButton>
 
               {isLoading ? (
                 <CircularProgress
-                  style={{ width: "20px", height: "20px", marginLeft: "4px" }}
+                  style={{width: "20px", height: "20px", marginLeft: "4px"}}
                 />
               ) : (
                 <RectangleIconButton
                   id="confirm-row"
                   color="success"
                   onClick={handleSubmit(onSubmit)}
-                  style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
-                >
+                  style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}>
                   <DoneIcon color="success" />
                 </RectangleIconButton>
               )}

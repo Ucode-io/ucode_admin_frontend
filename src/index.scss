@@ -313,6 +313,10 @@ div {
 .custom_textfield {
   padding-right: 0 !important;
 
+  input {
+    border: none !important;
+  }
+
   div fieldset {
     border: none;
   }

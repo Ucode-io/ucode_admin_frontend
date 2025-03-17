@@ -8,6 +8,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import {showAlert} from "../../../store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
+import {useQueryClient} from "react-query";
 
 export default function TimeLineDayDataBlockItem({
   data,
@@ -30,6 +31,7 @@ export default function TimeLineDayDataBlockItem({
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const handleOpen = () => {
     setOpen(true);
@@ -139,6 +141,7 @@ export default function TimeLineDayDataBlockItem({
       })
       .then((res) => {
         dispatch(showAlert("Успешно обновлено", "success"));
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
 

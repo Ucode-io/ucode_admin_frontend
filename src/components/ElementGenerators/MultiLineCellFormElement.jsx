@@ -47,8 +47,8 @@ export default function MultiLineCellFormElement({
         }}>
         <p
           id="textAreaInput"
-          onClick={() => {
-            !isDisabled && handleClick();
+          onClick={(e) => {
+            !isDisabled && handleClick(e);
           }}
           style={
             isWrapField

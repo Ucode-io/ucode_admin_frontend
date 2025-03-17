@@ -1,10 +1,10 @@
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {useMutation} from "react-query";
+import {useMutation, useQuery} from "react-query";
 import classes from "../style.module.scss";
 import {useTranslation} from "react-i18next";
-import {Box, InputAdornment, Tooltip} from "@mui/material";
+import {Box, Checkbox, InputAdornment, Tooltip} from "@mui/material";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import {useRegisterCompanyMutation} from "../../../services/companyService";
@@ -12,6 +12,8 @@ import GoogleAuthLogin from "./LoginFormDesign/ExternalAuth/GoogleAuthLogin";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
 import HFTextFieldPassword from "../../../components/FormElements/HFTextFieldPassword";
 import {useNavigate} from "react-router-dom";
+import HFFairSelect from "../../../components/FormElements/HFFairSelect";
+import billingService from "../../../services/billingService";
 
 const loginRules = {
   minLength: {
@@ -25,31 +27,31 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [publicCheck, setPublicCheck] = useState(false);
   const {
     control,
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm();
 
-  const { mutate: updateObject } = useMutation(() => console.log(""));
+  const {mutate: updateObject} = useMutation(() => console.log(""));
 
-  const { mutateAsync: registerCompany, isLoading } =
-    useRegisterCompanyMutation({
-      onSuccess: () => {
-        dispatch(showAlert("Registration was successful", "success"));
-        setLoading(false);
-        navigate("/login");
-      },
-      onError: (err) => {
-        setLoading(false);
-        if (err.response?.data?.description) {
-          dispatch(showAlert(err.response.data.description));
-        } else
-          dispatch(showAlert("Connection issues. Please try again", "error"));
-      },
-    });
+  const {mutateAsync: registerCompany, isLoading} = useRegisterCompanyMutation({
+    onSuccess: () => {
+      dispatch(showAlert("Registration was successful", "success"));
+      setLoading(false);
+      navigate("/login");
+    },
+    onError: (err) => {
+      setLoading(false);
+      if (err.response?.data?.description) {
+        dispatch(showAlert(err.response.data.description));
+      } else
+        dispatch(showAlert("Connection issues. Please try again", "error"));
+    },
+  });
 
   const onSubmit = (values) => {
     setLoading(true);
@@ -61,17 +63,33 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
     });
   };
 
+  const {data: fares} = useQuery(
+    ["GET_OBJECT_LIST"],
+    () => {
+      return billingService.getFareList();
+    },
+    {
+      select: (res) => {
+        return (
+          res?.fares?.map((item) => ({
+            label: item?.name,
+            value: item?.id,
+          })) ?? []
+        );
+      },
+    }
+  );
+
   return (
-    <div className={classes.outlet}>
+    <div className={classes.outletRegister}>
       <div className={classes.form}>
-        <Box sx={{ width: "100%", textAlign: "center" }}>
+        <Box sx={{width: "100%", textAlign: "center"}}>
           <h1 className={classes.titleDesign}>{t("register.form")}</h1>
-          <p className={classes.subtitleDesign}>{t("fill.out.info")}</p>
         </Box>
 
-        <form style={{ marginTop: "25px" }} onSubmit={handleSubmit(onSubmit)}>
-          <Box className="" h="calc(100vh - 300px)" overflow="auto">
-            <div className={classes.formRow}>
+        <form style={{marginTop: "5px"}} onSubmit={handleSubmit(onSubmit)}>
+          <Box className="" h="calc(100vh - 200px)" overflow="auto">
+            <div style={{marginBottom: "13px"}} className={classes.formRow}>
               <p className={classes.label}>{t("company.name")}</p>
               <HFTextFieldLogin
                 name="name"
@@ -89,7 +107,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               />
             </div>
             {!watch("googleToken") && (
-              <div className={classes.formRow}>
+              <div style={{marginBottom: "13px"}} className={classes.formRow}>
                 <p className={classes.label}>{t("email")}</p>
                 <HFTextFieldLogin
                   name="user_info.email"
@@ -108,7 +126,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               </div>
             )}
 
-            <div className={classes.formRow}>
+            <div style={{marginBottom: "13px"}} className={classes.formRow}>
               <p className={classes.label}>{t("login")}</p>
               <HFTextFieldLogin
                 required
@@ -126,7 +144,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
                 }}
               />
             </div>
-            <div className={classes.formRow}>
+            <div style={{marginBottom: "13px"}} className={classes.formRow}>
               <p className={classes.label}>{t("password")}</p>
               <HFTextFieldPassword
                 required
@@ -153,11 +171,35 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
                 </span>
               )}
             </div>
+            <div style={{marginBottom: "13px"}} className={classes.formRow}>
+              <p className={classes.label}>{t("Tariff")}</p>
+              <HFFairSelect
+                options={fares}
+                required
+                name="user_info.fair_id"
+                control={control}
+                fullWidth
+              />
+            </div>
           </Box>
         </form>
 
+        <Box sx={{display: "flex", gap: "10px"}}>
+          <Checkbox
+            style={{width: "16px", height: "16px", marginTop: "2px"}}
+            onChange={(e) => setPublicCheck(e.target.checked)}
+            id="public_offer"
+          />
+          <label for="public_offer" style={{fontSize: "11px"}}>
+            {t("public_offer")}{" "}
+            <a href={import.meta.env.VITE_PUBLIC_OFFER} download>
+              {t("public_link")}
+            </a>
+          </label>
+        </Box>
+
         <Tooltip title="Google Auth!">
-          <Box sx={{ marginBottom: "25px" }}>
+          <Box sx={{marginBottom: "13px"}}>
             <GoogleAuthLogin
               watch={watch}
               setValue={setValue}
@@ -168,11 +210,11 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
 
         <div className={classes.buttonsArea}>
           <PrimaryButton
+            disabled={!publicCheck}
             onClick={handleSubmit(onSubmit)}
             size="large"
             loader={loading}
-            style={{ borderRadius: "8px", fontSize: "16px", margin: "0 0" }}
-          >
+            style={{borderRadius: "8px", fontSize: "16px", margin: "0 0"}}>
             {t("register.form")}
           </PrimaryButton>
         </div>
@@ -183,13 +225,11 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
             gap: "5px",
             marginTop: "16px",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <p>{t("already.have.account")}</p>
           <Box
             onClick={() => navigate("/login")}
-            sx={{ color: "#175CD3", fontSize: "14px", cursor: "pointer" }}
-          >
+            sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
             {t("enter")}
           </Box>
         </Box>

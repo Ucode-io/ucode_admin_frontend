@@ -37,25 +37,25 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import { Menu, Checkbox, Pagination, Button, Skeleton } from "@mui/material";
+import {Menu, Checkbox, Pagination, Button, Skeleton} from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-import { useForm } from "react-hook-form";
-import { transliterate } from "@/utils/textTranslater";
-import { showAlert } from "@/store/alert/alert.thunk";
-import { generateGUID } from "@/utils/generateID";
+import {useForm} from "react-hook-form";
+import {transliterate} from "@/utils/textTranslater";
+import {showAlert} from "@/store/alert/alert.thunk";
+import {generateGUID} from "@/utils/generateID";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import FieldOptionModal from "@/components/DataTable/FieldOptionModal";
 import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import TableRow from "./table-row";
 import AddDataColumn from "./AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
-import { CreatableSelect } from "chakra-react-select";
+import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { TableDataSkeleton } from "../../components/TableDataSkeleton";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 
-const mockColumns = Array.from({ length: 5 }, (_, index) => ({
+const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
     field_permission: {
       edit_permission: true,
@@ -174,7 +174,7 @@ export const DynamicTable = ({
   getAllData = () => {},
   tableSlugProp = "",
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -247,7 +247,7 @@ export const DynamicTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -346,10 +346,9 @@ export const DynamicTable = ({
       className="CTableContainer"
       style={
         isPaginationPositionSticky
-          ? { display: "flex", flexDirection: "column", height: "100%" }
+          ? {display: "flex", flexDirection: "column", height: "100%"}
           : {}
-      }
-    >
+      }>
       <div
         className="table"
         style={{
@@ -360,8 +359,7 @@ export const DynamicTable = ({
           height: height
             ? height
             : `calc(100vh - ${(tableViewFiltersOpen ? 35 : 0) + tabHeight + 130}px)`,
-        }}
-      >
+        }}>
         <table id="resizeMe">
           <thead
             style={{
@@ -369,8 +367,7 @@ export const DynamicTable = ({
               position: "sticky",
               top: 0,
               zIndex: 2,
-            }}
-          >
+            }}>
             <tr>
               <IndexTh
                 items={isRelationTable ? fields : data}
@@ -427,8 +424,7 @@ export const DynamicTable = ({
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
                   type="add_field"
-                  id="addField"
-                >
+                  id="addField">
                   <FieldButton
                     tableLan={tableLan}
                     openFieldSettings={openFieldSettings}
@@ -536,8 +532,7 @@ export const DynamicTable = ({
                     zIndex: "1",
                     width: "45px",
                     color: "#007aff",
-                  }}
-                >
+                  }}>
                   <Flex
                     id="addRowBtn"
                     h="30px"
@@ -545,9 +540,8 @@ export const DynamicTable = ({
                     justifyContent="center"
                     transition="background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
                     cursor="pointer"
-                    _hover={{ bg: "rgba(0, 122, 255, 0.08)" }}
-                    onClick={() => setAddNewRow(true)}
-                  >
+                    _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
+                    onClick={() => setAddNewRow(true)}>
                     <AddRoundedIcon fill="#007aff" />
                   </Flex>
                 </td>
@@ -567,15 +561,13 @@ export const DynamicTable = ({
         py="6px"
         borderTop="1px solid #EAECF0"
         justifyContent="space-between"
-        bg="#fff"
-      >
+        bg="#fff">
         <Flex
           columnGap="16px"
           alignItems="center"
           fontSize={14}
           fontWeight={600}
-          color="#344054"
-        >
+          color="#344054">
           {generateLangaugeText(tableLan, i18n?.language, "Show") || "Show"}
           <ChakraProvider>
             <CreatableSelect
@@ -597,7 +589,7 @@ export const DynamicTable = ({
                 label: `${option.value} ${generateLangaugeText(tableLan, i18n?.language, "rows") || "rows"}`,
               }))}
               menuPlacement="top"
-              onChange={({ value }) => getLimitValue(value)}
+              onChange={({value}) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
@@ -801,17 +793,17 @@ const FieldButton = ({
 
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({ data, tableSlug });
+        createField({data, tableSlug});
       }
       if (values?.type === "RELATION") {
-        createRelation({ data: relationData, tableSlug });
+        createRelation({data: relationData, tableSlug});
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({ data: values, tableSlug });
+        updateRelation({data: values, tableSlug});
       } else {
-        updateField({ data, tableSlug });
+        updateField({data, tableSlug});
       }
     }
   };

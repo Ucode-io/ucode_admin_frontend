@@ -230,5 +230,8 @@
   "account": "Account",
   "account_security": "Account security",
   "advanced_settings": "Advanced settings",
-  "add_resource": "Add resource"
+  "add_resource": "Add resource",
+  "public_offer": "By clicking the confirm button, you agree to the terms of the",
+  "public_link": "Public Offer",
+  "select_tariff": "Select Tariff"
 }

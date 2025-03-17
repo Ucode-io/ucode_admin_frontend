@@ -236,5 +236,8 @@
   "account": "Akkaunt",
   "account_security": "Akkaunt havfsizligi",
   "advanced_settings": "Kengaytirilgan sozlamalar",
-  "add_resource": "Resurs qo'shish"
+  "add_resource": "Resurs qo'shish",
+  "public_offer": "Tasdiqlash tugmasini bosish orqali siz",
+  "public_link": "Ommaviy oferta shartlariga rozilik bildirasiz.",
+  "select_tariff": "Tarifni tanlang"
 }

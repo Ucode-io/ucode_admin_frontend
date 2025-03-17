@@ -29,6 +29,7 @@ import { Redirect } from "./modules/Redirect";
 import { RedirectForm } from "./modules/RedirectForm";
 import { ActivityLogs } from "./modules/ActivityLogs";
 import { ActivityLogsDetail } from "./modules/ActivityLogsDetail";
+import { Models } from "./modules/Models";
 
 export const useSettingsPopupProps = ({ onClose }) => {
   const { t, i18n } = useTranslation();
@@ -138,6 +139,12 @@ export const useSettingsPopupProps = ({ onClose }) => {
             "Activity Logs",
           icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
         },
+        {
+          key: "models",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Models") || "Models",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
       ],
     },
   ];
@@ -187,6 +194,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
       activityLogs: <ActivityLogs />,
       activityLogsDetail: <ActivityLogsDetail />,
     },
+    models: <Models />,
   };
 
   useEffect(() => {

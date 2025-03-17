@@ -30,6 +30,10 @@ import { RedirectForm } from "./modules/RedirectForm";
 import { ActivityLogs } from "./modules/ActivityLogs";
 import { ActivityLogsDetail } from "./modules/ActivityLogsDetail";
 import { Models } from "./modules/Models";
+import { Functions } from "./modules/Functions";
+import { FunctionsDetail } from "./modules/FunctionsDetail";
+import { MicroFrontend } from "./modules/MicroFrontend";
+import { MicroFrontendDetail } from "./modules/MicroFrontendDetail";
 
 export const useSettingsPopupProps = ({ onClose }) => {
   const { t, i18n } = useTranslation();
@@ -145,6 +149,20 @@ export const useSettingsPopupProps = ({ onClose }) => {
             generateLangaugeText(lang, i18n?.language, "Models") || "Models",
           icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
         },
+        {
+          key: "functions",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Functions") ||
+            "Functions",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
+        {
+          key: "microFrontend",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Microfrontend") ||
+            "Microfrontend",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
       ],
     },
   ];
@@ -195,6 +213,14 @@ export const useSettingsPopupProps = ({ onClose }) => {
       activityLogsDetail: <ActivityLogsDetail />,
     },
     models: <Models />,
+    functions: {
+      functions: <Functions />,
+      functionsDetail: <FunctionsDetail />,
+    },
+    microFrontend: {
+      microFrontend: <MicroFrontend />,
+      microFrontendDetail: <MicroFrontendDetail />,
+    },
   };
 
   useEffect(() => {

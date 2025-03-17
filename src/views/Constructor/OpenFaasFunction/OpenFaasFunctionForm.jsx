@@ -237,7 +237,9 @@ export default function OpenFaasFunctionForm() {
           ...item,
           translations: item.translations || {},
         }));
-        setFunctionLan(formattedData?.find((item) => item?.key === "Fuctions"));
+        setFunctionLan(
+          formattedData?.find((item) => item?.key === "Functions")
+        );
       }
     });
 

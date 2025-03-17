@@ -1,0 +1,1 @@
+export { MicroFrontendDetail } from "./MicroFrontendDetail"

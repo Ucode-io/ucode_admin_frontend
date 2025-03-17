@@ -172,6 +172,7 @@ export const DynamicTable = ({
   height,
   isPaginationPositionSticky,
   getAllData = () => {},
+  tableSlugProp = "",
 }) => {
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -520,6 +521,7 @@ export const DynamicTable = ({
                 tableSettings={tableSettings}
                 calculateWidthFixedColumn={calculateWidthFixedColumn}
                 firstRowWidth={45}
+                tableSlugProp={tableSlugProp}
               />
             )}
 

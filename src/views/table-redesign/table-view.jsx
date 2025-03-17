@@ -587,6 +587,7 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
+          tableSlugProp={tableSlug}
           {...props}
         />
 
@@ -643,7 +644,8 @@ const TableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -662,7 +664,8 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

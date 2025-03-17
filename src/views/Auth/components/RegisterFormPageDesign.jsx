@@ -192,7 +192,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
           />
           <label for="public_offer" style={{fontSize: "11px"}}>
             {t("public_offer")}{" "}
-            <a href="" download>
+            <a href={import.meta.env.VITE_PUBLIC_OFFER} download>
               {t("public_link")}
             </a>
           </label>

@@ -103,12 +103,13 @@ export const useEnvironmentDeleteMutation = (mutationSettings) => {
   return useMutation((id) => environmentService.delete(id), mutationSettings);
 };
 
-export const useVersionHistoryExcel = (params) => {
+export const useVersionHistoryExcel = (params, props = {}) => {
   return useQuery(
     ["VERSION_HISTORY_EXCEL", params],
     () => {
       return environmentService.getVersionHistoryExcel(params.envId, params);
-    }
+    },
+    props
   );
 }
 

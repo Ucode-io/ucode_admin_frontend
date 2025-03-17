@@ -70,9 +70,9 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug: paramsTableSlug, appId} = useParams();
-  const tableSlug = paramsTableSlug || tableSlugProp;
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const { id, slug, tableSlug: paramsTableSlug, appId } = useParams();
+  const tableSlug = tableSlugProp || paramsTableSlug;
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(

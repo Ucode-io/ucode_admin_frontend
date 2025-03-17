@@ -65,7 +65,7 @@ export const useSMSTypeProps = ({ i18n }) => {
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
+    ["GET_VIEWS_AND_FIELDS_SMS_TEMPLATE", tableSlug, i18n?.language],
     () => {
       if (Boolean(!tableSlug)) return [];
       return constructorTableService.getTableInfo(

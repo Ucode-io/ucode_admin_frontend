@@ -18,19 +18,22 @@ import {
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import {ChevronRightIcon} from "@chakra-ui/icons";
 import ColumnsVisibility from "./ColumnVisibility";
+import constructorTableService from "../../../services/constructorTableService";
+import {listToMap} from "../../../utils/listToMap";
 
 const ViewOptions = ({
   selectedTab,
   data,
   refetchViews = () => {},
   getAllData = () => {},
-  fieldsMap,
+  fieldsMap: fieldsMapFromProps,
   selectedTabIndex,
   tableLan,
 }) => {
   const {appId, tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
+  const relatedTableSlug = selectedTab?.relation?.relation_table_slug;
 
   const ref = useRef();
 
@@ -41,6 +44,37 @@ const ViewOptions = ({
       ref.current.focus();
     }
   }, [openedMenu]);
+
+  const {
+    data: {fieldsMap} = {
+      views: [],
+      fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    () => {
+      return constructorTableService.getTableInfo(
+        relatedTableSlug,
+        {
+          data: {},
+        },
+        {
+          language_setting: i18n?.language,
+        }
+      );
+    },
+    {
+      enabled: Boolean(relatedTableSlug),
+      select: ({data}) => {
+        return {
+          fieldsMap: listToMap(data?.fields),
+        };
+      },
+      enabled: !!relatedTableSlug,
+    }
+  );
 
   const layoutQuery = useQuery({
     queryKey: ["GET_LAYOUT", {tableSlug}],
@@ -157,30 +191,6 @@ const ViewOptions = ({
             </Box>
           </>
         )}
-
-        {/* <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            justifyContent: "flex-end",
-            borderBottom: "1px solid #eee",
-          }}>
-          <FixColumnsRelationSection
-            relatedTable={getRelatedTabeSlug}
-            fieldsMap={fieldsMap}
-            getAllData={getAllData}
-          />
-          <Divider orientation="vertical" flexItem />
-          <VisibleColumnsButtonRelationSection
-            currentView={getRelatedTabeSlug}
-            fieldsMap={fieldsMap}
-            getAllData={getAllData}
-            // getLayoutList={getLayoutList}
-            selectedTabIndex={selectedTabIndex}
-            data={data}
-          />
-        </Box> */}
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility

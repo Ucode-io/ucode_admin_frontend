@@ -13,6 +13,7 @@ import PermissionWrapperV2 from "../../../components/PermissionWrapper/Permissio
 import AddDataColumn from "../../table-redesign/AddDataColumn";
 import TableRow from "../../table-redesign/table-row";
 import Th from "./Th-table";
+import DrawerTablePagination from "./DrawerTablePagination.jsx";
 
 const DrawerObjectDataTable = ({
   tableView,
@@ -49,13 +50,17 @@ const DrawerObjectDataTable = ({
   view,
   refetch,
   menuItem,
+  setLimit = () => {},
   getAllData = () => {},
+  onPaginationChange = () => {},
+  multipleDelete = () => {},
+  pageCount,
+  tableLan = {},
   layoutData,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
-  const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
@@ -65,7 +70,7 @@ const DrawerObjectDataTable = ({
   const [addNewRow, setAddNewRow] = useState(false);
 
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
-  console.log("datadata", data);
+
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
@@ -215,7 +220,7 @@ const DrawerObjectDataTable = ({
           flexGrow: 1,
           backgroundColor: "#fff",
           borderTop: "1px solid #E5E9EB",
-          height: `calc(100vh - ${0 + tabHeight + 130}px)`,
+          height: `calc(100vh - ${0 + tabHeight + 140}px)`,
         }}>
         <table id="resizeMe">
           <thead
@@ -329,7 +334,8 @@ const DrawerObjectDataTable = ({
                 setAddNewRow={setAddNewRow}
                 isTableView={isTableView}
                 tableView={tableView}
-                tableSlug={relatedTableSlug}
+                relatedTableSlug={relatedTableSlug}
+                tableSlug={tableSlug}
                 fields={columns}
                 getValues={getValues}
                 mainForm={mainForm}
@@ -377,6 +383,16 @@ const DrawerObjectDataTable = ({
           </tbody>
         </table>
       </div>
+      <DrawerTablePagination
+        dataCount={pageCount}
+        currentPage={currentPage}
+        limit={limit}
+        setLimit={setLimit}
+        tableLan={tableLan}
+        selectedObjectsForDelete={selectedObjectsForDelete}
+        onPaginationChange={onPaginationChange}
+        multipleDelete={multipleDelete}
+      />
     </div>
   );
 };

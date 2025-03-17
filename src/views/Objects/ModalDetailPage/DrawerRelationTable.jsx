@@ -1,15 +1,5 @@
-import {useQuery} from "react-query";
-import {Box, Divider} from "@mui/material";
-import {useParams, useSearchParams} from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import {useFieldArray} from "react-hook-form";
-import {listToMap} from "../../../utils/listToMap";
-import {useEffect, useMemo, useRef, useState} from "react";
-import constructorTableService from "../../../services/constructorTableService";
-import FixColumnsRelationSection from "../RelationSection/FixColumnsRelationSection";
-import VisibleColumnsButtonRelationSection from "../RelationSection/VisibleColumnsButtonRelationSection";
-import RelationTableDrawer from "./RelationTableDrawer";
 import chakraUITheme from "@/theme/chakraUITheme";
+import {ChevronDownIcon} from "@chakra-ui/icons";
 import {
   Button,
   ChakraProvider,
@@ -24,10 +14,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@chakra-ui/react";
+import {Box} from "@mui/material";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import {ChevronDownIcon} from "@chakra-ui/icons";
-import ViewOptions from "./ViewOptions";
 import useTabRouter from "../../../hooks/useTabRouter";
+import constructorTableService from "../../../services/constructorTableService";
+import {listToMap} from "../../../utils/listToMap";
+import RelationTableDrawer from "./RelationTableDrawer";
+import ViewOptions from "./ViewOptions";
+import useDebounce from "../../../hooks/useDebounce";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 const DrawerRelationTable = ({
   selectedTabIndex,
@@ -58,6 +58,8 @@ const DrawerRelationTable = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+  const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
@@ -126,6 +128,11 @@ const DrawerRelationTable = ({
     }
   );
 
+  const inputChangeHandler = useDebounce((val) => {
+    setCurrentPage(1);
+    setSearchText(val);
+  }, 300);
+
   return (
     <>
       <Box py={"5px"} sx={{height: "100vh"}}>
@@ -137,17 +144,16 @@ const DrawerRelationTable = ({
                   <Image src="/img/search-lg.svg" alt="search" />
                 </InputLeftElement>
                 <Input
-                  placeholder="Search"
                   id="search_input"
-                  // defaultValue={searchText}
-                  // placeholder={
-                  //   generateLangaugeText(tableLan, i18n?.language, "Search") ||
-                  //   "Search"
-                  // }
-                  // onChange={(ev) => inputChangeHandler(ev.target.value)}
+                  defaultValue={searchText}
+                  placeholder={
+                    generateLangaugeText(tableLan, i18n?.language, "Search") ||
+                    "Search"
+                  }
+                  onChange={(ev) => inputChangeHandler(ev.target.value)}
                 />
 
-                <PopoverTrigger>
+                {/* <PopoverTrigger>
                   <InputRightElement>
                     <IconButton
                       w="24px"
@@ -159,7 +165,7 @@ const DrawerRelationTable = ({
                       size="xs"
                     />
                   </InputRightElement>
-                </PopoverTrigger>
+                </PopoverTrigger> */}
               </InputGroup>
 
               <PopoverContent
@@ -223,15 +229,7 @@ const DrawerRelationTable = ({
               data={data}
               selectedTabIndex={selectedTabIndex}
               getAllData={getAllData}
-              // viewName={viewName}
-              // refetchViews={refetchViews}
               fieldsMap={fieldsMap}
-              // visibleRelationColumns={visibleRelationColumns}
-              // searchText={searchText}
-              // checkedColumns={checkedColumns}
-              // onDocsClick={onDocsClick}
-              // computedVisibleFields={computedVisibleFields}
-              // tableLan={tableLan}
             />
           </Flex>
         </ChakraProvider>
@@ -241,6 +239,9 @@ const DrawerRelationTable = ({
           loader={loader}
           remove={remove}
           reset={reset}
+          searchText={searchText}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
           selectedTabIndex={selectedTabIndex}
           watch={watch}
           selectedTab={selectedTab}
@@ -256,6 +257,7 @@ const DrawerRelationTable = ({
           setCreateFormVisible={setCreateFormVisible}
           selectedObjects={selectedObjects}
           setSelectedObjects={setSelectedObjects}
+          inputChangeHandler={inputChangeHandler}
           tableSlug={tableSlug}
           removableHeight={140}
           id={id}

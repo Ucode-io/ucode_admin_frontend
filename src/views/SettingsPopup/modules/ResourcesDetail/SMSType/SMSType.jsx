@@ -84,7 +84,7 @@ export const SMSType = ({
                 "Resource settings"
               ) || "Resource settings"}
             </span>
-            <Box>
+            {/* <Box>
               {(resourceType === "CLICK_HOUSE"
                 ? !isEditPage
                 : resource_type !== 2 ||
@@ -125,7 +125,7 @@ export const SMSType = ({
                   ) || "Reconnect"}
                 </Button>
               )}
-            </Box>
+            </Box> */}
           </Box>
         </ContentTitle>
         <TabList>

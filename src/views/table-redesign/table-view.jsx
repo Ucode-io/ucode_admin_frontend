@@ -572,6 +572,7 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
+          tableSlugProp={tableSlugProp}
           {...props}
         />
 

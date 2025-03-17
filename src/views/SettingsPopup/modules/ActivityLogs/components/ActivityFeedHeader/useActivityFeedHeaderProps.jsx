@@ -53,23 +53,36 @@ export const useActivityFeedHeaderProps = ({ setActionValue, dateFilters }) => {
   const [actionType, setActionType] = useState("");
   const {i18n} = useTranslation();
 
-  const {data} = useVersionHistoryExcel({
-    envId: envId,
-    action_type: actionType?.value,
-    collection: searchParams.get("collection"),
-    user_info: searchParams.get("user_info"),
-    from_date: dateFilters?.$gte
-      ? format(dateFilters?.$gte, "yyyy-MM-dd")
-      : undefined,
-    to_date: dateFilters?.$lt
-      ? format(dateFilters?.$lt, "yyyy-MM-dd")
-      : undefined
-  });
+  const { refetch, isLoading } = useVersionHistoryExcel(
+    {
+      envId: envId,
+      action_type: actionType?.value,
+      collection: searchParams.get("collection"),
+      user_info: searchParams.get("user_info"),
+      from_date: dateFilters?.$gte
+        ? format(dateFilters?.$gte, "yyyy-MM-dd")
+        : undefined,
+      to_date: dateFilters?.$lt
+        ? format(dateFilters?.$lt, "yyyy-MM-dd")
+        : undefined,
+    },
+    {
+      enabled: false,
+      onSuccess(data) {
+        window.open("https://" + data.link, "_blank");
+      },
+    }
+  );
+
+  const handleDownloadExcel = (e) => {
+    e.preventDefault();
+    if (!isLoading) refetch();
+  };
 
   const changeHandler = (newValue) => {
     setActionValue(newValue);
     setActionType(newValue || {});
-  }
+  };
 
   return {
     inputValue,
@@ -77,7 +90,8 @@ export const useActivityFeedHeaderProps = ({ setActionValue, dateFilters }) => {
     i18n,
     actionOptions,
     changeHandler,
-    link: data?.link,
     actionType,
-  }
+    handleDownloadExcel,
+    isLoading,
+  };
 }

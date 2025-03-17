@@ -14,16 +14,16 @@ export const ActivityFeedHeader = ({
   dateFilters,
   activityLan,
   setActionValue,
+  isLoading,
 }) => {
-
   const {
     inputValue,
     setInputValue,
     i18n,
     actionOptions,
     changeHandler,
-    link,
-    actionType
+    handleDownloadExcel,
+    actionType,
   } = useActivityFeedHeaderProps({ setActionValue, dateFilters });
 
   return (
@@ -33,11 +33,15 @@ export const ActivityFeedHeader = ({
           <>
             {histories?.length || "0"}{" "}
             {generateLangaugeText(activityLan, i18n?.language, "Items") ||
-            "Items"}
+              "Items"}
           </>
         }
       >
-        <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
           <span>
             {generateLangaugeText(
               activityLan,
@@ -45,7 +49,14 @@ export const ActivityFeedHeader = ({
               "Activity Logs"
             ) || "Activity Logs"}
           </span>
-          <a href={link} download style={{fontSize: "14px"}}>
+          <a
+            onClick={handleDownloadExcel}
+            href="/"
+            style={{
+              fontSize: "14px",
+              cursor: isLoading ? "progress" : "pointer",
+            }}
+          >
             {generateLangaugeText(
               activityLan,
               i18n?.language,
@@ -57,7 +68,7 @@ export const ActivityFeedHeader = ({
       <FiltersBlock sideClassName={cls.side} className={cls.filter_block}>
         <Select
           inputValue={inputValue}
-          onInputChange={(newInputValue, {action}) => {
+          onInputChange={(newInputValue, { action }) => {
             setInputValue(newInputValue);
           }}
           options={actionOptions}
@@ -66,9 +77,9 @@ export const ActivityFeedHeader = ({
           // components={{
           //   DropdownIndicator: null,
           // }}
-          onChange={(newValue, {action}) => {
-            console.log(action)
-            if(action === "clear") {
+          onChange={(newValue, { action }) => {
+            console.log(action);
+            if (action === "clear") {
               setInputValue("");
             }
             changeHandler(newValue);
@@ -80,11 +91,10 @@ export const ActivityFeedHeader = ({
           isOptionSelected={(option, value) =>
             value.some((val) => val.guid === value)
           }
-          placeholder={generateLangaugeText(
-            activityLan,
-            i18n?.language,
+          placeholder={
+            generateLangaugeText(activityLan, i18n?.language, "Action Type") ||
             "Action Type"
-          ) || "Action Type"}
+          }
           blurInputOnSelect
         />
         <CRangePickerNew

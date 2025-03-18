@@ -75,6 +75,31 @@ function DrawerFormDetailPage({
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
 
+  // const updateLayout = () => {
+  //   const updatedTabs = layout.tabs.map((tab, index) =>
+  //     index === 1
+  //       ? {
+  //           ...tab,
+  //           attributes: {
+  //             ...tab?.attributes,
+  //             columns: [],
+  //           },
+  //         }
+  //       : tab
+  //   );
+
+  //   const currentUpdatedLayout = {
+  //     ...layout,
+  //     tabs: updatedTabs,
+  //   };
+
+  //   layoutService.update(currentUpdatedLayout, tableSlug);
+  // };
+
+  // useEffect(() => {
+  //   updateLayout();
+  // }, []);
+
   useEffect(() => {
     setFormValue(
       "attributes.layout_heading",
@@ -334,14 +359,6 @@ const HeadingOptions = ({
                     alignItems: "center",
                     gap: "5px",
                   }}>
-                  {/* <span>
-                    {getColumnIcon({
-                      column: {
-                        type: option?.type ?? option?.relation_type,
-                        table_slug: "field",
-                      },
-                    })}
-                  </span> */}
                   {option.label}
                 </Box>
 

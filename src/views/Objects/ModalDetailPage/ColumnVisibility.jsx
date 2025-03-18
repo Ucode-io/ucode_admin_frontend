@@ -8,8 +8,8 @@ import {
   InputGroup,
   InputLeftElement,
   Spinner,
+  Switch,
 } from "@chakra-ui/react";
-import {Switch} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useParams, useSearchParams} from "react-router-dom";
@@ -37,9 +37,9 @@ const ColumnsVisibility = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const [computedColumns, setComputedColumns] = useState(
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? []
+    data?.tabs?.[selectedTabIndex]?.attributes?.columns || []
   );
-
+  console.log("computedColumnscomputedColumns", computedColumns, data);
   const allFields = useMemo(() => {
     return Object.values(fieldsMap);
   }, [fieldsMap]);
@@ -78,12 +78,13 @@ const ColumnsVisibility = ({
   );
 
   const updateView = (newColumns) => {
-    mutation.mutate(newColumns);
+    console.log("newColumnsnewColumns", newColumns);
+    // mutation.mutate(newColumns);
   };
 
   const visibleFields = useMemo(() => {
     return (
-      computedColumns?.map((id) => fieldsMap[id])?.filter((el) => el?.type) ??
+      computedColumns?.map((id) => fieldsMap?.[id])?.filter((el) => el?.type) ??
       []
     );
   }, [computedColumns, fieldsMap]);
@@ -126,34 +127,27 @@ const ColumnsVisibility = ({
   }, []);
 
   return (
-    <Box>
+    <Box p={"10px"}>
       <Flex justifyContent="space-between" alignItems="center">
-        <Button
-          leftIcon={<ChevronLeftIcon fontSize={22} />}
-          rightIcon={
-            mutation.isLoading ? <Spinner color="#475467" /> : undefined
-          }
-          colorScheme="gray"
-          variant="ghost"
-          w="fit-content"
-          onClick={onBackClick}>
-          <Box color="#475467" fontSize={16} fontWeight={600}>
-            {generateLangaugeText(
-              tableLan,
-              i18n?.language,
-              "Visible columns"
-            ) || "Visible columns"}
-          </Box>
-        </Button>
+        <Box color="#475467" fontSize={16} ml={"5px"} fontWeight={600}>
+          {generateLangaugeText(tableLan, i18n?.language, "Visible columns") ||
+            "Visible columns"}
+        </Box>
 
-        {/* <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
+        <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
           <Switch
-            isChecked={allColumns?.length === visibleFields?.length}
-            onChange={(ev) => onShowAllChange(ev.target.checked)}
+            isChecked={computedColumns?.includes(column?.id)}
+            onChange={(e) => {
+              // updateView(
+              //   e.target.checked
+              //     ? [...computedColumns, column.id]
+              //     : computedColumns.filter((el) => el !== column.id)
+              // );
+            }}
           />
           {generateLangaugeText(tableLan, i18n?.language, "Show all") ||
             "Show all"}
-        </Flex> */}
+        </Flex>
       </Flex>
       <InputGroup mt="10px">
         <InputLeftElement>
@@ -167,7 +161,6 @@ const ColumnsVisibility = ({
               "Search by filled name"
             ) || "Search by filled name"
           }
-          value={"search"}
           onChange={(ev) => setSearch(ev.target.value)}
         />
       </InputGroup>
@@ -208,7 +201,7 @@ const ColumnsVisibility = ({
                   </div>
                   <p
                     style={{
-                      textWrap: "nowrap",
+                      width: "200px",
                     }}>
                     {column?.attributes?.[`label_${i18n.language}`] ??
                       column?.label}
@@ -223,14 +216,13 @@ const ColumnsVisibility = ({
                     width: 70,
                     border: 0,
                     paddingLeft: 0,
-                    paddingRight: 0,
+                    paddingRight: "5px",
                     display: "flex",
                     justifyContent: "flex-end",
                   }}>
                   {column.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                     <Switch
-                      size="small"
-                      checked={computedColumns?.includes(column?.relation_id)}
+                      isChecked={computedColumns?.includes(column?.relation_id)}
                       onChange={(e) => {
                         updateView(
                           e.target.checked
@@ -243,8 +235,7 @@ const ColumnsVisibility = ({
                     />
                   ) : (
                     <Switch
-                      size="small"
-                      checked={computedColumns?.includes(column?.id)}
+                      isChecked={computedColumns?.includes(column?.id)}
                       onChange={(e) => {
                         updateView(
                           e.target.checked
@@ -288,7 +279,9 @@ const ColumnsVisibility = ({
                 </div>
                 <p
                   style={{
-                    textWrap: "nowrap",
+                    width: "200px",
+                    minHeight: "42px",
+                    wordBreak: "break-all",
                   }}>
                   {column?.attributes?.[`label_${i18n.language}`] ??
                     column?.label}
@@ -303,14 +296,13 @@ const ColumnsVisibility = ({
                   width: 70,
                   border: 0,
                   paddingLeft: 0,
-                  paddingRight: 0,
+                  paddingRight: "5px",
                   display: "flex",
                   justifyContent: "flex-end",
                 }}>
                 {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                   <Switch
-                    size="small"
-                    checked={computedColumns?.includes(column?.relation_id)}
+                    isChecked={computedColumns?.includes(column?.relation_id)}
                     onChange={(e) => {
                       updateView(
                         e.target.checked
@@ -323,8 +315,7 @@ const ColumnsVisibility = ({
                   />
                 ) : (
                   <Switch
-                    size="small"
-                    checked={computedColumns?.includes(column?.id)}
+                    isChecked={computedColumns?.includes(column?.id)}
                     onChange={(e) => {
                       updateView(
                         e.target.checked

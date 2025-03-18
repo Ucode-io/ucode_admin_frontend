@@ -84,9 +84,6 @@ const ViewOptions = ({
     },
   });
 
-  const groupByColumnsCount = selectedTab?.attributes?.group_by_columns?.length;
-  const visibleColumnsCount = selectedTab?.columns?.length ?? 0;
-
   return (
     <Popover
       offset={[-145, 8]}
@@ -106,83 +103,26 @@ const ViewOptions = ({
           icon={<Image src="/img/dots-vertical.svg" alt="more" />}
           variant="ghost"
           colorScheme="gray"
+          ml={"10px"}
         />
       </PopoverTrigger>
       <PopoverContent
         ref={ref}
         w="320px"
         p={openedMenu === null ? "0px" : "8px"}>
-        {openedMenu === null && (
-          <>
-            <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
-              <Flex
-                p="8px"
-                h="32px"
-                columnGap="8px"
-                alignItems="center"
-                borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
-                cursor="pointer"
-                onClick={() => setOpenedMenu("columns-visibility")}>
-                <Image src="/img/eye.svg" alt="Visibility" />
-                <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Columns") ||
-                    "Columns"}
-                </ViewOptionTitle>
-                <Flex ml="auto" alignItems="center" columnGap="8px">
-                  {Boolean(visibleColumnsCount) && visibleColumnsCount > 0 && (
-                    <ViewOptionSubtitle>
-                      {visibleColumnsCount}{" "}
-                      {generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Shown"
-                      ) || "Shown"}
-                    </ViewOptionSubtitle>
-                  )}
-                  <ChevronRightIcon fontSize={22} />
-                </Flex>
-              </Flex>
-            </Box>
-          </>
-        )}
-
-        {openedMenu === "columns-visibility" && (
-          <ColumnsVisibility
-            getAllData={getAllData}
-            data={data}
-            selectedTabIndex={selectedTabIndex}
-            selectedTab={selectedTab}
-            // tableLan={tableLan}
-            fieldsMap={fieldsMap}
-            refetchViews={refetchViews}
-            onBackClick={() => setOpenedMenu(null)}
-          />
-        )}
-
-        {openedMenu === "fix-column" && (
-          <FixColumns
-            tableLan={tableLan}
-            fieldsMap={fieldsMap}
-            refetchViews={refetchViews}
-            onBackClick={() => setOpenedMenu(null)}
-          />
-        )}
+        <ColumnsVisibility
+          getAllData={getAllData}
+          data={data}
+          selectedTabIndex={selectedTabIndex}
+          selectedTab={selectedTab}
+          // tableLan={tableLan}
+          fieldsMap={fieldsMap}
+          refetchViews={refetchViews}
+          onBackClick={() => setOpenedMenu(null)}
+        />
       </PopoverContent>
     </Popover>
   );
 };
-
-const ViewOptionSubtitle = ({children}) => (
-  <Box color="#667085" fontWeight={400} fontSize={14}>
-    {children}
-  </Box>
-);
-
-const ViewOptionTitle = ({children}) => (
-  <Box color="#475467" fontWeight={500} fontSize={14}>
-    {children}
-  </Box>
-);
 
 export default ViewOptions;

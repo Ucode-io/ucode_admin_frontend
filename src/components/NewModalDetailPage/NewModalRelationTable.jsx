@@ -10,6 +10,7 @@ import VisibleColumnsButtonRelationSection from "../../views/Objects/RelationSec
 import RelationTable from "../../views/Objects/RelationSection/RelationTable";
 import RelationTableDrawer from "../../views/Objects/ModalDetailPage/RelationTableDrawer";
 import useDebounce from "../../hooks/useDebounce";
+import {listToMap} from "../../utils/listToMap";
 
 const NewModalRelationTable = ({
   selectedTabIndex,
@@ -118,7 +119,7 @@ const NewModalRelationTable = ({
             justifyContent: "flex-end",
             borderBottom: "1px solid #eee",
           }}>
-          <FixColumnsRelationSection
+          {/* <FixColumnsRelationSection
             relatedTable={getRelatedTabeSlug}
             fieldsMap={fieldsMap}
             getAllData={getAllData}
@@ -131,7 +132,7 @@ const NewModalRelationTable = ({
             // getLayoutList={getLayoutList}
             selectedTabIndex={selectedTabIndex}
             data={data}
-          />
+          /> */}
         </Box>
         <Box>
           <RelationTableDrawer

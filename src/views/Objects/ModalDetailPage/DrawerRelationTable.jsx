@@ -137,7 +137,11 @@ const DrawerRelationTable = ({
     <>
       <Box py={"5px"} sx={{height: "100vh"}}>
         <ChakraProvider theme={chakraUITheme}>
-          <Flex mb={"10px"} gap={"10px"} justifyContent={"space-between"}>
+          <Flex
+            px={3}
+            mb={"10px"}
+            gap={"10px"}
+            justifyContent={"space-between"}>
             <Popover>
               <InputGroup ml="auto" w="320px">
                 <InputLeftElement>

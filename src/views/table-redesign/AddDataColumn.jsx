@@ -46,10 +46,13 @@ const AddDataColumn = React.memo(
       setValue: setFormValue,
       formState: {errors},
     } = useForm({});
-
     const onSubmit = (values) => {
       const data = {
-        [isRelationTable && computedSlug]: id,
+        [isRelationTable && computedSlug]: Boolean(
+          values?.[computedSlug]?.length
+        )
+          ? values?.[computedSlug]
+          : id,
         ...values,
       };
 

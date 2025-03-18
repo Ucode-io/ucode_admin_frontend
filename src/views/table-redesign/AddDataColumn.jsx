@@ -48,13 +48,15 @@ const AddDataColumn = React.memo(
     } = useForm({});
 
     const onSubmit = (values) => {
+      const data = {
+        [isRelationTable && computedSlug]: id,
+        ...values,
+      };
+
       setIsLoading(true);
       constructorObjectService
         .create(computedTableSlug, {
-          data: {
-            ...values,
-            [isRelationTable && computedSlug]: id,
-          },
+          data: data,
         })
         .then((res) => {
           setIsLoading(false);

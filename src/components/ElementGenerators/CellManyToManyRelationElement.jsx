@@ -60,7 +60,7 @@ const CellManyToManyRelationElement = ({
               control={control}
               setValue={(value) => {
                 onChange(value);
-                updateObject();
+                !isNewTableView && updateObject();
               }}
               value={value}
               setFormValue={setFormValue}
@@ -109,7 +109,7 @@ const AutoCompleteElement = ({
   defaultValue,
   classes,
   isBlackBg,
-  setValue,
+  setValue = () => {},
   index,
   control,
   setFormValue = () => {},
@@ -263,6 +263,7 @@ const AutoCompleteElement = ({
   }, [optionsFromLocale?.options, value]);
 
   const changeHandler = (value) => {
+    console.log("setValuesetValuesetValue", value);
     if (!value) setValue(null);
     const val = value?.map((el) => el.guid);
 
@@ -278,7 +279,7 @@ const AutoCompleteElement = ({
   //     setAllOptions(matchingOption.response);
   //   }
   // }, [relOptions, field]);
-  console.log("optionsFromLocale", optionsFromLocale);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete

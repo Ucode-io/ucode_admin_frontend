@@ -10,6 +10,7 @@ import {store} from "../../store";
 
 import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
+import {SettingsPopup} from "../../views/SettingsPopup/SettingsPopup";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
@@ -54,6 +55,11 @@ const MainLayout = ({setFavicon, favicon}) => {
       },
     },
   });
+
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+
+  const handleOpenProfileModal = () => setOpenProfileModal(true);
+  const handleCloseProfileModal = () => setOpenProfileModal(false);
 
   return (
     <>

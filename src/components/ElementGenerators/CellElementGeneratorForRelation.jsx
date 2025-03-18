@@ -142,6 +142,7 @@ const CellElementGeneratorForRelation = ({
     },
     LOOKUPS: () => (
       <CellManyToManyRelationElement
+        newUi={newUi}
         row={row}
         isFormEdit
         field={field}

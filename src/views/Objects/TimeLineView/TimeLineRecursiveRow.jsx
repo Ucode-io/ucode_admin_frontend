@@ -42,7 +42,7 @@ export default function TimeLineRecursiveRow({
       setOpen(false);
     }
   }, [item, openedRows, lastLabels]);
-
+  console.log("itemitem", item);
   const handleClick = () => {
     const isCurrentlyOpen = openedRows.includes(
       lastLabels?.length ? lastLabels + "." + item?.label : item?.label
@@ -72,7 +72,7 @@ export default function TimeLineRecursiveRow({
         .getById(item?.group_by_slug, item?.label)
         .then((res) => {
           if (res?.data?.response) {
-            setLabel(res?.data?.response);
+            // setLabel(res?.data?.response);
           }
         });
     }

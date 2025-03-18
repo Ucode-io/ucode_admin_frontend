@@ -5,6 +5,7 @@ import TimeLineRecursiveRow from "./TimeLineRecursiveRow";
 import styles from "./styles.module.scss";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {isSameDay, isWithinInterval} from "date-fns";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -51,6 +52,68 @@ export default function TimeLineBlock({
     }
   }, [calendar_from_slug, calendar_to_slug]);
 
+  const computedData = useMemo(() => {
+    let result = [];
+
+    data?.forEach((record) => {
+      let shouldDuplicate = false;
+
+      if (!record?.data?.length) {
+        result.push(record);
+        return;
+      }
+
+      for (let i = 0; i < record.data.length; i++) {
+        let {start_date, end_date} = record.data[i];
+        let startDate = start_date ? new Date(start_date) : null;
+        let endDate = end_date ? new Date(end_date) : null;
+
+        if (!startDate || !endDate || isNaN(startDate) || isNaN(endDate))
+          continue;
+
+        for (let j = i + 1; j < record.data.length; j++) {
+          let {start_date: otherStartDate, end_date: otherEndDate} =
+            record.data[j];
+          let otherStart = otherStartDate ? new Date(otherStartDate) : null;
+          let otherEnd = otherEndDate ? new Date(otherEndDate) : null;
+
+          if (!otherStart || !otherEnd || isNaN(otherStart) || isNaN(otherEnd))
+            continue;
+
+          if (hasSameDay(startDate, endDate, otherStart, otherEnd)) {
+            shouldDuplicate = true;
+            break;
+          }
+        }
+
+        if (shouldDuplicate) break;
+      }
+
+      if (shouldDuplicate) {
+        result.push({...record, data: record.data.slice(1)});
+
+        result.push({...record, data: [record.data[0]]});
+      } else {
+        result.push(record);
+      }
+    });
+
+    return result;
+  }, [data]);
+
+  function hasSameDay(startDate1, endDate1, startDate2, endDate2) {
+    return (
+      isSameDay(startDate1, startDate2) ||
+      isSameDay(startDate1, endDate2) ||
+      isSameDay(endDate1, startDate2) ||
+      isSameDay(endDate1, endDate2) ||
+      isWithinInterval(startDate2, {start: startDate1, end: endDate1}) ||
+      isWithinInterval(endDate2, {start: startDate1, end: endDate1}) ||
+      isWithinInterval(startDate1, {start: startDate2, end: endDate2}) ||
+      isWithinInterval(endDate1, {start: startDate2, end: endDate2})
+    );
+  }
+
   return (
     <div
       className={styles.main_container}
@@ -68,7 +131,7 @@ export default function TimeLineBlock({
 
           {calendar_from_slug !== calendar_to_slug && (
             <div className={styles.group_by_columns}>
-              {data?.map((item, index) => (
+              {computedData?.map((item, index) => (
                 <TimeLineRecursiveRow
                   openedRows={openedRows}
                   setOpenedRows={setOpenedRows}
@@ -112,7 +175,7 @@ export default function TimeLineBlock({
             setFocusedDays={setFocusedDays}
             selectedType={selectedType}
             zoomPosition={zoomPosition}
-            data={data}
+            data={computedData}
             fieldsMap={fieldsMap}
             view={view}
             tabs={tabs}

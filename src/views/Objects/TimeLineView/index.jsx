@@ -645,47 +645,6 @@ export default function TimeLineView({
             </div>
           </Menu>
 
-          {/* <Button
-            className={style.moreButton}
-            onClick={() => zoom("zoomin")}
-            style={{
-              margin: "0 5px",
-              color: "#888",
-              display: "flex",
-              alignItems: "center",
-              gap: "3px",
-              width: "32px",
-              height: "32px",
-              padding: "0",
-              minWidth: "32px",
-            }}>
-            <ZoomInIcon
-              style={{
-                color: "#888",
-              }}
-            />
-          </Button>
-          <Divider orientation="vertical" flexItem />
-          <Button
-            className={style.moreButton}
-            onClick={() => zoom("zoomout")}
-            style={{
-              margin: "0 5px",
-              color: "#888",
-              display: "flex",
-              alignItems: "center",
-              gap: "3px",
-              width: "32px",
-              height: "32px",
-              padding: "0",
-              minWidth: "32px",
-            }}>
-            <ZoomOutIcon
-              style={{
-                color: "#888",
-              }}
-            />
-          </Button> */}
           <Divider orientation="vertical" flexItem />
         </div>
       </div>

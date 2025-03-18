@@ -2,6 +2,8 @@
 
 .autocompleteWrapper {
   position: relative;
+  height: 32px !important;
+  overflow: auto;
 
   .createButton {
     position: absolute;
@@ -32,6 +34,10 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+
+  .multipleAutocompleteTags {
+    height: 20px;
+  }
 }
 .barcode_input {
   background: rgba(192, 192, 192, 0.224);

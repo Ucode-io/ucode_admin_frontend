@@ -17,7 +17,7 @@ export default function NewTableDataForm({
   data,
   isWrap,
   watch,
-  newUi=false
+  newUi = false,
 }) {
   const {mutate: updateObject} = useMutation(() => console.log(""));
 

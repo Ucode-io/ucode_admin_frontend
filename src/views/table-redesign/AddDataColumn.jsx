@@ -3,7 +3,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import {showAlert} from "@/store/alert/alert.thunk";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
@@ -31,15 +31,16 @@ const AddDataColumn = React.memo(
     relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
-    tableSlugProp = "",
+    relatedTable,
   }) => {
     const dispatch = useDispatch();
     const {tableSlug: tableSlugParams, id} = useParams();
-    const [isLoading, setIsLoading] = useState();
 
     const computedSlug = isRelationTable
       ? `${relatedTableSlug}_id`
       : tableSlugProp || tableSlugParams;
+
+    const [isLoading, setIsLoading] = useState();
 
     const computedTableSlug = isRelationTable
       ? view?.relatedTable
@@ -57,7 +58,7 @@ const AddDataColumn = React.memo(
           values?.[computedSlug]?.length
         )
           ? values?.[computedSlug]
-          : id,
+          : (id ?? view?.id),
         ...values,
       };
 

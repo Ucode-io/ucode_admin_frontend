@@ -42,6 +42,7 @@ const CellManyToManyRelationElement = ({
   index,
   defaultValue,
   row,
+  newUi = false,
 }) => {
   const classes = useStyles();
   if (!isLayout)
@@ -89,6 +90,7 @@ const CellManyToManyRelationElement = ({
               setFormValue={setFormValue}
               control={control}
               index={index}
+              newUi={newUi}
             />
           );
         }}
@@ -112,6 +114,7 @@ const AutoCompleteElement = ({
   setValue = () => {},
   index,
   control,
+  newUi,
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();
@@ -263,7 +266,6 @@ const AutoCompleteElement = ({
   }, [optionsFromLocale?.options, value]);
 
   const changeHandler = (value) => {
-    console.log("setValuesetValuesetValue", value);
     if (!value) setValue(null);
     const val = value?.map((el) => el.guid);
 

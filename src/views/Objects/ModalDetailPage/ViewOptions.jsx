@@ -1,11 +1,8 @@
 import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useMutation, useQuery} from "react-query";
-import {useSelector} from "react-redux";
 import {Link, useParams, useSearchParams} from "react-router-dom";
-import layoutService from "../../../services/layoutService";
 import constructorViewService from "../../../services/constructorViewService";
-import useDebounce from "../../../hooks/useDebounce";
 import {
   Box,
   Flex,
@@ -76,11 +73,6 @@ const ViewOptions = ({
     }
   );
 
-  const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", {tableSlug}],
-    queryFn: () => layoutService.getLayout(tableSlug, appId),
-  });
-
   const updateView = useMutation({
     mutationFn: async (value) => {
       await constructorViewService.update(tableSlug, {
@@ -92,16 +84,8 @@ const ViewOptions = ({
     },
   });
 
-  const onViewNameChange = useDebounce((ev) => {
-    updateView.mutate(ev.target.value);
-  }, 500);
-
-  const fixedColumnsCount = Object.values(
-    selectedTab?.attributes?.fixedColumns || {}
-  ).length;
   const groupByColumnsCount = selectedTab?.attributes?.group_by_columns?.length;
   const visibleColumnsCount = selectedTab?.columns?.length ?? 0;
-  const tabGroupColumnsCount = selectedTab?.group_fields?.length;
 
   return (
     <Popover
@@ -154,35 +138,6 @@ const ViewOptions = ({
                         i18n?.language,
                         "Shown"
                       ) || "Shown"}
-                    </ViewOptionSubtitle>
-                  )}
-                  <ChevronRightIcon fontSize={22} />
-                </Flex>
-              </Flex>
-
-              <Flex
-                p="8px"
-                h="32px"
-                columnGap="8px"
-                alignItems="center"
-                borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
-                cursor="pointer"
-                onClick={() => setOpenedMenu("group")}>
-                <Image src="/img/copy-01.svg" alt="Group by" />
-                <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Group") ||
-                    "Group"}
-                </ViewOptionTitle>
-                <Flex ml="auto" alignItems="center" columnGap="8px">
-                  {Boolean(groupByColumnsCount) && (
-                    <ViewOptionSubtitle>
-                      {groupByColumnsCount}{" "}
-                      {generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Group"
-                      ) || "Group"}
                     </ViewOptionSubtitle>
                   )}
                   <ChevronRightIcon fontSize={22} />

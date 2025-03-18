@@ -37,7 +37,7 @@ const TableDataForm = ({
       })
       .find((x) => x?.id === field?.id)?.status;
   }, [isWrap, field?.id]);
-  console.log("watchwatch", watch());
+
   return (
     <Box
       style={{

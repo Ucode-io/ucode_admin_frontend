@@ -334,14 +334,6 @@ const HeadingOptions = ({
                     alignItems: "center",
                     gap: "5px",
                   }}>
-                  {/* <span>
-                    {getColumnIcon({
-                      column: {
-                        type: option?.type ?? option?.relation_type,
-                        table_slug: "field",
-                      },
-                    })}
-                  </span> */}
                   {option.label}
                 </Box>
 

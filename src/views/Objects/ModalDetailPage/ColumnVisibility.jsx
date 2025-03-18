@@ -8,8 +8,8 @@ import {
   InputGroup,
   InputLeftElement,
   Spinner,
+  Switch,
 } from "@chakra-ui/react";
-import {Switch} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useParams, useSearchParams} from "react-router-dom";
@@ -19,6 +19,7 @@ import menuService from "../../../services/menuService";
 import {columnIcons} from "../../../utils/constants/columnIcons";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import {useMutation} from "react-query";
+import useDebounce from "../../../hooks/useDebounce";
 
 const ColumnsVisibility = ({
   data,
@@ -30,14 +31,13 @@ const ColumnsVisibility = ({
   setOpenedMenu = () => {},
 }) => {
   const {tableSlug} = useParams();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const {i18n} = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const [computedColumns, setComputedColumns] = useState(
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns ?? []
+    data?.tabs?.[selectedTabIndex]?.attributes?.columns || []
   );
 
   const allFields = useMemo(() => {
@@ -83,20 +83,29 @@ const ColumnsVisibility = ({
 
   const visibleFields = useMemo(() => {
     return (
-      computedColumns?.map((id) => fieldsMap[id])?.filter((el) => el?.type) ??
+      computedColumns?.map((id) => fieldsMap?.[id])?.filter((el) => el?.type) ??
       []
     );
   }, [computedColumns, fieldsMap]);
 
   const unVisibleFields = useMemo(() => {
-    return allFields.filter((field) => {
-      if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
-        return !computedColumns?.includes(field.relation_id);
-      } else {
-        return !computedColumns?.includes(field.id);
-      }
-    });
-  }, [allFields, computedColumns]);
+    return allFields
+      .filter((field) => {
+        if (field?.type === "LOOKUP" || field?.type === "LOOKUPS") {
+          return !computedColumns?.includes(field.relation_id);
+        } else {
+          return !computedColumns?.includes(field.id);
+        }
+      })
+      .filter((el) => {
+        const label =
+          el?.attributes?.[`label_${i18n.language}`] ?? el?.label ?? "";
+
+        return searchTerm
+          ? label.toLowerCase().includes(searchTerm.toLowerCase())
+          : true;
+      });
+  }, [allFields, computedColumns, searchTerm]);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(visibleFields, dropResult);
@@ -125,19 +134,20 @@ const ColumnsVisibility = ({
     }
   }, []);
 
+  const inputChangeHandler = useDebounce((val) => setSearchTerm(val), 500);
+
   return (
-    <Box>
+    <Box p={"10px"}>
       <Flex justifyContent="space-between" alignItems="center">
         <Button
-          leftIcon={<ChevronLeftIcon fontSize={22} />}
+          bg={"none"}
+          _hover={{
+            bg: "none",
+          }}
           rightIcon={
             mutation.isLoading ? <Spinner color="#475467" /> : undefined
-          }
-          colorScheme="gray"
-          variant="ghost"
-          w="fit-content"
-          onClick={onBackClick}>
-          <Box color="#475467" fontSize={16} fontWeight={600}>
+          }>
+          <Box color="#475467" fontSize={16} ml={"5px"} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
               i18n?.language,
@@ -146,14 +156,28 @@ const ColumnsVisibility = ({
           </Box>
         </Button>
 
-        {/* <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
-          <Switch
-            isChecked={allColumns?.length === visibleFields?.length}
-            onChange={(ev) => onShowAllChange(ev.target.checked)}
-          />
+        <Flex as="label" alignItems="center" columnGap="10px" cursor="pointer">
           {generateLangaugeText(tableLan, i18n?.language, "Show all") ||
             "Show all"}
-        </Flex> */}
+
+          <Switch
+            mr={"14px"}
+            isChecked={computedColumns?.length === allFields?.length}
+            onChange={(e) => {
+              updateView(
+                e.target.checked
+                  ? allFields.map((el) => {
+                      if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+                        return el.relation_id;
+                      } else {
+                        return el.id;
+                      }
+                    })
+                  : []
+              );
+            }}
+          />
+        </Flex>
       </Flex>
       <InputGroup mt="10px">
         <InputLeftElement>
@@ -167,8 +191,7 @@ const ColumnsVisibility = ({
               "Search by filled name"
             ) || "Search by filled name"
           }
-          value={"search"}
-          onChange={(ev) => setSearch(ev.target.value)}
+          onChange={(e) => inputChangeHandler(e.target.value)}
         />
       </InputGroup>
       <Flex
@@ -178,86 +201,95 @@ const ColumnsVisibility = ({
         maxHeight="300px"
         overflow="auto">
         <Container onDrop={onDrop}>
-          {visibleFields?.map((column, index) => (
-            <Draggable key={column?.id}>
-              <div
-                key={column?.id}
-                style={{
-                  display: "flex",
-                  backgroundColor: "#fff",
-                }}>
+          {visibleFields
+            ?.filter((el) => {
+              const label =
+                el?.attributes?.[`label_${i18n.language}`] ?? el?.label ?? "";
+
+              return Boolean(searchTerm)
+                ? label.toLowerCase().includes(searchTerm?.toLowerCase())
+                : true;
+            })
+            .map((column, index) => (
+              <Draggable key={column?.id}>
                 <div
+                  key={column?.id}
                   style={{
-                    flex: 1,
-                    border: 0,
                     display: "flex",
-                    alignItems: "center",
-                    padding: "8px 0px",
-                    margin: "-1px -1px 0 0",
+                    backgroundColor: "#fff",
                   }}>
                   <div
                     style={{
-                      width: 20,
-                      height: 20,
-                      marginRight: 5,
+                      flex: 1,
+                      border: 0,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
+                      padding: "8px 0px",
+                      margin: "-1px -1px 0 0",
                     }}>
-                    {column?.type ? columnIcons(column?.type) : <LinkIcon />}
+                    <div
+                      style={{
+                        width: 20,
+                        height: 20,
+                        marginRight: 5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}>
+                      {column?.type ? columnIcons(column?.type) : <LinkIcon />}
+                    </div>
+                    <p
+                      style={{
+                        width: "200px",
+                      }}>
+                      {column?.attributes?.[`label_${i18n.language}`] ??
+                        column?.label}
+                    </p>
                   </div>
-                  <p
+                  <div
                     style={{
-                      textWrap: "nowrap",
+                      flex: 1,
+                      alignItems: "center",
+                      padding: "8px 16px",
+                      margin: "-1px -1px 0 0",
+                      width: 70,
+                      border: 0,
+                      paddingLeft: 0,
+                      paddingRight: "5px",
+                      display: "flex",
+                      justifyContent: "flex-end",
                     }}>
-                    {column?.attributes?.[`label_${i18n.language}`] ??
-                      column?.label}
-                  </p>
+                    {column.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
+                      <Switch
+                        isChecked={computedColumns?.includes(
+                          column?.relation_id
+                        )}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? [...computedColumns, column.relation_id]
+                              : computedColumns.filter(
+                                  (el) => el !== column.relation_id
+                                )
+                          );
+                        }}
+                      />
+                    ) : (
+                      <Switch
+                        isChecked={computedColumns?.includes(column?.id)}
+                        onChange={(e) => {
+                          updateView(
+                            e.target.checked
+                              ? [...computedColumns, column.id]
+                              : computedColumns.filter((el) => el !== column.id)
+                          );
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
-                <div
-                  style={{
-                    flex: 1,
-                    alignItems: "center",
-                    padding: "8px 16px",
-                    margin: "-1px -1px 0 0",
-                    width: 70,
-                    border: 0,
-                    paddingLeft: 0,
-                    paddingRight: 0,
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}>
-                  {column.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-                    <Switch
-                      size="small"
-                      checked={computedColumns?.includes(column?.relation_id)}
-                      onChange={(e) => {
-                        updateView(
-                          e.target.checked
-                            ? [...computedColumns, column.relation_id]
-                            : computedColumns.filter(
-                                (el) => el !== column.relation_id
-                              )
-                        );
-                      }}
-                    />
-                  ) : (
-                    <Switch
-                      size="small"
-                      checked={computedColumns?.includes(column?.id)}
-                      onChange={(e) => {
-                        updateView(
-                          e.target.checked
-                            ? [...computedColumns, column.id]
-                            : computedColumns.filter((el) => el !== column.id)
-                        );
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-            </Draggable>
-          ))}
+              </Draggable>
+            ))}
 
           {unVisibleFields?.map((column, index) => (
             <div
@@ -288,7 +320,8 @@ const ColumnsVisibility = ({
                 </div>
                 <p
                   style={{
-                    textWrap: "nowrap",
+                    width: "200px",
+                    wordBreak: "break-all",
                   }}>
                   {column?.attributes?.[`label_${i18n.language}`] ??
                     column?.label}
@@ -303,14 +336,13 @@ const ColumnsVisibility = ({
                   width: 70,
                   border: 0,
                   paddingLeft: 0,
-                  paddingRight: 0,
+                  paddingRight: "5px",
                   display: "flex",
                   justifyContent: "flex-end",
                 }}>
                 {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                   <Switch
-                    size="small"
-                    checked={computedColumns?.includes(column?.relation_id)}
+                    isChecked={computedColumns?.includes(column?.relation_id)}
                     onChange={(e) => {
                       updateView(
                         e.target.checked
@@ -323,8 +355,7 @@ const ColumnsVisibility = ({
                   />
                 ) : (
                   <Switch
-                    size="small"
-                    checked={computedColumns?.includes(column?.id)}
+                    isChecked={computedColumns?.includes(column?.id)}
                     onChange={(e) => {
                       updateView(
                         e.target.checked

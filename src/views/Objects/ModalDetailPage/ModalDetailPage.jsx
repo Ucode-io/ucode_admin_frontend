@@ -115,7 +115,6 @@ const ScreenOptions = ({
   };
 
   const handleClose = (option) => {
-    console.log("optionoption", option);
     if (option?.icon === "FullPage") {
       setLayoutType("SimpleLayout");
       navigateToEditPage(selectedRow);

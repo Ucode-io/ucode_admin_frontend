@@ -7,16 +7,14 @@ import {Outlet, useParams} from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
-import {isOnlineReducerAction} from "../../store/isOnline/isOnline.slice";
+
 import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
-  const updateSearchParam = useSearchParams()[2];
 
-  const dispatch = useDispatch();
   const {data: projectInfo} = useProjectGetByIdQuery({
     projectId,
     queryParams: {

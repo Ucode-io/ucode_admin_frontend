@@ -176,7 +176,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               <HFFairSelect
                 options={fares}
                 required
-                name="user_info.fair_id"
+                name="fair_id"
                 control={control}
                 fullWidth
               />

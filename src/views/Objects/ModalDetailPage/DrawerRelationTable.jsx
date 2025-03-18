@@ -152,20 +152,6 @@ const DrawerRelationTable = ({
                   }
                   onChange={(ev) => inputChangeHandler(ev.target.value)}
                 />
-
-                {/* <PopoverTrigger>
-                  <InputRightElement>
-                    <IconButton
-                      w="24px"
-                      h="24px"
-                      aria-label="more"
-                      icon={<Image src="/img/dots-vertical.svg" alt="more" />}
-                      variant="ghost"
-                      colorScheme="gray"
-                      size="xs"
-                    />
-                  </InputRightElement>
-                </PopoverTrigger> */}
               </InputGroup>
 
               <PopoverContent
@@ -174,38 +160,7 @@ const DrawerRelationTable = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto">
-                {/* {columnsForSearch.map((column) => (
-                  <Flex
-                    key={column.id}
-                    as="label"
-                    p="8px"
-                    columnGap="8px"
-                    alignItems="center"
-                    borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
-                    cursor="pointer">
-                    {getColumnIcon({column})}
-                    <ViewOptionTitle>{column.label}</ViewOptionTitle>
-                    <Switch
-                      ml="auto"
-                      isChecked={column.is_search}
-                      onChange={(e) =>
-                        updateField({
-                          data: {
-                            fields: columnsForSearch.map((c) =>
-                              c.id === column.id
-                                ? {...c, is_search: e.target.checked}
-                                : c
-                            ),
-                          },
-                          tableSlug,
-                        })
-                      }
-                    />
-                  </Flex>
-                ))} */}
-              </PopoverContent>
+                overflow="auto"></PopoverContent>
             </Popover>
             <PermissionWrapperV2 tableSlug={tableSlug} type="write">
               <Button

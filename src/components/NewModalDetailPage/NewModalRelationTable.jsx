@@ -8,6 +8,8 @@ import constructorTableService from "../../services/constructorTableService";
 import FixColumnsRelationSection from "../../views/Objects/RelationSection/FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "../../views/Objects/RelationSection/VisibleColumnsButtonRelationSection";
 import RelationTable from "../../views/Objects/RelationSection/RelationTable";
+import RelationTableDrawer from "../../views/Objects/ModalDetailPage/RelationTableDrawer";
+import useDebounce from "../../hooks/useDebounce";
 
 const NewModalRelationTable = ({
   selectedTabIndex,
@@ -32,6 +34,9 @@ const NewModalRelationTable = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchText, setSearchText] = useState("");
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
@@ -100,6 +105,8 @@ const NewModalRelationTable = ({
     }
   );
 
+  const inputChangeHandler = useDebounce((e) => setSearchText(e), 5000);
+
   return (
     <>
       <Box>
@@ -127,11 +134,14 @@ const NewModalRelationTable = ({
           />
         </Box>
         <Box>
-          <RelationTable
+          <RelationTableDrawer
             ref={myRef}
             loader={loader}
             remove={remove}
             reset={reset}
+            searchText={searchText}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
             selectedTabIndex={selectedTabIndex}
             watch={watch}
             selectedTab={selectedTab}
@@ -147,11 +157,15 @@ const NewModalRelationTable = ({
             setCreateFormVisible={setCreateFormVisible}
             selectedObjects={selectedObjects}
             setSelectedObjects={setSelectedObjects}
+            inputChangeHandler={inputChangeHandler}
             tableSlug={tableSlug}
             removableHeight={140}
             id={id}
+            // getValues={getValues}
             getAllData={getAllData}
-            type={type}
+            relatedTable={relatedTableSlug}
+            fieldsMap={fieldsMap}
+            type={"relation"}
             layoutData={data}
           />
         </Box>

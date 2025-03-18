@@ -11,9 +11,9 @@ import {Box, Flex, Image} from "@chakra-ui/react";
 import FieldButton from "../../../components/DataTable/FieldButton";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import AddDataColumn from "../../table-redesign/AddDataColumn";
-import TableRow from "../../table-redesign/table-row";
 import Th from "./Th-table";
 import DrawerTablePagination from "./DrawerTablePagination.jsx";
+import TableRow from "./drawer-table-row";
 
 const DrawerObjectDataTable = ({
   tableView,

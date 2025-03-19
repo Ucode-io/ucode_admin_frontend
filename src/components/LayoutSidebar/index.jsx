@@ -70,6 +70,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {GreyLoader} from "../Loaders/GreyLoader";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -350,6 +351,10 @@ const LayoutSidebar = ({
     };
   }, []);
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
   return (
     <>
       <Flex
@@ -360,7 +365,7 @@ const LayoutSidebar = ({
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
         bg={menuStyle?.background ?? "#fff"}
-        h={"calc(100vh - 32px)"}>
+        h={`calc(100vh - ${isWarning <= 5 ? 32 : 0}px )`}>
         <Flex
           position="absolute"
           zIndex={999}

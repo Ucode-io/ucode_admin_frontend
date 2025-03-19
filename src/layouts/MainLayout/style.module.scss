@@ -4,6 +4,12 @@
   display: flex;
 }
 
+.layoutWarning {
+  display: flex;
+  overflow: hidden;
+  height: calc(100vh - 32px);
+}
+
 .content {
   flex: 1;
   height: 100vh;

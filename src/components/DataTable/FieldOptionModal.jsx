@@ -96,8 +96,7 @@ export default function FieldOptionModal({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div className={style.field}>
           <Typography variant="h6" className={style.title}>
             {generateLangaugeText(
@@ -122,7 +121,9 @@ export default function FieldOptionModal({
               onChange={(ev) => setSearchValue(ev.target.value)}
             />
           </InputGroup>
-          <Box sx={{ overflow: "auto", height: "400px" }}>
+          <Box
+            className="scrollbarNone"
+            sx={{overflow: "auto", height: "400px"}}>
             {newFieldTypes
               ?.filter((el) =>
                 searchValue
@@ -136,8 +137,7 @@ export default function FieldOptionModal({
                   className={style.button}
                   onClick={(e) => {
                     handleChange(e, field?.value);
-                  }}
-                >
+                  }}>
                   {field?.value &&
                     getColumnIcon({
                       column: {

@@ -28,6 +28,7 @@ import NewModalDetailPage from "../../components/NewModalDetailPage";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const TableView = ({
+  projectInfo,
   filterVisible,
   setCurrentPage,
   currentPage,
@@ -70,9 +71,9 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug: paramsTableSlug, appId } = useParams();
+  const {id, slug, tableSlug: paramsTableSlug, appId} = useParams();
   const tableSlug = tableSlugProp || paramsTableSlug;
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -533,6 +534,7 @@ const TableView = ({
     <MaterialUIProvider>
       <div id="wrapper_drag" className={styles.wrapper}>
         <DynamicTable
+          projectInfo={projectInfo}
           tableLan={tableLan}
           custom_events={custom_events}
           dataCount={dataCount}
@@ -644,8 +646,7 @@ const TableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -664,8 +665,7 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

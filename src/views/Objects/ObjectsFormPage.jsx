@@ -29,8 +29,8 @@ import {useTranslation} from "react-i18next";
 import {useMenuGetByIdQuery} from "../../services/menuService";
 import {generateID} from "../../utils/generateID";
 import DividentWayll from "./DividentWayll";
-import { useGetLang } from "../../hooks/useGetLang";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
+import {useGetLang} from "../../hooks/useGetLang";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -40,10 +40,10 @@ const ObjectsFormPage = ({
   dateInfo,
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(false);
@@ -60,7 +60,7 @@ const ObjectsFormPage = ({
   const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
-  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
+  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
   const microPathCloseMonth = `/main/${idFromParam}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${idFromParam}`;
@@ -79,11 +79,11 @@ const ObjectsFormPage = ({
   }, [tableSlugFromParam, tableSlugFromProps]);
 
   const isInvite = menu.invite;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const lang = useGetLang("Table");
 
-  const { deleteTab } = useTabRouter();
-  const { pathname } = useLocation();
+  const {deleteTab} = useTabRouter();
+  const {pathname} = useLocation();
 
   const {
     handleSubmit,
@@ -92,7 +92,7 @@ const ObjectsFormPage = ({
     setValue: setFormValue,
     watch,
     getValues,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       ...state,
@@ -111,7 +111,7 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, layoutData] = await Promise.all([
+      const [{data = {}}, layoutData] = await Promise.all([
         getFormData,
         getLayoutData,
       ]);
@@ -202,7 +202,7 @@ const ObjectsFormPage = ({
     delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -284,7 +284,7 @@ const ObjectsFormPage = ({
     }
   };
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -355,8 +355,7 @@ const ObjectsFormPage = ({
                       tableSlugFromParam
                     );
                     navigate(microPath);
-                  }}
-                >
+                  }}>
                   Пополнить баланс
                 </PrimaryButton>
               )}
@@ -373,16 +372,14 @@ const ObjectsFormPage = ({
                         tableSlugFromParam
                       );
                       navigate(microPathCloseMonth);
-                    }}
-                  >
+                    }}>
                     Закрытия месяца
                   </PrimaryButton>
                 </>
               )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
-              color="error"
-            >
+              color="error">
               {generateLangaugeText(lang, i18n.language, "Close") || "Close"}
             </SecondaryButton>
             <FormCustomActionButton
@@ -395,8 +392,7 @@ const ObjectsFormPage = ({
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
+                onClick={handleSubmit(onSubmit)}>
                 <Save />
                 {generateLangaugeText(lang, i18n.language, "Save") || "Save"}
               </PrimaryButton>

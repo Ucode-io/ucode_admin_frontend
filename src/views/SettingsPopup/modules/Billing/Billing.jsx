@@ -1,12 +1,15 @@
-import { AccountBalance, AttachMoney, HourglassBottom } from "@mui/icons-material"
-import { Box, Card, CardContent, Grid, Modal, Typography } from "@mui/material";
-import { useBillingProps } from "./useBillingProps"
-import { numberWithSpaces } from "@/utils/formatNumbers";
-import { BillingTable } from "../../components/BillingTable"
-import { TopUpBalance } from "../../components/TopUpBalance"
+import {
+  AccountBalance,
+  AttachMoney,
+  HourglassBottom,
+} from "@mui/icons-material";
+import {Box, Card, CardContent, Grid, Modal, Typography} from "@mui/material";
+import {useBillingProps} from "./useBillingProps";
+import {numberWithSpaces} from "@/utils/formatNumbers";
+import {BillingTable} from "../../components/BillingTable";
+import {TopUpBalance} from "../../components/TopUpBalance";
 
 export const Billing = () => {
-
   const {
     project,
     data,
@@ -19,7 +22,7 @@ export const Billing = () => {
     onSubmit,
     loading,
     reset,
-  } = useBillingProps()
+  } = useBillingProps();
 
   return (
     <Box>
@@ -30,8 +33,7 @@ export const Billing = () => {
               height: "100%",
               boxShadow: "none",
               border: "1px solid rgba(55, 53, 47, 0.06)",
-            }}
-          >
+            }}>
             <CardContent
               sx={{
                 height: "100%",
@@ -39,9 +41,8 @@ export const Billing = () => {
                 alignItems: "center",
                 padding: "16px",
                 paddingBottom: "16px !important",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              }}>
+              <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
                 <AccountBalance color="primary" fontSize="large" />
                 <Box>
                   <Typography variant="h6">Balance</Typography>
@@ -64,8 +65,7 @@ export const Billing = () => {
               height: "100%",
               boxShadow: "none",
               border: "1px solid rgba(55, 53, 47, 0.06)",
-            }}
-          >
+            }}>
             <CardContent
               sx={{
                 height: "100%",
@@ -73,15 +73,14 @@ export const Billing = () => {
                 alignItems: "center",
                 padding: "16px",
                 paddingBottom: "16px !important",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              }}>
+              <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
                 <AttachMoney color="success" fontSize="large" />
                 <Box>
                   <Typography variant="h6">Tariff</Typography>
                   <Typography variant="h6" color="success.main">
                     {data?.name}
-                    <Typography variant="subtitle1" sx={{ color: "#000" }}>
+                    <Typography variant="subtitle1" sx={{color: "#000"}}>
                       {data?.price} {data?.currency?.toUpperCase()}
                     </Typography>
                   </Typography>
@@ -97,8 +96,7 @@ export const Billing = () => {
               height: "100%",
               boxShadow: "none",
               border: "1px solid rgba(55, 53, 47, 0.06)",
-            }}
-          >
+            }}>
             <CardContent
               sx={{
                 height: "100%",
@@ -106,9 +104,8 @@ export const Billing = () => {
                 alignItems: "center",
                 padding: "16px",
                 paddingBottom: "16px !important",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              }}>
+              <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
                 <HourglassBottom color="warning" fontSize="large" />
                 <Box>
                   <Typography variant="h6">Expire Date</Typography>
@@ -128,8 +125,7 @@ export const Billing = () => {
         onClose={handCloseBalance}
         open={addBalance}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
+        aria-describedby="alert-dialog-slide-description">
         <TopUpBalance
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
@@ -141,4 +137,4 @@ export const Billing = () => {
       </Modal>
     </Box>
   );
-}
+};

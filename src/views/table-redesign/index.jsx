@@ -37,25 +37,25 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import { Menu, Checkbox, Pagination, Button, Skeleton } from "@mui/material";
+import {Menu, Checkbox, Pagination, Button, Skeleton} from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-import { useForm } from "react-hook-form";
-import { transliterate } from "@/utils/textTranslater";
-import { showAlert } from "@/store/alert/alert.thunk";
-import { generateGUID } from "@/utils/generateID";
+import {useForm} from "react-hook-form";
+import {transliterate} from "@/utils/textTranslater";
+import {showAlert} from "@/store/alert/alert.thunk";
+import {generateGUID} from "@/utils/generateID";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import FieldOptionModal from "@/components/DataTable/FieldOptionModal";
 import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import TableRow from "./table-row";
 import AddDataColumn from "./AddDataColumn";
 import SummaryRow from "@/components/DataTable/SummaryRow";
-import { CreatableSelect } from "chakra-react-select";
+import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { TableDataSkeleton } from "../../components/TableDataSkeleton";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 
-const mockColumns = Array.from({ length: 5 }, (_, index) => ({
+const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
     field_permission: {
       edit_permission: true,
@@ -171,7 +171,7 @@ export const DynamicTable = ({
   loader,
   getAllData = () => {},
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -186,6 +186,8 @@ export const DynamicTable = ({
   );
 
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
+  const filterHeight = localStorage.getItem("filtersHeight");
+
   const [limitOptions, setLimitOptions] = useState([
     {
       value: 10,
@@ -244,7 +246,7 @@ export const DynamicTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -336,6 +338,12 @@ export const DynamicTable = ({
     );
   };
 
+  const calculatedHeight = useMemo(() => {
+    if (tableViewFiltersOpen) {
+      return filterHeight + Number(tabHeight) ?? 0;
+    } else return 0 + Number(tabHeight);
+  }, [tableViewFiltersOpen, filterHeight]);
+
   const showSkeleton = loader;
 
   return (
@@ -347,7 +355,7 @@ export const DynamicTable = ({
           borderRadius: 0,
           flexGrow: 1,
           backgroundColor: "#fff",
-          height: `calc(100vh - ${(tableViewFiltersOpen ? 35 : 0) + tabHeight + 130}px)`,
+          height: `calc(100vh - ${calculatedHeight + 130}px)`,
         }}>
         <table id="resizeMe">
           <thead

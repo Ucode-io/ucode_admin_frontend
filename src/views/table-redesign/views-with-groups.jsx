@@ -993,6 +993,7 @@ const FiltersList = ({
   const {filters} = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
+  const filtersRef = useRef(null);
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -1045,12 +1046,19 @@ const FiltersList = ({
     );
   };
 
+  useEffect(() => {
+    if (filtersRef.current) {
+      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
+    }
+  }, []);
+
   if (!filtersOpen) {
     return;
   }
 
   return (
     <Flex
+      ref={filtersRef}
       minH="max-content"
       px="16px"
       py="6px"
@@ -1696,7 +1704,12 @@ const ColumnsVisibility = ({
           onChange={(ev) => setSearch(ev.target.value)}
         />
       </InputGroup>
-      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+      <Flex
+        className="scrollbarNone"
+        flexDirection="column"
+        mt="8px"
+        maxHeight="300px"
+        overflow="auto">
         <Container onDrop={onDrop}>
           {renderFields.map((column) => (
             <Draggable key={column.id}>

@@ -65,11 +65,11 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import { Modal, Skeleton } from "@mui/material";
+import {Modal, Skeleton} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { clearDB, getAllFromDB } from "../../utils/languageDB";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { GreyLoader } from "../Loaders/GreyLoader";
+import {clearDB, getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {GreyLoader} from "../Loaders/GreyLoader";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -78,7 +78,7 @@ const LayoutSidebar = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const { appId } = useParams();
+  const {appId} = useParams();
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -224,7 +224,7 @@ const LayoutSidebar = ({
       .then((res) => {
         setMenuList(res.menus);
         setIsMenuListLoading(false);
-        console.log({ menu: res.menus });
+        console.log({menu: res.menus});
       })
       .catch((error) => {
         setIsMenuListLoading(false);
@@ -359,7 +359,8 @@ const LayoutSidebar = ({
         flexDirection="column"
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
-        bg={menuStyle?.background ?? "#fff"}>
+        bg={menuStyle?.background ?? "#fff"}
+        h={"calc(100vh - 32px)"}>
         <Flex
           position="absolute"
           zIndex={999}
@@ -406,8 +407,7 @@ const LayoutSidebar = ({
           pt={8}
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
-          overflowX="hidden"
-        >
+          overflowX="hidden">
           {isMenuListLoading && (
             <Box mx="8px">
               <Box display="flex" columnGap="8px">
@@ -675,8 +675,8 @@ const LayoutSidebar = ({
   );
 };
 
-const Chatwoot = forwardRef(({ open, ...props }, ref) => {
-  const { originalButtonFunction } = useChatwoot();
+const Chatwoot = forwardRef(({open, ...props}, ref) => {
+  const {originalButtonFunction} = useChatwoot();
 
   return (
     <Flex
@@ -686,18 +686,17 @@ const Chatwoot = forwardRef(({ open, ...props }, ref) => {
       alignItems="center"
       justifyContent="center"
       borderRadius={6}
-      _hover={{ bg: "#EAECF0" }}
+      _hover={{bg: "#EAECF0"}}
       cursor="pointer"
       mb={open ? 0 : 4}
       {...props}
-      onClick={originalButtonFunction}
-    >
+      onClick={originalButtonFunction}>
       <img src="/img/message-text-square.svg" alt="chat" />
     </Flex>
   );
 });
 
-const AIChat = forwardRef(({ sidebarOpen, ...props }, ref) => {
+const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -721,13 +720,12 @@ const AIChat = forwardRef(({ sidebarOpen, ...props }, ref) => {
         alignItems="center"
         justifyContent="center"
         borderRadius={6}
-        _hover={{ bg: "#EAECF0" }}
+        _hover={{bg: "#EAECF0"}}
         cursor="pointer"
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <img src="/img/magic-wand.svg" alt="magic" />
       </Flex>
 
@@ -757,7 +755,7 @@ const Header = ({
 }) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen, onOpen, onClose} = useDisclosure();
 
   const handleClose = () => {
     onClose();
@@ -774,7 +772,7 @@ const Header = ({
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
     authService
-      .updateToken({ ...params, env_id: environment.id }, { ...params })
+      .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
@@ -789,8 +787,7 @@ const Header = ({
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      onClose={handleClose}
-    >
+      onClose={handleClose}>
       <PopoverTrigger>
         <Flex
           w="calc(100% - 8px)"
@@ -801,18 +798,16 @@ const Header = ({
           p={5}
           borderRadius={8}
           bg="#fff"
-          _hover={{ bg: "#EAECF0" }}
+          _hover={{bg: "#EAECF0"}}
           cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}
-        >
+          onClick={() => (!isOpen ? onOpen() : null)}>
           <Flex
             w={36}
             h={36}
             position="absolute"
             left={0}
             alignItems="center"
-            justifyContent="center"
-          >
+            justifyContent="center">
             {Boolean(projectInfo?.logo) && (
               <img src={projectInfo?.logo} alt="" width={20} height={20} />
             )}
@@ -827,8 +822,7 @@ const Header = ({
                 alignItems="center"
                 justifyContent="center"
                 fontSize={14}
-                fontWeight={500}
-              >
+                fontWeight={500}>
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             )}
@@ -841,11 +835,10 @@ const Header = ({
             fontSize={13}
             fontWeight={500}
             overflow="hidden"
-            textOverflow="ellipsis"
-          >
+            textOverflow="ellipsis">
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{ marginLeft: "auto", fontSize: 20 }} />
+          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent
@@ -855,8 +848,7 @@ const Header = ({
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}
-      >
+        zIndex={999}>
         <>
           <ProfilePanel
             menuLanguages={menuLanguages}
@@ -881,7 +873,7 @@ const ProfilePanel = ({
 }) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
@@ -892,11 +884,10 @@ const ProfilePanel = ({
           justifyContent={"center"}
           w={36}
           h={36}
-          style={{ border: "1px solid #eee", fontSize: "24px" }}
+          style={{border: "1px solid #eee", fontSize: "24px"}}
           borderRadius={"5px"}
           bg={"#04ADD4"}
-          color={"white"}
-        >
+          color={"white"}>
           {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
@@ -910,7 +901,7 @@ const ProfilePanel = ({
       </Flex>
 
       <Flex
-        _hover={{ background: "#eeee" }}
+        _hover={{background: "#eeee"}}
         alignItems={"center"}
         h={25}
         minW={86}
@@ -927,7 +918,7 @@ const ProfilePanel = ({
         //   onClose();
         // }}
       >
-        <SettingsIcon style={{ color: "#475467" }} />
+        <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
         </Box>

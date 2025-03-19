@@ -1999,6 +1999,11 @@ export const iconsList = [
   "brand_youtube-square.svg",
   "brand_youtube.svg",
   "brand_zhihu.svg",
+  "bed-new.svg",
+  "single-bed.svg",
+  "sofa-2.svg",
+  "mattress.svg",
+  "bunk-bed.svg",
 ];
 
 window.iconsList = iconsList;

@@ -73,6 +73,7 @@ const WarningBanner = ({
       gap: "10px",
       zIndex: 9,
       cursor: "pointer",
+      justifyContent: "center",
     }}>
     <Box sx={{display: "flex", alignItems: "center"}}>
       <WarningAmberIcon
@@ -106,6 +107,7 @@ const SubscribeExpired = ({navigate}) => (
       gap: "10px",
       zIndex: 9,
       cursor: "pointer",
+      justifyContent: "center",
     }}>
     <Box sx={{display: "flex", alignItems: "center"}}>
       <WarningAmberIcon

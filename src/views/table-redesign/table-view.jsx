@@ -23,10 +23,9 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import NewModalDetailPage from "../../components/NewModalDetailPage";
 
 const TableView = ({
+  projectInfo,
   filterVisible,
   setCurrentPage,
   currentPage,
@@ -515,6 +514,7 @@ const TableView = ({
     <MaterialUIProvider>
       <div id="wrapper_drag" className={styles.wrapper}>
         <DynamicTable
+          projectInfo={projectInfo}
           tableLan={tableLan}
           custom_events={custom_events}
           dataCount={dataCount}
@@ -624,8 +624,7 @@ const TableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -644,8 +643,7 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

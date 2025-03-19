@@ -1,6 +1,6 @@
 import cls from "./styles.module.scss";
-import { format } from "date-fns";
-import { numberWithSpaces } from "../../../../utils/formatNumbers";
+import {format} from "date-fns";
+import {numberWithSpaces} from "../../../../utils/formatNumbers";
 import {
   Done,
   HourglassTop,
@@ -19,9 +19,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useBillingTableProps } from "./useBillingTableProps";
-import { Button } from "../Button";
-import { AddIcon } from "@chakra-ui/icons";
+import {useBillingTableProps} from "./useBillingTableProps";
+import {Button} from "../Button";
+import {AddIcon} from "@chakra-ui/icons";
 
 const tableHeads = [
   "Date",
@@ -34,11 +34,11 @@ const tableHeads = [
   "Amount",
 ];
 
-export const BillingTable = ({ handClickBalance }) => {
-  const { transactions, project, isLoading } = useBillingTableProps();
+export const BillingTable = ({handClickBalance}) => {
+  const {transactions, project, isLoading} = useBillingTableProps();
 
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box sx={{mt: 2}}>
       <Typography
         variant="h6"
         sx={{
@@ -46,8 +46,7 @@ export const BillingTable = ({ handClickBalance }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        }}
-      >
+        }}>
         Transactions
         <Button className={cls.btn} onClick={handClickBalance} primary>
           <Box display="flex" alignItems="center" gap="4px">
@@ -61,11 +60,10 @@ export const BillingTable = ({ handClickBalance }) => {
         sx={{
           borderRadius: 1,
           borderTop: "1px solid #eee",
-          // borderBottom: "1px solid #eee",
-          height: "calc(100vh - 280px)",
+          height: "calc(100vh - 450px)",
         }}
-      >
-        <Table sx={{ position: "relative" }} stickyHeader>
+        className="scrollbarNone">
+        <Table sx={{position: "relative"}} stickyHeader>
           <TableHead>
             <TableRow>
               {tableHeads?.map((item, index) => (
@@ -94,24 +92,23 @@ export const BillingTable = ({ handClickBalance }) => {
                       },
                     },
                     // "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
-                  }}
-                >
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  }}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {project?.title}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.fare?.name ?? ""}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.payment_type ?? ""}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.transaction_type ?? ""}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.payment_status === "accepted" ? (
                       <Typography
                         variant="body2"
@@ -121,8 +118,7 @@ export const BillingTable = ({ handClickBalance }) => {
                           gap: 1,
                           color: "success.main",
                           fontSize: "14px",
-                        }}
-                      >
+                        }}>
                         <Done /> Paid
                       </Typography>
                     ) : row?.payment_status === "cancelled" ? (
@@ -134,8 +130,7 @@ export const BillingTable = ({ handClickBalance }) => {
                           gap: 1,
                           color: "red",
                           fontSize: "16px",
-                        }}
-                      >
+                        }}>
                         <BlockIcon /> Cancelled
                       </Typography>
                     ) : (
@@ -147,16 +142,15 @@ export const BillingTable = ({ handClickBalance }) => {
                           gap: 1,
                           color: "warning.main",
                           fontSize: "14px",
-                        }}
-                      >
+                        }}>
                         <HourglassTop /> Pending
                       </Typography>
                     )}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px" }}>
+                  <TableCell sx={{fontSize: "14px"}}>
                     {row?.currency?.code}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px" }}>
+                  <TableCell sx={{fontSize: "14px"}}>
                     {numberWithSpaces(row.amount)}
                   </TableCell>
                 </TableRow>
@@ -172,11 +166,10 @@ export const BillingTable = ({ handClickBalance }) => {
                   justifyContent: "center",
                   flexDirection: "column",
                   fontSize: "16px",
-                }}
-              >
+                }}>
                 No transactions are found.
-                <Box sx={{ marginTop: "12px" }}>
-                  <BackupTableIcon style={{ width: "40px", height: "30px" }} />
+                <Box sx={{marginTop: "12px"}}>
+                  <BackupTableIcon style={{width: "40px", height: "30px"}} />
                 </Box>
               </Box>
             )}
@@ -187,7 +180,7 @@ export const BillingTable = ({ handClickBalance }) => {
   );
 };
 
-const TableHeadCell = ({ children, ...props }) => {
+const TableHeadCell = ({children, ...props}) => {
   return (
     <TableCell
       sx={{
@@ -202,8 +195,7 @@ const TableHeadCell = ({ children, ...props }) => {
         boxShadow: "none !important",
         padding: "8px",
       }}
-      {...props}
-    >
+      {...props}>
       {children}
     </TableCell>
   );
@@ -212,30 +204,29 @@ const TableHeadCell = ({ children, ...props }) => {
 const TableSkeleton = () => {
   return (
     <TableRow>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell sx={{textAlign: "center", padding: "0"}}>
         <Skeleton height="53px" />
       </TableCell>
       <TableCell
-        sx={{ textAlign: "center", padding: "0", paddingRight: "0 !important" }}
-      >
+        sx={{textAlign: "center", padding: "0", paddingRight: "0 !important"}}>
         <Skeleton height="53px" />
       </TableCell>
     </TableRow>

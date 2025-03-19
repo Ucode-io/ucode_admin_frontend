@@ -11,13 +11,13 @@ import {isOnlineReducerAction} from "../../store/isOnline/isOnline.slice";
 import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
 import {SettingsPopup} from "../../views/SettingsPopup/SettingsPopup";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const updateSearchParam = useSearchParams()[2];
 
-  const dispatch = useDispatch();
   const {data: projectInfo} = useProjectGetByIdQuery({
     projectId,
     queryParams: {
@@ -68,6 +68,10 @@ const MainLayout = ({setFavicon, favicon}) => {
     updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
   };
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -76,7 +80,8 @@ const MainLayout = ({setFavicon, favicon}) => {
           handleOpenBilling={handleOpenBilling}
           projectInfo={projectInfo}
         />
-        <div className={`${styles.layout} ${darkMode ? styles.dark : ""}`}>
+        <div
+          className={`${isWarning <= 5 ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}

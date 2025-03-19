@@ -86,6 +86,7 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {LayoutPopup} from "./LayoutPopup";
 import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -205,6 +206,8 @@ export const NewUiViewsWithGroups = ({
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
+  const projectId = useSelector((state) => state.company?.projectId);
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
@@ -297,24 +300,6 @@ export const NewUiViewsWithGroups = ({
   }, [view, fieldsMap]);
 
   const tableLan = useGetLang("Table");
-
-  // useEffect(() => {
-  //   let isMounted = true;
-
-  //   getAllFromDB().then((storedData) => {
-  //     if (isMounted && storedData && Array.isArray(storedData)) {
-  //       const formattedData = storedData.map((item) => ({
-  //         ...item,
-  //         translations: item.translations || {},
-  //       }));
-  //       setTableLan(formattedData?.find((item) => item?.key === "Table"));
-  //     }
-  //   });
-
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, []);
 
   if (view?.type === "WEBSITE") {
     return (
@@ -445,7 +430,11 @@ export const NewUiViewsWithGroups = ({
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>
-        <Flex h="100vh" flexDirection="column" bg={"white"}>
+        <Flex
+          h={`100vh`}
+          overflow={"hidden"}
+          flexDirection="column"
+          bg={"white"}>
           {updateLoading && (
             <Backdrop
               sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
@@ -789,6 +778,7 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableView
+                          projectInfo={projectInfo}
                           tableLan={tableLan}
                           isVertical
                           setCurrentPage={setCurrentPage}
@@ -836,6 +826,7 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        projectInfo={projectInfo}
                         tableLan={tableLan}
                         visibleColumns={visibleColumns}
                         setCurrentPage={setCurrentPage}
@@ -993,6 +984,7 @@ const FiltersList = ({
   const {filters} = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
+  const filtersRef = useRef(null);
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -1045,12 +1037,19 @@ const FiltersList = ({
     );
   };
 
+  useEffect(() => {
+    if (filtersRef.current) {
+      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
+    }
+  }, []);
+
   if (!filtersOpen) {
     return;
   }
 
   return (
     <Flex
+      ref={filtersRef}
       minH="max-content"
       px="16px"
       py="6px"
@@ -1696,7 +1695,12 @@ const ColumnsVisibility = ({
           onChange={(ev) => setSearch(ev.target.value)}
         />
       </InputGroup>
-      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+      <Flex
+        className="scrollbarNone"
+        flexDirection="column"
+        mt="8px"
+        maxHeight="300px"
+        overflow="auto">
         <Container onDrop={onDrop}>
           {renderFields.map((column) => (
             <Draggable key={column.id}>

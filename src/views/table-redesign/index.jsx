@@ -54,6 +54,7 @@ import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
@@ -123,6 +124,7 @@ const mockColumns = Array.from({length: 5}, (_, index) => ({
 }));
 
 export const DynamicTable = ({
+  projectInfo,
   tableLan,
   dataCount,
   tableView,
@@ -181,6 +183,7 @@ export const DynamicTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
@@ -339,10 +342,23 @@ export const DynamicTable = ({
   };
 
   const calculatedHeight = useMemo(() => {
-    if (tableViewFiltersOpen) {
-      return filterHeight + Number(tabHeight) ?? 0;
-    } else return 0 + Number(tabHeight);
-  }, [tableViewFiltersOpen, filterHeight]);
+    let warningHeight = 0;
+
+    if (
+      projectInfo?.expire_date &&
+      differenceInCalendarDays(parseISO(projectInfo.expire_date), new Date()) +
+        1 <=
+        5
+    ) {
+      warningHeight = 32;
+    }
+    const filterHeightValue = Number(filterHeight) || 0;
+    const tabHeightValue = Number(tabHeight) || 0;
+
+    return tableViewFiltersOpen
+      ? filterHeightValue + tabHeightValue + warningHeight
+      : tabHeightValue + warningHeight;
+  }, [tableViewFiltersOpen, filterHeight, tabHeight, projectInfo]);
 
   const showSkeleton = loader;
 

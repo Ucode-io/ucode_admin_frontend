@@ -491,6 +491,7 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        menuPortalTarget={document.body}
         id="relation-lookup"
         inputValue={inputValue}
         onInputChange={(newInputValue, {action}) => {

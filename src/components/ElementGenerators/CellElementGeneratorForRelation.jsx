@@ -20,6 +20,7 @@ const CellElementGeneratorForRelation = ({
   isNewRow = false,
   newColumn = false,
   isBlackBg = false,
+  isTableView = false,
   updateObject = () => {},
   setFormValue = () => {},
   newUi,
@@ -125,7 +126,7 @@ const CellElementGeneratorForRelation = ({
           index={index}
           field={field}
           control={control}
-          isTableView={true}
+          isTableView={isTableView}
           name={computedSlug}
           tableView={tableView}
           disabled={isDisabled}

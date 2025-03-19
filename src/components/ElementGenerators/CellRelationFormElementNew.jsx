@@ -46,7 +46,7 @@ const CellRelationFormElementNew = ({
   defaultValue = null,
   relationfields,
   data,
-  isTableView,
+  isTableView = false,
   row,
   newUi,
 }) => {
@@ -141,7 +141,7 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
-  isTableView,
+  isTableView = false,
   relationfields,
   setFormValue = () => {},
   row,
@@ -175,7 +175,7 @@ const AutoCompleteElement = ({
       border: "0px solid #fff",
       outline: "none",
       minHeight: newUi ? "25px" : undefined,
-      height: newUi ? "25px" : undefined
+      height: newUi ? "25px" : undefined,
     }),
     input: (provided) => ({
       ...provided,

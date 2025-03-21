@@ -6,7 +6,7 @@ import {AgGridReact} from "ag-grid-react";
 import AggridFooter from "./AggridFooter";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {themeQuartz} from "ag-grid-community";
+import {ValidationModule, themeQuartz} from "ag-grid-community";
 import FastFilter from "../components/FastFilter";
 import useFilters from "../../../hooks/useFilters";
 import {generateGUID} from "../../../utils/generateID";
@@ -51,6 +51,7 @@ ModuleRegistry.registerModules([
   RowSelectionModule,
   RowGroupingModule,
   TreeDataModule,
+  ValidationModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -439,7 +440,6 @@ function AgGridTableView(props) {
                 paginationPageSize={limit}
                 undoRedoCellEditing={true}
                 rowModelType={"clientSide"}
-                // rowSelection={rowSelection}
                 undoRedoCellEditingLimit={5}
                 defaultColDef={defaultColDef}
                 cellSelection={cellSelection}
@@ -482,16 +482,18 @@ function AgGridTableView(props) {
 }
 
 const HeaderComponent = (props) => {
+  const buttonRef = useRef(null);
   const {column} = props;
   const field = column?.colDef?.fieldObj;
 
   const openFilterMenu = () => {
-    if (props.api) {
-      props?.api.getColumnFilterInstance("name");
+    if (props.api && props.column && buttonRef.current) {
+      props.showColumnMenu(buttonRef.current);
     }
   };
+
   return (
-    <Flex justifyContent={"space-between"}>
+    <Flex justifyContent={"space-between"} alignItems={"center"}>
       <Flex alignItems={"center"} gap={"10px"}>
         {getColumnIcon({
           column: {
@@ -502,14 +504,15 @@ const HeaderComponent = (props) => {
         <Text>{column?.colDef?.headerName}</Text>
       </Flex>
       <ChakraButton
+        ref={buttonRef}
         onClick={openFilterMenu}
-        _hover={{
-          background: "#EDF2F6",
-        }}
+        _hover={{background: "#EDF2F6"}}
         w={"20px"}
         h={"20px"}
         bg={"none"}>
-        <ExpandMoreIcon style={{fontSize: "24px", color: "#667085"}} />
+        <ExpandMoreIcon
+          style={{fontSize: "24px", color: "#667085", pointerEvents: "none"}}
+        />
       </ChakraButton>
     </Flex>
   );

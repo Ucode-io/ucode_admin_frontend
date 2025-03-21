@@ -1,4 +1,4 @@
-import {Box, Button, Tooltip} from "@mui/material";
+import {Box, Button, Checkbox, Tooltip} from "@mui/material";
 import React from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -45,14 +45,14 @@ function RowIndexField(props) {
   return (
     <Box className="rowIndex">
       <Button
-        onClick={() => {
-          navigateToDetailPage(data);
-        }}
+        // onClick={() => {
+        //   navigateToDetailPage(data);
+        // }}
         className="editButton"
         style={{
           minWidth: "max-content",
         }}>
-        <OpenInFullIcon />
+        <Checkbox style={{width: "16px", height: "16px"}} />
       </Button>
       <Box className="indexValue">{value}</Box>
     </Box>

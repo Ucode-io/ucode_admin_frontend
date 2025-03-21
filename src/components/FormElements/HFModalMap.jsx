@@ -17,6 +17,8 @@ function HFModalMap({
   required,
   drawerDetail = false,
   placeholder = "",
+  disabled = false,
+  ...props
 }) {
   const [open, setOpen] = useState(false);
   const value = useWatch({
@@ -36,8 +38,10 @@ function HFModalMap({
     <Box
       sx={{
         padding: drawerDetail ? "0 4.6px" : "0",
-      }}>
+      }}
+    >
       <TextField
+        disabled={disabled}
         className="mapField"
         placeholder={placeholder}
         id={`map_field`}
@@ -49,7 +53,7 @@ function HFModalMap({
         defaultValue={defaultValue}
         variant="standard"
         width="small"
-        onClick={() => handleOpen()}
+        onClick={() => (disabled ? null : handleOpen())}
         sx={{
           width: "330px",
           paddingLeft: "5px",
@@ -66,6 +70,7 @@ function HFModalMap({
           },
           disableUnderline: true,
         }}
+        {...props}
       />
 
       <Dialog open={open} onClose={handleClose}>
@@ -87,8 +92,9 @@ function HFModalMap({
             </Button>
             <Button
               onClick={handleClose}
-              sx={{marginLeft: "10px"}}
-              variant="outlined">
+              sx={{ marginLeft: "10px" }}
+              variant="outlined"
+            >
               Confirm
             </Button>
           </Box>

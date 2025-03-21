@@ -651,7 +651,7 @@ export const DynamicTable = ({
 const IndexTh = ({items, selectedItems, onSelectAll}) => {
   const {tableSlug} = useParams();
   const permissions = useSelector((state) => state?.permissions?.permissions);
-  const hasPermission = permissions?.[tableSlug]?.delete;
+  const hasPermission = permissions?.[tableSlug]?.delete_all;
   const [hover, setHover] = useState(false);
 
   const showCheckbox = hover || selectedItems?.length > 0;

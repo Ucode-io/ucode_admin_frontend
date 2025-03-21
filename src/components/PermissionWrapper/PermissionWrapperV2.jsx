@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 
-const PermissionWrapperV2 = ({children, tableSlug, type}) => {
+const PermissionWrapperV2 = ({ children, tableSlug, type }) => {
   const permissions2 = useSelector((state) => state?.permissions?.permissions);
 
   const role = useSelector((state) => state.auth.roleInfo);

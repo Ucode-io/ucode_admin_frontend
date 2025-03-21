@@ -101,6 +101,10 @@
     .data_table__row_number {
       display: none;
     }
+
+    .data_table__row_number.show {
+      display: block;
+    }
   }
 }
 

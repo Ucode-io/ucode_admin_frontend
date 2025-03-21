@@ -1,13 +1,11 @@
 import {useQuery} from "react-query";
 import style from "./style.module.scss";
-import FiltersBlock from "./FiltersBlock";
 import {Box, Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import AggridFooter from "./AggridFooter";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {ValidationModule, themeQuartz} from "ag-grid-community";
-import FastFilter from "../components/FastFilter";
 import useFilters from "../../../hooks/useFilters";
 import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
@@ -30,6 +28,7 @@ import {
   ServerSideRowModelModule,
   RowGroupingModule,
   TreeDataModule,
+  CellSelectionModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
@@ -52,10 +51,12 @@ ModuleRegistry.registerModules([
   RowGroupingModule,
   TreeDataModule,
   ValidationModule,
+  CellSelectionModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
   columnBorder: true,
+  rowHeight: "32px",
 });
 
 function AgGridTableView(props) {
@@ -86,7 +87,6 @@ function AgGridTableView(props) {
   const [groupTab, setGroupTab] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(false);
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -148,7 +148,7 @@ function AgGridTableView(props) {
       enabled: !!tableSlug && !view?.attributes?.treeData,
       onSuccess: (data) => {
         setCount(data?.data?.count);
-        setRowData(data?.data?.response ?? []);
+        setRowData([...data?.data?.response] ?? []);
         setLoading(false);
       },
       onError: () => {
@@ -156,6 +156,13 @@ function AgGridTableView(props) {
       },
     }
   );
+
+  const ButtonCellRenderer = (params) => {
+    if (params.node.rowPinned) {
+      return <button onClick={addNewRow}>➕ Add Row</button>;
+    }
+    return null;
+  };
 
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
     ["GET_OBJECTS_TREEDATA", filters],
@@ -167,7 +174,14 @@ function AgGridTableView(props) {
     {
       enabled: !!tableSlug && view?.attributes?.treeData,
       onSuccess: (data) => {
-        setRowData(data?.data?.response);
+        setRowData([
+          ...data?.data?.response,
+          {
+            field: "actions",
+            headerName: "Actions",
+            cellRenderer: ButtonCellRenderer,
+          },
+        ]);
         setLoading(false);
       },
       onError: () => {
@@ -425,40 +439,42 @@ function AgGridTableView(props) {
             {!columns?.length ? (
               <NoFieldsComponent />
             ) : (
-              <AgGridReact
-                ref={gridApi}
-                rowBuffer={8}
-                theme={myTheme}
-                rowData={rowData}
-                loading={loading}
-                columnDefs={columns}
-                suppressRefresh={true}
-                enableClipboard={true}
-                showOpenedGroup={true}
-                groupDisplayType="single"
-                suppressAutoColumn={true}
-                paginationPageSize={limit}
-                undoRedoCellEditing={true}
-                rowModelType={"clientSide"}
-                undoRedoCellEditingLimit={5}
-                defaultColDef={defaultColDef}
-                cellSelection={cellSelection}
-                onColumnPinned={onColumnPinned}
-                suppressColumnVirtualisation={true}
-                treeData={view?.attributes?.treeData}
-                autoGroupColumnDef={autoGroupColumnDef}
-                suppressServerSideFullWidthLoadingRow={true}
-                loadingOverlayComponent={CustomLoadingOverlay}
-                getDataPath={
-                  view?.attributes?.treeData ? getDataPath : undefined
-                }
-                onCellValueChanged={(e) => {
-                  updateObject(e.data);
-                }}
-                onSelectionChanged={(e) =>
-                  setSelectedRows(e.api.getSelectedRows())
-                }
-              />
+              <>
+                <AgGridReact
+                  ref={gridApi}
+                  rowBuffer={8}
+                  theme={myTheme}
+                  rowData={rowData}
+                  loading={loading}
+                  columnDefs={columns}
+                  suppressRefresh={true}
+                  enableClipboard={true}
+                  showOpenedGroup={true}
+                  groupDisplayType="single"
+                  suppressAutoColumn={true}
+                  paginationPageSize={limit}
+                  undoRedoCellEditing={true}
+                  rowModelType={"clientSide"}
+                  undoRedoCellEditingLimit={5}
+                  defaultColDef={defaultColDef}
+                  cellSelection={cellSelection}
+                  onColumnPinned={onColumnPinned}
+                  suppressColumnVirtualisation={true}
+                  treeData={view?.attributes?.treeData}
+                  autoGroupColumnDef={autoGroupColumnDef}
+                  suppressServerSideFullWidthLoadingRow={true}
+                  loadingOverlayComponent={CustomLoadingOverlay}
+                  getDataPath={
+                    view?.attributes?.treeData ? getDataPath : undefined
+                  }
+                  onCellValueChanged={(e) => {
+                    updateObject(e.data);
+                  }}
+                  onSelectionChanged={(e) =>
+                    setSelectedRows(e.api.getSelectedRows())
+                  }
+                />
+              </>
             )}
           </Box>
         </div>

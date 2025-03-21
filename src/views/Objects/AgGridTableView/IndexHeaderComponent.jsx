@@ -1,8 +1,5 @@
 import React from "react";
-import AddIcon from "@mui/icons-material/Add";
-import style from "./style.module.scss";
-import {generateGUID} from "../../../utils/generateID";
-import {Box, Flex, Image} from "@chakra-ui/react";
+import {Box, Image} from "@chakra-ui/react";
 import {useState} from "react";
 import {Checkbox} from "@mui/material";
 

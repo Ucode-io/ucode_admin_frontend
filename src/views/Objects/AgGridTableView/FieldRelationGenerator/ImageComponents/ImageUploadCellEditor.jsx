@@ -144,7 +144,7 @@ const ImageUploadCellEditor = ({
             <div
               style={{
                 width: "35px",
-                height: "35px",
+                height: "32px",
                 borderRadius: "50%",
                 overflow: "hidden",
               }}

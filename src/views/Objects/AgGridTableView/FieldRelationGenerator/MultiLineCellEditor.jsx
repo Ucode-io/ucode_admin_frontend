@@ -54,7 +54,7 @@ function MultiLineCellEditor(props) {
           style={
             true
               ? {
-                  height: "40px",
+                  height: "32px",
                   display: "flex",
                   alignItems: "center",
                   width: "100%",

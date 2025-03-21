@@ -46,7 +46,7 @@ const HFAggridMultiselect = (props) => {
   const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
   const isMultiSelect =
     colDef?.cellEditorParams?.field.attributes?.is_multiselect;
-  console.log("propspropsprops", props);
+
   return (
     <Box
       sx={{

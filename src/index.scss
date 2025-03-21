@@ -348,7 +348,7 @@ div {
   left: 0;
 
   input {
-    height: 33px;
+    height: 32px;
     padding: 0 15px 0 15px;
 
     &:focus {
@@ -416,7 +416,7 @@ div {
   padding-left: 10px;
 
   input {
-    height: 40px;
+    height: 32px;
     padding: 0 15px 0 15px;
   }
   div fieldset {
@@ -820,6 +820,7 @@ u {
 
 .phone_input {
   input {
+    height: 32px;
     padding-left: 50px;
   }
   .PhoneInputCountry {
@@ -880,19 +881,13 @@ u {
   --ag-font-family: "Inter", sans-serif;
 }
 
-.ag-cell-focus:not(.ag-cell-range-selected):focus-within {
-  border: none !important;
-}
-
 .ag-cell {
   padding: 0px 5px !important;
-  border-right: 1px solid #dcdddd !important;
-  border-left: none !important;
 
   .rowIndex {
     position: absolute;
     width: 100%;
-    height: 33px;
+    height: 100%;
     top: 0;
     left: 0;
     display: flex;
@@ -1011,9 +1006,7 @@ u {
 .ag-header-cell {
   height: 32px !important;
   font-size: 12px !important;
-  // border-right: 1px solid #dcdddd;
   padding: 0 10px !important;
-  border: none !important;
 }
 
 .ag-header {
@@ -1024,8 +1017,12 @@ u {
 }
 
 .ag-row-even {
-  height: 33px !important;
+  height: 32px !important;
   // border-left: 1px solid #dcdddd;
+}
+
+.ag-row-odd {
+  height: 32px !important;
 }
 
 #billingTable {

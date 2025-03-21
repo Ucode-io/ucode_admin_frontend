@@ -37,9 +37,6 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
     case "NUMBER":
       columnDef.cellRenderer = HFNumberFieldCell;
-      // (columnDef.valueFormatter = (params) => {
-      //   return params?.value?.toLocaleString();
-      // });
 
       break;
 
@@ -205,7 +202,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "MULTISELECT":
       columnDef.cellRenderer = HFAggridMultiselect;
-      columnDef.cellEditor = HFAggridMultiselect;
       columnDef.cellEditorParams = {
         values: item?.attributes?.options.map((option) => option?.label),
         field: item,

@@ -48,6 +48,7 @@ const FormulaCellEditor = (props) => {
   return (
     <TextField
       size="small"
+      className="custom_textfield_new"
       value={
         formulaIsVisible
           ? formula

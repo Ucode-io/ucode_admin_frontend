@@ -37,16 +37,29 @@ import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import {Lock} from "@mui/icons-material";
 import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
+import { numberWithSpaces } from "../../../../utils/formatNumbers";
 
-function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
+function DrawerFieldGenerator({
+  field,
+  control,
+  watch,
+  drawerDetail,
+  isDisabled,
+}) {
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
       return (
-        <RelationField field={field} control={control} name={field?.slug} />
+        <RelationField
+          disabled={isDisabled}
+          field={field}
+          control={control}
+          name={field?.slug}
+        />
       );
     case "MULTI_LINE":
       return (
         <MultiLineInput
+          isDisabled={isDisabled}
           placeholder={"Empty"}
           control={control}
           name={field?.slug}
@@ -57,6 +70,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "DATE":
       return (
         <HFDatePickerField
+          disabled={isDisabled}
           field={field}
           control={control}
           name={field?.slug}
@@ -67,6 +81,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "DATE_TIME":
       return (
         <HFDateTimePickerField
+          disabled={isDisabled}
           field={field}
           control={control}
           name={field?.slug}
@@ -76,6 +91,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return (
         <HFDateDatePickerWithoutTimeZoneTableField
+          disabled={isDisabled}
           field={field}
           control={control}
           name={field?.slug}
@@ -85,6 +101,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "TIME":
       return (
         <HFTimePickerField
+          disabled={isDisabled}
           control={control}
           name={field?.slug}
           field={field}
@@ -94,12 +111,18 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
 
     case "PASSWORD":
       return (
-        <InputField type="password" control={control} name={field?.slug} />
+        <InputField
+          disabled={isDisabled}
+          type="password"
+          control={control}
+          name={field?.slug}
+        />
       );
 
     case "SWITCH":
       return (
         <HFSwitch
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -109,6 +132,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "VIDEO":
       return (
         <HFVideoUpload
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -118,6 +142,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "CHECKBOX":
       return (
         <HFCheckbox
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -127,6 +152,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "STATUS":
       return (
         <HFStatusField
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -137,6 +163,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "MULTISELECT":
       return (
         <HFMultipleAutocomplete
+          disabled={isDisabled}
           control={control}
           name={field?.slug}
           field={field}
@@ -147,6 +174,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "PHOTO":
       return (
         <HFPhotoUpload
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -157,6 +185,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "MULTI_IMAGE":
       return (
         <HFMultiImage
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           isTableView={true}
           control={control}
@@ -168,6 +197,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "MULTI_FILE":
       return (
         <HFMultiFile
+          disabled={isDisabled}
           drawerDetail={true}
           isTableView={true}
           control={control}
@@ -179,6 +209,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "LINK":
       return (
         <HFLinkField
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -191,6 +222,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "FLOAT":
       return (
         <NumberField
+          disabled={isDisabled}
           control={control}
           name={field?.slug}
           field={field}
@@ -201,6 +233,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "FILE":
       return (
         <HFFileUpload
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -211,6 +244,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "MONEY":
       return (
         <HFMoneyField
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -221,6 +255,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "MAP":
       return (
         <HFModalMap
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -231,6 +266,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "POLYGON":
       return (
         <PolygonFieldTable
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           computedSlug={field?.slug}
@@ -241,6 +277,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "ICON":
       return (
         <HFIconPicker
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -250,6 +287,7 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
     case "COLOR":
       return (
         <HFColorPicker
+          disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
           name={field?.slug}
@@ -259,22 +297,39 @@ function DrawerFieldGenerator({field, control, watch, drawerDetail}) {
 
     case "FORMULA_FRONTEND":
       return (
-        <FormulaField control={control} name={field?.slug} field={field} />
+        <FormulaField
+          disabled={isDisabled}
+          control={control}
+          name={field?.slug}
+          field={field}
+        />
       );
 
     default:
-      return <InputField control={control} name={field?.slug} />;
+      return (
+        <InputField
+          disabled={isDisabled}
+          control={control}
+          name={field?.slug}
+        />
+      );
   }
 }
 
-const InputField = ({control, name = "", type = "text"}) => {
+const InputField = ({
+  control,
+  name = "",
+  type = "text",
+  disabled = false,
+}) => {
   return (
     <Controller
       control={control}
       name={name}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <Input
+            disabled={disabled}
             type={type}
             value={value}
             onChange={(e) => onChange(e.target.value)}

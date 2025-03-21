@@ -96,14 +96,15 @@ function DrawerFormDetailPage({
       isEqual(prevSections, updatedSections) ? prevSections : updatedSections
     );
   }, [data, watch("attributes.layout_heading")]);
-
+console.log({ sections });
   return (
     <>
       <Box
         mt="10px"
-        sx={{height: "calc(100vh - 44px)"}}
+        sx={{ height: "calc(100vh - 44px)" }}
         pb={"10px"}
-        overflow={"auto"}>
+        overflow={"auto"}
+      >
         <HeadingOptions
           selectedRow={selectedRow}
           watch={watch}
@@ -119,7 +120,8 @@ function DrawerFormDetailPage({
               margin: "8px 0 0 0",
               overflow: "hidden",
             }}
-            key={secIndex}>
+            key={secIndex}
+          >
             <Container
               behaviour="contain"
               style={{
@@ -130,19 +132,22 @@ function DrawerFormDetailPage({
               dragHandleSelector=".drag-handle"
               dragClass="drag-item"
               lockAxis="y"
-              onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
+              onDrop={(dropResult) => onDrop(secIndex, dropResult)}
+            >
               {section?.fields?.map((field, fieldIndex) => (
                 <Draggable
                   className="drag-handle"
-                  key={field?.id ?? fieldIndex}>
+                  key={field?.id ?? fieldIndex}
+                >
                   <Box
                     className={dragAction ? "rowColumnDrag" : "rowColumn"}
                     display="flex"
                     alignItems="center"
                     {...(Boolean(field?.type === "MULTISELECT")
-                      ? {minHeight: "30px"}
-                      : {height: "34px"})}
-                    py="8px">
+                      ? { minHeight: "30px" }
+                      : { height: "34px" })}
+                    py="8px"
+                  >
                     <Box
                       display="flex"
                       alignItems="center"
@@ -154,7 +159,8 @@ function DrawerFormDetailPage({
                         "&:hover": {
                           backgroundColor: "#F7F7F7",
                         },
-                      }}>
+                      }}
+                    >
                       <Box
                         width="18px"
                         height="16px"
@@ -162,13 +168,14 @@ function DrawerFormDetailPage({
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
-                        sx={{color: "#787774"}}>
+                        sx={{ color: "#787774" }}
+                      >
                         <span className="drag">
                           <DragIndicatorIcon
-                            style={{width: "16px", height: "16px"}}
+                            style={{ width: "16px", height: "16px" }}
                           />
                         </span>
-                        <span style={{color: "#787774"}} className="icon">
+                        <span style={{ color: "#787774" }} className="icon">
                           {getColumnIcon({
                             column: {
                               type: field?.type ?? field?.relation_type,
@@ -181,18 +188,20 @@ function DrawerFormDetailPage({
                         fontSize="14px"
                         color="#787774"
                         fontWeight="500"
-                        width="100%">
+                        width="100%"
+                      >
                         {field?.attributes?.[`label_${i18n?.language}`] ||
                           field?.label ||
                           field?.attributes?.label}
                       </Box>
                     </Box>
-                    <Box sx={{width: "60%"}}>
+                    <Box sx={{ width: "60%" }}>
                       <DrawerFieldGenerator
                         drawerDetail={true}
                         control={control}
                         field={field}
                         watch={watch}
+                        isDisabled={field?.attributes?.disabled}
                       />
                     </Box>
                   </Box>

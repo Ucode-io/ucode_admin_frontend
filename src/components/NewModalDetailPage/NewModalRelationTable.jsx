@@ -8,6 +8,9 @@ import constructorTableService from "../../services/constructorTableService";
 import FixColumnsRelationSection from "../../views/Objects/RelationSection/FixColumnsRelationSection";
 import VisibleColumnsButtonRelationSection from "../../views/Objects/RelationSection/VisibleColumnsButtonRelationSection";
 import RelationTable from "../../views/Objects/RelationSection/RelationTable";
+import RelationTableDrawer from "../../views/Objects/ModalDetailPage/RelationTableDrawer";
+import useDebounce from "../../hooks/useDebounce";
+import {listToMap} from "../../utils/listToMap";
 
 const NewModalRelationTable = ({
   selectedTabIndex,
@@ -32,6 +35,9 @@ const NewModalRelationTable = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchText, setSearchText] = useState("");
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
@@ -100,6 +106,8 @@ const NewModalRelationTable = ({
     }
   );
 
+  const inputChangeHandler = useDebounce((e) => setSearchText(e), 5000);
+
   return (
     <>
       <Box>
@@ -111,7 +119,7 @@ const NewModalRelationTable = ({
             justifyContent: "flex-end",
             borderBottom: "1px solid #eee",
           }}>
-          <FixColumnsRelationSection
+          {/* <FixColumnsRelationSection
             relatedTable={getRelatedTabeSlug}
             fieldsMap={fieldsMap}
             getAllData={getAllData}
@@ -124,48 +132,45 @@ const NewModalRelationTable = ({
             // getLayoutList={getLayoutList}
             selectedTabIndex={selectedTabIndex}
             data={data}
+          /> */}
+        </Box>
+        <Box>
+          <RelationTableDrawer
+            ref={myRef}
+            loader={loader}
+            remove={remove}
+            reset={reset}
+            searchText={searchText}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            selectedTabIndex={selectedTabIndex}
+            watch={watch}
+            selectedTab={selectedTab}
+            control={control}
+            setFormValue={setFormValue}
+            fields={fields}
+            setFormVisible={setFormVisible}
+            formVisible={formVisible}
+            key={selectedTab.id}
+            relation={relations}
+            getRelatedTabeSlug={getRelatedTabeSlug}
+            createFormVisible={relationsCreateFormVisible}
+            setCreateFormVisible={setCreateFormVisible}
+            selectedObjects={selectedObjects}
+            setSelectedObjects={setSelectedObjects}
+            inputChangeHandler={inputChangeHandler}
+            tableSlug={tableSlug}
+            removableHeight={140}
+            id={id}
+            // getValues={getValues}
+            getAllData={getAllData}
+            relatedTable={relatedTableSlug}
+            fieldsMap={fieldsMap}
+            type={"relation"}
+            layoutData={data}
           />
         </Box>
-        <RelationTable
-          ref={myRef}
-          loader={loader}
-          remove={remove}
-          reset={reset}
-          selectedTabIndex={selectedTabIndex}
-          watch={watch}
-          selectedTab={selectedTab}
-          control={control}
-          setFormValue={setFormValue}
-          fields={fields}
-          setFormVisible={setFormVisible}
-          formVisible={formVisible}
-          key={selectedTab.id}
-          relation={relations}
-          getRelatedTabeSlug={getRelatedTabeSlug}
-          createFormVisible={relationsCreateFormVisible}
-          setCreateFormVisible={setCreateFormVisible}
-          selectedObjects={selectedObjects}
-          setSelectedObjects={setSelectedObjects}
-          tableSlug={tableSlug}
-          removableHeight={140}
-          id={id}
-          getAllData={getAllData}
-          type={type}
-          layoutData={data}
-        />
       </Box>
-
-      {/* <Box
-        onMouseDown={handleMouseDown}
-        sx={{
-          position: "absolute",
-          height: "calc(100vh - 50px)",
-          width: "3px",
-          left: 0,
-          top: 0,
-          cursor: "col-resize",
-        }}
-      /> */}
     </>
   );
 };

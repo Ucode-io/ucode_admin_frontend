@@ -1,0 +1,100 @@
+@mixin flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-handle-item {
+  right: 0px !important;
+}
+
+.rowCol {
+  input {
+    height: 30px !important;
+
+    &:hover {
+      background: #f7f7f7;
+      border-radius: 4px;
+    }
+  }
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+
+  &:hover {
+    .icon {
+      display: none;
+    }
+
+    .drag {
+      display: block;
+    }
+  }
+}
+
+.rowDragCol {
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+}
+
+.headingText {
+  div {
+    fieldset {
+      display: none;
+    }
+  }
+
+  input {
+    font-weight: 700;
+    height: 25px;
+    font-size: 32px;
+    padding-left: 0;
+  }
+}
+
+.drag-item {
+  .icon {
+    display: none;
+  }
+
+  .drag {
+    display: block;
+  }
+}
+
+.layoutHeading {
+  .fieldChoose {
+    display: none;
+  }
+  &:hover {
+    .fieldChoose {
+      display: block;
+    }
+  }
+}
+
+.dragging_preview {
+  border: 1px dashed #007aff;
+  border-radius: 4px;
+}

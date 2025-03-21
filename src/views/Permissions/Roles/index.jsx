@@ -21,19 +21,22 @@ import {useState} from "react";
 import RoleCreateModal from "./RoleFormPage";
 import styles from "../style.module.scss";
 
-const RolePage = () => {
-  const {clientId} = useParams();
+const RolePage = ({ onRowClick }) => {
+  const { clientId } = useParams();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
   const [roleId, setRoleId] = useState();
   const navigate = useNavigate();
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
 
-  const {data: roles, isLoading} = useQuery(["GET_ROLE_LIST", clientId], () => {
-    return roleServiceV2.getList({"client-type-id": clientId});
-  });
+  const { data: roles, isLoading } = useQuery(
+    ["GET_ROLE_LIST", clientId],
+    () => {
+      return roleServiceV2.getList({ "client-type-id": clientId });
+    }
+  );
 
-  const {mutateAsync: deleteRole, isLoading: createLoading} =
+  const { mutateAsync: deleteRole, isLoading: createLoading } =
     useRoleDeleteMutation({
       onSuccess: () => {
         store.dispatch(showAlert("Успешно", "success"));
@@ -60,7 +63,8 @@ const RolePage = () => {
             marginTop: "10px",
           }}
           disablePagination
-          removableHeight={false}>
+          removableHeight={false}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
@@ -69,13 +73,17 @@ const RolePage = () => {
           <CTableBody
             loader={isLoading}
             columnsCount={2}
-            dataLength={roles?.data?.response?.length}>
+            dataLength={roles?.data?.response?.length}
+          >
             {roles?.data?.response?.map((element, index) => (
               <CTableRow
                 key={element.guid}
                 onClick={() => {
-                  navigateToDetailPage(element.guid);
-                }}>
+                  onRowClick
+                    ? onRowClick(element)
+                    : navigateToDetailPage(element.guid);
+                }}
+              >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>
@@ -83,7 +91,8 @@ const RolePage = () => {
                     color="error"
                     onClick={() => {
                       deleteRoleElement(element?.guid);
-                    }}>
+                    }}
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>
@@ -91,7 +100,7 @@ const RolePage = () => {
             ))}
             <PermissionWrapperV2 tabelSlug="app" type="write">
               <TableRowButton
-                styles={{borderBottom: "none"}}
+                styles={{ borderBottom: "none" }}
                 colSpan={4}
                 onClick={() => setModalType("NEW")}
               />

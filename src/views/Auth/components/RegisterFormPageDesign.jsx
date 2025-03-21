@@ -167,7 +167,7 @@ const RegisterFormPageDesign = ({setFormType = () => {}}) => {
               />
               {errors["user_info"]?.password && (
                 <span className={classes.errorMessage}>
-                  {errors["user_info"]?.password?.message}
+                  {t(errors["user_info"]?.password?.message)}
                 </span>
               )}
             </div>

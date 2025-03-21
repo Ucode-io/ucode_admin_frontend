@@ -9,6 +9,7 @@
 }
 
 .rowColumn {
+  height: 32px;
   margin-top: 4px;
   cursor: pointer;
   .icon {
@@ -35,6 +36,8 @@
 }
 
 .rowColumnDrag {
+  height: 32px;
+  margin-top: 4px;
   cursor: pointer;
   .icon {
     display: block;
@@ -61,6 +64,11 @@
     height: 25px;
     font-size: 32px;
     padding-left: 0;
+
+    &::placeholder {
+      font-weight: bold;
+      color: #000;
+    }
   }
 }
 

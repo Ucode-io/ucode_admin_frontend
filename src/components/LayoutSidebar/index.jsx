@@ -65,16 +65,22 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {Modal} from "@mui/material";
+import {Modal, Skeleton} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {GreyLoader} from "../Loaders/GreyLoader";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
-const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
+const LayoutSidebar = ({
+  toggleDarkMode = () => {},
+  darkMode,
+  handleOpenProfileModal = () => {},
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const {appId} = useParams();
-  console.log("appIdappId", appId);
+
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -89,6 +95,7 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
+  const [isMenuListLoading, setIsMenuListLoading] = useState(false);
   const [tableModal, setTableModalOpen] = useState(false);
   const [linkTableModal, setLinkTableModal] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
@@ -209,15 +216,23 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
   };
 
   const getMenuList = () => {
+    setIsMenuListLoading(true);
+
     menuSettingsService
       .getList({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
         setMenuList(res.menus);
+        setIsMenuListLoading(false);
+        console.log({menu: res.menus});
       })
       .catch((error) => {
+        setIsMenuListLoading(false);
         console.log("error", error);
+      })
+      .finally(() => {
+        setIsMenuListLoading(false);
       });
   };
 
@@ -336,6 +351,10 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
     };
   }, []);
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
   return (
     <>
       <Flex
@@ -345,7 +364,8 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
         flexDirection="column"
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
-        bg={menuStyle?.background ?? "#fff"}>
+        bg={menuStyle?.background ?? "#fff"}
+        h={`calc(100vh - ${isWarning <= 5 ? 32 : 0}px )`}>
         <Flex
           position="absolute"
           zIndex={999}
@@ -383,15 +403,49 @@ const LayoutSidebar = ({toggleDarkMode = () => {}, darkMode}) => {
             projectInfo={projectInfo}
             menuLanguages={menuLanguages}
             profileSettingLan={profileSettingLan}
+            handleOpenProfileModal={handleOpenProfileModal}
           />
         </Flex>
 
         <Box
+          className="scrollbarNone"
           pt={8}
-          maxH={`calc(100vh - ${sidebarIsOpen ? 140 : 240}px)`}
+          maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
-          {!menuList && <RingLoaderWithWrapper style={{height: "100%"}} />}
+          {isMenuListLoading && (
+            <Box mx="8px">
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+              <Box display="flex" columnGap="8px">
+                <Skeleton height="50px" width="36px" />
+                <Skeleton width="100%" height="50px" />
+              </Box>
+            </Box>
+            // <Box
+            //   position="absolute"
+            //   top="50%"
+            //   left="50%"
+            //   transform={"translate(-50%, -50%)"}
+            // >
+            //   <GreyLoader />
+            // </Box>
+            // <RingLoaderWithWrapper style={{height: "100%"}} />
+          )}
 
           {Array.isArray(menuList) && (
             <div
@@ -702,6 +756,7 @@ const Header = ({
   projectInfo,
   menuLanguages,
   profileSettingLan,
+  handleOpenProfileModal,
 }) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
@@ -800,7 +855,11 @@ const Header = ({
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
         zIndex={999}>
         <>
-          <ProfilePanel menuLanguages={menuLanguages} onClose={onClose} />
+          <ProfilePanel
+            menuLanguages={menuLanguages}
+            handleOpenProfileModal={handleOpenProfileModal}
+            onClose={onClose}
+          />
           <Companies onSelectEnvironment={onSelectEnvironment} />
           <ProfileBottom
             projectInfo={projectInfo}
@@ -812,7 +871,11 @@ const Header = ({
   );
 };
 
-const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
+const ProfilePanel = ({
+  onClose = () => {},
+  menuLanguages,
+  handleOpenProfileModal,
+}) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
   const {i18n} = useTranslation();
@@ -854,10 +917,12 @@ const ProfilePanel = ({onClose = () => {}, menuLanguages}) => {
         gap={5}
         mt={10}
         cursor={"pointer"}
-        onClick={() => {
-          navigate(`/settings/auth/matrix/profile/crossed`);
-          onClose();
-        }}>
+        onClick={handleOpenProfileModal}
+        // onClick={() => {
+        //   navigate(`/settings/auth/matrix/profile/crossed`);
+        //   onClose();
+        // }}
+      >
         <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
@@ -871,6 +936,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
+  const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
   const {i18n} = useTranslation();
@@ -903,16 +969,20 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     if (languages?.length) {
       if (languages?.length === 1) {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+        localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
         i18n.changeLanguage(languages?.[0]?.slug);
       } else if (languages?.length > 1) {
         if (!defaultLanguage) {
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
           i18n.changeLanguage(languages?.[0]?.slug);
         } else if (defaultLanguage && isLanguageExist) {
           dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          localStorage.setItem("defaultLanguage", defaultLanguage);
           i18n.changeLanguage(defaultLanguage);
         } else {
           dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
           i18n.changeLanguage(languages?.[0]?.slug);
         }
       }
@@ -924,14 +994,17 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    clearDB();
-    store.dispatch(authActions.logout());
-    dispatch(companyActions.setCompanies([]));
+    authService.sendAccessToken({access_token: accessToken}).then((res) => {
+      clearDB();
+      store.dispatch(authActions.logout());
+      dispatch(companyActions.setCompanies([]));
+    });
   };
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
+    localStorage.setItem("defaultLanguage", lang);
     onClose();
   };
 

@@ -14,9 +14,17 @@
     font-size: 50px;
     border: 1px solid silver;
     object-fit: cover;
+    overflow: hidden;
+
+    &.xs {
+      width: 60px;
+      height: 60px;
+    }
   }
 
   .shape {
+    max-width: 100%;
+    max-height: 100%;
     position: absolute;
     top: 0;
     left: 0;

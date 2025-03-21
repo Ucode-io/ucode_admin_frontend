@@ -29,6 +29,8 @@ import {useTranslation} from "react-i18next";
 import {useMenuGetByIdQuery} from "../../services/menuService";
 import {generateID} from "../../utils/generateID";
 import DividentWayll from "./DividentWayll";
+import {useGetLang} from "../../hooks/useGetLang";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -78,6 +80,7 @@ const ObjectsFormPage = ({
 
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
+  const lang = useGetLang("Table");
 
   const {deleteTab} = useTabRouter();
   const {pathname} = useLocation();
@@ -377,7 +380,7 @@ const ObjectsFormPage = ({
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
               color="error">
-              Close
+              {generateLangaugeText(lang, i18n.language, "Close") || "Close"}
             </SecondaryButton>
             <FormCustomActionButton
               control={control?._formValues}
@@ -391,7 +394,7 @@ const ObjectsFormPage = ({
                 id="submit"
                 onClick={handleSubmit(onSubmit)}>
                 <Save />
-                Save
+                {generateLangaugeText(lang, i18n.language, "Save") || "Save"}
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

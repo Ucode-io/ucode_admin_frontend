@@ -17,6 +17,7 @@ import HFSelectField from "../../../../components/FormElements/HFSelectField";
 import { useTranslation } from "react-i18next";
 import { useGetLang } from "../../../../hooks/useGetLang";
 import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
 
 const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const inputFIle = useRef();
@@ -131,7 +132,8 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
             <div className={styles.dialog_upload}>
               {visible ? (
                 <div className={styles.tab_loader}>
-                  <RingLoader />
+                  {/* <RingLoader /> */}
+                  <GreyLoader />
                 </div>
               ) : (
                 <div className={styles.dialog_upload_section}>

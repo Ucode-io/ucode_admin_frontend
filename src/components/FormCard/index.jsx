@@ -11,6 +11,7 @@ const FormCard = ({
   extra,
   maxWidth = 700,
   cardStyle = {},
+  contentStyle = {},
   ...props
 }) => {
   if (!visible) return null;
@@ -28,7 +29,9 @@ const FormCard = ({
             <div className="extra">{extra}</div>
           </div>
         )}
-        <div className="content">{children}</div>
+        <div className="content" style={contentStyle}>
+          {children}
+        </div>
       </div>
     </div>
   );

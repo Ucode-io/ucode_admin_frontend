@@ -97,7 +97,7 @@ export default function FieldOptionModal({
             },
           },
         }}>
-        <div className={style.field}>
+        <div className={`${style.field}`}>
           <Typography variant="h6" className={style.title}>
             {generateLangaugeText(
               tableLan,
@@ -114,14 +114,16 @@ export default function FieldOptionModal({
                 generateLangaugeText(
                   tableLan,
                   i18n?.language,
-                  "Search by filled name"
+                  "Seaarch by filled name"
                 ) || "Search by filled name"
               }
               value={searchValue}
               onChange={(ev) => setSearchValue(ev.target.value)}
             />
           </InputGroup>
-          <Box sx={{overflow: "auto", height: "400px"}}>
+          <Box
+            className="scrollbarNone"
+            sx={{overflow: "auto", height: "400px"}}>
             {newFieldTypes
               ?.filter((el) =>
                 searchValue
@@ -143,7 +145,7 @@ export default function FieldOptionModal({
                         table_slug: field?.table_slug,
                       },
                     })}
-                  <p>{field?.label}</p>
+                  <p>{field?.[`label_${i18n?.language}`] || field?.label}</p>
                 </Button>
               ))}
           </Box>

@@ -37,7 +37,7 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import {Menu, Checkbox, Pagination, Button} from "@mui/material";
+import {Menu, Checkbox, Pagination, Button, Skeleton} from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import {useForm} from "react-hook-form";
 import {transliterate} from "@/utils/textTranslater";
@@ -53,8 +53,78 @@ import {CreatableSelect} from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {TableDataSkeleton} from "../../components/TableDataSkeleton";
+import {differenceInCalendarDays, parseISO} from "date-fns";
+
+const mockColumns = Array.from({length: 5}, (_, index) => ({
+  attributes: {
+    field_permission: {
+      edit_permission: true,
+      field_id: "231442e6-4395-4232-910f-56419049340d",
+      guid: "12f68b6d-5e1e-4399-82c0-ce8f3aa0bff1",
+      label: "Name",
+      role_id: "c06ce3e5-e8f0-4cb6-9afe-6456cd105334",
+      table_slug: "time-line_test",
+      view_permission: true,
+    },
+    format: "SINGLE_LINE",
+    formula: "undefined + undefined",
+    label: "",
+    label_undefined: "   ",
+    math: {
+      label: "plus",
+      value: "+",
+    },
+    options: [],
+  },
+  autofill_field: "",
+  autofill_table: "",
+  automatic: false,
+  column: 0,
+  default: "",
+  enable_multilanguage: false,
+  id: index,
+  index: "string",
+  is_editable: false,
+  is_search: true,
+  is_visible: false,
+  is_visible_layout: false,
+  label: "Name",
+  order: 0,
+  path_slug: "",
+  relation_data: {
+    auto_filters: null,
+    cascading_tree_field_slug: "",
+    cascading_tree_table_slug: "",
+    commit_id: "",
+    editable: false,
+    field_from: "",
+    field_to: "",
+    id: "",
+    is_system: false,
+    is_user_id_default: false,
+    object_id_from_jwt: false,
+    relation_buttons: false,
+    relation_field_slug: "",
+    table_from: "",
+    table_to: "",
+    type: "",
+    view_fields: null,
+  },
+  relation_id: "",
+  relation_type: "",
+  required: false,
+  show_label: false,
+  slug: "name",
+  table_id: "ef3d73fa-c486-4ac2-a5a0-f32671ba80a7",
+  table_slug: "",
+  type: "SINGLE_LINE",
+  unique: false,
+  view_fields: null,
+}));
 
 export const DynamicTable = ({
+  projectInfo,
   tableLan,
   dataCount,
   tableView,
@@ -100,6 +170,7 @@ export const DynamicTable = ({
   view,
   refetch,
   menuItem,
+  loader,
   getAllData = () => {},
 }) => {
   const {i18n} = useTranslation();
@@ -112,16 +183,31 @@ export const DynamicTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
 
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
+  const filterHeight = localStorage.getItem("filtersHeight");
+
   const [limitOptions, setLimitOptions] = useState([
-    {value: 10, label: "10 rows"},
-    {value: 20, label: "20 rows"},
-    {value: 30, label: "30 rows"},
-    {value: 40, label: "40 rows"},
+    {
+      value: 10,
+      label: `10`,
+    },
+    {
+      value: 20,
+      label: `20`,
+    },
+    {
+      value: 30,
+      label: `30`,
+    },
+    {
+      value: 40,
+      label: `40`,
+    },
   ]);
 
   const pageName =
@@ -237,7 +323,10 @@ export const DynamicTable = ({
     }
     setLimitOptions([
       ...limitOptions,
-      {value: Number(value), label: `${value} rows`},
+      {
+        value: Number(value),
+        label: `${value}`,
+      },
     ]);
     setLimit(Number(value));
   };
@@ -252,6 +341,27 @@ export const DynamicTable = ({
     );
   };
 
+  const calculatedHeight = useMemo(() => {
+    let warningHeight = 0;
+
+    if (
+      projectInfo?.expire_date &&
+      differenceInCalendarDays(parseISO(projectInfo.expire_date), new Date()) +
+        1 <=
+        5
+    ) {
+      warningHeight = 32;
+    }
+    const filterHeightValue = Number(filterHeight) || 0;
+    const tabHeightValue = Number(tabHeight) || 0;
+
+    return tableViewFiltersOpen
+      ? filterHeightValue + tabHeightValue + warningHeight
+      : tabHeightValue + warningHeight;
+  }, [tableViewFiltersOpen, filterHeight, tabHeight, projectInfo]);
+
+  const showSkeleton = loader;
+
   return (
     <div className="CTableContainer">
       <div
@@ -261,7 +371,7 @@ export const DynamicTable = ({
           borderRadius: 0,
           flexGrow: 1,
           backgroundColor: "#fff",
-          height: `calc(100vh - ${(tableViewFiltersOpen ? 35 : 0) + tabHeight + 130}px)`,
+          height: `calc(100vh - ${calculatedHeight + 130}px)`,
         }}>
         <table id="resizeMe">
           <thead
@@ -282,26 +392,47 @@ export const DynamicTable = ({
                   )
                 }
               />
-              {renderColumns.map((column) => (
-                <Th
-                  key={column.id}
-                  tableSlug={tableSlug}
-                  columns={renderColumns}
-                  column={column}
-                  view={view}
-                  tableSettings={tableSettings}
-                  tableSize={tableSize}
-                  pageName={pageName}
-                  sortedDatas={sortedDatas}
-                  setSortedDatas={setSortedDatas}
-                  relationAction={relationAction}
-                  isRelationTable={isRelationTable}
-                  setFieldCreateAnchor={setFieldCreateAnchor}
-                  setFieldData={setFieldData}
-                  getAllData={getAllData}
-                  setCurrentColumnWidth={setCurrentColumnWidth}
-                />
-              ))}
+              {showSkeleton
+                ? mockColumns.map((column) => (
+                    <Th
+                      key={column.id}
+                      tableSlug={tableSlug}
+                      columns={renderColumns}
+                      column={column}
+                      view={view}
+                      tableSettings={tableSettings}
+                      tableSize={tableSize}
+                      pageName={pageName}
+                      sortedDatas={sortedDatas}
+                      setSortedDatas={setSortedDatas}
+                      relationAction={relationAction}
+                      isRelationTable={isRelationTable}
+                      setFieldCreateAnchor={setFieldCreateAnchor}
+                      setFieldData={setFieldData}
+                      getAllData={getAllData}
+                      setCurrentColumnWidth={setCurrentColumnWidth}
+                    />
+                  ))
+                : renderColumns.map((column) => (
+                    <Th
+                      key={column.id}
+                      tableSlug={tableSlug}
+                      columns={renderColumns}
+                      column={column}
+                      view={view}
+                      tableSettings={tableSettings}
+                      tableSize={tableSize}
+                      pageName={pageName}
+                      sortedDatas={sortedDatas}
+                      setSortedDatas={setSortedDatas}
+                      relationAction={relationAction}
+                      isRelationTable={isRelationTable}
+                      setFieldCreateAnchor={setFieldCreateAnchor}
+                      setFieldData={setFieldData}
+                      getAllData={getAllData}
+                      setCurrentColumnWidth={setCurrentColumnWidth}
+                    />
+                  ))}
               {!isRelationTable && (
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
@@ -326,46 +457,52 @@ export const DynamicTable = ({
             </tr>
           </thead>
           <tbody>
-            {(isRelationTable ? fields : data).map(
-              (virtualRowObject, index) => (
-                <TableRow
-                  key={isRelationTable ? virtualRowObject?.id : index}
-                  tableView={tableView}
-                  width={"40px"}
-                  remove={remove}
-                  watch={watch}
-                  getValues={getValues}
-                  control={control}
-                  row={virtualRowObject}
-                  mainForm={mainForm}
-                  formVisible={formVisible}
-                  rowIndex={index}
-                  isTableView={isTableView}
-                  selectedObjectsForDelete={selectedObjectsForDelete}
-                  setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                  isRelationTable={isRelationTable}
-                  relatedTableSlug={relatedTableSlug}
-                  onRowClick={onRowClick}
-                  isChecked={isChecked}
-                  calculateWidthFixedColumn={calculateWidthFixedColumn}
-                  onCheckboxChange={onCheckboxChange}
-                  currentPage={currentPage}
-                  limit={limit}
-                  setFormValue={setFormValue}
-                  columns={columns}
-                  tableHeight={tableHeight}
-                  tableSettings={tableSettings}
-                  pageName={pageName}
-                  calculateWidth={calculateWidth}
-                  tableSlug={tableSlug}
-                  onDeleteClick={onDeleteClick}
-                  relationAction={relationAction}
-                  onChecked={onChecked}
-                  relationFields={fields?.length}
-                  data={data}
-                  view={view}
-                  firstRowWidth={45}
-                />
+            {showSkeleton ? (
+              <TableDataSkeleton colLength={5 + (!isRelationTable ? 2 : 1)} />
+            ) : (
+              (isRelationTable ? fields : data).map(
+                (virtualRowObject, index) => {
+                  return (
+                    <TableRow
+                      key={isRelationTable ? virtualRowObject?.id : index}
+                      tableView={tableView}
+                      width={"40px"}
+                      remove={remove}
+                      watch={watch}
+                      getValues={getValues}
+                      control={control}
+                      row={virtualRowObject}
+                      mainForm={mainForm}
+                      formVisible={formVisible}
+                      rowIndex={index}
+                      isTableView={isTableView}
+                      selectedObjectsForDelete={selectedObjectsForDelete}
+                      setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                      isRelationTable={isRelationTable}
+                      relatedTableSlug={relatedTableSlug}
+                      onRowClick={onRowClick}
+                      isChecked={isChecked}
+                      calculateWidthFixedColumn={calculateWidthFixedColumn}
+                      onCheckboxChange={onCheckboxChange}
+                      currentPage={currentPage}
+                      limit={limit}
+                      setFormValue={setFormValue}
+                      columns={columns}
+                      tableHeight={tableHeight}
+                      tableSettings={tableSettings}
+                      pageName={pageName}
+                      calculateWidth={calculateWidth}
+                      tableSlug={tableSlug}
+                      onDeleteClick={onDeleteClick}
+                      relationAction={relationAction}
+                      onChecked={onChecked}
+                      relationFields={fields?.length}
+                      data={data}
+                      view={view}
+                      firstRowWidth={45}
+                    />
+                  );
+                }
               )
             )}
 
@@ -459,7 +596,10 @@ export const DynamicTable = ({
                   "Show"
                 }`,
               }}
-              options={limitOptions}
+              options={limitOptions?.map((option) => ({
+                ...option,
+                label: `${option.value} ${generateLangaugeText(tableLan, i18n?.language, "rows") || "rows"}`,
+              }))}
               menuPlacement="top"
               onChange={({value}) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
@@ -501,7 +641,7 @@ export const DynamicTable = ({
 const IndexTh = ({items, selectedItems, onSelectAll}) => {
   const {tableSlug} = useParams();
   const permissions = useSelector((state) => state?.permissions?.permissions);
-  const hasPermission = permissions?.[tableSlug]?.delete;
+  const hasPermission = permissions?.[tableSlug]?.delete_all;
   const [hover, setHover] = useState(false);
 
   const showCheckbox = hover || selectedItems?.length > 0;

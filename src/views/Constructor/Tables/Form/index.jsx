@@ -95,7 +95,7 @@ const ConstructorTablesFormPage = () => {
     }
   }, []);
 
-  const {isLoading} = useTableByIdQuery({
+  const { isLoading, data: tableByIdQueryData } = useTableByIdQuery({
     id: id,
     queryParams: {
       enabled: !!id,
@@ -107,19 +107,22 @@ const ConstructorTablesFormPage = () => {
     },
   });
 
+  const tableSubtitle =
+    tableByIdQueryData?.attributes?.[`label_${i18n?.language}`];
+
   const getData = async () => {
     setLoader(true);
 
     try {
-      const [tableData, {custom_events: actions = []}] = await Promise.all([
-        await constructorViewRelationService.getList({table_slug: tableSlug}),
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([
+        await constructorViewRelationService.getList({ table_slug: tableSlug }),
         await constructorCustomEventService.getList(
-          {table_slug: tableSlug},
+          { table_slug: tableSlug },
           tableSlug
         ),
         await layoutService
           .getList(
-            {"table-slug": tableSlug, language_setting: i18n?.language},
+            { "table-slug": tableSlug, language_setting: i18n?.language },
             tableSlug
           )
           .then((res) => {
@@ -339,7 +342,7 @@ const ConstructorTablesFormPage = () => {
                   generateLangaugeText(tableLan, i18n?.language, "Objects") ||
                   "Objects"
                 }
-                subtitle={id ? mainForm.getValues("label") : "Add"}
+                subtitle={id ? tableSubtitle : "Add"}
                 icon={mainForm.getValues("icon")}
                 backButtonLink={-1}
                 sticky

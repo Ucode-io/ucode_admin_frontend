@@ -80,11 +80,13 @@ import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
+import {useGetLang} from "../../hooks/useGetLang";
 import {getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {LayoutPopup} from "./LayoutPopup";
 import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -121,7 +123,7 @@ export const NewUiViewsWithGroups = ({
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
-  const [tableLan, setTableLan] = useState();
+  // const [tableLan, setTableLan] = useState();
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -204,6 +206,8 @@ export const NewUiViewsWithGroups = ({
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
+  const projectId = useSelector((state) => state.company?.projectId);
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
@@ -295,23 +299,7 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    getAllFromDB().then((storedData) => {
-      if (isMounted && storedData && Array.isArray(storedData)) {
-        const formattedData = storedData.map((item) => ({
-          ...item,
-          translations: item.translations || {},
-        }));
-        setTableLan(formattedData?.find((item) => item?.key === "Table"));
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const tableLan = useGetLang("Table");
 
   if (view?.type === "WEBSITE") {
     return (
@@ -429,21 +417,32 @@ export const NewUiViewsWithGroups = ({
     );
   }
 
-  const tableName = menuItem?.label ?? menuItem?.title;
+  const tableName =
+    menuItem?.attributes?.[`label_${i18n.language}`] ??
+    menuItem?.label ??
+    menuItem?.title;
   // const viewName =
   //   (view.attributes?.[`name_${i18n.language}`]
   //     ? view.attributes?.[`name_${i18n.language}`]
   //     : view.type) ?? view?.name;
   const viewName = view?.attributes?.name_en || view?.name || view.type;
 
+  console.log({ columnsForSearch });
+
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>
-        <Flex h="100vh" flexDirection="column" bg={"white"}>
+        <Flex
+          h={`100vh`}
+          overflow={"hidden"}
+          flexDirection="column"
+          bg={"white"}
+        >
           {updateLoading && (
             <Backdrop
-              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-              open={true}>
+              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+              open={true}
+            >
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -455,7 +454,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="8px">
+            columnGap="8px"
+          >
             <IconButton
               aria-label="back"
               icon={<ArrowBackIcon fontSize={20} color="#344054" />}
@@ -482,7 +482,8 @@ export const NewUiViewsWithGroups = ({
               color="#344054"
               fontWeight={500}
               alignItems="center"
-              columnGap="8px">
+              columnGap="8px"
+            >
               <Flex
                 w="16px"
                 h="16px"
@@ -493,7 +494,8 @@ export const NewUiViewsWithGroups = ({
                 fontWeight={500}
                 fontSize={11}
                 justifyContent="center"
-                alignItems="center">
+                alignItems="center"
+              >
                 {tableName?.[0]}
               </Flex>
               {tableName}
@@ -509,7 +511,8 @@ export const NewUiViewsWithGroups = ({
                 borderColor="#D0D5DD"
                 color="#344054"
                 leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                borderRadius="8px">
+                borderRadius="8px"
+              >
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -526,7 +529,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="5px">
+            columnGap="5px"
+          >
             {(views ?? []).map((view, index) => (
               <Button
                 key={view.id}
@@ -546,14 +550,15 @@ export const NewUiViewsWithGroups = ({
                 color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                 bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
                 _hover={
-                  selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
+                  selectedTabIndex === index ? { bg: "#D1E9FF" } : undefined
                 }
                 onClick={() => {
                   dispatch(
-                    viewsActions.setViewTab({tableSlug, tabIndex: index})
+                    viewsActions.setViewTab({ tableSlug, tabIndex: index })
                   );
                   setSelectedTabIndex(index);
-                }}>
+                }}
+              >
                 {view?.attributes?.name_en || view?.name || view.type}
               </Button>
             ))}
@@ -564,7 +569,8 @@ export const NewUiViewsWithGroups = ({
                 variant="ghost"
                 colorScheme="gray"
                 color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}
+              >
                 {generateLangaugeText(tableLan, i18n?.language, "View") ||
                   "View"}
               </Button>
@@ -581,7 +587,8 @@ export const NewUiViewsWithGroups = ({
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
-              }}>
+              }}
+            >
               <ViewTypeList
                 views={views}
                 computedViewTypes={computedViewTypes}
@@ -633,7 +640,8 @@ export const NewUiViewsWithGroups = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto">
+                overflow="auto"
+              >
                 {columnsForSearch.map((column) => (
                   <Flex
                     key={column.id}
@@ -642,10 +650,14 @@ export const NewUiViewsWithGroups = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
-                    cursor="pointer">
-                    {getColumnIcon({column})}
-                    <ViewOptionTitle>{column.label}</ViewOptionTitle>
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                  >
+                    {getColumnIcon({ column })}
+                    <ViewOptionTitle>
+                      {column?.attributes?.[`label_${i18n.language}`] ||
+                        column?.label}
+                    </ViewOptionTitle>
                     <Switch
                       ml="auto"
                       isChecked={column.is_search}
@@ -654,7 +666,7 @@ export const NewUiViewsWithGroups = ({
                           data: {
                             fields: columnsForSearch.map((c) =>
                               c.id === column.id
-                                ? {...c, is_search: e.target.checked}
+                                ? { ...c, is_search: e.target.checked }
                                 : c
                             ),
                           },
@@ -671,7 +683,8 @@ export const NewUiViewsWithGroups = ({
               tableLan={tableLan}
               view={view}
               visibleColumns={visibleColumns}
-              refetchViews={refetchViews}>
+              refetchViews={refetchViews}
+            >
               <FilterButton view={view} />
             </FilterPopover>
 
@@ -684,10 +697,11 @@ export const NewUiViewsWithGroups = ({
                     tableSlug,
                     "CREATE",
                     {},
-                    {id},
+                    { id },
                     searchParams.get("menuId")
                   )
-                }>
+                }
+              >
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -724,16 +738,17 @@ export const NewUiViewsWithGroups = ({
           <Tabs direction={"ltr"} defaultIndex={0}>
             {tabs?.length > 0 && (
               <div id="tabsHeight" className={style.tableCardHeader}>
-                <div style={{display: "flex", alignItems: "center"}}>
-                  <div className="title" style={{marginRight: "20px"}}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className="title" style={{ marginRight: "20px" }}>
                     <h3>{view.table_label}</h3>
                   </div>
-                  <TabList style={{border: "none"}}>
+                  <TabList style={{ border: "none" }}>
                     {tabs?.map((tab) => (
                       <Tab
                         key={tab.value}
                         selectedClassName={style.activeTab}
-                        className={`${style.disableTab} react-tabs__tab`}>
+                        className={`${style.disableTab} react-tabs__tab`}
+                      >
                         {tab.label}
                       </Tab>
                     ))}
@@ -783,6 +798,7 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableView
+                          projectInfo={projectInfo}
                           tableLan={tableLan}
                           isVertical
                           setCurrentPage={setCurrentPage}
@@ -830,6 +846,7 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        projectInfo={projectInfo}
                         tableLan={tableLan}
                         visibleColumns={visibleColumns}
                         setCurrentPage={setCurrentPage}
@@ -955,7 +972,7 @@ const FilterPopover = ({
               generateLangaugeText(
                 tableLan,
                 i18n?.language,
-                "Search by filled name"
+                "Seaarch by filled name"
               ) || "Search by filled name"
             }
             value={search}
@@ -987,6 +1004,7 @@ const FiltersList = ({
   const {filters} = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
+  const filtersRef = useRef(null);
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -1039,12 +1057,19 @@ const FiltersList = ({
     );
   };
 
+  useEffect(() => {
+    if (filtersRef.current) {
+      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
+    }
+  }, []);
+
   if (!filtersOpen) {
     return;
   }
 
   return (
     <Flex
+      ref={filtersRef}
       minH="max-content"
       px="16px"
       py="6px"
@@ -1101,6 +1126,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
+  const [queryParameters] = useSearchParams();
 
   const columnsIds = visibleColumns?.map((item) => item?.id);
   const quickFiltersIds = view?.attributes?.quick_filters?.map(
@@ -1160,6 +1186,17 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];
+
+    !checked &&
+      dispatch(
+        filterActions.clearFilters({
+          tableSlug: tableSlug,
+          viewId: view?.id,
+          name: "specialities_id",
+          value: [`${queryParameters.get("specialities")}`],
+        })
+      );
+
     updateView(
       checked
         ? [...quickFilters, column]
@@ -1207,7 +1244,7 @@ const ViewOptions = ({
   handleOpenPopup,
 }) => {
   const {appId, tableSlug} = useParams();
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1281,11 +1318,7 @@ const ViewOptions = ({
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
               <Box color="#475467" fontSize={16} fontWeight={600}>
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "View options"
-                ) || "View options"}
+                {t("view_options")}
               </Box>
               <Flex mt="12px" columnGap="4px">
                 <Flex
@@ -1304,7 +1337,7 @@ const ViewOptions = ({
                 <InputGroup>
                   <Input
                     h="26px"
-                    placeholder="View name"
+                    placeholder={t("view_name")}
                     defaultValue={viewName}
                     onChange={onViewNameChange}
                   />
@@ -1338,7 +1371,7 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layout") ||
+                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
                     "Layout"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
@@ -1372,12 +1405,7 @@ const ViewOptions = ({
                     {Boolean(visibleColumnsCount) &&
                       visibleColumnsCount > 0 && (
                         <ViewOptionSubtitle>
-                          {visibleColumnsCount}{" "}
-                          {generateLangaugeText(
-                            tableLan,
-                            i18n?.language,
-                            "Shown"
-                          ) || "Shown"}
+                          {visibleColumnsCount} {t("shown")}
                         </ViewOptionSubtitle>
                       )}
                     <ChevronRightIcon fontSize={22} />
@@ -1463,8 +1491,8 @@ const ViewOptions = ({
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Fix Column"
-                    ) || "Fix Column"}
+                      "Fix columns"
+                    ) || "Fix columns"}
                   </ViewOptionTitle>
                   <Flex ml="auto" alignItems="center" columnGap="8px">
                     {Boolean(fixedColumnsCount) && (
@@ -1569,7 +1597,7 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
@@ -1666,7 +1694,7 @@ const ColumnsVisibility = ({
           variant="ghost"
           w="fit-content"
           onClick={onBackClick}>
-          <Box color="#475467" fontSize={16} fontWeight={600}>
+          <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
               i18n?.language,
@@ -1680,8 +1708,7 @@ const ColumnsVisibility = ({
             isChecked={allColumns?.length === visibleFields?.length}
             onChange={(ev) => onShowAllChange(ev.target.checked)}
           />
-          {generateLangaugeText(tableLan, i18n?.language, "Show all") ||
-            "Show all"}
+          {t("show_all")}
         </Flex>
       </Flex>
       <InputGroup mt="10px">
@@ -1693,14 +1720,19 @@ const ColumnsVisibility = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
           onChange={(ev) => setSearch(ev.target.value)}
         />
       </InputGroup>
-      <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
+      <Flex
+        className="scrollbarNone"
+        flexDirection="column"
+        mt="8px"
+        maxHeight="300px"
+        overflow="auto">
         <Container onDrop={onDrop}>
           {renderFields.map((column) => (
             <Draggable key={column.id}>
@@ -1808,7 +1840,7 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -1919,7 +1951,7 @@ const TabGroup = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}
@@ -2029,7 +2061,7 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Search by filled name"
+              "Seaarch by filled name"
             ) || "Search by filled name"
           }
           value={search}

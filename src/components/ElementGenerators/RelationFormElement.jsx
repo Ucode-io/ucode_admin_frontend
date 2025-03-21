@@ -517,6 +517,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
+            menuPortalTarget={document.body}
             options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}

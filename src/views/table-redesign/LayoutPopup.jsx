@@ -141,20 +141,27 @@ export const LayoutPopup = ({
   }, [computedTableFields]);
 
   return (
-    <Dialog maxWidth="sm" fullWidth open={open} onClose={handleClose}>
-      <DialogContent>
+    <Dialog
+      sx={{
+        "& .MuiPaper-root": {
+          width: "100%",
+          maxWidth: "520px",
+        },
+      }}
+      fullWidth
+      open={open}
+      onClose={handleClose}
+    >
+      <DialogContent style={{ padding: "0px" }}>
         <FormCard
+          contentStyle={{ paddingBottom: "0px" }}
           maxWidth="100%"
           title={
             generateLangaugeText(tableLan, i18n?.language, "General") ||
             "General"
           }
         >
-          <FRow
-            label={
-              generateLangaugeText(tableLan, i18n?.language, "Name") || "Name"
-            }
-          >
+          <Box display="flex" flexDirection="column" gap="16px">
             <Box style={{ display: "flex", gap: "6px" }}>
               <HFTextFieldWithMultiLanguage
                 control={control}
@@ -166,12 +173,6 @@ export const LayoutPopup = ({
                 id={"create_table_name"}
               />
             </Box>
-          </FRow>
-          <FRow
-            label={
-              generateLangaugeText(tableLan, i18n?.language, "Key") || "Key"
-            }
-          >
             <HFTextField
               control={control}
               name="slug"
@@ -181,12 +182,9 @@ export const LayoutPopup = ({
               withTrim
               id={"create_table_key"}
             />
-          </FRow>
+          </Box>
 
-          <Box
-            sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}
-            className={style.checkbox}
-          >
+          <Box className={style.checkbox}>
             <HFCheckbox
               id="login_table_check"
               control={control}
@@ -201,7 +199,10 @@ export const LayoutPopup = ({
               control={control}
               name="is_cached"
               required
-              label="Cache"
+              label={
+                generateLangaugeText(tableLan, i18n?.language, "Cache") ||
+                "Cache"
+              }
             />
             <HFCheckbox
               control={control}
@@ -216,7 +217,9 @@ export const LayoutPopup = ({
               control={control}
               name="order_by"
               required
-              label="Sort"
+              label={
+                generateLangaugeText(tableLan, i18n?.language, "Sort") || "Sort"
+              }
             />
           </Box>
 
@@ -383,9 +386,10 @@ export const LayoutPopup = ({
               <Box
                 sx={{
                   display: "flex",
-                  width: "500px",
+                  width: "100%",
+                  maxWidth: "500px",
                   alignItems: "center",
-                  margin: "10px 0",
+                  marginTop: "30px",
                 }}
               >
                 <FRow
@@ -411,11 +415,12 @@ export const LayoutPopup = ({
         </FormCard>
       </DialogContent>
       <DialogActions>
-        <SecondaryButton onClick={handleClose}>{t("cancel")}</SecondaryButton>
         <PrimaryButton
+          size="large"
           loader={btnLoader}
           loading={btnLoader}
           onClick={handleSubmit(onSubmit)}
+          fullWidth
         >
           {t("save")}
         </PrimaryButton>

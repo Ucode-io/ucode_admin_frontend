@@ -105,12 +105,14 @@ const MainInfo = ({
       <FormCard
         title={
           generateLangaugeText(tableLan, i18n?.language, "General") || "General"
-        }>
+        }
+      >
         <FRow
           label={
             generateLangaugeText(tableLan, i18n?.language, "Name") || "Name"
-          }>
-          <Box style={{display: "flex", gap: "6px"}}>
+          }
+        >
+          <Box style={{ display: "flex", gap: "6px" }}>
             <HFTextFieldWithMultiLanguage
               control={control}
               name="attributes.label"
@@ -123,9 +125,8 @@ const MainInfo = ({
           </Box>
         </FRow>
         <FRow
-          label={
-            generateLangaugeText(tableLan, i18n?.language, "Key") || "Key"
-          }>
+          label={generateLangaugeText(tableLan, i18n?.language, "Key") || "Key"}
+        >
           <HFTextField
             control={control}
             name="slug"
@@ -139,8 +140,9 @@ const MainInfo = ({
         </FRow>
 
         <Box
-          sx={{display: "flex", alignItems: "center", margin: "30px 0"}}
-          className={style.checkbox}>
+          sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}
+          className={style.checkbox}
+        >
           <HFCheckbox
             id="login_table_check"
             control={control}
@@ -155,7 +157,9 @@ const MainInfo = ({
             control={control}
             name="is_cached"
             required
-            label="Cache"
+            label={
+              generateLangaugeText(tableLan, i18n?.language, "Cache") || "Cache"
+            }
           />
           <HFCheckbox
             control={control}
@@ -179,7 +183,8 @@ const MainInfo = ({
                     width: "500px",
                     alignItems: "center",
                     margin: "10px 0",
-                  }}>
+                  }}
+                >
                   <FRow
                     label={
                       generateLangaugeText(
@@ -204,7 +209,8 @@ const MainInfo = ({
                     width: "500px",
                     alignItems: "center",
                     margin: "10px 0",
-                  }}>
+                  }}
+                >
                   <FRow
                     label={
                       generateLangaugeText(tableLan, i18n?.language, "Roles") ||
@@ -226,7 +232,8 @@ const MainInfo = ({
                     width: "500px",
                     alignItems: "center",
                     margin: "10px 0",
-                  }}>
+                  }}
+                >
                   <FRow
                     label={
                       generateLangaugeText(tableLan, i18n?.language, "Login") ||
@@ -247,7 +254,8 @@ const MainInfo = ({
                     width: "500px",
                     alignItems: "center",
                     margin: "10px 0",
-                  }}>
+                  }}
+                >
                   <FRow
                     label={
                       generateLangaugeText(
@@ -272,7 +280,8 @@ const MainInfo = ({
                     width: "500px",
                     alignItems: "center",
                     margin: "10px 0",
-                  }}>
+                  }}
+                >
                   <FRow
                     label={
                       generateLangaugeText(tableLan, i18n?.language, "Email") ||
@@ -293,7 +302,8 @@ const MainInfo = ({
                     width: "500px",
                     alignItems: "center",
                     margin: "10px 0",
-                  }}>
+                  }}
+                >
                   <FRow
                     label={
                       generateLangaugeText(tableLan, i18n?.language, "Phone") ||
@@ -317,7 +327,8 @@ const MainInfo = ({
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}>
+              }}
+            >
               <FRow
                 label={
                   generateLangaugeText(

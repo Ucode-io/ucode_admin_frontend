@@ -2,6 +2,11 @@ import React from "react";
 import HFTextEditor from "../FormElements/HFTextEditor";
 import {Box, Popover} from "@mui/material";
 import {useWatch} from "react-hook-form";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../store/alert/alert.thunk";
+import cls from "./style.module.scss";
+import { parseHTMLToText } from "../../utils/parseHTMLToText";
 
 export default function MultiLineCellFormElement({
   control,
@@ -39,17 +44,34 @@ export default function MultiLineCellFormElement({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+  const dispatch = useDispatch();
+
+  const handleCopy = (value) => {
+    const cleanedText = parseHTMLToText(value);
+
+    navigator.clipboard.writeText(cleanedText);
+    dispatch(showAlert("Copied to clipboard", "success"));
+  };
+
   return (
     <>
       <Box
+        className={cls.multiLineCellFormElement}
         style={{
           display: "flex",
-        }}>
+        }}
+      >
+        <button
+          className={cls.multiLineCellFormElementBtn}
+          onClick={() => handleCopy(value)}
+        >
+          <span>
+            <ContentCopyIcon />
+          </span>
+        </button>
         <p
           id="textAreaInput"
-          onClick={(e) => {
-            !isDisabled && handleClick(e);
-          }}
+          onClick={(e) => handleClick(e)}
           style={
             isWrapField
               ? {
@@ -69,7 +91,8 @@ export default function MultiLineCellFormElement({
                   cursor: "text",
                   minHeight: "16px",
                 }
-          }>
+          }
+        >
           {stripHtmlTags(
             value
               ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
@@ -89,7 +112,8 @@ export default function MultiLineCellFormElement({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}>
+          }}
+        >
           <HFTextEditor
             id="multi_line"
             control={control}

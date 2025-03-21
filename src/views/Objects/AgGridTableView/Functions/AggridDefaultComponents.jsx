@@ -62,8 +62,8 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
 export default AggridDefaultComponents;
 
 export const IndexColumn = {
-  width: 50,
-  height: 40,
+  width: 45,
+  height: 32,
   filter: false,
   pinned: "left",
   headerName: "№",
@@ -78,7 +78,8 @@ export const IndexColumn = {
 };
 
 export const ActionsColumn = {
-  width: 120,
+  width: 45,
+  height: 32,
   filter: false,
   sortable: false,
   editable: false,

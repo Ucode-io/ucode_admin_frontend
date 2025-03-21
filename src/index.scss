@@ -1071,3 +1071,15 @@ div:has(.chakra-tooltip) {
     display: none;
   }
 }
+
+.ag-header-cell {
+  height: 32px !important;
+  font-size: 12px !important;
+  border-right: 1px solid #dcdddd;
+  // background: #000;
+}
+
+.ag-header {
+  height: 32px !important;
+  min-height: 32px !important;
+}

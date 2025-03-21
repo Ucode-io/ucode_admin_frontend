@@ -7,7 +7,6 @@ import {generateGUID} from "../../../utils/generateID";
 function IndexHeaderComponent(props) {
   const {column} = props;
   const treeData = column?.colDef?.view?.attributes?.treeData;
-  console.log("columncolumn", column, treeData);
 
   return (
     <Tooltip title="Add new row button">

@@ -40,13 +40,13 @@ const useStyles = makeStyles((theme) => ({
 const HFAggridMultiselect = (props) => {
   const classes = useStyles();
 
-  const {value, setValue, field, width = "100%", colDef} = props;
+  const {value, setValue = () => {}, field, width = "100%", colDef} = props;
   const options = colDef?.cellEditorParams?.field?.attributes?.options;
   const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
   const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
   const isMultiSelect =
     colDef?.cellEditorParams?.field.attributes?.is_multiselect;
-
+  console.log("propspropsprops", props);
   return (
     <Box
       sx={{

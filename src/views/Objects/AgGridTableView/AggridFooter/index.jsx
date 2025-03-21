@@ -89,7 +89,7 @@ function AggridFooter({
               Add Child
             </Button>
           )}
-          <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+          {/* <PermissionWrapperV2 tableSlug={tableSlug} type="write">
             <Button
               variant="outlined"
               onClick={() => {
@@ -98,7 +98,7 @@ function AggridFooter({
               <AddIcon style={{color: "#007AFF"}} />
               Add object
             </Button>
-          </PermissionWrapperV2>
+          </PermissionWrapperV2> */}
         </div>
         <div className="pagination">
           <Pagination

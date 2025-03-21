@@ -6,10 +6,16 @@ import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
 import { SaveCancelBtns } from "../../components/SaveCancelBtns";
-import { Box, Grid } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+} from "@mui/material";
 import { ContentTitle } from "../../components/ContentTitle";
 import { Field } from "../../components/Field";
-import { Flex } from '@chakra-ui/react';
+import { Flex } from "@chakra-ui/react";
 
 export const ProjectSettings = () => {
   const {
@@ -25,6 +31,7 @@ export const ProjectSettings = () => {
     timezoneOptions,
     currencyOptions,
     btnLoading,
+    setValue,
   } = useProjectSettings();
 
   return (
@@ -107,6 +114,79 @@ export const ProjectSettings = () => {
             <HFAvatarUpload control={control} name="logo" />
           </Grid> */}
         </Grid>
+        <ContentTitle style={{ marginTop: "24px" }}>Beta version</ContentTitle>
+        <FormGroup
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            columnGap: "16px",
+            marginTop: "16px",
+          }}
+        >
+          <FormControlLabel
+            style={{ marginLeft: "0", columnGap: "5px" }}
+            labelPlacement="start"
+            label={<span style={{ fontWeight: "bold" }}>Design: </span>}
+            control={
+              <Checkbox
+                icon={
+                  <img
+                    src="/img/checbkox.svg"
+                    alt="checkbox"
+                    style={{ width: 20 }}
+                  />
+                }
+                checkedIcon={
+                  <img
+                    src="/img/checkbox-checked.svg"
+                    alt="checked"
+                    style={{ width: 20 }}
+                  />
+                }
+                style={{
+                  transform: "translate(-1px)",
+                  marginRight: "8px",
+                  padding: "4px",
+                }}
+                checked={watch("new_design")}
+                onChange={() => setValue("new_design", !watch("new_design"))}
+                {...register("new_design")}
+                color="primary"
+              />
+            }
+          />
+          <FormControlLabel
+            style={{ marginLeft: "0", columnGap: "5px" }}
+            labelPlacement="start"
+            label={<span style={{ fontWeight: "bold" }}>Layout: </span>}
+            control={
+              <Checkbox
+                icon={
+                  <img
+                    src="/img/checbkox.svg"
+                    alt="checkbox"
+                    style={{ width: 20 }}
+                  />
+                }
+                checkedIcon={
+                  <img
+                    src="/img/checkbox-checked.svg"
+                    alt="checked"
+                    style={{ width: 20 }}
+                  />
+                }
+                style={{
+                  transform: "translate(-1px)",
+                  marginRight: "8px",
+                  padding: "4px",
+                }}
+                checked={watch("new_layout")}
+                onChange={() => setValue("new_layout", !watch("new_layout"))}
+                color="primary"
+              />
+            }
+          />
+        </FormGroup>
       </form>
 
       <SaveCancelBtns
@@ -121,4 +201,4 @@ export const ProjectSettings = () => {
       />
     </Box>
   );
-}
+};

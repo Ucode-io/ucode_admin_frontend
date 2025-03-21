@@ -23,13 +23,14 @@ export const SettingsPopup = ({ open, onClose }) => {
   } = useSettingsPopupProps({ onClose });
 
   return (
-    <SettingsPopupProvider 
-      value={{ 
+    <SettingsPopupProvider
+      value={{
         activeTab,
         handleChangeTab,
         searchParams,
         setSearchParams,
         updateSearchParam,
+        handleClose,
       }}
     >
       <Dialog
@@ -41,50 +42,52 @@ export const SettingsPopup = ({ open, onClose }) => {
             borderRadius: "12px !important",
             maxWidth: "1150px !important",
             width: "100% !important",
-          }
+          },
         }}
       >
-        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
+        <DialogContent className={cls.dialogContent} sx={{ padding: 0 }}>
           <Box className={cls.content}>
             <Box className={cls.leftBarWrapper}>
               <Box className={cls.leftBar}>
-                {
-                  tabs.map((tab, index) => {
-
-                    return (
-                      <Box mb="20px" key={index}>
-                        <Typography className={cls.leftBarTitle} variant='h2'>{tab?.title}</Typography>
-                        {
-                          tab?.tabs?.map((tab, tabIndex) => {
-
-                            return <Flex 
-                                className={clsx(cls.tabItem, {[cls.active]: activeTab === tab?.key})}
-                                onClick={() => handleChangeTab(tab?.key)}
-                                alignItems="center"
-                                key={tabIndex}
+                {tabs.map((tab, index) => {
+                  return (
+                    <Box mb="20px" key={index}>
+                      <Typography className={cls.leftBarTitle} variant="h2">
+                        {tab?.title}
+                      </Typography>
+                      {tab?.tabs?.map((tab, tabIndex) => {
+                        return (
+                          <Flex
+                            className={clsx(cls.tabItem, {
+                              [cls.active]: activeTab === tab?.key,
+                            })}
+                            onClick={() => handleChangeTab(tab?.key)}
+                            alignItems="center"
+                            key={tabIndex}
+                          >
+                            <Flex columnGap="8px">
+                              {tab?.icon && tab?.icon}
+                              <Typography
+                                className={cls.tabItemTitle}
+                                flexGrow={1}
+                                variant="p"
                               >
-                                <Flex columnGap="8px">
-                                  {tab?.icon && tab?.icon}
-                                  <Typography className={cls.tabItemTitle} flexGrow={1} variant='p'>{tab?.title}</Typography>
-                                </Flex>
+                                {tab?.title}
+                              </Typography>
                             </Flex>
-                          })
-                        }
-                      </Box>
-                    )
-
-                  })
-                }
+                          </Flex>
+                        );
+                      })}
+                    </Box>
+                  );
+                })}
               </Box>
             </Box>
             <Box className={cls.rightContent}>
-              {
-                isValidElement(tabComponents[activeTab])
-                  ? tabComponents[activeTab]
-                  : (
-                    tabComponents[activeTab]?.[searchParams.get("tab")] ?? tabComponents[activeTab]?.[activeTab]
-                  )
-              }
+              {isValidElement(tabComponents[activeTab])
+                ? tabComponents[activeTab]
+                : (tabComponents[activeTab]?.[searchParams.get("tab")] ??
+                  tabComponents[activeTab]?.[activeTab])}
             </Box>
           </Box>
         </DialogContent>

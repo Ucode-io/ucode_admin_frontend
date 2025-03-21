@@ -9,7 +9,7 @@ import { Field } from "../../components/Field";
 import { ContentTitle } from "../../components/ContentTitle";
 import { DeviceCard } from "./components/DeviceCard";
 
-export const Account = ({ handleClose = () => {} }) => {
+export const Account = () => {
   const {
     t,
     control,
@@ -24,6 +24,7 @@ export const Account = ({ handleClose = () => {} }) => {
     handleSubmit,
     onSubmit,
     isDirty,
+    handleClose,
   } = useAccountProps();
 
   return (

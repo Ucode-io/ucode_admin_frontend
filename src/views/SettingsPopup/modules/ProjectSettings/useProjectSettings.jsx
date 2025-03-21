@@ -16,7 +16,12 @@ export const useProjectSettings = () => {
   const company = store.getState().company;
   const { i18n } = useTranslation();
   const lang = useGetLang("Setting");
-  const { control, reset, handleSubmit, watch, register } = useForm();
+  const { control, reset, handleSubmit, watch, register, setValue } = useForm({
+    defaultValues: {
+      new_layout: false,
+      new_design: false,
+    },
+  });
   const dispatch = useDispatch();
 
   const { handleClose } = useSettingsPopupContext();
@@ -144,5 +149,6 @@ export const useProjectSettings = () => {
     currencyOptions,
     btnLoading,
     handleClose,
+    setValue,
   };
 };

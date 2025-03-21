@@ -340,10 +340,10 @@ export default function VisibleColumnsButtonRelationSection({
                           onChange={(e) => {
                             updateView(
                               e.target.checked
-                                ? data?.tabs?.[selectedTabIndex]?.attributes
+                                ? (data?.tabs?.[selectedTabIndex]?.attributes
                                     ?.columns ??
                                   data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
+                                    ?.columns)
                                   ? [
                                       ...(data?.tabs[selectedTabIndex]
                                         ?.attributes?.columns ??
@@ -368,10 +368,10 @@ export default function VisibleColumnsButtonRelationSection({
                           onChange={(e) => {
                             updateView(
                               e.target.checked
-                                ? data?.tabs?.[selectedTabIndex]?.attributes
+                                ? (data?.tabs?.[selectedTabIndex]?.attributes
                                     ?.columns ??
                                   data?.tabs?.[selectedTabIndex]?.relation
-                                    ?.columns
+                                    ?.columns)
                                   ? [
                                       ...(data?.tabs[selectedTabIndex]
                                         ?.attributes?.columns ??
@@ -450,10 +450,10 @@ export default function VisibleColumnsButtonRelationSection({
                         onChange={(e) => {
                           updateView(
                             e.target.checked
-                              ? data?.tabs?.[selectedTabIndex]?.attributes
+                              ? (data?.tabs?.[selectedTabIndex]?.attributes
                                   ?.columns ??
                                 data?.tabs?.[selectedTabIndex]?.relation
-                                  ?.columns
+                                  ?.columns)
                                 ? [
                                     ...(data?.tabs?.[selectedTabIndex]
                                       ?.attributes?.columns ??
@@ -478,10 +478,10 @@ export default function VisibleColumnsButtonRelationSection({
                         onChange={(e) => {
                           updateView(
                             e.target.checked
-                              ? data?.tabs?.[selectedTabIndex]?.attributes
+                              ? (data?.tabs?.[selectedTabIndex]?.attributes
                                   ?.columns ??
                                 data?.tabs?.[selectedTabIndex]?.relation
-                                  ?.columns
+                                  ?.columns)
                                 ? [
                                     ...(data?.tabs?.[selectedTabIndex]
                                       ?.attributes?.columns ??

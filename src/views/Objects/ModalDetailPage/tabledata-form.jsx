@@ -1,0 +1,94 @@
+import {Box} from "@mui/material";
+import React, {useMemo} from "react";
+import CellElementGeneratorForTable from "../../../components/ElementGenerators/CellElementGeneratorForTable";
+import CellElementGeneratorForRelation from "../../../components/ElementGenerators/CellElementGeneratorForRelation";
+import CellElementGeneratorForTableView from "../../../components/ElementGenerators/CellElementGeneratorForTableView";
+
+const TableDataForm = ({
+  row,
+  data,
+  view,
+  index,
+  field,
+  watch,
+  isWrap,
+  fields,
+  control,
+  tableView,
+  tableSlug,
+  relOptions,
+  isTableView,
+  relationfields,
+  getValues = () => {},
+  setFormValue = () => {},
+  newUi,
+}) => {
+  const isWrapField = useMemo(() => {
+    if (!isWrap || !field || !field.id) {
+      return null;
+    }
+
+    return Object.keys(isWrap)
+      .map((key) => {
+        return {
+          id: key,
+          status: isWrap?.[key],
+        };
+      })
+      .find((x) => x?.id === field?.id)?.status;
+  }, [isWrap, field?.id]);
+
+  return (
+    <Box
+      id="drawerForm"
+      style={{
+        position: "relative",
+        minWidth: "150px",
+        boxSizing: "border-box",
+      }}>
+      {view?.attributes?.table_editable ? (
+        <CellElementGeneratorForTable field={field} row={row} />
+      ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
+        <CellElementGeneratorForRelation
+          row={row}
+          data={data}
+          field={field}
+          index={index}
+          key={field?.id}
+          fields={fields}
+          control={control}
+          tableView={tableView}
+          tableSlug={tableSlug}
+          relOptions={relOptions}
+          isWrapField={isWrapField}
+          isTableView={isTableView}
+          setFormValue={setFormValue}
+          relationfields={relationfields}
+          newUi={newUi}
+        />
+      ) : (
+        <CellElementGeneratorForTableView
+          row={row}
+          data={data}
+          field={field}
+          index={index}
+          watch={watch}
+          key={field?.id}
+          fields={fields}
+          control={control}
+          getValues={getValues}
+          tableView={tableView}
+          tableSlug={tableSlug}
+          relOptions={relOptions}
+          isTableView={isTableView}
+          isWrapField={isWrapField}
+          setFormValue={setFormValue}
+          relationfields={relationfields}
+          newUi={newUi}
+        />
+      )}
+    </Box>
+  );
+};
+
+export default TableDataForm;

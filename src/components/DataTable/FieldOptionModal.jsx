@@ -97,7 +97,7 @@ export default function FieldOptionModal({
             },
           },
         }}>
-        <div className={style.field}>
+        <div className={`${style.field}`}>
           <Typography variant="h6" className={style.title}>
             {generateLangaugeText(
               tableLan,

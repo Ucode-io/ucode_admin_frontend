@@ -23,6 +23,9 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import NewModalDetailPage from "../../components/NewModalDetailPage";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const TableView = ({
   projectInfo,
@@ -86,6 +89,8 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const projectId = useSelector((state) => state.auth.projectId);
+
   const [selectedViewType, setSelectedViewType] = useState({
     label: "Side peek",
     icon: "SidePeek",
@@ -118,6 +123,8 @@ const TableView = ({
     name: "fields",
     keyName: "key",
   });
+
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
@@ -421,20 +428,30 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (layoutType === "PopupLayout") {
+    if (projectInfo?.new_layout) {
       setSelectedRow(row);
       setOpen(true);
     } else {
-      navigateToDetailPage(row);
+      if (layoutType === "PopupLayout") {
+        setSelectedRow(row);
+        setOpen(true);
+      } else {
+        navigateToDetailPage(row);
+      }
     }
   };
 
   const navigateCreatePage = (row) => {
-    if (layoutType === "PopupLayout") {
+    if (projectInfo?.new_layout) {
       setSelectedRow(row);
       setOpen(true);
     } else {
-      navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
+      if (layoutType === "PopupLayout") {
+        setSelectedRow(row);
+        setOpen(true);
+      } else {
+        navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
+      }
     }
   };
 
@@ -572,7 +589,8 @@ const TableView = ({
           {...props}
         />
 
-        {/* {open && selectedViewType?.icon === "SidePeek" ? (
+        {Boolean(open && projectInfo?.new_layout) &&
+        selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
             open={open}
             setFormValue={setFormValue}
@@ -602,9 +620,9 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null} */}
+        ) : null}
 
-        {open && (
+        {Boolean(open && !projectInfo?.new_layout) && (
           <ModalDetailPage
             open={open}
             setOpen={setOpen}

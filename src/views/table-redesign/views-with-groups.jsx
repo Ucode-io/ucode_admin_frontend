@@ -1106,6 +1106,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
+  const [queryParameters] = useSearchParams();
 
   const columnsIds = visibleColumns?.map((item) => item?.id);
   const quickFiltersIds = view?.attributes?.quick_filters?.map(
@@ -1165,6 +1166,17 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];
+
+    !checked &&
+      dispatch(
+        filterActions.clearFilters({
+          tableSlug: tableSlug,
+          viewId: view?.id,
+          name: "specialities_id",
+          value: [`${queryParameters.get("specialities")}`],
+        })
+      );
+
     updateView(
       checked
         ? [...quickFilters, column]

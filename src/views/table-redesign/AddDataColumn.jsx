@@ -3,7 +3,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import {showAlert} from "@/store/alert/alert.thunk";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
@@ -28,19 +28,16 @@ const AddDataColumn = React.memo(
     isRelationTable,
     pageName,
     tableSettings,
+    relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
     isTableView = false,
   }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
-    const [isLoading, setIsLoading] = useState();
 
-    const computedSlug = isRelationTable
-      ? view?.type === "Many2One"
-        ? `${tableSlug}_id`
-        : `${tableSlug}_ids`
-      : tableSlug;
+    const [isLoading, setIsLoading] = useState();
+    const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
 
     const computedTableSlug = isRelationTable ? view?.relatedTable : tableSlug;
 
@@ -50,15 +47,20 @@ const AddDataColumn = React.memo(
       setValue: setFormValue,
       formState: {errors},
     } = useForm({});
-
     const onSubmit = (values) => {
+      const data = {
+        [isRelationTable && computedSlug]: Boolean(
+          values?.[computedSlug]?.length
+        )
+          ? values?.[computedSlug]
+          : (id ?? view?.id),
+        ...values,
+      };
+
       setIsLoading(true);
       constructorObjectService
         .create(computedTableSlug, {
-          data: {
-            ...values,
-            [isRelationTable && computedSlug]: id,
-          },
+          data: data,
         })
         .then((res) => {
           setIsLoading(false);

@@ -42,6 +42,7 @@ const CellManyToManyRelationElement = ({
   index,
   defaultValue,
   row,
+  newUi = false,
 }) => {
   const classes = useStyles();
   if (!isLayout)
@@ -60,7 +61,7 @@ const CellManyToManyRelationElement = ({
               control={control}
               setValue={(value) => {
                 onChange(value);
-                updateObject();
+                !isNewTableView && updateObject();
               }}
               value={value}
               setFormValue={setFormValue}
@@ -89,6 +90,7 @@ const CellManyToManyRelationElement = ({
               setFormValue={setFormValue}
               control={control}
               index={index}
+              newUi={newUi}
             />
           );
         }}
@@ -109,9 +111,10 @@ const AutoCompleteElement = ({
   defaultValue,
   classes,
   isBlackBg,
-  setValue,
+  setValue = () => {},
   index,
   control,
+  newUi,
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();

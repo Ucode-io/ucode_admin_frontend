@@ -196,6 +196,10 @@ const AutoCompleteElement = ({
       ...provided,
       zIndex: 9999,
     }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999, // Ensures the dropdown appears on top of the drawer
+    }),
   };
 
   const autoFiltersFieldFroms = useMemo(() => {

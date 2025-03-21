@@ -31,7 +31,7 @@ const AddDataColumn = React.memo(
     relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
-    relatedTable,
+    isTableView = false,
   }) => {
     const dispatch = useDispatch();
     const {tableSlug: tableSlugParams, id} = useParams();
@@ -143,6 +143,7 @@ const AddDataColumn = React.memo(
               index={index}
               watch={mainForm.watch}
               newUi={true}
+              isTableView={isTableView}
             />
 
             {(column.attributes?.disabled ||

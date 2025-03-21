@@ -181,7 +181,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
   };
 
   const tabComponents = {
-    profile: <Account handleClose={handleClose} />,
+    profile: <Account />,
     billing: <Billing />,
     fares: <Fares />,
     projectSettings: <ProjectSettings />,

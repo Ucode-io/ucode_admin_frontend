@@ -101,9 +101,9 @@ const SubscribeExpired = ({ onClick = () => {} }) => (
       gap: "10px",
       zIndex: 9,
       cursor: "pointer",
-    }}
-  >
-    <Box sx={{ display: "flex", alignItems: "center" }}>
+      justifyContent: "center",
+    }}>
+    <Box sx={{display: "flex", alignItems: "center"}}>
       <WarningAmberIcon
         sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
       />

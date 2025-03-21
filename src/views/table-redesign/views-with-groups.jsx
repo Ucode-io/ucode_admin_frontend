@@ -427,6 +427,8 @@ export const NewUiViewsWithGroups = ({
   //     : view.type) ?? view?.name;
   const viewName = view?.attributes?.name_en || view?.name || view.type;
 
+  console.log({ columnsForSearch });
+
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>
@@ -434,7 +436,8 @@ export const NewUiViewsWithGroups = ({
           h={`100vh`}
           overflow={"hidden"}
           flexDirection="column"
-          bg={"white"}>
+          bg={"white"}
+        >
           {updateLoading && (
             <Backdrop
               sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
@@ -651,7 +654,10 @@ export const NewUiViewsWithGroups = ({
                     cursor="pointer"
                   >
                     {getColumnIcon({ column })}
-                    <ViewOptionTitle>{column.label}</ViewOptionTitle>
+                    <ViewOptionTitle>
+                      {column?.attributes?.[`label_${i18n.language}`] ||
+                        column?.label}
+                    </ViewOptionTitle>
                     <Switch
                       ml="auto"
                       isChecked={column.is_search}

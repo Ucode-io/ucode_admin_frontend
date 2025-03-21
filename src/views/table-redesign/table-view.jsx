@@ -28,7 +28,6 @@ import NewModalDetailPage from "../../components/NewModalDetailPage";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const TableView = ({
-  projectInfo,
   filterVisible,
   setCurrentPage,
   currentPage,

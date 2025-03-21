@@ -1,10 +1,12 @@
-import React, {lazy, Suspense, useEffect} from "react";
-import {Controller, useWatch} from "react-hook-form";
+import React, { lazy, Suspense, useEffect, useRef } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
 import "./reactQuill.scss";
-import {Quill} from "react-quill";
+import { Quill } from "react-quill";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../store/alert/alert.thunk";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -23,8 +25,12 @@ const HFTextEditor = ({
   field,
   label,
   drawerDetail = false,
+  disabled = false,
   ...props
 }) => {
+  const quillRef = useRef(null);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const Font = Quill.import("formats/font");
     Font.whitelist = [
@@ -38,13 +44,47 @@ const HFTextEditor = ({
     Quill.register(Font, true);
   }, []);
 
+  useEffect(() => {
+    if (quillRef.current) {
+      const quillEditor = quillRef.current.getEditor();
+
+      const toolbar = quillEditor.getModule("toolbar");
+      const button = document.createElement("button");
+      const img = document.createElement("img");
+      const span = document.createElement("span");
+
+      span.className = "ql-formats";
+
+      img.src = "/img/copy-01.svg";
+      img.style.width = "18px";
+      img.style.height = "18px";
+
+      button.title = "Скопировать";
+
+      span.appendChild(button);
+      button.appendChild(img);
+
+      button.onclick = () => {
+        const htmlContent = quillEditor.root.textContent;
+        navigator.clipboard.writeText(htmlContent).then(() => {
+          dispatch(showAlert("Скопировано в буфер обмена", "success"));
+        });
+      };
+
+      const toolbarContainer = document.querySelector(".ql-toolbar");
+      if (toolbarContainer) {
+        toolbarContainer.appendChild(span);
+      }
+    }
+  }, []);
+
   const modules = {
     toolbar: {
       container: [
-        [{header: "1"}, {header: "2"}],
-        [{list: "ordered"}, {list: "bullet"}],
+        [{ header: "1" }, { header: "2" }],
+        [{ list: "ordered" }, { list: "bullet" }],
         ["bold", "italic", "underline"],
-        [{color: []}],
+        [{ color: [] }],
         ["link", "image", "video"],
         [
           {
@@ -66,7 +106,8 @@ const HFTextEditor = ({
     <FRowMultiLine
       label={label}
       required={field?.required}
-      extraClassName={isNewTableView ? "tableView" : ""}>
+      extraClassName={isNewTableView ? "tableView" : ""}
+    >
       <Controller
         control={control}
         name={name}
@@ -74,9 +115,11 @@ const HFTextEditor = ({
           required: required ? "This is a required field" : false,
           ...rules,
         }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <Suspense fallback={<RingLoaderWithWrapper />}>
             <ReactQuill
+              ref={quillRef}
+              readOnly={disabled}
               id={drawerDetail ? "drawerMultiLine" : "multilineField"}
               theme="snow"
               defaultValue={value}

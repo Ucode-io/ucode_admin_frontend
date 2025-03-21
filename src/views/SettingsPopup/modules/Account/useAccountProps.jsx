@@ -7,11 +7,14 @@ import { showAlert } from "@/store/alert/alert.thunk";
 import userService from "@/services/auth/userService";
 import sessionService from "@/services/sessionService";
 import { authActions } from "../../../../store/auth/auth.slice";
+import { useSettingsPopupContext } from "../../providers";
 
 export const useAccountProps = () => {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
+
+  const { handleClose } = useSettingsPopupContext();
 
   const role = useSelector((state) => state?.auth?.roleInfo);
   const clientType = useSelector((state) => state?.auth?.clientType);
@@ -173,5 +176,6 @@ export const useAccountProps = () => {
     handleSubmit,
     onSubmit,
     isDirty: !(Object.keys(dirtyFields).length > 0),
+    handleClose,
   };
 };

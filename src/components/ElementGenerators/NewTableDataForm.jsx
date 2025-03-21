@@ -18,6 +18,7 @@ export default function NewTableDataForm({
   isWrap,
   watch,
   newUi = false,
+  isTableView = false,
 }) {
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
@@ -45,7 +46,7 @@ export default function NewTableDataForm({
       {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
         <CellElementGeneratorForRelation
           key={field?.id}
-          isTableView={false}
+          isTableView={isTableView}
           isNewRow={true}
           tableView={tableView}
           tableSlug={tableSlug}

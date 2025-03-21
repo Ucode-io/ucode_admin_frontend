@@ -8,13 +8,13 @@ import { useDispatch } from "react-redux";
 import { useProjectGetByIdQuery, useProjectsAllSettingQuery, useProjectUpdateMutation } from "../../../../services/projectService";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import { useGetLang } from "../../../../hooks/useGetLang";
+import { useSettingsPopupContext } from "../../providers";
 
 export const useProjectSettings = () => {
-
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const company = store.getState().company;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const lang = useGetLang("Setting");
   const { control, reset, handleSubmit, watch, register, setValue } = useForm({
     defaultValues: {
@@ -23,6 +23,8 @@ export const useProjectSettings = () => {
     },
   });
   const dispatch = useDispatch();
+
+  const { handleClose } = useSettingsPopupContext();
 
   const { isLoading } = useProjectGetByIdQuery({
     projectId: company.projectId,
@@ -148,5 +150,6 @@ export const useProjectSettings = () => {
     btnLoading,
     setValue,
     isLoading,
+    handleClose,
   };
 };

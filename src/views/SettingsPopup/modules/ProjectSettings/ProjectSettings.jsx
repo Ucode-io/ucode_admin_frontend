@@ -19,7 +19,7 @@ import { Flex } from "@chakra-ui/react";
 
 export const ProjectSettings = () => {
   const {
-    navigate,
+    handleClose,
     i18n,
     lang,
     control,
@@ -142,7 +142,7 @@ export const ProjectSettings = () => {
 
       <SaveCancelBtns
         cancelProps={{
-          onClick: () => navigate(-1),
+          onClick: handleClose,
         }}
         saveProps={{
           loading: btnLoading,

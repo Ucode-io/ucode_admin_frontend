@@ -13,7 +13,7 @@ import { Flex } from '@chakra-ui/react';
 
 export const ProjectSettings = () => {
   const {
-    navigate,
+    handleClose,
     i18n,
     lang,
     control,
@@ -30,23 +30,21 @@ export const ProjectSettings = () => {
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <ContentTitle subtitle={watch("title")}>
-        {
-          generateLangaugeText(
-            lang,
-            i18n?.language,
-            "Project Settings"
-          ) || "Project settings"
-        }
+        {generateLangaugeText(lang, i18n?.language, "Project Settings") ||
+          "Project settings"}
       </ContentTitle>
       <Flex alignItems="flex-end" mb="48px">
-        <HFAvatarUpload size="xs" defaultImage={<div className={cls.avatar}>Logo</div>} control={control} name="logo" />
+        <HFAvatarUpload
+          size="xs"
+          defaultImage={<div className={cls.avatar}>Logo</div>}
+          control={control}
+          name="logo"
+        />
         <Box className={cls.nameWrapper}>
-          <p className={cls.name}>{generateLangaugeText(lang, i18n?.language, "Name") || "Name"}</p>
-          <Field
-            register={register} 
-            name="title"
-            type="text"
-          />
+          <p className={cls.name}>
+            {generateLangaugeText(lang, i18n?.language, "Name") || "Name"}
+          </p>
+          <Field register={register} name="title" type="text" />
         </Box>
       </Flex>
 
@@ -113,11 +111,11 @@ export const ProjectSettings = () => {
 
       <SaveCancelBtns
         cancelProps={{
-          onClick: () => navigate(-1)
+          onClick: handleClose,
         }}
         saveProps={{
           loading: btnLoading,
-          onClick: handleSubmit(onSubmit)
+          onClick: handleSubmit(onSubmit),
         }}
         marginTop="auto"
       />

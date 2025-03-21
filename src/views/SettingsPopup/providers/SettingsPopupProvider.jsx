@@ -6,6 +6,7 @@ export const SettingsPopupContext = createContext({
   searchParams: {},
   setSearchParams: () => {},
   updateSearchParam: () => {},
+  handleClose: () => {},
 });
 
 export const SettingsPopupProvider = ({ children, value }) => {

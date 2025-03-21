@@ -23,6 +23,7 @@ function PolygonFieldTable({
   isNewTableView = false,
   row,
   drawerDetail = false,
+  disabled,
 }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -49,8 +50,11 @@ function PolygonFieldTable({
             background: "#f7f7f7",
           },
         }}
-        onClick={handleOpen}>
-        <Box sx={{fontSize: drawerDetail ? "13px" : "11px", color: "#787774"}}>
+        onClick={handleOpen}
+      >
+        <Box
+          sx={{ fontSize: drawerDetail ? "13px" : "11px", color: "#787774" }}
+        >
           Polygon
         </Box>
         <img src="/table-icons/polygon.svg" alt="Polygon" />
@@ -59,6 +63,7 @@ function PolygonFieldTable({
         <Box sx={style}>
           <Box>
             <HFPolygonField
+              disabled={disabled}
               width={"740px"}
               height={"400px"}
               control={control}
@@ -77,18 +82,22 @@ function PolygonFieldTable({
               alignItems: "center",
               justifyContent: "space-between",
               margin: "20px 0 0 0",
-            }}>
+            }}
+          >
             <Button
-              sx={{width: "150px"}}
+              sx={{ width: "150px" }}
               variant="outlined"
               color="error"
-              onClick={handleClose}>
+              onClick={handleClose}
+            >
               Cancel
             </Button>
             <Button
-              sx={{width: "150px"}}
+              disabled={disabled}
+              sx={{ width: "150px" }}
               variant="contained"
-              onClick={updatePolygon}>
+              onClick={updatePolygon}
+            >
               Save
             </Button>
           </Box>

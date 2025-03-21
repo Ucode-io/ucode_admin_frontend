@@ -151,5 +151,6 @@ export const useProjectSettings = () => {
     setValue,
     isLoading,
     handleClose,
+    setValue,
   };
 };

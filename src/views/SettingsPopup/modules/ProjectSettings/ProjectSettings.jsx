@@ -111,13 +111,40 @@ export const ProjectSettings = () => {
             </FRow>
           </Grid>
         </Grid>
-        <FormGroup style={{ alignItems: "flex-start", marginTop: "16px" }}>
+        <ContentTitle style={{ marginTop: "24px" }}>Beta version</ContentTitle>
+        <FormGroup
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            columnGap: "16px",
+            marginTop: "16px",
+          }}
+        >
           <FormControlLabel
-            style={{ marginLeft: "0" }}
+            style={{ marginLeft: "0", columnGap: "5px" }}
             labelPlacement="start"
-            label={<span style={{ fontWeight: "bold" }}>New Design</span>}
+            label={<span style={{ fontWeight: "bold" }}>Design: </span>}
             control={
               <Checkbox
+                icon={
+                  <img
+                    src="/img/checbkox.svg"
+                    alt="checkbox"
+                    style={{ width: 20 }}
+                  />
+                }
+                checkedIcon={
+                  <img
+                    src="/img/checkbox-checked.svg"
+                    alt="checked"
+                    style={{ width: 20 }}
+                  />
+                }
+                style={{
+                  transform: "translate(-1px)",
+                  marginRight: "8px",
+                  padding: "4px",
+                }}
                 checked={watch("new_design")}
                 onChange={() => setValue("new_design", !watch("new_design"))}
                 {...register("new_design")}
@@ -126,11 +153,30 @@ export const ProjectSettings = () => {
             }
           />
           <FormControlLabel
-            style={{ marginLeft: "0" }}
+            style={{ marginLeft: "0", columnGap: "5px" }}
             labelPlacement="start"
-            label={<span style={{ fontWeight: "bold" }}>New Layout</span>}
+            label={<span style={{ fontWeight: "bold" }}>Layout: </span>}
             control={
               <Checkbox
+                icon={
+                  <img
+                    src="/img/checbkox.svg"
+                    alt="checkbox"
+                    style={{ width: 20 }}
+                  />
+                }
+                checkedIcon={
+                  <img
+                    src="/img/checkbox-checked.svg"
+                    alt="checked"
+                    style={{ width: 20 }}
+                  />
+                }
+                style={{
+                  transform: "translate(-1px)",
+                  marginRight: "8px",
+                  padding: "4px",
+                }}
                 checked={watch("new_layout")}
                 onChange={() => setValue("new_layout", !watch("new_layout"))}
                 color="primary"

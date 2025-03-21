@@ -7,7 +7,6 @@ import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import {isSameDay, isWithinInterval} from "date-fns";
 import { Sidebar } from "./components/Sidebar";
-import { TimelineRecursiveRow } from "./components/TimelineRecursiveRow";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -166,7 +165,6 @@ export default function TimeLineBlock({
 
       {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
         <Sidebar
-          handleCloseSidebar={handleCloseSidebar}
           view={view}
           computedData={computedData}
           openedRows={openedRows}

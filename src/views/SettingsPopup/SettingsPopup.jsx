@@ -1,15 +1,15 @@
-import cls from './styles.module.scss';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import { useSettingsPopupProps } from './useSettingsPopupProps';
-import { Box, Typography } from '@mui/material';
-import { Flex } from '@chakra-ui/react';
-import clsx from 'clsx';
-import { SettingsPopupProvider } from './providers';
-import { isValidElement } from 'react';
+import cls from "./styles.module.scss";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import {useSettingsPopupProps} from "./useSettingsPopupProps";
+import {Box, Typography} from "@mui/material";
+import {Flex} from "@chakra-ui/react";
+import clsx from "clsx";
+import {SettingsPopupProvider} from "./providers";
+import {isValidElement} from "react";
+import {store} from "../../store";
 
-export const SettingsPopup = ({ open, onClose }) => {
-
+export const SettingsPopup = ({open, onClose}) => {
   const {
     handleClose,
     t,
@@ -20,7 +20,10 @@ export const SettingsPopup = ({ open, onClose }) => {
     searchParams,
     setSearchParams,
     updateSearchParam,
-  } = useSettingsPopupProps({ onClose });
+  } = useSettingsPopupProps({onClose});
+  const auth = store.getState().auth;
+
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
 
   return (
     <SettingsPopupProvider
@@ -31,8 +34,7 @@ export const SettingsPopup = ({ open, onClose }) => {
         setSearchParams,
         updateSearchParam,
         handleClose,
-      }}
-    >
+      }}>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -43,9 +45,8 @@ export const SettingsPopup = ({ open, onClose }) => {
             maxWidth: "1150px !important",
             width: "100% !important",
           },
-        }}
-      >
-        <DialogContent className={cls.dialogContent} sx={{ padding: 0 }}>
+        }}>
+        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
           <Box className={cls.content}>
             <Box className={cls.leftBarWrapper}>
               <Box className={cls.leftBar}>
@@ -56,26 +57,44 @@ export const SettingsPopup = ({ open, onClose }) => {
                         {tab?.title}
                       </Typography>
                       {tab?.tabs?.map((tab, tabIndex) => {
-                        return (
+                        return defaultAdmin && tab?.title === "Billing" ? (
                           <Flex
                             className={clsx(cls.tabItem, {
                               [cls.active]: activeTab === tab?.key,
                             })}
                             onClick={() => handleChangeTab(tab?.key)}
                             alignItems="center"
-                            key={tabIndex}
-                          >
+                            key={tabIndex}>
                             <Flex columnGap="8px">
                               {tab?.icon && tab?.icon}
                               <Typography
                                 className={cls.tabItemTitle}
                                 flexGrow={1}
-                                variant="p"
-                              >
+                                variant="p">
                                 {tab?.title}
                               </Typography>
                             </Flex>
                           </Flex>
+                        ) : tab?.title !== "Billing" ? (
+                          <Flex
+                            className={clsx(cls.tabItem, {
+                              [cls.active]: activeTab === tab?.key,
+                            })}
+                            onClick={() => handleChangeTab(tab?.key)}
+                            alignItems="center"
+                            key={tabIndex}>
+                            <Flex columnGap="8px">
+                              {tab?.icon && tab?.icon}
+                              <Typography
+                                className={cls.tabItemTitle}
+                                flexGrow={1}
+                                variant="p">
+                                {tab?.title}
+                              </Typography>
+                            </Flex>
+                          </Flex>
+                        ) : (
+                          ""
                         );
                       })}
                     </Box>
@@ -94,4 +113,4 @@ export const SettingsPopup = ({ open, onClose }) => {
       </Dialog>
     </SettingsPopupProvider>
   );
-}
+};

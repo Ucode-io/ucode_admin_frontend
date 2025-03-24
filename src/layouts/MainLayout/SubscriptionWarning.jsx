@@ -19,7 +19,7 @@ const SubscriptionWarning = ({ projectInfo, handleOpenBilling }) => {
   if (
     projectStatus === "insufficient_funds" &&
     subscriptionType === "free_trial" &&
-    daysLeft <= 7
+    daysLeft <= 16
   ) {
     return (
       <WarningBanner

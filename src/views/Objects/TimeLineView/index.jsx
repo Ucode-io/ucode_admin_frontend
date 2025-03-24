@@ -31,6 +31,7 @@ import style from "./styles.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
 import {useTranslation} from "react-i18next";
 import listToLanOptions from "../../../utils/listToLanOptions";
+import { useDateLineProps } from "./hooks/useDateLineProps";
 
 export default function TimeLineView({
   view,
@@ -41,8 +42,8 @@ export default function TimeLineView({
   setViews,
   isViewLoading,
 }) {
-  const {tableSlug} = useParams();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { tableSlug } = useParams();
+  const { filters } = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -50,7 +51,7 @@ export default function TimeLineView({
     startOfMonth(new Date()),
     endOfMonth(new Date()),
   ]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const [fieldsMap, setFieldsMap] = useState({});
   const [dataFromQuery, setDataFromQuery] = useState([]);
@@ -71,7 +72,7 @@ export default function TimeLineView({
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], {days: i}));
+      result.push(add(dateFilters[0], { days: i }));
     }
     return result;
   }, [dateFilters]);
@@ -94,10 +95,10 @@ export default function TimeLineView({
   };
 
   // FOR DATA
-  const {data: {data} = {data: []}, isLoading} = useQuery(
+  const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug, filters, dateFilters, view},
+      { tableSlug, filters, dateFilters, view },
     ],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
@@ -137,10 +138,10 @@ export default function TimeLineView({
 
   // FOR TABLE INFO
   const {
-    data: {fields, visibleColumns, visibleRelationColumns} = {data: []},
+    data: { fields, visibleColumns, visibleRelationColumns } = { data: [] },
     isLoading: tableInfoLoading,
   } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug, filters, dateFilters}],
+    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -351,6 +352,9 @@ export default function TimeLineView({
     }
   }, [selectedType]);
 
+  const { handleScroll, calendarRef, months, scrollToMonth } =
+    useDateLineProps();
+
   return (
     <div>
       <FiltersBlock>
@@ -378,12 +382,14 @@ export default function TimeLineView({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         <div
           style={{
             display: "flex",
             alignItems: "center",
-          }}>
+          }}
+        >
           <CRangePicker
             interval={"months"}
             value={dateFilters}
@@ -395,7 +401,8 @@ export default function TimeLineView({
               margin: "0 5px",
               color: "#888",
             }}
-            onClick={handleScrollClick}>
+            onClick={handleScrollClick}
+          >
             Today
           </Button>
         </div>
@@ -404,7 +411,8 @@ export default function TimeLineView({
           style={{
             display: "flex",
             alignItems: "center",
-          }}>
+          }}
+        >
           <Divider orientation="vertical" flexItem />
 
           <Button
@@ -415,7 +423,8 @@ export default function TimeLineView({
               display: "flex",
               alignItems: "center",
               gap: "3px",
-            }}>
+            }}
+          >
             <span>
               {types.find((item) => item.value === selectedType).title}
             </span>
@@ -453,14 +462,16 @@ export default function TimeLineView({
                   zIndex: 0,
                 },
               },
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "5px",
                 padding: "5px 0",
-              }}>
+              }}
+            >
               {types.map((el) => (
                 <Button
                   onClick={() => setSelectedType(el.value)}
@@ -472,7 +483,8 @@ export default function TimeLineView({
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                  }}>
+                  }}
+                >
                   {el.title}
                   {el.value === selectedType && <CheckIcon />}
                 </Button>
@@ -488,13 +500,15 @@ export default function TimeLineView({
               display: "flex",
               alignItems: "center",
               gap: "3px",
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "3px",
-              }}>
+              }}
+            >
               <SettingsIcon />
               <span>Settings</span>
             </div>
@@ -532,7 +546,8 @@ export default function TimeLineView({
                   zIndex: 0,
                 },
               },
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -540,7 +555,8 @@ export default function TimeLineView({
                 gap: "5px",
                 minWidth: "200px",
                 padding: "10px",
-              }}>
+              }}
+            >
               <div>
                 <FRow label="Time from">
                   <HFSelect
@@ -583,13 +599,15 @@ export default function TimeLineView({
               display: "flex",
               alignItems: "center",
               gap: "3px",
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "3px",
-              }}>
+              }}
+            >
               <WorkspacesIcon />
               <span>Group</span>
             </div>
@@ -627,13 +645,15 @@ export default function TimeLineView({
                   zIndex: 0,
                 },
               },
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 minWidth: "200px",
-              }}>
+              }}
+            >
               <TimeLineGroupBy
                 columns={computedColumnsFor}
                 isLoading={isLoading}
@@ -653,7 +673,10 @@ export default function TimeLineView({
         className={styles.wrapper}
         style={{
           height: "calc(100vh - 92px)",
-        }}>
+        }}
+        ref={calendarRef}
+        onScroll={handleScroll}
+      >
         {isLoading || tableInfoLoading || isViewLoading ? (
           <PageFallback />
         ) : (
@@ -675,6 +698,7 @@ export default function TimeLineView({
             calendar_from_slug={view?.attributes?.calendar_from_slug}
             calendar_to_slug={view?.attributes?.calendar_to_slug}
             visible_field={view?.attributes?.visible_field}
+            months={months}
           />
         )}
       </div>

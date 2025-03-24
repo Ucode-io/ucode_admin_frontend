@@ -26,6 +26,7 @@ export default function TimeLineBlock({
   visible_field,
   computedColumnsFor,
   isLoading,
+  months,
 }) {
   const scrollContainerRef = useRef(null);
   const [focusedDays, setFocusedDays] = useState([]);
@@ -177,16 +178,13 @@ export default function TimeLineBlock({
           zoomPosition={zoomPosition}
         />
       )}
-      <div
-        className={styles.gantt}
-        ref={scrollContainerRef}
-        // onScroll={handleScroll}
-      >
+      <div className={styles.gantt}>
         <TimeLineDatesRow
           focusedDays={focusedDays}
           datesList={datesList}
           zoomPosition={zoomPosition}
           selectedType={selectedType}
+          months={months}
         />
 
         {calendar_from_slug !== calendar_to_slug && (

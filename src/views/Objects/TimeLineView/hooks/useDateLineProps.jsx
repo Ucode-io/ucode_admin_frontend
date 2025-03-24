@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export const useDateLineProps = () => {
+
   const [months, setMonths] = useState([]);
   const calendarRef = useRef(null);
   const isLoading = useRef(false);
@@ -27,42 +28,43 @@ export const useDateLineProps = () => {
     if (isLoading.current) return;
     isLoading.current = true;
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       setMonths((prev) => {
         const newMonths = [...prev];
         const lastMonth = newMonths[newMonths.length - 1];
         const firstMonth = newMonths[0];
 
-        if (direction === "right") {
-          const [monthName, year] = lastMonth.month.split(" ");
+        if (direction === 'right') {
+          const [monthName, year] = lastMonth.month.split(' ');
           const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
           for (let i = 0; i < 3; i++) {
-            const newMonth = generateMonth(
-              (monthIndex + 1 + i) % 12,
-              parseInt(year) + (monthIndex + 1 + i > 11 ? 1 : 0)
-            );
-            if (!newMonths.some((m) => m.month === newMonth.month)) {
+            const newMonth = generateMonth((monthIndex + 1 + i) % 12, parseInt(year) + ((monthIndex + 1 + i) > 11 ? 1 : 0));
+            if (!newMonths.some(m => m.month === newMonth.month)) {
               newMonths.push(newMonth);
             }
           }
-        } else {
-          const [monthName, year] = firstMonth.month.split(" ");
+        } else if (direction === 'left') {
+          const [monthName, year] = firstMonth.month.split(' ');
           const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
           for (let i = 0; i < 3; i++) {
-            const newMonth = generateMonth(
-              (monthIndex - 1 - i + 12) % 12,
-              parseInt(year) - (monthIndex - 1 - i < 0 ? 1 : 0)
-            );
-            if (!newMonths.some((m) => m.month === newMonth.month)) {
+            const newMonth = generateMonth((monthIndex - 1 - i + 12) % 12, parseInt(year) - ((monthIndex - 1 - i < 0) ? 1 : 0));
+            if (!newMonths.some(m => m.month === newMonth.month)) {
               newMonths.unshift(newMonth);
             }
           }
+          
+          requestAnimationFrame(() => {
+            if (calendarRef.current) {
+              const scrollAmount = calendarRef.current.scrollWidth / months.length * 3;
+              calendarRef.current.scrollLeft += scrollAmount;
+            }
+          });
         }
+        
+        isLoading.current = false;
         return newMonths;
       });
-
-      isLoading.current = false;
-    }, 300);
+    });
   };
 
   useEffect(() => {
@@ -82,6 +84,16 @@ export const useDateLineProps = () => {
     setMonths(initialMonths);
   }, []);
 
+  const scrollToMonth = (monthName) => {
+    if (!calendarRef.current) return;
+    const cards = calendarRef.current.querySelectorAll('.month-card');
+    cards.forEach(card => {
+      if (card.dataset.month === monthName) {
+        card.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+    });
+  };
+
   const handleScroll = () => {
     if (!calendarRef.current || isLoading.current) return;
 
@@ -95,6 +107,11 @@ export const useDateLineProps = () => {
     }
   };
 
-  return {};
+  return {
+    handleScroll,
+    scrollToMonth,
+    calendarRef,
+    months,
+  };
 };
 

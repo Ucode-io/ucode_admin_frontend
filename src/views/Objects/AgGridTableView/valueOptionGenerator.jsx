@@ -27,6 +27,8 @@ import {
   HFTimePicker,
 } from "./FieldRelationGenerator/hf-date-pickers";
 import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
+import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
+import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -254,6 +256,20 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "POLYGON":
       columnDef.cellRenderer = PolygonFieldTableCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "COLOR":
+      columnDef.cellRenderer = ColorPicker;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "ICON":
+      columnDef.cellRenderer = IconPickerCell;
       columnDef.cellRendererParams = {
         field: item,
       };

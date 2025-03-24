@@ -22,6 +22,7 @@ export const useAccountProps = () => {
 
   const projectId = useSelector((state) => state?.auth?.projectId);
   const userInfo = useSelector((state) => state?.auth?.userInfo);
+  const userData = useSelector((state) => state?.auth?.user_data);
   const envId = useSelector((state) => state?.auth);
 
   const [inputType, setInputType] = useState(true);
@@ -84,7 +85,7 @@ export const useAccountProps = () => {
     const requestData = {
       ...data,
       guid: userInfo?.id,
-      user_id: userInfo?.id,
+      user_id: userData?.user_id_auth,
       client_type_id: clientType?.id,
       project_id: projectId,
       environment_id: envId?.environmentId,

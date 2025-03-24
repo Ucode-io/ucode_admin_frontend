@@ -85,7 +85,7 @@ export const useAccountProps = () => {
     const requestData = {
       ...data,
       guid: userInfo?.id,
-      user_id: userData?.user_id_auth,
+      user_id: userInfo?.id,
       client_type_id: clientType?.id,
       project_id: projectId,
       environment_id: envId?.environmentId,
@@ -148,7 +148,7 @@ export const useAccountProps = () => {
     getSessions();
 
     authService
-      .getUserById(userId, {
+      .getUserById(userData?.user_id_auth, {
         "project-id": projectId,
         "client-type-id": clientType?.id,
       })

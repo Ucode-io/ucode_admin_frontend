@@ -77,7 +77,12 @@ const FormulaAttributes = ({control, mainForm}) => {
       );
     },
     {
-      select: ({fields}) => listToOptions(fields, "label", "slug"),
+      select: ({fields}) =>
+        listToOptions(
+          fields?.filter((field) => field.type !== "LOOKUP"),
+          "label",
+          "slug"
+        ),
     }
   );
 

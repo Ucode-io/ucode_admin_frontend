@@ -1,5 +1,4 @@
 import HFTextInputField from "./HFTextInputField";
-import DateCellEditor from "./FieldRelationGenerator/DateCellEditor";
 import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
@@ -8,22 +7,26 @@ import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
 import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
 import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
 import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
-import DateTimeCellEditor from "./FieldRelationGenerator/DateTimeCellEditor";
 import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
 import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
 import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
 import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
 import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
-import HFTimePickerCellEditor from "./FieldRelationGenerator/HFTimePickerCellEditor";
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
 import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
 import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
 import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
 import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
-import HFDateTimePickerWithoutCell from "./FieldRelationGenerator/HFDateTimePickerWithoutCell";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
 import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
+import {
+  HFDateDatePickerWithoutTimeZoneTable,
+  HFDatePicker,
+  HFDateTimePicker,
+  HFTimePicker,
+} from "./FieldRelationGenerator/hf-date-pickers";
+import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -90,7 +93,7 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "CHECKBOX":
-      columnDef.cellRenderer = "agCheckboxCellRenderer";
+      columnDef.cellRenderer = HFCheckboxCell;
       break;
 
     case "SWITCH":
@@ -154,7 +157,7 @@ const getColumnEditorParams = (item, columnDef) => {
 
     // DATE FIELDS:
     case "DATE":
-      columnDef.cellRenderer = DateCellEditor;
+      columnDef.cellRenderer = HFDatePicker;
       columnDef.cellRendererParams = {
         field: item,
       };
@@ -162,7 +165,7 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "DATE_TIME":
-      columnDef.cellRenderer = DateTimeCellEditor;
+      columnDef.cellRenderer = HFDateTimePicker;
       columnDef.cellRendererParams = {
         field: item,
       };
@@ -170,7 +173,7 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "DATE_TIME_WITHOUT_TIME_ZONE":
-      columnDef.cellRenderer = HFDateTimePickerWithoutCell;
+      columnDef.cellRenderer = HFDateDatePickerWithoutTimeZoneTable;
       columnDef.cellRendererParams = {
         field: item,
       };
@@ -178,7 +181,7 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "TIME":
-      columnDef.cellRenderer = HFTimePickerCellEditor;
+      columnDef.cellRenderer = HFTimePicker;
       columnDef.cellRendererParams = {
         field: item,
       };

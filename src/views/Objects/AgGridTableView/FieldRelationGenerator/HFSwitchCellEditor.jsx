@@ -1,19 +1,20 @@
-import {Switch} from "@mui/material";
+import {Box, ChakraProvider, Switch} from "@chakra-ui/react";
 import {useId} from "react";
-import {Controller} from "react-hook-form";
 
 const HFSwitchCellEditor = (props) => {
   const id = useId();
   const {field, setValue, value} = props;
   return (
-    <div>
-      <Switch
-        checked={value || false}
-        onChange={(e, val) => {
-          setValue(val);
-        }}
-      />
-    </div>
+    <ChakraProvider>
+      <Box pl={"10px"}>
+        <Switch
+          isChecked={value || false}
+          onChange={(e, val) => {
+            setValue(e.target.checked);
+          }}
+        />
+      </Box>
+    </ChakraProvider>
   );
 };
 

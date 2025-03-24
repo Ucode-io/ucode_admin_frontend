@@ -4,12 +4,17 @@ import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 import {Box} from "@mui/material";
+import {components} from "react-select";
+import LaunchIcon from "@mui/icons-material/Launch";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import {useParams, useSearchParams} from "react-router-dom";
 
 const customStyles = {
   control: (provided) => ({
     ...provided,
-    height: "100%",
-    minHeight: "40px",
+    height: "32px",
+    minHeight: "25px",
+
     boxSizing: "border-box",
     width: "100%",
     border: "none",
@@ -17,7 +22,7 @@ const customStyles = {
   }),
   container: (provided) => ({
     ...provided,
-    height: "100%",
+    height: "32px",
     width: "100%",
   }),
   menu: (provided) => ({
@@ -33,8 +38,9 @@ const customStyles = {
   }),
   placeholder: (provided) => ({
     ...provided,
-    fontSize: "14px",
+    fontSize: "13px",
     color: "#888",
+    fontWeight: "300",
   }),
 };
 
@@ -44,6 +50,10 @@ const LookupCellEditor = (props) => {
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
   );
+  const {tableSlug} = useParams();
+  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
   const [inputValue, setInputValue] = useState(null);
 
   const {refetch} = useQuery(
@@ -85,17 +95,52 @@ const LookupCellEditor = (props) => {
     setValue(selectedOption?.guid || null);
   };
 
+  const CustomSingleValue = (props) => (
+    <components.SingleValue {...props}>
+      <div
+        className="select_icon"
+        style={{display: "flex", alignItems: "center"}}
+        onClick={() => {
+          refetch();
+        }}>
+        {props.children}
+        {!field?.disabled && (
+          <Box
+            sx={{position: "relative", zIndex: 99999}}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+            }}>
+            <LaunchIcon
+              style={{
+                fontSize: "18px",
+                marginLeft: "5px",
+                fontWeight: "700",
+                cursor: "pointer",
+                marginTop: "6px",
+              }}
+            />
+          </Box>
+        )}
+      </div>
+    </components.SingleValue>
+  );
+
   return (
     <Box
       sx={{
         position: "relative",
-        height: "100%",
+        // height: "100%",
         width: "100%",
         overflow: "hidden",
       }}>
       <Select
         isClearable={true}
-        placeholder="Select"
+        placeholder="Select..."
         menuPortalTarget={document.body}
         styles={customStyles}
         value={inputValue ?? localValue}
@@ -104,6 +149,9 @@ const LookupCellEditor = (props) => {
         getOptionLabel={(option) =>
           `${getRelationFieldTabsLabel(field, option)}`
         }
+        components={{
+          SingleValue: CustomSingleValue,
+        }}
         onChange={handleChange}
         onMenuOpen={() => {
           refetch();

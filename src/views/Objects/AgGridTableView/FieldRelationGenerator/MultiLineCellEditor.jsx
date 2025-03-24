@@ -61,6 +61,7 @@ function MultiLineCellEditor(props) {
                   marginRight: "8px",
                   cursor: "text",
                   minHeight: "16px",
+                  paddingLeft: "10px",
                 }
               : {
                   display: "flex",

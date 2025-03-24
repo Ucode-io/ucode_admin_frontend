@@ -12,7 +12,7 @@ const PhoneCellEditor = (props) => {
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
 
   return (
-    <Box>
+    <Box sx={{padding: " 0 6px 0 13px"}}>
       <PhoneInput
         disabled={false}
         placeholder="Enter phone number"

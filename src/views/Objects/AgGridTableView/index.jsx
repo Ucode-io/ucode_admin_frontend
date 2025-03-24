@@ -43,7 +43,7 @@ import {Button as ChakraButton} from "@chakra-ui/react";
 
 ModuleRegistry.registerModules([
   MenuModule,
-  ClipboardModule,
+  // ClipboardModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   ClientSideRowModelModule,
@@ -442,7 +442,7 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={8}
+                  rowBuffer={6}
                   theme={myTheme}
                   rowData={rowData}
                   loading={loading}
@@ -468,6 +468,7 @@ function AgGridTableView(props) {
                     view?.attributes?.treeData ? getDataPath : undefined
                   }
                   onCellValueChanged={(e) => {
+                    console.log("eeeeeeeeeeeee", e);
                     updateObject(e.data);
                   }}
                   onSelectionChanged={(e) =>

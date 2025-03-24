@@ -87,6 +87,7 @@ import {LayoutPopup} from "./LayoutPopup";
 import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
 import {useProjectGetByIdQuery} from "../../services/projectService";
+import MaterialUIProvider from "../../providers/MaterialUIProvider";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -300,7 +301,7 @@ export const NewUiViewsWithGroups = ({
   }, [view, fieldsMap]);
 
   const tableLan = useGetLang("Table");
-  console.log("viewview", view);
+
   if (view?.type === "WEBSITE") {
     return (
       <>
@@ -741,21 +742,24 @@ export const NewUiViewsWithGroups = ({
                 {!tabs?.length && (
                   <>
                     {view?.type === "GRID" && groupTable?.length ? (
-                      <AgGridTableView
-                        selectedTabIndex={selectedTabIndex}
-                        view={view}
-                        views={views}
-                        fieldsMap={fieldsMap}
-                        computedVisibleFields={computedVisibleFields}
-                        checkedColumns={checkedColumns}
-                        setCheckedColumns={setCheckedColumns}
-                        columnsForSearch={columnsForSearch}
-                        updateField={updateField}
-                        visibleColumns={visibleColumns}
-                        visibleRelationColumns={visibleRelationColumns}
-                        visibleForm={visibleForm}
-                        menuItem={menuItem}
-                      />
+                      <MaterialUIProvider>
+                        {" "}
+                        <AgGridTableView
+                          selectedTabIndex={selectedTabIndex}
+                          view={view}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
+                        />
+                      </MaterialUIProvider>
                     ) : view.type === "TABLE" && groupTable?.length ? (
                       <GroupTableView
                         tableLan={tableLan}
@@ -785,21 +789,23 @@ export const NewUiViewsWithGroups = ({
                   tabs?.map((tab) => (
                     <TabPanel key={tab.value}>
                       {view?.type === "GRID" ? (
-                        <AgGridTableView
-                          selectedTabIndex={selectedTabIndex}
-                          view={view}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                          computedVisibleFields={computedVisibleFields}
-                          checkedColumns={checkedColumns}
-                          setCheckedColumns={setCheckedColumns}
-                          columnsForSearch={columnsForSearch}
-                          updateField={updateField}
-                          visibleColumns={visibleColumns}
-                          visibleRelationColumns={visibleRelationColumns}
-                          visibleForm={visibleForm}
-                          menuItem={menuItem}
-                        />
+                        <MaterialUIProvider>
+                          <AgGridTableView
+                            selectedTabIndex={selectedTabIndex}
+                            view={view}
+                            views={views}
+                            fieldsMap={fieldsMap}
+                            computedVisibleFields={computedVisibleFields}
+                            checkedColumns={checkedColumns}
+                            setCheckedColumns={setCheckedColumns}
+                            columnsForSearch={columnsForSearch}
+                            updateField={updateField}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            menuItem={menuItem}
+                          />
+                        </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
                         <TreeView
                           tableSlug={tableSlug}
@@ -850,21 +856,23 @@ export const NewUiViewsWithGroups = ({
                 {!tabs?.length && !groupTable?.length ? (
                   <>
                     {view?.type === "GRID" ? (
-                      <AgGridTableView
-                        selectedTabIndex={selectedTabIndex}
-                        view={view}
-                        views={views}
-                        fieldsMap={fieldsMap}
-                        computedVisibleFields={computedVisibleFields}
-                        checkedColumns={checkedColumns}
-                        setCheckedColumns={setCheckedColumns}
-                        columnsForSearch={columnsForSearch}
-                        updateField={updateField}
-                        visibleColumns={visibleColumns}
-                        visibleRelationColumns={visibleRelationColumns}
-                        visibleForm={visibleForm}
-                        menuItem={menuItem}
-                      />
+                      <MaterialUIProvider>
+                        <AgGridTableView
+                          selectedTabIndex={selectedTabIndex}
+                          view={view}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
+                        />
+                      </MaterialUIProvider>
                     ) : view.type === "TREE" ? (
                       <TreeView
                         tableSlug={tableSlug}

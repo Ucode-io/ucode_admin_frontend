@@ -393,7 +393,7 @@ div {
   width: 100%;
   height: 100%;
   border: none !important;
-  height: 41px;
+  height: 32px;
   padding: 0 0 0 5px;
 }
 
@@ -413,7 +413,7 @@ div {
   top: 0;
   left: 0;
   border: none;
-  padding-left: 10px;
+  padding-left: 13px;
 
   input {
     height: 32px;
@@ -882,7 +882,7 @@ u {
 }
 
 .ag-cell {
-  padding: 0px 5px !important;
+  padding: 0px 0px !important;
 
   .rowIndex {
     position: absolute;
@@ -964,7 +964,9 @@ u {
   .multiselectAggrid {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 32px;
+    bottom: 0;
+    padding-left: 6px;
 
     div fieldset {
       border: none;

@@ -42,7 +42,7 @@ const HFLinkFieldEditor = (props) => {
       fullWidth
       InputProps={{
         readOnly: disabled,
-        inputProps: {style: {height: "41px"}},
+        inputProps: {style: {height: "32px"}},
 
         endAdornment: (
           <InputAdornment position="start">

@@ -136,7 +136,7 @@ const AutoCompleteElement = ({
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
-        id={`multiselect_${name}`}
+        id={`multiselect`}
         value={computedValue}
         options={localOptions}
         popupIcon={

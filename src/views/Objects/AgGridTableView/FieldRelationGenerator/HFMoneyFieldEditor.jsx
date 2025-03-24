@@ -35,9 +35,9 @@ function HFMoneyFieldEditor(props) {
       setValueArray((prev) => [prev[0], currency]);
     }
   };
-  console.log("setValuesetValue", setValue);
+
   return (
-    <Box sx={{display: "flex", alignItems: "center"}}>
+    <Box sx={{display: "flex", alignItems: "center", height: "32px"}}>
       <NumericFormat
         thousandsGroupStyle="thousand"
         thousandSeparator=" "

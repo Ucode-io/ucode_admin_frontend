@@ -87,6 +87,7 @@ function MultiImageUploadCellEditor({
               display: "flex",
               alignItems: "center",
               gap: "10px",
+              padding: "0 0 0 13px",
             }}>
             <Box
               sx={{

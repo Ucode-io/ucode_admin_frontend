@@ -8,13 +8,15 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
       <Select
         className={styles.statusSelect}
         sx={{
-          height: "41px",
+          width: "100%",
+          height: "32px",
           border: "none",
+          borderRadius: "0px",
           "& .MuiSelect-select": {
             display: "flex",
             alignItems: "center",
-            padding: "8px",
-            borderRadius: "4px",
+            // padding: "8px 8px 8px 8px",
+            // borderRadius: "4px",
           },
         }}
         value={value || ""}
@@ -41,7 +43,7 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
                   ? `${selectedOption.color}30`
                   : "transparent",
                 color: selectedOption?.color || "#000",
-                padding: "4px 8px",
+                padding: "0px 6px 0px 6px",
                 borderRadius: "4px",
               }}>
               {selected}

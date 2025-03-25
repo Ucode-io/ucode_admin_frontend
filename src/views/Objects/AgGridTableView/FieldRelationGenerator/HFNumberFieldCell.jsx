@@ -3,7 +3,9 @@ import RowClickButton from "../RowClickButton";
 
 const HFNumberFieldCell = (props) => {
   const {value, setValue, colDef} = props;
-  console.log("colDefcolDef", colDef);
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
+  };
   return (
     <>
       <NumericFormat
@@ -19,7 +21,9 @@ const HFNumberFieldCell = (props) => {
         }}
         className="custom_number_field"
       />
-      {colDef?.colIndex === 0 && <RowClickButton />}
+      {colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 };

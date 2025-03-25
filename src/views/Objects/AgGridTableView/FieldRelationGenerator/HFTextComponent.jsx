@@ -3,6 +3,9 @@ import React from "react";
 import RowClickButton from "../RowClickButton";
 
 function HFTextComponent(props) {
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(props?.data);
+  };
   return (
     <>
       {true ? (
@@ -23,7 +26,9 @@ function HFTextComponent(props) {
         </Box>
       )}
 
-      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 }

@@ -871,6 +871,13 @@ u {
   --ag-header-background-color: #fff;
 }
 
+.ag-theme-alpine .ag-cell {
+  background-color: inherit !important;
+}
+.ag-theme-alpine .ag-cell:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important; /* Light hover effect */
+}
+
 .ag-theme-quartz {
   --ag-grid-size: 8px;
 }

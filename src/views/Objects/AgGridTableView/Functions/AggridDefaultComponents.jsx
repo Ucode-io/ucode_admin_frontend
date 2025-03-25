@@ -13,6 +13,10 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
       width: 200,
       autoHeaderHeight: true,
       suppressServerSideFullWidthLoadingRow: true,
+      enableRangeSelection: true, // Enable selecting multiple cells
+      enableFillHandle: true, // Enable dragging to copy values
+      fillHandleDirection: "xy", // Allow copying in all directions (x: horizontal, y: vertical)
+      suppressMultiRangeSelection: false,
     }),
     []
   );
@@ -49,7 +53,10 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   );
   const cellSelection = useMemo(
     () => ({
-      handle: {mode: "fill", suppressClearOnFillReduction: true},
+      handle: {
+        mode: "fill",
+        direction: "y",
+      },
     }),
     []
   );

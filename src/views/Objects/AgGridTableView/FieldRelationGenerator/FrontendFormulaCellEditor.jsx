@@ -46,6 +46,10 @@ const FrontendFormulaCellEditor = (props) => {
     }
   }, [data, node, field]);
 
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
+
   useEffect(() => {
     evaluateFormula();
   }, [Object?.values(data ?? {})?.map((el) => el), evaluateFormula]);
@@ -69,7 +73,9 @@ const FrontendFormulaCellEditor = (props) => {
         }}
         className="custom_textfield_new"
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
     </>
   );
 };

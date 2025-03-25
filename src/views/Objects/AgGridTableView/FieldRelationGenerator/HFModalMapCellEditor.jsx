@@ -7,7 +7,11 @@ import RowClickButton from "../RowClickButton";
 
 function HFModalMapCellEditor(props) {
   const [open, setOpen] = useState(false);
-  const {value, setValue, field, isTransparent = false} = props;
+  const {value, setValue, field, isTransparent = false, data, colDef} = props;
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -76,7 +80,9 @@ function HFModalMapCellEditor(props) {
           </div>
         </Dialog>
       </Box>
-      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 }

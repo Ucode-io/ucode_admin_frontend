@@ -131,13 +131,18 @@ function MultiImageUploadCellEditor({
                 fontSize: "10px",
                 gap: "5px",
               }}>
-              <UploadFileIcon
+              <img
+                src="/img/newUpload.svg"
+                alt="Upload"
+                style={{width: 22, height: 22}}
+              />
+              {/* <UploadFileIcon
                 style={{
                   width: "25px",
                   height: "25px",
                   color: "rgb(116, 116, 116)",
                 }}
-              />
+              /> */}
             </Box>
           </Box>
         </>
@@ -208,7 +213,12 @@ function MultiImageUploadCellEditor({
                 onChange={inputChangeHandler}
                 // disabled={disabled}
               />
-              <UploadIcon style={{width: "32px", height: "32px"}} />
+              <img
+                src="/img/newUpload.svg"
+                alt="Upload"
+                style={{width: 22, height: 22}}
+              />
+              {/* <UploadIcon style={{width: "32px", height: "32px"}} /> */}
             </Box>
           </div>
 

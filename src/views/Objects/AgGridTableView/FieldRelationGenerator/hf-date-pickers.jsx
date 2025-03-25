@@ -4,7 +4,11 @@ import {format, isValid, parse} from "date-fns";
 import RowClickButton from "../RowClickButton";
 
 export const HFDatePicker = (props) => {
-  const {field, setValue, value} = props;
+  const {field, setValue, value, data} = props;
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
 
   return (
     <>
@@ -28,13 +32,19 @@ export const HFDatePicker = (props) => {
         highlightToday
         disabled={field?.disabled}
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      )}
     </>
   );
 };
 
 export const HFDateTimePicker = (props) => {
-  const {field, setValue, value} = props;
+  const {field, setValue, value, data} = props;
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
   return (
     <>
       <DateTimePicker
@@ -56,13 +66,19 @@ export const HFDateTimePicker = (props) => {
         highlightToday
         disabled={field?.disabled}
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      )}
     </>
   );
 };
 
 export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
-  const {field, setValue, value} = props;
+  const {field, setValue, value, data} = props;
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
   return (
     <>
       {" "}
@@ -85,13 +101,19 @@ export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
         highlightToday
         disabled={field?.disabled}
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      )}
     </>
   );
 };
 
 export const HFTimePicker = (props) => {
-  const {field, setValue, value} = props;
+  const {field, setValue, value, data} = props;
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
   return (
     <>
       <TimeInput
@@ -111,7 +133,9 @@ export const HFTimePicker = (props) => {
         styles={{input: {background: "inherit", border: "none"}}}
         disabled={field?.disabled}
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      )}
     </>
   );
 };

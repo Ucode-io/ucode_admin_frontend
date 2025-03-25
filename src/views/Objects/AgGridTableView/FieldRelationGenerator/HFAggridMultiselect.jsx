@@ -41,12 +41,23 @@ const useStyles = makeStyles((theme) => ({
 const HFAggridMultiselect = (props) => {
   const classes = useStyles();
 
-  const {value, setValue = () => {}, field, width = "100%", colDef} = props;
+  const {
+    value,
+    setValue = () => {},
+    field,
+    width = "100%",
+    colDef,
+    data,
+  } = props;
   const options = colDef?.cellEditorParams?.field?.attributes?.options;
   const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
   const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
   const isMultiSelect =
     colDef?.cellEditorParams?.field.attributes?.is_multiselect;
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
+  };
 
   return (
     <Box
@@ -71,6 +82,7 @@ const HFAggridMultiselect = (props) => {
         disabled={field?.disabled}
         isMultiSelect={isMultiSelect}
         props={props}
+        onNavigateToDetail={onNavigateToDetail}
       />
     </Box>
   );
@@ -93,6 +105,7 @@ const AutoCompleteElement = ({
   isBlackBg = false,
   disabledHelperText = "",
   onFormChange = () => {},
+  onNavigateToDetail = () => {},
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
@@ -248,7 +261,9 @@ const AutoCompleteElement = ({
           />
         </Dialog>
       </FormControl>
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
     </>
   );
 };

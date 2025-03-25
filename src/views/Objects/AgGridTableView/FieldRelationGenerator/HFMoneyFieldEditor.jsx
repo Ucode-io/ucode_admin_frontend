@@ -15,6 +15,7 @@ function HFMoneyFieldEditor(props) {
     isBlackBg = false,
     error = {},
     colDef,
+    data,
   } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [valueArray, setValueArray] = useState([
@@ -36,6 +37,10 @@ function HFMoneyFieldEditor(props) {
     if (currency) {
       setValueArray((prev) => [prev[0], currency]);
     }
+  };
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
   };
 
   return (
@@ -105,7 +110,9 @@ function HFMoneyFieldEditor(props) {
           ))}
         </Menu>
       </Box>
-      {colDef?.colIndex === 0 && <RowClickButton right={"55px"} />}
+      {colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right={"55px"} />
+      )}
     </>
   );
 }

@@ -9,7 +9,6 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import {useTranslation} from "react-i18next";
 
 const options = [
-  {value: "all", label: "All"},
   {value: 10, label: "10 Rows"},
   {value: 15, label: "15 Rows"},
   {value: 20, label: "20 Rows"},
@@ -68,10 +67,25 @@ function AggridFooter({
                 setLimit(e.target.value);
               }}
               inputProps={{style: {borderRadius: 50}}}
+              style={{fontWeight: "600", color: "#344054"}}
+              menuStyle={{fontWeight: "600", color: "#344054"}}
             />
           </div>
         )}
-        <div>Out of {count}</div>
+        <div>out of {count}</div>
+      </div>
+
+      <div className={style.pagination}>
+        <Pagination
+          variant="outlined"
+          shape="rounded"
+          onChange={(e, val) => {
+            setLoading(true);
+            setOffset(val);
+          }}
+          count={Math.ceil(count / limit)}
+          color="primary"
+        />
       </div>
 
       <div className={style.footerActions}>
@@ -91,18 +105,6 @@ function AggridFooter({
               Add Child
             </Button>
           )}
-        </div>
-        <div className="pagination">
-          <Pagination
-            variant="outlined"
-            shape="rounded"
-            onChange={(e, val) => {
-              setLoading(true);
-              setOffset(val);
-            }}
-            count={Math.ceil(count / limit)}
-            color="primary"
-          />
         </div>
       </div>
     </div>

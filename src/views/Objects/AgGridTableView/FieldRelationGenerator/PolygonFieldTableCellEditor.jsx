@@ -19,12 +19,16 @@ const style = {
 };
 function PolygonFieldTableCellEditor(props) {
   const [open, setOpen] = useState(false);
-  const {field, value, setValue} = props;
+  const {field, value, setValue, data, colDef} = props;
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const updatePolygon = () => {
     handleClose();
+  };
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
   };
 
   return (
@@ -81,7 +85,9 @@ function PolygonFieldTableCellEditor(props) {
           </Box>
         </Modal>
       </Box>
-      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 }

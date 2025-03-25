@@ -8,9 +8,13 @@ import {isString} from "lodash-es";
 import RowClickButton from "../RowClickButton";
 
 const PhoneCellEditor = (props) => {
-  const {setValue = () => {}, value = ""} = props;
+  const {setValue = () => {}, value = "", data} = props;
 
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
 
   return (
     <>
@@ -33,7 +37,9 @@ const PhoneCellEditor = (props) => {
           isValidPhoneNumber
         />
       </Box>
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
     </>
   );
 };

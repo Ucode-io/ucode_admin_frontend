@@ -22,6 +22,7 @@ const HFLinkFieldEditor = (props) => {
     isNewTableView = false,
     disabled = false,
     colDef,
+    data,
   } = props;
   const location = useLocation();
 
@@ -37,6 +38,10 @@ const HFLinkFieldEditor = (props) => {
   const navigateToNewPage = (url, target = "_blank") => {
     if (!url) return;
     window.open(url, target);
+  };
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
   };
 
   return (
@@ -68,7 +73,9 @@ const HFLinkFieldEditor = (props) => {
         className={"custom_textfield_new"}
         {...props}
       />
-      {colDef?.colIndex === 0 && <RowClickButton />}
+      {colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 };

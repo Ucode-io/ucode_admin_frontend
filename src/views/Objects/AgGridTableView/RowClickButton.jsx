@@ -2,11 +2,11 @@ import {Button} from "@mui/material";
 import React from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 
-function RowClickButton({onRowClick = () => {}, api, right = "5px"}) {
+function RowClickButton({onRowClick = () => {}, right = "5px"}) {
   return (
     <Button
       onClick={(e) => {
-        e.stopPropagation();
+        onRowClick();
       }}
       className={"rowClickButton"}
       style={{

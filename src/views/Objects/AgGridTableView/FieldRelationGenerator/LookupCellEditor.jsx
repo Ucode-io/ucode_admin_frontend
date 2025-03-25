@@ -82,6 +82,10 @@ const LookupCellEditor = (props) => {
     }
   );
 
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
+
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(new Set(options.map(JSON.stringify))).map(
       JSON.parse
@@ -161,7 +165,9 @@ const LookupCellEditor = (props) => {
           }}
         />
       </Box>
-      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 };

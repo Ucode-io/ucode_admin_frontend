@@ -4,7 +4,7 @@ import {colorList} from "../../../../components/ColorPicker/colorList";
 import RowClickButton from "../RowClickButton";
 
 const ColorPicker = (props) => {
-  const {setValue, value, field} = props;
+  const {setValue, value, field, colDef, data} = props;
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (e) => {
@@ -13,6 +13,10 @@ const ColorPicker = (props) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
   };
 
   const open = Boolean(anchorEl);
@@ -66,7 +70,9 @@ const ColorPicker = (props) => {
           </Card>
         </Popover>
       </div>
-      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 };

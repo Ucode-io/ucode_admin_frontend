@@ -14,7 +14,7 @@ import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import RowClickButton from "../RowClickButton";
 
 const IconPickerCell = (props) => {
-  const {value, setValue, field, error} = props;
+  const {value, setValue, field, error, colDef, data} = props;
   const buttonRef = useRef();
   const id = useId();
 
@@ -39,6 +39,10 @@ const IconPickerCell = (props) => {
     [searchText],
     300
   );
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
+  };
 
   return (
     <>
@@ -95,7 +99,9 @@ const IconPickerCell = (props) => {
           </div>
         </Menu>
       </div>
-      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 };

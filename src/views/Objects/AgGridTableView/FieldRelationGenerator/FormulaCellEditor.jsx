@@ -15,7 +15,7 @@ import RowClickButton from "../RowClickButton";
 const parser = new Parser();
 
 const FormulaCellEditor = (props) => {
-  let {field, setValue, value} = props;
+  let {field, setValue, value, data} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   const formula = field?.attributes?.formula ?? "";
 
@@ -35,6 +35,10 @@ const FormulaCellEditor = (props) => {
     });
 
     const {error, result} = parser.parse(computedFormula);
+  };
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
   };
 
   return (
@@ -109,7 +113,9 @@ const FormulaCellEditor = (props) => {
         }}
         {...props}
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
     </>
   );
 };

@@ -3,7 +3,11 @@ import styles from "./style.module.scss";
 import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 
-function HFStatusFieldEditor({value, setValue, colDef} = props) {
+function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
+  };
+
   return (
     <>
       {" "}
@@ -104,7 +108,9 @@ function HFStatusFieldEditor({value, setValue, colDef} = props) {
           )}
         </Select>
       </Box>
-      {colDef?.colIndex === 0 && <RowClickButton right="25px" />}
+      {colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="25px" />
+      )}
     </>
   );
 }

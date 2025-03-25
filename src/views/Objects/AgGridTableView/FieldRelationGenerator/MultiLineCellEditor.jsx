@@ -14,6 +14,10 @@ function MultiLineCellEditor(props) {
     setAnchorEl(null);
   };
 
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(props?.data);
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -115,7 +119,9 @@ function MultiLineCellEditor(props) {
         />
       </Popover>
 
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
     </>
   );
 }

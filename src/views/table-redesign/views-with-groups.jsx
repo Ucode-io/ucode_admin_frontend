@@ -315,6 +315,26 @@ export const NewUiViewsWithGroups = ({
     }
   };
 
+  const navigateToEditPage = (row) => {
+    if (projectInfo?.new_layout) {
+      setSelectedRow(row);
+      setOpen(true);
+    } else {
+      if (layoutType === "PopupLayout") {
+        setSelectedRow(row);
+        setOpen(true);
+      } else {
+        navigateToForm(
+          tableSlug,
+          "EDIT",
+          row,
+          {},
+          searchParams.get("menuId") ?? appId
+        );
+      }
+    }
+  };
+
   useEffect(() => {
     initDB();
   }, [tableSlug]);
@@ -763,6 +783,12 @@ export const NewUiViewsWithGroups = ({
                       <MaterialUIProvider>
                         {" "}
                         <AgGridTableView
+                          open={open}
+                          setOpen={setOpen}
+                          selectedRow={selectedRow}
+                          projectInfo={projectInfo}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
                           selectedTabIndex={selectedTabIndex}
                           view={view}
                           views={views}
@@ -809,6 +835,12 @@ export const NewUiViewsWithGroups = ({
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
                           <AgGridTableView
+                            open={open}
+                            setOpen={setOpen}
+                            selectedRow={selectedRow}
+                            projectInfo={projectInfo}
+                            setLayoutType={setLayoutType}
+                            navigateToEditPage={navigateToEditPage}
                             selectedTabIndex={selectedTabIndex}
                             view={view}
                             views={views}
@@ -882,6 +914,12 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          open={open}
+                          setOpen={setOpen}
+                          selectedRow={selectedRow}
+                          projectInfo={projectInfo}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
                           selectedTabIndex={selectedTabIndex}
                           view={view}
                           views={views}

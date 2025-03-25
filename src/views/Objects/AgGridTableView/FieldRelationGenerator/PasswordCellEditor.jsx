@@ -5,7 +5,7 @@ import useDebounce from "../../../../hooks/useDebounce";
 import RowClickButton from "../RowClickButton";
 
 function PasswordCellEditor(props) {
-  const {setValue, value, colDef} = props;
+  const {setValue, value, colDef, data} = props;
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -14,6 +14,10 @@ function PasswordCellEditor(props) {
 
   const getType = () => {
     return showPassword ? "text" : "password";
+  };
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
   };
 
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
@@ -40,7 +44,9 @@ function PasswordCellEditor(props) {
         onChange={(e) => inputChangeHandler(e.target.value)}
         className={"custom_textfield_new"}
       />
-      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
     </>
   );
 }

@@ -1,10 +1,8 @@
 import {Box} from "@mui/material";
 import React, {useMemo} from "react";
-import {useMutation} from "react-query";
-import constructorObjectService from "../../services/constructorObjectService";
-import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
-import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
-import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
+import CellElementGeneratorForTable from "../../../components/ElementGenerators/CellElementGeneratorForTable";
+import CellElementGeneratorForRelation from "../../../components/ElementGenerators/CellElementGeneratorForRelation";
+import CellElementGeneratorForTableView from "../../../components/ElementGenerators/CellElementGeneratorForTableView";
 
 const TableDataForm = ({
   row,
@@ -25,12 +23,6 @@ const TableDataForm = ({
   setFormValue = () => {},
   newUi,
 }) => {
-  const {mutate: updateObject} = useMutation(() =>
-    constructorObjectService.update(tableSlug, {
-      data: {...getValues(`multi.${index}`)},
-    })
-  );
-
   const isWrapField = useMemo(() => {
     if (!isWrap || !field || !field.id) {
       return null;
@@ -48,12 +40,12 @@ const TableDataForm = ({
 
   return (
     <Box
+      id="drawerForm"
       style={{
         position: "relative",
         minWidth: "150px",
         boxSizing: "border-box",
-      }}
-    >
+      }}>
       {view?.attributes?.table_editable ? (
         <CellElementGeneratorForTable field={field} row={row} />
       ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
@@ -70,7 +62,6 @@ const TableDataForm = ({
           relOptions={relOptions}
           isWrapField={isWrapField}
           isTableView={isTableView}
-          updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
           newUi={newUi}
@@ -91,7 +82,6 @@ const TableDataForm = ({
           relOptions={relOptions}
           isTableView={isTableView}
           isWrapField={isWrapField}
-          updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
           newUi={newUi}

@@ -130,6 +130,9 @@ export const NewUiViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
   const [inputKey, setInputKey] = useState(0);
+  const [layoutType, setLayoutType] = useState("SimpleLayout");
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
 
   const [isPopupOpen, setPopupOpen] = useState(false);
 
@@ -291,6 +294,26 @@ export const NewUiViewsWithGroups = ({
       },
     },
   });
+
+  const navigateCreatePage = () => {
+    if (projectInfo?.new_layout) {
+      setOpen(true);
+      setSelectedRow(null);
+    } else {
+      if (layoutType === "PopupLayout") {
+        setOpen(true);
+        setSelectedRow(null);
+      } else {
+        navigateToForm(
+          tableSlug,
+          "CREATE",
+          {},
+          {id},
+          searchParams.get("menuId")
+        );
+      }
+    }
+  };
 
   useEffect(() => {
     initDB();
@@ -641,7 +664,10 @@ export const NewUiViewsWithGroups = ({
                     _hover={{bg: "#EAECF0"}}
                     cursor="pointer">
                     {getColumnIcon({column})}
-                    <ViewOptionTitle>{column.label}</ViewOptionTitle>
+                    <ViewOptionTitle>
+                      {column?.attributes?.[`label_${i18n.language}`] ||
+                        column?.label}
+                    </ViewOptionTitle>
                     <Switch
                       ml="auto"
                       isChecked={column.is_search}
@@ -675,15 +701,7 @@ export const NewUiViewsWithGroups = ({
               <Button
                 h={"30px"}
                 rightIcon={<ChevronDownIcon fontSize={18} />}
-                onClick={() =>
-                  navigateToForm(
-                    tableSlug,
-                    "CREATE",
-                    {},
-                    {id},
-                    searchParams.get("menuId")
-                  )
-                }>
+                onClick={() => navigateCreatePage()}>
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -816,6 +834,12 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableView
+                          selectedRow={selectedRow}
+                          setSelectedRow={setSelectedRow}
+                          open={open}
+                          setOpen={setOpen}
+                          setLayoutType={setLayoutType}
+                          layoutType={layoutType}
                           projectInfo={projectInfo}
                           tableLan={tableLan}
                           isVertical
@@ -882,6 +906,12 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        selectedRow={selectedRow}
+                        setSelectedRow={setSelectedRow}
+                        open={open}
+                        setOpen={setOpen}
+                        setLayoutType={setLayoutType}
+                        layoutType={layoutType}
                         projectInfo={projectInfo}
                         tableLan={tableLan}
                         visibleColumns={visibleColumns}
@@ -1162,6 +1192,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
+  const [queryParameters] = useSearchParams();
 
   const columnsIds = visibleColumns?.map((item) => item?.id);
   const quickFiltersIds = view?.attributes?.quick_filters?.map(
@@ -1221,6 +1252,17 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];
+
+    !checked &&
+      dispatch(
+        filterActions.clearFilters({
+          tableSlug: tableSlug,
+          viewId: view?.id,
+          name: "specialities_id",
+          value: [`${queryParameters.get("specialities")}`],
+        })
+      );
+
     updateView(
       checked
         ? [...quickFilters, column]

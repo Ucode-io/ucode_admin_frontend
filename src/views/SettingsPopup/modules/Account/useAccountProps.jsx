@@ -7,11 +7,14 @@ import { showAlert } from "@/store/alert/alert.thunk";
 import userService from "@/services/auth/userService";
 import sessionService from "@/services/sessionService";
 import { authActions } from "../../../../store/auth/auth.slice";
+import { useSettingsPopupContext } from "../../providers";
 
 export const useAccountProps = () => {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
+
+  const { handleClose } = useSettingsPopupContext();
 
   const role = useSelector((state) => state?.auth?.roleInfo);
   const clientType = useSelector((state) => state?.auth?.clientType);
@@ -19,6 +22,7 @@ export const useAccountProps = () => {
 
   const projectId = useSelector((state) => state?.auth?.projectId);
   const userInfo = useSelector((state) => state?.auth?.userInfo);
+  const userData = useSelector((state) => state?.auth?.user_data);
   const envId = useSelector((state) => state?.auth);
 
   const [inputType, setInputType] = useState(true);
@@ -144,7 +148,7 @@ export const useAccountProps = () => {
     getSessions();
 
     authService
-      .getUserById(userId, {
+      .getUserById(userData?.user_id_auth, {
         "project-id": projectId,
         "client-type-id": clientType?.id,
       })
@@ -173,5 +177,6 @@ export const useAccountProps = () => {
     handleSubmit,
     onSubmit,
     isDirty: !(Object.keys(dirtyFields).length > 0),
+    handleClose,
   };
 };

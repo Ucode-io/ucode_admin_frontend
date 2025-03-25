@@ -23,7 +23,6 @@ import {
 } from "ag-grid-community";
 import {
   MenuModule,
-  ClipboardModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   RowGroupingModule,
@@ -36,7 +35,6 @@ import AggridDefaultComponents, {
 } from "./Functions/AggridDefaultComponents";
 import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
 import {Flex, Text} from "@chakra-ui/react";
-import RowIndexField from "./RowIndexField";
 import {getColumnIcon} from "../../table-redesign/icons";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Button as ChakraButton} from "@chakra-ui/react";

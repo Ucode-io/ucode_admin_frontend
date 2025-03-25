@@ -5,21 +5,20 @@ import {useTranslation} from "react-i18next";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import styles from "./style.module.scss";
-import {generateGUID} from "../../../utils/generateID";
-import {useMenuGetByIdQuery} from "../../../services/menuService";
-import constructorFieldService from "../../../services/constructorFieldService";
-import constructorRelationService from "../../../services/constructorRelationService";
-import constructorObjectService from "../../../services/constructorObjectService";
-import useTabRouter from "../../../hooks/useTabRouter";
-import {pageToOffset} from "../../../utils/pageToOffset";
-import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import {objectToArray} from "../../../utils/objectToArray";
+import useTabRouter from "../../../hooks/useTabRouter";
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import constructorFieldService from "../../../services/constructorFieldService";
+import constructorObjectService from "../../../services/constructorObjectService";
+import constructorRelationService from "../../../services/constructorRelationService";
+import {useMenuGetByIdQuery} from "../../../services/menuService";
+import {generateGUID} from "../../../utils/generateID";
 import {listToMap} from "../../../utils/listToMap";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import DrawerObjectDataTable from "./DrawerObjectDataTable";
-import PageFallback from "../../../components/PageFallback";
+import styles from "./style.module.scss";
 
 const RelationTableDrawer = forwardRef(
   (
@@ -31,12 +30,9 @@ const RelationTableDrawer = forwardRef(
       remove,
       setCreateFormVisible,
       watch,
-      loader,
       selectedObjects,
       setSelectedObjects,
-      setFieldSlug,
       id,
-      reset,
       selectedTabIndex,
       control,
       setFormValue,
@@ -49,6 +45,10 @@ const RelationTableDrawer = forwardRef(
       getAllData = () => {},
       layoutData,
       removableHeight,
+      setCurrentPage = () => {},
+      inputChangeHandler = () => {},
+      currentPage,
+      searchText,
     },
     ref
   ) => {
@@ -59,7 +59,7 @@ const RelationTableDrawer = forwardRef(
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
+
     const [limit, setLimit] = useState(10);
     const {i18n} = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
@@ -277,6 +277,7 @@ const RelationTableDrawer = forwardRef(
           filters: computedFilters,
           offset: pageToOffset(currentPage, limit),
           limit,
+          searchText,
         },
       ],
       () => {
@@ -287,6 +288,7 @@ const RelationTableDrawer = forwardRef(
               offset: pageToOffset(currentPage, limit),
               limit: limitPage !== 0 ? limitPage : limit,
               from_tab: type === "relation" ? true : false,
+              search: searchText,
               ...computedFilters,
             },
           },
@@ -443,7 +445,7 @@ const RelationTableDrawer = forwardRef(
       {
         onSuccess: (a, b) => {
           remove(tableData.findIndex((i) => i.guid === b.guid));
-          // queryClient.refetchQueries(["GET_OBJECT_LIST"]);
+          queryClient.refetchQueries(["GET_OBJECT_LIST"]);
           refetch();
         },
       }
@@ -481,7 +483,7 @@ const RelationTableDrawer = forwardRef(
       }
     };
 
-    if (loader) return <PageFallback />;
+    // if (Boolean(columns?.length)) return <PageFallback />;
 
     return (
       <div assName={styles.relationTable} ref={tableRef}>
@@ -503,16 +505,17 @@ const RelationTableDrawer = forwardRef(
               data={tableData}
               view={getRelatedTabeSlug}
               isResizeble={true}
-              fields={columns}
+              fields={fields}
               setDrawerState={setDrawerState}
               columns={columns}
+              layoutData={layoutData}
               setFormValue={setFormValue}
               control={control}
               relatedTableSlug={relatedTableSlug}
-              tableSlug={relatedTableSlug ?? tableSlug}
+              tableSlug={tableSlug}
               removableHeight={removableHeight ? removableHeight : 230}
               disableFilters
-              pagesCount={pageCount}
+              pageCount={pageCount}
               currentPage={currentPage}
               count={count}
               onRowClick={navigateToEditPage}
@@ -520,6 +523,7 @@ const RelationTableDrawer = forwardRef(
               onPaginationChange={setCurrentPage}
               filters={filters}
               filterChangeHandler={filterChangeHandler}
+              inputChangeHandler={inputChangeHandler}
               paginationExtraButton={
                 id && (
                   <SecondaryButton onClick={navigateToTablePage}>

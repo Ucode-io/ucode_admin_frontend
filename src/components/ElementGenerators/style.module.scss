@@ -1,7 +1,36 @@
 @use "/src/scss/colors";
 
+.multiLineCellFormElement {
+  position: relative;
+
+  &:hover {
+    .multiLineCellFormElementBtn {
+      display: block;
+    }
+  }
+}
+
+.multiLineCellFormElementBtn {
+  display: none;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+  }
+}
+
 .autocompleteWrapper {
   position: relative;
+  // height: 32px !important;
+  overflow: auto;
 
   .createButton {
     position: absolute;
@@ -32,6 +61,10 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+
+  .multipleAutocompleteTags {
+    height: 20px;
+  }
 }
 .barcode_input {
   background: rgba(192, 192, 192, 0.224);

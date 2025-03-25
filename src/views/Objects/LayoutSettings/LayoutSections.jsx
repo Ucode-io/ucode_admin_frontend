@@ -28,7 +28,7 @@ function LayoutSections({
   };
 
   const addSections = () => {
-    const updatedSections = [...sections, {id: generateID(), fields: []}];
+    const updatedSections = [...sections, {fields: []}];
     setSections(updatedSections);
   };
 

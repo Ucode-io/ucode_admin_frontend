@@ -1,35 +1,35 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useGetLang } from "../../hooks/useGetLang";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { ProjectSettings } from "./modules/ProjectSettings";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useGetLang} from "../../hooks/useGetLang";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {ProjectSettings} from "./modules/ProjectSettings";
 import useSearchParams from "../../hooks/useSearchParams";
-import { Environment } from "./modules/Environment";
-import { EnvironmentDetail } from "./modules/EnvironmentDetail";
-import { useSelector } from "react-redux";
+import {Environment} from "./modules/Environment";
+import {EnvironmentDetail} from "./modules/EnvironmentDetail";
+import {useSelector} from "react-redux";
 import BillingIcon from "@/assets/icons/billing.svg";
 import TariffsIcon from "@/assets/icons/fares.svg";
 import ProjectSettingsIcon from "@/assets/icons/setting.svg";
 import EnvironmentsIcon from "@/assets/icons/environment.svg";
 import LanguageIcon from "@/assets/icons/language.svg";
 import cls from "./styles.module.scss";
-import { Fares } from "./modules/Fares";
-import { Account } from "./modules/Account";
-import { Billing } from "./modules/Billing";
+import {Fares} from "./modules/Fares";
+import {Account} from "./modules/Account";
+import {Billing} from "./modules/Billing";
 import LanguageControl from "../../components/LayoutSidebar/Components/LanguageControl";
-import { Permissions } from "./modules/Permissions";
-import { PermissionsDetail } from "./modules/PermissionsDetail";
-import { PermissionsRoleDetail } from "./modules/PermissionsRoleDetail";
-import { Resources } from "./modules/Resources";
-import { ResourcesDetail } from "./modules/ResourcesDetail";
-import { Storage } from "@mui/icons-material";
-import { ApiKeys } from "./modules/ApiKeys";
-import { ApiKeysDetail } from "./modules/ApiKeysDetail";
-import { Redirect } from "./modules/Redirect";
-import { RedirectForm } from "./modules/RedirectForm";
+import {Permissions} from "./modules/Permissions";
+import {PermissionsDetail} from "./modules/PermissionsDetail";
+import {PermissionsRoleDetail} from "./modules/PermissionsRoleDetail";
+import {Resources} from "./modules/Resources";
+import {ResourcesDetail} from "./modules/ResourcesDetail";
+import {Storage} from "@mui/icons-material";
+import {ApiKeys} from "./modules/ApiKeys";
+import {ApiKeysDetail} from "./modules/ApiKeysDetail";
+import {Redirect} from "./modules/Redirect";
+import {RedirectForm} from "./modules/RedirectForm";
 
-export const useSettingsPopupProps = ({ onClose }) => {
-  const { t, i18n } = useTranslation();
+export const useSettingsPopupProps = ({onClose}) => {
+  const {t, i18n} = useTranslation();
 
   const userInfo = useSelector((state) => state?.auth?.userInfo);
 
@@ -147,7 +147,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
   };
 
   const tabComponents = {
-    profile: <Account handleClose={handleClose} />,
+    profile: <Account />,
     billing: <Billing />,
     fares: <Fares />,
     projectSettings: <ProjectSettings />,

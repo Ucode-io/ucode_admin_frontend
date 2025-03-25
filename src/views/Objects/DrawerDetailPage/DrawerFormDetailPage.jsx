@@ -1,20 +1,21 @@
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
+import {Box, Menu, MenuItem, TextField} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
 import {getColumnIcon} from "../../table-redesign/icons";
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
 
-import "./style.scss";
-import layoutService from "../../../services/layoutService";
-import {useParams} from "react-router-dom";
+import {Flex, Text} from "@chakra-ui/react";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import {Controller} from "react-hook-form";
-import {Flex, Text} from "@chakra-ui/react";
-import {applyDrag} from "../../../utils/applyDrag";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {isEqual} from "lodash";
+import {Controller} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import layoutService from "../../../services/layoutService";
+import {applyDrag} from "../../../utils/applyDrag";
+import "./style.scss";
 
 function DrawerFormDetailPage({
   control,
@@ -86,12 +87,14 @@ function DrawerFormDetailPage({
 
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
-      fields: section.fields.filter(
-        (el) => el?.slug !== watch("attributes.layout_heading")
+      fields: section?.fields?.filter(
+        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
       ),
     }));
 
-    setSections(updatedSections);
+    setSections((prevSections) =>
+      isEqual(prevSections, updatedSections) ? prevSections : updatedSections
+    );
   }, [data, watch("attributes.layout_heading")]);
 
   return (
@@ -128,7 +131,7 @@ function DrawerFormDetailPage({
               dragClass="drag-item"
               lockAxis="y"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-              {section?.fields.map((field, fieldIndex) => (
+              {section?.fields?.map((field, fieldIndex) => (
                 <Draggable
                   className="drag-handle"
                   key={field?.id ?? fieldIndex}>
@@ -180,7 +183,8 @@ function DrawerFormDetailPage({
                         fontWeight="500"
                         width="100%">
                         {field?.attributes?.[`label_${i18n?.language}`] ||
-                          field?.label}
+                          field?.label ||
+                          field?.attributes?.label}
                       </Box>
                     </Box>
                     <Box sx={{width: "60%"}}>
@@ -189,6 +193,7 @@ function DrawerFormDetailPage({
                         control={control}
                         field={field}
                         watch={watch}
+                        isDisabled={field?.attributes?.disabled}
                       />
                     </Box>
                   </Box>
@@ -330,14 +335,6 @@ const HeadingOptions = ({
                     alignItems: "center",
                     gap: "5px",
                   }}>
-                  {/* <span>
-                    {getColumnIcon({
-                      column: {
-                        type: option?.type ?? option?.relation_type,
-                        table_slug: "field",
-                      },
-                    })}
-                  </span> */}
                   {option.label}
                 </Box>
 

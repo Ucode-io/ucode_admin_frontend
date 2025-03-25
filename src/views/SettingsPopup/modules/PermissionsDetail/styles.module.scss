@@ -31,3 +31,23 @@
   left: 0;
   z-index: 99;
 }
+
+.btn {
+
+  &:not(:last-child),
+  &:not(:first-child) {
+    border-radius: 0;
+  }
+
+  &:first-child {
+    border-radius: 6px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &:last-child {
+    border-radius: 6px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}

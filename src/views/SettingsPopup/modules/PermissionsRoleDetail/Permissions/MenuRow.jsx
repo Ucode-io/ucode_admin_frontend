@@ -3,11 +3,34 @@ import {useWatch} from "react-hook-form";
 import {useParams} from "react-router-dom";
 import {useMemo} from "react";
 import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
-import {Box, Button, Checkbox} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import {useMenuPermissionGetByIdQuery} from "../../../../../services/rolePermissionService";
-import {store} from "../../../../../store";
-import {useTranslation} from "react-i18next";
+import { useMenuPermissionGetByIdQuery } from "../../../../../services/rolePermissionService";
+import { store } from "../../../../../store";
+import { useTranslation } from "react-i18next";
+import { CustomCheckbox } from "./CustomCheckbox";
+import styles from "./style.module.scss";
+import clsx from "clsx";
+
+const MenuCheckbox = ({ label, onChange, checked }) => {
+  return (
+    <label>
+      <input
+        className={styles.visuallyHidden}
+        type="checkbox"
+        onChange={onChange}
+        checked={checked}
+      />
+      <span
+        className={clsx(styles.label, {
+          [styles.active]: checked,
+        })}
+      >
+        {label}
+      </span>
+    </label>
+  );
+};
 
 const MenuRow = ({
   app,
@@ -22,12 +45,12 @@ const MenuRow = ({
   setCheckBoxValues,
   checkBoxValues,
 }) => {
-  const {roleId} = useParams();
+  const { roleId } = useParams();
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
   const [parentId, setParentId] = useState("");
   const [data, setData] = useState([]);
   const projectId = store.getState().company.projectId;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const table = useWatch({
     control,
     name: `menus.${appIndex}`,
@@ -40,7 +63,7 @@ const MenuRow = ({
     );
   }, [changedData]);
 
-  const {data: permissionData, isLoading: permissionGetByIdLoading} =
+  const { data: permissionData, isLoading: permissionGetByIdLoading } =
     useMenuPermissionGetByIdQuery({
       projectId: projectId,
       roleId: roleId,
@@ -54,7 +77,7 @@ const MenuRow = ({
             obj[item?.id] = item.permission;
           });
 
-          setCheckBoxValues((prev) => ({...prev, ...obj}));
+          setCheckBoxValues((prev) => ({ ...prev, ...obj }));
 
           setData(res?.menus);
           if (!parentId) {
@@ -140,11 +163,19 @@ const MenuRow = ({
             onClick={() => {
               setTableBlockIsOpen((prev) => !prev);
               setParentId(app?.id);
-            }}>
+            }}
+          >
             <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center">
+              sx={{
+                fontWeight: 400,
+                fontSize: "14px",
+                lineHeight: "20px",
+                color: "#475467",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               {app?.attributes?.[`label_${i18n?.language}`] ??
                 app?.attributes?.[`title_${i18n?.language}`] ??
                 app.label}
@@ -154,7 +185,8 @@ const MenuRow = ({
                   padding: "0",
                   justifyContent: "flex-end",
                 }}
-                disabled>
+                disabled
+              >
                 <ArrowForwardIosIcon
                   style={{
                     transform: `rotate(${tableBlockIsOpen ? 90 : -90}deg)`,
@@ -164,44 +196,49 @@ const MenuRow = ({
             </Box>
           </CTableCell>
 
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.read, "read");
               }}
               checked={rowPermissions?.read ?? false}
+              label="Read"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.write, "write");
               }}
               checked={rowPermissions?.write ?? false}
+              label="Write"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.update, "update");
               }}
               checked={rowPermissions?.update ?? false}
+              label="Update"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.delete, "delete");
               }}
               checked={rowPermissions?.delete ?? false}
+              label="Delete"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.menu_settings, "menu_settings");
               }}
               checked={rowPermissions?.menu_settings ?? false}
+              label="Settings"
             />
           </CTableCell>
         </CTableHeadRow>
@@ -209,52 +246,64 @@ const MenuRow = ({
         <CTableHeadRow>
           <CTableCell cursor="pointer">
             <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center">
+              sx={{
+                fontWeight: 400,
+                fontSize: "14px",
+                lineHeight: "20px",
+                color: "#475467",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               {app?.attributes?.[`label_${i18n?.language}`] ??
                 app?.attributes?.[`title_${i18n?.language}`] ??
                 app.label}
             </Box>
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.read, "read");
               }}
               checked={rowPermissions?.read ?? false}
+              label="Read"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.write, "write");
               }}
               checked={rowPermissions?.write ?? false}
+              label="Write"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.update, "update");
               }}
               checked={rowPermissions?.update ?? false}
+              label="Update"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.delete, "delete");
               }}
               checked={rowPermissions?.delete ?? false}
+              label="Delete"
             />
           </CTableCell>
-          <CTableCell>
-            <Checkbox
+          <CTableCell className={styles.menuCell}>
+            <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.menu_settings, "menu_settings");
               }}
               checked={rowPermissions?.menu_settings ?? false}
+              label="Settings"
             />
           </CTableCell>
         </CTableHeadRow>

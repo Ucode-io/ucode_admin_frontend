@@ -8,9 +8,9 @@ import ConnectionPage from "../../../Permissions/Connections";
 import FRow from "../../../../components/FormElements/FRow";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import RolePage from "../../../Permissions/Roles";
+import { Button } from "../../components/Button";
 
 export const PermissionsDetail = () => {
-
   const {
     lang,
     clientId,
@@ -23,17 +23,45 @@ export const PermissionsDetail = () => {
     setSelectedTab,
     setSearchParams,
     onRowClick,
+    roles,
+    isRolesLoading,
+    tabIndex,
+    setTabIndex,
+    onTabClick,
+    activeTabId,
   } = usePermissionsDetailProps();
+
+  console.log({ roles });
 
   return (
     <Box className={cls.permission}>
       <ContentTitle withBackBtn onBackClick={() => setSearchParams({})}>
-        {
-          generateLangaugeText(lang, i18n?.language, "Matrix Details") ||
-          "Matrix Details"
-        }
+        Admin
+        {/* {generateLangaugeText(lang, i18n?.language, "Matrix Details") ||
+          "Matrix Details"} */}
       </ContentTitle>
-      <Tabs
+      <Box overflow="auto" display="flex">
+        {roles?.map((el, index) => (
+          <Button
+            className={cls.btn}
+            key={el?.guid}
+            onClick={() => onTabClick(el, index)}
+            primary={el?.guid === activeTabId}
+          >
+            {el?.name}
+          </Button>
+        ))}
+      </Box>
+
+      {/* <div style={{ padding: "10px 10px 0 10px", maxWidth: "30%" }}>
+        <FRow
+          label={generateLangaugeText(lang, i18n?.language, "Name") || "Name"}
+        >
+          <HFTextField control={control} name="name" fullWidth />
+        </FRow>
+      </div> */}
+      <RolePage onRowClick={onRowClick} />
+      {/* <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
@@ -66,7 +94,7 @@ export const PermissionsDetail = () => {
             <ConnectionPage settingLan={lang} connections={connections} />
           </TabPanel>
         </Card>
-      </Tabs>
+      </Tabs> */}
     </Box>
   );
-}
+};

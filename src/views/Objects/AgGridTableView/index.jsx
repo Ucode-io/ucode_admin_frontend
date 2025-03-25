@@ -175,7 +175,7 @@ function AgGridTableView(props) {
       },
     }
   );
-  console.log("viewviewviewviewview", view);
+
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
     ["GET_OBJECTS_TREEDATA", filters],
     () =>

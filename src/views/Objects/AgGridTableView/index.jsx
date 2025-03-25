@@ -566,6 +566,7 @@ function AgGridTableView(props) {
                   onSelectionChanged={(e) => {
                     setSelectedRows(e.api.getSelectedRows());
                   }}
+                  onCellDoubleClicked={(params) => params.api.stopEditing()}
                 />
               </>
             )}

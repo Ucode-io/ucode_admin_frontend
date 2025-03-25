@@ -38,6 +38,16 @@ function HFModalMapCellEditor(props) {
           onClick={() => handleOpen()}
           sx={{
             width: "100%",
+            backgroundColor: "transparent",
+            "& .MuiInputBase-root": {
+              backgroundColor: "transparent",
+            },
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "transparent",
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "transparent",
+            },
           }}
           InputProps={{
             style: {

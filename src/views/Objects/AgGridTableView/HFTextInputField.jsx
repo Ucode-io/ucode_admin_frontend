@@ -15,6 +15,18 @@ const HFTextInputField = (props) => {
         value={value}
         fullWidth
         onChange={(e) => setValue(e.target.value)}
+        sx={{
+          backgroundColor: "transparent",
+          "& .MuiInputBase-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "transparent",
+          },
+        }}
         className="custom_textfield_new"
       />
       {colDef?.colIndex === 0 && (

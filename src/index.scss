@@ -350,6 +350,8 @@ div {
   input {
     height: 32px;
     padding: 0 15px 0 15px;
+    background: #000;
+    background: transparent;
 
     &:focus {
       border: none !important;
@@ -403,6 +405,7 @@ div {
   border: none !important;
   height: 41px;
   padding: 0 9.6px 0px;
+  background: transparent !important;
 }
 
 .custom_number_field {
@@ -414,6 +417,7 @@ div {
   left: 0;
   border: none;
   padding-left: 13px;
+  background: transparent;
 
   input {
     height: 32px;

@@ -70,8 +70,18 @@ const FormulaCellEditor = (props) => {
         }}
         fullWidth
         disabled={field?.disabled}
-        // autoFocus={tabIndex === 1}
-        // helperText={!disabledHelperText && error?.message}
+        sx={{
+          backgroundColor: "transparent",
+          "& .MuiInputBase-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "transparent",
+          },
+        }}
         InputProps={{
           // inputProps: {tabIndex},
           readOnly: field?.disabled,

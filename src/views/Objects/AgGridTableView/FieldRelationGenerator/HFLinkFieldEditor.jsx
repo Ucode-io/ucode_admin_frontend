@@ -53,6 +53,18 @@ const HFLinkFieldEditor = (props) => {
           setValue(e.target.value);
         }}
         fullWidth
+        sx={{
+          backgroundColor: "transparent",
+          "& .MuiInputBase-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "transparent",
+          },
+        }}
         InputProps={{
           readOnly: disabled,
           inputProps: {style: {height: "32px"}},

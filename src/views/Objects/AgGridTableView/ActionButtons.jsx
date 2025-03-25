@@ -2,16 +2,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
 import {useParams} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import GeneratePdfFromTable from "../../../components/DataTable/GeneratePdfFromTable";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import {Box} from "@mui/material";
+import {Delete} from "@mui/icons-material";
 
 function ActionButtons(props) {
   const {colDef, data} = props;
 
-  const {tableSlug} = useParams();
   return (
     <>
       {data?.new_field ? (
@@ -20,7 +18,7 @@ function ActionButtons(props) {
           sx={{
             display: "flex",
             width: "100%",
-            height: "41px",
+            height: "32px",
             alignItems: "center",
             justifyContent: "center",
             gap: "10px",
@@ -45,19 +43,17 @@ function ActionButtons(props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "40px",
             gap: "8px",
-            padding: "8px 0 0 0",
+            padding: "10px 0 0 0",
+            width: "100%",
+            height: "100%",
           }}>
           <RectangleIconButton
-            style={{border: "1px solid #7777"}}
             color="error"
+            style={{minWidth: 25, minHeight: 25, height: 25}}
             onClick={() => colDef.deleteFunction(data)}>
-            <DeleteIcon color="error" />
+            <Delete color="error" />
           </RectangleIconButton>
-          <PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>
-            <GeneratePdfFromTable view={colDef?.view} row={data} />
-          </PermissionWrapperV2>
         </Box>
       )}
     </>

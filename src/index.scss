@@ -348,8 +348,13 @@ div {
   left: 0;
 
   input {
-    height: 40px;
+    height: 32px;
     padding: 0 15px 0 15px;
+
+    &:focus {
+      border: none !important;
+      outline: none !important;
+    }
   }
 
   div fieldset {
@@ -388,7 +393,7 @@ div {
   width: 100%;
   height: 100%;
   border: none !important;
-  height: 41px;
+  height: 32px;
   padding: 0 0 0 5px;
 }
 
@@ -408,10 +413,10 @@ div {
   top: 0;
   left: 0;
   border: none;
-  padding-left: 10px;
+  padding-left: 13px;
 
   input {
-    height: 40px;
+    height: 32px;
     padding: 0 15px 0 15px;
   }
   div fieldset {
@@ -815,6 +820,7 @@ u {
 
 .phone_input {
   input {
+    height: 32px;
     padding-left: 50px;
   }
   .PhoneInputCountry {
@@ -865,6 +871,13 @@ u {
   --ag-header-background-color: #fff;
 }
 
+.ag-theme-alpine .ag-cell {
+  background-color: inherit !important;
+}
+.ag-theme-alpine .ag-cell:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important; /* Light hover effect */
+}
+
 .ag-theme-quartz {
   --ag-grid-size: 8px;
 }
@@ -876,7 +889,7 @@ u {
 }
 
 .ag-cell {
-  padding: 0px 5px !important;
+  padding: 0px 0px !important;
 
   .rowIndex {
     position: absolute;
@@ -904,6 +917,43 @@ u {
         display: block;
         background: none !important;
       }
+    }
+  }
+
+  .rowIndexSelected {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .editButton {
+      display: block;
+      width: 100%;
+      height: 30px !important;
+      height: 100%;
+    }
+
+    .indexValue {
+      display: none;
+    }
+  }
+
+  .rowClickButton {
+    border: 1px solid #deebff;
+    background: #fff;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 3px;
+    display: none;
+
+    &:hover {
+      background: #edf4ed;
     }
   }
 
@@ -958,7 +1008,9 @@ u {
   .multiselectAggrid {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 32px;
+    bottom: 0;
+    padding-left: 6px;
 
     div fieldset {
       border: none;
@@ -995,6 +1047,34 @@ u {
       justify-content: center;
     }
   }
+}
+
+.ag-row-hover {
+  .rowClickButton {
+    display: flex;
+  }
+}
+
+.ag-header-cell {
+  height: 32px !important;
+  font-size: 12px !important;
+  padding: 0 10px !important;
+}
+
+.ag-header {
+  height: 32px !important;
+  min-height: 32px !important;
+  background: #f9fafb;
+  border-radius: 0 !important;
+}
+
+.ag-row-even {
+  height: 32px !important;
+  // border-left: 1px solid #dcdddd;
+}
+
+.ag-row-odd {
+  height: 32px !important;
 }
 
 #billingTable {

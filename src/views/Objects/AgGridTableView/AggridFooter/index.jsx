@@ -1,23 +1,21 @@
-import React from "react";
+import React, {useState} from "react";
 import style from "../style.module.scss";
-import AddIcon from "@mui/icons-material/Add";
 import {Button, Pagination} from "@mui/material";
 import CSelect from "../../../../components/CSelect";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import {useParams, useSearchParams} from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
+import {useTranslation} from "react-i18next";
 
 const options = [
-  {value: "all", label: "All"},
-  {value: 10, label: 10},
-  {value: 15, label: 15},
-  {value: 20, label: 20},
-  {value: 25, label: 25},
-  {value: 30, label: 30},
-  {value: 35, label: 35},
-  {value: 40, label: 40},
+  {value: 10, label: "10 Rows"},
+  {value: 15, label: "15 Rows"},
+  {value: 20, label: "20 Rows"},
+  {value: 25, label: "25 Rows"},
+  {value: 30, label: "30 Rows"},
+  {value: 35, label: "35 Rows"},
+  {value: 40, label: "40 Rows"},
 ];
 
 function AggridFooter({
@@ -36,6 +34,7 @@ function AggridFooter({
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const {i18n} = useTranslation();
 
   const multipleDelete = () => {
     constructorObjectService
@@ -52,7 +51,7 @@ function AggridFooter({
   return (
     <div className={style.footer}>
       <div className={style.limitCount}>
-        <div>Count: {count ?? 0}</div>
+        <div>Show </div>
         {limit && (
           <div className={style.limitSide}>
             <CSelect
@@ -68,10 +67,27 @@ function AggridFooter({
                 setLimit(e.target.value);
               }}
               inputProps={{style: {borderRadius: 50}}}
+              style={{fontWeight: "600", color: "#344054"}}
+              menuStyle={{fontWeight: "600", color: "#344054"}}
             />
           </div>
         )}
+        <div>out of {count}</div>
       </div>
+
+      <div className={style.pagination}>
+        <Pagination
+          variant="outlined"
+          shape="rounded"
+          onChange={(e, val) => {
+            setLoading(true);
+            setOffset(val);
+          }}
+          count={Math.ceil(count / limit)}
+          color="primary"
+        />
+      </div>
+
       <div className={style.footerActions}>
         <div className={style.footerBtns}>
           {Boolean(selectedRows?.length) && (
@@ -89,26 +105,6 @@ function AggridFooter({
               Add Child
             </Button>
           )}
-          <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-            <Button
-              variant="outlined"
-              onClick={() => {
-                navigateCreatePage();
-              }}>
-              <AddIcon style={{color: "#007AFF"}} />
-              Add object
-            </Button>
-          </PermissionWrapperV2>
-        </div>
-        <div className="pagination">
-          <Pagination
-            onChange={(e, val) => {
-              setLoading(true);
-              setOffset(val);
-            }}
-            count={Math.ceil(count / limit)}
-            color="primary"
-          />
         </div>
       </div>
     </div>

@@ -1,13 +1,15 @@
 import {useQuery} from "react-query";
 import style from "./style.module.scss";
-import FiltersBlock from "./FiltersBlock";
 import {Box, Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import AggridFooter from "./AggridFooter";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {themeQuartz} from "ag-grid-community";
-import FastFilter from "../components/FastFilter";
+import {
+  TextEditorModule,
+  ValidationModule,
+  themeQuartz,
+} from "ag-grid-community";
 import useFilters from "../../../hooks/useFilters";
 import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
@@ -25,16 +27,27 @@ import {
 } from "ag-grid-community";
 import {
   MenuModule,
-  ClipboardModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
   RowGroupingModule,
   TreeDataModule,
+  CellSelectionModule,
+  ClipboardModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
   ActionsColumn,
 } from "./Functions/AggridDefaultComponents";
+import {mergeStringAndState} from "@/utils/jsonPath";
+import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
+import {Flex, Text} from "@chakra-ui/react";
+import {getColumnIcon} from "../../table-redesign/icons";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {Button as ChakraButton} from "@chakra-ui/react";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import NewModalDetailPage from "../../../components/NewModalDetailPage";
+import DrawerDetailPage from "../DrawerDetailPage";
+import layoutService from "../../../services/layoutService";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -45,20 +58,27 @@ ModuleRegistry.registerModules([
   RowSelectionModule,
   RowGroupingModule,
   TreeDataModule,
+  ValidationModule,
+  CellSelectionModule,
+  TextEditorModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
   columnBorder: true,
+  rowHeight: "32px",
 });
 
 function AgGridTableView(props) {
   const {
+    open,
     view,
     views,
     menuItem,
     fieldsMap,
     updateField,
     visibleForm,
+    selectedRow,
+    projectInfo,
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
@@ -66,10 +86,13 @@ function AgGridTableView(props) {
     setCheckedColumns,
     computedVisibleFields,
     visibleRelationColumns,
+    setOpen = () => {},
+    setLayoutType = () => {},
+    navigateToEditPage = () => {},
   } = props;
   const gridApi = useRef(null);
   const pinFieldsRef = useRef({});
-  const {tableSlug} = useParams();
+  const {tableSlug, appId} = useParams();
   const {i18n, t} = useTranslation();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -79,7 +102,10 @@ function AgGridTableView(props) {
   const [groupTab, setGroupTab] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [filterVisible, setFilterVisible] = useState(false);
+  const [selectedViewType, setSelectedViewType] = useState({
+    label: "Side peek",
+    icon: "SidePeek",
+  });
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -141,7 +167,7 @@ function AgGridTableView(props) {
       enabled: !!tableSlug && !view?.attributes?.treeData,
       onSuccess: (data) => {
         setCount(data?.data?.count);
-        setRowData(data?.data?.response ?? []);
+        setRowData([...data?.data?.response] ?? []);
         setLoading(false);
       },
       onError: () => {
@@ -160,7 +186,14 @@ function AgGridTableView(props) {
     {
       enabled: !!tableSlug && view?.attributes?.treeData,
       onSuccess: (data) => {
-        setRowData(data?.data?.response);
+        setRowData([
+          ...data?.data?.response,
+          {
+            field: "actions",
+            headerName: "Actions",
+            cellRenderer: ButtonCellRenderer,
+          },
+        ]);
         setLoading(false);
       },
       onError: () => {
@@ -181,13 +214,14 @@ function AgGridTableView(props) {
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields?.map((item) => {
+        fiedlsarray: res?.data?.fields?.map((item, index) => {
           const columnDef = {
             view,
             flex: 1,
             minWidth: 250,
             editable: true,
             enableRowGroup: true,
+            fieldObj: item,
             field: item?.slug,
             rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
               ? true
@@ -201,12 +235,44 @@ function AgGridTableView(props) {
                 : item?.id || generateGUID(),
             headerName:
               item?.attributes?.[`label_${i18n?.language}`] || item?.label,
+            headerComponent: HeaderComponent,
             pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
           };
           getColumnEditorParams(item, columnDef);
           return columnDef;
         }),
       };
+    },
+  });
+
+  const {
+    data: {layout} = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onSuccess: (data) => {
+      if (data?.layout?.type === "PopupLayout") {
+        setLayoutType("PopupLayout");
+      } else {
+        setLayoutType("SimpleLayout");
+      }
+    },
+    onError: (error) => {
+      console.error("Error", error);
     },
   });
 
@@ -229,8 +295,10 @@ function AgGridTableView(props) {
         },
         ...fiedlsarray
           ?.filter((item) => view?.columns?.includes(item?.columnID))
-          .map((el) => ({
+          .map((el, index) => ({
             ...el,
+            colIndex: index,
+            onRowClick: navigateToEditPage,
           })),
         {
           ...ActionsColumn,
@@ -248,24 +316,25 @@ function AgGridTableView(props) {
       ];
     }
   }, [fiedlsarray, view]);
-  const getFilteredFilterFields = useMemo(() => {
-    const filteredFieldsView =
-      views &&
-      views?.find((item) => {
-        return item?.type === "TABLE" && item?.attributes?.quick_filters;
-      });
 
-    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
-      (el) => {
-        return el?.field_id;
-      }
-    );
-    const filteredFields = fiedlsarray?.filter((item) => {
-      return quickFilters?.includes(item?.columnID);
-    });
+  // const getFilteredFilterFields = useMemo(() => {
+  //   const filteredFieldsView =
+  //     views &&
+  //     views?.find((item) => {
+  //       return item?.type === "TABLE" && item?.attributes?.quick_filters;
+  //     });
 
-    return filteredFields;
-  }, [views, fiedlsarray]);
+  //   const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
+  //     (el) => {
+  //       return el?.field_id;
+  //     }
+  //   );
+  //   const filteredFields = fiedlsarray?.filter((item) => {
+  //     return quickFilters?.includes(item?.columnID);
+  //   });
+
+  //   return filteredFields;
+  // }, [views, fiedlsarray]);
 
   function addRow(data) {
     setLoading(true);
@@ -292,6 +361,19 @@ function AgGridTableView(props) {
       addIndex: 0,
     });
   }
+
+  const ButtonCellRenderer = (params) => {
+    if (params.node.rowPinned) {
+      return (
+        <button
+        // onClick={addNewRow}
+        >
+          ➕ Add Row
+        </button>
+      );
+    }
+    return null;
+  };
 
   function removeRow(guid) {
     const allRows = [];
@@ -343,7 +425,6 @@ function AgGridTableView(props) {
 
   const createChild = () => {
     if (!selectedRows?.length) {
-      console.error("No parent row selected");
       return;
     }
 
@@ -364,6 +445,40 @@ function AgGridTableView(props) {
 
   const getDataPath = useCallback((data) => data.path, []);
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
   useEffect(() => {
     pinFieldsRef.current = view?.attributes?.pinnedFields;
   }, [view?.attributes?.pinnedFields]);
@@ -377,43 +492,8 @@ function AgGridTableView(props) {
   }, [tabs?.length]);
 
   return (
-    <Box sx={{height: "calc(100vh - 50px)", overflow: "scroll"}}>
-      <FiltersBlock
-        view={view}
-        views={views}
-        filters={filters}
-        fieldsMap={fieldsMap}
-        searchText={searchText}
-        updateField={updateField}
-        setSearchText={setSearchText}
-        checkedColumns={checkedColumns}
-        selectedTabIndex={selectedTabIndex}
-        setFilterVisible={setFilterVisible}
-        columnsForSearch={columnsForSearch}
-        setCheckedColumns={setCheckedColumns}
-        computedVisibleFields={computedVisibleFields}
-        visibleRelationColumns={visibleRelationColumns}
-      />
-
+    <Box sx={{height: "calc(100vh - 85px)", overflow: "scroll"}}>
       <div className={style.gridTable}>
-        <div className={!filterVisible ? style.wrapperVisible : style.wrapper}>
-          <Box className={style.block}>
-            <p>{t("filters")}</p>
-            <FastFilter
-              isVertical
-              view={view}
-              fieldsMap={fieldsMap}
-              isVisibleLoading={true}
-              visibleForm={visibleForm}
-              visibleColumns={visibleColumns}
-              setFilterVisible={setFilterVisible}
-              selectedTabIndex={selectedTabIndex}
-              visibleRelationColumns={visibleRelationColumns}
-              getFilteredFilterFields={getFilteredFilterFields}
-            />
-          </Box>
-        </div>
-
         <div
           className="ag-theme-quartz"
           style={{
@@ -448,39 +528,47 @@ function AgGridTableView(props) {
               </Box>
             )}
 
-            <AgGridReact
-              ref={gridApi}
-              rowBuffer={8}
-              theme={myTheme}
-              rowData={rowData}
-              loading={loading}
-              columnDefs={columns}
-              suppressRefresh={true}
-              enableClipboard={true}
-              showOpenedGroup={true}
-              groupDisplayType="single"
-              suppressAutoColumn={true}
-              paginationPageSize={limit}
-              undoRedoCellEditing={true}
-              rowModelType={"clientSide"}
-              rowSelection={rowSelection}
-              undoRedoCellEditingLimit={5}
-              defaultColDef={defaultColDef}
-              cellSelection={cellSelection}
-              onColumnPinned={onColumnPinned}
-              suppressColumnVirtualisation={true}
-              treeData={view?.attributes?.treeData}
-              autoGroupColumnDef={autoGroupColumnDef}
-              suppressServerSideFullWidthLoadingRow={true}
-              loadingOverlayComponent={CustomLoadingOverlay}
-              getDataPath={view?.attributes?.treeData ? getDataPath : undefined}
-              onCellValueChanged={(e) => {
-                updateObject(e.data);
-              }}
-              onSelectionChanged={(e) =>
-                setSelectedRows(e.api.getSelectedRows())
-              }
-            />
+            {!columns?.length ? (
+              <NoFieldsComponent />
+            ) : (
+              <>
+                <AgGridReact
+                  ref={gridApi}
+                  rowBuffer={6}
+                  theme={myTheme}
+                  rowData={rowData}
+                  loading={loading}
+                  columnDefs={columns}
+                  suppressRefresh={true}
+                  enableClipboard={true}
+                  showOpenedGroup={true}
+                  groupDisplayType="single"
+                  suppressAutoColumn={true}
+                  paginationPageSize={limit}
+                  undoRedoCellEditing={true}
+                  rowSelection={rowSelection}
+                  rowModelType={"clientSide"}
+                  undoRedoCellEditingLimit={5}
+                  defaultColDef={defaultColDef}
+                  cellSelection={cellSelection}
+                  onColumnPinned={onColumnPinned}
+                  suppressColumnVirtualisation={true}
+                  treeData={view?.attributes?.treeData}
+                  autoGroupColumnDef={autoGroupColumnDef}
+                  suppressServerSideFullWidthLoadingRow={true}
+                  loadingOverlayComponent={CustomLoadingOverlay}
+                  getDataPath={
+                    view?.attributes?.treeData ? getDataPath : undefined
+                  }
+                  onCellValueChanged={(e) => {
+                    updateObject(e.data);
+                  }}
+                  onSelectionChanged={(e) => {
+                    setSelectedRows(e.api.getSelectedRows());
+                  }}
+                />
+              </>
+            )}
           </Box>
         </div>
       </div>
@@ -498,8 +586,92 @@ function AgGridTableView(props) {
         selectedRows={selectedRows}
         updateTreeData={updateTreeData}
       />
+
+      {Boolean(open && projectInfo?.new_layout) &&
+      selectedViewType?.icon === "SidePeek" ? (
+        <DrawerDetailPage
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      ) : selectedViewType?.icon === "CenterPeek" ? (
+        <NewModalDetailPage
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      ) : null}
+
+      {Boolean(open && !projectInfo?.new_layout) && (
+        <ModalDetailPage
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      )}
     </Box>
   );
 }
+
+const HeaderComponent = (props) => {
+  const buttonRef = useRef(null);
+  const {column} = props;
+  const field = column?.colDef?.fieldObj;
+
+  const openFilterMenu = () => {
+    if (props.api && props.column && buttonRef.current) {
+      props.showColumnMenu(buttonRef.current);
+    }
+  };
+
+  return (
+    <Flex justifyContent={"space-between"} alignItems={"center"}>
+      <Flex alignItems={"center"} gap={"10px"}>
+        {getColumnIcon({
+          column: {
+            type: field?.type ?? field?.relation_type,
+            table_slug: field?.table_slug ?? field?.slug,
+          },
+        })}
+        <Text>{column?.colDef?.headerName}</Text>
+      </Flex>
+      <ChakraButton
+        ref={buttonRef}
+        onClick={openFilterMenu}
+        _hover={{background: "#EDF2F6"}}
+        w={"20px"}
+        h={"20px"}
+        bg={"none"}>
+        <ExpandMoreIcon
+          style={{fontSize: "24px", color: "#667085", pointerEvents: "none"}}
+        />
+      </ChakraButton>
+    </Flex>
+  );
+};
 
 export default AgGridTableView;

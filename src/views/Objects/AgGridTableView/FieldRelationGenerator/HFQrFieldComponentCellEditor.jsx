@@ -4,6 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import HFQrFieldCellEditor from "./BarcodeComponents/HFQrFieldCellEditor";
 import HFQrForTableViewCellEditor from "./BarcodeComponents/HFQrForTableViewCellEditor";
+import RowClickButton from "../RowClickButton";
 
 function HFQrFieldComponentCellEditor(props) {
   const {field, setValue, value, isTableView = true, newColumn = false} = props;
@@ -96,6 +97,8 @@ function HFQrFieldComponentCellEditor(props) {
           )}
         </Box>
       </Menu>
+
+      {props?.colDef?.colIndex === 0 && <RowClickButton />}
     </>
   );
 }

@@ -157,7 +157,7 @@
 .gridTable {
   position: relative;
   width: 100%;
-  height: calc(100vh - 300px);
+  // height: calc(100vh - 300px);
   display: flex;
   flex-direction: row;
 }
@@ -263,7 +263,7 @@
 
 .footer {
   width: 100%;
-  height: 50px;
+  height: 45px;
   background: #fff;
   position: absolute;
   bottom: 0;
@@ -277,6 +277,7 @@
   .footerActions {
     display: flex;
     align-items: center;
+
     .footerBtns {
       display: flex;
       gap: 10px;
@@ -286,9 +287,9 @@
 
 .addRowBtn {
   width: 100%;
-  height: 40px;
-  position: absolute;
-  top: -20px;
+  height: 100%;
+  // position: absolute;
+  // top: -20px;
   left: 0;
   border: none;
   background-color: #fff;
@@ -302,4 +303,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #344054;
+}
+
+.limitSide {
+  width: 150px;
+}
+
+.pagination {
+  position: absolute;
+  left: 45%;
 }

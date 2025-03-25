@@ -1179,8 +1179,8 @@ const Companies = ({onSelectEnvironment}) => {
   return (
     <Box p={8} borderBottom={"1px solid #eee"}>
       <Accordion allowToggle>
-        {companies.map((company) => (
-          <AccordionItem key={company.id}>
+        {companies?.map((company) => (
+          <AccordionItem key={company?.id}>
             <AccordionButton
               columnGap={8}
               p={5}
@@ -1190,7 +1190,8 @@ const Companies = ({onSelectEnvironment}) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{bg: "#EAECF0"}}>
+              _hover={{ bg: "#EAECF0" }}
+            >
               <Flex
                 w={20}
                 h={20}
@@ -1200,11 +1201,12 @@ const Companies = ({onSelectEnvironment}) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff">
-                {company.name?.[0]?.toUpperCase()}
+                color="#fff"
+              >
+                {company?.name?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">
-                {company.name}
+                {company?.name}
               </Box>
               <AccordionIcon ml="auto" fontSize="20px" />
             </AccordionButton>

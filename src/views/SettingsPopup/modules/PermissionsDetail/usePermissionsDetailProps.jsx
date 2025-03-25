@@ -7,20 +7,23 @@ import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
 import { useGetLang } from "../../../../hooks/useGetLang";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
+import roleServiceV2 from "../../../../services/roleServiceV2";
 
 export const usePermissionsDetailProps = () => {
-
   const lang = useGetLang("Setting");
 
-  const {clientId} = useParams();
+  const { clientId } = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
-  const {control, reset} = useForm();
+  const { control, reset } = useForm();
   const [connections, setConnections] = useState([]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
-  const {setSearchParams} = useSettingsPopupContext()
+  const [tabIndex, setTabIndex] = useState(0);
 
-  const {isLoading} = useQuery(
+  const { searchParams, setSearchParams, updateSearchParam } =
+    useSettingsPopupContext();
+
+  const { isLoading } = useQuery(
     ["GET_CLIENT_TYPE_BY_ID", clientId],
     () => {
       return clientTypeServiceV2.getById(clientId);
@@ -34,12 +37,34 @@ export const usePermissionsDetailProps = () => {
     }
   );
 
+  const { data: roles, isRolesLoading } = useQuery(
+    ["GET_ROLE_LIST", clientId, searchParams?.get("permissionId")],
+    () => {
+      return roleServiceV2.getList({ "client-type-id": clientId });
+    },
+    {
+      onSuccess(res) {
+        updateSearchParam("roleId", res?.data?.response[0]?.guid);
+      },
+    }
+  );
+
   const onRowClick = (element) => {
     setSearchParams({
       permissionId: element?.guid,
-      tab: TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS_ROLE_DETAIL
-    })
-  }
+      tab: TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS_ROLE_DETAIL,
+    });
+  };
+
+  const onTabClick = (element, index) => {
+    console.log({ element });
+    updateSearchParam("roleId", element?.guid);
+    updateSearchParam(
+      "tab",
+      TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS_ROLE_DETAIL
+    );
+    setTabIndex(index);
+  };
 
   return {
     lang,
@@ -53,6 +78,11 @@ export const usePermissionsDetailProps = () => {
     setSelectedTab,
     setSearchParams,
     onRowClick,
-  }
-
-}
+    roles: roles?.data?.response ?? [],
+    isRolesLoading,
+    tabIndex,
+    setTabIndex,
+    onTabClick,
+    activeTabId: searchParams.get("roleId"),
+  };
+};

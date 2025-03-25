@@ -27,9 +27,31 @@ import {ApiKeys} from "./modules/ApiKeys";
 import {ApiKeysDetail} from "./modules/ApiKeysDetail";
 import {Redirect} from "./modules/Redirect";
 import {RedirectForm} from "./modules/RedirectForm";
+import { store } from "../../store";
+import { useQuery } from "react-query";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
-export const useSettingsPopupProps = ({onClose}) => {
-  const {t, i18n} = useTranslation();
+const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+
+const permissionFolder = {
+  label: "Permissionss",
+  type: "USER_FOLDER",
+  icon: "lock.svg",
+  parent_id: adminId,
+  id: "14",
+  data: {
+    permission: {
+      read: true,
+      write: true,
+      delete: true,
+      update: true,
+    },
+  },
+};
+
+export const useSettingsPopupProps = ({ onClose }) => {
+  const { t, i18n } = useTranslation();
 
   const userInfo = useSelector((state) => state?.auth?.userInfo);
 
@@ -39,29 +61,75 @@ export const useSettingsPopupProps = ({onClose}) => {
 
   const [activeTab, setActiveTab] = useState("profile");
 
+  const [isClientTypeModalOpen, setIsClientTypeModalOpen] = useState(false);
+
+  const [permissionChild, setPermissionChild] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const lang = useGetLang("Setting");
+
+  const auth = store.getState().auth;
+
+  const isDefaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+
+  useQuery(
+    ["GET_CLIENT_TYPE_PERMISSION", permissionFolder],
+    () => {
+      setIsLoading(true);
+      return clientTypeServiceV2.getList();
+    },
+    {
+      cacheTime: 10,
+      enabled: Boolean(permissionFolder),
+      onSuccess: (res) => {
+        setIsLoading(false);
+        setPermissionChild(
+          res.data.response?.map((row) => ({
+            ...row,
+            type: "PERMISSION",
+            id: row.guid,
+            parent_id: "13",
+            data: {
+              permission: {
+                read: true,
+              },
+            },
+          }))
+        );
+      },
+      onError: () => {
+        setIsLoading(false);
+      },
+    }
+  );
+
+  const accountTabs = [
+    {
+      key: "profile",
+      title: userInfo?.email || t("profile"),
+      icon: <div className={cls.profileIcon}>{userInfo?.login?.[0]}</div>,
+    },
+    {
+      key: "billing",
+      title: "Billing",
+      icon: <img src={BillingIcon} alt="" width={20} height={20} />,
+    },
+    {
+      key: "fares",
+      title: "Fares",
+      icon: <img src={TariffsIcon} alt="" width={20} height={20} />,
+    },
+  ];
+
+  if (!isDefaultAdmin) {
+    accountTabs.splice(1, 1);
+  }
 
   const tabs = [
     {
       key: "account",
       title: t("account"),
-      tabs: [
-        {
-          key: "profile",
-          title: userInfo?.email || t("profile"),
-          icon: <div className={cls.profileIcon}>{userInfo?.login?.[0]}</div>,
-        },
-        {
-          key: "billing",
-          title: "Billing",
-          icon: <img src={BillingIcon} alt="" width={20} height={20} />,
-        },
-        {
-          key: "fares",
-          title: "Fares",
-          icon: <img src={TariffsIcon} alt="" width={20} height={20} />,
-        },
-      ],
+      tabs: accountTabs,
     },
     {
       key: "advancedSettings",
@@ -92,45 +160,46 @@ export const useSettingsPopupProps = ({onClose}) => {
         },
       ],
     },
-    // {
-    //   key: "permissions",
-    //   title: t("advanced_settings"),
-    //   tabs: [
-    //     {
-    //       key: "permissions",
-    //       title:
-    //         generateLangaugeText(lang, i18n?.language, "Permissions") ||
-    //         "Permissions",
-    //       icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
-    //     },
-    //     {
-    //       key: "resources",
-    //       title:
-    //         generateLangaugeText(lang, i18n?.language, "Resources") ||
-    //         "Resources",
-    //       icon: (
-    //         <Storage
-    //           sx={{ width: 20, height: 20 }}
-    //           color="rgba(55, 53, 47, 0.85)"
-    //         />
-    //       ),
-    //     },
-    //     {
-    //       key: "apiKeys",
-    //       title:
-    //         generateLangaugeText(lang, i18n?.language, "API Keys") ||
-    //         "API Keys",
-    //       icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
-    //     },
-    //     {
-    //       key: "redirect",
-    //       title:
-    //         generateLangaugeText(lang, i18n?.language, "Custom endpoint") ||
-    //         "Custom endpoint",
-    //       icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
-    //     },
-    //   ],
-    // },
+    {
+      key: "permissions",
+      title: t("advanced_settings"),
+      tabs: [
+        {
+          key: "permissions",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Permissions") ||
+            "Permissions",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+          children: permissionChild,
+        },
+        {
+          key: "resources",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Resources") ||
+            "Resources",
+          icon: (
+            <Storage
+              sx={{ width: 20, height: 20 }}
+              color="rgba(55, 53, 47, 0.85)"
+            />
+          ),
+        },
+        {
+          key: "apiKeys",
+          title:
+            generateLangaugeText(lang, i18n?.language, "API Keys") ||
+            "API Keys",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
+        {
+          key: "redirect",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Custom endpoint") ||
+            "Custom endpoint",
+          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+        },
+      ],
+    },
   ];
 
   const handleClose = () => {
@@ -146,6 +215,22 @@ export const useSettingsPopupProps = ({onClose}) => {
     }
   };
 
+  const handlePermissionClick = (element) => {
+    setActiveTab(TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS);
+    setSearchParams({
+      permissionId: element?.guid,
+      tab: TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS_DETAIL,
+    });
+  };
+
+  const handleOpenClientTypeModal = () => {
+    setIsClientTypeModalOpen(true);
+  };
+
+  const handleCloseClientTypeModal = () => {
+    setIsClientTypeModalOpen(false);
+  };
+
   const tabComponents = {
     profile: <Account />,
     billing: <Billing />,
@@ -159,7 +244,8 @@ export const useSettingsPopupProps = ({onClose}) => {
     languageControl: <LanguageControl withHeader={false} />,
     permissions: {
       permissions: <Permissions />,
-      permissionsDetail: <PermissionsDetail />,
+      // permissionsDetail: <PermissionsDetail />,
+      permissionsDetail: <PermissionsRoleDetail />,
       permissionsRoleDetail: <PermissionsRoleDetail />,
     },
     resources: {
@@ -192,5 +278,12 @@ export const useSettingsPopupProps = ({onClose}) => {
     searchParams,
     setSearchParams,
     updateSearchParam,
+    isDefaultAdmin,
+    handlePermissionClick,
+    activeChildId: searchParams.get("permissionId"),
+    handleOpenClientTypeModal,
+    handleCloseClientTypeModal,
+    isClientTypeModalOpen,
+    permissionChild,
   };
 };

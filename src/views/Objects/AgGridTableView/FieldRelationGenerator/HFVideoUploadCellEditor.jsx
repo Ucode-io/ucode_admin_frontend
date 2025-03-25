@@ -1,3 +1,4 @@
+import RowClickButton from "../RowClickButton";
 import VideoUploadCellEditor from "./ImageComponents/VideoUploadCellEditor";
 
 const HFVideoUploadCellEditor = (props) => {
@@ -14,6 +15,8 @@ const HFVideoUploadCellEditor = (props) => {
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
       )} */}
+
+      {props?.colDef?.colIndex === 0 && <RowClickButton />}
     </>
   );
 };

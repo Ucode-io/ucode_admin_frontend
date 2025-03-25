@@ -8,6 +8,7 @@ import {components} from "react-select";
 import LaunchIcon from "@mui/icons-material/Launch";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import {useParams, useSearchParams} from "react-router-dom";
+import RowClickButton from "../RowClickButton";
 
 const customStyles = {
   control: (provided) => ({
@@ -131,33 +132,37 @@ const LookupCellEditor = (props) => {
   );
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        // height: "100%",
-        width: "100%",
-        overflow: "hidden",
-      }}>
-      <Select
-        isClearable={true}
-        placeholder="Select..."
-        menuPortalTarget={document.body}
-        styles={customStyles}
-        value={inputValue ?? localValue}
-        options={computedOptions}
-        getOptionValue={(option) => option?.guid === value}
-        getOptionLabel={(option) =>
-          `${getRelationFieldTabsLabel(field, option)}`
-        }
-        components={{
-          SingleValue: CustomSingleValue,
-        }}
-        onChange={handleChange}
-        onMenuOpen={() => {
-          refetch();
-        }}
-      />
-    </Box>
+    <>
+      {" "}
+      <Box
+        sx={{
+          position: "relative",
+          // height: "100%",
+          width: "100%",
+          overflow: "hidden",
+        }}>
+        <Select
+          isClearable={true}
+          placeholder="Select..."
+          menuPortalTarget={document.body}
+          styles={customStyles}
+          value={inputValue ?? localValue}
+          options={computedOptions}
+          getOptionValue={(option) => option?.guid === value}
+          getOptionLabel={(option) =>
+            `${getRelationFieldTabsLabel(field, option)}`
+          }
+          components={{
+            SingleValue: CustomSingleValue,
+          }}
+          onChange={handleChange}
+          onMenuOpen={() => {
+            refetch();
+          }}
+        />
+      </Box>
+      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+    </>
   );
 };
 

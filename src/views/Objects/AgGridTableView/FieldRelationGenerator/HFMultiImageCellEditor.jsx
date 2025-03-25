@@ -1,3 +1,4 @@
+import RowClickButton from "../RowClickButton";
 import MultiImageUploadCellEditor from "./ImageComponents/MultiImageUploadCellEditor";
 
 const HFMultiImageCellEditor = (props) => {
@@ -13,6 +14,7 @@ const HFMultiImageCellEditor = (props) => {
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
       )} */}
+      {props?.colDef?.colIndex === 0 && <RowClickButton />}
     </>
   );
 };

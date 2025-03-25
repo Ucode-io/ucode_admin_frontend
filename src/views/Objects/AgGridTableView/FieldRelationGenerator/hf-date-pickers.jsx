@@ -1,103 +1,118 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
 import {format, isValid, parse} from "date-fns";
+import RowClickButton from "../RowClickButton";
 
 export const HFDatePicker = (props) => {
   const {field, setValue, value} = props;
 
   return (
-    <DatePickerInput
-      id="dateField"
-      value={getValue(value)}
-      valueFormat="DD.MM.YYYY"
-      rightSection={<img src="/table-icons/date.svg" alt="" />}
-      onChange={(value) => {
-        if (!value) return;
-        const formattedDate = format(value, "yyyy-MM-dd");
+    <>
+      {" "}
+      <DatePickerInput
+        id="dateField"
+        value={getValue(value)}
+        valueFormat="DD.MM.YYYY"
+        rightSection={<img src="/table-icons/date.svg" alt="" />}
+        onChange={(value) => {
+          if (!value) return;
+          const formattedDate = format(value, "yyyy-MM-dd");
 
-        setValue(formattedDate);
+          setValue(formattedDate);
 
-        if (props.node && props.column) {
-          props.node.setDataValue(props.column.colId, formattedDate);
-        }
-      }}
-      styles={{input: {background: "inherit", border: "none"}}}
-      highlightToday
-      disabled={field?.disabled}
-    />
+          if (props.node && props.column) {
+            props.node.setDataValue(props.column.colId, formattedDate);
+          }
+        }}
+        styles={{input: {background: "inherit", border: "none"}}}
+        highlightToday
+        disabled={field?.disabled}
+      />
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+    </>
   );
 };
 
 export const HFDateTimePicker = (props) => {
   const {field, setValue, value} = props;
   return (
-    <DateTimePicker
-      id="dateTimeField"
-      value={getValue(value)}
-      valueFormat="DD.MM.YYYY HH:mm"
-      rightSection={<img src="/table-icons/date-time.svg" alt="" />}
-      onChange={(value) => {
-        if (!value) return;
-        const formattedDate = format(value, "yyyy-MM-dd HH:mm");
+    <>
+      <DateTimePicker
+        id="dateTimeField"
+        value={getValue(value)}
+        valueFormat="DD.MM.YYYY HH:mm"
+        rightSection={<img src="/table-icons/date-time.svg" alt="" />}
+        onChange={(value) => {
+          if (!value) return;
+          const formattedDate = format(value, "yyyy-MM-dd HH:mm");
 
-        setValue(formattedDate);
+          setValue(formattedDate);
 
-        if (props.node && props.column) {
-          props.node.setDataValue(props.column.colId, formattedDate);
-        }
-      }}
-      styles={{input: {background: "inherit", border: "none"}}}
-      highlightToday
-      disabled={field?.disabled}
-    />
+          if (props.node && props.column) {
+            props.node.setDataValue(props.column.colId, formattedDate);
+          }
+        }}
+        styles={{input: {background: "inherit", border: "none"}}}
+        highlightToday
+        disabled={field?.disabled}
+      />
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+    </>
   );
 };
 
 export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
   const {field, setValue, value} = props;
   return (
-    <DateTimePicker
-      id="dateTimeZoneField"
-      value={getNoTimezoneValue(value)}
-      valueFormat="DD.MM.YYYY HH:mm"
-      rightSection={<img src="/table-icons/date-time.svg" alt="" />}
-      onChange={(value) => {
-        if (!value) return;
-        const formattedDate = format(value, "dd.MM.yyyy HH:mm");
+    <>
+      {" "}
+      <DateTimePicker
+        id="dateTimeZoneField"
+        value={getNoTimezoneValue(value)}
+        valueFormat="DD.MM.YYYY HH:mm"
+        rightSection={<img src="/table-icons/date-time.svg" alt="" />}
+        onChange={(value) => {
+          if (!value) return;
+          const formattedDate = format(value, "dd.MM.yyyy HH:mm");
 
-        setValue(formattedDate);
+          setValue(formattedDate);
 
-        if (props.node && props.column) {
-          props.node.setDataValue(props.column.colId, formattedDate);
-        }
-      }}
-      styles={{input: {background: "inherit", border: "none"}}}
-      highlightToday
-      disabled={field?.disabled}
-    />
+          if (props.node && props.column) {
+            props.node.setDataValue(props.column.colId, formattedDate);
+          }
+        }}
+        styles={{input: {background: "inherit", border: "none"}}}
+        highlightToday
+        disabled={field?.disabled}
+      />
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+    </>
   );
 };
 
 export const HFTimePicker = (props) => {
   const {field, setValue, value} = props;
   return (
-    <TimeInput
-      id="timeField"
-      value={value}
-      rightSection={<img src="/table-icons/time.svg" alt="" />}
-      onChange={(value) => {
-        if (!value) return;
-        const formattedDate = format(value, "yyyy-MM-dd");
+    <>
+      <TimeInput
+        id="timeField"
+        value={value}
+        rightSection={<img src="/table-icons/time.svg" alt="" />}
+        onChange={(value) => {
+          if (!value) return;
+          const formattedDate = format(value, "yyyy-MM-dd");
 
-        setValue(formattedDate);
+          setValue(formattedDate);
 
-        if (props.node && props.column) {
-          props.node.setDataValue(props.column.colId, formattedDate);
-        }
-      }}
-      styles={{input: {background: "inherit", border: "none"}}}
-      disabled={field?.disabled}
-    />
+          if (props.node && props.column) {
+            props.node.setDataValue(props.column.colId, formattedDate);
+          }
+        }}
+        styles={{input: {background: "inherit", border: "none"}}}
+        disabled={field?.disabled}
+      />
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="30px" />}
+    </>
   );
 };
 

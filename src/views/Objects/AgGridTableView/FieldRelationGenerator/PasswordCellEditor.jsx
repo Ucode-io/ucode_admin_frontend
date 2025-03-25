@@ -2,9 +2,10 @@ import {IconButton, InputAdornment, TextField} from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import React, {useState} from "react";
 import useDebounce from "../../../../hooks/useDebounce";
+import RowClickButton from "../RowClickButton";
 
 function PasswordCellEditor(props) {
-  const {setValue, value} = props;
+  const {setValue, value, colDef} = props;
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -39,6 +40,7 @@ function PasswordCellEditor(props) {
         onChange={(e) => inputChangeHandler(e.target.value)}
         className={"custom_textfield_new"}
       />
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
     </>
   );
 }

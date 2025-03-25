@@ -4,6 +4,7 @@ import {NumericFormat} from "react-number-format";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {useSelector} from "react-redux";
 import styles from "./style.module.scss";
+import RowClickButton from "../RowClickButton";
 
 function HFMoneyFieldEditor(props) {
   const {
@@ -13,6 +14,7 @@ function HFMoneyFieldEditor(props) {
     disabled = false,
     isBlackBg = false,
     error = {},
+    colDef,
   } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [valueArray, setValueArray] = useState([
@@ -37,70 +39,74 @@ function HFMoneyFieldEditor(props) {
   };
 
   return (
-    <Box sx={{display: "flex", alignItems: "center", height: "32px"}}>
-      <NumericFormat
-        thousandsGroupStyle="thousand"
-        thousandSeparator=" "
-        decimalSeparator="."
-        displayType="input"
-        isNumericString={true}
-        autoComplete="off"
-        className="customMoneyField"
-        value={value?.[0] || 0}
-        onChange={(event) => {
-          const newValue = event.target.value;
-          console.log("newValue", newValue);
-          setValueArray([newValue, valueArray[1]]);
-          setValue([newValue, value[1]]);
-        }}
-        style={
-          isTransparent
-            ? {
-                background: "transparent",
-                border: "none",
-                borderRadius: "0",
-                outline: "none",
-              }
-            : disabled
+    <>
+      {" "}
+      <Box sx={{display: "flex", alignItems: "center", height: "32px"}}>
+        <NumericFormat
+          thousandsGroupStyle="thousand"
+          thousandSeparator=" "
+          decimalSeparator="."
+          displayType="input"
+          isNumericString={true}
+          autoComplete="off"
+          className="customMoneyField"
+          value={value?.[0] || 0}
+          onChange={(event) => {
+            const newValue = event.target.value;
+            console.log("newValue", newValue);
+            setValueArray([newValue, valueArray[1]]);
+            setValue([newValue, value[1]]);
+          }}
+          style={
+            isTransparent
               ? {
-                  background: "#c0c0c039",
-                  borderRight: 0,
+                  background: "transparent",
+                  border: "none",
+                  borderRadius: "0",
                   outline: "none",
                 }
-              : {
-                  background: isBlackBg ? "#2A2D34" : "",
-                  color: isBlackBg ? "#fff" : "",
-                  outline: "none",
-                  border: error?.type === "required" ? "1px solid red" : "",
-                }
-        }
-      />
-      <button
-        className={styles.moneyBtn}
-        onClick={handleMenuClick}
-        style={{cursor: "pointer", paddingLeft: "5px"}}>
-        <div>{valueArray?.[1]}</div>
-        <ArrowDropDownIcon style={{fontSize: "20px"}} />
-      </button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => handleMenuClose()}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}>
-        {currencies?.map((el) => (
-          <MenuItem
-            onClick={() => {
-              setValue([value?.[0] ?? "", el?.label]);
-              handleMenuClose(el?.label);
-            }}>
-            {el?.label}
-          </MenuItem>
-        ))}
-      </Menu>
-    </Box>
+              : disabled
+                ? {
+                    background: "#c0c0c039",
+                    borderRight: 0,
+                    outline: "none",
+                  }
+                : {
+                    background: isBlackBg ? "#2A2D34" : "",
+                    color: isBlackBg ? "#fff" : "",
+                    outline: "none",
+                    border: error?.type === "required" ? "1px solid red" : "",
+                  }
+          }
+        />
+        <button
+          className={styles.moneyBtn}
+          onClick={handleMenuClick}
+          style={{cursor: "pointer", paddingLeft: "5px"}}>
+          <div>{valueArray?.[1]}</div>
+          <ArrowDropDownIcon style={{fontSize: "20px"}} />
+        </button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={() => handleMenuClose()}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}>
+          {currencies?.map((el) => (
+            <MenuItem
+              onClick={() => {
+                setValue([value?.[0] ?? "", el?.label]);
+                handleMenuClose(el?.label);
+              }}>
+              {el?.label}
+            </MenuItem>
+          ))}
+        </Menu>
+      </Box>
+      {colDef?.colIndex === 0 && <RowClickButton right={"55px"} />}
+    </>
   );
 }
 

@@ -42,6 +42,8 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   const rowSelection = useMemo(
     () => ({
       mode: "multiRow",
+      checkboxes: false,
+      headerCheckbox: false,
     }),
     []
   );

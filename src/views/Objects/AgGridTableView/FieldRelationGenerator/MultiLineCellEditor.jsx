@@ -1,6 +1,7 @@
 import {Box, Popover} from "@mui/material";
 import React, {useState} from "react";
 import ReactQuill from "react-quill";
+import RowClickButton from "../RowClickButton";
 
 function MultiLineCellEditor(props) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -43,6 +44,7 @@ function MultiLineCellEditor(props) {
       ],
     },
   };
+
   return (
     <>
       <Box
@@ -112,6 +114,8 @@ function MultiLineCellEditor(props) {
           }}
         />
       </Popover>
+
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
     </>
   );
 }

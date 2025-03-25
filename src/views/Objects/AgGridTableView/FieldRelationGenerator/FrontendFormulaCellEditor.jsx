@@ -51,23 +51,26 @@ const FrontendFormulaCellEditor = (props) => {
   }, [Object?.values(data ?? {})?.map((el) => el), evaluateFormula]);
 
   return (
-    <TextField
-      size="small"
-      value={formulaIsVisible ? formula : calculatedValue}
-      fullWidth
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              edge="end"
-              onClick={() => setFormulaIsVisible(!formulaIsVisible)}>
-              <FunctionsIcon />
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-      className="custom_textfield_new"
-    />
+    <>
+      <TextField
+        size="small"
+        value={formulaIsVisible ? formula : calculatedValue}
+        fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                edge="end"
+                onClick={() => setFormulaIsVisible(!formulaIsVisible)}>
+                <FunctionsIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        className="custom_textfield_new"
+      />
+      {props?.colDef?.colIndex === 0 && <RowClickButton right="5px" />}
+    </>
   );
 };
 

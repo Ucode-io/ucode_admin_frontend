@@ -3,6 +3,7 @@ import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import {useState} from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import HFPolygonFieldCellEditor from "./MapCellEditorComponents/HFPolygonFieldCellEditor";
+import RowClickButton from "../RowClickButton";
 
 const style = {
   position: "absolute",
@@ -27,57 +28,61 @@ function PolygonFieldTableCellEditor(props) {
   };
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          padding: "0  0 0 13px",
-        }}
-        onClick={handleOpen}>
-        <span>Polygon</span>
-        <Button>
-          <LocationSearchingIcon />
-        </Button>
-      </Box>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Box>
-            <HFPolygonFieldCellEditor
-              width={"740px"}
-              height={"400px"}
-              field={field}
-              onChange={setValue}
-              value={value}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              bottom: "20px",
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              margin: "20px 0 0 0",
-            }}>
-            <Button
-              sx={{width: "150px"}}
-              variant="outlined"
-              color="error"
-              onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              sx={{width: "150px"}}
-              variant="contained"
-              onClick={updatePolygon}>
-              Save
-            </Button>
-          </Box>
+    <>
+      {" "}
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            padding: "0  0 0 13px",
+          }}
+          onClick={handleOpen}>
+          <span>Polygon</span>
+          <Button>
+            <LocationSearchingIcon />
+          </Button>
         </Box>
-      </Modal>
-    </Box>
+        <Modal open={open} onClose={handleClose}>
+          <Box sx={style}>
+            <Box>
+              <HFPolygonFieldCellEditor
+                width={"740px"}
+                height={"400px"}
+                field={field}
+                onChange={setValue}
+                value={value}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                bottom: "20px",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                margin: "20px 0 0 0",
+              }}>
+              <Button
+                sx={{width: "150px"}}
+                variant="outlined"
+                color="error"
+                onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button
+                sx={{width: "150px"}}
+                variant="contained"
+                onClick={updatePolygon}>
+                Save
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      </Box>
+      {props?.colDef?.colIndex === 0 && <RowClickButton />}
+    </>
   );
 }
 

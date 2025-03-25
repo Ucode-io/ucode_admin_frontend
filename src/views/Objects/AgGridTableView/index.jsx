@@ -157,13 +157,6 @@ function AgGridTableView(props) {
     }
   );
 
-  const ButtonCellRenderer = (params) => {
-    if (params.node.rowPinned) {
-      return <button onClick={addNewRow}>➕ Add Row</button>;
-    }
-    return null;
-  };
-
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
     ["GET_OBJECTS_TREEDATA", filters],
     () =>
@@ -202,7 +195,7 @@ function AgGridTableView(props) {
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields?.map((item) => {
+        fiedlsarray: res?.data?.fields?.map((item, index) => {
           const columnDef = {
             view,
             flex: 1,
@@ -217,6 +210,8 @@ function AgGridTableView(props) {
             cellClass:
               item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
             gridApi: gridApi,
+            checkboxSelection: false,
+            headerCheckboxSelection: false,
             columnID:
               item?.type === "LOOKUP"
                 ? item?.relation_id
@@ -252,8 +247,9 @@ function AgGridTableView(props) {
         },
         ...fiedlsarray
           ?.filter((item) => view?.columns?.includes(item?.columnID))
-          .map((el) => ({
+          .map((el, index) => ({
             ...el,
+            colIndex: index,
           })),
         {
           ...ActionsColumn,
@@ -272,24 +268,24 @@ function AgGridTableView(props) {
     }
   }, [fiedlsarray, view]);
 
-  const getFilteredFilterFields = useMemo(() => {
-    const filteredFieldsView =
-      views &&
-      views?.find((item) => {
-        return item?.type === "TABLE" && item?.attributes?.quick_filters;
-      });
+  // const getFilteredFilterFields = useMemo(() => {
+  //   const filteredFieldsView =
+  //     views &&
+  //     views?.find((item) => {
+  //       return item?.type === "TABLE" && item?.attributes?.quick_filters;
+  //     });
 
-    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
-      (el) => {
-        return el?.field_id;
-      }
-    );
-    const filteredFields = fiedlsarray?.filter((item) => {
-      return quickFilters?.includes(item?.columnID);
-    });
+  //   const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
+  //     (el) => {
+  //       return el?.field_id;
+  //     }
+  //   );
+  //   const filteredFields = fiedlsarray?.filter((item) => {
+  //     return quickFilters?.includes(item?.columnID);
+  //   });
 
-    return filteredFields;
-  }, [views, fiedlsarray]);
+  //   return filteredFields;
+  // }, [views, fiedlsarray]);
 
   function addRow(data) {
     setLoading(true);
@@ -316,6 +312,19 @@ function AgGridTableView(props) {
       addIndex: 0,
     });
   }
+
+  const ButtonCellRenderer = (params) => {
+    if (params.node.rowPinned) {
+      return (
+        <button
+        // onClick={addNewRow}
+        >
+          ➕ Add Row
+        </button>
+      );
+    }
+    return null;
+  };
 
   function removeRow(guid) {
     const allRows = [];
@@ -454,6 +463,7 @@ function AgGridTableView(props) {
                   suppressAutoColumn={true}
                   paginationPageSize={limit}
                   undoRedoCellEditing={true}
+                  rowSelection={rowSelection}
                   rowModelType={"clientSide"}
                   undoRedoCellEditingLimit={5}
                   defaultColDef={defaultColDef}
@@ -468,12 +478,11 @@ function AgGridTableView(props) {
                     view?.attributes?.treeData ? getDataPath : undefined
                   }
                   onCellValueChanged={(e) => {
-                    console.log("eeeeeeeeeeeee", e);
                     updateObject(e.data);
                   }}
-                  onSelectionChanged={(e) =>
-                    setSelectedRows(e.api.getSelectedRows())
-                  }
+                  onSelectionChanged={(e) => {
+                    setSelectedRows(e.api.getSelectedRows());
+                  }}
                 />
               </>
             )}

@@ -28,6 +28,12 @@ import NewModalDetailPage from "../../components/NewModalDetailPage";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const TableView = ({
+  selectedRow,
+  setSelectedRow = () => {},
+  open,
+  setOpen = () => {},
+  setLayoutType = () => {},
+  layoutType,
   filterVisible,
   setCurrentPage,
   currentPage,
@@ -79,10 +85,8 @@ const TableView = ({
     (state) => state?.pagination?.paginationInfo
   );
   const [limit, setLimit] = useState(20);
-  const [layoutType, setLayoutType] = useState("SimpleLayout");
-  const [open, setOpen] = useState(false);
+
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
-  const [selectedRow, setSelectedRow] = useState("");
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const [drawerStateField, setDrawerStateField] = useState(null);

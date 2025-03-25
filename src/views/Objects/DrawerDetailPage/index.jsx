@@ -36,7 +36,7 @@ function DrawerDetailPage({
   open,
   layout,
   refetch,
-  setOpen,
+  setOpen = () => {},
   menuItem,
   fieldsMap,
   selectedRow,
@@ -60,6 +60,7 @@ function DrawerDetailPage({
   const isUserId = useSelector((state) => state?.auth?.userId);
 
   const {id: idFromParam, tableSlug, appId} = useParams();
+
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
   }, [idFromParam, selectedRow]);
@@ -262,6 +263,7 @@ function DrawerDetailPage({
       .create(tableSlug, {data})
       .then((res) => {
         updateLayout();
+        setOpen(false);
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -289,7 +291,6 @@ function DrawerDetailPage({
           handleClose();
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
-
         dispatch(showAlert("Successfully updated!", "success"));
       })
       .catch((e) => console.log("ERROR: ", e))

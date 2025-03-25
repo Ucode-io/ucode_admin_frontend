@@ -756,7 +756,7 @@ export const NewUiViewsWithGroups = ({
           )}
 
           <Tabs direction={"ltr"} defaultIndex={0}>
-            {tabs?.length > 0 && (
+            {tabs?.length > 0 && view?.type !== "GRID" && (
               <div id="tabsHeight" className={style.tableCardHeader}>
                 <div style={{display: "flex", alignItems: "center"}}>
                   <div className="title" style={{marginRight: "20px"}}>

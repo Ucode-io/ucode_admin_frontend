@@ -175,7 +175,7 @@ function AgGridTableView(props) {
       },
     }
   );
-
+  console.log("viewviewviewviewview", view);
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
     ["GET_OBJECTS_TREEDATA", filters],
     () =>
@@ -184,7 +184,7 @@ function AgGridTableView(props) {
         ...filters,
       }),
     {
-      enabled: !!tableSlug && view?.attributes?.treeData,
+      enabled: Boolean(tableSlug && view?.attributes?.treeData),
       onSuccess: (data) => {
         setRowData([
           ...data?.data?.response,

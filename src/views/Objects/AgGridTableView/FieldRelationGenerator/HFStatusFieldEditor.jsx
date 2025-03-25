@@ -18,6 +18,7 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
             width: "100%",
             height: "32px",
             border: "none",
+            background: "transparent",
             borderRadius: "0px",
             "& .MuiSelect-select": {
               display: "flex",

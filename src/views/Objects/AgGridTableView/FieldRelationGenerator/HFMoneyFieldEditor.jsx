@@ -10,7 +10,7 @@ function HFMoneyFieldEditor(props) {
   const {
     value,
     setValue,
-    isTransparent = false,
+    isTransparent = true,
     disabled = false,
     isBlackBg = false,
     error = {},
@@ -46,7 +46,13 @@ function HFMoneyFieldEditor(props) {
   return (
     <>
       {" "}
-      <Box sx={{display: "flex", alignItems: "center", height: "32px"}}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          height: "32px",
+          background: "transparent",
+        }}>
         <NumericFormat
           thousandsGroupStyle="thousand"
           thousandSeparator=" "

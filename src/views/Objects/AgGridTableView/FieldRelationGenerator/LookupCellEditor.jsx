@@ -15,7 +15,7 @@ const customStyles = {
     ...provided,
     height: "32px",
     minHeight: "25px",
-
+    background: "transparent",
     boxSizing: "border-box",
     width: "100%",
     border: "none",

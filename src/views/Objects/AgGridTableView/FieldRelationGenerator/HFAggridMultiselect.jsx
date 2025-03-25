@@ -191,6 +191,16 @@ const AutoCompleteElement = ({
                   position: "absolute",
                   right: 0,
                 },
+                backgroundColor: "transparent",
+                "& .MuiInputBase-root": {
+                  backgroundColor: "transparent",
+                },
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "transparent",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "transparent",
+                },
               }}
               InputProps={{
                 ...params.InputProps,

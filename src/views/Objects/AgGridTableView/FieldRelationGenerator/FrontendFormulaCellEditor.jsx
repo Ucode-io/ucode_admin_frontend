@@ -71,6 +71,18 @@ const FrontendFormulaCellEditor = (props) => {
             </InputAdornment>
           ),
         }}
+        sx={{
+          backgroundColor: "transparent",
+          "& .MuiInputBase-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "transparent",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "transparent",
+          },
+        }}
         className="custom_textfield_new"
       />
       {props?.colDef?.colIndex === 0 && (

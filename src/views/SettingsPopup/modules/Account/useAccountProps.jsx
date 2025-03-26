@@ -22,6 +22,7 @@ export const useAccountProps = () => {
 
   const projectId = useSelector((state) => state?.auth?.projectId);
   const userInfo = useSelector((state) => state?.auth?.userInfo);
+  const userData = useSelector((state) => state?.auth?.user_data);
   const envId = useSelector((state) => state?.auth);
 
   const [inputType, setInputType] = useState(true);
@@ -147,7 +148,7 @@ export const useAccountProps = () => {
     getSessions();
 
     authService
-      .getUserById(userId, {
+      .getUserById(userData?.user_id_auth, {
         "project-id": projectId,
         "client-type-id": clientType?.id,
       })

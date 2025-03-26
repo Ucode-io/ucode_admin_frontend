@@ -18,13 +18,39 @@ const CustomPermissionRow = ({ watch, setValue }) => {
     <>
       <CTableHeadRow>
         <CTableCell>
-          <Box sx={style}>Chat</Box>
+          <Box sx={style}>ChatAI</Box>
         </CTableCell>
         <CTableCell>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <CustomCheckbox
               checked={watch("data.global_permission.chat")}
               onChange={(e) => handleChange(e, "chat")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
+      <CTableHeadRow>
+        <CTableCell>
+          <Box sx={style}>Chatwoot</Box>
+        </CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <CustomCheckbox
+              checked={watch("data.global_permission.chatwoot_button")}
+              onChange={(e) => handleChange(e, "chatwoot_button")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
+      <CTableHeadRow>
+        <CTableCell>
+          <Box sx={style}>Documentation</Box>
+        </CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <CustomCheckbox
+              checked={watch("data.global_permission.gitbook_button")}
+              onChange={(e) => handleChange(e, "gitbook_button")}
             />
           </Box>
         </CTableCell>

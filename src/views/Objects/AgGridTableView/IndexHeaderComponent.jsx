@@ -1,30 +1,65 @@
 import React from "react";
-import AddIcon from "@mui/icons-material/Add";
-import style from "./style.module.scss";
-import {Tooltip} from "@mui/material";
-import {generateGUID} from "../../../utils/generateID";
+import {Box, Image} from "@chakra-ui/react";
+import {useState} from "react";
+import {Checkbox} from "@mantine/core";
+import {Button} from "@mui/material";
 
 function IndexHeaderComponent(props) {
-  const {column} = props;
-  const treeData = column?.colDef?.view?.attributes?.treeData;
-  console.log("columncolumn", column, treeData);
+  const {column, api} = props;
+  const [hover, setHover] = useState(false);
 
+  const selectedNodes = api.getSelectedNodes();
+  const totalRows = api.getDisplayedRowCount();
+
+  const allSelected = selectedNodes.length === totalRows && totalRows > 0;
+  const someSelected =
+    selectedNodes?.length < totalRows && selectedNodes?.length > 0;
+
+  const toggleRowSelection = () => {
+    if (!api) return;
+
+    if (allSelected) {
+      api.deselectAll();
+    } else {
+      api.selectAll();
+    }
+  };
   return (
-    <Tooltip title="Add new row button">
-      <button
-        className={style.addRowBtn}
-        onClick={() => {
-          treeData
-            ? column?.colDef?.addRow({
-                guid: generateGUID(),
-              })
-            : column?.colDef?.appendNewRow();
-
-          column?.colDef?.appendNewRow();
-        }}>
-        <AddIcon />
-      </button>
-    </Tooltip>
+    <>
+      <Box
+        w={"100%"}
+        h={"100%"}
+        bg={"#F6F6F6"}
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        onMouseEnter={() => (!allSelected || !someSelected) && setHover(true)}
+        onMouseLeave={() => (!allSelected || !someSelected) && setHover(false)}>
+        {!allSelected && !someSelected ? (
+          hover ? (
+            <Checkbox
+              size="xs"
+              checked={allSelected}
+              onChange={(e) => toggleRowSelection()}
+              style={{
+                border: "1.5px solid #637381",
+                borderRadius: "2px",
+              }}
+            />
+          ) : (
+            <Box>
+              <Image src="/img/hash.svg" alt="index" mx="auto" />
+            </Box>
+          )
+        ) : (
+          <Checkbox
+            indeterminate={someSelected}
+            checked={allSelected}
+            onChange={(e) => toggleRowSelection()}
+          />
+        )}
+      </Box>
+    </>
   );
 }
 

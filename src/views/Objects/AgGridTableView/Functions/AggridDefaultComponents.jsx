@@ -13,6 +13,10 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
       width: 200,
       autoHeaderHeight: true,
       suppressServerSideFullWidthLoadingRow: true,
+      enableRangeSelection: true, // Enable selecting multiple cells
+      enableFillHandle: true, // Enable dragging to copy values
+      fillHandleDirection: "xy", // Allow copying in all directions (x: horizontal, y: vertical)
+      suppressMultiRangeSelection: false,
     }),
     []
   );
@@ -42,12 +46,17 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   const rowSelection = useMemo(
     () => ({
       mode: "multiRow",
+      checkboxes: false,
+      headerCheckbox: false,
     }),
     []
   );
   const cellSelection = useMemo(
     () => ({
-      handle: {mode: "fill", suppressClearOnFillReduction: true},
+      handle: {
+        mode: "fill",
+        direction: "y",
+      },
     }),
     []
   );
@@ -62,8 +71,8 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
 export default AggridDefaultComponents;
 
 export const IndexColumn = {
-  width: 50,
-  height: 40,
+  width: 45,
+  height: 32,
   filter: false,
   pinned: "left",
   headerName: "№",
@@ -78,7 +87,8 @@ export const IndexColumn = {
 };
 
 export const ActionsColumn = {
-  width: 120,
+  width: 45,
+  height: 32,
   filter: false,
   sortable: false,
   editable: false,

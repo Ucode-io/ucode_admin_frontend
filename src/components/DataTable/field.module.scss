@@ -96,6 +96,8 @@
   }
 
   .dropdown {
+    height: 150px;
+    overflow: auto;
     .option {
       display: flex;
       flex-direction: column;

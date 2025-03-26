@@ -17,7 +17,7 @@ import HFLinkField from "../../../../components/FormElements/HFLinkField";
 import HFFileUpload from "../../../../components/FormElements/HFFileUpload";
 import HFMoneyField from "./hf-moneyField";
 import {Controller, useWatch} from "react-hook-form";
-import {Input} from "@chakra-ui/react";
+import {ChakraProvider, Input, InputGroup} from "@chakra-ui/react";
 import {NumericFormat} from "react-number-format";
 import {
   Box,
@@ -37,7 +37,7 @@ import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import {Lock} from "@mui/icons-material";
 import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
-import { numberWithSpaces } from "../../../../utils/formatNumbers";
+import {numberWithSpaces} from "../../../../utils/formatNumbers";
 
 function DrawerFieldGenerator({
   field,
@@ -316,39 +316,36 @@ function DrawerFieldGenerator({
   }
 }
 
-const InputField = ({
-  control,
-  name = "",
-  type = "text",
-  disabled = false,
-}) => {
+const InputField = ({control, name = "", type = "text", disabled = false}) => {
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value } }) => {
+      render={({field: {onChange, value}}) => {
         return (
-          <Input
-            disabled={disabled}
-            type={type}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Empty"
-            height="30px"
-            fontSize="13px"
-            px={"9.6px"}
-            width="100%"
-            border="none"
-            borderRadius={"4px"}
-            _hover={{
-              bg: "#F7F7F7",
-            }}
-            _focus={{
-              backgroundColor: "#F7F7F7",
-              border: "none",
-              outline: "none",
-            }}
-          />
+          <ChakraProvider>
+            <Input
+              disabled={disabled}
+              type={type}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="Empty"
+              height="30px"
+              fontSize="13px"
+              px={"9.6px"}
+              width="100%"
+              border="none"
+              borderRadius={"4px"}
+              _hover={{
+                bg: "#F7F7F7",
+              }}
+              _focus={{
+                backgroundColor: "#F7F7F7",
+                border: "none",
+                outline: "none",
+              }}
+            />
+          </ChakraProvider>
         );
       }}
     />

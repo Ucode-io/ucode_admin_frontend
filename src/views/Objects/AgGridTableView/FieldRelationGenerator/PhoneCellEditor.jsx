@@ -5,31 +5,42 @@ import {Box} from "@mui/material";
 import styles from "./style.module.scss";
 import useDebounce from "../../../../hooks/useDebounce";
 import {isString} from "lodash-es";
+import RowClickButton from "../RowClickButton";
 
 const PhoneCellEditor = (props) => {
-  const {setValue = () => {}, value = ""} = props;
+  const {setValue = () => {}, value = "", data} = props;
 
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
 
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
+
   return (
-    <Box>
-      <PhoneInput
-        disabled={false}
-        placeholder="Enter phone number"
-        value={
-          isString(value) ? (value?.includes("+") ? value : `${value}`) : ""
-        }
-        id={`phone_input`}
-        onChange={(newValue) => {
-          inputChangeHandler(newValue);
-        }}
-        defaultCountry="UZ"
-        international
-        className={styles.inputTable}
-        limitMaxLength={true}
-        isValidPhoneNumber
-      />
-    </Box>
+    <>
+      {" "}
+      <Box sx={{padding: " 0 6px 0 13px"}}>
+        <PhoneInput
+          disabled={false}
+          placeholder="Enter phone number"
+          value={
+            isString(value) ? (value?.includes("+") ? value : `${value}`) : ""
+          }
+          id={`phone_input`}
+          onChange={(newValue) => {
+            inputChangeHandler(newValue);
+          }}
+          defaultCountry="UZ"
+          international
+          className={styles.inputTable}
+          limitMaxLength={true}
+          isValidPhoneNumber
+        />
+      </Box>
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      )}
+    </>
   );
 };
 

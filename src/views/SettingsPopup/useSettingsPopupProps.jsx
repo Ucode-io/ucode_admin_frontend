@@ -61,6 +61,11 @@ export const useSettingsPopupProps = ({ onClose }) => {
   const { t, i18n } = useTranslation();
 
   const userInfo = useSelector((state) => state?.auth?.userInfo);
+  const globalPermissions = useSelector(
+    (state) => state?.permissions?.globalPermissions
+  );
+
+  const showSettings = globalPermissions?.settings_button;
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
 
@@ -127,10 +132,6 @@ export const useSettingsPopupProps = ({ onClose }) => {
       icon: <img src={TariffsIcon} alt="" width={20} height={20} />,
     },
   ];
-
-  if (!isDefaultAdmin) {
-    accountTabs.splice(1, 1);
-  }
 
   const tabs = [
     {
@@ -235,6 +236,15 @@ export const useSettingsPopupProps = ({ onClose }) => {
       ],
     },
   ];
+
+  if (!isDefaultAdmin) {
+    accountTabs.splice(1, 1);
+  }
+
+  if (!showSettings) {
+    accountTabs.splice(1, 2);
+    tabs.splice(1);
+  }
 
   const handleClose = () => {
     onClose();

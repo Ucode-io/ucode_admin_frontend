@@ -354,7 +354,7 @@ const LayoutSidebar = ({
   const isWarning =
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
-
+  console.log("permissionsssss", permissions);
   return (
     <>
       <Flex
@@ -531,45 +531,56 @@ const LayoutSidebar = ({
               ? undefined
               : () => dispatch(mainActions.setSidebarHighlightedAction(null))
           }>
-          <SidebarActionTooltip id="documentation" title="Documentation">
-            <Flex
-              as="a"
-              href="https://ucode.gitbook.io/ucode-docs"
-              target="_blank"
-              w={sidebarIsOpen ? "100%" : 36}
-              h={36}
-              alignItems="center"
-              justifyContent="center"
-              borderRadius={6}
-              _hover={{bg: "#EAECF0"}}
-              cursor="pointer"
-              mb={sidebarIsOpen ? 0 : 4}
-              {...getActionProps("documentation")}>
-              <img src="/img/documentation.svg" alt="merge" />
-            </Flex>
-          </SidebarActionTooltip>
+          {Boolean(permissions?.gitbook_button) && (
+            <>
+              <SidebarActionTooltip id="documentation" title="Documentation">
+                <Flex
+                  as="a"
+                  href="https://ucode.gitbook.io/ucode-docs"
+                  target="_blank"
+                  w={sidebarIsOpen ? "100%" : 36}
+                  h={36}
+                  alignItems="center"
+                  justifyContent="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  mb={sidebarIsOpen ? 0 : 4}
+                  {...getActionProps("documentation")}>
+                  <img src="/img/documentation.svg" alt="merge" />
+                </Flex>
+              </SidebarActionTooltip>
+              <Box
+                display={sidebarIsOpen ? "block" : "none"}
+                w="1px"
+                h={20}
+                bg="#D0D5DD"
+              />
+            </>
+          )}
+          <></>
+          {Boolean(permissions?.chatwoot_button) && (
+            <SidebarActionTooltip id="chat" title="Chat">
+              <Chatwoot open={sidebarIsOpen} {...getActionProps("chat")} />
+            </SidebarActionTooltip>
+          )}
 
-          <Box
-            display={sidebarIsOpen ? "block" : "none"}
-            w="1px"
-            h={20}
-            bg="#D0D5DD"
-          />
-          <SidebarActionTooltip id="chat" title="Chat">
-            <Chatwoot open={sidebarIsOpen} {...getActionProps("chat")} />
-          </SidebarActionTooltip>
-          <Box
-            display={sidebarIsOpen ? "block" : "none"}
-            w="1px"
-            h={20}
-            bg="#D0D5DD"
-          />
-          <SidebarActionTooltip id="ai-chat" title="AI Chat">
-            <AIChat
-              sidebarOpen={sidebarIsOpen}
-              {...getActionProps("ai-chat")}
-            />
-          </SidebarActionTooltip>
+          {Boolean(permissions?.chat) && (
+            <>
+              <Box
+                display={sidebarIsOpen ? "block" : "none"}
+                w="1px"
+                h={20}
+                bg="#D0D5DD"
+              />
+              <SidebarActionTooltip id="ai-chat" title="AI Chat">
+                <AIChat
+                  sidebarOpen={sidebarIsOpen}
+                  {...getActionProps("ai-chat")}
+                />
+              </SidebarActionTooltip>
+            </>
+          )}
         </Flex>
 
         {(modalType === "create" ||

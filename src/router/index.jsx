@@ -134,7 +134,7 @@ const Router = () => {
 
   const subdomain =
     window.location.hostname === "localhost"
-      ? "ett.u-code.io"
+      ? "fbs-integrations.mybazar.uz"
       : window.location.hostname;
 
   const {data, isLoading} = useLoginMicrofrontendQuery({

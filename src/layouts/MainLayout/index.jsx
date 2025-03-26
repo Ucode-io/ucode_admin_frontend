@@ -3,7 +3,7 @@ import {ThemeProvider} from "@mui/styles";
 import {useEffect, useState} from "react";
 import Favicon from "react-favicon";
 import {useDispatch} from "react-redux";
-import { Outlet, useParams } from "react-router-dom";
+import {Outlet, useParams} from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
@@ -12,16 +12,16 @@ import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
 import {SettingsPopup} from "../../views/SettingsPopup/SettingsPopup";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
+import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
 
-const MainLayout = ({ setFavicon, favicon }) => {
-  const { appId } = useParams();
+const MainLayout = ({setFavicon, favicon}) => {
+  const {appId} = useParams();
   const projectId = store.getState().company.projectId;
 
   const updateSearchParam = useSearchParams()[2];
 
-  const { data: projectInfo } = useProjectGetByIdQuery({
+  const {data: projectInfo} = useProjectGetByIdQuery({
     projectId,
     queryParams: {
       onSuccess: (data) => {
@@ -71,6 +71,15 @@ const MainLayout = ({ setFavicon, favicon }) => {
     handleOpenProfileModal();
   };
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -79,7 +88,8 @@ const MainLayout = ({ setFavicon, favicon }) => {
           projectInfo={projectInfo}
           handleOpenBilling={handleOpenBilling}
         />
-        <div className={`${styles.layout} ${darkMode ? styles.dark : ""}`}>
+        <div
+          className={`${isWarningActive ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}

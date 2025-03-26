@@ -100,6 +100,8 @@ export const SettingsPopup = ({ open, onClose }) => {
                                   },
                                   "& .MuiButtonBase-root": {
                                     minHeight: "27px !important",
+                                    paddingLeft: "12px",
+                                    paddingRight: "12px",
                                   },
                                 }}
                               >

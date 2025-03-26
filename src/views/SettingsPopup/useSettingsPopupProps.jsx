@@ -9,24 +9,32 @@ import {EnvironmentDetail} from "./modules/EnvironmentDetail";
 import {useSelector} from "react-redux";
 import BillingIcon from "@/assets/icons/billing.svg";
 import TariffsIcon from "@/assets/icons/fares.svg";
+import ResourcesIcon from "@/assets/icons/rows.svg";
+import ApiKeyIcon from "@/assets/icons/key-outline.svg";
+import CodeIcon from "@/assets/icons/code-square.svg";
+import MicroFrontendIcon from "@/assets/icons/server.svg";
+import ModelsIcon from "@/assets/icons/share.svg";
+import CustomEndpointIcon from "@/assets/icons/route.svg";
+import ActivityLogsIcon from "@/assets/icons/archive.svg";
+import PermissionsIcon from "@/assets/icons/lock.svg";
 import ProjectSettingsIcon from "@/assets/icons/setting.svg";
 import EnvironmentsIcon from "@/assets/icons/environment.svg";
 import LanguageIcon from "@/assets/icons/language.svg";
 import cls from "./styles.module.scss";
-import {Fares} from "./modules/Fares";
-import {Account} from "./modules/Account";
-import {Billing} from "./modules/Billing";
+import { Fares } from "./modules/Fares";
+import { Account } from "./modules/Account";
+import { Billing } from "./modules/Billing";
 import LanguageControl from "../../components/LayoutSidebar/Components/LanguageControl";
-import {Permissions} from "./modules/Permissions";
-import {PermissionsDetail} from "./modules/PermissionsDetail";
-import {PermissionsRoleDetail} from "./modules/PermissionsRoleDetail";
-import {Resources} from "./modules/Resources";
-import {ResourcesDetail} from "./modules/ResourcesDetail";
-import {Storage} from "@mui/icons-material";
-import {ApiKeys} from "./modules/ApiKeys";
-import {ApiKeysDetail} from "./modules/ApiKeysDetail";
-import {Redirect} from "./modules/Redirect";
-import {RedirectForm} from "./modules/RedirectForm";
+import { Permissions } from "./modules/Permissions";
+import { PermissionsDetail } from "./modules/PermissionsDetail";
+import { PermissionsRoleDetail } from "./modules/PermissionsRoleDetail";
+import { Resources } from "./modules/Resources";
+import { ResourcesDetail } from "./modules/ResourcesDetail";
+import { Storage } from "@mui/icons-material";
+import { ApiKeys } from "./modules/ApiKeys";
+import { ApiKeysDetail } from "./modules/ApiKeysDetail";
+import { Redirect } from "./modules/Redirect";
+import { RedirectForm } from "./modules/RedirectForm";
 import { store } from "../../store";
 import { useQuery } from "react-query";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
@@ -170,7 +178,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
           title:
             generateLangaugeText(lang, i18n?.language, "Permissions") ||
             "Permissions",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+          icon: <img src={PermissionsIcon} alt="" width={20} height={20} />,
           children: permissionChild,
         },
         {
@@ -178,19 +186,14 @@ export const useSettingsPopupProps = ({ onClose }) => {
           title:
             generateLangaugeText(lang, i18n?.language, "Resources") ||
             "Resources",
-          icon: (
-            <Storage
-              sx={{ width: 20, height: 20 }}
-              color="rgba(55, 53, 47, 0.85)"
-            />
-          ),
+          icon: <img src={ResourcesIcon} alt="" width={20} height={20} />,
         },
         {
           key: "apiKeys",
           title:
             generateLangaugeText(lang, i18n?.language, "API Keys") ||
             "API Keys",
-          icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
+          icon: <img src={ApiKeyIcon} alt="" width={20} height={20} />,
         },
         {
           key: "redirect",

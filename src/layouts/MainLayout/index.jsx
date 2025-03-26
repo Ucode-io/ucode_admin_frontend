@@ -72,6 +72,11 @@ const MainLayout = ({setFavicon, favicon}) => {
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -81,7 +86,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           projectInfo={projectInfo}
         />
         <div
-          className={`${isWarning <= 5 ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
+          className={`${isWarningActive ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}

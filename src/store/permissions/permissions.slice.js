@@ -5,6 +5,7 @@ export const {actions: permissionsActions, reducer: permissionsReducer} =
     name: "permissions",
     initialState: {
       permissions: {},
+      globalPermissions: {},
     },
     reducers: {
       setPermissions: (state, {payload}) => {
@@ -32,6 +33,9 @@ export const {actions: permissionsActions, reducer: permissionsReducer} =
           };
           return acc;
         }, {});
+      },
+      setGlobalPermissions: (state, {payload}) => {
+        state.globalPermissions = payload;
       },
     },
   });

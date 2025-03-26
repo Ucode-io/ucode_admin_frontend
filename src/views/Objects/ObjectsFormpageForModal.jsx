@@ -24,8 +24,8 @@ import RelationSectionForModal from "./RelationSection/RelationSectionForModal";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import styles from "./style.module.scss";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { useGetLang } from "../../hooks/useGetLang";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {useGetLang} from "../../hooks/useGetLang";
 
 const ObjectsFormPageForModal = ({
   tableSlugFromProps,
@@ -39,7 +39,7 @@ const ObjectsFormPageForModal = ({
   menuItem,
   setFullScreen = () => {},
 }) => {
-  const { id: idFromParam, tableSlug: tableSlugFromParam, appId } = useParams();
+  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -51,10 +51,10 @@ const ObjectsFormPageForModal = ({
 
   const [editAcces, setEditAccess] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
@@ -65,7 +65,7 @@ const ObjectsFormPageForModal = ({
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [layout, setLayout] = useState({});
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
@@ -79,7 +79,7 @@ const ObjectsFormPageForModal = ({
     reset,
     setValue: setFormValue,
     watch,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       ...state,
@@ -97,10 +97,7 @@ const ObjectsFormPageForModal = ({
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, layout] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
 
       const layout1 = {
         ...layout,
@@ -237,7 +234,7 @@ const ObjectsFormPageForModal = ({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -266,7 +263,7 @@ const ObjectsFormPageForModal = ({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -368,8 +365,7 @@ const ObjectsFormPageForModal = ({
                 left: "16px",
                 border: "0px solid #2d6ce5",
                 padding: "4px",
-              }}
-            >
+              }}>
               {/* {fullScreen ? (
                 <FullscreenExitIcon
                   style={{color: "#2d6ce5", width: "26px", height: "26px"}}
@@ -382,8 +378,7 @@ const ObjectsFormPageForModal = ({
             </SecondaryButton>
             <SecondaryButton
               onClick={() => (modal ? handleClose() : navigate(-1))}
-              color="error"
-            >
+              color="error">
               {generateLangaugeText(lang, i18n?.language, "Close")}
             </SecondaryButton>
             <FormCustomActionButton
@@ -393,13 +388,11 @@ const ObjectsFormPageForModal = ({
             />
             <PermissionWrapperV2
               tableSlug={tableSlug}
-              type={id ? "update" : "write"}
-            >
+              type={id ? "update" : "write"}>
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
+                onClick={handleSubmit(onSubmit)}>
                 <Save />
                 {generateLangaugeText(lang, i18n?.language, "Save")}
               </PrimaryButton>

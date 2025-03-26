@@ -354,7 +354,12 @@ const LayoutSidebar = ({
   const isWarning =
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
-  console.log("permissionsssss", permissions);
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   return (
     <>
       <Flex
@@ -365,7 +370,7 @@ const LayoutSidebar = ({
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
         bg={menuStyle?.background ?? "#fff"}
-        h={`calc(100vh - ${isWarning <= 5 ? 32 : 0}px )`}>
+        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}>
         <Flex
           position="absolute"
           zIndex={999}

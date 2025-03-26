@@ -8,7 +8,6 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useMenuPermissionGetByIdQuery } from "../../../../../services/rolePermissionService";
 import { store } from "../../../../../store";
 import { useTranslation } from "react-i18next";
-import { CustomCheckbox } from "./CustomCheckbox";
 import styles from "./style.module.scss";
 import clsx from "clsx";
 

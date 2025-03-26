@@ -1,18 +1,18 @@
 import clsx from "clsx";
-import styles from "./style.module.scss";
+import cls from "./styles.module.scss";
 
-export const CustomCheckbox = ({ children, defaultChecked, onChange, ...props }) => {
+export const CustomCheckbox = ({ children, defaultChecked, onChange, className, ...props }) => {
   return (
-    <label className={styles.custom_checkbox}>
+    <label className={clsx(cls.customCheckbox, className)}>
       <input
-        className={clsx(styles.checkbox_input, styles.visuallyHidden)}
+        className={clsx(cls.checkboxInput, cls.visuallyHidden)}
         type="checkbox"
         onChange={onChange}
         defaultChecked={defaultChecked}
         {...props}
       />
-      <span className={styles.checkmark}>
-        <span className={styles.checkmark_inner}>
+      <span className={cls.checkmark}>
+        <span className={cls.checkmarkInner}>
           <svg
             width="15"
             height="14"

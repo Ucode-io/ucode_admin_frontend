@@ -16,6 +16,7 @@ import { isValidElement } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import { FolderCreateModal } from "./components/FolderCreateModal";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
 const TabTitle = ({ tab, children, ...props }) => {
   return (
@@ -46,6 +47,8 @@ export const SettingsPopup = ({ open, onClose }) => {
     isClientTypeModalOpen,
     permissionChild,
   } = useSettingsPopupProps({ onClose });
+
+  console.log(searchParams.get("tab"));
 
   return (
     <SettingsPopupProvider
@@ -182,7 +185,13 @@ export const SettingsPopup = ({ open, onClose }) => {
                 })}
               </Box>
             </Box>
-            <Box className={cls.rightContent}>
+            <Box
+              className={clsx(cls.rightContent, {
+                [cls.smPadding]:
+                  searchParams.get("tab") ===
+                  TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
+              })}
+            >
               {isValidElement(tabComponents[activeTab])
                 ? tabComponents[activeTab]
                 : (tabComponents[activeTab]?.[searchParams.get("tab")] ??

@@ -94,7 +94,7 @@ ingress:
           servicePort: 80
         - host: "fbs-integrations.mybazar.uz"
           path: /
-          servicePort: 8080
+          servicePort: 80
       tls:
         - secretName: fbs-integrations-tls
           hosts:

@@ -10,6 +10,12 @@ import AddIcon from "@mui/icons-material/Add";
 import cls from "./styles.module.scss";
 import clsx from "clsx";
 import RoleCreateModal from "./RoleCreateModal";
+import { FolderCreateModal } from "../../components/FolderCreateModal";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import { EditIcon } from "../../../../assets/icons/icon";
+import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
+import { useEffect, useState } from "react";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 
 export const PermissionsRoleDetail = () => {
   const {
@@ -30,7 +36,36 @@ export const PermissionsRoleDetail = () => {
     handleCloseRoleModal,
     isCreateRoleModalOpen,
     activeClientType,
+    isUpdateModalOpen,
+    handleOpenUpdateModal,
+    handleCloseUpdateModal,
   } = usePermissionsRoleDetail();
+
+  const [activeTab, setActiveTab] = useState("table");
+  const [isCategoryOpen, setCategoryOpen] = useState(false);
+
+  const handleChangeTab = (tab) => setActiveTab(tab);
+
+  const handleOpenCategory = () => setCategoryOpen(true);
+  const handleCloseCategory = () => setCategoryOpen(false);
+
+  const categories = {
+    table: "Table",
+    permission: "Global Permission",
+    menu: "Menu",
+  };
+
+  const handleWindowClick = (e) => {
+    if (!e.target.matches(`.${cls.categoryDropdownBtn}`)) {
+      handleCloseCategory();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", handleWindowClick);
+
+    return () => window.removeEventListener("click", handleWindowClick);
+  }, []);
 
   return (
     <Box flex={1}>
@@ -43,7 +78,12 @@ export const PermissionsRoleDetail = () => {
             width: "100%",
           }}
         >
-          <span>{activeClientType?.name}</span>
+          <Box display={"flex"} alignItems={"center"} columnGap={"8px"}>
+            <span>{activeClientType?.name}</span>
+            <RectangleIconButton onClick={handleOpenUpdateModal}>
+              <EditIcon />
+            </RectangleIconButton>
+          </Box>
 
           {/* <div>
             <HFTextField
@@ -68,7 +108,11 @@ export const PermissionsRoleDetail = () => {
         </Box>
       </ContentTitle>
 
-      <Box display="flex">
+      <Box
+        display="flex"
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
         <Box className={cls.tabs}>
           {roles?.map((el, index) => (
             <button
@@ -89,23 +133,108 @@ export const PermissionsRoleDetail = () => {
             </span>
           </button>
         </Box>
+        <div className={cls.categoryDropdown}>
+          <button
+            className={cls.categoryDropdownBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              isCategoryOpen ? handleCloseCategory() : handleOpenCategory();
+            }}
+          >
+            <span className={cls.categoryDropdownBtnInner}>
+              <span>Category: {categories[activeTab]}</span>
+              <ExpandMoreOutlinedIcon
+                sx={{
+                  transform: isCategoryOpen ? "rotate(180deg)" : "rotate(0)",
+                }}
+                color="inherit"
+              />
+            </span>
+          </button>
+          {isCategoryOpen && (
+            <div className={cls.categoryDropdownContent}>
+              <p className={cls.categoryTitle}>Category</p>
+              <ul className={cls.categoryList}>
+                <li className={cls.categoryItem}>
+                  <div
+                    className={cls.categoryLabel}
+                    onClick={() => handleChangeTab("table")}
+                  >
+                    <span
+                      className={clsx(cls.customRadio, {
+                        [cls.active]: activeTab === "table",
+                      })}
+                    >
+                      <span></span>
+                    </span>
+                    <span className={clsx(cls.categoryLabelBadge, cls.table)}>
+                      Table
+                    </span>
+                  </div>
+                </li>
+                <li className={cls.categoryItem}>
+                  <div
+                    className={cls.categoryLabel}
+                    onClick={() => handleChangeTab("menu")}
+                  >
+                    <span
+                      className={clsx(cls.customRadio, {
+                        [cls.active]: activeTab === "menu",
+                      })}
+                    >
+                      <span></span>
+                    </span>
+                    <span className={clsx(cls.categoryLabelBadge, cls.menu)}>
+                      Menu
+                    </span>
+                  </div>
+                </li>
+                <li className={cls.categoryItem}>
+                  <div
+                    className={cls.categoryLabel}
+                    onClick={() => handleChangeTab("permission")}
+                  >
+                    <span
+                      className={clsx(cls.customRadio, {
+                        [cls.active]: activeTab === "permission",
+                      })}
+                    >
+                      <span></span>
+                    </span>
+                    <span
+                      className={clsx(cls.categoryLabelBadge, cls.permission)}
+                    >
+                      Global Permissions
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </Box>
 
       {rolePermissionGetByIdLoading || permissionGetByIdLoading ? (
-        <RingLoaderWithWrapper />
+        <GreyLoader />
       ) : (
-        <div style={{ padding: "10px", background: "#fff" }}>
-          <Permissions
-            control={control}
-            setChangedData={setChangedData}
-            changedData={changedData}
-            setValue={setValue}
-            watch={watch}
-          />
-        </div>
+        <Permissions
+          control={control}
+          setChangedData={setChangedData}
+          changedData={changedData}
+          setValue={setValue}
+          watch={watch}
+          activeTab={activeTab}
+        />
       )}
       {isCreateRoleModalOpen && (
         <RoleCreateModal closeModal={handleCloseRoleModal} modalType={"NEW"} />
+      )}
+      {isUpdateModalOpen && (
+        <FolderCreateModal
+          clientType={activeClientType}
+          closeModal={handleCloseUpdateModal}
+          modalType={"UPDATE"}
+        />
       )}
     </Box>
   );

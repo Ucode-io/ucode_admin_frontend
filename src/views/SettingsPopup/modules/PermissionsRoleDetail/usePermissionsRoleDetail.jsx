@@ -25,6 +25,7 @@ export const usePermissionsRoleDetail = () => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const [isCreateRoleModalOpen, setCreateRoleModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -39,6 +40,9 @@ export const usePermissionsRoleDetail = () => {
 
   const handleOpenRoleModal = () => setCreateRoleModalOpen(true);
   const handleCloseRoleModal = () => setCreateRoleModalOpen(false);
+
+  const handleOpenUpdateModal = () => setIsUpdateModalOpen(true);
+  const handleCloseUpdateModal = () => setIsUpdateModalOpen(false);
 
   const onBackClick = () => {
     setSearchParams({
@@ -151,5 +155,8 @@ export const usePermissionsRoleDetail = () => {
     handleCloseRoleModal,
     isCreateRoleModalOpen,
     activeClientType,
+    isUpdateModalOpen,
+    handleOpenUpdateModal,
+    handleCloseUpdateModal,
   };
 };

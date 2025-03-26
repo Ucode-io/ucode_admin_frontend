@@ -19,9 +19,9 @@ import { getAllFromDB } from "../../../../../utils/languageDB";
 import { useTranslation } from "react-i18next";
 import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
 import TableRow from "./TableRow";
-import { CustomCheckbox } from "./CustomCheckbox";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import clsx from "clsx";
+import { CustomCheckbox } from "../../../components/CustomCheckbox";
 
 const Permissions = ({
   control,
@@ -29,6 +29,7 @@ const Permissions = ({
   changedData,
   setValue,
   watch,
+  activeTab,
 }) => {
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
@@ -117,126 +118,10 @@ const Permissions = ({
     );
   };
 
-  const [activeTab, setActiveTab] = useState("table");
-  const [isCategoryOpen, setCategoryOpen] = useState(false);
-
-  const handleChangeTab = (tab) => setActiveTab(tab);
-
-  const handleOpenCategory = () => setCategoryOpen(true);
-  const handleCloseCategory = () => setCategoryOpen(false);
-
-  const categories = {
-    table: "Table",
-    permission: "Global Permission",
-    menu: "Menu",
-  };
-
-  const handleWindowClick = (e) => {
-    if (!e.target.matches(`.${styles.categoryDropdownBtn}`)) {
-      handleCloseCategory();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("click", handleWindowClick);
-
-    return () => window.removeEventListener("click", handleWindowClick);
-  }, []);
-
   return (
     <>
       <div>
         <Card style={{ boxShadow: "none", paddingTop: "3px" }}>
-          <div className={styles.categoryDropdown}>
-            <button
-              className={styles.categoryDropdownBtn}
-              onClick={(e) => {
-                e.stopPropagation();
-                isCategoryOpen ? handleCloseCategory() : handleOpenCategory();
-              }}
-            >
-              <span className={styles.categoryDropdownBtnInner}>
-                <span>Category: {categories[activeTab]}</span>
-                <ExpandMoreOutlinedIcon
-                  sx={{
-                    transform: isCategoryOpen ? "rotate(180deg)" : "rotate(0)",
-                  }}
-                  color="inherit"
-                />
-              </span>
-            </button>
-            {isCategoryOpen && (
-              <div className={styles.categoryDropdownContent}>
-                <p className={styles.categoryTitle}>Category</p>
-                <ul className={styles.categoryList}>
-                  <li className={styles.categoryItem}>
-                    <div
-                      className={styles.categoryLabel}
-                      onClick={() => handleChangeTab("table")}
-                    >
-                      <span
-                        className={clsx(styles.customRadio, {
-                          [styles.active]: activeTab === "table",
-                        })}
-                      >
-                        <span></span>
-                      </span>
-                      <span
-                        className={clsx(
-                          styles.categoryLabelBadge,
-                          styles.table
-                        )}
-                      >
-                        Table
-                      </span>
-                    </div>
-                  </li>
-                  <li className={styles.categoryItem}>
-                    <div
-                      className={styles.categoryLabel}
-                      onClick={() => handleChangeTab("menu")}
-                    >
-                      <span
-                        className={clsx(styles.customRadio, {
-                          [styles.active]: activeTab === "menu",
-                        })}
-                      >
-                        <span></span>
-                      </span>
-                      <span
-                        className={clsx(styles.categoryLabelBadge, styles.menu)}
-                      >
-                        Menu
-                      </span>
-                    </div>
-                  </li>
-                  <li className={styles.categoryItem}>
-                    <div
-                      className={styles.categoryLabel}
-                      onClick={() => handleChangeTab("permission")}
-                    >
-                      <span
-                        className={clsx(styles.customRadio, {
-                          [styles.active]: activeTab === "permission",
-                        })}
-                      >
-                        <span></span>
-                      </span>
-                      <span
-                        className={clsx(
-                          styles.categoryLabelBadge,
-                          styles.permission
-                        )}
-                      >
-                        Global Permissions
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-
           {/* <TabList>
             <Tab>
               {generateLangaugeText(permissionLan, i18n?.language, "Table") ||
@@ -257,8 +142,13 @@ const Permissions = ({
 
           {activeTab === "table" && (
             <Box py={1}>
-              <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
-                <CTable removableHeight={false}>
+              <TableCard
+                withBorder
+                borderRadius="md"
+                disablePagination
+                type={"withoutPadding"}
+              >
+                <CTable removableHeight={false} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
                       <CTableCell
@@ -463,8 +353,13 @@ const Permissions = ({
           )}
           {activeTab === "menu" && (
             <Box py={1}>
-              <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
-                <CTable removableHeight={false}>
+              <TableCard
+                withBorder
+                disablePagination
+                borderRadius="md"
+                type={"withoutPadding"}
+              >
+                <CTable removableHeight={false} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
                       <CTableCell rowSpan={2} w={200}>
@@ -593,8 +488,13 @@ const Permissions = ({
           )}
           {activeTab === "permission" && (
             <Box py={1}>
-              <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
-                <CTable removableHeight={false}>
+              <TableCard
+                withBorder
+                borderRadius="md"
+                type={"withoutPadding"}
+                disablePagination
+              >
+                <CTable removableHeight={false} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
                       <CTableCell width={"50%"}>

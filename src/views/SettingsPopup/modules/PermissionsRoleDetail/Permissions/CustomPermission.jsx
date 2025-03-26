@@ -1,6 +1,6 @@
-import {Box, Checkbox} from "@mui/material";
-import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
-import { CustomCheckbox } from "./CustomCheckbox";
+import { Box } from "@mui/material";
+import { CTableCell, CTableHeadRow } from "../../../../../components/CTable";
+import { CustomCheckbox } from "../../../components/CustomCheckbox";
 
 const style = {
   fontWeight: 400,

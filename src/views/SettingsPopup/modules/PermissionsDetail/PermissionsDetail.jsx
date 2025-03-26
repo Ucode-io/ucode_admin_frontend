@@ -31,8 +31,6 @@ export const PermissionsDetail = () => {
     activeTabId,
   } = usePermissionsDetailProps();
 
-  console.log({ roles });
-
   return (
     <Box className={cls.permission}>
       <ContentTitle withBackBtn onBackClick={() => setSearchParams({})}>

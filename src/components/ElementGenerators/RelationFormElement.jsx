@@ -37,6 +37,7 @@ const RelationFormElement = ({
   checkRequiredField,
   rules,
   activeLang,
+  isModal = false,
   errors,
   ...props
 }) => {
@@ -72,6 +73,7 @@ const RelationFormElement = ({
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
+              isModal={isModal}
               value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
               field={field}
@@ -155,6 +157,7 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   errors,
   required = false,
+  isModal = false,
   activeLang,
 }) => {
   const [inputValue, setInputValue] = useState("");
@@ -517,7 +520,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
-            menuPortalTarget={document.body}
+            menuPortalTarget={isModal ? null : document.body}
             options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}

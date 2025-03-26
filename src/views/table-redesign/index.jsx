@@ -341,15 +341,19 @@ export const DynamicTable = ({
     );
   };
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (
-      projectInfo?.expire_date &&
-      differenceInCalendarDays(parseISO(projectInfo.expire_date), new Date()) +
-        1 <=
-        5
-    ) {
+    if (isWarningActive) {
       warningHeight = 32;
     }
     const filterHeightValue = Number(filterHeight) || 0;

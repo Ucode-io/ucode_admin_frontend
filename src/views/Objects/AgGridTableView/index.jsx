@@ -167,7 +167,7 @@ function AgGridTableView(props) {
       enabled: !!tableSlug && !view?.attributes?.treeData,
       onSuccess: (data) => {
         setCount(data?.data?.count);
-        setRowData([...data?.data?.response] ?? []);
+        setRowData([...(data?.data?.response ?? [])] ?? []);
         setLoading(false);
       },
       onError: () => {

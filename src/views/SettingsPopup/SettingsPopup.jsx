@@ -109,6 +109,13 @@ export const SettingsPopup = ({ open, onClose }) => {
                                   expandIcon={<ExpandMoreIcon />}
                                   aria-controls="panel1-content"
                                   id="panel1-header"
+                                  sx={{
+                                    borderRadius: "4px",
+                                    "&:hover": {
+                                      backgroundColor:
+                                        "rgba(55, 53, 47, 0.06) !important",
+                                    },
+                                  }}
                                 >
                                   <TabTitle tab={tab}>{tab?.title}</TabTitle>
                                 </AccordionSummary>
@@ -141,6 +148,10 @@ export const SettingsPopup = ({ open, onClose }) => {
                                           backgroundColor: "#344054",
                                           transform: "translateY(-50%)",
                                           content: '""',
+                                        },
+                                        "&:hover": {
+                                          backgroundColor:
+                                            "rgba(55, 53, 47, 0.06) !important",
                                         },
                                       }}
                                     >

@@ -26,14 +26,19 @@
 }
 
 .sticky_header {
-    position: sticky;
+    padding: 8px;
     background: #fff;
+    position: sticky;
     left: 0;
-    z-index: 99;
+    // z-index: 99;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: #475467;
+}
+
+.body {
+    height: auto !important;
 }
 
 .visuallyHidden {
@@ -104,14 +109,6 @@
 .menuCell {
     border-left: none !important;
     border-right: none !important;
-}
-
-.categoryTitle {
-    padding-left: 16px;
-    margin-bottom: 8px;
-    color: #667085;
-    font-size: 12px;
-    line-height: 18px;
 }
 
 .categoryDropdown {
@@ -215,4 +212,12 @@
 
 .iconBtn {
     border: none;
+}
+
+.tbCell {
+    padding: 4px;
+}
+
+.tbBadgeCell {
+    border-right: none !important;
 }

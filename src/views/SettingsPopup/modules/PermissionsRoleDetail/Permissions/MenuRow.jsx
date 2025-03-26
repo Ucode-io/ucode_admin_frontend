@@ -195,7 +195,7 @@ const MenuRow = ({
             </Box>
           </CTableCell>
 
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.read, "read");
@@ -204,7 +204,7 @@ const MenuRow = ({
               label="Read"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.write, "write");
@@ -213,7 +213,7 @@ const MenuRow = ({
               label="Write"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.update, "update");
@@ -222,7 +222,7 @@ const MenuRow = ({
               label="Update"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.delete, "delete");
@@ -231,7 +231,7 @@ const MenuRow = ({
               label="Delete"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.menu_settings, "menu_settings");
@@ -260,7 +260,7 @@ const MenuRow = ({
                 app.label}
             </Box>
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.read, "read");
@@ -269,7 +269,7 @@ const MenuRow = ({
               label="Read"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.write, "write");
@@ -278,7 +278,7 @@ const MenuRow = ({
               label="Write"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.update, "update");
@@ -287,7 +287,7 @@ const MenuRow = ({
               label="Update"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.delete, "delete");
@@ -296,7 +296,7 @@ const MenuRow = ({
               label="Delete"
             />
           </CTableCell>
-          <CTableCell className={styles.menuCell}>
+          <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
               onChange={() => {
                 handleChange(!rowPermissions?.menu_settings, "menu_settings");

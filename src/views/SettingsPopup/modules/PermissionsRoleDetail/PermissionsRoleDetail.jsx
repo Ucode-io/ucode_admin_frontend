@@ -79,10 +79,12 @@ export const PermissionsRoleDetail = () => {
           }}
         >
           <Box display={"flex"} alignItems={"center"} columnGap={"8px"}>
-            <span>{activeClientType?.name}</span>
-            <RectangleIconButton onClick={handleOpenUpdateModal}>
-              <EditIcon />
-            </RectangleIconButton>
+            <span className={cls.clientType}>{activeClientType?.name}</span>
+            <button className={cls.iconBtn} onClick={handleOpenUpdateModal}>
+              <span>
+                <EditIcon />
+              </span>
+            </button>
           </Box>
 
           {/* <div>
@@ -102,7 +104,12 @@ export const PermissionsRoleDetail = () => {
               }}
             />
           </div> */}
-          <Button primary onClick={handleSubmit(onSubmit)} variant="contained">
+          <Button
+            className={cls.saveBtn}
+            primary
+            onClick={handleSubmit(onSubmit)}
+            variant="contained"
+          >
             Save
           </Button>
         </Box>

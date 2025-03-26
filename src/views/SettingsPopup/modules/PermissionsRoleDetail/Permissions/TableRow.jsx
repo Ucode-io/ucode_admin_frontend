@@ -73,7 +73,7 @@ const TableRow = ({
             table?.attributes?.[`title${i18n?.language}`] ??
             table.label}
         </CTableCell>
-        <CTableCell style={{ borderRight: "none" }}>
+        <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <label>
               <PermissionCheckbox
@@ -99,7 +99,7 @@ const TableRow = ({
             </RectangleIconButton> */}
           </Box>
         </CTableCell>
-        <CTableCell style={{ borderRight: "none" }}>
+        <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <label>
               <PermissionCheckbox
@@ -117,7 +117,7 @@ const TableRow = ({
             </label>
           </Box>
         </CTableCell>
-        <CTableCell style={{ borderRight: "none" }}>
+        <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <label>
               <PermissionCheckbox
@@ -143,7 +143,7 @@ const TableRow = ({
             </RectangleIconButton> */}
           </Box>
         </CTableCell>
-        <CTableCell style={{ borderRight: "none" }}>
+        <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <label>
               <PermissionCheckbox
@@ -168,7 +168,7 @@ const TableRow = ({
             </RectangleIconButton> */}
           </Box>
         </CTableCell>
-        <CTableCell>
+        <CTableCell className={styles.tbCell}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <label>
               <FormCheckbox
@@ -189,7 +189,7 @@ const TableRow = ({
             </label>
           </Box>
         </CTableCell>
-        <CTableCell>
+        <CTableCell className={styles.tbCell}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               className={styles.iconBtn}
@@ -200,7 +200,7 @@ const TableRow = ({
             </RectangleIconButton>
           </Box>
         </CTableCell>
-        <CTableCell>
+        <CTableCell className={styles.tbCell}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               className={styles.iconBtn}
@@ -211,7 +211,7 @@ const TableRow = ({
             </RectangleIconButton>
           </Box>
         </CTableCell>
-        <CTableCell>
+        <CTableCell className={styles.tbCell}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               className={styles.iconBtn}
@@ -222,7 +222,7 @@ const TableRow = ({
             </RectangleIconButton>
           </Box>
         </CTableCell>
-        <CTableCell>
+        <CTableCell className={styles.tbCell}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               className={styles.iconBtn}
@@ -233,7 +233,7 @@ const TableRow = ({
             </RectangleIconButton>
           </Box>
         </CTableCell>
-        <CTableCell>
+        <CTableCell className={styles.tbCell}>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               className={styles.iconBtn}

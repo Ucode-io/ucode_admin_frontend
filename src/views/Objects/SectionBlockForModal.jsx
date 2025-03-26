@@ -60,6 +60,7 @@ export default function SectionBlockForModal({
             minWidth: "200px",
           }}>
           <FormElementGenerator
+            isModal={true}
             key={field.id}
             isMultiLanguage={isMultiLanguage}
             field={field}

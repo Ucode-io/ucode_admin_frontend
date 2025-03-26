@@ -167,7 +167,7 @@ function AgGridTableView(props) {
       enabled: !!tableSlug && !view?.attributes?.treeData,
       onSuccess: (data) => {
         setCount(data?.data?.count);
-        setRowData([...data?.data?.response] ?? []);
+        setRowData([...(data?.data?.response ?? [])] ?? []);
         setLoading(false);
       },
       onError: () => {
@@ -186,14 +186,7 @@ function AgGridTableView(props) {
     {
       enabled: Boolean(tableSlug && view?.attributes?.treeData),
       onSuccess: (data) => {
-        setRowData([
-          ...data?.data?.response,
-          {
-            field: "actions",
-            headerName: "Actions",
-            cellRenderer: ButtonCellRenderer,
-          },
-        ]);
+        setRowData([...(data?.data?.response ?? [])]);
         setLoading(false);
       },
       onError: () => {
@@ -351,29 +344,13 @@ function AgGridTableView(props) {
   }
 
   function appendNewRow() {
-    const emptyRow = {
-      new_field: true,
-    };
-
-    const newRow = {...emptyRow, guid: generateGUID()};
+    console.log("append Worked");
+    const newRow = {new_field: true, guid: generateGUID()};
     gridApi.current.api.applyTransaction({
       add: [newRow],
       addIndex: 0,
     });
   }
-
-  const ButtonCellRenderer = (params) => {
-    if (params.node.rowPinned) {
-      return (
-        <button
-        // onClick={addNewRow}
-        >
-          ➕ Add Row
-        </button>
-      );
-    }
-    return null;
-  };
 
   function removeRow(guid) {
     const allRows = [];
@@ -491,6 +468,12 @@ function AgGridTableView(props) {
     }
   }, [tabs?.length]);
 
+  const pinnedBottomRowData = [
+    {
+      rowIndex: "pinnedPlaceholder",
+    },
+  ];
+
   return (
     <Box sx={{height: "calc(100vh - 85px)", overflow: "scroll"}}>
       <div className={style.gridTable}>
@@ -557,6 +540,7 @@ function AgGridTableView(props) {
                   autoGroupColumnDef={autoGroupColumnDef}
                   suppressServerSideFullWidthLoadingRow={true}
                   loadingOverlayComponent={CustomLoadingOverlay}
+                  pinnedBottomRowData={pinnedBottomRowData}
                   getDataPath={
                     view?.attributes?.treeData ? getDataPath : undefined
                   }
@@ -566,6 +550,7 @@ function AgGridTableView(props) {
                   onSelectionChanged={(e) => {
                     setSelectedRows(e.api.getSelectedRows());
                   }}
+                  onCellDoubleClicked={(params) => params.api.stopEditing()}
                 />
               </>
             )}

@@ -892,8 +892,32 @@ u {
   --ag-font-family: "Inter", sans-serif;
 }
 
+.add_row_btn {
+  position: fixed;
+  top: 31px !important;
+  z-index: 99999 !important;
+  border: 1px solid #dcdddd;
+  width: 100%;
+  height: 29px;
+  border-left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  left: 0;
+  transition: #eef4ff 0.2s ease;
+  pointer-events: auto;
+}
+
+.ag-row {
+  &:hover {
+    background: #fff;
+  }
+}
+
 .ag-cell {
   padding: 0px 0px !important;
+  overflow: visible !important;
 
   .rowIndex {
     position: absolute;

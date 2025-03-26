@@ -6,6 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import {Box} from "@mui/material";
 import {Delete} from "@mui/icons-material";
+import ClearIcon from "@mui/icons-material/Clear";
 
 function ActionButtons(props) {
   const {colDef, data} = props;
@@ -13,30 +14,80 @@ function ActionButtons(props) {
   return (
     <>
       {data?.new_field ? (
-        <Box
-          className="sssss"
-          sx={{
-            display: "flex",
-            width: "100%",
-            height: "32px",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-          }}>
-          <RectangleIconButton
-            onClick={() => {
-              colDef.removeRow(data?.guid);
+        <>
+          <Box
+            sx={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              "&:hover .imageBox": {
+                opacity: 0,
+                transition: "opacity 0.3s ease",
+              },
+              "&:hover .buttonBox": {
+                opacity: 1,
+                transition: "opacity 0.3s ease",
+              },
             }}>
-            <CloseIcon color="error" />
-          </RectangleIconButton>
-          <RectangleIconButton
-            color="success"
-            onClick={() => {
-              colDef.addRow(data);
-            }}>
-            <DoneIcon color="success" />
-          </RectangleIconButton>
-        </Box>
+            <Box
+              className="imageBox"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: 1,
+                transition: "opacity 0.3s ease",
+              }}>
+              <img
+                src="/table-icons/save-delete.svg"
+                alt="More"
+                width="25px"
+                height="25px"
+              />
+            </Box>
+
+            <Box
+              className="buttonBox"
+              sx={{
+                position: "absolute",
+                top: "3px",
+                right: "10px",
+                width: "53px",
+                height: "26px",
+                display: "flex",
+                justifyContent: "center",
+                // alignItems: "center",
+                gap: "3px",
+                background: "#fff",
+                overflow: "hidden",
+                opacity: 0,
+                transition: "opacity 0.3s ease",
+              }}>
+              <RectangleIconButton
+                id="cancel-row"
+                color="error"
+                style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
+                onClick={() => colDef.removeRow(data?.guid)}>
+                <ClearIcon color="error" />
+              </RectangleIconButton>
+              <RectangleIconButton
+                id="confirm-row"
+                color="success"
+                style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  colDef.addRow(data);
+                }}>
+                <DoneIcon color="success" />
+              </RectangleIconButton>
+            </Box>
+          </Box>
+        </>
       ) : (
         <Box
           sx={{

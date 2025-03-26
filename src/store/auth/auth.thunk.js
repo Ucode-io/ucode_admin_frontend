@@ -25,6 +25,7 @@ export const loginAction = createAsyncThunk(
       dispatch(companyActions.setEnvironmentId(res?.environment_id));
       dispatch(companyActions.setDefaultPage(data?.default_page));
       dispatch(permissionsActions.setPermissions(res?.permissions));
+      dispatch(permissionsActions.setGlobalPermissions(res?.global_permission));
 
       await languageService
         .getLanguageList()

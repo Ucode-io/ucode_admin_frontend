@@ -2,14 +2,34 @@ import cls from "./styles.module.scss";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import {useSettingsPopupProps} from "./useSettingsPopupProps";
-import {Box, Typography} from "@mui/material";
-import {Flex} from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
+} from "@mui/material";
+import { Flex } from "@chakra-ui/react";
 import clsx from "clsx";
-import {SettingsPopupProvider} from "./providers";
-import {isValidElement} from "react";
-import {store} from "../../store";
+import { SettingsPopupProvider } from "./providers";
+import { isValidElement } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AddIcon from "@mui/icons-material/Add";
+import { FolderCreateModal } from "./components/FolderCreateModal";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 
-export const SettingsPopup = ({open, onClose}) => {
+const TabTitle = ({ tab, children, ...props }) => {
+  return (
+    <Flex columnGap="8px" cursor="pointer" {...props}>
+      {tab?.icon && tab?.icon}
+      <Typography className={cls.tabItemTitle} flexGrow={1} variant="p">
+        {children}
+      </Typography>
+    </Flex>
+  );
+};
+
+export const SettingsPopup = ({ open, onClose }) => {
   const {
     handleClose,
     t,
@@ -20,10 +40,15 @@ export const SettingsPopup = ({open, onClose}) => {
     searchParams,
     setSearchParams,
     updateSearchParam,
-  } = useSettingsPopupProps({onClose});
-  const auth = store.getState().auth;
+    handlePermissionClick,
+    activeChildId,
+    handleOpenClientTypeModal,
+    handleCloseClientTypeModal,
+    isClientTypeModalOpen,
+    permissionChild,
+  } = useSettingsPopupProps({ onClose });
 
-  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+  console.log(searchParams.get("tab"));
 
   return (
     <SettingsPopupProvider
@@ -34,7 +59,9 @@ export const SettingsPopup = ({open, onClose}) => {
         setSearchParams,
         updateSearchParam,
         handleClose,
-      }}>
+        permissionChild,
+      }}
+    >
       <Dialog
         open={open}
         onClose={handleClose}
@@ -45,8 +72,9 @@ export const SettingsPopup = ({open, onClose}) => {
             maxWidth: "1150px !important",
             width: "100% !important",
           },
-        }}>
-        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
+        }}
+      >
+        <DialogContent className={cls.dialogContent} sx={{ padding: 0 }}>
           <Box className={cls.content}>
             <Box className={cls.leftBarWrapper}>
               <Box className={cls.leftBar}>
@@ -57,44 +85,112 @@ export const SettingsPopup = ({open, onClose}) => {
                         {tab?.title}
                       </Typography>
                       {tab?.tabs?.map((tab, tabIndex) => {
-                        return defaultAdmin && tab?.title === "Billing" ? (
-                          <Flex
-                            className={clsx(cls.tabItem, {
-                              [cls.active]: activeTab === tab?.key,
-                            })}
-                            onClick={() => handleChangeTab(tab?.key)}
-                            alignItems="center"
-                            key={tabIndex}>
-                            <Flex columnGap="8px">
-                              {tab?.icon && tab?.icon}
-                              <Typography
-                                className={cls.tabItemTitle}
-                                flexGrow={1}
-                                variant="p">
-                                {tab?.title}
-                              </Typography>
-                            </Flex>
-                          </Flex>
-                        ) : tab?.title !== "Billing" ? (
-                          <Flex
-                            className={clsx(cls.tabItem, {
-                              [cls.active]: activeTab === tab?.key,
-                            })}
-                            onClick={() => handleChangeTab(tab?.key)}
-                            alignItems="center"
-                            key={tabIndex}>
-                            <Flex columnGap="8px">
-                              {tab?.icon && tab?.icon}
-                              <Typography
-                                className={cls.tabItemTitle}
-                                flexGrow={1}
-                                variant="p">
-                                {tab?.title}
-                              </Typography>
-                            </Flex>
-                          </Flex>
-                        ) : (
-                          ""
+                        return (
+                          <Box>
+                            {tab?.children ? (
+                              <Accordion
+                                sx={{
+                                  boxShadow: "none !important",
+                                  backgroundColor: "transparent !important",
+                                  "& .MuiPaper-root": {
+                                    boxShadow: "none !important",
+                                  },
+                                  "& .MuiAccordionSummary-content": {
+                                    margin: "0 !important",
+                                  },
+                                  "& .MuiButtonBase-root": {
+                                    minHeight: "27px !important",
+                                    paddingLeft: "12px",
+                                    paddingRight: "12px",
+                                  },
+                                }}
+                              >
+                                <AccordionSummary
+                                  expandIcon={<ExpandMoreIcon />}
+                                  aria-controls="panel1-content"
+                                  id="panel1-header"
+                                  sx={{
+                                    borderRadius: "4px",
+                                    "&:hover": {
+                                      backgroundColor:
+                                        "rgba(55, 53, 47, 0.06) !important",
+                                    },
+                                  }}
+                                >
+                                  <TabTitle tab={tab}>{tab?.title}</TabTitle>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                  {tab?.children?.map((child) => (
+                                    <Box
+                                      key={child?.id}
+                                      sx={{
+                                        position: "relative",
+                                        paddingLeft: "28px",
+                                        fontSize: "14px",
+                                        lineHeight: "20px",
+                                        fontWeight: "400",
+                                        paddingTop: "4px",
+                                        paddingBottom: "4px",
+                                        borderRadius: "4px",
+                                        backgroundColor:
+                                          child?.guid === activeChildId
+                                            ? "rgba(55, 53, 47, 0.06)"
+                                            : "transparent",
+
+                                        color: "rgb(55, 53, 47)",
+                                        "&::after": {
+                                          width: "4px",
+                                          height: "4px",
+                                          position: "absolute",
+                                          top: "50%",
+                                          left: "12px",
+                                          borderRadius: "50%",
+                                          backgroundColor: "#344054",
+                                          transform: "translateY(-50%)",
+                                          content: '""',
+                                        },
+                                        "&:hover": {
+                                          backgroundColor:
+                                            "rgba(55, 53, 47, 0.06) !important",
+                                        },
+                                      }}
+                                    >
+                                      <TabTitle
+                                        tab={child}
+                                        onClick={() =>
+                                          handlePermissionClick(child)
+                                        }
+                                      >
+                                        {child?.name}
+                                      </TabTitle>
+                                    </Box>
+                                  ))}
+                                  <button
+                                    className={cls.addClientTypeBtn}
+                                    onClick={handleOpenClientTypeModal}
+                                  >
+                                    <span>
+                                      <span className={cls.addIcon}>
+                                        <AddIcon />
+                                      </span>
+                                      <span>Add client type</span>
+                                    </span>
+                                  </button>
+                                </AccordionDetails>
+                              </Accordion>
+                            ) : (
+                              <Flex
+                                className={clsx(cls.tabItem, {
+                                  [cls.active]: activeTab === tab?.key,
+                                })}
+                                onClick={() => handleChangeTab(tab?.key)}
+                                alignItems="center"
+                                key={tabIndex}
+                              >
+                                <TabTitle tab={tab}>{tab?.title}</TabTitle>
+                              </Flex>
+                            )}
+                          </Box>
                         );
                       })}
                     </Box>
@@ -102,7 +198,13 @@ export const SettingsPopup = ({open, onClose}) => {
                 })}
               </Box>
             </Box>
-            <Box className={cls.rightContent}>
+            <Box
+              className={clsx(cls.rightContent, {
+                [cls.smPadding]:
+                  searchParams.get("tab") ===
+                  TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
+              })}
+            >
               {isValidElement(tabComponents[activeTab])
                 ? tabComponents[activeTab]
                 : (tabComponents[activeTab]?.[searchParams.get("tab")] ??
@@ -111,6 +213,12 @@ export const SettingsPopup = ({open, onClose}) => {
           </Box>
         </DialogContent>
       </Dialog>
+      {isClientTypeModalOpen && (
+        <FolderCreateModal
+          closeModal={handleCloseClientTypeModal}
+          modalType="CREATE"
+        />
+      )}
     </SettingsPopupProvider>
   );
 };

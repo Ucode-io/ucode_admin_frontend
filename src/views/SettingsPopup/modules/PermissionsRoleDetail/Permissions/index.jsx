@@ -7,19 +7,21 @@ import {
   CTableHead,
   CTableHeadRow,
 } from "../../../../../components/CTable";
-import {Box, Card, Checkbox} from "@mui/material";
-import {useEffect, useState} from "react";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Box, Card } from "@mui/material";
+import { useEffect, useState } from "react";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
 import styles from "./style.module.scss";
-import {permissions, recordPermission} from "./mock";
+import { permissions } from "./mock";
 import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
-import {GoInfo} from "react-icons/go";
-import {getAllFromDB} from "../../../../../utils/languageDB";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
+import { GoInfo } from "react-icons/go";
+import { getAllFromDB } from "../../../../../utils/languageDB";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
 import TableRow from "./TableRow";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import clsx from "clsx";
+import { CustomCheckbox } from "../../../components/CustomCheckbox";
 
 const Permissions = ({
   control,
@@ -27,12 +29,13 @@ const Permissions = ({
   changedData,
   setValue,
   watch,
+  activeTab,
 }) => {
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
   const [modalData, setModalData] = useState(null);
   const [permissionLan, setPermissionLan] = useState(null);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const closeModal = () => {
     setModalData(null);
@@ -63,12 +66,19 @@ const Permissions = ({
     (permission) => permission.record_permissions?.is_public === true
   );
 
+  const isAllChecked =
+    allReadTrue &&
+    allWriteTrue &&
+    allUpdateTrue &&
+    allDeleteTrue &&
+    allPublicTrue;
+
   useEffect(() => {
     const obj = {};
     allMenu?.forEach((item, index) => {
       obj[item.id] = item.permission;
     });
-    setCheckBoxValues((prev) => ({...prev, ...obj}));
+    setCheckBoxValues((prev) => ({ ...prev, ...obj }));
   }, [allMenu]);
 
   useEffect(() => {
@@ -91,324 +101,428 @@ const Permissions = ({
     };
   }, []);
 
+  const handleChangeAllPermission = (e) => {
+    setValue(
+      "data.tables",
+      tables?.tables?.map((el) => ({
+        ...el,
+        record_permissions: {
+          ...el.record_permissions,
+          read: e.target.checked ? "Yes" : "No",
+          write: e.target.checked ? "Yes" : "No",
+          update: e.target.checked ? "Yes" : "No",
+          delete: e.target.checked ? "Yes" : "No",
+          is_public: e.target.checked ? true : false,
+        },
+      }))
+    );
+  };
+
   return (
     <>
-      <Tabs
-        direction={"ltr"}
-        selectedIndex={selectedTab}
-        onSelect={setSelectedTab}>
-        <div>
-          <Card style={{boxShadow: "none"}}>
-            <TabList>
-              <Tab>
-                {generateLangaugeText(permissionLan, i18n?.language, "Table") ||
-                  "Table"}
-              </Tab>
-              <Tab>
-                {generateLangaugeText(permissionLan, i18n?.language, "Menu") ||
-                  "Menu"}
-              </Tab>
-              <Tab>
-                {generateLangaugeText(
-                  permissionLan,
-                  i18n?.language,
-                  "Global Permission"
-                ) || "Global Permission"}
-              </Tab>
-            </TabList>
+      <div>
+        <Card style={{ boxShadow: "none", paddingTop: "3px" }}>
+          {/* <TabList>
+            <Tab>
+              {generateLangaugeText(permissionLan, i18n?.language, "Table") ||
+                "Table"}
+            </Tab>
+            <Tab>
+              {generateLangaugeText(permissionLan, i18n?.language, "Menu") ||
+                "Menu"}
+            </Tab>
+            <Tab>
+              {generateLangaugeText(
+                permissionLan,
+                i18n?.language,
+                "Global Permission"
+              ) || "Global Permission"}
+            </Tab>
+          </TabList> */}
 
-            <TabPanel>
-              <Box py={1}>
-                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
-                  <CTable>
-                    <CTableHead>
-                      <CTableHeadRow>
-                        <CTableCell
-                          rowSpan={2}
-                          w={200}
-                          className={styles.sticky_header}>
+          {activeTab === "table" && (
+            <Box py={1}>
+              <TableCard
+                withBorder
+                borderRadius="md"
+                disablePagination
+                type={"withoutPadding"}
+              >
+                <CTable removableHeight={false} disablePagination>
+                  <CTableHead>
+                    <CTableHeadRow>
+                      <CTableCell
+                        rowSpan={2}
+                        w={200}
+                        className={styles.sticky_header}
+                      >
+                        <Box
+                          minWidth="198px"
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
                             "Objects"
                           ) || "Objects"}
-                        </CTableCell>
-                        <CTableCell colSpan={5}>
+                        </Box>
+                      </CTableCell>
+                      <CTableCell colSpan={5}>
+                        <Box
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
+                          <CustomCheckbox
+                            onChange={handleChangeAllPermission}
+                            defaultChecked={isAllChecked}
+                          >
+                            {generateLangaugeText(
+                              permissionLan,
+                              i18n?.language,
+                              "Action"
+                            ) || "Action"}
+                          </CustomCheckbox>
+                          {/* <GoInfo
+                            size={18}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setModalData(recordPermission)}
+                          /> */}
+                        </Box>
+                      </CTableCell>
+                      {permissions.map((item) => (
+                        <CTableCell rowSpan={2}>
                           <Box
                             display={"flex"}
                             alignItems={"center"}
-                            justifyContent="center"
-                            columnGap={"4px"}>
-                            {generateLangaugeText(
-                              permissionLan,
-                              i18n?.language,
-                              "Record Permission"
-                            ) || "Record Permission"}
+                            columnGap={"4px"}
+                            color="#475467"
+                            fontSize="12px"
+                            fontWeight={500}
+                            lineHeight="18px"
+                          >
+                            {item.title}{" "}
                             <GoInfo
                               size={18}
-                              style={{cursor: "pointer"}}
-                              onClick={() => setModalData(recordPermission)}
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                item?.content && setModalData(item)
+                              }
                             />
                           </Box>
                         </CTableCell>
-                        {permissions.map((item) => (
-                          <CTableCell rowSpan={2}>
-                            <Box
-                              display={"flex"}
-                              alignItems={"center"}
-                              columnGap={"4px"}>
-                              {item.title}{" "}
-                              <GoInfo
-                                size={18}
-                                style={{cursor: "pointer"}}
-                                onClick={() =>
-                                  item?.content && setModalData(item)
-                                }
-                              />
-                            </Box>
-                          </CTableCell>
-                        ))}
-                      </CTableHeadRow>
-                      <CTableHeadRow>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Reading"
-                          ) || "Reading"}
-                          <Checkbox
-                            checked={allReadTrue ? true : false}
-                            onChange={(e) => {
-                              setValue(
-                                "data.tables",
-                                tables?.tables?.map((el) => ({
-                                  ...el,
-                                  record_permissions: {
-                                    ...el.record_permissions,
-                                    read: e.target.checked ? "Yes" : "No",
-                                  },
-                                }))
-                              );
-                            }}
-                          />
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Adding"
-                          ) || "Adding"}
-                          <Checkbox
-                            checked={allWriteTrue ? true : false}
-                            onChange={(e) => {
-                              setValue(
-                                "data.tables",
-                                tables?.tables?.map((el) => ({
-                                  ...el,
-                                  record_permissions: {
-                                    ...el.record_permissions,
-                                    write: e.target.checked ? "Yes" : "No",
-                                  },
-                                }))
-                              );
-                            }}
-                          />
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Editing"
-                          ) || "Editing"}
-                          <Checkbox
-                            checked={allUpdateTrue ? true : false}
-                            onChange={(e) => {
-                              setValue(
-                                "data.tables",
-                                tables?.tables?.map((el) => ({
-                                  ...el,
-                                  record_permissions: {
-                                    ...el.record_permissions,
-                                    update: e.target.checked ? "Yes" : "No",
-                                  },
-                                }))
-                              );
-                            }}
-                          />
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Deleting"
-                          ) || "Deleting"}
-                          <Checkbox
-                            checked={allDeleteTrue ? true : false}
-                            onChange={(e) => {
-                              setValue(
-                                "data.tables",
-                                tables?.tables?.map((el) => ({
-                                  ...el,
-                                  record_permissions: {
-                                    ...el.record_permissions,
-                                    delete: e.target.checked ? "Yes" : "No",
-                                  },
-                                }))
-                              );
-                            }}
-                          />
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Public"
-                          ) || "Public"}
-                          <Checkbox
-                            checked={allPublicTrue ? true : false}
-                            onChange={(e) => {
-                              setValue(
-                                "data.tables",
-                                tables?.tables?.map((el) => ({
-                                  ...el,
-                                  record_permissions: {
-                                    ...el.record_permissions,
-                                    is_public: e.target.checked,
-                                  },
-                                }))
-                              );
-                            }}
-                          />
-                        </CTableCell>
-                      </CTableHeadRow>
-                    </CTableHead>
-                    <CTableBody
-                      //   loader={isLoading}
-                      columnsCount={8}
-                      dataLength={tables?.tables?.length}>
-                      {tables?.tables?.map((table, tableIndex) => (
-                        <TableRow
-                          key={table.id}
-                          table={table}
-                          tableIndex={tableIndex}
-                          control={control}
-                          setValue={setValue}
-                          watch={watch}
-                          permissionLan={permissionLan}
-                        />
                       ))}
-                    </CTableBody>
-                  </CTable>
-                </TableCard>
-              </Box>
-            </TabPanel>
-            <TabPanel>
-              <Box py={1}>
-                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
-                  <CTable>
-                    <CTableHead>
-                      <CTableHeadRow>
-                        <CTableCell rowSpan={2} w={200}>
+                    </CTableHeadRow>
+                    {/* <CTableHeadRow>
+                      <CTableCell>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Reading"
+                        ) || "Reading"}
+                        <Checkbox
+                          checked={allReadTrue ? true : false}
+                          onChange={(e) => {
+                            setValue(
+                              "data.tables",
+                              tables?.tables?.map((el) => ({
+                                ...el,
+                                record_permissions: {
+                                  ...el.record_permissions,
+                                  read: e.target.checked ? "Yes" : "No",
+                                },
+                              }))
+                            );
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Adding"
+                        ) || "Adding"}
+                        <Checkbox
+                          checked={allWriteTrue ? true : false}
+                          onChange={(e) => {
+                            setValue(
+                              "data.tables",
+                              tables?.tables?.map((el) => ({
+                                ...el,
+                                record_permissions: {
+                                  ...el.record_permissions,
+                                  write: e.target.checked ? "Yes" : "No",
+                                },
+                              }))
+                            );
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Editing"
+                        ) || "Editing"}
+                        <Checkbox
+                          checked={allUpdateTrue ? true : false}
+                          onChange={(e) => {
+                            setValue(
+                              "data.tables",
+                              tables?.tables?.map((el) => ({
+                                ...el,
+                                record_permissions: {
+                                  ...el.record_permissions,
+                                  update: e.target.checked ? "Yes" : "No",
+                                },
+                              }))
+                            );
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Deleting"
+                        ) || "Deleting"}
+                        <Checkbox
+                          checked={allDeleteTrue ? true : false}
+                          onChange={(e) => {
+                            setValue(
+                              "data.tables",
+                              tables?.tables?.map((el) => ({
+                                ...el,
+                                record_permissions: {
+                                  ...el.record_permissions,
+                                  delete: e.target.checked ? "Yes" : "No",
+                                },
+                              }))
+                            );
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Public"
+                        ) || "Public"}
+                        <Checkbox
+                          checked={allPublicTrue ? true : false}
+                          onChange={(e) => {
+                            setValue(
+                              "data.tables",
+                              tables?.tables?.map((el) => ({
+                                ...el,
+                                record_permissions: {
+                                  ...el.record_permissions,
+                                  is_public: e.target.checked,
+                                },
+                              }))
+                            );
+                          }}
+                        />
+                      </CTableCell>
+                    </CTableHeadRow> */}
+                  </CTableHead>
+                  <CTableBody
+                    //   loader={isLoading}
+                    columnsCount={8}
+                    dataLength={tables?.tables?.length}
+                  >
+                    {tables?.tables?.map((table, tableIndex) => (
+                      <TableRow
+                        key={table.id}
+                        table={table}
+                        tableIndex={tableIndex}
+                        control={control}
+                        setValue={setValue}
+                        watch={watch}
+                        permissionLan={permissionLan}
+                      />
+                    ))}
+                  </CTableBody>
+                </CTable>
+              </TableCard>
+            </Box>
+          )}
+          {activeTab === "menu" && (
+            <Box py={1}>
+              <TableCard
+                withBorder
+                disablePagination
+                borderRadius="md"
+                type={"withoutPadding"}
+              >
+                <CTable removableHeight={false} disablePagination>
+                  <CTableHead>
+                    <CTableHeadRow>
+                      <CTableCell rowSpan={2} w={200}>
+                        <Box
+                          minWidth="198px"
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
                             "Objects"
                           ) || "Objects"}
-                        </CTableCell>
-                        <CTableCell colSpan={5} tex>
-                          <Box sx={{justifyContent: "center", display: "flex"}}>
-                            {generateLangaugeText(
-                              permissionLan,
-                              i18n?.language,
-                              "Menu permissions"
-                            ) || " Menu permissions"}
-                          </Box>
-                        </CTableCell>
-                      </CTableHeadRow>
-                      <CTableHeadRow>
-                        <CTableCell>
+                        </Box>
+                      </CTableCell>
+                      <CTableCell colSpan={5} tex>
+                        <Box
+                          sx={{ justifyContent: "center", display: "flex" }}
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
-                            "Read"
-                          ) || "Read"}
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Add"
-                          ) || "Add"}
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Edit"
-                          ) || "Edit"}
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Delete"
-                          ) || "Delete"}
-                        </CTableCell>
-                        <CTableCell>
-                          {generateLangaugeText(
-                            permissionLan,
-                            i18n?.language,
-                            "Settings"
-                          ) || " Settings"}
-                        </CTableCell>
-                      </CTableHeadRow>
-                    </CTableHead>
-                    <CTableBody columnsCount={6} dataLength={allMenu?.length}>
-                      {allMenu?.map((app, appIndex) => (
-                        <MenuRow
-                          key={app.id}
-                          allMenus={allMenu}
-                          app={app}
-                          changedData={changedData}
-                          appIndex={appIndex}
-                          control={control}
-                          checkBoxValues={checkBoxValues}
-                          setCheckBoxValues={setCheckBoxValues}
-                          setChangedData={setChangedData}
-                          setValue={setValue}
-                        />
-                      ))}
-                    </CTableBody>
-                  </CTable>
-                </TableCard>
-              </Box>
-            </TabPanel>
-            <TabPanel>
-              <Box py={1}>
-                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
-                  <CTable>
-                    <CTableHead>
-                      <CTableHeadRow>
-                        <CTableCell width={"50%"}>
+                            "Menu permissions"
+                          ) || "Menu permissions"}
+                        </Box>
+                      </CTableCell>
+                    </CTableHeadRow>
+                    {/* <CTableHeadRow>
+                    <CTableCell>
+                      <Box
+                        color="#475467"
+                        fontSize="12px"
+                        fontWeight={500}
+                        lineHeight="18px"
+                      >
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Read"
+                        ) || "Read"}
+                      </Box>
+                    </CTableCell>
+                    <CTableCell>
+                      <Box
+                        color="#475467"
+                        fontSize="12px"
+                        fontWeight={500}
+                        lineHeight="18px"
+                      >
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Add"
+                        ) || "Add"}
+                      </Box>
+                    </CTableCell>
+                    <CTableCell>
+                      <Box
+                        color="#475467"
+                        fontSize="12px"
+                        fontWeight={500}
+                        lineHeight="18px"
+                      >
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Edit"
+                        ) || "Edit"}
+                      </Box>
+                    </CTableCell>
+                    <CTableCell>
+                      <Box
+                        color="#475467"
+                        fontSize="12px"
+                        fontWeight={500}
+                        lineHeight="18px"
+                      >
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Delete"
+                        ) || "Delete"}
+                      </Box>
+                    </CTableCell>
+                    <CTableCell>
+                      <Box
+                        color="#475467"
+                        fontSize="12px"
+                        fontWeight={500}
+                        lineHeight="18px"
+                      >
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Settings"
+                        ) || " Settings"}
+                      </Box>
+                    </CTableCell>
+                  </CTableHeadRow> */}
+                  </CTableHead>
+                  <CTableBody columnsCount={6} dataLength={allMenu?.length}>
+                    {allMenu?.map((app, appIndex) => (
+                      <MenuRow
+                        key={app.id}
+                        allMenus={allMenu}
+                        app={app}
+                        changedData={changedData}
+                        appIndex={appIndex}
+                        control={control}
+                        checkBoxValues={checkBoxValues}
+                        setCheckBoxValues={setCheckBoxValues}
+                        setChangedData={setChangedData}
+                        setValue={setValue}
+                      />
+                    ))}
+                  </CTableBody>
+                </CTable>
+              </TableCard>
+            </Box>
+          )}
+          {activeTab === "permission" && (
+            <Box py={1}>
+              <TableCard
+                withBorder
+                borderRadius="md"
+                type={"withoutPadding"}
+                disablePagination
+              >
+                <CTable removableHeight={false} disablePagination>
+                  <CTableHead>
+                    <CTableHeadRow>
+                      <CTableCell width={"50%"}>
+                        <Box
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
                             "Global Permissions"
                           ) || "Global Permissions"}
-                        </CTableCell>
-                        <CTableCell></CTableCell>
-                      </CTableHeadRow>
-                    </CTableHead>
-                    <CTableBody columnsCount={2} dataLength={5}>
-                      <CustomPermissionRow watch={watch} setValue={setValue} />
-                    </CTableBody>
-                  </CTable>
-                </TableCard>
-              </Box>
-            </TabPanel>
-          </Card>
-        </div>
-      </Tabs>
+                        </Box>
+                      </CTableCell>
+                      <CTableCell></CTableCell>
+                    </CTableHeadRow>
+                  </CTableHead>
+                  <CTableBody columnsCount={2} dataLength={5}>
+                    <CustomPermissionRow watch={watch} setValue={setValue} />
+                  </CTableBody>
+                </CTable>
+              </TableCard>
+            </Box>
+          )}
+        </Card>
+      </div>
       {modalData && (
         <PermissionInfoModal modalData={modalData} closeModal={closeModal} />
       )}

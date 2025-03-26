@@ -803,7 +803,8 @@ const Header = ({
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      onClose={handleClose}>
+      onClose={handleClose}
+    >
       <PopoverTrigger>
         <Flex
           w="calc(100% - 8px)"
@@ -814,16 +815,19 @@ const Header = ({
           p={5}
           borderRadius={8}
           bg="#fff"
-          _hover={{bg: "#EAECF0"}}
+          _hover={{ bg: "#EAECF0" }}
           cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}>
+          onClick={() => (!isOpen ? onOpen() : null)}
+          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+        >
           <Flex
             w={36}
             h={36}
             position="absolute"
             left={0}
             alignItems="center"
-            justifyContent="center">
+            justifyContent="center"
+          >
             {Boolean(projectInfo?.logo) && (
               <img src={projectInfo?.logo} alt="" width={20} height={20} />
             )}
@@ -838,7 +842,8 @@ const Header = ({
                 alignItems="center"
                 justifyContent="center"
                 fontSize={14}
-                fontWeight={500}>
+                fontWeight={500}
+              >
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             )}
@@ -851,10 +856,11 @@ const Header = ({
             fontSize={13}
             fontWeight={500}
             overflow="hidden"
-            textOverflow="ellipsis">
+            textOverflow="ellipsis"
+          >
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
+          <KeyboardArrowDownIcon style={{ marginLeft: "auto", fontSize: 20 }} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent
@@ -864,7 +870,10 @@ const Header = ({
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}>
+        zIndex={999}
+        onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+        onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}
+      >
         <>
           <ProfilePanel
             menuLanguages={menuLanguages}
@@ -1190,8 +1199,8 @@ const Companies = ({onSelectEnvironment}) => {
   return (
     <Box p={8} borderBottom={"1px solid #eee"}>
       <Accordion allowToggle>
-        {companies.map((company) => (
-          <AccordionItem key={company.id}>
+        {companies?.map((company) => (
+          <AccordionItem key={company?.id}>
             <AccordionButton
               columnGap={8}
               p={5}
@@ -1201,7 +1210,8 @@ const Companies = ({onSelectEnvironment}) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{bg: "#EAECF0"}}>
+              _hover={{ bg: "#EAECF0" }}
+            >
               <Flex
                 w={20}
                 h={20}
@@ -1211,11 +1221,12 @@ const Companies = ({onSelectEnvironment}) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff">
-                {company.name?.[0]?.toUpperCase()}
+                color="#fff"
+              >
+                {company?.name?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">
-                {company.name}
+                {company?.name}
               </Box>
               <AccordionIcon ml="auto" fontSize="20px" />
             </AccordionButton>

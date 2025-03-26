@@ -16,6 +16,7 @@ const CSelect = ({
   placeholder,
   inputProps = {},
   onChange = () => {},
+  menuStyle = {},
   ...props
 }) => {
   return (
@@ -58,7 +59,7 @@ const CSelect = ({
         }}
         {...props}>
         {options?.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+          <MenuItem style={menuStyle} key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
         ))}

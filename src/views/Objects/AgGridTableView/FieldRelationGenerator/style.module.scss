@@ -81,6 +81,7 @@
   border-radius: 4px;
   color: #000;
   background-color: #c0c0c039;
+  height: 20px;
 
   .value {
     margin-right: 4px;
@@ -300,6 +301,7 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  padding-left: 0px;
 
   div {
     border-radius: 0px;
@@ -360,8 +362,55 @@
   }
 }
 
-.statusSelect {
-  fieldset {
-    display: none !important;
+.iconWrapper {
+  width: 24px;
+  height: 24px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+  color: #0067f4;
+  padding: 0 0 0 0;
+
+  &.rectangle {
+    border-radius: 6px;
+    margin-top: 7px;
+  }
+
+  &.error {
+    border-color: red !important;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.menuList {
+  padding: 10px;
+  width: 300px;
+}
+
+.iconsBlock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.popupIconWrapper {
+  width: 24px;
+  height: 24px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
   }
 }

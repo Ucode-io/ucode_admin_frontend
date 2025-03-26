@@ -52,8 +52,7 @@ const TableDataForm = ({
         position: "relative",
         minWidth: "150px",
         boxSizing: "border-box",
-      }}
-    >
+      }}>
       {view?.attributes?.table_editable ? (
         <CellElementGeneratorForTable field={field} row={row} />
       ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (

@@ -87,6 +87,7 @@ import {LayoutPopup} from "./LayoutPopup";
 import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
 import {useProjectGetByIdQuery} from "../../services/projectService";
+import MaterialUIProvider from "../../providers/MaterialUIProvider";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -314,6 +315,26 @@ export const NewUiViewsWithGroups = ({
     }
   };
 
+  const navigateToEditPage = (row) => {
+    if (projectInfo?.new_layout) {
+      setSelectedRow(row);
+      setOpen(true);
+    } else {
+      if (layoutType === "PopupLayout") {
+        setSelectedRow(row);
+        setOpen(true);
+      } else {
+        navigateToForm(
+          tableSlug,
+          "EDIT",
+          row,
+          {},
+          searchParams.get("menuId") ?? appId
+        );
+      }
+    }
+  };
+
   useEffect(() => {
     initDB();
   }, [tableSlug]);
@@ -375,70 +396,70 @@ export const NewUiViewsWithGroups = ({
     );
   }
 
-  if (view?.type === "GRID") {
-    return (
-      <MuiBox>
-        <FiltersBlock
-          extra={
-            <>
-              <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-                <ShareModal />
-              </PermissionWrapperV2>
+  // if (view?.type === "GRID") {
+  //   return (
+  //     <MuiBox>
+  //       <FiltersBlock
+  //         extra={
+  //           <>
+  //             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+  //               <ShareModal />
+  //             </PermissionWrapperV2>
 
-              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-                <MuiButton
-                  variant="outlined"
-                  onClick={navigateToSettingsPage}
-                  style={{
-                    borderColor: "#A8A8A8",
-                    width: "35px",
-                    height: "35px",
-                    padding: "0px",
-                    minWidth: "35px",
-                  }}>
-                  <SettingsIcon
-                    style={{
-                      color: "#A8A8A8",
-                    }}
-                  />
-                </MuiButton>
-              </PermissionWrapperV2>
-            </>
-          }>
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-            settingsModalVisible={settingsModalVisible}
-            setSettingsModalVisible={setSettingsModalVisible}
-            isChanged={isChanged}
-            setIsChanged={setIsChanged}
-            selectedView={selectedView}
-            setSelectedView={setSelectedView}
-            menuItem={menuItem}
-          />
-          {view?.type === "FINANCE CALENDAR" && (
-            <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-          )}
-        </FiltersBlock>
-        <AgGridTableView
-          selectedTabIndex={selectedTabIndex}
-          view={view}
-          views={views}
-          fieldsMap={fieldsMap}
-          computedVisibleFields={computedVisibleFields}
-          checkedColumns={checkedColumns}
-          setCheckedColumns={setCheckedColumns}
-          columnsForSearch={columnsForSearch}
-          updateField={updateField}
-          visibleColumns={visibleColumns}
-          visibleRelationColumns={visibleRelationColumns}
-          visibleForm={visibleForm}
-          menuItem={menuItem}
-        />
-      </MuiBox>
-    );
-  }
+  //             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+  //               <MuiButton
+  //                 variant="outlined"
+  //                 onClick={navigateToSettingsPage}
+  //                 style={{
+  //                   borderColor: "#A8A8A8",
+  //                   width: "35px",
+  //                   height: "35px",
+  //                   padding: "0px",
+  //                   minWidth: "35px",
+  //                 }}>
+  //                 <SettingsIcon
+  //                   style={{
+  //                     color: "#A8A8A8",
+  //                   }}
+  //                 />
+  //               </MuiButton>
+  //             </PermissionWrapperV2>
+  //           </>
+  //         }>
+  //         <ViewTabSelector
+  //           selectedTabIndex={selectedTabIndex}
+  //           setSelectedTabIndex={setSelectedTabIndex}
+  //           views={views}
+  //           settingsModalVisible={settingsModalVisible}
+  //           setSettingsModalVisible={setSettingsModalVisible}
+  //           isChanged={isChanged}
+  //           setIsChanged={setIsChanged}
+  //           selectedView={selectedView}
+  //           setSelectedView={setSelectedView}
+  //           menuItem={menuItem}
+  //         />
+  //         {view?.type === "FINANCE CALENDAR" && (
+  //           <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+  //         )}
+  //       </FiltersBlock>
+  //       <AgGridTableView
+  //         selectedTabIndex={selectedTabIndex}
+  //         view={view}
+  //         views={views}
+  //         fieldsMap={fieldsMap}
+  //         computedVisibleFields={computedVisibleFields}
+  //         checkedColumns={checkedColumns}
+  //         setCheckedColumns={setCheckedColumns}
+  //         columnsForSearch={columnsForSearch}
+  //         updateField={updateField}
+  //         visibleColumns={visibleColumns}
+  //         visibleRelationColumns={visibleRelationColumns}
+  //         visibleForm={visibleForm}
+  //         menuItem={menuItem}
+  //       />
+  //     </MuiBox>
+  //   );
+  // }
 
   const tableName =
     menuItem?.attributes?.[`label_${i18n.language}`] ??
@@ -735,7 +756,7 @@ export const NewUiViewsWithGroups = ({
           )}
 
           <Tabs direction={"ltr"} defaultIndex={0}>
-            {tabs?.length > 0 && (
+            {tabs?.length > 0 && view?.type !== "GRID" && (
               <div id="tabsHeight" className={style.tableCardHeader}>
                 <div style={{display: "flex", alignItems: "center"}}>
                   <div className="title" style={{marginRight: "20px"}}>
@@ -758,7 +779,32 @@ export const NewUiViewsWithGroups = ({
               <>
                 {!tabs?.length && (
                   <>
-                    {view.type === "TABLE" && groupTable?.length ? (
+                    {view?.type === "GRID" && groupTable?.length ? (
+                      <MaterialUIProvider>
+                        {" "}
+                        <AgGridTableView
+                          open={open}
+                          setOpen={setOpen}
+                          selectedRow={selectedRow}
+                          projectInfo={projectInfo}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
+                          selectedTabIndex={selectedTabIndex}
+                          view={view}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
+                        />
+                      </MaterialUIProvider>
+                    ) : view.type === "TABLE" && groupTable?.length ? (
                       <GroupTableView
                         tableLan={tableLan}
                         selectedTabIndex={selectedTabIndex}
@@ -786,7 +832,31 @@ export const NewUiViewsWithGroups = ({
                 {!groupTable?.length &&
                   tabs?.map((tab) => (
                     <TabPanel key={tab.value}>
-                      {view.type === "TREE" ? (
+                      {view?.type === "GRID" ? (
+                        <MaterialUIProvider>
+                          <AgGridTableView
+                            open={open}
+                            setOpen={setOpen}
+                            selectedRow={selectedRow}
+                            projectInfo={projectInfo}
+                            setLayoutType={setLayoutType}
+                            navigateToEditPage={navigateToEditPage}
+                            selectedTabIndex={selectedTabIndex}
+                            view={view}
+                            views={views}
+                            fieldsMap={fieldsMap}
+                            computedVisibleFields={computedVisibleFields}
+                            checkedColumns={checkedColumns}
+                            setCheckedColumns={setCheckedColumns}
+                            columnsForSearch={columnsForSearch}
+                            updateField={updateField}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            menuItem={menuItem}
+                          />
+                        </MaterialUIProvider>
+                      ) : view.type === "TREE" ? (
                         <TreeView
                           tableSlug={tableSlug}
                           filters={filters}
@@ -841,7 +911,31 @@ export const NewUiViewsWithGroups = ({
 
                 {!tabs?.length && !groupTable?.length ? (
                   <>
-                    {view.type === "TREE" ? (
+                    {view?.type === "GRID" ? (
+                      <MaterialUIProvider>
+                        <AgGridTableView
+                          open={open}
+                          setOpen={setOpen}
+                          selectedRow={selectedRow}
+                          projectInfo={projectInfo}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
+                          selectedTabIndex={selectedTabIndex}
+                          view={view}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
+                        />
+                      </MaterialUIProvider>
+                    ) : view.type === "TREE" ? (
                       <TreeView
                         tableSlug={tableSlug}
                         filters={filters}

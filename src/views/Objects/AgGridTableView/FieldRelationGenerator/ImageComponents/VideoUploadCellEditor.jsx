@@ -93,7 +93,12 @@ const VideoUploadCellEditor = ({
                     </InputAdornment>
                   </Tooltip>
                 ) : (
-                  <DownloadingIcon style={{fontSize: "25px"}} />
+                  <img
+                    src="/img/file-docs.svg"
+                    alt="Upload"
+                    style={{width: 24, height: 24}}
+                  />
+                  // <DownloadingIcon style={{fontSize: "25px"}} />
                 )}
                 {/* <p>Max size: 4 MB</p> */}
               </>

@@ -144,7 +144,7 @@ const ImageUploadCellEditor = ({
             <div
               style={{
                 width: "35px",
-                height: "35px",
+                height: "32px",
                 borderRadius: "50%",
                 overflow: "hidden",
               }}
@@ -342,11 +342,16 @@ const ImageUploadCellEditor = ({
             disabled={disabled}
             accept=".jpg, .jpeg, .png, .gif"
           />
-          <UploadFileIcon
+          {/* <UploadFileIcon
             style={{
               color: "#747474",
               fontSize: "25px",
             }}
+          /> */}
+          <img
+            src="/img/newUpload.svg"
+            alt="Upload"
+            style={{width: 22, height: 22}}
           />
         </Button>
       )}

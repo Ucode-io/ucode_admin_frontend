@@ -1,8 +1,13 @@
 import React from "react";
 import ImageUploadCellEditor from "./ImageComponents/ImageUploadCellEditor";
+import RowClickButton from "../RowClickButton";
 
 export default function HFPhotoUploadCellEditor(props) {
-  const {field, value, setValue} = props;
+  const {field, value, setValue, data, colDef} = props;
+
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick(data);
+  };
   return (
     <>
       <ImageUploadCellEditor
@@ -17,6 +22,9 @@ export default function HFPhotoUploadCellEditor(props) {
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
       )} */}
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
     </>
   );
 }

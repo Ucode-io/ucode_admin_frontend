@@ -32,6 +32,7 @@ const AddDataColumn = React.memo(
     calculateWidthFixedColumn,
     firstRowWidth = 45,
     isTableView = false,
+    tableSlugProp = "",
   }) => {
     const dispatch = useDispatch();
     const {tableSlug: tableSlugParams, id} = useParams();

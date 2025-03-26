@@ -86,7 +86,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           projectInfo={projectInfo}
         />
         <div
-          className={`${isWarningActive ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
+          className={`${isWarningActive || projectInfo?.status === "inactive" ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}

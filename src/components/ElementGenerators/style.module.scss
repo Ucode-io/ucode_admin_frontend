@@ -29,8 +29,20 @@
 
 .autocompleteWrapper {
   position: relative;
+
+  .createButton {
+    position: absolute;
+    right: 0;
+    top: -28px;
+    color: #1990ff;
+    cursor: pointer;
+  }
+}
+
+.manyToManyField {
+  position: relative;
   // height: 32px !important;
-  overflow: auto;
+  // overflow: auto;
 
   .createButton {
     position: absolute;

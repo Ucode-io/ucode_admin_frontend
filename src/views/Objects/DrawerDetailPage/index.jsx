@@ -75,7 +75,9 @@ function DrawerDetailPage({
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-
+  const permissions = useSelector(
+    (state) => state?.permissions?.permissions?.[tableSlug]
+  );
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -440,33 +442,36 @@ function DrawerDetailPage({
                     }}
                   />
 
-                  <Button
-                    onClick={() =>
-                      navigate(
-                        `/main/${appId}/layout-settings/${tableSlug}/${id}`,
-                        {
-                          state: {
-                            ...selectedRow,
-                          },
+                  {Boolean(permissions?.settings) && (
+                    <>
+                      <Button
+                        onClick={() =>
+                          navigate(
+                            `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                            {
+                              state: {
+                                ...selectedRow,
+                              },
+                            }
+                          )
                         }
-                      )
-                    }
-                    w={18}
-                    h={18}
-                    display={"flex"}
-                    alignItems={"center"}
-                    variant="outlined">
-                    <SpaceDashboardIcon style={{color: "#808080"}} />
-                  </Button>
-
-                  <Box
-                    sx={{
-                      width: "1px",
-                      height: "14px",
-                      margin: "0 6px",
-                      background: "rgba(55, 53, 47, 0.16)",
-                    }}
-                  />
+                        w={18}
+                        h={18}
+                        display={"flex"}
+                        alignItems={"center"}
+                        variant="outlined">
+                        <SpaceDashboardIcon style={{color: "#808080"}} />
+                      </Button>
+                      <Box
+                        sx={{
+                          width: "1px",
+                          height: "14px",
+                          margin: "0 6px",
+                          background: "rgba(55, 53, 47, 0.16)",
+                        }}
+                      />
+                    </>
+                  )}
 
                   <TabList
                     style={{

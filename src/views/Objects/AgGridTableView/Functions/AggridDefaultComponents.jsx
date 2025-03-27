@@ -13,9 +13,9 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
       width: 200,
       autoHeaderHeight: true,
       suppressServerSideFullWidthLoadingRow: true,
-      enableRangeSelection: true, // Enable selecting multiple cells
-      enableFillHandle: true, // Enable dragging to copy values
-      fillHandleDirection: "xy", // Allow copying in all directions (x: horizontal, y: vertical)
+      enableRangeSelection: true,
+      enableFillHandle: true,
+      fillHandleDirection: "xy",
       suppressMultiRangeSelection: false,
     }),
     []
@@ -24,7 +24,7 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   const autoGroupColumnDef = useMemo(
     () => ({
       minWidth: 230,
-      field: fields?.[1]?.slug,
+      field: "name",
       cellRendererParams: {
         suppressCount: true,
       },

@@ -6,6 +6,8 @@ import AggridFooter from "./AggridFooter";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {
+  CheckboxEditorModule,
+  NumberEditorModule,
   TextEditorModule,
   ValidationModule,
   themeQuartz,
@@ -48,6 +50,8 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import NewModalDetailPage from "../../../components/NewModalDetailPage";
 import DrawerDetailPage from "../DrawerDetailPage";
 import layoutService from "../../../services/layoutService";
+import {differenceInCalendarDays, parseISO} from "date-fns";
+import {useSelector} from "react-redux";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -61,6 +65,8 @@ ModuleRegistry.registerModules([
   ValidationModule,
   CellSelectionModule,
   TextEditorModule,
+  CheckboxEditorModule,
+  NumberEditorModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -177,10 +183,11 @@ function AgGridTableView(props) {
   );
 
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters],
+    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
+        [groupTab?.slug]: [groupTab?.value],
         ...filters,
       }),
     {
@@ -474,8 +481,48 @@ function AgGridTableView(props) {
     },
   ];
 
+  const tableViewFiltersOpen = useSelector(
+    (state) => state.main.tableViewFiltersOpen
+  );
+
+  const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
+  const filterHeight = localStorage.getItem("filtersHeight");
+
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
+  const calculatedHeight = useMemo(() => {
+    let warningHeight = 0;
+
+    if (isWarningActive || projectInfo?.status === "inactive") {
+      warningHeight = 32;
+    }
+    const filterHeightValue = Number(filterHeight) || 0;
+    const tabHeightValue = Number(tabHeight) || 0;
+
+    return tableViewFiltersOpen
+      ? filterHeightValue + tabHeightValue + warningHeight
+      : tabHeightValue + warningHeight;
+  }, [
+    tableViewFiltersOpen,
+    filterHeight,
+    tabHeight,
+    projectInfo,
+    isWarningActive,
+  ]);
+
   return (
-    <Box sx={{height: "calc(100vh - 85px)", overflow: "scroll"}}>
+    <Box
+      sx={{
+        height: `calc(100vh - ${calculatedHeight + 85}px)`,
+        overflow: "scroll",
+      }}>
       <div className={style.gridTable}>
         <div
           className="ag-theme-quartz"

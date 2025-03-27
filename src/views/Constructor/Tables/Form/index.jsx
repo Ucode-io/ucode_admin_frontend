@@ -35,6 +35,8 @@ import constructorTableService, {
 } from "../../../../services/constructorTableService";
 import {getAllFromDB} from "../../../../utils/languageDB";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useProjectGetByIdQuery} from "../../../../services/projectService";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -57,6 +59,7 @@ const ConstructorTablesFormPage = () => {
       ...value,
     }))
   );
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
     defaultValues: {
@@ -95,7 +98,7 @@ const ConstructorTablesFormPage = () => {
     }
   }, []);
 
-  const { isLoading, data: tableByIdQueryData } = useTableByIdQuery({
+  const {isLoading, data: tableByIdQueryData} = useTableByIdQuery({
     id: id,
     queryParams: {
       enabled: !!id,
@@ -114,15 +117,15 @@ const ConstructorTablesFormPage = () => {
     setLoader(true);
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([
-        await constructorViewRelationService.getList({ table_slug: tableSlug }),
+      const [tableData, {custom_events: actions = []}] = await Promise.all([
+        await constructorViewRelationService.getList({table_slug: tableSlug}),
         await constructorCustomEventService.getList(
-          { table_slug: tableSlug },
+          {table_slug: tableSlug},
           tableSlug
         ),
         await layoutService
           .getList(
-            { "table-slug": tableSlug, language_setting: i18n?.language },
+            {"table-slug": tableSlug, language_setting: i18n?.language},
             tableSlug
           )
           .then((res) => {
@@ -152,8 +155,6 @@ const ConstructorTablesFormPage = () => {
     }
   };
 
-  console.log("---------> ", mainForm?.getValues());
-
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
@@ -170,7 +171,7 @@ const ConstructorTablesFormPage = () => {
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -300,7 +301,7 @@ const ConstructorTablesFormPage = () => {
   };
 
   const setPermission = (permission, table_slug) => {
-    const newPermission = { table_slug, ...permission };
+    const newPermission = {table_slug, ...permission};
     const res = [...permissions, newPermission];
 
     dispatch(permissionsActions.setPermissions(res));
@@ -329,11 +330,21 @@ const ConstructorTablesFormPage = () => {
     else getData();
   }, [id]);
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   if (loader) return <PageFallback />;
 
   return (
     <>
-      <div className="pageWithStickyFooter">
+      <div
+        className={`${isWarningActive || projectInfo?.status === "inactive" ? "pageWithStickyFooterWarning" : "pageWithStickyFooter"}`}>
         {id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
@@ -345,8 +356,7 @@ const ConstructorTablesFormPage = () => {
                 subtitle={id ? tableSubtitle : "Add"}
                 icon={mainForm.getValues("icon")}
                 backButtonLink={-1}
-                sticky
-              >
+                sticky>
                 <TabList>
                   <Tab onClick={() => setSelectedTab(0)}>
                     {generateLangaugeText(
@@ -452,8 +462,7 @@ const ConstructorTablesFormPage = () => {
               title={id ? mainForm.getValues("label") : "Create table"}
               icon={mainForm.getValues("icon")}
               backButtonLink={-1}
-              sticky
-            ></HeaderSettings>
+              sticky></HeaderSettings>
 
             <MainInfo
               control={mainForm.control}
@@ -479,8 +488,7 @@ const ConstructorTablesFormPage = () => {
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
-                loading={btnLoader}
-              >
+                loading={btnLoader}>
                 <Save />{" "}
                 {generateLangaugeText(tableLan, i18n?.language, "Save") ||
                   "Save"}

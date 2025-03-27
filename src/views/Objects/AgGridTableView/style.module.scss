@@ -157,9 +157,10 @@
 .gridTable {
   position: relative;
   width: 100%;
-  // height: calc(100vh - 300px);
+  height: calc(100vh - 160px);
   display: flex;
   flex-direction: row;
+  overflow: auto;
 }
 
 .wrapper {

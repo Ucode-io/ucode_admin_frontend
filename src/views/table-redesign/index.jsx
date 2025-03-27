@@ -374,7 +374,7 @@ export const DynamicTable = ({
   ]);
 
   const showSkeleton = loader;
-  console.log("calculatedHeightcalculatedHeight", calculatedHeight);
+
   return (
     <div
       className="CTableContainer"

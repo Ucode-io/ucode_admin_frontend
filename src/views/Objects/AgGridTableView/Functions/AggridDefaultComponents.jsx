@@ -6,7 +6,9 @@ import FieldCreateHeaderComponent from "../FieldCreateHeaderComponent";
 import constructorObjectService from "../../../../services/constructorObjectService";
 
 function AggridDefaultComponents({customAutoGroupColumnDef}) {
-  const {view, fields} = customAutoGroupColumnDef;
+  const {view, fields, tableSlug} = customAutoGroupColumnDef;
+
+  const recursiveField = fields?.find((el) => el?.table_slug === tableSlug);
 
   const defaultColDef = useMemo(
     () => ({
@@ -24,7 +26,7 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   const autoGroupColumnDef = useMemo(
     () => ({
       minWidth: 230,
-      field: "name",
+      field: recursiveField?.view_fields?.[1]?.slug,
       cellRendererParams: {
         suppressCount: true,
       },

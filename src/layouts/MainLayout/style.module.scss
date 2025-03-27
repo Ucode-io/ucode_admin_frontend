@@ -18,6 +18,14 @@
   position: relative;
 }
 
+.contentLayout {
+  flex: 1;
+  height: calc(100vh - 40px);
+  overflow: auto;
+  background-color: colors.$page-background;
+  position: relative;
+}
+
 .navigateWrap {
   width: 100%;
   margin-top: 10px;

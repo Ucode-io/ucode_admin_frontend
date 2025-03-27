@@ -6,16 +6,18 @@ import FieldCreateHeaderComponent from "../FieldCreateHeaderComponent";
 import constructorObjectService from "../../../../services/constructorObjectService";
 
 function AggridDefaultComponents({customAutoGroupColumnDef}) {
-  const {view, fields} = customAutoGroupColumnDef;
+  const {view, fields, tableSlug} = customAutoGroupColumnDef;
+
+  const recursiveField = fields?.find((el) => el?.table_slug === tableSlug);
 
   const defaultColDef = useMemo(
     () => ({
       width: 200,
       autoHeaderHeight: true,
       suppressServerSideFullWidthLoadingRow: true,
-      enableRangeSelection: true, // Enable selecting multiple cells
-      enableFillHandle: true, // Enable dragging to copy values
-      fillHandleDirection: "xy", // Allow copying in all directions (x: horizontal, y: vertical)
+      enableRangeSelection: true,
+      enableFillHandle: true,
+      fillHandleDirection: "xy",
       suppressMultiRangeSelection: false,
     }),
     []
@@ -24,7 +26,7 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   const autoGroupColumnDef = useMemo(
     () => ({
       minWidth: 230,
-      field: fields?.[1]?.slug,
+      field: recursiveField?.view_fields?.[1]?.slug,
       cellRendererParams: {
         suppressCount: true,
       },

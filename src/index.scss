@@ -264,6 +264,7 @@ div {
 
 .pageWithStickyFooterWarning {
   min-height: calc(100vh - 88px);
+  overflow: auto;
 }
 
 .drag-cards-drop-preview {

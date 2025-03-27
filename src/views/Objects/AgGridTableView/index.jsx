@@ -116,6 +116,7 @@ function AgGridTableView(props) {
         suppressCount: true,
         fields: visibleColumns,
         view,
+        tableSlug,
       },
     });
 

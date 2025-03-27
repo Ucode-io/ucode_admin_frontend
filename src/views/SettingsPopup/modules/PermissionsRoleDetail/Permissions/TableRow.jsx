@@ -15,12 +15,15 @@ import {Box, Icon} from "@mui/material";
 import {MdDashboardCustomize} from "react-icons/md";
 import {BiTable} from "react-icons/bi";
 import {
-  ActionPermissionIcon,
-  FieldsPermissionIcon,
-  RelationPermissionIcon,
+  RouteIcon,
+  LinkIcon,
+  TableIcon,
+  EyeIcon,
+  EditCardIcon,
 } from "../../../../../assets/icons/icon";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import styles from "./style.module.scss";
+import clsx from "clsx";
 
 const TableRow = ({
   table,
@@ -31,7 +34,7 @@ const TableRow = ({
   permissionLan,
 }) => {
   const [type, setType] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const basePath = `data.tables.${tableIndex}.record_permissions`;
   const [
@@ -70,89 +73,174 @@ const TableRow = ({
             table?.attributes?.[`title${i18n?.language}`] ??
             table.label}
         </CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <PermissionCheckbox control={control} name={basePath + ".read"} />
-            <RectangleIconButton
+        <CTableCell style={{ borderRight: "none" }}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <label>
+              <PermissionCheckbox
+                className={clsx(styles.visuallyHidden)}
+                control={control}
+                name={basePath + ".read"}
+              />
+              <span
+                className={clsx(styles.label, {
+                  [styles.active]: watch(basePath + ".read") === "Yes",
+                })}
+              >
+                Read
+              </span>
+            </label>
+            {/* <RectangleIconButton
               size="small"
               onClick={() => {
                 setType("read");
                 openAutoFiltersModal();
               }}>
               <Icon as={FiFilter} w={"18px"} h={"18px"} />
-            </RectangleIconButton>
+            </RectangleIconButton> */}
           </Box>
         </CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <PermissionCheckbox control={control} name={basePath + ".write"} />
+        <CTableCell style={{ borderRight: "none" }}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <label>
+              <PermissionCheckbox
+                className={clsx(styles.visuallyHidden)}
+                control={control}
+                name={basePath + ".write"}
+              />
+              <span
+                className={clsx(styles.label, {
+                  [styles.active]: watch(basePath + ".write") === "Yes",
+                })}
+              >
+                Write
+              </span>
+            </label>
           </Box>
         </CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <PermissionCheckbox control={control} name={basePath + ".update"} />
-            <RectangleIconButton
+        <CTableCell style={{ borderRight: "none" }}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <label>
+              <PermissionCheckbox
+                className={clsx(styles.visuallyHidden)}
+                control={control}
+                name={basePath + ".update"}
+              />
+
+              <span
+                className={clsx(styles.label, {
+                  [styles.active]: watch(basePath + ".update") === "Yes",
+                })}
+              >
+                Update
+              </span>
+            </label>
+            {/* <RectangleIconButton
               onClick={() => {
                 setType("update");
                 openAutoFiltersModal();
               }}>
               <Icon as={FiFilter} w={"18px"} h={"18px"} />
-            </RectangleIconButton>
+            </RectangleIconButton> */}
           </Box>
         </CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <PermissionCheckbox control={control} name={basePath + ".delete"} />
-            <RectangleIconButton
+        <CTableCell style={{ borderRight: "none" }}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <label>
+              <PermissionCheckbox
+                className={clsx(styles.visuallyHidden)}
+                control={control}
+                name={basePath + ".delete"}
+              />
+              <span
+                className={clsx(styles.label, {
+                  [styles.active]: watch(basePath + ".delete") === "Yes",
+                })}
+              >
+                Delete
+              </span>
+            </label>
+            {/* <RectangleIconButton
               onClick={() => {
                 setType("delete");
                 openAutoFiltersModal();
               }}>
               <Icon as={FiFilter} w={"18px"} h={"18px"} />
-            </RectangleIconButton>
+            </RectangleIconButton> */}
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <FormCheckbox control={control} name={basePath + ".is_public"} />
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <label>
+              <FormCheckbox
+                className={styles.visuallyHidden}
+                control={control}
+                name={basePath + ".is_public"}
+              />
+              <span
+                className={clsx(styles.label, {
+                  [styles.active]:
+                    typeof watch(basePath + ".is_public") === "string"
+                      ? watch(basePath + ".is_public") === "Yes"
+                      : watch(basePath + ".is_public"),
+                })}
+              >
+                Public
+              </span>
+            </label>
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <RectangleIconButton size="lg" onClick={openFieldPermissionModal}>
-              <FieldsPermissionIcon w={"34px"} h={"34px"} />
-            </RectangleIconButton>
-          </Box>
-        </CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <RectangleIconButton size="lg" onClick={openActionPermissionsModal}>
-              <ActionPermissionIcon w={"34px"} h={"34px"} />
-            </RectangleIconButton>
-          </Box>
-        </CTableCell>
-        <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
+              className={styles.iconBtn}
               size="lg"
-              onClick={openRelationPermissionModal}>
-              <RelationPermissionIcon w={"26px"} h={"26px"} />
+              onClick={openFieldPermissionModal}
+            >
+              <TableIcon w={"34px"} h={"34px"} />
             </RectangleIconButton>
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
+              className={styles.iconBtn}
               size="lg"
-              onClick={openTableViewPermissionModal}>
-              <BiTable width={"34px"} height={"34px"} />
+              onClick={openActionPermissionsModal}
+            >
+              <RouteIcon w={"34px"} h={"34px"} />
             </RectangleIconButton>
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
-            <RectangleIconButton size="lg" onClick={openCustomPermissionModal}>
-              <MdDashboardCustomize width={"34px"} height={"34px"} />
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <RectangleIconButton
+              className={styles.iconBtn}
+              size="lg"
+              onClick={openRelationPermissionModal}
+            >
+              <LinkIcon w={"26px"} h={"26px"} />
+            </RectangleIconButton>
+          </Box>
+        </CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <RectangleIconButton
+              className={styles.iconBtn}
+              size="lg"
+              onClick={openTableViewPermissionModal}
+            >
+              <EyeIcon width={"34px"} height={"34px"} />
+            </RectangleIconButton>
+          </Box>
+        </CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <RectangleIconButton
+              className={styles.iconBtn}
+              size="lg"
+              onClick={openCustomPermissionModal}
+            >
+              <EditCardIcon width={"34px"} height={"34px"} />
             </RectangleIconButton>
           </Box>
         </CTableCell>

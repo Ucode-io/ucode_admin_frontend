@@ -355,6 +355,11 @@ const LayoutSidebar = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   return (
     <>
       <Flex
@@ -365,7 +370,7 @@ const LayoutSidebar = ({
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
         bg={menuStyle?.background ?? "#fff"}
-        h={`calc(100vh - ${isWarning <= 5 ? 32 : 0}px )`}>
+        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}>
         <Flex
           position="absolute"
           zIndex={999}
@@ -531,45 +536,56 @@ const LayoutSidebar = ({
               ? undefined
               : () => dispatch(mainActions.setSidebarHighlightedAction(null))
           }>
-          <SidebarActionTooltip id="documentation" title="Documentation">
-            <Flex
-              as="a"
-              href="https://ucode.gitbook.io/ucode-docs"
-              target="_blank"
-              w={sidebarIsOpen ? "100%" : 36}
-              h={36}
-              alignItems="center"
-              justifyContent="center"
-              borderRadius={6}
-              _hover={{bg: "#EAECF0"}}
-              cursor="pointer"
-              mb={sidebarIsOpen ? 0 : 4}
-              {...getActionProps("documentation")}>
-              <img src="/img/documentation.svg" alt="merge" />
-            </Flex>
-          </SidebarActionTooltip>
+          {Boolean(permissions?.gitbook_button) && (
+            <>
+              <SidebarActionTooltip id="documentation" title="Documentation">
+                <Flex
+                  as="a"
+                  href="https://ucode.gitbook.io/ucode-docs"
+                  target="_blank"
+                  w={sidebarIsOpen ? "100%" : 36}
+                  h={36}
+                  alignItems="center"
+                  justifyContent="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  mb={sidebarIsOpen ? 0 : 4}
+                  {...getActionProps("documentation")}>
+                  <img src="/img/documentation.svg" alt="merge" />
+                </Flex>
+              </SidebarActionTooltip>
+              <Box
+                display={sidebarIsOpen ? "block" : "none"}
+                w="1px"
+                h={20}
+                bg="#D0D5DD"
+              />
+            </>
+          )}
+          <></>
+          {Boolean(permissions?.chatwoot_button) && (
+            <SidebarActionTooltip id="chat" title="Chat">
+              <Chatwoot open={sidebarIsOpen} {...getActionProps("chat")} />
+            </SidebarActionTooltip>
+          )}
 
-          <Box
-            display={sidebarIsOpen ? "block" : "none"}
-            w="1px"
-            h={20}
-            bg="#D0D5DD"
-          />
-          <SidebarActionTooltip id="chat" title="Chat">
-            <Chatwoot open={sidebarIsOpen} {...getActionProps("chat")} />
-          </SidebarActionTooltip>
-          <Box
-            display={sidebarIsOpen ? "block" : "none"}
-            w="1px"
-            h={20}
-            bg="#D0D5DD"
-          />
-          <SidebarActionTooltip id="ai-chat" title="AI Chat">
-            <AIChat
-              sidebarOpen={sidebarIsOpen}
-              {...getActionProps("ai-chat")}
-            />
-          </SidebarActionTooltip>
+          {Boolean(permissions?.chat) && (
+            <>
+              <Box
+                display={sidebarIsOpen ? "block" : "none"}
+                w="1px"
+                h={20}
+                bg="#D0D5DD"
+              />
+              <SidebarActionTooltip id="ai-chat" title="AI Chat">
+                <AIChat
+                  sidebarOpen={sidebarIsOpen}
+                  {...getActionProps("ai-chat")}
+                />
+              </SidebarActionTooltip>
+            </>
+          )}
         </Flex>
 
         {(modalType === "create" ||
@@ -792,7 +808,8 @@ const Header = ({
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      onClose={handleClose}>
+      onClose={handleClose}
+    >
       <PopoverTrigger>
         <Flex
           w="calc(100% - 8px)"
@@ -803,16 +820,19 @@ const Header = ({
           p={5}
           borderRadius={8}
           bg="#fff"
-          _hover={{bg: "#EAECF0"}}
+          _hover={{ bg: "#EAECF0" }}
           cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}>
+          onClick={() => (!isOpen ? onOpen() : null)}
+          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+        >
           <Flex
             w={36}
             h={36}
             position="absolute"
             left={0}
             alignItems="center"
-            justifyContent="center">
+            justifyContent="center"
+          >
             {Boolean(projectInfo?.logo) && (
               <img src={projectInfo?.logo} alt="" width={20} height={20} />
             )}
@@ -827,7 +847,8 @@ const Header = ({
                 alignItems="center"
                 justifyContent="center"
                 fontSize={14}
-                fontWeight={500}>
+                fontWeight={500}
+              >
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             )}
@@ -840,10 +861,11 @@ const Header = ({
             fontSize={13}
             fontWeight={500}
             overflow="hidden"
-            textOverflow="ellipsis">
+            textOverflow="ellipsis"
+          >
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
+          <KeyboardArrowDownIcon style={{ marginLeft: "auto", fontSize: 20 }} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent
@@ -853,7 +875,10 @@ const Header = ({
         border="1px solid #EAECF0"
         outline="none"
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}>
+        zIndex={999}
+        onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+        onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}
+      >
         <>
           <ProfilePanel
             menuLanguages={menuLanguages}
@@ -1179,8 +1204,8 @@ const Companies = ({onSelectEnvironment}) => {
   return (
     <Box p={8} borderBottom={"1px solid #eee"}>
       <Accordion allowToggle>
-        {companies.map((company) => (
-          <AccordionItem key={company.id}>
+        {companies?.map((company) => (
+          <AccordionItem key={company?.id}>
             <AccordionButton
               columnGap={8}
               p={5}
@@ -1190,7 +1215,8 @@ const Companies = ({onSelectEnvironment}) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{bg: "#EAECF0"}}>
+              _hover={{ bg: "#EAECF0" }}
+            >
               <Flex
                 w={20}
                 h={20}
@@ -1200,11 +1226,12 @@ const Companies = ({onSelectEnvironment}) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff">
-                {company.name?.[0]?.toUpperCase()}
+                color="#fff"
+              >
+                {company?.name?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">
-                {company.name}
+                {company?.name}
               </Box>
               <AccordionIcon ml="auto" fontSize="20px" />
             </AccordionButton>

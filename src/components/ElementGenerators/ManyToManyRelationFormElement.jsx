@@ -338,7 +338,7 @@ const AutoCompleteElement = ({
   };
 
   return (
-    <div className={styles.autocompleteWrapper}>
+    <div className={styles.manyToManyField}>
       <div
         className={styles.createButton}
         onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>

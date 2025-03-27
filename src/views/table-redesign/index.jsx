@@ -341,15 +341,19 @@ export const DynamicTable = ({
     );
   };
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (
-      projectInfo?.expire_date &&
-      differenceInCalendarDays(parseISO(projectInfo.expire_date), new Date()) +
-        1 <=
-        5
-    ) {
+    if (isWarningActive || projectInfo?.status === "inactive") {
       warningHeight = 32;
     }
     const filterHeightValue = Number(filterHeight) || 0;
@@ -358,10 +362,16 @@ export const DynamicTable = ({
     return tableViewFiltersOpen
       ? filterHeightValue + tabHeightValue + warningHeight
       : tabHeightValue + warningHeight;
-  }, [tableViewFiltersOpen, filterHeight, tabHeight, projectInfo]);
+  }, [
+    tableViewFiltersOpen,
+    filterHeight,
+    tabHeight,
+    projectInfo,
+    isWarningActive,
+  ]);
 
   const showSkeleton = loader;
-
+  console.log("calculatedHeightcalculatedHeight", calculatedHeight);
   return (
     <div className="CTableContainer">
       <div

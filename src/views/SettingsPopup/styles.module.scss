@@ -72,7 +72,11 @@
 .rightContent {
   flex-grow: 1;
   padding: 36px 60px;
-  // overflow: auto;
+  overflow: auto;
+}
+
+.smPadding {
+  padding: 36px 32px;
 }
 
 .profileIcon {
@@ -90,4 +94,26 @@
   box-shadow: rgba(15, 15, 15, 0.1) 0px 2px 4px;
   outline: rgba(84, 72, 49, 0.08) solid 1px;
   outline-offset: -1px;
+}
+
+.addClientTypeBtn {
+  width: 100%;
+  padding: 4px 0;
+  padding-left: 5px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 6px;
+  background-color: transparent;
+  color: #D0D5DD;
+  cursor: pointer;
+
+  span {
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+  }
+}
+
+.addIcon {
+  color: rgb(55, 53, 47);
 }

@@ -55,6 +55,7 @@ const FormElementGenerator = ({
   formTableSlug,
   valueGenerator,
   isMultiLanguage,
+  isModal = false,
   checkRequired = true,
   getValues = () => {},
   checkPermission = true,
@@ -206,6 +207,7 @@ const FormElementGenerator = ({
     } else {
       return (
         <RelationFormElement
+          isModal={isModal}
           control={control}
           field={field}
           name={computedSlug}

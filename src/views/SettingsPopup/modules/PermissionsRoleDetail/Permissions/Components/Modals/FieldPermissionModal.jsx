@@ -12,6 +12,7 @@ import {
 import FormCheckbox from "../Checkbox/FormCheckbox";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
 
 const FieldPermissions = ({
   closeModal,
@@ -76,7 +77,8 @@ const FieldPermissions = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}>
+                }}
+              >
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
@@ -93,7 +95,7 @@ const FieldPermissions = ({
                         i18n?.language,
                         "View permission"
                       ) ?? "View permission"}
-                      <Checkbox
+                      <CustomCheckbox
                         checked={allViewTrue ? true : false}
                         onChange={(e) => {
                           updateView(e.target.checked);
@@ -106,7 +108,7 @@ const FieldPermissions = ({
                         i18n?.language,
                         "Edit permission"
                       ) ?? "Edit permission"}
-                      <Checkbox
+                      <CustomCheckbox
                         checked={allEditTrue ? true : false}
                         onChange={(e) => {
                           updateEdit(e.target.checked);
@@ -121,7 +123,7 @@ const FieldPermissions = ({
                       <CTableCell>{fieldIndex + 1}</CTableCell>
                       <CTableCell>{field.label}</CTableCell>
                       <CTableCell>
-                        <Box sx={{justifyContent: "center", display: "flex"}}>
+                        <Box sx={{ justifyContent: "center", display: "flex" }}>
                           <FormCheckbox
                             name={`${basePath}.${fieldIndex}.view_permission`}
                             control={control}
@@ -129,7 +131,7 @@ const FieldPermissions = ({
                         </Box>
                       </CTableCell>
                       <CTableCell>
-                        <Box sx={{justifyContent: "center", display: "flex"}}>
+                        <Box sx={{ justifyContent: "center", display: "flex" }}>
                           <FormCheckbox
                             name={`${basePath}.${fieldIndex}.edit_permission`}
                             control={control}

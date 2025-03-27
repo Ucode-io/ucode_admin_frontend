@@ -147,8 +147,9 @@ const Permissions = ({
                 borderRadius="md"
                 disablePagination
                 type={"withoutPadding"}
+                bodyClassname={styles.body}
               >
-                <CTable removableHeight={false} disablePagination>
+                <CTable removableHeight={284} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
                       <CTableCell

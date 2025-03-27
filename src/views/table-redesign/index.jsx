@@ -171,7 +171,10 @@ export const DynamicTable = ({
   refetch,
   menuItem,
   loader,
+  height,
+  isPaginationPositionSticky,
   getAllData = () => {},
+  tableSlugProp = "",
 }) => {
   const {i18n} = useTranslation();
   const location = useLocation();
@@ -376,7 +379,13 @@ export const DynamicTable = ({
   const showSkeleton = loader;
 
   return (
-    <div className="CTableContainer">
+    <div
+      className="CTableContainer"
+      style={
+        isPaginationPositionSticky
+          ? {display: "flex", flexDirection: "column", height: "100%"}
+          : {}
+      }>
       <div
         className="table"
         style={{
@@ -543,6 +552,7 @@ export const DynamicTable = ({
                 tableSettings={tableSettings}
                 calculateWidthFixedColumn={calculateWidthFixedColumn}
                 firstRowWidth={45}
+                tableSlugProp={tableSlugProp}
               />
             )}
 

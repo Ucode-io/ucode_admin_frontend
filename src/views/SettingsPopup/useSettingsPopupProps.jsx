@@ -25,16 +25,23 @@ import { Fares } from "./modules/Fares";
 import { Account } from "./modules/Account";
 import { Billing } from "./modules/Billing";
 import LanguageControl from "../../components/LayoutSidebar/Components/LanguageControl";
-import { Permissions } from "./modules/Permissions";
-import { PermissionsDetail } from "./modules/PermissionsDetail";
-import { PermissionsRoleDetail } from "./modules/PermissionsRoleDetail";
-import { Resources } from "./modules/Resources";
-import { ResourcesDetail } from "./modules/ResourcesDetail";
 import { Storage } from "@mui/icons-material";
 import { ApiKeys } from "./modules/ApiKeys";
 import { ApiKeysDetail } from "./modules/ApiKeysDetail";
 import { Redirect } from "./modules/Redirect";
 import { RedirectForm } from "./modules/RedirectForm";
+import { ActivityLogs } from "./modules/ActivityLogs";
+import { ActivityLogsDetail } from "./modules/ActivityLogsDetail";
+import { Models } from "./modules/Models";
+import { Functions } from "./modules/Functions";
+import { FunctionsDetail } from "./modules/FunctionsDetail";
+import { MicroFrontend } from "./modules/MicroFrontend";
+import { MicroFrontendDetail } from "./modules/MicroFrontendDetail";
+import {Permissions} from "./modules/Permissions";
+import {PermissionsDetail} from "./modules/PermissionsDetail";
+import {PermissionsRoleDetail} from "./modules/PermissionsRoleDetail";
+import {Resources} from "./modules/Resources";
+import {ResourcesDetail} from "./modules/ResourcesDetail";
 import { store } from "../../store";
 import { useQuery } from "react-query";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
@@ -202,6 +209,33 @@ export const useSettingsPopupProps = ({ onClose }) => {
             "Custom endpoint",
           icon: <img src={ProjectSettingsIcon} alt="" width={20} height={20} />,
         },
+        {
+          key: "activityLogs",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Activity Logs") ||
+            "Activity Logs",
+          icon: <img src={ActivityLogsIcon} alt="" width={20} height={20} />,
+        },
+        {
+          key: "models",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Models") || "Models",
+          icon: <img src={ModelsIcon} alt="" width={20} height={20} />,
+        },
+        {
+          key: "functions",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Functions") ||
+            "Functions",
+          icon: <img src={CodeIcon} alt="" width={20} height={20} />,
+        },
+        {
+          key: "microFrontend",
+          title:
+            generateLangaugeText(lang, i18n?.language, "Microfrontend") ||
+            "Microfrontend",
+          icon: <img src={MicroFrontendIcon} alt="" width={20} height={20} />,
+        },
       ],
     },
   ];
@@ -272,6 +306,19 @@ export const useSettingsPopupProps = ({ onClose }) => {
     redirect: {
       redirect: <Redirect />,
       redirectForm: <RedirectForm />,
+    },
+    activityLogs: {
+      activityLogs: <ActivityLogs />,
+      activityLogsDetail: <ActivityLogsDetail />,
+    },
+    models: <Models />,
+    functions: {
+      functions: <Functions />,
+      functionsDetail: <FunctionsDetail />,
+    },
+    microFrontend: {
+      microFrontend: <MicroFrontend />,
+      microFrontendDetail: <MicroFrontendDetail />,
     },
   };
 

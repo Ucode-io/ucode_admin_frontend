@@ -70,13 +70,16 @@ const TableView = ({
   currentView,
   watch,
   tableLan,
+  tableSlugProp = "",
   ...props
 }) => {
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug, appId} = useParams();
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const {id, slug, tableSlug: paramsTableSlug, appId} = useParams();
+  const tableSlug = tableSlugProp || paramsTableSlug;
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
+
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -589,6 +592,7 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
+          tableSlugProp={tableSlug}
           {...props}
         />
 

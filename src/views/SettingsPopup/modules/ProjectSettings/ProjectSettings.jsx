@@ -110,9 +110,6 @@ export const ProjectSettings = () => {
               />
             </FRow>
           </Grid>
-          {/* <Grid item xs={6}>
-            <HFAvatarUpload control={control} name="logo" />
-          </Grid> */}
         </Grid>
         <ContentTitle style={{ marginTop: "24px" }}>Beta version</ContentTitle>
         <FormGroup

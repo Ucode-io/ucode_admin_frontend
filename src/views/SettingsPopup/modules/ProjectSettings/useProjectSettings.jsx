@@ -148,6 +148,8 @@ export const useProjectSettings = () => {
     timezoneOptions,
     currencyOptions,
     btnLoading,
+    setValue,
+    isLoading,
     handleClose,
     setValue,
   };

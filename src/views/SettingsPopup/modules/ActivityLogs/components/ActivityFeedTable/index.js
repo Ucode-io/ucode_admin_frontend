@@ -1,0 +1,1 @@
+export {  ActivityFeedTable } from "./ActivityFeedTable";

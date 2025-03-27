@@ -7,7 +7,7 @@ import {Outlet, useParams} from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
-import {isOnlineReducerAction} from "../../store/isOnline/isOnline.slice";
+
 import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
 import {SettingsPopup} from "../../views/SettingsPopup/SettingsPopup";
@@ -18,6 +18,7 @@ import useSearchParams from "../../hooks/useSearchParams";
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
+
   const updateSearchParam = useSearchParams()[2];
 
   const {data: projectInfo} = useProjectGetByIdQuery({
@@ -84,8 +85,8 @@ const MainLayout = ({setFavicon, favicon}) => {
       <ThemeProvider theme={theme} defaultMode="dark">
         <CssBaseline />
         <SubscriptionWarning
-          handleOpenBilling={handleOpenBilling}
           projectInfo={projectInfo}
+          handleOpenBilling={handleOpenBilling}
         />
         <div
           className={`${isWarningActive || projectInfo?.status === "inactive" ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>

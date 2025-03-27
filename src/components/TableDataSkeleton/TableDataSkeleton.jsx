@@ -1,10 +1,14 @@
 import { Skeleton } from "@mui/material"
 import { CTableCell, CTableRow } from "../CTable";
 
-export const TableDataSkeleton = ({ colLength = 10 }) => {
+export const TableDataSkeleton = ({
+  rowLength = 12,
+  colLength = 10,
+  height = 22,
+}) => {
   return (
     <>
-      {Array.from({ length: 12 }).map(() => (
+      {Array.from({ length: rowLength }).map(() => (
         <CTableRow>
           {Array.from({ length: colLength })?.map(() => {
             return (
@@ -12,7 +16,7 @@ export const TableDataSkeleton = ({ colLength = 10 }) => {
                 <Skeleton
                   variant="rounded"
                   animation="wave"
-                  height={22}
+                  height={height}
                   width="100%"
                 />
               </CTableCell>

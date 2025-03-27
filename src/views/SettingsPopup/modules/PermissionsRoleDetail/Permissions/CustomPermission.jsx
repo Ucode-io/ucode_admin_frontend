@@ -14,8 +14,6 @@ const CustomPermissionRow = ({ watch, setValue }) => {
     setValue(`data.global_permission.${type}`, e.target.checked);
   };
 
-  console.log({ per: watch("data.global_permission") });
-
   return (
     <>
       <CTableHeadRow>

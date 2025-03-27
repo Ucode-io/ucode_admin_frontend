@@ -1,11 +1,9 @@
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import React, {useMemo} from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useMemo } from "react";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {Box, Typography} from "@mui/material";
 
-const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
-  const navigate = useNavigate();
+const SubscriptionWarning = ({ projectInfo, handleOpenBilling }) => {
   const projectStatus = localStorage.getItem("project_status");
   const subscriptionType = projectInfo?.subscription_type;
   const expireDate = projectInfo?.expire_date;
@@ -16,7 +14,7 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
   }, [expireDate]);
 
   if (projectStatus === "inactive")
-    return <SubscribeExpired onCLick={handleOpenBilling} />;
+    return <SubscribeExpired onClick={handleOpenBilling} />;
 
   if (
     projectStatus === "insufficient_funds" &&

@@ -262,6 +262,10 @@ div {
   min-height: calc(100vh - 56px);
 }
 
+.pageWithStickyFooterWarning {
+  min-height: calc(100vh - 88px);
+}
+
 .drag-cards-drop-preview {
   background-color: rgba(150, 150, 200, 0.1);
   border: 1px dashed #abc;

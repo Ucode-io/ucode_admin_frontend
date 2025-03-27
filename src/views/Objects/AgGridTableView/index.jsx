@@ -78,20 +78,14 @@ function AgGridTableView(props) {
   const {
     open,
     view,
-    views,
     menuItem,
     fieldsMap,
-    updateField,
-    visibleForm,
     selectedRow,
     projectInfo,
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
-    columnsForSearch,
-    setCheckedColumns,
     computedVisibleFields,
-    visibleRelationColumns,
     setOpen = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
@@ -317,25 +311,6 @@ function AgGridTableView(props) {
     }
   }, [fiedlsarray, view]);
 
-  // const getFilteredFilterFields = useMemo(() => {
-  //   const filteredFieldsView =
-  //     views &&
-  //     views?.find((item) => {
-  //       return item?.type === "TABLE" && item?.attributes?.quick_filters;
-  //     });
-
-  //   const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
-  //     (el) => {
-  //       return el?.field_id;
-  //     }
-  //   );
-  //   const filteredFields = fiedlsarray?.filter((item) => {
-  //     return quickFilters?.includes(item?.columnID);
-  //   });
-
-  //   return filteredFields;
-  // }, [views, fiedlsarray]);
-
   function addRow(data) {
     setLoading(true);
     constructorObjectService
@@ -475,12 +450,6 @@ function AgGridTableView(props) {
     }
   }, [tabs?.length]);
 
-  const pinnedBottomRowData = [
-    {
-      rowIndex: "pinnedPlaceholder",
-    },
-  ];
-
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
@@ -521,13 +490,13 @@ function AgGridTableView(props) {
     <Box
       sx={{
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
-        // overflow: "scroll",
+        overflow: "scroll",
       }}>
       <div className={style.gridTable}>
         <div
           className="ag-theme-quartz"
           style={{
-            height: `calc(100vh - ${Boolean(tabs?.length) ? 154 : 95}px)`,
+            minHeight: `calc(100vh - ${Boolean(tabs?.length) ? 154 : 95}px)`,
             display: "flex",
             width: "100%",
           }}>
@@ -564,16 +533,19 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={6}
+                  rowBuffer={45}
                   theme={myTheme}
+                  gridOptions={{
+                    rowBuffer: 50,
+                    cacheBlockSize: 100,
+                    maxBlocksInCache: 100,
+                  }}
                   rowData={rowData}
                   loading={loading}
                   columnDefs={columns}
                   suppressRefresh={true}
                   enableClipboard={true}
-                  showOpenedGroup={true}
                   groupDisplayType="single"
-                  suppressAutoColumn={true}
                   paginationPageSize={limit}
                   undoRedoCellEditing={true}
                   rowSelection={rowSelection}
@@ -582,12 +554,11 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
-                  suppressColumnVirtualisation={true}
+                  suppressColumnVirtualisation={false}
                   treeData={view?.attributes?.treeData}
                   autoGroupColumnDef={autoGroupColumnDef}
                   suppressServerSideFullWidthLoadingRow={true}
                   loadingOverlayComponent={CustomLoadingOverlay}
-                  pinnedBottomRowData={pinnedBottomRowData}
                   getDataPath={
                     view?.attributes?.treeData ? getDataPath : undefined
                   }

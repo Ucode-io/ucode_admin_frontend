@@ -160,11 +160,12 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
+      <Box sx={{ padding: "0 5px" }} style={{ marginBottom: 5 }}>
         <div
           className="parent-block column-drag-handle"
           key={element.id}
-          style={{marginBottom: 5}}>
+          style={{ marginBottom: 5 }}
+        >
           {permission && (
             <Button
               id="more-button"
@@ -180,7 +181,8 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
-              }}>
+              }}
+            >
               <div className="label">
                 {element?.type === "USER" && (
                   <PersonIcon
@@ -192,7 +194,7 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                {MenuFolderArrows({element, childBlockVisible})}
+                {MenuFolderArrows({ element, childBlockVisible })}
                 <IconGenerator
                   icon={
                     element?.icon ||
@@ -209,7 +211,8 @@ const RecursiveBlock = ({
                     alignItems: "center",
                     width: "100%",
                     position: "relative",
-                  }}>
+                  }}
+                >
                   <Box>
                     <p>
                       {element?.attributes?.[`label_${defaultLanguage}`] ??
@@ -225,10 +228,11 @@ const RecursiveBlock = ({
                       style={{
                         position: "absolute",
                         right: 0,
-                        backgroundColor: "#EAECF0",
+                        // backgroundColor: "#EAECF0",
                         padding: "2px 4px",
                         borderRadius: 4,
-                      }}>
+                      }}
+                    >
                       {(element?.data?.permission?.delete ||
                         element?.data?.permission?.update ||
                         element?.data?.permission?.write) && (
@@ -250,7 +254,7 @@ const RecursiveBlock = ({
                         </Tooltip>
                       )}
 
-                      {addButtonPermission &&
+                      {/* {addButtonPermission &&
                         element?.data?.permission?.write && (
                           <Tooltip title="Create folder" placement="top">
                             <Box className="extra_icon">
@@ -268,7 +272,7 @@ const RecursiveBlock = ({
                               />
                             </Box>
                           </Tooltip>
-                        )}
+                        )} */}
                     </Box>
                   )}
                 </Box>

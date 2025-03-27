@@ -521,7 +521,7 @@ function AgGridTableView(props) {
     <Box
       sx={{
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
-        overflow: "scroll",
+        // overflow: "scroll",
       }}>
       <div className={style.gridTable}>
         <div

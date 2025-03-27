@@ -31,10 +31,8 @@ export const Functions = () => {
   } = useFunctionsProps();
 
   return (
-    <div>
-      <ContentTitle>
-        Faas функции
-      </ContentTitle>
+    <Box position="relative">
+      <ContentTitle>Faas функции</ContentTitle>
 
       <FiltersBlock>
         <SearchInput onChange={(e) => inputChangeHandler(e)} />
@@ -47,7 +45,8 @@ export const Functions = () => {
             border: "none",
           }}
           disablePagination
-          removableHeight={140}>
+          removableHeight={140}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
@@ -59,11 +58,13 @@ export const Functions = () => {
           <CTableBody
             loader={loader}
             columnsCount={4}
-            dataLength={list?.functions?.length}>
+            dataLength={list?.functions?.length}
+          >
             {list?.functions?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}>
+                onClick={() => navigateToEditForm(element.id)}
+              >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>
@@ -76,7 +77,8 @@ export const Functions = () => {
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
-                    onClick={() => deleteFunction(element.id)}>
+                    onClick={() => deleteFunction(element.id)}
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>
@@ -101,7 +103,8 @@ export const Functions = () => {
           borderTop: "1px solid #eee",
           paddingRight: "30px",
         }}
-        color="primary">
+        color="primary"
+      >
         <Box>
           <Pagination
             count={Math.ceil(list?.count / 10)}
@@ -109,6 +112,6 @@ export const Functions = () => {
           />
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 }

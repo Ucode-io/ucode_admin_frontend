@@ -33,12 +33,10 @@ export const MicroFrontend = () => {
   } = useMicroFrontendProps();
 
   return (
-    <div>
+    <Box position="relative">
       <ContentTitle>
-        {
-          generateLangaugeText(microLan, i18n?.language, "Microfrontend") ||
-          "Microfrontend"
-        }
+        {generateLangaugeText(microLan, i18n?.language, "Microfrontend") ||
+          "Microfrontend"}
       </ContentTitle>
       <FiltersBlock>
         <div className="p-1">
@@ -53,7 +51,8 @@ export const MicroFrontend = () => {
             border: "none",
           }}
           disablePagination
-          removableHeight={140}>
+          removableHeight={140}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>
@@ -82,11 +81,13 @@ export const MicroFrontend = () => {
           <CTableBody
             loader={loader}
             columnsCount={4}
-            dataLength={list?.functions?.length}>
+            dataLength={list?.functions?.length}
+          >
             {list?.functions?.map((element, index) => (
               <CTableRow
                 key={element.id}
-                onClick={() => navigateToEditForm(element.id)}>
+                onClick={() => navigateToEditForm(element.id)}
+              >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>
@@ -98,7 +99,8 @@ export const MicroFrontend = () => {
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
-                    onClick={() => deleteTable(element.id)}>
+                    onClick={() => deleteTable(element.id)}
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>
@@ -125,7 +127,8 @@ export const MicroFrontend = () => {
           borderTop: "1px solid #eee",
           paddingRight: "30px",
         }}
-        color="primary">
+        color="primary"
+      >
         <Box>
           <Pagination
             count={Math.ceil(list?.count / 10)}
@@ -133,6 +136,6 @@ export const MicroFrontend = () => {
           />
         </Box>
       </Box>
-    </div>
+    </Box>
   );
 };

@@ -3,7 +3,7 @@ import {ThemeProvider} from "@mui/styles";
 import {useEffect, useState} from "react";
 import Favicon from "react-favicon";
 import {useDispatch} from "react-redux";
-import {Outlet, useParams} from "react-router-dom";
+import {Outlet, useLocation, useParams} from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {store} from "../../store";
@@ -19,6 +19,7 @@ const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
   const updateSearchParam = useSearchParams()[2];
+  const location = useLocation();
 
   const {data: projectInfo} = useProjectGetByIdQuery({
     projectId,
@@ -88,7 +89,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           projectInfo={projectInfo}
         />
         <div
-          className={`${isWarningActive || projectInfo?.status === "inactive" ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
+          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}
@@ -96,10 +97,16 @@ const MainLayout = ({setFavicon, favicon}) => {
             toggleDarkMode={toggleDarkMode}
             handleOpenProfileModal={handleOpenProfileModal}
           />
-          <div className={styles.content}>
+          <div
+            className={
+              location.pathname?.includes("constructor")
+                ? styles.contentLayout
+                : styles.content
+            }>
             <Outlet />
           </div>
         </div>
+
         <SettingsPopup
           open={openProfileModal}
           onClose={handleCloseProfileModal}

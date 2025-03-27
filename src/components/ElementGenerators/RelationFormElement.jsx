@@ -308,7 +308,14 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         if (page > 1) {
-          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+          setAllOptions((prevOptions) => {
+            // Removing duplicated options
+            const mergedData = [...prevOptions, ...data.options];
+            const uniqueData = Array.from(
+              new Map(mergedData.map((item) => [item.guid, item])).values()
+            );
+            return uniqueData;
+          });
         } else {
           setAllOptions(data?.options);
         }

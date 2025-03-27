@@ -204,7 +204,8 @@ const MainInfoForModal = ({
               {projectInfo?.language?.map((lang) => (
                 <Button
                   className={activeLang === lang?.short_name && styles.active}
-                  onClick={() => setActiveLang(lang?.short_name)}>
+                  onClick={() => setActiveLang(lang?.short_name)}
+                >
                   {lang?.name}
                 </Button>
               ))}
@@ -231,7 +232,8 @@ const MainInfoForModal = ({
                             aria-controls={open ? "basic-menu" : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? "true" : undefined}
-                            onClick={handleClick}>
+                            onClick={handleClick}
+                          >
                             <AddRoundedIcon />
                           </Button>
 
@@ -242,13 +244,15 @@ const MainInfoForModal = ({
                             onClose={handleClose}
                             MenuListProps={{
                               "aria-labelledby": "basic-button",
-                            }}>
+                            }}
+                          >
                             {allFields?.map((field) => (
                               <MenuItem
                                 onClick={() => {
                                   addFieldsToSection(field?.value, index);
                                   handleClose();
-                                }}>
+                                }}
+                              >
                                 {field?.label}
                               </MenuItem>
                             ))}
@@ -257,9 +261,11 @@ const MainInfoForModal = ({
                       )
                     }
                     className={styles.formCard}
-                    icon={section.icon}>
+                    icon={section.icon}
+                  >
                     <div className={styles.newformColumn}>
                       <SectionBlockForModal
+                        modalClass={styles.newMainInfoSectionsModal}
                         index={index}
                         data={data}
                         setData={setData}
@@ -287,7 +293,7 @@ const MainInfoForModal = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{color: "#000"}} />
+              <KeyboardTabIcon style={{ color: "#000" }} />
             </button>
           </Tooltip>
         </div>

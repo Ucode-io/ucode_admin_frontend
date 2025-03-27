@@ -39,9 +39,10 @@ const RelationFormElement = ({
   activeLang,
   isModal = false,
   errors,
+  modalClass,
   ...props
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const tableSlug = useMemo(() => {
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
@@ -71,7 +72,7 @@ const RelationFormElement = ({
             required: required ? "This field is required!" : "",
             ...rules,
           }}
-          render={({field: {onChange, value}, fieldState: {error}}) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <AutoCompleteElement
               isModal={isModal}
               value={Array.isArray(value) ? value[0] : value}
@@ -88,6 +89,7 @@ const RelationFormElement = ({
               errors={errors}
               required={required}
               activeLang={activeLang}
+              modalClass={modalClass}
             />
           )}
         />
@@ -99,16 +101,17 @@ const RelationFormElement = ({
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}>
+          required={checkRequiredField}
+        >
           <Controller
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
-            render={({field: {onChange, value}, fieldState: {error}}) =>
+            render={({ field: { onChange, value }, fieldState: { error } }) =>
               field?.attributes?.cascadings?.length === 2 ? (
                 <CascadingElement
                   field={field}
@@ -137,7 +140,8 @@ const RelationFormElement = ({
             }
           />
         </FEditableRow>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 
@@ -159,6 +163,7 @@ const AutoCompleteElement = ({
   required = false,
   isModal = false,
   activeLang,
+  modalClass,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -168,13 +173,13 @@ const AutoCompleteElement = ({
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const {i18n} = useTranslation();
-  const {state} = useLocation();
+  const { i18n } = useTranslation();
+  const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
@@ -222,7 +227,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -266,7 +271,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -349,7 +354,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -360,7 +365,7 @@ const AutoCompleteElement = ({
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -397,7 +402,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -473,7 +478,8 @@ const AutoCompleteElement = ({
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
+          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
+        >
           Create new
         </div>
       )}
@@ -527,6 +533,18 @@ const AutoCompleteElement = ({
             value={localValue ?? []}
             required={required}
             defaultValue={value ?? ""}
+            onMenuOpen={() => {
+              if (isModal) {
+                setTimeout(() => {
+                  const modal = document.querySelector(
+                    `.${modalClass}` || ".modal-class"
+                  );
+                  if (modal) {
+                    modal.scrollTop = modal.scrollHeight;
+                  }
+                }, 100);
+              }
+            }}
             onChange={(e) => {
               changeHandler(e);
             }}
@@ -550,10 +568,10 @@ const AutoCompleteElement = ({
             }
             components={{
               DropdownIndicator: () => null,
-              MultiValue: ({data}) => (
+              MultiValue: ({ data }) => (
                 <IconGenerator
                   icon="arrow-up-right-from-square.svg"
-                  style={{marginLeft: "10px", cursor: "pointer"}}
+                  style={{ marginLeft: "10px", cursor: "pointer" }}
                   size={15}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -571,7 +589,8 @@ const AutoCompleteElement = ({
                 fontSize: "10px",
                 textAlign: "center",
                 marginTop: "5px",
-              }}>
+              }}
+            >
               {"This field is required!"}
             </div>
           )}

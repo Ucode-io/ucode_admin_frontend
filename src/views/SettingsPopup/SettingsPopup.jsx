@@ -48,8 +48,6 @@ export const SettingsPopup = ({ open, onClose }) => {
     permissionChild,
   } = useSettingsPopupProps({ onClose });
 
-  console.log(searchParams.get("tab"));
-
   return (
     <SettingsPopupProvider
       value={{

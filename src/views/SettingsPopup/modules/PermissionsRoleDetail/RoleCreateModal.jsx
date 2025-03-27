@@ -1,13 +1,13 @@
 import {Box, Card, Modal, Typography} from "@mui/material";
-import {useParams} from "react-router-dom";
-import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import HFTextField from "@/components/FormElements/HFTextField";
 import CreateButton from "@/components/Buttons/CreateButton";
 import SaveButton from "@/components/Buttons/SaveButton";
-import {store} from "@/store";
-import {showAlert} from "@/store/alert/alert.thunk";
+import { store } from "@/store";
+import { showAlert } from "@/store/alert/alert.thunk";
 import {
   useRoleCreateMutation,
   useRoleGetByIdQuery,
@@ -15,19 +15,21 @@ import {
 } from "@/services/roleServiceV2";
 import HFSelect from "@/components/FormElements/HFSelect";
 
-const RoleCreateModal = ({closeModal, modalType, roleId}) => {
+const RoleCreateModal = ({ closeModal, modalType, roleId }) => {
   const queryClient = useQueryClient();
-  const {clientId} = useParams();
+  const [searchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
 
-  const {control, handleSubmit, reset} = useForm({
+  const clientId = searchParams.get("permissionId");
+
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
       client_type_id: clientId,
       "project-id": projectId,
     },
   });
 
-  const {isLoading} = useRoleGetByIdQuery({
+  const { isLoading } = useRoleGetByIdQuery({
     id: roleId,
     queryParams: {
       enabled: Boolean(modalType === "UPDATE"),
@@ -37,7 +39,7 @@ const RoleCreateModal = ({closeModal, modalType, roleId}) => {
     },
   });
 
-  const {mutateAsync: createRole, isLoading: createLoading} =
+  const { mutateAsync: createRole, isLoading: createLoading } =
     useRoleCreateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_ROLE_LIST"]);
@@ -45,7 +47,7 @@ const RoleCreateModal = ({closeModal, modalType, roleId}) => {
         closeModal();
       },
     });
-  const {mutateAsync: updateRole, isLoading: updateLoading} =
+  const { mutateAsync: updateRole, isLoading: updateLoading } =
     useRoleUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_ROLE_LIST"]);
@@ -58,7 +60,7 @@ const RoleCreateModal = ({closeModal, modalType, roleId}) => {
     if (modalType === "NEW") {
       createRole(data);
     } else {
-      updateRole({...data, roleId: roleId});
+      updateRole({ ...data, roleId: roleId });
     }
   };
 
@@ -93,9 +95,10 @@ const RoleCreateModal = ({closeModal, modalType, roleId}) => {
             </Box>
             <Box
               display={"flex"}
-              sx={{marginTop: "20px"}}
+              sx={{ marginTop: "20px" }}
               columnGap={"16px"}
-              className="form-elements">
+              className="form-elements"
+            >
               <HFSelect
                 options={[
                   {

@@ -8,6 +8,7 @@
   letter-spacing: 0%;
   color: #667085;
   background-color: transparent;
+  white-space: nowrap;
   cursor: pointer;
 
   &.active {
@@ -41,6 +42,7 @@
   background-color: #F9FAFB;
   overflow: auto;
   border: 1px solid #EAECF0;
+  margin-right: 10px;
 }
 
 
@@ -66,6 +68,7 @@
   display: flex;
   align-items: center;
   column-gap: 4px;
+  white-space: nowrap;
 }
 
 .categoryDropdownContent {

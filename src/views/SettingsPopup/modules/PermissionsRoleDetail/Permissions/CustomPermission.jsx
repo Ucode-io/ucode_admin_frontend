@@ -81,7 +81,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
           </Box>
         </CTableCell>
       </CTableHeadRow>
-      <CTableHeadRow>
+      {/* <CTableHeadRow>
         <CTableCell>
           <Box sx={style}>Projects button</Box>
         </CTableCell>
@@ -198,7 +198,7 @@ const CustomPermissionRow = ({ watch, setValue }) => {
             />
           </Box>
         </CTableCell>
-      </CTableHeadRow>
+      </CTableHeadRow> */}
     </>
   );
 };

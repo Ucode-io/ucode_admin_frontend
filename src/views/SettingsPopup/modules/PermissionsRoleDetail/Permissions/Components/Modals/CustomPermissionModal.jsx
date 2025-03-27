@@ -11,6 +11,7 @@ import {
 import PermissionCheckbox from "../PermissionCheckbox";
 import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 import {useTranslation} from "react-i18next";
+import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
 
 const CustomPermissionModal = ({
   closeModal,
@@ -21,38 +22,38 @@ const CustomPermissionModal = ({
   permissionLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.custom_permission`;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const fields = [
     {
       guid: "1",
       name: "View create",
       controlName: "view_create",
     },
-    {
-      guid: "2",
-      name: "Share modal",
-      controlName: "share_modal",
-    },
-    {
-      guid: "3",
-      name: "Automation",
-      controlName: "automation",
-    },
-    {
-      guid: "4",
-      name: "Language",
-      controlName: "language_btn",
-    },
+    // {
+    //   guid: "2",
+    //   name: "Share modal",
+    //   controlName: "share_modal",
+    // },
+    // {
+    //   guid: "3",
+    //   name: "Automation",
+    //   controlName: "automation",
+    // },
+    // {
+    //   guid: "4",
+    //   name: "Language",
+    //   controlName: "language_btn",
+    // },
     {
       guid: "5",
       name: "Settings",
       controlName: "settings",
     },
-    {
-      guid: "6",
-      name: "Pdf action",
-      controlName: "pdf_action",
-    },
+    // {
+    //   guid: "6",
+    //   name: "Pdf action",
+    //   controlName: "pdf_action",
+    // },
     {
       guid: "7",
       name: "Add field",
@@ -63,46 +64,46 @@ const CustomPermissionModal = ({
       name: "Delete All",
       controlName: "delete_all",
     },
-    {
-      guid: "9",
-      name: "Add filter",
-      controlName: "add_filter",
-    },
-    {
-      guid: "10",
-      name: "Field filter",
-      controlName: "field_filter",
-    },
-    {
-      guid: "11",
-      name: "Fix column",
-      controlName: "fix_column",
-    },
+    // {
+    //   guid: "9",
+    //   name: "Add filter",
+    //   controlName: "add_filter",
+    // },
+    // {
+    //   guid: "10",
+    //   name: "Field filter",
+    //   controlName: "field_filter",
+    // },
+    // {
+    //   guid: "11",
+    //   name: "Fix column",
+    //   controlName: "fix_column",
+    // },
     {
       guid: "12",
       name: "columns",
       controlName: "columns",
     },
-    {
-      guid: "13",
-      name: "Group",
-      controlName: "group",
-    },
-    {
-      guid: "14",
-      name: "Excel menu",
-      controlName: "excel_menu",
-    },
-    {
-      guid: "15",
-      name: "Tab group",
-      controlName: "tab_group",
-    },
-    {
-      guid: "16",
-      name: "Search button",
-      controlName: "search_button",
-    },
+    // {
+    //   guid: "13",
+    //   name: "Group",
+    //   controlName: "group",
+    // },
+    // {
+    //   guid: "14",
+    //   name: "Excel menu",
+    //   controlName: "excel_menu",
+    // },
+    // {
+    //   guid: "15",
+    //   name: "Tab group",
+    //   controlName: "tab_group",
+    // },
+    // {
+    //   guid: "16",
+    //   name: "Search button",
+    //   controlName: "search_button",
+    // },
   ];
 
   const updateView = (val) => {
@@ -150,7 +151,8 @@ const CustomPermissionModal = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}>
+                }}
+              >
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
@@ -162,15 +164,17 @@ const CustomPermissionModal = ({
                       ) || "Label"}
                     </CTableCell>
                     <CTableCell w={150}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Permission"
-                      ) || "Permission"}
-                      <Checkbox
-                        checked={allYes ? true : false}
-                        onChange={(e) => updateView(e.target.checked)}
-                      />
+                      <Box display="flex" alignItems="center">
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Permission"
+                        ) || "Permission"}
+                        <CustomCheckbox
+                          checked={allYes ? true : false}
+                          onChange={(e) => updateView(e.target.checked)}
+                        />
+                      </Box>
                     </CTableCell>
                   </CTableHeadRow>
                 </CTableHead>

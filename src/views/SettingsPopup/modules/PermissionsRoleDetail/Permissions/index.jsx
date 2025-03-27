@@ -173,26 +173,20 @@ const Permissions = ({
                       </CTableCell>
                       <CTableCell colSpan={5}>
                         <Box
+                          display={"flex"}
+                          alignItems={"center"}
+                          justifyContent="center"
+                          columnGap={"4px"}
                           color="#475467"
                           fontSize="12px"
                           fontWeight={500}
                           lineHeight="18px"
                         >
-                          <CustomCheckbox
-                            onChange={handleChangeAllPermission}
-                            defaultChecked={isAllChecked}
-                          >
-                            {generateLangaugeText(
-                              permissionLan,
-                              i18n?.language,
-                              "Action"
-                            ) || "Action"}
-                          </CustomCheckbox>
-                          {/* <GoInfo
-                            size={18}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => setModalData(recordPermission)}
-                          /> */}
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Record Permission"
+                          ) || "Record Permission"}
                         </Box>
                       </CTableCell>
                       {permissions.map((item) => (
@@ -218,14 +212,9 @@ const Permissions = ({
                         </CTableCell>
                       ))}
                     </CTableHeadRow>
-                    {/* <CTableHeadRow>
+                    <CTableHeadRow>
                       <CTableCell>
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Reading"
-                        ) || "Reading"}
-                        <Checkbox
+                        <CustomCheckbox
                           checked={allReadTrue ? true : false}
                           onChange={(e) => {
                             setValue(
@@ -242,12 +231,7 @@ const Permissions = ({
                         />
                       </CTableCell>
                       <CTableCell>
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Adding"
-                        ) || "Adding"}
-                        <Checkbox
+                        <CustomCheckbox
                           checked={allWriteTrue ? true : false}
                           onChange={(e) => {
                             setValue(
@@ -264,12 +248,7 @@ const Permissions = ({
                         />
                       </CTableCell>
                       <CTableCell>
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Editing"
-                        ) || "Editing"}
-                        <Checkbox
+                        <CustomCheckbox
                           checked={allUpdateTrue ? true : false}
                           onChange={(e) => {
                             setValue(
@@ -286,12 +265,7 @@ const Permissions = ({
                         />
                       </CTableCell>
                       <CTableCell>
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Deleting"
-                        ) || "Deleting"}
-                        <Checkbox
+                        <CustomCheckbox
                           checked={allDeleteTrue ? true : false}
                           onChange={(e) => {
                             setValue(
@@ -308,12 +282,7 @@ const Permissions = ({
                         />
                       </CTableCell>
                       <CTableCell>
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Public"
-                        ) || "Public"}
-                        <Checkbox
+                        <CustomCheckbox
                           checked={allPublicTrue ? true : false}
                           onChange={(e) => {
                             setValue(
@@ -329,7 +298,7 @@ const Permissions = ({
                           }}
                         />
                       </CTableCell>
-                    </CTableHeadRow> */}
+                    </CTableHeadRow>
                   </CTableHead>
                   <CTableBody
                     //   loader={isLoading}

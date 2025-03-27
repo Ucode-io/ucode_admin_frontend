@@ -356,7 +356,10 @@ export const DynamicTable = ({
     if (isWarningActive || projectInfo?.status === "inactive") {
       warningHeight = 32;
     }
-    const filterHeightValue = Number(filterHeight) || 0;
+    const filterHeightValue = Boolean(view?.attributes?.quick_filters?.length)
+      ? Number(filterHeight) || 0
+      : 0;
+
     const tabHeightValue = Number(tabHeight) || 0;
 
     return tableViewFiltersOpen

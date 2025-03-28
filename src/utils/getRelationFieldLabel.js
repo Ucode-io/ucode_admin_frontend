@@ -21,10 +21,12 @@ export const getRelationFieldLabel = (field, option) => {
   return label;
 };
 
-export const getRelationFieldTabsLabel = (field, option) => {
+export const getRelationFieldTabsLabel = (field, option, lang) => {
   if (!Array.isArray(field?.view_fields)) return "";
 
   let label = "";
+
+  let langLabel = "";
 
   field?.view_fields?.forEach((el) => {
     let result = "";
@@ -33,12 +35,21 @@ export const getRelationFieldTabsLabel = (field, option) => {
     else if (el?.type === "DATE_TIME")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
     else if (el?.type === "NUMBER") result = numberWithSpaces(option[el?.slug]);
-    else result = option?.[el?.slug];
+    else {
+
+      const pattern = new RegExp(`_${lang}`);
+
+      if(lang && pattern.test(el?.slug)) {
+        langLabel = option?.[el?.slug] ?? " ";
+      }
+
+      result = option?.[el?.slug];
+    }
 
     label += `${result ?? ""} `;
   });
 
-  return label;
+  return langLabel ? langLabel : label;
 };
 
 export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {

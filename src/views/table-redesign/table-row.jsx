@@ -46,7 +46,6 @@ const TableRow = ({
   const navigate = useNavigate();
 
   const hasPermission = usePermission({ tableSlug, type: "delete_all" });
-  console.log({ hasPermission });
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {

@@ -147,7 +147,8 @@ const AutoCompleteElement = ({
   row,
   newUi,
 }) => {
-  const {navigateToForm} = useTabRouter();
+
+  const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -163,7 +164,7 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -220,7 +221,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
-  const {data: optionsFromLocale, refetch} = useQuery(
+  const { data: optionsFromLocale, refetch } = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
@@ -304,7 +305,7 @@ const AutoCompleteElement = ({
     setLocalValue(value);
 
     if (!field?.attributes?.autofill) return;
-    field.attributes.autofill.forEach(({field_from, field_to}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -333,7 +334,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -354,14 +355,17 @@ const AutoCompleteElement = ({
     <components.SingleValue {...props}>
       <div
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}
+        style={{ display: "flex", alignItems: "center" }}
         onClick={() => {
           refetch();
-        }}>
-        {props.children}
+        }}
+      >
+        {props?.data?.[`name_${i18n?.language}`] ||
+          props?.data?.name ||
+          props.children}
         {!disabled && (
           <Box
-            sx={{position: "relative", zIndex: 99999}}
+            sx={{ position: "relative", zIndex: 99999 }}
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -369,7 +373,8 @@ const AutoCompleteElement = ({
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
-            }}>
+            }}
+          >
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -395,7 +400,8 @@ const AutoCompleteElement = ({
       {field.attributes.creatable && (
         <span
           onClick={() => openFormModal(tableSlug)}
-          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
+          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+        >
           <AddIcon
             aria-owns={openPopover ? "mouse-over-popover" : undefined}
             aria-haspopup="true"
@@ -418,8 +424,9 @@ const AutoCompleteElement = ({
               horizontal: "left",
             }}
             onClose={handlePopoverClose}
-            disableRestoreFocus>
-            <Typography sx={{p: 1}}>Create new object</Typography>
+            disableRestoreFocus
+          >
+            <Typography sx={{ p: 1 }}>Create new object</Typography>
           </Popover>
         </span>
       )}
@@ -435,7 +442,7 @@ const AutoCompleteElement = ({
       <Select
         id="relation-lookup"
         inputValue={inputValue}
-        onInputChange={(newInputValue, {action}) => {
+        onInputChange={(newInputValue, { action }) => {
           if (action !== "reset") {
             setInputValue(newInputValue);
             inputChangeHandler(newInputValue);
@@ -461,20 +468,22 @@ const AutoCompleteElement = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   setLocalValue([]);
-                }}>
+                }}
+              >
                 <ClearIcon />
               </div>
             ),
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
-        onChange={(newValue, {action}) => {
+        onChange={(newValue, { action }) => {
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+          >
             Create new
           </span>
         )}

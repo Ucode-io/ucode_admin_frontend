@@ -1,5 +1,6 @@
+import cls from "./styles.module.scss";
 import { useFunctionsProps } from "./useFunctionsProps";
-import {Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -14,12 +15,12 @@ import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrappe
 import SearchInput from "@/components/SearchInput";
 import TableCard from "@/components/TableCard";
 import TableRowButton from "@/components/TableRowButton";
-import {Box, Pagination} from "@mui/material";
+import { Box, Pagination } from "@mui/material";
 import { StatusPipeline } from "../../components/StatusPipeline";
 import { ContentTitle } from "../../components/ContentTitle";
+import { Button } from "../../components/Button";
 
 export const Functions = () => {
-
   const {
     loader,
     list,
@@ -32,7 +33,16 @@ export const Functions = () => {
 
   return (
     <Box position="relative">
-      <ContentTitle>Faas функции</ContentTitle>
+      <ContentTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <span>Environments</span>
+          <PermissionWrapperV2 tableSlug="app" type="write">
+            <Button primary onClick={navigateToCreateForm}>
+              Add
+            </Button>
+          </PermissionWrapperV2>
+        </Box>
+      </ContentTitle>
 
       <FiltersBlock>
         <SearchInput onChange={(e) => inputChangeHandler(e)} />
@@ -48,12 +58,14 @@ export const Functions = () => {
           removableHeight={140}
         >
           <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Name</CTableCell>
-            <CTableCell>Status</CTableCell>
-            <CTableCell>Path</CTableCell>
-            <CTableCell>Type</CTableCell>
-            <CTableCell width={60}></CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={10}>
+              №
+            </CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Name</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Status</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Path</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Type</CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={60}></CTableCell>
           </CTableHead>
           <CTableBody
             loader={loader}
@@ -65,16 +77,20 @@ export const Functions = () => {
                 key={element.id}
                 onClick={() => navigateToEditForm(element.id)}
               >
-                <CTableCell>{index + 1}</CTableCell>
-                <CTableCell>{element?.name}</CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.name}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   <StatusPipeline element={element} />
                 </CTableCell>
-                <CTableCell>{element?.path}</CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.path}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   {element?.type === "FUNCTION" ? "OPENFAAS" : element?.type}
                 </CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   <RectangleIconButton
                     color="error"
                     onClick={() => deleteFunction(element.id)}
@@ -84,9 +100,6 @@ export const Functions = () => {
                 </CTableCell>
               </CTableRow>
             ))}
-            <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={7} onClick={navigateToCreateForm} />
-            </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>
@@ -114,4 +127,4 @@ export const Functions = () => {
       </Box>
     </Box>
   );
-}
+};

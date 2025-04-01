@@ -2,17 +2,23 @@ import { Box } from "@mui/material";
 import { ContentTitle } from "../../components/ContentTitle";
 import { useEnvironmentProps } from "./useEnvironmentProps";
 import { generateLangaugeText } from "../../../../utils/generateLanguageText";
-import FiltersBlock from "../../../../components/FiltersBlock";
-import TableCard from "../../../../components/TableCard";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "../../../../components/CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableRow,
+} from "../../../../components/CTable";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import { Delete } from "@mui/icons-material";
+// import { Delete } from "@mui/icons-material";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 import TableRowButton from "../../../../components/TableRowButton";
+import cls from "./styles.module.scss";
+import { Button } from "../../components/Button";
 
 export const Environment = () => {
-
-  const { 
+  const {
     lang,
     i18n,
     environmentLoading,
@@ -25,48 +31,51 @@ export const Environment = () => {
   return (
     <Box>
       <ContentTitle>
-        {
-          generateLangaugeText(
-            lang,
-            i18n?.language,
-            "Environments"
-          ) || "Environments"
-        }
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <span>
+            {generateLangaugeText(lang, i18n?.language, "Environments") ||
+              "Environments"}
+          </span>
+          <Button primary onClick={navigateToCreateForm}>
+            {generateLangaugeText(lang, i18n?.language, "Add") || "Add"}
+          </Button>
+        </Box>
       </ContentTitle>
 
       <CTable disablePagination removableHeight={0}>
         <CTableHead>
-          <CTableCell width={10}>№</CTableCell>
-          <CTableCell>
-            {generateLangaugeText(lang, i18n?.language, "Name") ||
-              "Name"}
+          <CTableCell className={cls.tableHeadCell} width={10}>
+            №
           </CTableCell>
-          <CTableCell>
+          <CTableCell className={cls.tableHeadCell}>
+            {generateLangaugeText(lang, i18n?.language, "Name") || "Name"}
+          </CTableCell>
+          <CTableCell className={cls.tableHeadCell}>
             {" "}
-            {generateLangaugeText(
-              lang,
-              i18n?.language,
-              "Description"
-            ) || "Description"}{" "}
+            {generateLangaugeText(lang, i18n?.language, "Description") ||
+              "Description"}{" "}
           </CTableCell>
           <CTableCell width={60}></CTableCell>
         </CTableHead>
         <CTableBody
           loader={environmentLoading}
           columnsCount={4}
-          dataLength={environments?.environments?.length}>
+          dataLength={environments?.environments?.length}
+        >
           {environments?.environments?.map((element, index) => (
             <CTableRow
               key={element.id}
-              onClick={() => navigateToEditForm(element.id)}>
-              <CTableCell>{index + 1}</CTableCell>
-              <CTableCell>
+              onClick={() => navigateToEditForm(element.id)}
+            >
+              <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
+              <CTableCell className={cls.tBodyCell}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     columnGap: "8px",
-                  }}>
+                  }}
+                >
                   <span
                     style={{
                       background: element.display_color,
@@ -74,34 +83,31 @@ export const Environment = () => {
                       height: "10px",
                       display: "block",
                       borderRadius: "50%",
-                    }}></span>
+                    }}
+                  ></span>
                   {element?.name}
                 </div>
               </CTableCell>
-              <CTableCell>{element?.description}</CTableCell>
-              <CTableCell>
-                <RectangleIconButton
-                  color="error"
-                  onClick={() => {
+              <CTableCell className={cls.tBodyCell}>
+                {element?.description}
+              </CTableCell>
+              <CTableCell className={cls.tBodyCell}>
+                <button
+                  className={cls.btn}
+                  onClick={(e) => {
+                    e.stopPropagation();
                     deleteEnvironment(element.id);
-                  }}>
-                  <Delete color="error" />
-                </RectangleIconButton>
+                  }}
+                >
+                  <span>
+                    <DeleteOutlinedIcon color="inherit" />
+                  </span>
+                </button>
               </CTableCell>
             </CTableRow>
           ))}
-          <PermissionWrapperV2 tabelSlug="app" type="write">
-            <TableRowButton
-              title={
-                generateLangaugeText(lang, i18n?.language, "Add") ||
-                "Add"
-              }
-              colSpan={4}
-              onClick={navigateToCreateForm}
-            />
-          </PermissionWrapperV2>
         </CTableBody>
       </CTable>
     </Box>
   );
-}
+};

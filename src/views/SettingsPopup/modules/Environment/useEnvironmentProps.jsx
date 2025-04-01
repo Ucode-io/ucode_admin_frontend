@@ -25,7 +25,7 @@ export const useEnvironmentProps = () => {
       setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.EDIT_ENVIRONMENT, envId: id });
     };
   
-    const navigateToCreateForm = () => {
+    const navigateToCreateForm = (e) => {
       setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT });
     };
   

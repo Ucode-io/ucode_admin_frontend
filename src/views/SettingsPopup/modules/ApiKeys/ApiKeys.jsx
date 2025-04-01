@@ -1,7 +1,7 @@
+import cls from "./styles.module.scss";
 import { Box } from "@mui/material";
 import { useApiKeysProps } from "./useApiKeysProps";
 import { Delete, Edit } from "@mui/icons-material";
-import HeaderSettings from "@/components/HeaderSettings";
 import { DownloadIcon } from "@chakra-ui/icons";
 import {
   CTable,
@@ -10,12 +10,11 @@ import {
   CTableHead,
   CTableRow,
 } from "@/components/CTable";
-import TableCard from "@/components/TableCard";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-import TableRowButton from "@/components/TableRowButton";
 import { numberWithSpaces } from "@/utils/formatNumbers";
 import { ContentTitle } from "../../components/ContentTitle";
+import { Button } from "../../components/Button";
 
 export const ApiKeys = () => {
   const {
@@ -40,20 +39,27 @@ export const ApiKeys = () => {
           }}
         >
           <span>Api keys</span>
-          <Box onClick={() => downloadUrl(URLFILE)}>
-            <a
-              target="_blank"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                fontSize: "14px",
-              }}
-              href="apikeys.zip"
-              download
-            >
-              <DownloadIcon style={{ background: "#007af" }} />
-              Download api documentation
-            </a>
+          <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <Box onClick={() => downloadUrl(URLFILE)}>
+              <a
+                target="_blank"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  fontSize: "14px",
+                }}
+                href="apikeys.zip"
+                download
+              >
+                <DownloadIcon style={{ background: "#007af" }} />
+                Download api documentation
+              </a>
+            </Box>
+            <PermissionWrapperV2 tableSlug="app" type="write">
+              <Button primary onClick={navigateToCreateForm}>
+                Add API key
+              </Button>
+            </PermissionWrapperV2>
           </Box>
         </Box>
       </ContentTitle>
@@ -62,15 +68,17 @@ export const ApiKeys = () => {
       <Box marginTop="36px">
         <CTable loader={false} disablePagination removableHeight={false}>
           <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Name</CTableCell>
-            <CTableCell>AppId</CTableCell>
-            <CTableCell>Client ID</CTableCell>
-            <CTableCell>Platform name</CTableCell>
-            <CTableCell>Monthly limit</CTableCell>
-            <CTableCell>RPS limit</CTableCell>
-            <CTableCell>Used count</CTableCell>
-            <CTableCell width={60}></CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={10}>
+              №
+            </CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Name</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>AppId</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Client ID</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Platform name</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Monthly limit</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>RPS limit</CTableCell>
+            <CTableCell className={cls.tableHeadCell}>Used count</CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={60}></CTableCell>
           </CTableHead>
 
           <CTableBody loader={false} columnsCount={4} dataLength={list.length}>
@@ -79,17 +87,29 @@ export const ApiKeys = () => {
                 onClick={() => navigateToForm(element?.id)}
                 key={element.id}
               >
-                <CTableCell>{index + 1}</CTableCell>
-                <CTableCell>{element?.name}</CTableCell>
-                <CTableCell>{element?.app_id}</CTableCell>
-                <CTableCell>{element?.client_id}</CTableCell>
-                <CTableCell>{element?.client_platform?.name}</CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.name}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.app_id}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.client_id}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.client_platform?.name}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   {numberWithSpaces(element?.monthly_request_limit)}
                 </CTableCell>
-                <CTableCell>{numberWithSpaces(element?.rps_limit)}</CTableCell>
-                <CTableCell>{numberWithSpaces(element?.used_count)}</CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {numberWithSpaces(element?.rps_limit)}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {numberWithSpaces(element?.used_count)}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   <div className="flex">
                     {element?.disable ? (
                       <RectangleIconButton
@@ -126,9 +146,6 @@ export const ApiKeys = () => {
                 </CTableCell>
               </CTableRow>
             ))}
-            <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={7} onClick={navigateToCreateForm} />
-            </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </Box>

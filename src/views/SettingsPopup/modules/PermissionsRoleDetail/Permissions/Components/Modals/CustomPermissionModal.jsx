@@ -12,6 +12,7 @@ import PermissionCheckbox from "../PermissionCheckbox";
 import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 import {useTranslation} from "react-i18next";
 import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
+import cls from "./styles.module.scss";
 
 const CustomPermissionModal = ({
   closeModal,
@@ -127,9 +128,11 @@ const CustomPermissionModal = ({
     setValue(basePath, computedValue);
   };
 
-  const allYes = Object.values(watch(basePath)).every(
+  const allYes = Object?.values(watch(basePath)).every(
     (value) => value === "Yes"
   );
+
+  console.log(watch(basePath));
 
   return (
     <div>
@@ -147,24 +150,33 @@ const CustomPermissionModal = ({
             />
           </div>
           <Box>
-            <TableCard withBorder borderRadius="md">
+            <TableCard disablePagination withBorder borderRadius="md">
               <CTable
+                disablePagination
                 tableStyle={{
                   height: "auto",
                 }}
               >
                 <CTableHead>
                   <CTableHeadRow>
-                    <CTableCell w={2}>No</CTableCell>
+                    <CTableCell w={2}>
+                      <Box className={cls.headCellBox}>No</Box>
+                    </CTableCell>
                     <CTableCell w={250}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Label"
-                      ) || "Label"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Label"
+                        ) || "Label"}
+                      </Box>
                     </CTableCell>
                     <CTableCell w={150}>
-                      <Box display="flex" alignItems="center">
+                      <Box
+                        className={cls.headCellBox}
+                        display="flex"
+                        alignItems="center"
+                      >
                         {generateLangaugeText(
                           permissionLan,
                           i18n?.language,
@@ -181,8 +193,12 @@ const CustomPermissionModal = ({
                 <CTableBody columnsCount={3} dataLength={fields?.length}>
                   {fields?.map((field, fieldIndex) => (
                     <CTableHeadRow key={field.guid}>
-                      <CTableCell>{fieldIndex + 1}</CTableCell>
-                      <CTableCell>{field.name}</CTableCell>
+                      <CTableCell>
+                        <Box className={cls.bodyCellBox}>{fieldIndex + 1}</Box>
+                      </CTableCell>
+                      <CTableCell>
+                        <Box className={cls.bodyCellBox}>{field.name}</Box>
+                      </CTableCell>
                       <CTableCell>
                         <PermissionCheckbox
                           name={`${basePath}.${field.controlName}`}

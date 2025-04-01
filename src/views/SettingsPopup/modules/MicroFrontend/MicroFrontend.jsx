@@ -1,5 +1,6 @@
-import {Delete} from "@mui/icons-material";
-import {Box, Pagination} from "@mui/material";
+import cls from "./styles.module.scss";
+import { Delete } from "@mui/icons-material";
+import { Box, Pagination } from "@mui/material";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -13,13 +14,13 @@ import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrappe
 import SearchInput from "@/components/SearchInput";
 import TableCard from "@/components/TableCard";
 import TableRowButton from "@/components/TableRowButton";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { useMicroFrontendProps } from "./useMicroFrontendProps";
 import { StatusPipeline } from "../../components/StatusPipeline";
 import { ContentTitle } from "../../components/ContentTitle";
+import { Button } from "../../components/Button";
 
 export const MicroFrontend = () => {
-
   const {
     loader,
     list,
@@ -35,8 +36,15 @@ export const MicroFrontend = () => {
   return (
     <Box position="relative">
       <ContentTitle>
-        {generateLangaugeText(microLan, i18n?.language, "Microfrontend") ||
-          "Microfrontend"}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <span>Microfrontend</span>
+          <PermissionWrapperV2 tableSlug="app" type="write">
+            <Button primary onClick={navigateToCreateForm}>
+              Add
+            </Button>
+            {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
+          </PermissionWrapperV2>
+        </Box>
       </ContentTitle>
       <FiltersBlock>
         <div className="p-1">
@@ -54,29 +62,31 @@ export const MicroFrontend = () => {
           removableHeight={140}
         >
           <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
-            <CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={10}>
+              №
+            </CTableCell>
+            <CTableCell className={cls.tableHeadCell}>
               {generateLangaugeText(microLan, i18n?.language, "Name") || "Name"}
             </CTableCell>
-            <CTableCell>
+            <CTableCell className={cls.tableHeadCell}>
               {generateLangaugeText(microLan, i18n?.language, "Status") ||
                 "Status"}
             </CTableCell>
-            <CTableCell>
+            <CTableCell className={cls.tableHeadCell}>
               {generateLangaugeText(microLan, i18n?.language, "Description") ||
                 "Description"}
             </CTableCell>
-            <CTableCell>
+            <CTableCell className={cls.tableHeadCell}>
               {generateLangaugeText(microLan, i18n?.language, "Link") || "Link"}
             </CTableCell>
-            <CTableCell>
+            <CTableCell className={cls.tableHeadCell}>
               {generateLangaugeText(
                 microLan,
                 i18n?.language,
                 "Framework type"
               ) || "Framework type"}
             </CTableCell>
-            <CTableCell width={60}></CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={60}></CTableCell>
           </CTableHead>
           <CTableBody
             loader={loader}
@@ -88,15 +98,23 @@ export const MicroFrontend = () => {
                 key={element.id}
                 onClick={() => navigateToEditForm(element.id)}
               >
-                <CTableCell>{index + 1}</CTableCell>
-                <CTableCell>{element?.name}</CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.name}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   <StatusPipeline element={element} />
                 </CTableCell>
-                <CTableCell>{element?.description}</CTableCell>
-                <CTableCell>{element?.path}</CTableCell>
-                <CTableCell>{element?.framework_type}</CTableCell>
-                <CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.description}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.path}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
+                  {element?.framework_type}
+                </CTableCell>
+                <CTableCell className={cls.tBodyCell}>
                   <RectangleIconButton
                     color="error"
                     onClick={() => deleteTable(element.id)}
@@ -106,10 +124,6 @@ export const MicroFrontend = () => {
                 </CTableCell>
               </CTableRow>
             ))}
-            <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={7} onClick={navigateToCreateForm} />
-              {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
-            </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>

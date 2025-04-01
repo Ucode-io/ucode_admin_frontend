@@ -1,12 +1,12 @@
 import {useWatch} from "react-hook-form";
-import TableCard from "../../../../../components/TableCard";
+import TableCard from "@/components/TableCard";
 import {
   CTable,
   CTableBody,
   CTableCell,
   CTableHead,
   CTableHeadRow,
-} from "../../../../../components/CTable";
+} from "@/components/CTable";
 import { Box, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import MenuRow from "./MenuRow";
@@ -17,10 +17,8 @@ import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
 import { GoInfo } from "react-icons/go";
 import { getAllFromDB } from "../../../../../utils/languageDB";
 import { useTranslation } from "react-i18next";
-import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
 import TableRow from "./TableRow";
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
-import clsx from "clsx";
 import { CustomCheckbox } from "../../../components/CustomCheckbox";
 
 const Permissions = ({
@@ -32,7 +30,6 @@ const Permissions = ({
   activeTab,
 }) => {
   const [checkBoxValues, setCheckBoxValues] = useState({});
-  const [selectedTab, setSelectedTab] = useState(0);
   const [modalData, setModalData] = useState(null);
   const [permissionLan, setPermissionLan] = useState(null);
   const { i18n } = useTranslation();
@@ -66,13 +63,6 @@ const Permissions = ({
     (permission) => permission.record_permissions?.is_public === true
   );
 
-  const isAllChecked =
-    allReadTrue &&
-    allWriteTrue &&
-    allUpdateTrue &&
-    allDeleteTrue &&
-    allPublicTrue;
-
   useEffect(() => {
     const obj = {};
     allMenu?.forEach((item, index) => {
@@ -100,23 +90,6 @@ const Permissions = ({
       isMounted = false;
     };
   }, []);
-
-  const handleChangeAllPermission = (e) => {
-    setValue(
-      "data.tables",
-      tables?.tables?.map((el) => ({
-        ...el,
-        record_permissions: {
-          ...el.record_permissions,
-          read: e.target.checked ? "Yes" : "No",
-          write: e.target.checked ? "Yes" : "No",
-          update: e.target.checked ? "Yes" : "No",
-          delete: e.target.checked ? "Yes" : "No",
-          is_public: e.target.checked ? true : false,
-        },
-      }))
-    );
-  };
 
   return (
     <>
@@ -177,10 +150,7 @@ const Permissions = ({
                           alignItems={"center"}
                           justifyContent="center"
                           columnGap={"4px"}
-                          color="#475467"
-                          fontSize="12px"
-                          fontWeight={500}
-                          lineHeight="18px"
+                          className={styles.headCellBox}
                         >
                           {generateLangaugeText(
                             permissionLan,
@@ -191,15 +161,7 @@ const Permissions = ({
                       </CTableCell>
                       {permissions.map((item) => (
                         <CTableCell rowSpan={2}>
-                          <Box
-                            display={"flex"}
-                            alignItems={"center"}
-                            columnGap={"4px"}
-                            color="#475467"
-                            fontSize="12px"
-                            fontWeight={500}
-                            lineHeight="18px"
-                          >
+                          <Box className={styles.headCellBox}>
                             {item.title}{" "}
                             <GoInfo
                               size={18}

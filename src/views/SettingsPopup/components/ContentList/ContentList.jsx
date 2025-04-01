@@ -26,28 +26,28 @@ export const ContentList = ({
     </Box>
   }
 
-  return <List {...props}>
-    {arr?.map((row) => {
-      return (
-        <ListItem
-          key={row.id || row.guid || row.name}
-          sx={{ borderBottom: "1px solid #E0E0E0", cursor: "pointer" }}
-          onClick={() => onItemClick(row)}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
+  return (
+    <List {...props}>
+      {arr?.map((row) => {
+        return (
+          <ListItem
+            key={row.id || row.guid || row.name}
+            sx={{ borderBottom: "1px solid #E0E0E0", cursor: "pointer" }}
+            onClick={() => onItemClick(row)}
           >
-            <ListItemText>{row?.[selectedFieldKey]}</ListItemText>
-            {
-              (canEdit || canDelete) && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <ListItemText>{row?.[selectedFieldKey]}</ListItemText>
+              {(canEdit || canDelete) && (
                 <Box display="flex" alignItems="center" gap="10px">
-                  {
-                    canEdit && <RiPencilFill
+                  {canEdit && (
+                    <RiPencilFill
                       cursor="pointer"
                       size={13}
                       onClick={(e) => {
@@ -58,12 +58,10 @@ export const ContentList = ({
                         color: "#475467",
                       }}
                     />
-                  }
-                  {
-                    canDelete && <Box className="extra_icon">
-                      <DeleteWrapperModal
-                        onDelete={() => handleDelete(row)}
-                      >
+                  )}
+                  {canDelete && (
+                    <Box className="extra_icon">
+                      <DeleteWrapperModal onDelete={() => handleDelete(row)}>
                         <RectangleIconButton style={{ border: "none" }}>
                           <Delete
                             size={13}
@@ -74,13 +72,13 @@ export const ContentList = ({
                         </RectangleIconButton>
                       </DeleteWrapperModal>
                     </Box>
-                  }
+                  )}
                 </Box>
-              )
-            }
-          </Box>
-        </ListItem>
-      );
-    })}
-  </List>
+              )}
+            </Box>
+          </ListItem>
+        );
+      })}
+    </List>
+  );
 }

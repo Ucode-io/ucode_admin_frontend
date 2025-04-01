@@ -72,11 +72,7 @@ export const useResourcesProps = () => {
     });
 
     const computedResources = useMemo(() => {
-      return [
-        ...(data?.resources || []),
-        // ...(resources || []),
-        ...(clickHouseList || []),
-      ];
+      return [...(data?.resources || []), ...(clickHouseList || [])];
     }, [data, resources, clickHouseList]);
 
   return {

@@ -1,5 +1,6 @@
+import cls from "./styles.module.scss";
 import { useModelsProps } from "./useModelsProps";
-import {Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -16,14 +17,8 @@ import FiltersBlock from "@/components/FiltersBlock";
 import { ContentTitle } from "../../components/ContentTitle";
 
 export const Models = () => {
-
-  const {
-    tables,
-    loader,
-    setSearchText,
-    navigateToEditForm,
-    deleteTable,
-  } = useModelsProps();
+  const { tables, loader, setSearchText, navigateToEditForm, deleteTable } =
+    useModelsProps();
 
   return (
     <>
@@ -46,25 +41,33 @@ export const Models = () => {
               border: "none",
             }}
             disablePagination
-            removableHeight={120}>
+            removableHeight={120}
+          >
             <CTableHead>
-              <CTableCell width={10}>№</CTableCell>
-              <CTableCell>Name</CTableCell>
-              <CTableCell>Description</CTableCell>
-              <CTableCell width={60} />
+              <CTableCell className={cls.tableHeadCell} width={10}>
+                №
+              </CTableCell>
+              <CTableCell className={cls.tableHeadCell}>Name</CTableCell>
+              <CTableCell className={cls.tableHeadCell}>Description</CTableCell>
+              <CTableCell className={cls.tableHeadCell} width={60} />
             </CTableHead>
             <CTableBody columnsCount={4} dataLength={1} loader={loader}>
               {tables?.tables?.map((element, index) => (
                 <CTableRow key={element.id}>
-                  <CTableCell>{index + 1}</CTableCell>
-                  <CTableCell>{element.label}</CTableCell>
-                  <CTableCell>{element.description}</CTableCell>
+                  <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
+                  <CTableCell className={cls.tBodyCell}>
+                    {element.label}
+                  </CTableCell>
+                  <CTableCell className={cls.tBodyCell}>
+                    {element.description}
+                  </CTableCell>
 
-                  <CTableCell>
+                  <CTableCell className={cls.tBodyCell}>
                     <RectangleIconButton
                       id="delete_btn"
                       color="error"
-                      onClick={() => deleteTable(element.id)}>
+                      onClick={() => deleteTable(element.id)}
+                    >
                       <Delete color="error" />
                     </RectangleIconButton>
                   </CTableCell>

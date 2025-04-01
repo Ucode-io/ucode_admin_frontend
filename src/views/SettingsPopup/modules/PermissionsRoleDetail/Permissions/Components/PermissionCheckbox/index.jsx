@@ -1,5 +1,6 @@
 import { Checkbox } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
 
 const PermissionCheckbox = ({
   control,
@@ -19,14 +20,14 @@ const PermissionCheckbox = ({
       defaultValue={defaultValue}
       rules={{ required }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <Checkbox
+        <CustomCheckbox
           isInvalid={error}
           onChange={(e) => onChange(e.target.checked ? "Yes" : "No")}
           checked={value === "Yes"}
           {...props}
         >
           {children}
-        </Checkbox>
+        </CustomCheckbox>
       )}
     />
   );

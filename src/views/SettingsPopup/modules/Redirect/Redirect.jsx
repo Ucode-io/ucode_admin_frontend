@@ -1,5 +1,4 @@
-import HeaderSettings from "@/components/HeaderSettings";
-import TableCard from "@/components/TableCard";
+import cls from "./styles.module.scss";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import { Add, Delete } from "@mui/icons-material";
 import { format } from "date-fns";
@@ -7,22 +6,83 @@ import { Container, Draggable } from "react-smooth-dnd";
 import SecondaryButton from "@/components/Buttons/SecondaryButton";
 import { useRedirectProps } from "./useRedirectProps";
 import { ContentTitle } from "../../components/ContentTitle";
+import { Button } from "../../components/Button";
+import { Box } from "@mui/material";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableRow,
+} from "@/components/CTable";
 
 export const Redirect = () => {
-
   const {
     computedData,
     navigateToEditForm,
     navigateToCreateForm,
     deleteRedirectElement,
     onDrop,
-  } = useRedirectProps()
+  } = useRedirectProps();
 
   return (
     <div>
-      <ContentTitle>Redirects</ContentTitle>
+      <ContentTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <span>Redirects</span>
+          <Button primary onClick={navigateToCreateForm}>
+            Add
+          </Button>
+        </Box>
+      </ContentTitle>
+      <CTable disablePagination removableHeight={0}>
+        <CTableHead>
+          <CTableCell className={cls.tableHeadCell} width={10}>
+            №
+          </CTableCell>
+          <CTableCell className={cls.tableHeadCell}>From</CTableCell>
+          <CTableCell className={cls.tableHeadCell}>To</CTableCell>
+          <CTableCell>Created at</CTableCell>
+          <CTableCell>Updated at</CTableCell>
+          <CTableCell width={60}></CTableCell>
+        </CTableHead>
+        <CTableBody>
+          {computedData?.map((element, index) => (
+            <CTableRow
+              key={element.id}
+              onClick={() => navigateToEditForm(element.id)}
+            >
+              <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
+              <CTableCell className={cls.tBodyCell}>{element?.from}</CTableCell>
+              <CTableCell className={cls.tBodyCell}>{element?.to}</CTableCell>
+              <CTableCell className={cls.tBodyCell}>
+                {format(
+                  new Date(element?.created_at),
+                  "MMMM d, yyyy 'at' kk:mm"
+                )}
+              </CTableCell>
+              <CTableCell className={cls.tBodyCell}>
+                {format(
+                  new Date(element?.updated_at),
+                  "MMMM d, yyyy 'at' kk:mm"
+                )}
+              </CTableCell>
+              <CTableCell className={cls.tBodyCell}>
+                <RectangleIconButton
+                  color="error"
+                  onClick={() => {
+                    deleteRedirectElement(element.id);
+                  }}
+                >
+                  <Delete color="error" />
+                </RectangleIconButton>
+              </CTableCell>
+            </CTableRow>
+          ))}
+        </CTableBody>
+      </CTable>
 
-      <div
+      {/* <div
         style={{
           display: "flex",
           flexDirection: "column",
@@ -40,6 +100,7 @@ export const Redirect = () => {
           }}
         >
           <div
+            className={cls.tableHeadCell}
             style={{
               width: 50,
               borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -49,6 +110,7 @@ export const Redirect = () => {
             №
           </div>
           <div
+            className={cls.tableHeadCell}
             style={{
               flex: 2,
               borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -58,6 +120,7 @@ export const Redirect = () => {
             From
           </div>
           <div
+            className={cls.tableHeadCell}
             style={{
               flex: 1,
               borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -67,6 +130,7 @@ export const Redirect = () => {
             To
           </div>
           <div
+            className={cls.tableHeadCell}
             style={{
               flex: 1,
               borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -76,6 +140,7 @@ export const Redirect = () => {
             Created at
           </div>
           <div
+            className={cls.tableHeadCell}
             style={{
               flex: 1,
               borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -91,18 +156,18 @@ export const Redirect = () => {
           onDrop={onDrop}
           dropPlaceholder={{ className: "drag-row-drop-preview" }}
         >
-          {computedData?.map((element, index) => (
+          {customComputedData?.map((element, index) => (
             <Draggable key={element.id}>
               <div
                 onClick={() => navigateToEditForm(element.id)}
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  alignItems: "center",
                   borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
                 }}
               >
                 <div
+                  className={cls.tBodyCell}
                   style={{
                     width: 50,
                     borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -112,6 +177,7 @@ export const Redirect = () => {
                   {index + 1}
                 </div>
                 <div
+                  className={cls.tBodyCell}
                   style={{
                     flex: 2,
                     borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -121,6 +187,7 @@ export const Redirect = () => {
                   {element?.from}
                 </div>
                 <div
+                  className={cls.tBodyCell}
                   style={{
                     flex: 1,
                     borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -130,6 +197,7 @@ export const Redirect = () => {
                   {element?.to}
                 </div>
                 <div
+                  className={cls.tBodyCell}
                   style={{
                     flex: 1,
                     borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -142,6 +210,7 @@ export const Redirect = () => {
                   )}
                 </div>
                 <div
+                  className={cls.tBodyCell}
                   style={{
                     flex: 1,
                     borderRight: "1px solid rgba(0, 0, 0, 0.12)",
@@ -173,16 +242,8 @@ export const Redirect = () => {
               </div>
             </Draggable>
           ))}
-          <SecondaryButton
-            type="button"
-            style={{ width: "100%", marginTop: "10px" }}
-            onClick={navigateToCreateForm}
-          >
-            <Add />
-            Add
-          </SecondaryButton>
         </Container>
-      </div>
+      </div> */}
     </div>
   );
 };

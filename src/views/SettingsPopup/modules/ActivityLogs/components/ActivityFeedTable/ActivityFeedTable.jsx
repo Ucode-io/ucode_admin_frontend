@@ -62,51 +62,74 @@ export const ActivityFeedTable = ({
           dataCount={histories?.count}
         >
           <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
-            <CTableCell width={130}>
+            <CTableCell className={cls.tableHeadCell} width={10}>
+              №
+            </CTableCell>
+            <CTableCell className={cls.tableHeadCell} width={130}>
               Action
             </CTableCell>
-            <CTableCell 
-              id="collection" 
+            <CTableCell
+              className={cls.tableHeadCell}
+              id="collection"
               onClick={(e) => {
-                onCollectionClick()
+                onCollectionClick();
                 e.stopPropagation();
               }}
-              style={{position: "relative"}}
+              style={{ position: "relative" }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                {
-                  isCollectionOpen &&
-                    <Input
-                      ref={collectionRef}
-                      onClick={(e) => e.stopPropagation()}
-                      autoFocus
-                      className={cls.searchInput}
-                      id="collection_search_input"
-                      defaultValue={collectionText}
-                      value={collectionText}
-                      placeholder={
-                        generateLangaugeText(tableLan, i18n?.language, "Search") ||
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {isCollectionOpen && (
+                  <Input
+                    ref={collectionRef}
+                    onClick={(e) => e.stopPropagation()}
+                    autoFocus
+                    className={cls.searchInput}
+                    id="collection_search_input"
+                    defaultValue={collectionText}
+                    value={collectionText}
+                    placeholder={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
                         "Search"
-                      }
-                      onChange={onCollectionChange}
-                    />
-                }
+                      ) || "Search"
+                    }
+                    onChange={onCollectionChange}
+                  />
+                )}
                 <span>Collection</span>
-                <Image src="/img/search-lg.svg" alt="search" width={16} height={16} />
+                <Image
+                  src="/img/search-lg.svg"
+                  alt="search"
+                  width={16}
+                  height={16}
+                />
               </Box>
             </CTableCell>
-            <CTableCell>Action On</CTableCell>
-            {actionByVisible && <CTableCell 
+            <CTableCell className={cls.tableHeadCell}>Action On</CTableCell>
+            {actionByVisible && (
+              <CTableCell
+                className={cls.tableHeadCell}
                 onClick={(e) => {
-                  onUserInfoClick()
+                  onUserInfoClick();
                   e.stopPropagation();
                 }}
-                style={{position: "relative"}}
+                style={{ position: "relative" }}
               >
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                {
-                  isUserInfoOpen &&
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {isUserInfoOpen && (
                     <Input
                       ref={userInfoRef}
                       onClick={(e) => e.stopPropagation()}
@@ -116,61 +139,79 @@ export const ActivityFeedTable = ({
                       defaultValue={userInfoText}
                       value={userInfoText}
                       placeholder={
-                        generateLangaugeText(tableLan, i18n?.language, "Search") ||
-                        "Search"
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Search"
+                        ) || "Search"
                       }
                       onChange={onUserInfoChange}
                     />
-                }
-                <span>Action By</span>
-                <Image src="/img/search-lg.svg" alt="search" width={16} height={16} />
-              </Box>
-            </CTableCell>}
+                  )}
+                  <span>Action By</span>
+                  <Image
+                    src="/img/search-lg.svg"
+                    alt="search"
+                    width={16}
+                    height={16}
+                  />
+                </Box>
+              </CTableCell>
+            )}
           </CTableHead>
           <CTableBody
             loader={false}
             columnsCount={5}
-            dataLength={histories?.histories?.length}>
-            {
-              versionHistoryLoader 
-                ? <TableDataSkeleton colLength={5} rowLength={10} height={33} />
-                : histories?.histories?.map((element, index) => {
-                  return (
-                    <CTableRow
-                      height="50px"
-                      className={cls.row}
-                      key={element.id}
-                      onClick={() => {
-                        handleActivityClick(element?.id);
-                      }}
-                      style={{
-                        width: "80px",
-                      }}>
-                      <CTableCell>{(currentPage - 1) * 10 + index + 1}</CTableCell>
-                      <CTableCell>
-                        <Tag
-                          shape="subtle"
-                          color={ActivityFeedColors(element?.action_type)}
-                          size="large"
-                          style={{
-                            background: `${ActivityFeedColors(element?.action_type)}`,
-                          }}
-                          className={cls.tag}>
-                          {element?.action_type?.charAt(0).toUpperCase() +
-                            element?.action_type.slice(1).toLowerCase()}
-                        </Tag>
+            dataLength={histories?.histories?.length}
+          >
+            {versionHistoryLoader ? (
+              <TableDataSkeleton colLength={5} rowLength={10} height={33} />
+            ) : (
+              histories?.histories?.map((element, index) => {
+                return (
+                  <CTableRow
+                    height="50px"
+                    className={cls.row}
+                    key={element.id}
+                    onClick={() => {
+                      handleActivityClick(element?.id);
+                    }}
+                    style={{
+                      width: "80px",
+                    }}
+                  >
+                    <CTableCell className={cls.tBodyCell}>
+                      {(currentPage - 1) * 10 + index + 1}
+                    </CTableCell>
+                    <CTableCell className={cls.tBodyCell}>
+                      <Tag
+                        shape="subtle"
+                        color={ActivityFeedColors(element?.action_type)}
+                        size="large"
+                        style={{
+                          background: `${ActivityFeedColors(element?.action_type)}`,
+                        }}
+                        className={cls.tag}
+                      >
+                        {element?.action_type?.charAt(0).toUpperCase() +
+                          element?.action_type.slice(1).toLowerCase()}
+                      </Tag>
+                    </CTableCell>
+                    <CTableCell className={cls.tBodyCell}>
+                      {element?.table_slug}
+                    </CTableCell>
+                    <CTableCell className={cls.tBodyCell}>
+                      {format(new Date(element?.date), "yyyy-MM-dd HH:mm:ss")}
+                    </CTableCell>
+                    {actionByVisible && (
+                      <CTableCell className={cls.tBodyCell}>
+                        {element?.user_info}
                       </CTableCell>
-                      <CTableCell>{element?.table_slug}</CTableCell>
-                      <CTableCell>
-                        {format(new Date(element?.date), "yyyy-MM-dd HH:mm:ss")}
-                      </CTableCell>
-                      {actionByVisible && (
-                        <CTableCell>{element?.user_info}</CTableCell>
-                      )}
-                    </CTableRow>
-                  );
-                })
-            }
+                    )}
+                  </CTableRow>
+                );
+              })
+            )}
             <EmptyDataComponent
               columnsCount={5}
               isVisible={!versionHistoryLoader && !histories?.histories}

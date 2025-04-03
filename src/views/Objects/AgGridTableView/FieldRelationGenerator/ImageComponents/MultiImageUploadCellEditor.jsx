@@ -26,6 +26,7 @@ function MultiImageUploadCellEditor({
   field = {},
   tabIndex = 0,
   onChange = () => {},
+  disabled = false,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const inputRef = useRef(null);
@@ -77,7 +78,7 @@ function MultiImageUploadCellEditor({
       {value && value?.length > 0 ? (
         <>
           <Box
-            onClick={handleClick}
+            onClick={() => !disabled && handleClick()}
             sx={{
               position: "absolute",
               left: 0,
@@ -105,12 +106,32 @@ function MultiImageUploadCellEditor({
             <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
               {parseImgPhoto(value?.[0])}
             </Box>
+
+            {disabled && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  right: "14px",
+                  height: "20px",
+                  width: "20px",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                  padding: "0 0 0 0",
+                  background: "transparent",
+                }}>
+                <img
+                  src="/table-icons/lock.svg"
+                  style={{width: "20px", height: "20px"}}
+                  alt="lock"
+                />
+              </Box>
+            )}
           </Box>
         </>
       ) : (
         <>
           <Box
-            onClick={handleClick}
+            onClick={() => !disabled && handleClick()}
             sx={{
               position: "absolute",
               top: 0,
@@ -119,6 +140,7 @@ function MultiImageUploadCellEditor({
               width: "100%",
               display: "flex",
               alignItems: "center",
+              justifyContent: disabled ? "space-between" : "",
               cursor: "pointer",
               paddingLeft: "10px",
             }}>
@@ -136,14 +158,26 @@ function MultiImageUploadCellEditor({
                 alt="Upload"
                 style={{width: 22, height: 22}}
               />
-              {/* <UploadFileIcon
-                style={{
-                  width: "25px",
-                  height: "25px",
-                  color: "rgb(116, 116, 116)",
-                }}
-              /> */}
             </Box>
+            {disabled && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  alignContent: "flex-end",
+                  color: "#777",
+                  fontSize: "10px",
+                  gap: "5px",
+                  marginRight: "14px",
+                }}>
+                <img
+                  src="/table-icons/lock.svg"
+                  style={{width: "20px", height: "20px"}}
+                  alt="lock"
+                />
+              </Box>
+            )}
           </Box>
         </>
       )}
@@ -211,7 +245,7 @@ function MultiImageUploadCellEditor({
                 tabIndex={tabIndex}
                 autoFocus={tabIndex === 1}
                 onChange={inputChangeHandler}
-                // disabled={disabled}
+                disabled={disabled}
               />
               <img
                 src="/img/newUpload.svg"

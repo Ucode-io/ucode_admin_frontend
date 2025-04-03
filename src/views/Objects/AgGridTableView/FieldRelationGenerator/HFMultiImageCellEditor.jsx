@@ -7,13 +7,14 @@ const HFMultiImageCellEditor = (props) => {
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
+
   return (
     <>
       <MultiImageUploadCellEditor
-        value={value}
+        value={value ?? []}
         onChange={setValue}
         field={field}
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>

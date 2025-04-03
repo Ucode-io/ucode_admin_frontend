@@ -239,5 +239,13 @@
   "add_resource": "Resurs qo'shish",
   "public_offer": "Tasdiqlash tugmasini bosish orqali siz",
   "public_link": "Ommaviy oferta shartlariga rozilik bildirasiz.",
-  "select_tariff": "Tarifni tanlang"
+  "select_tariff": "Tarifni tanlang",
+  "enter_btn": "Kirish",
+  "enter_desc": "Sotuvchining shaxsiy hisob raqami (FBS)",
+  "username_title": "Kirish",
+  "username_placeholder": "Loginni kiriting",
+  "password_title": "Parol",
+  "password_placeholder": "Parolni kiriting",
+  "need_help": "Yordam kerakmi?",
+  "contact_us": "Biz bilan bog'laning"
 }

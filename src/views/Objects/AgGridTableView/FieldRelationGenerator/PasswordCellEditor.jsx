@@ -7,7 +7,7 @@ import RowClickButton from "../RowClickButton";
 function PasswordCellEditor(props) {
   const {setValue, value, colDef, data} = props;
   const [showPassword, setShowPassword] = useState(false);
-
+  const field = colDef?.fieldObj;
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -29,11 +29,21 @@ function PasswordCellEditor(props) {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={togglePasswordVisibility}>
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
+              {field?.attributes?.disabled ? (
+                <IconButton aria-label="toggle password visibility">
+                  <img
+                    src="/table-icons/lock.svg"
+                    style={{width: "20px", height: "20px"}}
+                    alt="lock"
+                  />
+                </IconButton>
+              ) : (
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={togglePasswordVisibility}>
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              )}
             </InputAdornment>
           ),
           style: {

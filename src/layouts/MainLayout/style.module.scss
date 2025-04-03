@@ -20,8 +20,7 @@
 
 .contentLayout {
   flex: 1;
-  height: calc(100vh - 30px);
-  overflow: auto;
+  overflow: hidden;
   background-color: colors.$page-background;
   position: relative;
 }

@@ -4,6 +4,7 @@ import RowClickButton from "./RowClickButton";
 
 const HFTextInputField = (props) => {
   const {value, setValue, colDef, data} = props;
+  const field = props?.colDef?.fieldObj;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -12,6 +13,7 @@ const HFTextInputField = (props) => {
     <>
       <TextField
         size="small"
+        disabled={field?.attributes?.disabled}
         value={value}
         fullWidth
         onChange={(e) => setValue(e.target.value)}
@@ -28,6 +30,13 @@ const HFTextInputField = (props) => {
           },
         }}
         className="custom_textfield_new"
+        InputProps={{
+          endAdornment: field?.attributes?.disabled ? (
+            <img src="/table-icons/lock.svg" alt="lock" />
+          ) : (
+            ""
+          ),
+        }}
       />
       {colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} />

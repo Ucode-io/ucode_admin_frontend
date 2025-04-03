@@ -95,8 +95,7 @@ const MainInfo = ({
               {projectInfo?.language?.map((lang) => (
                 <Button
                   className={activeLang === lang?.short_name && styles.active}
-                  onClick={() => setActiveLang(lang?.short_name)}
-                >
+                  onClick={() => setActiveLang(lang?.short_name)}>
                   {lang?.name}
                 </Button>
               ))}
@@ -113,15 +112,13 @@ const MainInfo = ({
                     section.label
                   }
                   className={styles.formCard}
-                  icon={section.icon}
-                >
+                  icon={section.icon}>
                   <div
                     className={styles.newformColumn}
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr 1fr",
-                    }}
-                  >
+                    }}>
                     {section?.fields
                       ?.filter((element) =>
                         filterFields(element, control, watch)
@@ -132,8 +129,7 @@ const MainInfo = ({
                             display: "flex",
                             alignItems: "flex-start",
                             minWidth: "250px",
-                          }}
-                        >
+                          }}>
                           <FormElementGenerator
                             key={field.id}
                             isMultiLanguage={isMultiLanguage}
@@ -158,8 +154,7 @@ const MainInfo = ({
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr 1fr",
-                  }}
-                >
+                  }}>
                   {section?.fields
                     ?.filter((element) => filterFields(element, control, watch))
                     .map((field) => (
@@ -168,8 +163,7 @@ const MainInfo = ({
                           display: "flex",
                           alignItems: "flex-start",
                           minWidth: "250px",
-                        }}
-                      >
+                        }}>
                         <FormElementGenerator
                           key={field.id}
                           isMultiLanguage={isMultiLanguage}
@@ -195,7 +189,7 @@ const MainInfo = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{ color: "#000" }} />
+              <KeyboardTabIcon style={{color: "#000"}} />
             </button>
           </Tooltip>
         </div>

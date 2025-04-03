@@ -100,7 +100,8 @@ const MainLayout = ({setFavicon, favicon}) => {
           />
           <div
             className={
-              location.pathname?.includes("constructor")
+              location.pathname?.includes("constructor") ||
+              location.pathname?.includes("object")
                 ? styles.contentLayout
                 : styles.content
             }>

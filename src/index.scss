@@ -1103,11 +1103,12 @@ u {
 
 .ag-row-even {
   height: 32px !important;
-  // border-left: 1px solid #dcdddd;
+  border-bottom-color: #dcdddd;
 }
 
 .ag-row-odd {
   height: 32px !important;
+  border-bottom-color: #dcdddd;
 }
 
 #billingTable {

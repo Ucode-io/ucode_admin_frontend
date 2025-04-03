@@ -52,6 +52,7 @@ import DrawerDetailPage from "../DrawerDetailPage";
 import layoutService from "../../../services/layoutService";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import {useSelector} from "react-redux";
+import useTabRouter from "../../../hooks/useTabRouter";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -106,6 +107,7 @@ function AgGridTableView(props) {
     label: "Side peek",
     icon: "SidePeek",
   });
+  const {navigateToForm} = useTabRouter();
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -327,7 +329,6 @@ function AgGridTableView(props) {
   }
 
   function appendNewRow() {
-    console.log("append Worked");
     const newRow = {new_field: true, guid: generateGUID()};
     gridApi.current.api.applyTransaction({
       add: [newRow],
@@ -497,7 +498,6 @@ function AgGridTableView(props) {
         <div
           className="ag-theme-quartz"
           style={{
-            minHeight: `calc(100vh - ${Boolean(tabs?.length) ? 154 : 95}px)`,
             display: "flex",
             width: "100%",
           }}>

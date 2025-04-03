@@ -19,7 +19,7 @@ import "./style.scss";
 import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import useOnClickOutside from "use-onclickoutside";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import {Checkbox} from "@mui/material";
+import {Box, Checkbox} from "@mui/material";
 import {numberWithSpaces} from "../../utils/formatNumbers";
 import {get} from "@ngard/tiny-get";
 import {useTranslation} from "react-i18next";
@@ -190,153 +190,43 @@ const DataTable = ({
   const defaultLanguage = i18n.language;
 
   return (
-    <CTable
-      disablePagination={disablePagination}
-      removableHeight={removableHeight}
-      count={pagesCount}
-      page={currentPage}
-      setCurrentPage={onPaginationChange}
-      loader={loader}
-      tableStyle={tableStyle}
-      wrapperStyle={wrapperStyle}
-      paginationExtraButton={paginationExtraButton}
-      limit={limit}
-      setLimit={setLimit}
-      defaultLimit={defaultLimit}>
-      <CTableHead>
-        <CTableRow>
-          {onCheckboxChange && <CTableCell width={10} />}
-          <CTableHeadCell width={10}>№</CTableHeadCell>
-          {(filteredColumns?.length ? filteredColumns : columns).map(
-            (column, index) => (
-              <CTableHeadCell
-                id={column.id}
-                key={index}
-                style={{
-                  minWidth: tableSize?.[pageName]?.[column.id]
-                    ? tableSize?.[pageName]?.[column.id]
-                    : "auto",
-                  width:
-                    column.width ??
-                    (tableSize?.[pageName]?.[column.id]
-                      ? tableSize?.[pageName]?.[column.id]
-                      : "auto"),
-                  position: tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky
-                    ? "sticky"
-                    : "relative",
-                  left: tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky
-                    ? calculateWidth(column?.id, index)
-                    : "0",
-                  backgroundColor: "#fff",
-                  zIndex: tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky
-                    ? "1"
-                    : "",
-                }}>
-                <div
-                  className="table-filter-cell cell-data"
-                  onMouseEnter={(e) => {
-                    setCurrentColumnWidth(e.relatedTarget.offsetWidth);
-                  }}>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setColumnId((prev) =>
-                        prev === column.id ? "" : column.id
-                      );
-                    }}>
-                    {column.label ??
-                      column?.attributes?.[`label_${defaultLanguage}`]}
-                  </span>
-                  {!disableFilters && (
-                    <FilterGenerator
-                      field={column}
-                      name={column.slug}
-                      onChange={filterChangeHandler}
-                      filters={filters}
-                      tableSlug={tableSlug}
-                    />
-                  )}
-                  {columnId === column?.id && (
-                    <div className="cell-popup" ref={popupRef}>
-                      {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
-                      <div
-                        className="cell-popup-item"
-                        onClick={() => handlePin(column?.id, index)}>
-                        <PinIcon
-                          pinned={
-                            tableSettings?.[pageName]?.find(
-                              (item) => item?.id === column?.id
-                            )?.isStiky
-                          }
-                        />
-                        <span>Pin column</span>
-                      </div>
-                      <div
-                        className="cell-popup-item"
-                        onClick={() => handleAutoSize(column?.id, index)}>
-                        <ResizeIcon />
-                        <span>Autosize</span>
-                      </div>
-                      {/* </OutsideClickHandler> */}
-                    </div>
-                  )}
-                </div>
-              </CTableHeadCell>
-            )
-          )}
-
-          {checkPermission ? (
-            <PermissionWrapperV2
-              tableSlug={tableSlug}
-              type={["update", "delete"]}>
-              {(onDeleteClick || onEditClick) && (
-                <CTableHeadCell width={10}></CTableHeadCell>
-              )}
-            </PermissionWrapperV2>
-          ) : (
-            <>
-              {(onDeleteClick || onEditClick) && (
-                <CTableHeadCell width={10}></CTableHeadCell>
-              )}
-            </>
-          )}
-        </CTableRow>
-      </CTableHead>
-      <CTableBody
+    <Box
+      clasName="scrollbarNone"
+      sx={{
+        overflow: "auto",
+        height: "calc(100vh - 160px)",
+      }}>
+      <CTable
+        disablePagination={disablePagination}
+        removableHeight={removableHeight}
+        count={pagesCount}
+        page={currentPage}
+        setCurrentPage={onPaginationChange}
         loader={loader}
-        columnsCount={columns.length}
-        dataLength={dataLength || data?.length}>
-        {data?.map((row, rowIndex) => (
-          <CTableRow
-            key={row.guid || row.id}
-            onClick={() => {
-              onRowClick(row, rowIndex);
-            }}>
-            {onCheckboxChange && (
-              <CTableCell>
-                <Checkbox
-                  checked={checkboxValue === row.guid}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </CTableCell>
-            )}
-            <CTableCell align="center">
-              {(currentPage - 1) * limit + rowIndex + 1}
-            </CTableCell>
+        tableStyle={tableStyle}
+        wrapperStyle={wrapperStyle}
+        paginationExtraButton={paginationExtraButton}
+        limit={limit}
+        setLimit={setLimit}
+        defaultLimit={defaultLimit}>
+        <CTableHead>
+          <CTableRow>
+            {onCheckboxChange && <CTableCell width={10} />}
+            <CTableHeadCell width={10}>№</CTableHeadCell>
             {(filteredColumns?.length ? filteredColumns : columns).map(
               (column, index) => (
-                <CTableCell
-                  key={column.id}
-                  className={`overflow-ellipsis ${tableHeight}`}
+                <CTableHeadCell
+                  id={column.id}
+                  key={index}
                   style={{
-                    padding: "8px 12px 4px",
+                    minWidth: tableSize?.[pageName]?.[column.id]
+                      ? tableSize?.[pageName]?.[column.id]
+                      : "auto",
+                    width:
+                      column.width ??
+                      (tableSize?.[pageName]?.[column.id]
+                        ? tableSize?.[pageName]?.[column.id]
+                        : "auto"),
                     position: tableSettings?.[pageName]?.find(
                       (item) => item?.id === column?.id
                     )?.isStiky
@@ -354,102 +244,219 @@ const DataTable = ({
                       ? "1"
                       : "",
                   }}>
-                  {column.slug === "label" ? (
-                    (row?.attributes?.[`label_${defaultLanguage}`] ?? (
-                      <CellElementGenerator field={column} row={row} />
-                    ))
-                  ) : column.render ? (
-                    column.render(get(row, column.slug, row), row, column)
-                  ) : (
-                    <CellElementGenerator field={column} row={row} />
-                  )}
-                </CTableCell>
+                  <div
+                    className="table-filter-cell cell-data"
+                    onMouseEnter={(e) => {
+                      setCurrentColumnWidth(e.relatedTarget.offsetWidth);
+                    }}>
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setColumnId((prev) =>
+                          prev === column.id ? "" : column.id
+                        );
+                      }}>
+                      {column.label ??
+                        column?.attributes?.[`label_${defaultLanguage}`]}
+                    </span>
+                    {!disableFilters && (
+                      <FilterGenerator
+                        field={column}
+                        name={column.slug}
+                        onChange={filterChangeHandler}
+                        filters={filters}
+                        tableSlug={tableSlug}
+                      />
+                    )}
+                    {columnId === column?.id && (
+                      <div className="cell-popup" ref={popupRef}>
+                        {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
+                        <div
+                          className="cell-popup-item"
+                          onClick={() => handlePin(column?.id, index)}>
+                          <PinIcon
+                            pinned={
+                              tableSettings?.[pageName]?.find(
+                                (item) => item?.id === column?.id
+                              )?.isStiky
+                            }
+                          />
+                          <span>Pin column</span>
+                        </div>
+                        <div
+                          className="cell-popup-item"
+                          onClick={() => handleAutoSize(column?.id, index)}>
+                          <ResizeIcon />
+                          <span>Autosize</span>
+                        </div>
+                        {/* </OutsideClickHandler> */}
+                      </div>
+                    )}
+                  </div>
+                </CTableHeadCell>
               )
             )}
+
             {checkPermission ? (
               <PermissionWrapperV2
                 tableSlug={tableSlug}
                 type={["update", "delete"]}>
                 {(onDeleteClick || onEditClick) && (
-                  <CTableCell
-                    style={{
-                      padding: "8px 12px 4px",
-                      verticalAlign: "middle",
-                    }}>
-                    <div className="flex">
-                      {onEditClick && (
-                        <RectangleIconButton
-                          color="success"
-                          className="mr-1"
-                          size="small"
-                          onClick={() => onEditClick(row, rowIndex)}>
-                          <Edit color="success" />
-                        </RectangleIconButton>
-                      )}
-
-                      <RectangleIconButton
-                        color="error"
-                        onClick={() => onDeleteClick(row, rowIndex)}>
-                        <Delete color="error" />
-                      </RectangleIconButton>
-                    </div>
-                  </CTableCell>
+                  <CTableHeadCell width={10}></CTableHeadCell>
                 )}
               </PermissionWrapperV2>
             ) : (
               <>
                 {(onDeleteClick || onEditClick) && (
-                  <CTableCell
-                    style={{
-                      padding: "8px 12px 4px",
-                      verticalAlign: "middle",
-                    }}>
-                    <div className="flex">
-                      {onEditClick && (
-                        <RectangleIconButton
-                          color="success"
-                          className="mr-1"
-                          size="small"
-                          onClick={() => {
-                            onEditClick(row, rowIndex);
-                            setSelectedField(row);
-                          }}>
-                          <Edit color="success" />
-                        </RectangleIconButton>
-                      )}
-
-                      <RectangleIconButton
-                        color="error"
-                        onClick={() => onDeleteClick(row, rowIndex)}>
-                        <Delete color="error" />
-                      </RectangleIconButton>
-                    </div>
-                  </CTableCell>
+                  <CTableHeadCell width={10}></CTableHeadCell>
                 )}
               </>
             )}
           </CTableRow>
-        ))}
-        {func?.length ? (
-          <CTableRow>
-            <CTableCell>Итог</CTableCell>
-            {columns?.map((col) => (
-              <CTableCell>
-                {col?.slug ===
-                func?.filter((item) => item?.field_name === col?.slug)?.[0]
-                  ?.field_name
-                  ? numberWithSpaces(
-                      data?.reduce((acc, curr) => acc + curr[col?.slug], 0)
-                    )
-                  : ""}
+        </CTableHead>
+        <CTableBody
+          loader={loader}
+          columnsCount={columns.length}
+          dataLength={dataLength || data?.length}>
+          {data?.map((row, rowIndex) => (
+            <CTableRow
+              key={row.guid || row.id}
+              onClick={() => {
+                onRowClick(row, rowIndex);
+              }}>
+              {onCheckboxChange && (
+                <CTableCell>
+                  <Checkbox
+                    checked={checkboxValue === row.guid}
+                    onChange={(_, val) => onCheckboxChange(val, row)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </CTableCell>
+              )}
+              <CTableCell align="center">
+                {(currentPage - 1) * limit + rowIndex + 1}
               </CTableCell>
-            ))}
-          </CTableRow>
-        ) : null}
+              {(filteredColumns?.length ? filteredColumns : columns).map(
+                (column, index) => (
+                  <CTableCell
+                    key={column.id}
+                    className={`overflow-ellipsis ${tableHeight}`}
+                    style={{
+                      padding: "8px 12px 4px",
+                      position: tableSettings?.[pageName]?.find(
+                        (item) => item?.id === column?.id
+                      )?.isStiky
+                        ? "sticky"
+                        : "relative",
+                      left: tableSettings?.[pageName]?.find(
+                        (item) => item?.id === column?.id
+                      )?.isStiky
+                        ? calculateWidth(column?.id, index)
+                        : "0",
+                      backgroundColor: "#fff",
+                      zIndex: tableSettings?.[pageName]?.find(
+                        (item) => item?.id === column?.id
+                      )?.isStiky
+                        ? "1"
+                        : "",
+                    }}>
+                    {column.slug === "label" ? (
+                      (row?.attributes?.[`label_${defaultLanguage}`] ?? (
+                        <CellElementGenerator field={column} row={row} />
+                      ))
+                    ) : column.render ? (
+                      column.render(get(row, column.slug, row), row, column)
+                    ) : (
+                      <CellElementGenerator field={column} row={row} />
+                    )}
+                  </CTableCell>
+                )
+              )}
+              {checkPermission ? (
+                <PermissionWrapperV2
+                  tableSlug={tableSlug}
+                  type={["update", "delete"]}>
+                  {(onDeleteClick || onEditClick) && (
+                    <CTableCell
+                      style={{
+                        padding: "8px 12px 4px",
+                        verticalAlign: "middle",
+                      }}>
+                      <div className="flex">
+                        {onEditClick && (
+                          <RectangleIconButton
+                            color="success"
+                            className="mr-1"
+                            size="small"
+                            onClick={() => onEditClick(row, rowIndex)}>
+                            <Edit color="success" />
+                          </RectangleIconButton>
+                        )}
 
-        {additionalRow}
-      </CTableBody>
-    </CTable>
+                        <RectangleIconButton
+                          color="error"
+                          onClick={() => onDeleteClick(row, rowIndex)}>
+                          <Delete color="error" />
+                        </RectangleIconButton>
+                      </div>
+                    </CTableCell>
+                  )}
+                </PermissionWrapperV2>
+              ) : (
+                <>
+                  {(onDeleteClick || onEditClick) && (
+                    <CTableCell
+                      style={{
+                        padding: "8px 12px 4px",
+                        verticalAlign: "middle",
+                      }}>
+                      <div className="flex">
+                        {onEditClick && (
+                          <RectangleIconButton
+                            color="success"
+                            className="mr-1"
+                            size="small"
+                            onClick={() => {
+                              onEditClick(row, rowIndex);
+                              setSelectedField(row);
+                            }}>
+                            <Edit color="success" />
+                          </RectangleIconButton>
+                        )}
+
+                        <RectangleIconButton
+                          color="error"
+                          onClick={() => onDeleteClick(row, rowIndex)}>
+                          <Delete color="error" />
+                        </RectangleIconButton>
+                      </div>
+                    </CTableCell>
+                  )}
+                </>
+              )}
+            </CTableRow>
+          ))}
+          {func?.length ? (
+            <CTableRow>
+              <CTableCell>Итог</CTableCell>
+              {columns?.map((col) => (
+                <CTableCell>
+                  {col?.slug ===
+                  func?.filter((item) => item?.field_name === col?.slug)?.[0]
+                    ?.field_name
+                    ? numberWithSpaces(
+                        data?.reduce((acc, curr) => acc + curr[col?.slug], 0)
+                      )
+                    : ""}
+                </CTableCell>
+              ))}
+            </CTableRow>
+          ) : null}
+
+          {additionalRow}
+        </CTableBody>
+      </CTable>
+    </Box>
   );
 };
 

@@ -247,5 +247,15 @@
   "password_title": "Parol",
   "password_placeholder": "Parolni kiriting",
   "need_help": "Yordam kerakmi?",
-  "contact_us": "Biz bilan bog'laning"
+  "contact_us": "Biz bilan bog'laning",
+
+  "free_trial_ending": "Sizning bepul sinov muddatingiz yaqinda tugaydi, ",
+  "subscribtion_expire_soon": "Sizning obunangiz yaqinda tugaydi.",
+  "left": "qoldi. ",
+  "days": "kun",
+  "day": "kun",
+
+  "subscription_expired": "Sizning obunangiz muddati tugadi.",
+  "click_here_upgrade": "Iltimos, tarifingizni yangilash uchun shu yerni bosing.",
+  "expired_content": "Xizmatlarimizdan foydalanishda davom etish uchun iltimos, uni yangilang."
 }

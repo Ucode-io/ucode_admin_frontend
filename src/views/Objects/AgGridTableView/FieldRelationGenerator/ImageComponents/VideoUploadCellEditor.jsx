@@ -89,7 +89,7 @@ const VideoUploadCellEditor = ({
                 {disabled ? (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
-                      <Lock style={{fontSize: "25px"}} />
+                      <img src="/table-icons/lock.svg" alt="lock" />
                     </InputAdornment>
                   </Tooltip>
                 ) : (
@@ -98,9 +98,7 @@ const VideoUploadCellEditor = ({
                     alt="Upload"
                     style={{width: 24, height: 24}}
                   />
-                  // <DownloadingIcon style={{fontSize: "25px"}} />
                 )}
-                {/* <p>Max size: 4 MB</p> */}
               </>
             ) : (
               <CircularProgress />

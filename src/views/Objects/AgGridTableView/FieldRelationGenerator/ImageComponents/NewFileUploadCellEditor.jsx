@@ -81,7 +81,9 @@ export default function NewFileUploadCellEditor({
           <Box className="uploadedFile">
             <Button
               aria-describedby={id}
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
                 padding: 0,
                 minWidth: "25px",
@@ -181,35 +183,43 @@ export default function NewFileUploadCellEditor({
       )}
 
       {!value && (
-        <Button
-          onClick={() => inputRef.current.click()}
+        <Box
           sx={{
-            padding: 0,
-            minWidth: "25px",
-            width: "25px",
-            height: "25px",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}>
-          <input
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-          />
-          {/* <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          /> */}
-          <img
-            src="/img/newUpload.svg"
-            alt="Upload"
-            style={{width: 22, height: 22}}
-          />
-        </Button>
+          <Button
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: "25px",
+              width: "25px",
+              height: "25px",
+            }}>
+            <input
+              type="file"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+            />
+
+            <img
+              src="/img/newUpload.svg"
+              alt="Upload"
+              style={{width: 22, height: 22}}
+            />
+          </Button>
+          {disabled && (
+            <Box sx={{marginRight: "14px"}}>
+              <img src="/table-icons/lock.svg" alt="lock" />
+            </Box>
+          )}
+        </Box>
       )}
     </Box>
   );

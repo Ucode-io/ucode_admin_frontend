@@ -33,15 +33,21 @@ const ColorPicker = (props) => {
         }}
         className="ColorPicker"
         onClick={(e) => e.stopPropagation()}>
-        <div
-          id="round"
-          className="round"
-          style={{
-            backgroundColor: value ?? "#fff",
-            width: "24px",
-            height: "24px",
-          }}
-          onClick={(e) => !field?.disabled && handleClick(e)}></div>
+        {field?.attributes?.disabled ? (
+          <img src="/table-icons/lock.svg" alt="lock" />
+        ) : (
+          <div
+            id="round"
+            className="round"
+            style={{
+              backgroundColor: value ?? "#fff",
+              width: "24px",
+              height: "24px",
+            }}
+            onClick={(e) =>
+              !field?.attributes?.disabled && handleClick(e)
+            }></div>
+        )}
 
         <Popover
           open={open}

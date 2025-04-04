@@ -8,11 +8,14 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
     colDef?.onRowClick(data);
   };
 
+  const field = colDef?.fieldObj;
+
   return (
     <>
       {" "}
       <Box>
         <Select
+          disabled={field?.attributes?.disabled}
           className={styles.statusSelect}
           sx={{
             width: "100%",
@@ -23,8 +26,6 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
             "& .MuiSelect-select": {
               display: "flex",
               alignItems: "center",
-              // padding: "8px 8px 8px 8px",
-              // borderRadius: "4px",
             },
           }}
           value={value || ""}
@@ -108,6 +109,24 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
             )
           )}
         </Select>
+      </Box>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "4px",
+          right: "10px",
+          height: "20px",
+          width: "20px",
+          borderRadius: "4px",
+          overflow: "hidden",
+          padding: "0 0 0 0",
+          background: "#fff",
+        }}>
+        <img
+          src="/table-icons/lock.svg"
+          style={{width: "20px", height: "20px"}}
+          alt="lock"
+        />
       </Box>
       {colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} right="25px" />

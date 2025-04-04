@@ -4,20 +4,25 @@ import {format, isValid, parse} from "date-fns";
 import RowClickButton from "../RowClickButton";
 
 export const HFDatePicker = (props) => {
-  const {field, setValue, value, data} = props;
-
+  const {setValue, value, data, colDef} = props;
+  const field = colDef?.fieldObj;
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
   };
 
   return (
     <>
-      {" "}
       <DatePickerInput
         id="dateField"
         value={getValue(value)}
         valueFormat="DD.MM.YYYY"
-        rightSection={<img src="/table-icons/date.svg" alt="" />}
+        rightSection={
+          field?.attributes?.disabled ? (
+            <img src="/table-icons/lock.svg" alt="lock" />
+          ) : (
+            <img src="/table-icons/date.svg" alt="" />
+          )
+        }
         onChange={(value) => {
           if (!value) return;
           const formattedDate = format(value, "yyyy-MM-dd");
@@ -30,8 +35,9 @@ export const HFDatePicker = (props) => {
         }}
         styles={{input: {background: "inherit", border: "none"}}}
         highlightToday
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
       />
+
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
       )}
@@ -40,7 +46,8 @@ export const HFDatePicker = (props) => {
 };
 
 export const HFDateTimePicker = (props) => {
-  const {field, setValue, value, data} = props;
+  const {setValue, value, data, colDef} = props;
+  const field = colDef?.fieldObj;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -51,7 +58,13 @@ export const HFDateTimePicker = (props) => {
         id="dateTimeField"
         value={getValue(value)}
         valueFormat="DD.MM.YYYY HH:mm"
-        rightSection={<img src="/table-icons/date-time.svg" alt="" />}
+        rightSection={
+          field?.attributes?.disabled ? (
+            <img src="/table-icons/lock.svg" alt="lock" />
+          ) : (
+            <img src="/table-icons/date.svg" alt="" />
+          )
+        }
         onChange={(value) => {
           if (!value) return;
           const formattedDate = format(value, "yyyy-MM-dd HH:mm");
@@ -64,7 +77,7 @@ export const HFDateTimePicker = (props) => {
         }}
         styles={{input: {background: "inherit", border: "none"}}}
         highlightToday
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
       />
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
@@ -99,7 +112,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
         }}
         styles={{input: {background: "inherit", border: "none"}}}
         highlightToday
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
       />
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} right="30px" />

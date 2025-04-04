@@ -3,7 +3,7 @@ import {makeStyles} from "@mui/styles";
 import styles from "./style.module.scss";
 import {useLocation} from "react-router-dom";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {InputAdornment, TextField} from "@mui/material";
+import {Button, InputAdornment, TextField} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,15 +16,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const HFLinkFieldEditor = (props) => {
-  const {
-    value,
-    setValue,
-    isNewTableView = false,
-    disabled = false,
-    colDef,
-    data,
-  } = props;
+  const {value, setValue, isNewTableView = false, colDef, data} = props;
   const location = useLocation();
+  const field = colDef?.fieldObj;
 
   useEffect(() => {
     if (
@@ -66,19 +60,29 @@ const HFLinkFieldEditor = (props) => {
           },
         }}
         InputProps={{
-          readOnly: disabled,
+          readOnly: field?.attributes?.disabled,
           inputProps: {style: {height: "32px"}},
 
           endAdornment: (
             <InputAdornment position="start">
-              <button
-                style={{marginRight: "10px"}}
-                disabled={Boolean(!value)}
-                className={styles.linkBtn}
-                onClick={() => navigateToNewPage(value)}
-                sx={{cursor: "pointer"}}>
-                <LaunchIcon style={{fontSize: "20px"}} />
-              </button>
+              {field?.attributes?.disabled ? (
+                <button style={{width: "20px", height: "20px"}}>
+                  <img
+                    src="/table-icons/lock.svg"
+                    alt="lock"
+                    style={{width: "20px", height: "20px"}}
+                  />
+                </button>
+              ) : (
+                <button
+                  style={{marginRight: "10px"}}
+                  disabled={Boolean(!value)}
+                  className={styles.linkBtn}
+                  onClick={() => navigateToNewPage(value)}
+                  sx={{cursor: "pointer"}}>
+                  <LaunchIcon style={{fontSize: "20px"}} />
+                </button>
+              )}
             </InputAdornment>
           ),
         }}

@@ -16,7 +16,7 @@ export default function HFPhotoUploadCellEditor(props) {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
         {...props}
       />
       {/* {!disabledHelperText && error?.message && (

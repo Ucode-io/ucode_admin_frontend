@@ -14,7 +14,7 @@ const HFVideoUploadCellEditor = (props) => {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>

@@ -2,6 +2,8 @@ import clsx from "clsx";
 import cls from "./styles.module.scss";
 import { SidebarButton } from "../SidebarButton";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
+import { useState } from "react";
+import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -16,11 +18,36 @@ export const Sidebar = ({
   datesList,
   zoomPosition,
 }) => {
+  const [isAllOpen, setIsAllOpen] = useState(null);
+  const handleAllOpen = () => {
+    setIsAllOpen(true);
+    setOpenedRows(computedData?.map((item) => item?.label));
+  };
+
+  const handleAllClose = () => {
+    setOpenedRows([]);
+    setIsAllOpen(false);
+  };
 
   return (
     <div className={cls.group_by}>
       <div className={clsx(cls.fakeDiv)}>
-        <span>Columns</span>
+        <div className={cls.header}>
+          <span className={cls.title}>Columns</span>
+          <button
+            className={cls.expendCollapseBtn}
+            onClick={isAllOpen ? handleAllClose : handleAllOpen}
+          >
+            <span className={cls.expendCollapseBtnInner}>
+              <span>{isAllOpen ? "Collapse all" : "Expend all"}</span>
+              <KeyboardDoubleArrowDownOutlinedIcon
+                sx={{
+                  transform: isAllOpen ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              />
+            </span>
+          </button>
+        </div>
         {/* <SidebarButton
           className={cls.sidebarBtn}
           onClick={handleCloseSidebar}
@@ -52,4 +79,4 @@ export const Sidebar = ({
       )}
     </div>
   );
-}
+};

@@ -9,7 +9,6 @@ export const useTimelineRecursiveRowProps = ({
   setOpenedRows,
   lastLabels = "",
 }) => {
-
   const [open, setOpen] = useState(false);
 
   const viewFields = Object.values(fieldsMap)
@@ -72,10 +71,10 @@ export const useTimelineRecursiveRowProps = ({
       setOpen(false);
     }
   }, [item, openedRows, lastLabels]);
-  
+
   return {
     handleClick,
     computedValue,
     open,
-  }
-}
+  };
+};

@@ -4,6 +4,36 @@
   right: 8px;
 }
 
+.header {
+  height: 100%;
+}
+
+.title {
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.expendCollapseBtn {
+  position: absolute;
+  bottom: 2px;
+  right: 8px;
+  padding: 2px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  color: rgba(55, 53, 47, 0.35);
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.expendCollapseBtnInner {
+  display: flex;
+  align-items: center;
+}
+
 // .sidebar {
 //   min-width: 200px;
 //   max-height: calc(100vh - 106px);
@@ -71,6 +101,7 @@
     align-items: center;
     justify-content: center;
     position: sticky;
+    z-index: 100;
     top: 0;
     background-color: #fff;
     &.month {

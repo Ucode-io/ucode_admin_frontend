@@ -24,34 +24,31 @@ export const TimelineRecursiveRow = ({
   setOpenedRows,
   sub = false,
   lastLabels = "",
+  isFirst = true,
 }) => {
-
-  const {
-    handleClick,
-    computedValue,
-    open,
-  } = useTimelineRecursiveRowProps({
+  const { handleClick, computedValue, open } = useTimelineRecursiveRowProps({
     item,
     fieldsMap,
     openedRows,
     setOpenedRows,
     lastLabels,
-  })
+  });
 
   return (
     <div>
       <div className={cls.group_by_column}>
-        <div
-          onClick={handleClick}
-          className={cls.group_by_column_header}
-        >
+        <div onClick={handleClick} className={cls.group_by_column_header}>
           <div
             className={cls.group_by_column_header_inner}
-            style={{ paddingLeft: sub ? `${level * 6}px` : ""}}
+            style={{ paddingLeft: sub ? `${level * 6}px` : "" }}
           >
             {item?.data?.[0]?.data && (
-              <button className={clsx(cls.group_by_column_header_btn, { [cls.open]: open })}>
-                <span className={cls.group_by_column_header_btn_inner} >
+              <button
+                className={clsx(cls.group_by_column_header_btn, {
+                  [cls.open]: open,
+                })}
+              >
+                <span className={cls.group_by_column_header_btn_inner}>
                   <PlayArrowRoundedIcon color="inherit" fontSize="medium" />
                 </span>
               </button>
@@ -65,9 +62,11 @@ export const TimelineRecursiveRow = ({
         {item?.data &&
           item?.data?.map(
             (option, index) =>
-              option?.data && (
+              option?.data &&
+              option?.data?.map((optionItem, optionIndex) => (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                   <TimelineRecursiveRow
+                    isFirst={false}
                     openedRows={openedRows}
                     setOpenedRows={setOpenedRows}
                     sub={true}
@@ -93,9 +92,9 @@ export const TimelineRecursiveRow = ({
                     }
                   />
                 </Collapse>
-              )
+              ))
           )}
       </div>
     </div>
   );
-}
+};

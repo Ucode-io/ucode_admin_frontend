@@ -675,7 +675,7 @@ export default function TimeLineView({
           height: "calc(100vh - 92px)",
         }}
         ref={calendarRef}
-        onScroll={handleScroll}
+        // onScroll={handleScroll}
       >
         {isLoading || tableInfoLoading || isViewLoading ? (
           <PageFallback />

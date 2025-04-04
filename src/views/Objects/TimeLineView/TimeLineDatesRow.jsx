@@ -19,7 +19,6 @@ export default function TimeLineDatesRow({
   focusedDays,
   months,
 }) {
-  console.log({ months });
   const computedDatesList = useMemo(() => {
     const result = {};
 
@@ -100,7 +99,7 @@ export default function TimeLineDatesRow({
     >
       {/* <div className={styles.mockBlock} /> */}
 
-      {months.map(({ month, days }) => (
+      {computedDatesList.map(({ month, days }) => (
         <div
           className={styles.dateBlock}
           style={{

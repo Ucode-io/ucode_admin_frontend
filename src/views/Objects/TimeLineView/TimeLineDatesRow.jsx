@@ -17,6 +17,7 @@ export default function TimeLineDatesRow({
   zoomPosition,
   selectedType,
   focusedDays,
+  months,
 }) {
   const computedDatesList = useMemo(() => {
     const result = {};
@@ -37,7 +38,7 @@ export default function TimeLineDatesRow({
 
         result[month] = {
           month,
-          days: Array.from({length: monthEnd.getDate()}, (_, index) => {
+          days: Array.from({ length: monthEnd.getDate() }, (_, index) => {
             const dayDate = new Date(monthStart);
             dayDate.setDate(index + 1);
             return format(dayDate, "dd/EEEE");
@@ -66,8 +67,8 @@ export default function TimeLineDatesRow({
   const computedWeekList = useMemo(() => {
     const result = {};
     datesList.forEach((date) => {
-      const weekStart = startOfWeek(date, {weekStartsOn: 1});
-      const weekEnd = endOfWeek(date, {weekStartsOn: 1});
+      const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
 
       const day = format(date, "dd/EEEE");
 
@@ -94,10 +95,11 @@ export default function TimeLineDatesRow({
         top: 0,
         background: "#fff",
         zIndex: 4,
-      }}>
+      }}
+    >
       {/* <div className={styles.mockBlock} /> */}
 
-      {computedDatesList.map(({month, days}) => (
+      {computedDatesList.map(({ month, days }) => (
         <div
           className={styles.dateBlock}
           style={{
@@ -105,7 +107,8 @@ export default function TimeLineDatesRow({
               selectedType === "day" || selectedType === "month"
                 ? "block"
                 : "flex",
-          }}>
+          }}
+        >
           {selectedType === "day" ? (
             <>
               <div className={styles.monthBlock}>
@@ -116,7 +119,8 @@ export default function TimeLineDatesRow({
                 className={styles.daysRow}
                 style={{
                   height: selectedType === "month" ? 0 : "auto",
-                }}>
+                }}
+              >
                 {days?.map((day) => (
                   <TimeLineDayBlock
                     day={day}
@@ -128,7 +132,7 @@ export default function TimeLineDatesRow({
               </div>
             </>
           ) : selectedType === "week" ? (
-            computedWeekList.map(({week, days, weekDays}) => (
+            computedWeekList.map(({ week, days, weekDays }) => (
               <div className={styles.weekBlock}>
                 <div
                   className={styles.weekNumber}
@@ -142,7 +146,8 @@ export default function TimeLineDatesRow({
                     minHeight: "32px",
                     width: `${days.length > 2 ? "100%" : zoomPosition * 30}px`,
                     border: "1px solid #e0e0e0",
-                  }}>
+                  }}
+                >
                   {days.length > 2 ? (
                     `${format(weekDays[0], "dd/EEEE") + " - " + format(weekDays[1], "dd/EEEE")}`
                   ) : (
@@ -170,7 +175,8 @@ export default function TimeLineDatesRow({
                 className={styles.daysRow}
                 style={{
                   height: selectedType === "month" ? 0 : "auto",
-                }}>
+                }}
+              >
                 {days?.map((day) => (
                   <TimelineMonthBlock
                     day={day}

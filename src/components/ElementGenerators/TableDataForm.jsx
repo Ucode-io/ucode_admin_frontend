@@ -45,7 +45,7 @@ const TableDataForm = ({
       })
       .find((x) => x?.id === field?.id)?.status;
   }, [isWrap, field?.id]);
-
+console.log(field?.type === "LOOKUP" || field?.type === "LOOKUPS");
   return (
     <Box
       style={{

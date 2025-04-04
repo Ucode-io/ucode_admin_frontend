@@ -28,7 +28,8 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
-        }}>
+        }}
+      >
         <div className={styles.days}>
           {datesList.map((date) => (
             <TimeLineDays
@@ -49,7 +50,8 @@ export default function TimeLineDayDataBlock({
               display: "flex",
               flexDirection: "column",
               top: 0,
-            }}>
+            }}
+          >
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
                 openedRows={openedRows}

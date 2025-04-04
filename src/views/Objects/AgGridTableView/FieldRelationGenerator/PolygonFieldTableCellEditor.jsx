@@ -33,19 +33,27 @@ function PolygonFieldTableCellEditor(props) {
 
   return (
     <>
-      {" "}
       <Box>
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            padding: "0  0 0 13px",
+            justifyContent: "space-between",
+            padding: "0  14px 0 13px",
           }}
-          onClick={handleOpen}>
-          <span>Polygon</span>
-          <Button>
-            <LocationSearchingIcon />
-          </Button>
+          onClick={() => !field?.attributes?.disabled && handleOpen()}>
+          <Box>
+            <span>Polygon</span>
+            <Button>
+              <LocationSearchingIcon />
+            </Button>
+          </Box>
+
+          {field?.attributes?.disabled && (
+            <Box>
+              <img src="/table-icons/lock.svg" alt="lock" />
+            </Box>
+          )}
         </Box>
         <Modal open={open} onClose={handleClose}>
           <Box sx={style}>

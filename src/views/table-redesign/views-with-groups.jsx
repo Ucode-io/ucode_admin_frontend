@@ -88,6 +88,8 @@ import {useTableByIdQuery} from "../../services/constructorTableService";
 import {generateGUID} from "../../utils/generateID";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
+import ViewSettings from "../Objects/components/ViewSettings";
+import ViewSettingsModal from "./ViewSettings";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -119,12 +121,12 @@ export const NewUiViewsWithGroups = ({
   const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [selectedView, setSelectedView] = useState(null);
+  const [selectedView, setSelectedView] = useState(view);
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
-  // const [tableLan, setTableLan] = useState();
+
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -133,7 +135,6 @@ export const NewUiViewsWithGroups = ({
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
-
   const [isPopupOpen, setPopupOpen] = useState(false);
 
   const {navigateToForm} = useTabRouter();
@@ -465,10 +466,7 @@ export const NewUiViewsWithGroups = ({
     menuItem?.attributes?.[`label_${i18n.language}`] ??
     menuItem?.label ??
     menuItem?.title;
-  // const viewName =
-  //   (view.attributes?.[`name_${i18n.language}`]
-  //     ? view.attributes?.[`name_${i18n.language}`]
-  //     : view.type) ?? view?.name;
+
   const viewName = view?.attributes?.name_en || view?.name || view.type;
 
   return (
@@ -588,6 +586,7 @@ export const NewUiViewsWithGroups = ({
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
+                  setSelectedView(view);
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
@@ -731,6 +730,10 @@ export const NewUiViewsWithGroups = ({
             </PermissionWrapperV2>
 
             <ViewOptions
+              selectedTabIndex={selectedTabIndex}
+              isChanged={isChanged}
+              setIsChanged={setIsChanged}
+              selectedView={selectedView}
               tableLan={tableLan}
               view={view}
               viewName={viewName}
@@ -1346,6 +1349,10 @@ const ViewOptions = ({
   computedVisibleFields,
   tableLan,
   handleOpenPopup,
+  selectedView,
+  isChanged,
+  selectedTabIndex,
+  setIsChanged = () => {},
 }) => {
   const {appId, tableSlug} = useParams();
   const {i18n, t} = useTranslation();
@@ -1485,6 +1492,15 @@ const ViewOptions = ({
                   <ChevronRightIcon fontSize={22} />
                 </Flex>
               </Flex>
+
+              <ViewSettingsModal
+                refetchViews={refetchViews}
+                selectedTabIndex={selectedTabIndex}
+                tableLan={tableLan}
+                selectedView={view}
+                isChanged={isChanged}
+                setIsChanged={setIsChanged}
+              />
             </Box>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
               {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (

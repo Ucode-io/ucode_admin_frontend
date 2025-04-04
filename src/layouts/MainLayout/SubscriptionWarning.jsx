@@ -3,6 +3,7 @@ import React, {useMemo} from "react";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {Box, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import {useNavigate} from "react-router-dom";
 
 const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
   const navigate = useNavigate();

@@ -21,8 +21,8 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
     return <SubscribeExpired onCLick={handleOpenBilling} />;
 
   if (
-    projectStatus === "insufficient_funds" &&
-    subscriptionType === "free_trial" &&
+    (projectStatus === "insufficient_funds" &&
+      subscriptionType === "free_trial") ||
     daysLeft <= 16
   ) {
     return (

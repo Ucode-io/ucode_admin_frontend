@@ -362,9 +362,11 @@ const ImageUploadCellEditor = ({
             />
           </Button>
 
-          <Box sx={{marginRight: "14px"}}>
-            <img src="/table-icons/lock.svg" alt="lock" />
-          </Box>
+          {field?.attributes?.disabled && (
+            <Box sx={{marginRight: "14px"}}>
+              <img src="/table-icons/lock.svg" alt="lock" />
+            </Box>
+          )}
         </Box>
       )}
     </Box>

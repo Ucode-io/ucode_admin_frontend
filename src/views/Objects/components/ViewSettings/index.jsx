@@ -20,9 +20,10 @@ const ViewSettings = ({
   setTab,
   selectedTabIndex,
   refetchMainView = () => {},
+  setSelectedView = () => {},
+  selectedView,
 }) => {
   const {tableSlug, appId} = useParams();
-  const [selectedView, setSelectedView] = useState(viewData);
   const closeForm = () => setSelectedView(null);
   console.log("viewDataviewData", viewData);
   const {

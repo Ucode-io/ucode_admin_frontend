@@ -1,16 +1,27 @@
-import {Button, TextField} from "@mui/material";
+import {Box, Button, TextField} from "@mui/material";
 import styles from "./style.module.scss";
 import RowClickButton from "./RowClickButton";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 const HFTextInputField = (props) => {
   const {value, setValue, colDef, data} = props;
   const field = props?.colDef?.fieldObj;
+  const view = colDef?.view;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <TextField
         size="small"
         disabled={field?.attributes?.disabled}
@@ -38,10 +49,11 @@ const HFTextInputField = (props) => {
           ),
         }}
       />
-      {colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+
+      {/* {colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 };
 

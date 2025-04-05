@@ -2,6 +2,7 @@ import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
 import {format, isValid, parse} from "date-fns";
 import RowClickButton from "../RowClickButton";
+import {Box} from "@mui/material";
 
 export const HFDatePicker = (props) => {
   const {setValue, value, data, colDef} = props;
@@ -11,7 +12,16 @@ export const HFDatePicker = (props) => {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <DatePickerInput
         id="dateField"
         value={getValue(value)}
@@ -38,10 +48,10 @@ export const HFDatePicker = (props) => {
         disabled={field?.attributes?.disabled}
       />
 
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      {/* )} */}
+    </Box>
   );
 };
 
@@ -53,7 +63,16 @@ export const HFDateTimePicker = (props) => {
     props?.colDef?.onRowClick(data);
   };
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <DateTimePicker
         id="dateTimeField"
         value={getValue(value)}
@@ -79,10 +98,10 @@ export const HFDateTimePicker = (props) => {
         highlightToday
         disabled={field?.attributes?.disabled}
       />
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      {/* )} */}
+    </Box>
   );
 };
 
@@ -128,7 +147,16 @@ export const HFTimePicker = (props) => {
     props?.colDef?.onRowClick(data);
   };
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <TimeInput
         id="timeField"
         value={value}
@@ -146,10 +174,10 @@ export const HFTimePicker = (props) => {
         styles={{input: {background: "inherit", border: "none"}}}
         disabled={field?.disabled}
       />
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      {/* )} */}
+    </Box>
   );
 };
 

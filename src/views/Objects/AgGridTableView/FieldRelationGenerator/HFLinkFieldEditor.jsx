@@ -3,7 +3,7 @@ import {makeStyles} from "@mui/styles";
 import styles from "./style.module.scss";
 import {useLocation} from "react-router-dom";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {Button, InputAdornment, TextField} from "@mui/material";
+import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 
 const useStyles = makeStyles((theme) => ({
@@ -39,7 +39,16 @@ const HFLinkFieldEditor = (props) => {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <TextField
         size="small"
         value={value}
@@ -89,10 +98,10 @@ const HFLinkFieldEditor = (props) => {
         className={"custom_textfield_new"}
         {...props}
       />
-      {colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+      {/* {colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 };
 

@@ -22,7 +22,16 @@ function HFModalMapCellEditor(props) {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       {" "}
       <Box>
         <TextField
@@ -96,10 +105,10 @@ function HFModalMapCellEditor(props) {
           </div>
         </Dialog>
       </Box>
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 }
 

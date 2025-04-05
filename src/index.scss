@@ -1083,9 +1083,17 @@ u {
 }
 
 .ag-row-hover {
-  .rowClickButton {
-    display: flex;
+  .editButton {
+    display: block !important;
   }
+
+  .indexValue {
+    display: none;
+  }
+}
+
+.ag-sticky-top {
+  top: 30px !important;
 }
 
 .ag-header-cell {

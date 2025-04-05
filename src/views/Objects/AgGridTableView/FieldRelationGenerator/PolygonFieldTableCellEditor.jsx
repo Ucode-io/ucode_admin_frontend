@@ -32,7 +32,16 @@ function PolygonFieldTableCellEditor(props) {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <Box>
         <Box
           sx={{
@@ -93,10 +102,10 @@ function PolygonFieldTableCellEditor(props) {
           </Box>
         </Modal>
       </Box>
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 }
 

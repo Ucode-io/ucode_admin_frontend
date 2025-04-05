@@ -3,14 +3,23 @@ import RowClickButton from "../RowClickButton";
 import {Box} from "@mui/material";
 
 const HFNumberFieldCell = (props) => {
-  const {value, setValue, colDef} = props;
+  const {value, setValue, colDef, data} = props;
   const field = props?.colDef?.fieldObj;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <NumericFormat
         disabled={field?.attributes?.disabled}
         size="small"
@@ -30,10 +39,10 @@ const HFNumberFieldCell = (props) => {
           <img src="/table-icons/lock.svg" alt="lock" />
         </Box>
       )}
-      {colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+      {/* {colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 };
 

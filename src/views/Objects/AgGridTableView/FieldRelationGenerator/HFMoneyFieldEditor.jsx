@@ -44,7 +44,16 @@ function HFMoneyFieldEditor(props) {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       {" "}
       <Box
         sx={{
@@ -116,10 +125,10 @@ function HFMoneyFieldEditor(props) {
           ))}
         </Menu>
       </Box>
-      {colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right={"55px"} />
-      )}
-    </>
+      {/* {colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right={"55px"} />
+      {/* )} */}
+    </Box>
   );
 }
 

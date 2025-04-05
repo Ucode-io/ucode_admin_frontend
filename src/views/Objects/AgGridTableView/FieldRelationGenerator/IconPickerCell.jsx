@@ -1,4 +1,5 @@
 import {
+  Box,
   CircularProgress,
   IconButton,
   Menu,
@@ -45,8 +46,16 @@ const IconPickerCell = (props) => {
   };
 
   return (
-    <>
-      {" "}
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <div
         style={{
           height: "31px",
@@ -102,10 +111,10 @@ const IconPickerCell = (props) => {
           </div>
         </Menu>
       </div>
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 };
 

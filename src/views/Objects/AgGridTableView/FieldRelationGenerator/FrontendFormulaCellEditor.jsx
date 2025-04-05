@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from "react";
-import {TextField, InputAdornment, IconButton} from "@mui/material";
+import {TextField, InputAdornment, IconButton, Box} from "@mui/material";
 import {Parser} from "hot-formula-parser";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import RowClickButton from "../RowClickButton";
@@ -56,7 +56,16 @@ const FrontendFormulaCellEditor = (props) => {
   }, [Object?.values(data ?? {})?.map((el) => el), evaluateFormula]);
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       <TextField
         size="small"
         value={formulaIsVisible ? formula : calculatedValue}
@@ -86,10 +95,10 @@ const FrontendFormulaCellEditor = (props) => {
         }}
         className="custom_textfield_new"
       />
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
+      {/* )} */}
+    </Box>
   );
 };
 

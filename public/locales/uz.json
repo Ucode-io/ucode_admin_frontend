@@ -255,7 +255,7 @@
   "days": "kun",
   "day": "kun",
 
-  "subscription_expired": "Sizning obunangiz muddati tugadi.",
-  "click_here_upgrade": "Iltimos, tarifingizni yangilash uchun shu yerni bosing.",
-  "expired_content": "Xizmatlarimizdan foydalanishda davom etish uchun iltimos, uni yangilang."
+  "subscription_expired": "Sizning obunangiz muddati tugadi. ",
+  "click_here_upgrade": "Iltimos, tarifingizni yangilash uchun shu yerni bosing. ",
+  "expired_content": "Xizmatlarimizdan foydalanishda davom etish uchun iltimos, uni yangilang. "
 }

@@ -281,6 +281,7 @@ function AgGridTableView(props) {
           menuItem,
           view,
           addRow,
+          createChildTree,
           appendNewRow,
           valueGetter: (params) => {
             return (
@@ -403,6 +404,21 @@ function AgGridTableView(props) {
       data: newChild,
     });
   };
+
+  function createChildTree(parentObj) {
+    const newChild = {
+      guid: generateGUID(),
+      [`${tableSlug}_id`]: parentObj.guid,
+      path: [...parentObj.path, generateGUID()],
+    };
+    gridApi.current.api.applyTransaction({
+      add: [newChild],
+    });
+
+    constructorObjectService.create(tableSlug, {
+      data: newChild,
+    });
+  }
 
   const getDataPath = useCallback((data) => data.path, []);
 

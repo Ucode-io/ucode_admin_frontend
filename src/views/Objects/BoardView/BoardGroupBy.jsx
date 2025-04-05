@@ -125,7 +125,7 @@ export default function BoardGroupButton({
       updateView(tabs);
     }
   }, [tabs]);
-  console.log("currentView", currentView);
+
   return (
     <div>
       <Button

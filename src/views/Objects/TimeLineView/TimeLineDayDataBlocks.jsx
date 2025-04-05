@@ -9,6 +9,7 @@ export default function TimeLineDayDataBlock({
   fieldsMap,
   setFocusedDays,
   view,
+  dateFilters,
   tabs,
   computedColumnsFor,
   datesList,
@@ -54,6 +55,7 @@ export default function TimeLineDayDataBlock({
           >
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
+                dateFilters={dateFilters}
                 openedRows={openedRows}
                 setOpenedRows={setOpenedRows}
                 key={item?.label}

@@ -50,6 +50,34 @@
   }
 }
 
+.tabChildren {
+  position: relative;
+  padding-left: 28px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 4px;
+  color: rgb(55, 53, 47);
+
+  &::after {
+    width: 4px;
+    height: 4px;
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    border-radius: 50%;
+    background-color: #344054;
+    transform: translateY(-50%);
+    content: '';
+  }
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06) !important;
+  }
+}
+
 .tabItem.active {
   background-color: rgba(55, 53, 47, 0.06);
 

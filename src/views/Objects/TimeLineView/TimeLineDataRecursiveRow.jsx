@@ -11,6 +11,7 @@ export default function TimeLineDataRecursiveRow({
   setFocusedDays,
   datesList,
   view,
+  dateFilters,
   zoomPosition,
   calendar_from_slug,
   calendar_to_slug,
@@ -48,6 +49,7 @@ export default function TimeLineDataRecursiveRow({
         {!item?.data && (
           <TimeLineDayDataBlockItem
             key={item?.guid}
+            dateFilters={dateFilters}
             selectedType={selectedType}
             computedColumnsFor={computedColumnsFor}
             groupbyFields={groupbyFields}

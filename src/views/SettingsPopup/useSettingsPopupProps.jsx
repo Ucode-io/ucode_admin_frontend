@@ -264,9 +264,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
 
   const handlePermissionClick = (element) => {
     setActiveTab(TAB_COMPONENTS?.PERMISSIONS.PERMISSIONS);
-    setSearchParams({
-      permissionId: element?.guid,
-    });
+    updateSearchParam("permissionId", element?.guid);
   };
 
   const handleOpenClientTypeModal = () => {

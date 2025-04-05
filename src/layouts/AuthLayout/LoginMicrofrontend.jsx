@@ -12,7 +12,7 @@ const LoginMicrofrontend = ({microfrontendUrl, isLoading}) => {
 
   if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
   const dispatch = useDispatch();
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   return (
     <>
       <MicrofrontendComponent
@@ -20,6 +20,7 @@ const LoginMicrofrontend = ({microfrontendUrl, isLoading}) => {
         key={microfrontendLink}
         link={microfrontendLink}
         t={t}
+        i18n={i18n}
       />
       <Outlet />
     </>

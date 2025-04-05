@@ -122,37 +122,13 @@ export const SettingsPopup = ({ open, onClose }) => {
                                 <AccordionDetails>
                                   {tab?.children?.map((child) => (
                                     <Box
+                                      className={cls.tabChildren}
                                       key={child?.id}
                                       sx={{
-                                        position: "relative",
-                                        paddingLeft: "28px",
-                                        fontSize: "14px",
-                                        lineHeight: "20px",
-                                        fontWeight: "400",
-                                        paddingTop: "4px",
-                                        paddingBottom: "4px",
-                                        borderRadius: "4px",
                                         backgroundColor:
                                           child?.guid === activeChildId
                                             ? "rgba(55, 53, 47, 0.06)"
                                             : "transparent",
-
-                                        color: "rgb(55, 53, 47)",
-                                        "&::after": {
-                                          width: "4px",
-                                          height: "4px",
-                                          position: "absolute",
-                                          top: "50%",
-                                          left: "12px",
-                                          borderRadius: "50%",
-                                          backgroundColor: "#344054",
-                                          transform: "translateY(-50%)",
-                                          content: '""',
-                                        },
-                                        "&:hover": {
-                                          backgroundColor:
-                                            "rgba(55, 53, 47, 0.06) !important",
-                                        },
                                       }}
                                     >
                                       <TabTitle

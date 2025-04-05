@@ -2,19 +2,14 @@ import { Box } from "@mui/material";
 import { usePermissionsRoleDetail } from "./usePermissionsRoleDetail";
 import { ContentTitle } from "../../components/ContentTitle";
 import { Button } from "../../components/Button";
-import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import FRow from "../../../../components/FormElements/FRow";
-import HFTextField from "../../../../components/FormElements/HFTextField";
 import Permissions from "./Permissions";
 import AddIcon from "@mui/icons-material/Add";
 import cls from "./styles.module.scss";
 import clsx from "clsx";
 import RoleCreateModal from "./RoleCreateModal";
 import { FolderCreateModal } from "../../components/FolderCreateModal";
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import { EditIcon } from "../../../../assets/icons/icon";
-import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
-import { useEffect, useState } from "react";
+import { EditIcon } from "@/assets/icons/icon";
+import { GreyLoader } from "@/components/Loaders/GreyLoader";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 
 export const PermissionsRoleDetail = () => {
@@ -39,33 +34,13 @@ export const PermissionsRoleDetail = () => {
     isUpdateModalOpen,
     handleOpenUpdateModal,
     handleCloseUpdateModal,
+    activeTab,
+    isCategoryOpen,
+    handleChangeTab,
+    handleOpenCategory,
+    handleCloseCategory,
+    categories,
   } = usePermissionsRoleDetail();
-
-  const [activeTab, setActiveTab] = useState("table");
-  const [isCategoryOpen, setCategoryOpen] = useState(false);
-
-  const handleChangeTab = (tab) => setActiveTab(tab);
-
-  const handleOpenCategory = () => setCategoryOpen(true);
-  const handleCloseCategory = () => setCategoryOpen(false);
-
-  const categories = {
-    table: "Table",
-    permission: "Global Permission",
-    menu: "Menu",
-  };
-
-  const handleWindowClick = (e) => {
-    if (!e.target.matches(`.${cls.categoryDropdownBtn}`)) {
-      handleCloseCategory();
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("click", handleWindowClick);
-
-    return () => window.removeEventListener("click", handleWindowClick);
-  }, []);
 
   return (
     <Box flex={1}>

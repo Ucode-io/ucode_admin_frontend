@@ -263,10 +263,9 @@ export const useSettingsPopupProps = ({ onClose }) => {
   };
 
   const handlePermissionClick = (element) => {
-    setActiveTab(TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS);
+    setActiveTab(TAB_COMPONENTS?.PERMISSIONS.PERMISSIONS);
     setSearchParams({
       permissionId: element?.guid,
-      tab: TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS_DETAIL,
     });
   };
 
@@ -289,12 +288,13 @@ export const useSettingsPopupProps = ({ onClose }) => {
       editEnvironment: <EnvironmentDetail />,
     },
     languageControl: <LanguageControl withHeader={false} />,
-    permissions: {
-      permissions: <Permissions />,
-      // permissionsDetail: <PermissionsDetail />,
-      permissionsDetail: <PermissionsRoleDetail />,
-      permissionsRoleDetail: <PermissionsRoleDetail />,
-    },
+    permissions: <PermissionsRoleDetail />,
+    // permissions: {
+    //   permissions: <Permissions />,
+    //   // permissionsDetail: <PermissionsDetail />,
+    //   permissionsDetail: <PermissionsRoleDetail />,
+    //   permissionsRoleDetail: <PermissionsRoleDetail />,
+    // },
     resources: {
       resources: <Resources />,
       resourcesDetail: <ResourcesDetail />,

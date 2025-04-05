@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { store } from "../../../../store";
+import { store } from "@/store";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -8,13 +8,14 @@ import {
   useMenuPermissionUpdateMutation,
   useRolePermissionGetByIdQuery,
   useRolePermissionUpdateMutation,
-} from "../../../../services/rolePermissionService";
-import { showAlert } from "../../../../store/alert/alert.thunk";
-import queryClient from "../../../../queries";
+} from "@/services/rolePermissionService";
+import { showAlert } from "@/store/alert/alert.thunk";
+import queryClient from "@/queries";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { useQuery } from "react-query";
-import roleServiceV2 from "../../../../services/roleServiceV2";
+import roleServiceV2 from "@/services/roleServiceV2";
+import cls from "./styles.module.scss";
 
 export const usePermissionsRoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit } = useForm();
@@ -26,6 +27,9 @@ export const usePermissionsRoleDetail = () => {
 
   const [isCreateRoleModalOpen, setCreateRoleModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState("table");
+  const [isCategoryOpen, setCategoryOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -43,6 +47,11 @@ export const usePermissionsRoleDetail = () => {
 
   const handleOpenUpdateModal = () => setIsUpdateModalOpen(true);
   const handleCloseUpdateModal = () => setIsUpdateModalOpen(false);
+
+  const handleChangeTab = (tab) => setActiveTab(tab);
+
+  const handleOpenCategory = () => setCategoryOpen(true);
+  const handleCloseCategory = () => setCategoryOpen(false);
 
   const onBackClick = () => {
     setSearchParams({
@@ -135,6 +144,24 @@ export const usePermissionsRoleDetail = () => {
     }
   }, [permissionData, rolePermissionData]);
 
+  const categories = {
+    table: "Table",
+    permission: "Global Permission",
+    menu: "Menu",
+  };
+
+  const handleWindowClick = (e) => {
+    if (!e.target.matches(`.${cls.categoryDropdownBtn}`)) {
+      handleCloseCategory();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", handleWindowClick);
+
+    return () => window.removeEventListener("click", handleWindowClick);
+  }, []);
+
   return {
     handleSubmit,
     onSubmit,
@@ -158,5 +185,11 @@ export const usePermissionsRoleDetail = () => {
     isUpdateModalOpen,
     handleOpenUpdateModal,
     handleCloseUpdateModal,
+    activeTab,
+    isCategoryOpen,
+    handleChangeTab,
+    handleOpenCategory,
+    handleCloseCategory,
+    categories,
   };
 };

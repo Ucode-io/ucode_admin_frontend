@@ -434,7 +434,7 @@ const CalendarView = ({
       {isLoading || tabLoading ? (
         <PageFallback />
       ) : (
-        <>
+        <Box>
           {date === "DAY" && (
             <CalendarDay
               data={data}
@@ -475,7 +475,7 @@ const CalendarView = ({
               workingDays={workingDays}
             />
           ) : null}
-        </>
+        </Box>
       )}
     </div>
   );

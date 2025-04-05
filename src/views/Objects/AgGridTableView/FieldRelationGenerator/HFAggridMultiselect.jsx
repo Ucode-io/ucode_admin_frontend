@@ -41,14 +41,8 @@ const useStyles = makeStyles((theme) => ({
 const HFAggridMultiselect = (props) => {
   const classes = useStyles();
 
-  const {
-    value,
-    setValue = () => {},
-    field,
-    width = "100%",
-    colDef,
-    data,
-  } = props;
+  const {value, setValue = () => {}, width = "100%", colDef, data} = props;
+  const field = colDef?.fieldObj;
   const options = colDef?.cellEditorParams?.field?.attributes?.options;
   const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
   const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
@@ -79,7 +73,7 @@ const HFAggridMultiselect = (props) => {
         className="hf-select"
         onFormChange={setValue}
         required={field?.required}
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
         isMultiSelect={isMultiSelect}
         props={props}
         onNavigateToDetail={onNavigateToDetail}
@@ -218,7 +212,7 @@ const AutoCompleteElement = ({
                       right: 0,
                     }}>
                     <InputAdornment position="start">
-                      <Lock style={{fontSize: "20px"}} />
+                      <img src="/table-icons/lock.svg" alt="lock" />
                     </InputAdornment>
                   </Tooltip>
                 ),

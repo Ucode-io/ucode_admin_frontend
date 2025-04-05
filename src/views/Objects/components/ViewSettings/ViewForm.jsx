@@ -240,7 +240,7 @@ const ViewForm = ({
       form.setValue(`attributes.name_${i18n?.language}`, nameMulti);
     }
   }, [nameMulti]);
-  console.log("viewDataviewData", viewData);
+
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>

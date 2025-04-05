@@ -7,6 +7,7 @@ const HFFileUploadCellEditor = (props) => {
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
+
   return (
     <>
       <NewFileUploadCellEditor
@@ -15,7 +16,7 @@ const HFFileUploadCellEditor = (props) => {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.disabled}
+        disabled={field?.attributes?.disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>

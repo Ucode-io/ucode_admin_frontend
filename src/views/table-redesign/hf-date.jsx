@@ -155,14 +155,18 @@ export const HFTimePicker = ({
 const getValue = (value) => {
   if (!value) return null;
   if (value instanceof Date && isValid(value)) return value;
-
   try {
     if (typeof value === "string") {
       if (value.toLowerCase().includes("now")) return new Date();
-
-      if (value.endsWith("Z")) {
+      if (value.includes("Z")) {
         const parsedISO = new Date(value);
-        if (isValid(parsedISO)) return parsedISO;
+        if (isValid(parsedISO)) {
+          console.log("entered 3");
+          return parsedISO;
+        }
+      } else {
+        const parsedISO = new Date(value);
+        return parsedISO;
       }
 
       const formats = [

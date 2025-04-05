@@ -57,16 +57,19 @@ const IconPickerCell = (props) => {
         onClick={(e) => e.stopPropagation()}>
         <div
           ref={buttonRef}
-          className={`${styles.iconWrapper}`}
-          style={{backgroundColor: value ?? "#fff"}}
+          style={{backgroundColor: value ?? "transparent"}}
           aria-describedby={id}
-          onClick={!field?.disabled && handleOpen}>
-          {field?.disabled ? (
+          onClick={!field?.attributes?.disabled && handleOpen}>
+          {field?.attributes?.disabled ? (
             <Tooltip title="This field is disabled for this role!">
-              <Lock style={{fontSize: "20px"}} />
+              <img src="/table-icons/lock.svg" alt="lock" />
             </Tooltip>
           ) : (
-            <IconGenerator size={16} icon={value} disabled={field?.disabled} />
+            <IconGenerator
+              size={16}
+              icon={value}
+              disabled={field?.attributes?.disabled}
+            />
           )}
         </div>
 

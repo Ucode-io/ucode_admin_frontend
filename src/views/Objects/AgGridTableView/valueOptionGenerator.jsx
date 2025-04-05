@@ -40,6 +40,7 @@ const getColumnEditorParams = (item, columnDef) => {
       };
       columnDef.valueFormatter = (params) => params.value || "";
       break;
+
     case "NUMBER":
       columnDef.cellRenderer = HFNumberFieldCell;
 

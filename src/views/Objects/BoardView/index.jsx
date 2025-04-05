@@ -34,6 +34,7 @@ const BoardView = ({
   setSelectedTabIndex,
   views,
   fieldsMap,
+  fieldsMapRel,
   selectedTable,
   menuItem,
 }) => {
@@ -43,7 +44,7 @@ const BoardView = ({
   const {tableSlug, appId} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const id = useId();
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -97,10 +98,10 @@ const BoardView = ({
   };
 
   const groupFieldId = view?.group_fields?.[0];
-  const groupField = fieldsMap[groupFieldId];
+  const groupField = fieldsMapRel[groupFieldId];
 
   const {data: tabs, isLoading: tabsLoader} = useQuery(
-    queryGenerator(groupField, filters)
+    queryGenerator(groupField, filters, i18n?.language)
   );
 
   const loader = dataLoader || tabsLoader;
@@ -286,7 +287,7 @@ const BoardView = ({
   );
 };
 
-const queryGenerator = (groupField, filters = {}, updateView) => {
+const queryGenerator = (groupField, filters = {}, updateView, lan) => {
   if (!groupField)
     return {
       queryFn: () => {},

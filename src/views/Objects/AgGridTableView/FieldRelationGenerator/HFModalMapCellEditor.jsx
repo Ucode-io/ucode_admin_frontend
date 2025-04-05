@@ -26,6 +26,7 @@ function HFModalMapCellEditor(props) {
       {" "}
       <Box>
         <TextField
+          disabled={field?.attributes?.disabled}
           id={`map_field`}
           value={
             value
@@ -35,7 +36,7 @@ function HFModalMapCellEditor(props) {
           defaultValue={"defaultValue"}
           variant="standard"
           width="small"
-          onClick={() => handleOpen()}
+          onClick={() => !field?.attributes?.disabled && handleOpen()}
           sx={{
             width: "100%",
             backgroundColor: "transparent",
@@ -50,11 +51,16 @@ function HFModalMapCellEditor(props) {
             },
           }}
           InputProps={{
+            endAdornment: field?.attributes?.disabled ? (
+              <img src="/table-icons/lock.svg" alt="lock" />
+            ) : (
+              ""
+            ),
             style: {
               background: isTransparent ? "transparent" : "",
               height: "100%x",
               height: "100%",
-              padding: "0 0",
+              padding: "0 14px 0 0",
             },
             classes: {
               notchedoutline: {},

@@ -233,5 +233,15 @@
   "add_resource": "Add resource",
   "public_offer": "By clicking the confirm button, you agree to the terms of the",
   "public_link": "Public Offer",
-  "select_tariff": "Select Tariff"
+  "select_tariff": "Select Tariff",
+
+  "free_trial_ending": "Your free trial is ending soon,  ",
+  "subscribtion_expire_soon": "Your subscription will expire soon. ",
+  "left": "left. ",
+  "days": "days",
+  "day": "day",
+
+  "subscription_expired": "Your subscription has expired. ",
+  "click_here_upgrade": "Please click here to upgrade your plan. ",
+  "expired_content": "Please renew to continue accessing our services. "
 }

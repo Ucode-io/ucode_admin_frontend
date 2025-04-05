@@ -43,59 +43,60 @@ export default function TimeLineDataRecursiveRow({
           minHeight: "32px",
           position: "relative",
           zIndex: 1,
-        }}>
-        {item?.data?.map(
-          (data, dataIndex) =>
-            !data?.data && (
-              <TimeLineDayDataBlockItem
-                key={data?.guid}
-                selectedType={selectedType}
-                computedColumnsFor={computedColumnsFor}
-                groupbyFields={groupbyFields}
-                data={data}
-                levelIndex={index}
-                groupByList={groupByList}
-                setFocusedDays={setFocusedDays}
-                datesList={datesList}
-                view={view}
-                zoomPosition={zoomPosition}
-                calendar_from_slug={calendar_from_slug}
-                calendar_to_slug={calendar_to_slug}
-                visible_field={visible_field}
-              />
-            )
+        }}
+      >
+        {!item?.data && (
+          <TimeLineDayDataBlockItem
+            key={item?.guid}
+            selectedType={selectedType}
+            computedColumnsFor={computedColumnsFor}
+            groupbyFields={groupbyFields}
+            data={item}
+            levelIndex={index}
+            groupByList={groupByList}
+            setFocusedDays={setFocusedDays}
+            datesList={datesList}
+            view={view}
+            zoomPosition={zoomPosition}
+            calendar_from_slug={calendar_from_slug}
+            calendar_to_slug={calendar_to_slug}
+            visible_field={visible_field}
+          />
         )}
       </div>
 
       {item?.data?.map(
         (option, subIndex) =>
-          option?.data && (
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <TimeLineDataRecursiveRow
-                lastLabels={
-                  lastLabels?.length
-                    ? lastLabels + "." + item?.label
-                    : item?.label
-                }
-                openedRows={openedRows}
-                setOpenedRows={setOpenedRows}
-                key={option?.label}
-                item={option}
-                index={subIndex + index}
-                groupbyFields={groupbyFields}
-                selectedType={selectedType}
-                computedColumnsFor={computedColumnsFor}
-                setFocusedDays={setFocusedDays}
-                datesList={datesList}
-                view={view}
-                zoomPosition={zoomPosition}
-                calendar_from_slug={calendar_from_slug}
-                calendar_to_slug={calendar_to_slug}
-                visible_field={visible_field}
-                groupByList={groupByList}
-              />
-            </Collapse>
-          )
+          option?.data &&
+          option?.data?.map((optionItem, optionIdex) => {
+            return (
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <TimeLineDataRecursiveRow
+                  lastLabels={
+                    lastLabels?.length
+                      ? lastLabels + "." + item?.label
+                      : item?.label
+                  }
+                  openedRows={openedRows}
+                  setOpenedRows={setOpenedRows}
+                  key={optionItem?.title}
+                  item={optionItem}
+                  index={subIndex + index}
+                  groupbyFields={groupbyFields}
+                  selectedType={selectedType}
+                  computedColumnsFor={computedColumnsFor}
+                  setFocusedDays={setFocusedDays}
+                  datesList={datesList}
+                  view={view}
+                  zoomPosition={zoomPosition}
+                  calendar_from_slug={calendar_from_slug}
+                  calendar_to_slug={calendar_to_slug}
+                  visible_field={visible_field}
+                  groupByList={groupByList}
+                />
+              </Collapse>
+            );
+          })
       )}
     </>
   );

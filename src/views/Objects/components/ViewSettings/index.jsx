@@ -11,18 +11,21 @@ import ViewsList from "./ViewsList";
 import constructorTableService from "../../../../services/constructorTableService";
 
 const ViewSettings = ({
-  closeModal,
+  closeModal = () => {},
   setIsChanged,
   isChanged,
   viewData,
   typeNewView,
   defaultViewTab,
   setTab,
+  selectedTabIndex,
+  refetchMainView = () => {},
+  setSelectedView = () => {},
+  selectedView,
 }) => {
   const {tableSlug, appId} = useParams();
-  const [selectedView, setSelectedView] = useState(viewData);
   const closeForm = () => setSelectedView(null);
-
+  console.log("viewDataviewData", viewData);
   const {
     data: {fields, views, columns, relationColumns} = {
       fields: [],
@@ -58,9 +61,14 @@ const ViewSettings = ({
   useEffect(() => {
     if (isChanged === true) {
       refetchViews();
+      refetchMainView();
       closeModal();
     }
   }, [isChanged]);
+
+  useEffect(() => {
+    setSelectedView(views?.[selectedTabIndex]);
+  }, []);
 
   return (
     <Card className={styles.card}>

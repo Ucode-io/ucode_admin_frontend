@@ -109,7 +109,7 @@ const LookupCellEditor = (props) => {
           refetch();
         }}>
         {props.children}
-        {!field?.disabled && (
+        {!field?.attributes?.disabled && (
           <Box
             sx={{position: "relative", zIndex: 99999}}
             onMouseDown={(e) => {
@@ -146,6 +146,7 @@ const LookupCellEditor = (props) => {
           overflow: "hidden",
         }}>
         <Select
+          disabled={field?.attributes?.disabled}
           isClearable={true}
           placeholder="Select..."
           menuPortalTarget={document.body}

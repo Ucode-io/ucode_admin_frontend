@@ -10,7 +10,7 @@ function IndexHeaderComponent(props) {
 
   const selectedNodes = api.getSelectedNodes();
   const totalRows = api.getDisplayedRowCount();
-
+  const view = column?.colDef?.view;
   const allSelected = selectedNodes.length === totalRows && totalRows > 0;
   const someSelected =
     selectedNodes?.length < totalRows && selectedNodes?.length > 0;
@@ -36,7 +36,7 @@ function IndexHeaderComponent(props) {
         onMouseEnter={() => (!allSelected || !someSelected) && setHover(true)}
         onMouseLeave={() => (!allSelected || !someSelected) && setHover(false)}>
         {!allSelected && !someSelected ? (
-          hover ? (
+          !view?.attributes?.treeData && hover ? (
             <Checkbox
               size="xs"
               checked={allSelected}

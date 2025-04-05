@@ -17,7 +17,16 @@ const PhoneCellEditor = (props) => {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       {" "}
       <Box sx={{padding: " 0 6px 0 13px"}}>
         <PhoneInput
@@ -37,10 +46,10 @@ const PhoneCellEditor = (props) => {
           isValidPhoneNumber
         />
       </Box>
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+      {/* )} */}
+    </Box>
   );
 };
 

@@ -1,4 +1,4 @@
-import {Card, Popover} from "@mui/material";
+import {Box, Card, Popover} from "@mui/material";
 import {useState} from "react";
 import {colorList} from "../../../../components/ColorPicker/colorList";
 import RowClickButton from "../RowClickButton";
@@ -22,7 +22,16 @@ const ColorPicker = (props) => {
   const open = Boolean(anchorEl);
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       {" "}
       <div
         style={{
@@ -76,10 +85,10 @@ const ColorPicker = (props) => {
           </Card>
         </Popover>
       </div>
-      {props?.colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} />
-      )}
-    </>
+      {/* {props?.colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} />
+      {/* )} */}
+    </Box>
   );
 };
 

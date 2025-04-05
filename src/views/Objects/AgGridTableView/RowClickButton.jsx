@@ -13,7 +13,7 @@ function RowClickButton({onRowClick = () => {}, right = "5px"}) {
         minWidth: "max-content",
         right: right,
       }}>
-      <OpenInFullIcon style={{width: "14px", height: "19px"}} />
+      <OpenInFullIcon style={{width: "14px", height: "22px"}} />
     </Button>
   );
 }

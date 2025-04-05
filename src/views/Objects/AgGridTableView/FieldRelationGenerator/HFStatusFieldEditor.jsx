@@ -11,7 +11,16 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
   const field = colDef?.fieldObj;
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        background: "#0000",
+
+        "&:hover .rowClickButton": {
+          display: "block",
+        },
+      }}>
       {" "}
       <Box>
         <Select
@@ -126,10 +135,10 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
           />
         </Box>
       )}
-      {colDef?.colIndex === 0 && (
-        <RowClickButton onRowClick={onNavigateToDetail} right="25px" />
-      )}
-    </>
+      {/* {colDef?.colIndex === 0 && ( */}
+      <RowClickButton onRowClick={onNavigateToDetail} right="25px" />
+      {/* )} */}
+    </Box>
   );
 }
 

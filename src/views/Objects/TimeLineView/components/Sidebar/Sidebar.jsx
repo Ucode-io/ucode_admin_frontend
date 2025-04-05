@@ -28,24 +28,34 @@ export const Sidebar = ({
     setOpenedRows([]);
     setIsAllOpen(false);
   };
+
+  const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
+
   return (
     <div className={cls.group_by}>
       <div className={clsx(cls.fakeDiv)}>
         <div className={cls.header}>
-          <span className={cls.title}>Columns</span>
-          <button
-            className={cls.expendCollapseBtn}
-            onClick={isAllOpen ? handleAllClose : handleAllOpen}
+          <span
+            className={cls.title}
+            style={{ marginTop: isAssignee ? "6px" : "16px" }}
           >
-            <span className={cls.expendCollapseBtnInner}>
-              <span>{isAllOpen ? "Collapse all" : "Expend all"}</span>
-              <KeyboardDoubleArrowDownOutlinedIcon
-                sx={{
-                  transform: isAllOpen ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              />
-            </span>
-          </button>
+            Columns
+          </span>
+          {isAssignee && (
+            <button
+              className={cls.expendCollapseBtn}
+              onClick={isAllOpen ? handleAllClose : handleAllOpen}
+            >
+              <span className={cls.expendCollapseBtnInner}>
+                <span>{isAllOpen ? "Collapse all" : "Expend all"}</span>
+                <KeyboardDoubleArrowDownOutlinedIcon
+                  sx={{
+                    transform: isAllOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  }}
+                />
+              </span>
+            </button>
+          )}
         </div>
         {/* <SidebarButton
           className={cls.sidebarBtn}

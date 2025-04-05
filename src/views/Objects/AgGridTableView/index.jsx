@@ -371,9 +371,17 @@ function AgGridTableView(props) {
     }
   };
 
-  function deleteHandler(row) {
-    constructorObjectService.delete(tableSlug, row.guid).then(() => {
-      view?.attributes?.treeData ? updateTreeData() : refetch();
+  function deleteHandler(rowToDelete) {
+    const allRows = [];
+    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
+    const rowToRemove = allRows.find((row) => row.guid === rowToDelete?.guid);
+
+    gridApi.current.api.applyTransaction({
+      remove: [rowToRemove],
+    });
+
+    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
+      view?.attributes?.treeData ? null : refetch();
     });
   }
 

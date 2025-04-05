@@ -11,7 +11,7 @@ import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
 import {useQuery} from "react-query";
 import PageFallback from "../../components/PageFallback";
-import {listToMap} from "../../utils/listToMap";
+import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
@@ -35,19 +35,19 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { TableDataSkeleton } from "../../components/TableDataSkeleton";
-import { DynamicTable } from "../table-redesign";
+import {TableDataSkeleton} from "../../components/TableDataSkeleton";
+import {DynamicTable} from "../table-redesign";
 
 const ObjectsPage = () => {
-  const { tableSlug } = useParams();
-  const { state } = useLocation();
+  const {tableSlug} = useParams();
+  const {state} = useLocation();
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -70,36 +70,41 @@ const ObjectsPage = () => {
   const resultDefaultLink =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
-  const { isLoading: permissionGetByIdLoading } = useMenuPermissionGetByIdQuery(
-    {
-      projectId: projectId,
-      roleId: roleId,
-      parentId: appId,
-      queryParams: {
-        enabled: Boolean(menuId),
-        onSuccess: (res) => {
-          if (
-            !res?.menus
-              ?.filter((item) => item?.permission?.read)
-              ?.some((el) => el?.id === menuId)
-          ) {
-            console.log("object");
-            navigate(resultDefaultLink);
-          }
-        },
-        cacheTime: false,
+  const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
+    projectId: projectId,
+    roleId: roleId,
+    parentId: appId,
+    queryParams: {
+      enabled: Boolean(menuId),
+      onSuccess: (res) => {
+        if (
+          !res?.menus
+            ?.filter((item) => item?.permission?.read)
+            ?.some((el) => el?.id === menuId)
+        ) {
+          console.log("object");
+          navigate(resultDefaultLink);
+        }
       },
-    }
-  );
+      cacheTime: false,
+    },
+  });
 
   const params = {
     language_setting: i18n?.language,
   };
 
   const {
-    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
+    data: {
+      views,
+      fieldsMap,
+      fieldsMapRel,
+      visibleColumns,
+      visibleRelationColumns,
+    } = {
       views: [],
       fieldsMap: {},
+      fieldsMapRel: {},
       visibleColumns: [],
       visibleRelationColumns: [],
     },
@@ -120,13 +125,14 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views:
             data?.views?.filter(
               (view) => view?.attributes?.view_permission?.view === true
             ) ?? [],
           fieldsMap: listToMap(data?.fields),
+          fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
           visibleRelationColumns:
             data?.relation_fields?.map((el) => ({
@@ -135,7 +141,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({ views }) => {
+      onSuccess: ({views}) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -147,7 +153,7 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -232,6 +238,7 @@ const ObjectsPage = () => {
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={views}
                       fieldsMap={fieldsMap}
+                      fieldsMapRel={fieldsMapRel}
                       menuItem={menuItem}
                     />
                   </>

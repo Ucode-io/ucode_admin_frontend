@@ -189,6 +189,7 @@ export default function TimeLineBlock({
 
         {calendar_from_slug !== calendar_to_slug && (
           <TimeLineDayDataBlock
+            dateFilters={dateFilters}
             openedRows={openedRows}
             setOpenedRows={setOpenedRows}
             computedColumnsFor={computedColumnsFor}

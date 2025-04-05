@@ -25,6 +25,10 @@ export const TimelineRecursiveRow = ({
   sub = false,
   lastLabels = "",
   isFirst = true,
+  handleAllOpen = () => {},
+  handleAllClose = () => {},
+  computedData,
+  setIsAllOpen,
 }) => {
   const { handleClick, computedValue, open } = useTimelineRecursiveRowProps({
     item,
@@ -32,6 +36,10 @@ export const TimelineRecursiveRow = ({
     openedRows,
     setOpenedRows,
     lastLabels,
+    handleAllOpen,
+    handleAllClose,
+    computedData,
+    setIsAllOpen,
   });
 
   return (

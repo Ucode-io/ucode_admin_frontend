@@ -18,7 +18,7 @@ export const Sidebar = ({
   datesList,
   zoomPosition,
 }) => {
-  const [isAllOpen, setIsAllOpen] = useState(null);
+  const [isAllOpen, setIsAllOpen] = useState(false);
   const handleAllOpen = () => {
     setIsAllOpen(true);
     setOpenedRows(computedData?.map((item) => item?.label));
@@ -28,7 +28,6 @@ export const Sidebar = ({
     setOpenedRows([]);
     setIsAllOpen(false);
   };
-
   return (
     <div className={cls.group_by}>
       <div className={clsx(cls.fakeDiv)}>
@@ -59,8 +58,12 @@ export const Sidebar = ({
         <div className={cls.sidebar_columns}>
           {computedData?.map((item, index) => (
             <TimelineRecursiveRow
+              computedData={computedData}
               openedRows={openedRows}
               setOpenedRows={setOpenedRows}
+              handleAllOpen={handleAllOpen}
+              handleAllClose={handleAllClose}
+              setIsAllOpen={setIsAllOpen}
               level={0}
               groupItem={item}
               fieldsMap={fieldsMap}

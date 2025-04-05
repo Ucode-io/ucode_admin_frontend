@@ -8,6 +8,10 @@ export const useTimelineRecursiveRowProps = ({
   openedRows,
   setOpenedRows,
   lastLabels = "",
+  handleAllOpen,
+  handleAllClose,
+  computedData,
+  setIsAllOpen,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -23,18 +27,31 @@ export const useTimelineRecursiveRowProps = ({
     setOpen(!isCurrentlyOpen);
 
     if (!isCurrentlyOpen) {
-      setOpenedRows([
-        ...openedRows,
-        lastLabels?.length ? lastLabels + "." + item?.label : item?.label,
-      ]);
+      setOpenedRows(() => {
+        const newOpenedRows = [
+          ...openedRows,
+          lastLabels?.length ? lastLabels + "." + item?.label : item?.label,
+        ];
+
+        if (newOpenedRows.length === computedData.length) {
+          setIsAllOpen(true);
+        }
+        return newOpenedRows;
+      });
     } else {
-      setOpenedRows(
-        openedRows.filter(
+      setOpenedRows(() => {
+        const newOpenedRows = openedRows.filter(
           (row) =>
             row !==
             (lastLabels?.length ? lastLabels + "." + item?.label : item?.label)
-        )
-      );
+        );
+
+        if (newOpenedRows?.length < computedData?.length) {
+          setIsAllOpen(false);
+        }
+
+        return newOpenedRows;
+      });
     }
   };
 

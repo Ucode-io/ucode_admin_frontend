@@ -3,12 +3,13 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import Moveable from "react-moveable";
 import {useDispatch} from "react-redux";
 import {useParams} from "react-router-dom";
-import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator";
-import constructorObjectService from "../../../services/constructorObjectService";
-import {showAlert} from "../../../store/alert/alert.thunk";
+import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
+import constructorObjectService from "@/services/constructorObjectService";
+import { showAlert } from "@/store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
 import {useQueryClient} from "react-query";
+import useFilters from "@/hooks/useFilters";
 
 export default function TimeLineDayDataBlockItem({
   data,
@@ -24,9 +25,11 @@ export default function TimeLineDayDataBlockItem({
   visible_field,
   groupByList,
   selectedType,
+  dateFilters,
 }) {
   const ref = useRef();
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
+  const { filters } = useFilters(tableSlug, view.id);
   const [target, setTarget] = useState();
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
@@ -141,7 +144,22 @@ export default function TimeLineDayDataBlockItem({
       })
       .then((res) => {
         dispatch(showAlert("Успешно обновлено", "success"));
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+        // queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+        queryClient.setQueryData(
+          [
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            { tableSlug, filters, dateFilters, view },
+          ],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              data: oldData.data.map((item) =>
+                item.guid === computedData.guid ? computedData : item
+              ),
+            };
+          }
+        );
       });
   };
 
@@ -175,7 +193,7 @@ export default function TimeLineDayDataBlockItem({
       });
   };
 
-  const onDrag = ({target, width, beforeTranslate}) => {
+  const onDrag = ({ target, width, beforeTranslate }) => {
     if (beforeTranslate[1] < 0) return null;
     const [x, y] = beforeTranslate;
     target.style.transform = `translate(${x}px, 0)`;
@@ -200,7 +218,7 @@ export default function TimeLineDayDataBlockItem({
     ]);
   };
 
-  const onDragEnd = ({lastEvent}) => {
+  const onDragEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onDragEndToUpdate(lastEvent, lastEvent.width);
@@ -210,7 +228,7 @@ export default function TimeLineDayDataBlockItem({
 
   // ----------RESIZE ACTIONS----------------------
 
-  const onResize = ({target, width, drag}) => {
+  const onResize = ({ target, width, drag }) => {
     const beforeTranslate = drag.beforeTranslate;
     if (beforeTranslate[1] < 0) return null;
     target.style.width = `${width}px`;
@@ -236,7 +254,7 @@ export default function TimeLineDayDataBlockItem({
     ]);
   };
 
-  const onResizeEnd = ({lastEvent}) => {
+  const onResizeEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate;
       onResizeEndToUpdate(lastEvent, lastEvent.width);
@@ -259,7 +277,8 @@ export default function TimeLineDayDataBlockItem({
         }}
         onClick={handleOpen}
         ref={ref}
-        key={data?.id_order}>
+        key={data?.id_order}
+      >
         <div
           className={styles.dataBlockInner}
           style={{
@@ -268,7 +287,8 @@ export default function TimeLineDayDataBlockItem({
             position: "relative",
             display: "flex",
             alignItems: "center",
-          }}>
+          }}
+        >
           <CellElementGenerator
             row={data}
             field={computedColumnsFor?.find(
@@ -297,7 +317,7 @@ export default function TimeLineDayDataBlockItem({
           keepRatio={false}
           origin={false}
           renderDirections={["w", "e"]}
-          padding={{left: 0, top: 0, right: 0, bottom: 0}}
+          padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
           onDrag={onDrag}
           onDragEnd={onDragEnd}
           onResize={onResize}

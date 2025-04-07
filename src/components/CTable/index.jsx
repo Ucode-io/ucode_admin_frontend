@@ -47,8 +47,7 @@ export const CTable = ({
           overflow: loader ? "hidden" : "auto",
           width: "100%",
         }}
-        ref={parentRef}
-      >
+        ref={parentRef}>
         {loader ? <PageFallback /> : <table id="resizeMe">{children}</table>}
       </div>
 

@@ -325,6 +325,7 @@ const AutoCompleteElement = ({
               style: {
                 background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
                 color: isBlackBg ? "#fff" : "",
+                height: "32px",
               },
             }}
             size="small"

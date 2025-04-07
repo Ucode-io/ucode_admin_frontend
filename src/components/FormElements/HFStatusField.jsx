@@ -12,7 +12,7 @@ function HFStatusField({
   disabled = false,
 }) {
   return (
-    <Box>
+    <>
       <Controller
         name={name}
         control={control}
@@ -29,7 +29,7 @@ function HFStatusField({
                 "& .MuiSelect-select": {
                   display: "flex",
                   alignItems: "center",
-                  padding: "8px",
+                  padding: "4px",
                   borderRadius: "4px",
                 },
               }}
@@ -119,7 +119,7 @@ function HFStatusField({
           );
         }}
       />
-    </Box>
+    </>
   );
 }
 

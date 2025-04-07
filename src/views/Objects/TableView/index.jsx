@@ -23,6 +23,9 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
+import {store} from "../../../store";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const TableView = ({
   filterVisible,
@@ -72,6 +75,7 @@ const TableView = ({
     (state) => state?.pagination?.paginationInfo
   );
   const [limit, setLimit] = useState(20);
+
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
@@ -84,6 +88,9 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const projectId = store.getState().company.projectId;
+
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
     defaultValues: {
@@ -543,6 +550,25 @@ const TableView = ({
     );
   }, []);
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
+  const calculatedHeight = useMemo(() => {
+    let warningHeight = 0;
+
+    if (isWarningActive || projectInfo?.status === "inactive") {
+      warningHeight = 32;
+    }
+
+    return 32;
+  }, [projectInfo, isWarningActive]);
+  console.log("calculatedHeightcalculatedHeight", calculatedHeight);
   return (
     <div id="wrapper_drag" className={styles.wrapper}>
       {
@@ -592,7 +618,7 @@ const TableView = ({
           setFormValue={setFormValue}
           mainForm={mainForm}
           isRelationTable={false}
-          removableHeight={isDocView ? 150 : 170}
+          removableHeight={isDocView ? 150 : calculatedHeight + 150}
           currentPage={currentPage}
           pagesCount={pageCount}
           selectedObjectsForDelete={selectedObjectsForDelete}

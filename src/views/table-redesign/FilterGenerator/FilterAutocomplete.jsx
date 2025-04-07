@@ -4,6 +4,7 @@ import styles from "./style.module.scss";
 import {Chip} from "./chip";
 import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
+import {useTranslation} from "react-i18next";
 
 const FilterAutoComplete = ({
   options = [],
@@ -16,7 +17,7 @@ const FilterAutoComplete = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
-
+  const {i18n} = useTranslation();
   const computedValue = useMemo(() => {
     return value
       ?.map((el) => options?.find((option) => option.value === el))
@@ -57,7 +58,8 @@ const FilterAutoComplete = ({
         onClick={openMenu}
         onClearButtonClick={onClearButtonClick}
         showCloseIcon={value?.length ?? 0}>
-        {computedValue?.[0]?.label ?? (field?.attributes?.label_en || value[0])}
+        {computedValue?.[0]?.label ??
+          (field?.attributes?.[`label_${i18n?.language}`] || value[0])}
         {(value?.length ?? 0) > 1 && (
           <span style={{color: "#6d757e"}}>{` +${value.length - 1}`}</span>
         )}

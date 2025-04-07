@@ -51,7 +51,7 @@ const CellManyToManyRelationElement = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return field?.attributes?.cascadings?.length === 4 ? (
             <CascadingElement
               field={field}
@@ -117,9 +117,9 @@ const AutoCompleteElement = ({
   newUi,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const [allOptions, setAllOptions] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -136,7 +136,7 @@ const AutoCompleteElement = ({
     }, null);
     return matchingProperty;
   }
-  const { id } = useParams();
+  const {id} = useParams();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const autoFilters = field?.attributes?.auto_filters;
@@ -160,7 +160,7 @@ const AutoCompleteElement = ({
     return result?.guid ? result : value;
   }, [autoFilters, filtersHandler, value]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(
@@ -197,8 +197,8 @@ const AutoCompleteElement = ({
     }
   );
 
-  const { data: optionsFromLocale } = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field?.table_slug],
+  const {data: optionsFromLocale} = useQuery(
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -290,7 +290,7 @@ const AutoCompleteElement = ({
         value={computedValue}
         popupIcon={
           isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
+            <ArrowDropDownIcon style={{color: "#fff"}} />
           ) : (
             <ArrowDropDownIcon />
           )
@@ -301,8 +301,7 @@ const AutoCompleteElement = ({
         noOptionsText={
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
             Create new
           </span>
         }
@@ -326,6 +325,7 @@ const AutoCompleteElement = ({
               style: {
                 background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
                 color: isBlackBg ? "#fff" : "",
+                height: "32px",
               },
             }}
             size="small"
@@ -338,8 +338,7 @@ const AutoCompleteElement = ({
                 {values?.map((el, index) => (
                   <div
                     key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
+                    className={styles.multipleAutocompleteTags}>
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
@@ -349,8 +348,7 @@ const AutoCompleteElement = ({
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}
-                    >
+                      }}>
                       <LaunchIcon
                         style={{
                           fontSize: "15px",
@@ -363,8 +361,8 @@ const AutoCompleteElement = ({
 
                     <Close
                       fontSize="12"
-                      onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: "pointer" }}
+                      onClick={getTagProps({index})?.onDelete}
+                      style={{cursor: "pointer"}}
                     />
                   </div>
                 ))}

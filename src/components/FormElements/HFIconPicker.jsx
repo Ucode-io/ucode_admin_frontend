@@ -26,7 +26,7 @@ const HFIconPicker = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
-        <div>
+        <>
           <IconPicker
             id="icon_field"
             disabled={disabled}
@@ -44,7 +44,7 @@ const HFIconPicker = ({
           {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
-        </div>
+        </>
       )}></Controller>
   );
 };

@@ -165,7 +165,7 @@ const AutoCompleteElement = ({
 
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
-  console.log("localValuelocalValue", localValue);
+
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
   const {navigateToForm} = useTabRouter();
@@ -332,7 +332,7 @@ const AutoCompleteElement = ({
       if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
-      console.log("resssssssss?.dataaaa getValue", res);
+
       setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
@@ -458,7 +458,6 @@ const AutoCompleteElement = ({
 
       if (foundOption) {
         setValue(foundOption?.guid);
-        console.log("foundOptionfoundOption", foundOption);
         setLocalValue([foundOption]);
       }
     }

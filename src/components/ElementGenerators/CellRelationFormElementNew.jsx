@@ -198,7 +198,7 @@ const AutoCompleteElement = ({
     }),
     menuPortal: (base) => ({
       ...base,
-      zIndex: 9999, // Ensures the dropdown appears on top of the drawer
+      zIndex: 9999,
     }),
   };
 

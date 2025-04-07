@@ -1,32 +1,29 @@
-
 .iconWrapper {
-    width: 35px;
-    height: 35px;
-    border: 1px solid silver;
-    display: flex;
-    align-items: center;
-    border-radius: 50%;
-    justify-content: center;
-    cursor: pointer;
-    color: #0067F4;
+  width: 26px;
+  height: 26px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+  color: #0067f4;
 
-    &.rectangle {
-      border-radius: 6px;
-      margin-top: 7px;
-    }
+  &.rectangle {
+    border-radius: 6px;
+    margin-top: 7px;
+  }
 
-    &.error {
-      border-color: red !important;
-    }
-  
-    &:hover {
-      transform: scale(1.2);
-    }
+  &.error {
+    border-color: red !important;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
-
 .menuPaper {
-
 }
 
 .menuList {
@@ -50,7 +47,7 @@
   border-radius: 50%;
   justify-content: center;
   cursor: pointer;
-  
+
   &:hover {
     transform: scale(1.2);
   }
@@ -63,15 +60,15 @@
 //   gap: 5px;
 
 //   .popupIconWrapper {
-    // width: 30px;
-    // height: 30px;
-    // border: 1px solid silver;
-    // display: flex;
-    // align-items: center;
-    // border-radius: 50%;
-    // justify-content: center;
-    // cursor: pointer;
-  
+// width: 30px;
+// height: 30px;
+// border: 1px solid silver;
+// display: flex;
+// align-items: center;
+// border-radius: 50%;
+// justify-content: center;
+// cursor: pointer;
+
 //     &:hover {
 //       transform: scale(1.2);
 //     }

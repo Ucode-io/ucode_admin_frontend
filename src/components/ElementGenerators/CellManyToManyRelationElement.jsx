@@ -198,7 +198,7 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(

@@ -120,18 +120,6 @@ const HFNumberField = ({
                 {error?.message}
               </FormHelperText>
             )}
-
-            {disabled && (
-              <Box
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "5px",
-                }}>
-                <Lock style={{fontSize: "20px"}} />
-              </Box>
-            )}
           </Box>
         );
       }}

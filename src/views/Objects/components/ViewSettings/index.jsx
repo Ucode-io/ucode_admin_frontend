@@ -4,10 +4,8 @@ import {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {useParams} from "react-router-dom";
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import constructorObjectService from "../../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
-import ViewsList from "./ViewsList";
 import constructorTableService from "../../../../services/constructorTableService";
 
 const ViewSettings = ({
@@ -25,7 +23,7 @@ const ViewSettings = ({
 }) => {
   const {tableSlug, appId} = useParams();
   const closeForm = () => setSelectedView(null);
-  console.log("viewDataviewData", viewData);
+
   const {
     data: {fields, views, columns, relationColumns} = {
       fields: [],

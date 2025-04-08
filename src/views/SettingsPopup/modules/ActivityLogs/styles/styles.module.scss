@@ -4,13 +4,17 @@
   }
 }
 
+.dateIcon {
+  opacity: 0.5;
+}
+
 .tag {
   padding: 4px 0;
   text-align: center;
   border-radius: 6px;
-  font-weight: 700;
-  font-size: 13px;
-  line-height: 22px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
   position: relative;
   color: #fff;
 
@@ -345,6 +349,7 @@
 }
 
 .tBodyCell {
+  padding: 8px;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;

@@ -15,6 +15,8 @@ import HeaderSettings from "@/components/HeaderSettings";
 import SearchInput from "@/components/SearchInput";
 import FiltersBlock from "@/components/FiltersBlock";
 import { ContentTitle } from "../../components/ContentTitle";
+import { Box } from "@mui/material";
+import clsx from "clsx";
 
 export const Models = () => {
   const { tables, loader, setSearchText, navigateToEditForm, deleteTable } =
@@ -23,23 +25,34 @@ export const Models = () => {
   return (
     <>
       <div>
-        <ContentTitle>Таблицы</ContentTitle>
-
-        <FiltersBlock>
-          <div className="p-1">
+        <ContentTitle>
+          <Box
+            display={"flex"}
+            justifyContent="space-between"
+            alignItems={"center"}
+          >
+            <span>Таблицы</span>
             <SearchInput
               onChange={(val) => {
                 setSearchText(val);
               }}
             />
+          </Box>
+        </ContentTitle>
+
+        {/* <FiltersBlock>
+          <div className="p-1">
+            
           </div>
-        </FiltersBlock>
+        </FiltersBlock> */}
         <TableCard type={"withoutPadding"}>
           <CTable
-            tableStyle={{
-              borderRadius: "0px",
-              border: "none",
-            }}
+            tableStyle={
+              {
+                // borderRadius: "0px",
+                // border: "none",
+              }
+            }
             disablePagination
             removableHeight={120}
           >
@@ -62,10 +75,11 @@ export const Models = () => {
                     {element.description}
                   </CTableCell>
 
-                  <CTableCell className={cls.tBodyCell}>
+                  <CTableCell className={clsx(cls.tBodyCell, cls.tBodyAction)}>
                     <RectangleIconButton
                       id="delete_btn"
                       color="error"
+                      size="small"
                       onClick={() => deleteTable(element.id)}
                     >
                       <Delete color="error" />

@@ -7,6 +7,7 @@ export const useActivityLogsProps = () => {
   const activityLan = useGetLang("Activity Logs")
 
   const [actionValue, setActionValue] = useState({});
+  const [actionType, setActionType] = useState({});
 
   const [histories, setHistories] = useState(null);
   const [dateFilters, setDateFilters] = useState({
@@ -22,5 +23,7 @@ export const useActivityLogsProps = () => {
     activityLan,
     actionValue,
     setActionValue,
-  }
+    actionType,
+    setActionType,
+  };
 }

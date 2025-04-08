@@ -8,10 +8,53 @@ import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "@/compone
 import { ActivityFeedColors } from "@/components/Status";
 import { TableDataSkeleton } from "@/components/TableDataSkeleton/TableDataSkeleton";
 import { Box, Fade, Paper, Popper } from "@mui/material";
-import { Image, Input, InputGroup, InputLeftElement, position } from "@chakra-ui/react";
+import { Image, Input } from "@chakra-ui/react";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import Select from "react-select";
 import { customStyles } from "@/components/Status";
+
+const selectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    background: "transparent",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    minWidth: "200px",
+    outline: "none",
+    minHeight: "24px",
+    height: "24px",
+    border: "none",
+    cursor: "pointer",
+  }),
+  input: (provided) => ({
+    ...provided,
+    width: "100%",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    display: "flex",
+    fontSize: "12px",
+    fontWeight: "500",
+    color: "#475467",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    background: state.isSelected ? "#007AFF" : provided.background,
+    color: state.isSelected ? "#fff" : provided.color,
+    cursor: "pointer",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    width: "20px",
+    height: "20px",
+    padding: "0",
+  }),
+};
 
 export const ActivityFeedTable = ({
   setHistories,
@@ -21,8 +64,10 @@ export const ActivityFeedTable = ({
   actionByVisible = true,
   dateFilters,
   actionValue,
+  activityLan,
+  actionType,
+  setActionType,
 }) => {
-
   const {
     pageCount,
     currentPage,
@@ -42,13 +87,19 @@ export const ActivityFeedTable = ({
     onUserInfoClick,
     collectionRef,
     userInfoRef,
+    inputValue,
+    setInputValue,
+    actionOptions,
+    changeHandler,
   } = useActivityFeedTableProps({
     setHistories,
     requestType,
     apiKey,
     dateFilters,
     actionValue,
-  })
+    actionType,
+    setActionType,
+  });
 
   return (
     <>
@@ -66,7 +117,33 @@ export const ActivityFeedTable = ({
               №
             </CTableCell>
             <CTableCell className={cls.tableHeadCell} width={130}>
-              Action
+              {/* Action */}
+              <Select
+                inputValue={inputValue}
+                onInputChange={(newInputValue, { action }) => {
+                  setInputValue(newInputValue);
+                }}
+                options={actionOptions}
+                isClearable
+                isSearchable
+                onChange={(newValue, { action }) => {
+                  if (action === "clear") {
+                    setInputValue("");
+                  }
+                  changeHandler(newValue);
+                }}
+                value={actionType?.label ? actionType : null}
+                menuShouldScrollIntoView
+                styles={selectStyles}
+                isOptionSelected={(option, value) =>
+                  value.some((val) => val.guid === value)
+                }
+                placeholder={
+                  generateLangaugeText(activityLan, i18n?.language, "Action") ||
+                  "Action"
+                }
+                blurInputOnSelect
+              />
             </CTableCell>
             <CTableCell
               className={cls.tableHeadCell}
@@ -170,7 +247,6 @@ export const ActivityFeedTable = ({
               histories?.histories?.map((element, index) => {
                 return (
                   <CTableRow
-                    height="50px"
                     className={cls.row}
                     key={element.id}
                     onClick={() => {

@@ -14,7 +14,9 @@ export const ActivityLogs = () => {
     activityLan,
     actionValue,
     setActionValue,
-  } = useActivityLogsProps()
+    actionType,
+    setActionType,
+  } = useActivityLogsProps();
 
   return (
     <Box className={cls.activity}>
@@ -24,11 +26,15 @@ export const ActivityLogs = () => {
         dateFilters={dateFilters}
         activityLan={activityLan}
         setActionValue={setActionValue}
+        actionType={actionType}
       />
       <ActivityFeedTable
         setHistories={setHistories}
         dateFilters={dateFilters}
         actionValue={actionValue}
+        activityLan={activityLan}
+        actionType={actionType}
+        setActionType={setActionType}
       />
     </Box>
   );

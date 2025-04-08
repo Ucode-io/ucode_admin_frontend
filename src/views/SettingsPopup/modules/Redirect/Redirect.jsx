@@ -15,6 +15,7 @@ import {
   CTableHead,
   CTableRow,
 } from "@/components/CTable";
+import clsx from "clsx";
 
 export const Redirect = () => {
   const {
@@ -42,8 +43,8 @@ export const Redirect = () => {
           </CTableCell>
           <CTableCell className={cls.tableHeadCell}>From</CTableCell>
           <CTableCell className={cls.tableHeadCell}>To</CTableCell>
-          <CTableCell>Created at</CTableCell>
-          <CTableCell>Updated at</CTableCell>
+          <CTableCell className={cls.tableHeadCell}>Created at</CTableCell>
+          <CTableCell className={cls.tableHeadCell}>Updated at</CTableCell>
           <CTableCell width={60}></CTableCell>
         </CTableHead>
         <CTableBody>
@@ -67,14 +68,15 @@ export const Redirect = () => {
                   "MMMM d, yyyy 'at' kk:mm"
                 )}
               </CTableCell>
-              <CTableCell className={cls.tBodyCell}>
+              <CTableCell className={clsx(cls.tBodyCell, cls.tBodyCellAction)}>
                 <RectangleIconButton
+                  size="small"
                   color="error"
                   onClick={() => {
                     deleteRedirectElement(element.id);
                   }}
                 >
-                  <Delete color="error" />
+                  <Delete color="error" fontSize="14px" />
                 </RectangleIconButton>
               </CTableCell>
             </CTableRow>

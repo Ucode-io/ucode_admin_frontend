@@ -36,27 +36,28 @@ export const Functions = () => {
       <ContentTitle>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <span>Environments</span>
-          <PermissionWrapperV2 tableSlug="app" type="write">
-            <Button primary onClick={navigateToCreateForm}>
-              Add
-            </Button>
-          </PermissionWrapperV2>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={"16px"}
+          >
+            <SearchInput onChange={(e) => inputChangeHandler(e)} />
+            <PermissionWrapperV2 tableSlug="app" type="write">
+              <Button primary onClick={navigateToCreateForm}>
+                Add
+              </Button>
+            </PermissionWrapperV2>
+          </Box>
         </Box>
       </ContentTitle>
-
+      {/* 
       <FiltersBlock>
         <SearchInput onChange={(e) => inputChangeHandler(e)} />
-      </FiltersBlock>
+      </FiltersBlock> */}
 
       <TableCard type={"withoutPadding"}>
-        <CTable
-          tableStyle={{
-            borderRadius: "0px",
-            border: "none",
-          }}
-          disablePagination
-          removableHeight={140}
-        >
+        <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell className={cls.tableHeadCell} width={10}>
               №

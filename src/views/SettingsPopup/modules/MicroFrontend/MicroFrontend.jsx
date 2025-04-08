@@ -38,29 +38,30 @@ export const MicroFrontend = () => {
       <ContentTitle>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <span>Microfrontend</span>
-          <PermissionWrapperV2 tableSlug="app" type="write">
-            <Button primary onClick={navigateToCreateForm}>
-              Add
-            </Button>
-            {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
-          </PermissionWrapperV2>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            gap={"16px"}
+          >
+            <SearchInput onChange={inputChangeHandler} />
+            <PermissionWrapperV2 tableSlug="app" type="write">
+              <Button primary onClick={navigateToCreateForm}>
+                Add
+              </Button>
+              {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
+            </PermissionWrapperV2>
+          </Box>
         </Box>
       </ContentTitle>
-      <FiltersBlock>
+      {/* <FiltersBlock>
         <div className="p-1">
           <SearchInput onChange={inputChangeHandler} />
         </div>
-      </FiltersBlock>
+      </FiltersBlock> */}
 
       <TableCard type={"withoutPadding"}>
-        <CTable
-          tableStyle={{
-            borderRadius: "0px",
-            border: "none",
-          }}
-          disablePagination
-          removableHeight={140}
-        >
+        <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell className={cls.tableHeadCell} width={10}>
               №

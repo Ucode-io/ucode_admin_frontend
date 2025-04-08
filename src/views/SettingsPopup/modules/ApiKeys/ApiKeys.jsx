@@ -138,6 +138,7 @@ export const ApiKeys = () => {
                       <RectangleIconButton
                         color="error"
                         onClick={() => deleteTable(element?.id)}
+                        size="small"
                       >
                         <Delete color="error" />
                       </RectangleIconButton>

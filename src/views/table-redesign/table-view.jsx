@@ -595,6 +595,7 @@ const TableView = ({
         {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType?.icon === "SidePeek" ? (
           <DrawerDetailPage
+            projectInfo={projectInfo}
             open={open}
             setFormValue={setFormValue}
             setOpen={setOpen}
@@ -610,6 +611,7 @@ const TableView = ({
           />
         ) : selectedViewType?.icon === "CenterPeek" ? (
           <NewModalDetailPage
+            projectInfo={projectInfo}
             open={open}
             setFormValue={setFormValue}
             setOpen={setOpen}

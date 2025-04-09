@@ -54,7 +54,7 @@ const ViewTabSelector = ({
     setSelectedView("NEW");
     setAnchorEl(event.currentTarget);
   };
-  console.log("selectedViewselectedView", selectedView);
+
   const handleClose = () => {
     setAnchorEl(null);
   };

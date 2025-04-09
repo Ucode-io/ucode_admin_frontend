@@ -30,6 +30,7 @@ function NewModalDetailPage({
   menuItem,
   fieldsMap,
   selectedRow,
+  projectInfo,
   dateInfo = {},
   selectedViewType,
   fullScreen = false,
@@ -469,6 +470,7 @@ function NewModalDetailPage({
               <TabPanel>
                 <Box overflow={"auto"} h={"600px"} p="0px 80px">
                   <NewModalFormPage
+                    projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}
                     getValues={getValues}
                     setFormValue={setFormValue}

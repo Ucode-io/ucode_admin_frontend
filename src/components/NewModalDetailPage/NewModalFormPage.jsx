@@ -1,5 +1,5 @@
-import {Box, Menu, MenuItem, TextField} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import {Box, Menu, MenuItem, TextField, Button} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
 import "./style.scss";
@@ -22,6 +22,7 @@ function NewModalFormPage({
   layout,
   fieldsMap,
   selectedRow,
+  projectInfo,
   selectedTab = {},
   selectedTabIndex = 0,
   setFormValue = () => {},
@@ -29,6 +30,7 @@ function NewModalFormPage({
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
   const [dragAction, setDragAction] = useState(false);
+  const [activeLang, setActiveLang] = useState();
 
   const [sections, setSections] = useState(data?.tabs?.[0]?.sections || []);
 
@@ -77,9 +79,49 @@ function NewModalFormPage({
     );
   }, [selectedTab, selectedRow]);
 
+  const getFieldLanguageLabel = (el) => {
+    if (el?.enable_multilanguage) {
+      return el?.attributes?.show_label
+        ? `${el?.label} (${activeLang ?? slugSplit(el?.slug)})`
+        : el?.attributes?.[`label_${i18n?.language}`];
+    } else {
+      if (el?.show_label === false) return "";
+      else
+        return el?.attributes?.[`label_${i18n.language}`] || el?.label || " ";
+    }
+  };
+
+  const isMultiLanguage = useMemo(() => {
+    const allFields = [];
+    selectedTab?.sections?.map((section) => {
+      return section?.fields?.map((field) => {
+        return allFields.push(field);
+      });
+    });
+    return !!allFields.find((field) => field?.enable_multilanguage === true);
+  }, [selectedTab]);
+
+  useEffect(() => {
+    if (isMultiLanguage) {
+      setActiveLang(projectInfo?.language?.[0]?.short_name);
+    }
+  }, [isMultiLanguage, projectInfo]);
+
   return (
     <>
       <Box id="newModalDetail" mt="10px" pb={"10px"}>
+        {isMultiLanguage && (
+          <div className={"language"}>
+            {projectInfo?.language?.map((lang) => (
+              <Button
+                className={activeLang === lang?.short_name && "active"}
+                onClick={() => setActiveLang(lang?.short_name)}>
+                {lang?.name}
+              </Button>
+            ))}
+          </div>
+        )}
+
         <HeadingOptions
           selectedRow={selectedRow}
           watch={watch}
@@ -110,9 +152,6 @@ function NewModalFormPage({
                         display={isHidden ? "none" : "flex"}
                         alignItems="center"
                         height={"34px"}
-                        // {...(Boolean(field?.type === "MULTISELECT")
-                        //   ? {minHeight: "30px"}
-                        //   : {height: "34px"})}
                         py="8px">
                         <Box
                           display="flex"
@@ -152,12 +191,12 @@ function NewModalFormPage({
                             color="#787774"
                             fontWeight="500"
                             width="100%">
-                            {field?.attributes?.[`label_${i18n?.language}`] ||
-                              field?.label}
+                            {getFieldLanguageLabel(field)}
                           </Box>
                         </Box>
                         <Box sx={{minWidth: "500px"}}>
                           <DrawerFieldGenerator
+                            activeLang={activeLang}
                             drawerDetail={true}
                             control={control}
                             field={field}

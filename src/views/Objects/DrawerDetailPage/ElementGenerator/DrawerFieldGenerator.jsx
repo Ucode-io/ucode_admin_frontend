@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import RelationField from "./RelationField";
 import {
   HFDateDatePickerWithoutTimeZoneTableField,
@@ -38,6 +38,7 @@ import FunctionsIcon from "@mui/icons-material/Functions";
 import {Lock} from "@mui/icons-material";
 import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
 import {numberWithSpaces} from "../../../../utils/formatNumbers";
+import MultiLineInput from "./MultiLineInput";
 
 function DrawerFieldGenerator({
   field,
@@ -45,7 +46,34 @@ function DrawerFieldGenerator({
   watch,
   drawerDetail,
   isDisabled,
+  activeLang = "",
 }) {
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = slug.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
+  const computedSlug = useMemo(() => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${activeLang}`;
+    } else if (field.id?.includes("@")) {
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    } else if (field?.id?.includes("#")) {
+      if (field?.type === "Many2Many") {
+        return `${field.id?.split("#")?.[0]}_ids`;
+      } else if (field?.type === "Many2One") {
+        return `${field.id?.split("#")?.[0]}_id`;
+      }
+    }
+
+    return field?.slug;
+  }, [field?.slug, activeLang, field?.enable_multilanguage]);
+
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
       return (
@@ -53,7 +81,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           field={field}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
         />
       );
     case "MULTI_LINE":
@@ -62,7 +90,7 @@ function DrawerFieldGenerator({
           isDisabled={isDisabled}
           placeholder={"Empty"}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           watch={watch}
         />
@@ -73,7 +101,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           field={field}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           drawerDetail={drawerDetail}
         />
       );
@@ -84,7 +112,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           field={field}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           drawerDetail={drawerDetail}
         />
       );
@@ -94,7 +122,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           field={field}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           drawerDetail={true}
         />
       );
@@ -103,7 +131,7 @@ function DrawerFieldGenerator({
         <HFTimePickerField
           disabled={isDisabled}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           drawerDetail={drawerDetail}
         />
@@ -115,7 +143,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           type="password"
           control={control}
-          name={field?.slug}
+          name={computedSlug}
         />
       );
 
@@ -125,7 +153,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
         />
       );
 
@@ -135,7 +163,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
         />
       );
 
@@ -145,7 +173,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
         />
       );
 
@@ -155,7 +183,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -165,7 +193,7 @@ function DrawerFieldGenerator({
         <HFMultipleAutocomplete
           disabled={isDisabled}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           placeholder={"Empty"}
         />
@@ -177,7 +205,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -189,7 +217,7 @@ function DrawerFieldGenerator({
           drawerDetail={drawerDetail}
           isTableView={true}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -201,7 +229,7 @@ function DrawerFieldGenerator({
           drawerDetail={true}
           isTableView={true}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -212,7 +240,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           placeholder={"Empty"}
         />
@@ -224,7 +252,7 @@ function DrawerFieldGenerator({
         <NumberField
           disabled={isDisabled}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           placeholder="Empty"
         />
@@ -236,7 +264,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -247,7 +275,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           watch={watch}
         />
@@ -258,7 +286,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
           placeholder="Empty"
         />
@@ -269,7 +297,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          computedSlug={field?.slug}
+          computedSlug={computedSlug}
           field={field}
         />
       );
@@ -280,7 +308,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -290,7 +318,7 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -300,7 +328,7 @@ function DrawerFieldGenerator({
         <FormulaField
           disabled={isDisabled}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
           field={field}
         />
       );
@@ -310,7 +338,7 @@ function DrawerFieldGenerator({
         <InputField
           disabled={isDisabled}
           control={control}
-          name={field?.slug}
+          name={computedSlug}
         />
       );
   }
@@ -405,96 +433,6 @@ const NumberField = ({
           );
         }}
       />
-    </>
-  );
-};
-
-const MultiLineInput = ({
-  control,
-  name,
-  isDisabled = false,
-  field,
-  isWrapField = false,
-  watch,
-  props,
-  placeholder = "",
-}) => {
-  const value = useWatch({
-    control,
-    name: name,
-  });
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-
-  const stripHtmlTags = (input) => {
-    return input.replace(/<[^>]*>/g, "");
-  };
-  return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          width: "325px",
-          color: "#787774",
-          padding: "5px 9.6px",
-          borderRadius: "4px",
-          "&:hover": {
-            backgroundColor: "#F7F7F7",
-          },
-        }}>
-        <Box
-          sx={{width: "100%", fontSize: "14px"}}
-          id="textAreaInput"
-          onClick={(e) => {
-            !isDisabled && handleClick(e);
-          }}>
-          {stripHtmlTags(
-            value
-              ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
-              : "Empty"
-          )}
-        </Box>
-
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}>
-          <HFTextEditor
-            drawerDetail={true}
-            id="multi_line"
-            control={control}
-            name={name}
-            tabIndex={field?.tabIndex}
-            fullWidth
-            multiline
-            rows={4}
-            defaultValue={field.defaultValue}
-            disabled={isDisabled}
-            key={name}
-            isTransparent={true}
-            {...props}
-          />
-        </Popover>
-      </Box>
     </>
   );
 };

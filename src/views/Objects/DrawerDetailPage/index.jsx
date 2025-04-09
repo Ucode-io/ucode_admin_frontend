@@ -43,6 +43,7 @@ function DrawerDetailPage({
   dateInfo = {},
   selectedViewType,
   fullScreen = false,
+  projectInfo,
   setLayoutType = () => {},
   setFullScreen = () => {},
   navigateToEditPage = () => {},
@@ -519,6 +520,7 @@ function DrawerDetailPage({
                   p="0px 50px"
                   overflow={"auto"}>
                   <DrawerFormDetailPage
+                    projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}
                     getValues={getValues}
                     setFormValue={setFormValue}

@@ -7,7 +7,14 @@ import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import { Button, Divider, Menu, Popover } from "@mui/material";
-import { add, differenceInDays, endOfMonth, set, startOfMonth } from "date-fns";
+import {
+  add,
+  differenceInDays,
+  endOfMonth,
+  format,
+  set,
+  startOfMonth,
+} from "date-fns";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueries, useQuery, useQueryClient } from "react-query";
@@ -269,17 +276,17 @@ export default function TimeLineView({
 
   const [selectedType, setSelectedType] = useState("day");
 
-  const handleScrollClick = () => {
-    const scrollToDiv = document.getElementById("todayDate");
+  // const handleScrollClick = () => {
+  //   const scrollToDiv = document.getElementById("todayDate");
 
-    if (scrollToDiv) {
-      scrollToDiv.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
-    }
-  };
+  //   if (scrollToDiv) {
+  //     scrollToDiv.scrollIntoView({
+  //       behavior: "smooth",
+  //       block: "center",
+  //       inline: "center",
+  //     });
+  //   }
+  // };
 
   const form = useForm({
     defaultValues: {
@@ -384,6 +391,23 @@ export default function TimeLineView({
   const { handleScroll, calendarRef, months, scrollToMonth } =
     useDateLineProps();
 
+  const scrollToToday = () => {
+    const container = calendarRef.current;
+    if (!container) return;
+
+    const today = format(new Date(), "dd.MM.yyyy");
+    const todayElement = container.querySelector(`[data-date='${today}']`);
+
+    if (todayElement) {
+      const offset = todayElement.offsetLeft - container.offsetLeft;
+
+      container.scrollTo({
+        left: offset - container.clientWidth / 2,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div>
       {/* <FiltersBlock>
@@ -430,7 +454,7 @@ export default function TimeLineView({
               margin: "0 5px",
               color: "#888",
             }}
-            onClick={handleScrollClick}
+            onClick={scrollToToday}
           >
             Today
           </Button>
@@ -714,7 +738,7 @@ export default function TimeLineView({
           <TimeLineBlock
             setDataFromQuery={setDataFromQuery}
             dataFromQuery={dataFromQuery}
-            handleScrollClick={handleScrollClick}
+            scrollToToday={scrollToToday}
             isLoading={isLoading}
             computedColumnsFor={computedColumnsFor}
             view={view}

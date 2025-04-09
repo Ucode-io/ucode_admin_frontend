@@ -6,12 +6,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import WorkspacesIcon from "@mui/icons-material/Workspaces";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
-import {Button, Divider, Menu} from "@mui/material";
-import {add, differenceInDays, endOfMonth, set, startOfMonth} from "date-fns";
-import React, {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useQueries, useQuery, useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
+import { Button, Divider, Menu, Popover } from "@mui/material";
+import { add, differenceInDays, endOfMonth, set, startOfMonth } from "date-fns";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQueries, useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
 import FiltersBlock from "../../../components/FiltersBlock";
 import FRow from "../../../components/FormElements/FRow";
@@ -20,18 +20,44 @@ import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorViewService from "../../../services/constructorViewService";
-import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
-import {listToMap} from "../../../utils/listToMap";
+import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
+import { listToMap } from "../../../utils/listToMap";
 import listToOptions from "../../../utils/listToOptions";
-import {selectElementFromEndOfString} from "../../../utils/selectElementFromEnd";
+import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import TimeLineBlock from "./TimeLineBlock";
 import TimeLineGroupBy from "./TimeLineGroupBy";
 import style from "./styles.module.scss";
 import constructorTableService from "../../../services/constructorTableService";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import listToLanOptions from "../../../utils/listToLanOptions";
 import { useDateLineProps } from "./hooks/useDateLineProps";
+import {
+  Flex,
+  Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  PopoverContent,
+} from "@chakra-ui/react";
+import SVG from "react-inlinesvg";
+import { useDispatch } from "react-redux";
+import { viewsActions } from "../../../store/views/view.slice";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
+import CRangePickerNew from "../../../components/DatePickers/CRangePickerNew";
+import ViewTypeList from "../components/ViewTypeList";
+import { computedViewTypes } from "../../../utils/constants/viewTypes";
+import { useGetLang } from "../../../hooks/useGetLang";
+import { getColumnIcon } from "../../table-redesign/icons";
+
+const viewIcons = {
+  TABLE: "layout-alt-01.svg",
+  CALENDAR: "calendar.svg",
+  BOARD: "rows.svg",
+  GRID: "grid.svg",
+  TIMELINE: "line-chart-up.svg",
+};
 
 export default function TimeLineView({
   view,
@@ -52,6 +78,9 @@ export default function TimeLineView({
     endOfMonth(new Date()),
   ]);
   const { i18n } = useTranslation();
+  const dispatch = useDispatch();
+  const [viewAnchorEl, setViewAnchorEl] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const [fieldsMap, setFieldsMap] = useState({});
   const [dataFromQuery, setDataFromQuery] = useState([]);
@@ -357,7 +386,7 @@ export default function TimeLineView({
 
   return (
     <div>
-      <FiltersBlock>
+      {/* <FiltersBlock>
         <ViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -371,7 +400,7 @@ export default function TimeLineView({
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
-      </FiltersBlock>
+      </FiltersBlock> */}
 
       <div
         className={style.search}
@@ -671,9 +700,11 @@ export default function TimeLineView({
 
       <div
         className={styles.wrapper}
-        style={{
-          height: "calc(100vh - 92px)",
-        }}
+        style={
+          {
+            // height: "calc(100vh - 92px)",
+          }
+        }
         ref={calendarRef}
         // onScroll={handleScroll}
       >

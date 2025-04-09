@@ -222,6 +222,52 @@ const ObjectsPage = () => {
     );
   }
 
+  const defaultProps = {
+    setViews: setViews,
+    selectedTabIndex: selectedTabIndex,
+    setSelectedTabIndex: setSelectedTabIndex,
+    views: views,
+    fieldsMap: fieldsMap,
+  };
+
+  const renderView = {
+    BOARD: (props) => (
+      <BoardView
+        menuItem={menuItem}
+        fieldsMapRel={fieldsMapRel}
+        {...defaultProps}
+        {...props}
+      />
+    ),
+    CALENDAR: (props) => (
+      <CalendarView menuItem={menuItem} {...defaultProps} {...props} />
+    ),
+    "CALENDAR HOUR": (props) => (
+      <CalendarHourView {...defaultProps} {...props} />
+    ),
+    GANTT: (props) => <GanttView {...defaultProps} {...props} />,
+    DEFAULT: (props) => (
+      <ViewsComponent
+        visibleColumns={visibleColumns}
+        visibleRelationColumns={visibleRelationColumns}
+        menuItem={menuItem}
+        refetchViews={refetch}
+        {...defaultProps}
+        {...props}
+      />
+    ),
+    // TIMELINE: (props) => (
+    //   <TimeLineView
+    //     setViews={() => {}}
+    //     isViewLoading={isLoading}
+    //     {...defaultProps}
+    //     {...props}
+    //   />
+    // ),
+  };
+
+  const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
@@ -229,80 +275,7 @@ const ObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {view.type === "BOARD" ? (
-                  <>
-                    <BoardView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                      fieldsMapRel={fieldsMapRel}
-                      menuItem={menuItem}
-                    />
-                  </>
-                ) : view.type === "CALENDAR" ? (
-                  <>
-                    <CalendarView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                      menuItem={menuItem}
-                    />
-                  </>
-                ) : view.type === "CALENDAR HOUR" ? (
-                  <>
-                    <CalendarHourView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                ) : view.type === "GANTT" ? (
-                  <>
-                    <GanttView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                ) : view.type === "TIMELINE" ? (
-                  <>
-                    <TimeLineView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                      isViewLoading={isLoading}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <ViewsComponent
-                      visibleColumns={visibleColumns}
-                      visibleRelationColumns={visibleRelationColumns}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      menuItem={menuItem}
-                      refetchViews={refetch}
-                    />
-                  </>
-                )}
+                {getViewComponent([view?.type])({ view })}
               </TabPanel>
             );
           })}

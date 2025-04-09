@@ -3,10 +3,10 @@ import HFTextEditor from "../FormElements/HFTextEditor";
 import {Box, Popover} from "@mui/material";
 import {useWatch} from "react-hook-form";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../store/alert/alert.thunk";
 import cls from "./style.module.scss";
-import { parseHTMLToText } from "../../utils/parseHTMLToText";
+import {parseHTMLToText} from "../../utils/parseHTMLToText";
 
 export default function MultiLineCellFormElement({
   control,
@@ -59,14 +59,12 @@ export default function MultiLineCellFormElement({
         className={cls.multiLineCellFormElement}
         style={{
           display: "flex",
-        }}
-      >
+        }}>
         <button
           className={cls.multiLineCellFormElementBtn}
-          onClick={() => handleCopy(value)}
-        >
+          onClick={() => handleCopy(value)}>
           <span>
-            <ContentCopyIcon />
+            <ContentCopyIcon style={{width: "17px", height: "17px"}} />
           </span>
         </button>
         <p
@@ -91,8 +89,7 @@ export default function MultiLineCellFormElement({
                   cursor: "text",
                   minHeight: "16px",
                 }
-          }
-        >
+          }>
           {stripHtmlTags(
             value
               ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
@@ -112,8 +109,7 @@ export default function MultiLineCellFormElement({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}
-        >
+          }}>
           <HFTextEditor
             id="multi_line"
             control={control}

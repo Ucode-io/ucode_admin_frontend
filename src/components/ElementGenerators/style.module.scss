@@ -13,7 +13,8 @@
 .multiLineCellFormElementBtn {
   display: none;
   position: absolute;
-  top: 5px;
+  top: 50%;
+  transform: translateY(-50%);
   left: 5px;
   background-color: #fff;
   border-radius: 5px;

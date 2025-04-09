@@ -196,6 +196,10 @@ const LoginFormDesign = ({
             "newUi",
             res?.companies?.[0]?.projects?.[0]?.new_design
           );
+          localStorage.setItem(
+            "newLayout",
+            res?.companies?.[0]?.projects?.[0]?.new_layout
+          );
         } else {
           dispatch(showAlert("The company does not exist", "error"));
         }

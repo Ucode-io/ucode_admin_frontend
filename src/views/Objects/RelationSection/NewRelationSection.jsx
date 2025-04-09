@@ -435,35 +435,38 @@ const NewRelationSection = ({
                 <TabPanel key={el.id}>
                   {selectedTab?.type === "section" ? (
                     <>
-                      {/* <FullpagePeekMaininfo
-                        updateCurrentLayout={updateCurrentLayout}
-                        control={control}
-                        loader={loader}
-                        isMultiLanguage={isMultiLanguage}
-                        computedSections={computedSections}
-                        setFormValue={setFormValue}
-                        relatedTable={relatedTable}
-                        relation={data}
-                        selectedIndex={selectedIndex}
-                        errors={errors}
-                        watch={watch}
-                        fieldsMap={fieldsMap}
-                        getValues={getValues}
-                        selectedTab={selectedTab}
-                      /> */}
-                      <NewMainInfo
-                        control={control}
-                        loader={loader}
-                        isMultiLanguage={isMultiLanguage}
-                        computedSections={computedSections}
-                        setFormValue={setFormValue}
-                        relatedTable={relatedTable}
-                        relation={data}
-                        selectedIndex={selectedIndex}
-                        errors={errors}
-                        watch={watch}
-                        getValues={getValues}
-                      />
+                      {localStorage.getItem("newLayout") ? (
+                        <FullpagePeekMaininfo
+                          updateCurrentLayout={updateCurrentLayout}
+                          control={control}
+                          loader={loader}
+                          isMultiLanguage={isMultiLanguage}
+                          computedSections={computedSections}
+                          setFormValue={setFormValue}
+                          relatedTable={relatedTable}
+                          relation={data}
+                          selectedIndex={selectedIndex}
+                          errors={errors}
+                          watch={watch}
+                          fieldsMap={fieldsMap}
+                          getValues={getValues}
+                          selectedTab={selectedTab}
+                        />
+                      ) : (
+                        <NewMainInfo
+                          control={control}
+                          loader={loader}
+                          isMultiLanguage={isMultiLanguage}
+                          computedSections={computedSections}
+                          setFormValue={setFormValue}
+                          relatedTable={relatedTable}
+                          relation={data}
+                          selectedIndex={selectedIndex}
+                          errors={errors}
+                          watch={watch}
+                          getValues={getValues}
+                        />
+                      )}
                     </>
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection

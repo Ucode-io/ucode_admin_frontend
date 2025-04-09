@@ -1,5 +1,5 @@
-import {Box, Menu, MenuItem, TextField} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
 import {getColumnIcon} from "../../table-redesign/icons";
@@ -27,11 +27,13 @@ function DrawerFormDetailPage({
   selectedRow,
   selectedTabIndex = 0,
   handleMouseDown,
+  projectInfo,
   setFormValue = () => {},
 }) {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
   const [dragAction, setDragAction] = useState(false);
+  const [activeLang, setActiveLang] = useState();
 
   const [sections, setSections] = useState(
     data?.tabs?.[selectedTabIndex]?.sections || []
@@ -97,6 +99,34 @@ function DrawerFormDetailPage({
     );
   }, [data, watch("attributes.layout_heading")]);
 
+  const getFieldLanguageLabel = (el) => {
+    if (el?.enable_multilanguage) {
+      return el?.attributes?.show_label
+        ? `${el?.label} (${activeLang ?? slugSplit(el?.slug)})`
+        : el?.attributes?.[`label_${i18n?.language}`];
+    } else {
+      if (el?.show_label === false) return "";
+      else
+        return el?.attributes?.[`label_${i18n.language}`] || el?.label || " ";
+    }
+  };
+
+  const isMultiLanguage = useMemo(() => {
+    const allFields = [];
+    selectedTab?.sections?.map((section) => {
+      return section?.fields?.map((field) => {
+        return allFields.push(field);
+      });
+    });
+    return !!allFields.find((field) => field?.enable_multilanguage === true);
+  }, [selectedTab]);
+
+  useEffect(() => {
+    if (isMultiLanguage) {
+      setActiveLang(projectInfo?.language?.[0]?.short_name);
+    }
+  }, [isMultiLanguage, projectInfo]);
+
   return (
     <>
       <Box
@@ -104,6 +134,18 @@ function DrawerFormDetailPage({
         sx={{height: "calc(100vh - 44px)"}}
         pb={"10px"}
         overflow={"auto"}>
+        {isMultiLanguage && (
+          <div className={"language"}>
+            {projectInfo?.language?.map((lang) => (
+              <Button
+                className={activeLang === lang?.short_name && "active"}
+                onClick={() => setActiveLang(lang?.short_name)}>
+                {lang?.name}
+              </Button>
+            ))}
+          </div>
+        )}
+
         <HeadingOptions
           selectedRow={selectedRow}
           watch={watch}
@@ -182,13 +224,12 @@ function DrawerFormDetailPage({
                         color="#787774"
                         fontWeight="500"
                         width="100%">
-                        {field?.attributes?.[`label_${i18n?.language}`] ||
-                          field?.label ||
-                          field?.attributes?.label}
+                        {getFieldLanguageLabel(field)}
                       </Box>
                     </Box>
                     <Box sx={{width: "60%"}}>
                       <DrawerFieldGenerator
+                        activeLang={activeLang}
                         drawerDetail={true}
                         control={control}
                         field={field}

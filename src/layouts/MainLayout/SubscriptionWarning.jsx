@@ -19,10 +19,15 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
 
   if (projectStatus === "inactive")
     return <SubscribeExpired onCLick={handleOpenBilling} />;
-
-  if (
-    (projectStatus === "insufficient_funds" &&
-      subscriptionType === "free_trial") ||
+  else if (projectStatus === "active" && daysLeft <= 7) {
+    <WarningBanner
+      onClick={handleOpenBilling}
+      message={t("subscribtion_expire_soon")}
+      daysLeft={daysLeft}
+    />;
+  } else if (
+    projectStatus === "insufficient_funds" &&
+    subscriptionType === "free_trial" &&
     daysLeft <= 16
   ) {
     return (

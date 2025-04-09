@@ -113,7 +113,7 @@ const BoardView = ({
   };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(view?.attributes?.tabs, dropResult);
+    const result = applyDrag(boardTab, dropResult);
 
     if (result) {
       updateView(result);
@@ -151,7 +151,7 @@ const BoardView = ({
       };
     },
   });
-
+  console.log("boardTabboardTabboardTab", boardTab);
   return (
     <div>
       <FiltersBlock

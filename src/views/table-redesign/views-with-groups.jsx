@@ -90,6 +90,7 @@ import {useProjectGetByIdQuery} from "../../services/projectService";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import ViewSettings from "../Objects/components/ViewSettings";
 import ViewSettingsModal from "./ViewSettings";
+import TimeLineView from "../Objects/TimeLineView";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -110,20 +111,20 @@ export const NewUiViewsWithGroups = ({
   visibleColumns,
   refetchViews,
 }) => {
-  const {tableSlug, id} = useParams();
+  const { tableSlug, id } = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(view);
   const [searchText, setSearchText] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
 
@@ -137,7 +138,7 @@ export const NewUiViewsWithGroups = ({
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
 
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -197,12 +198,12 @@ export const NewUiViewsWithGroups = ({
     control: mainForm?.control,
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -212,9 +213,9 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const projectId = useSelector((state) => state.company?.projectId);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
@@ -284,7 +285,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const {isLoading} = useTableByIdQuery({
+  const { isLoading } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -309,7 +310,7 @@ export const NewUiViewsWithGroups = ({
           tableSlug,
           "CREATE",
           {},
-          {id},
+          { id },
           searchParams.get("menuId")
         );
       }
@@ -366,7 +367,8 @@ export const NewUiViewsWithGroups = ({
                     height: "35px",
                     padding: "0px",
                     minWidth: "35px",
-                  }}>
+                  }}
+                >
                   <SettingsIcon
                     style={{
                       color: "#A8A8A8",
@@ -375,7 +377,8 @@ export const NewUiViewsWithGroups = ({
                 </MuiButton>
               </PermissionWrapperV2>
             </>
-          }>
+          }
+        >
           <ViewTabSelector
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
@@ -843,6 +846,17 @@ export const NewUiViewsWithGroups = ({
                         selectedObjects={selectedObjects}
                         setSelectedObjects={setSelectedObjects}
                         selectedView={selectedView}
+                      />
+                    ) : view.type === "TIMELINE" ? (
+                      <TimeLineView
+                        view={view}
+                        // selectedTable={selectedTable}
+                        setViews={() => {}}
+                        selectedTabIndex={selectedTabIndex}
+                        setSelectedTabIndex={setSelectedTabIndex}
+                        views={views}
+                        fieldsMap={fieldsMap}
+                        isViewLoading={isLoading}
                       />
                     ) : null}
                   </>

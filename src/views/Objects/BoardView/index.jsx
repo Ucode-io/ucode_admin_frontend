@@ -49,6 +49,7 @@ const BoardView = ({
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
+  const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
 
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
@@ -84,16 +85,17 @@ const BoardView = ({
     }
   );
 
-  const updateView = () => {
+  const updateView = (tabs) => {
+    setBoardTab(tabs);
     const computedData = {
       ...selectedView,
       attributes: {
         ...selectedView?.attributes,
-        tabs,
+        tabs: tabs,
       },
     };
     constructorViewService.update(tableSlug, computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
 
@@ -111,7 +113,8 @@ const BoardView = ({
   };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(view?.attributes?.tabs, dropResult);
+    const result = applyDrag(boardTab, dropResult);
+
     if (result) {
       updateView(result);
     }
@@ -148,7 +151,7 @@ const BoardView = ({
       };
     },
   });
-
+  console.log("boardTabboardTabboardTab", boardTab);
   return (
     <div>
       <FiltersBlock
@@ -267,7 +270,7 @@ const BoardView = ({
                 className: "drag-cards-drop-preview",
               }}
               style={{display: "flex", gap: 24}}>
-              {view?.attributes?.tabs?.map((tab) => (
+              {boardTab?.map((tab) => (
                 <Draggable key={tab.value}>
                   <BoardColumn
                     key={tab.value}

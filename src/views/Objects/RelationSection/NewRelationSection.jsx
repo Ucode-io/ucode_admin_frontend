@@ -331,8 +331,7 @@ const NewRelationSection = ({
             selectedIndex={selectedTabIndex}
             onSelect={(index) => {
               setSelectedTabIndex(index);
-            }}
-          >
+            }}>
             {!data?.is_visible_section && (
               <div className={styles.cardHeader}>
                 <TabList className={styles.tabList}>
@@ -353,8 +352,7 @@ const NewRelationSection = ({
                         );
                         setSelectedIndex(index);
                         onSelect(el);
-                      }}
-                    >
+                      }}>
                       {data?.view_relation_type === "FILE" && (
                         <>
                           <InsertDriveFile /> Файлы
@@ -385,9 +383,8 @@ const NewRelationSection = ({
                         color="success"
                         size="small"
                         onClick={navigateToCreatePage}
-                        disabled={!id}
-                      >
-                        <Add style={{ color: "#007AFF" }} />
+                        disabled={!id}>
+                        <Add style={{color: "#007AFF"}} />
                       </RectangleIconButton>
                     )}
 
@@ -418,8 +415,7 @@ const NewRelationSection = ({
                       />
                       <button
                         className={styles.moreButton}
-                        onClick={handleClick}
-                      >
+                        onClick={handleClick}>
                         <MoreHorizIcon
                           style={{
                             color: "#888",
@@ -439,35 +435,38 @@ const NewRelationSection = ({
                 <TabPanel key={el.id}>
                   {selectedTab?.type === "section" ? (
                     <>
-                      {/* <FullpagePeekMaininfo
-                        updateCurrentLayout={updateCurrentLayout}
-                        control={control}
-                        loader={loader}
-                        isMultiLanguage={isMultiLanguage}
-                        computedSections={computedSections}
-                        setFormValue={setFormValue}
-                        relatedTable={relatedTable}
-                        relation={data}
-                        selectedIndex={selectedIndex}
-                        errors={errors}
-                        watch={watch}
-                        fieldsMap={fieldsMap}
-                        getValues={getValues}
-                        selectedTab={selectedTab}
-                      /> */}
-                      <NewMainInfo
-                        control={control}
-                        loader={loader}
-                        isMultiLanguage={isMultiLanguage}
-                        computedSections={computedSections}
-                        setFormValue={setFormValue}
-                        relatedTable={relatedTable}
-                        relation={data}
-                        selectedIndex={selectedIndex}
-                        errors={errors}
-                        watch={watch}
-                        getValues={getValues}
-                      />
+                      {localStorage.getItem("newLayout") ? (
+                        <FullpagePeekMaininfo
+                          updateCurrentLayout={updateCurrentLayout}
+                          control={control}
+                          loader={loader}
+                          isMultiLanguage={isMultiLanguage}
+                          computedSections={computedSections}
+                          setFormValue={setFormValue}
+                          relatedTable={relatedTable}
+                          relation={data}
+                          selectedIndex={selectedIndex}
+                          errors={errors}
+                          watch={watch}
+                          fieldsMap={fieldsMap}
+                          getValues={getValues}
+                          selectedTab={selectedTab}
+                        />
+                      ) : (
+                        <NewMainInfo
+                          control={control}
+                          loader={loader}
+                          isMultiLanguage={isMultiLanguage}
+                          computedSections={computedSections}
+                          setFormValue={setFormValue}
+                          relatedTable={relatedTable}
+                          relation={data}
+                          selectedIndex={selectedIndex}
+                          errors={errors}
+                          watch={watch}
+                          getValues={getValues}
+                        />
+                      )}
                     </>
                   ) : data?.relatedTable === "file" ? (
                     <FilesSection
@@ -547,8 +546,7 @@ const NewRelationSection = ({
               zIndex: 0,
             },
           },
-        }}
-      >
+        }}>
         <div className={styles.menuBar}>
           <ExcelDownloadButton
             computedVisibleFields={computedVisibleFields}

@@ -16,7 +16,7 @@ export default function TimeLineBlock({
   datesList,
   view,
   tabs,
-  handleScrollClick,
+  scrollToToday,
   zoomPosition,
   setDateFilters,
   dateFilters,
@@ -44,7 +44,7 @@ export default function TimeLineBlock({
   }, [view?.group_fields, fieldsMap]);
 
   useEffect(() => {
-    handleScrollClick();
+    scrollToToday();
   }, []);
 
   useEffect(() => {

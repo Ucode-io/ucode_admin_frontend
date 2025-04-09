@@ -19,6 +19,7 @@ export default function TimeLineDays({date, zoomPosition, selectedType}) {
   return (
     <>
       <div
+        data-date={format(date, "dd.MM.yyyy")}
         onClick={handleOpen}
         className={`${styles.rowItem} ${detectDayName(date) && selectedType !== "month" ? styles.dayOff : ""} ${selectedType === "month" ? styles.month : ""}`}
         style={{
@@ -28,14 +29,16 @@ export default function TimeLineDays({date, zoomPosition, selectedType}) {
             selectedType === "month" && format(date, "dd") === "31"
               ? "1px solid #e0e0e0"
               : "",
-        }}>
+        }}
+      >
         <div
           style={{
             position: "absolute",
             top: "20px",
             color: "#d63b30",
             transform: "rotate(90deg)",
-          }}>
+          }}
+        >
           {format(new Date(), "dd.MM.yyyy") === format(date, "dd.MM.yyyy") &&
             "Today"}
         </div>

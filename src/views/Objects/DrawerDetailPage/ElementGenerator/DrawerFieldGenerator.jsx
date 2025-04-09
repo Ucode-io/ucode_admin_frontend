@@ -59,6 +59,7 @@ function DrawerFieldGenerator({
   };
 
   const computedSlug = useMemo(() => {
+    console.log("enteredddddddddd");
     if (field?.enable_multilanguage) {
       return `${removeLangFromSlug(field.slug)}_${activeLang}`;
     } else if (field.id?.includes("@")) {
@@ -72,7 +73,7 @@ function DrawerFieldGenerator({
     }
 
     return field?.slug;
-  }, [field?.slug, activeLang, field?.enable_multilanguage]);
+  }, [field?.slug, activeLang, field]);
 
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
@@ -336,6 +337,7 @@ function DrawerFieldGenerator({
     default:
       return (
         <InputField
+          watch={watch}
           disabled={isDisabled}
           control={control}
           name={computedSlug}
@@ -344,12 +346,19 @@ function DrawerFieldGenerator({
   }
 }
 
-const InputField = ({control, name = "", type = "text", disabled = false}) => {
+const InputField = ({
+  control,
+  name = "",
+  type = "text",
+  disabled = false,
+  watch,
+}) => {
+  const value = watch(name);
   return (
     <Controller
       control={control}
       name={name}
-      render={({field: {onChange, value}}) => {
+      render={({field: {onChange}}) => {
         return (
           <ChakraProvider>
             <Input

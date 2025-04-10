@@ -313,7 +313,10 @@ const NewRelationSection = ({
 
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-
+  console.log(
+    "localStorage.getItemlocalStorage.getItem",
+    Boolean(localStorage.getItem("newLayout"))
+  );
   return (
     <>
       {selectedManyToManyRelation && (
@@ -435,7 +438,10 @@ const NewRelationSection = ({
                 <TabPanel key={el.id}>
                   {selectedTab?.type === "section" ? (
                     <>
-                      {localStorage.getItem("newLayout") ? (
+                      {Boolean(
+                        localStorage.getItem("newLayout") &&
+                          localStorage.getItem("newLayout") !== "undefined"
+                      ) ? (
                         <FullpagePeekMaininfo
                           updateCurrentLayout={updateCurrentLayout}
                           control={control}

@@ -249,5 +249,19 @@
 
   "subscription_expired": "Sizning obunangiz muddati tugadi. ",
   "click_here_upgrade": "Iltimos, tarifingizni yangilash uchun shu yerni bosing. ",
-  "expired_content": "Xizmatlarimizdan foydalanishda davom etish uchun iltimos, uni yangilang. "
+  "expired_content": "Xizmatlarimizdan foydalanishda davom etish uchun iltimos, uni yangilang. ",
+
+  "enter_btn": "Kirish",
+  "wrong_text": "Noto'g'ri kiritildi",
+  "enter_desc": "Sotuvchining shaxsiy hisob raqami (SSH)",
+  "username_title": "Kirish",
+  "username_placeholder": "Loginni kiriting",
+  "password_title": "Parol",
+  "password_placeholder": "Parolni kiriting",
+  "need_help": "Yordam kerakmi?",
+  "contact_us": "Biz bilan bog'laning",
+  "input_err": "Noto'g'ri kiritildi",
+  "regex_text": "Kamida 8 ta belgidan iborat bo‘lishi kerak, kamida 1 ta katta harf, kamida 1 ta raqam (0–9), kamida 1 ta maxsus belgi bo‘lishi kerak",
+  "password_missmatch": "Parollar mos kelmaydi",
+  "email_wrong": "E-mail or password is wrong"
 }

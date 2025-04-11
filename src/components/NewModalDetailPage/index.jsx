@@ -553,12 +553,13 @@ const ScreenOptions = ({
   };
 
   const handleClose = (option) => {
+    localStorage.setItem("detailPage", option?.icon);
     if (option?.icon === "FullPage") {
       setLayoutType("SimpleLayout");
       navigateToEditPage(selectedRow);
     }
 
-    if (option) setSelectedViewType(option);
+    if (option) setSelectedViewType(option?.icon);
     setAnchorEl(null);
   };
 
@@ -590,9 +591,7 @@ const ScreenOptions = ({
                 {option.label}
               </Box>
 
-              <Box>
-                {option.label === selectedViewType?.label ? <Check /> : ""}
-              </Box>
+              <Box>{option?.icon === selectedViewType ? <Check /> : ""}</Box>
             </MenuItem>
           ))}
         </Box>
@@ -602,7 +601,7 @@ const ScreenOptions = ({
 };
 
 export const getColumnFieldIcon = (column) => {
-  if (column.icon === "SidePeek") {
+  if (column === "SidePeek") {
     return (
       <img
         src="/img/drawerPeek.svg"
@@ -611,7 +610,7 @@ export const getColumnFieldIcon = (column) => {
         alt="drawer svg"
       />
     );
-  } else if (column?.icon === "CenterPeek") {
+  } else if (column === "CenterPeek") {
     return (
       <img
         src="/img/centerPeek.svg"

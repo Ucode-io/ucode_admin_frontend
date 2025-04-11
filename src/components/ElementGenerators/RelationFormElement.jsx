@@ -296,7 +296,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path && !isSettings,
+      enabled: Boolean(!field?.attributes?.function_path),
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =

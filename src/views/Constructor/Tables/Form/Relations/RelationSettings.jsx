@@ -351,7 +351,7 @@ const RelationSettings = ({
             onSubmit={handleSubmit(submitHandler)}
             className={styles.fieldSettingsForm}>
             <div>
-              <Card className={styles.noShadow}>
+              <div className={styles.noShadow}>
                 {drawerType === "SCHEMA" && (
                   <div className="p-2">
                     <div
@@ -685,7 +685,7 @@ const RelationSettings = ({
                     <AutoFiltersBlock control={control} watch={watch} />
                   </div>
                 )}
-              </Card>
+              </div>
             </div>
 
             <div className={styles.settingsFooter}>

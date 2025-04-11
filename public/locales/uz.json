@@ -263,5 +263,5 @@
   "input_err": "Noto'g'ri kiritildi",
   "regex_text": "Kamida 8 ta belgidan iborat bo‘lishi kerak, kamida 1 ta katta harf, kamida 1 ta raqam (0–9), kamida 1 ta maxsus belgi bo‘lishi kerak",
   "password_missmatch": "Parollar mos kelmaydi",
-  "email_wrong": "E-mail or password is wrong"
+  "email_wrong": "Elektron pochta yoki parol noto'g'ri."
 }

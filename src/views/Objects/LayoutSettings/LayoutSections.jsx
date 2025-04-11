@@ -145,7 +145,6 @@ const LayoutHeading = ({
         <Text fontSize={34} fontWeight={700}>
           {selectedRow?.[selectedTab?.attributes?.layout_heading] ??
             "Select field for title"}
-          {/* (Layout) Input fields need to be disabled */}
         </Text>
 
         <Button
@@ -226,7 +225,7 @@ const MainSection = ({
         </Flex>
         <Box p={15}>
           {section?.fields
-            ?.filter((el) => el?.attributes?.field_hide_layout !== false)
+            ?.filter((el) => el?.attributes?.field_hide_layout !== true)
             ?.map((field) => (
               <FieldGenerator field={field} selectedRow={selectedRow} />
             ))}

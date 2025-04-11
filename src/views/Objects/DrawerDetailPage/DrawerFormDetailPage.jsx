@@ -159,7 +159,6 @@ function DrawerFormDetailPage({
           <Box
             sx={{
               margin: "8px 0 0 0",
-              overflow: "hidden",
             }}
             key={secIndex}>
             <Container

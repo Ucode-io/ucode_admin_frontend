@@ -31,7 +31,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
       return constructorObjectService.update(tableSlug, {
         data: {
           ...data,
-          [tab.slug]: [tab.value],
+          [tab.slug]: tab.value,
           board_order: index + 1,
         },
       });
@@ -78,7 +78,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
     setDateInfo({[tab.slug]: tab.value});
     setSelectedRow(null);
   };
-  console.log("tabaaaaaaaaaa", tab);
+
   return (
     <>
       <div className={styles.column}>

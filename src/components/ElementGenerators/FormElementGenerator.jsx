@@ -65,7 +65,7 @@ const FormElementGenerator = ({
 }) => {
   let objectIdFromJWT = "";
   let relationTableSlug = "";
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tables = useSelector((state) => state?.auth?.tables);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const checkRequiredField = !checkRequired ? checkRequired : field?.required;
@@ -141,12 +141,12 @@ const FormElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (field?.type === "SINGLE_LINE") return defaultValue;
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
 
   const isDisabled = useMemo(() => {
-    const { attributes } = field;
+    const {attributes} = field;
 
     if (window.location.pathname.includes("create")) {
       if (attributes?.disabled) return true;
@@ -1017,7 +1017,7 @@ const FormElementGenerator = ({
               endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),

@@ -1,14 +1,16 @@
-import { useMemo } from "react";
-import { useParams } from "react-router-dom";
+import {useMemo} from "react";
+import {useParams} from "react-router-dom";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import styles from "./style.module.scss";
-import { Typography } from "@mui/material";
+import {Typography} from "@mui/material";
 
-const RelationDefault = ({ control, watch, columnsList }) => {
-  const { tableSlug } = useParams();
+const RelationDefault = ({control, watch, columnsList, isModal = false}) => {
+  const {tableSlug} = useParams();
   const relation = watch();
   const relatedTableSlug =
-    relation?.table_from === tableSlug ? relation?.table_to : relation?.table_from;
+    relation?.table_from === tableSlug
+      ? relation?.table_to
+      : relation?.table_from;
 
   const computedRelation = useMemo(
     () => ({
@@ -29,14 +31,13 @@ const RelationDefault = ({ control, watch, columnsList }) => {
     [relation, relatedTableSlug, columnsList]
   );
 
-  console.log("computedRelation", computedRelation)
-
   if (!relation.table_to || !relation.table_from) return null;
   return (
-    <div style={{ padding: 0 }}>
+    <div style={{padding: 0}}>
       <div>
         <Typography variant="h6">Default value</Typography>
         <FormElementGenerator
+          isModal={isModal}
           disabled={false}
           field={computedRelation}
           control={control}

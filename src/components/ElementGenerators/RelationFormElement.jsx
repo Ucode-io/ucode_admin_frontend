@@ -42,7 +42,7 @@ const RelationFormElement = ({
   modalClass,
   ...props
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSlug = useMemo(() => {
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
@@ -72,7 +72,7 @@ const RelationFormElement = ({
             required: required ? "This field is required!" : "",
             ...rules,
           }}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               isModal={isModal}
               value={Array.isArray(value) ? value[0] : value}
@@ -101,17 +101,16 @@ const RelationFormElement = ({
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={defaultValue}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField}
-        >
+          required={checkRequiredField}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
-            render={({ field: { onChange, value }, fieldState: { error } }) =>
+            render={({field: {onChange, value}, fieldState: {error}}) =>
               field?.attributes?.cascadings?.length === 2 ? (
                 <CascadingElement
                   field={field}
@@ -140,8 +139,7 @@ const RelationFormElement = ({
             }
           />
         </FEditableRow>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -173,13 +171,13 @@ const AutoCompleteElement = ({
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const { i18n } = useTranslation();
-  const { state } = useLocation();
+  const {i18n} = useTranslation();
+  const {state} = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
@@ -227,7 +225,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -270,8 +268,8 @@ const AutoCompleteElement = ({
       },
     }
   );
-
-  const { data: optionsFromLocale } = useQuery(
+  console.log("fieldfieldfield", field, tableSlug);
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -296,7 +294,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path && !isSettings,
+      enabled: Boolean(!field?.attributes?.function_path),
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -309,7 +307,6 @@ const AutoCompleteElement = ({
       onSuccess: (data) => {
         if (page > 1) {
           setAllOptions((prevOptions) => {
-            // Removing duplicated options
             const mergedData = [...prevOptions, ...data.options];
             const uniqueData = Array.from(
               new Map(mergedData.map((item) => [item.guid, item])).values()
@@ -361,7 +358,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -372,7 +369,7 @@ const AutoCompleteElement = ({
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -386,7 +383,6 @@ const AutoCompleteElement = ({
       field?.attributes?.object_id_from_jwt &&
       field?.id?.split("#")?.[0] === "client_type"
     ) {
-      console.log("valueeee setClient", value);
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
     }
@@ -410,7 +406,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -481,14 +477,13 @@ const AutoCompleteElement = ({
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
-
+  console.log("allOptionsallOptions", allOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-        >
+          onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
           Create new
         </div>
       )}
@@ -577,10 +572,10 @@ const AutoCompleteElement = ({
             }
             components={{
               DropdownIndicator: () => null,
-              MultiValue: ({ data }) => (
+              MultiValue: ({data}) => (
                 <IconGenerator
                   icon="arrow-up-right-from-square.svg"
-                  style={{ marginLeft: "10px", cursor: "pointer" }}
+                  style={{marginLeft: "10px", cursor: "pointer"}}
                   size={15}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -598,8 +593,7 @@ const AutoCompleteElement = ({
                 fontSize: "10px",
                 textAlign: "center",
                 marginTop: "5px",
-              }}
-            >
+              }}>
               {"This field is required!"}
             </div>
           )}

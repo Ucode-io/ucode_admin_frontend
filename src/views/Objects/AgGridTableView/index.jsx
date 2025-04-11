@@ -210,6 +210,7 @@ function AgGridTableView(props) {
     queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
+      console.log("ressssssssssss", res?.data?.fields);
       return {
         fiedlsarray: res?.data?.fields?.map((item, index) => {
           const columnDef = {
@@ -464,6 +465,12 @@ function AgGridTableView(props) {
     }
   };
 
+  const getColumnsUpdated = (event) => {
+    const newColumnOrder = event.api.getAllGridColumns();
+    console.log("eventeventevent", event);
+    console.log("eventtttttt", gridApi.current);
+  };
+
   useEffect(() => {
     pinFieldsRef.current = view?.attributes?.pinnedFields;
   }, [view?.attributes?.pinnedFields]);
@@ -565,6 +572,7 @@ function AgGridTableView(props) {
                     cacheBlockSize: 100,
                     maxBlocksInCache: 100,
                   }}
+                  onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
                   loading={loading}
                   columnDefs={columns}
@@ -581,6 +589,7 @@ function AgGridTableView(props) {
                   onColumnPinned={onColumnPinned}
                   suppressColumnVirtualisation={false}
                   treeData={view?.attributes?.treeData}
+                  suppressColumnMoveAnimation={true}
                   autoGroupColumnDef={autoGroupColumnDef}
                   suppressServerSideFullWidthLoadingRow={true}
                   loadingOverlayComponent={CustomLoadingOverlay}

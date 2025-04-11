@@ -467,7 +467,8 @@ export const NewUiViewsWithGroups = ({
     menuItem?.label ??
     menuItem?.title;
 
-  const viewName = view?.attributes?.name_en || view?.name || view.type;
+  const viewName =
+    view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
   return (
     <>
@@ -592,7 +593,9 @@ export const NewUiViewsWithGroups = ({
                   );
                   setSelectedTabIndex(index);
                 }}>
-                {view?.attributes?.name_en || view?.name || view.type}
+                {view?.attributes?.[`name_${i18n?.language}`] ||
+                  view?.name ||
+                  view.type}
               </Button>
             ))}
 
@@ -1383,7 +1386,7 @@ const ViewOptions = ({
         ...view,
         id: view.id,
         columns: view.columns,
-        attributes: {name_en: value},
+        attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
       });
       return await refetchViews();
     },

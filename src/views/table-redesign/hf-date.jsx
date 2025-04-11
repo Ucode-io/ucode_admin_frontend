@@ -153,7 +153,7 @@ export const HFTimePicker = ({
 };
 
 const getValue = (value) => {
-  if (!value || !isValid(value)) return null;
+  if (!value) return null;
   if (value instanceof Date && isValid(value)) return value;
 
   try {

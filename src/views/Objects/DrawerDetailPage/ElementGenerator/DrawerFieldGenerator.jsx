@@ -43,7 +43,7 @@ import MultiLineInput from "./MultiLineInput";
 function DrawerFieldGenerator({
   field,
   control,
-  watch,
+  watch = () => {},
   drawerDetail,
   isDisabled,
   activeLang = "",
@@ -59,7 +59,6 @@ function DrawerFieldGenerator({
   };
 
   const computedSlug = useMemo(() => {
-    console.log("enteredddddddddd");
     if (field?.enable_multilanguage) {
       return `${removeLangFromSlug(field.slug)}_${activeLang}`;
     } else if (field.id?.includes("@")) {
@@ -351,20 +350,21 @@ const InputField = ({
   name = "",
   type = "text",
   disabled = false,
-  watch,
+  watch = () => {},
 }) => {
-  const value = watch(name);
+  const inputValue = watch(name);
+
   return (
     <Controller
       control={control}
       name={name}
-      render={({field: {onChange}}) => {
+      render={({field: {onChange, value}}) => {
         return (
           <ChakraProvider>
             <Input
               disabled={disabled}
               type={type}
-              value={value}
+              value={inputValue ?? value}
               onChange={(e) => onChange(e.target.value)}
               placeholder="Empty"
               height="30px"

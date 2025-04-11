@@ -151,7 +151,7 @@ const BoardView = ({
       };
     },
   });
-  console.log("boardTabboardTabboardTab", boardTab);
+
   return (
     <div>
       <FiltersBlock

@@ -434,13 +434,7 @@ const AutoCompleteElement = ({
       <Select
         placeholder="Empty"
         id={`relationField`}
-        isDisabled={
-          disabled ||
-          (field?.attributes?.object_id_from_jwt &&
-            field?.id?.split("#")?.[0] === "client_type") ||
-          (Boolean(field?.attributes?.is_user_id_default) &&
-            localValue?.length !== 0)
-        }
+        isDisabled={disabled}
         options={allOptions ?? []}
         isClearable={true}
         styles={customStyles}

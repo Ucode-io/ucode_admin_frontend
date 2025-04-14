@@ -66,6 +66,7 @@ const SettingFields = ({
   const [dragAction, setDragAction] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const {tableSlug} = useParams();
+  const {i18n} = useTranslation();
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -144,6 +145,12 @@ const SettingFields = ({
     setSectionFields(selectedSection?.fields);
   }, [selectedSection]);
 
+  const getFieldLabel = (el) => {
+    const label =
+      el?.label ?? el?.attributes?.[`label_${i18n?.language}`] ?? "";
+    return label.toLowerCase().includes(sectionSearch?.toLowerCase());
+  };
+  console.log("selectedSectionselectedSection", selectedSection);
   return (
     <Box mt={"25px"} h={"calc(100vh - 160px)"} pb={5} overflow={"auto"} px={15}>
       <Container
@@ -152,10 +159,8 @@ const SettingFields = ({
         onDragStart={() => setDragAction(true)}
         onDragEnd={() => setDragAction(false)}
         dragClass="field-drag">
-        {sectionFields
-          ?.filter((el) =>
-            el?.label?.toLowerCase()?.includes(sectionSearch?.toLowerCase())
-          )
+        {selectedSection?.fields
+          ?.filter((el) => getFieldLabel(el))
           ?.map((item) => (
             <Draggable>
               <Flex
@@ -192,7 +197,7 @@ const SettingFields = ({
                     />
                   </Flex>
                   <Text color={"#1b1d16"} fontSize={14}>
-                    {item?.label}
+                    {item?.attributes?.[`label_${i18n?.language}`]}
                   </Text>
                 </Flex>
                 <FieldControl

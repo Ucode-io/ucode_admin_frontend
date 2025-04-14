@@ -16,6 +16,7 @@ import {useParams} from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import {applyDrag} from "../../../utils/applyDrag";
 import "./style.scss";
+import {store} from "../../../store";
 
 function DrawerFormDetailPage({
   control,
@@ -34,6 +35,9 @@ function DrawerFormDetailPage({
   const {tableSlug} = useParams();
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
+  const auth = store.getState().auth;
+
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
 
   const [sections, setSections] = useState(
     data?.tabs?.[selectedTabIndex]?.sections || []
@@ -159,7 +163,6 @@ function DrawerFormDetailPage({
           <Box
             sx={{
               margin: "8px 0 0 0",
-              overflow: "hidden",
             }}
             key={secIndex}>
             <Container
@@ -175,7 +178,7 @@ function DrawerFormDetailPage({
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
               {section?.fields?.map((field, fieldIndex) => (
                 <Draggable
-                  className="drag-handle"
+                  className={Boolean(defaultAdmin) ? "drag-handle" : ""}
                   key={field?.id ?? fieldIndex}>
                   <Box
                     className={dragAction ? "rowColumnDrag" : "rowColumn"}

@@ -14,6 +14,7 @@ import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGe
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import {Flex, Text} from "@chakra-ui/react";
+import {store} from "../../store";
 
 function NewModalFormPage({
   control,
@@ -31,7 +32,9 @@ function NewModalFormPage({
   const {tableSlug} = useParams();
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
+  const auth = store.getState().auth;
 
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const [sections, setSections] = useState(data?.tabs?.[0]?.sections || []);
 
   useEffect(() => {
@@ -146,7 +149,9 @@ function NewModalFormPage({
                   const isHidden =
                     field?.slug === watch("attributes.layout_heading");
                   return (
-                    <Draggable key={fieldIndex} className={`drag-handles`}>
+                    <Draggable
+                      key={fieldIndex}
+                      className={Boolean(defaultAdmin) ? `drag-handles` : ""}>
                       <Box
                         className={dragAction ? "rowDragCol" : "rowCol"}
                         display={isHidden ? "none" : "flex"}

@@ -43,6 +43,10 @@ const FullpagePeekMaininfo = ({
   const [sections, setSections] = useState(computedSections ?? []);
   const rowData = watch();
 
+  const auth = store.getState().auth;
+
+  const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -162,7 +166,11 @@ const FullpagePeekMaininfo = ({
                       (el) => el?.slug !== watch("attributes.layout_heading")
                     )
                     .map((field, fieldIndex) => (
-                      <Draggable className="drag-handle-item" key={field?.id}>
+                      <Draggable
+                        className={
+                          Boolean(defaultAdmin) ? "drag-handle-item" : ""
+                        }
+                        key={field?.id}>
                         <Box
                           className={dragAction ? "rowColumnDrag" : "rowColumn"}
                           key={fieldIndex}

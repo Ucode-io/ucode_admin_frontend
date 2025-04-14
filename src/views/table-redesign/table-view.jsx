@@ -97,10 +97,11 @@ const TableView = ({
   const menuId = searchParams.get("menuId");
   const projectId = useSelector((state) => state.auth.projectId);
 
-  const [selectedViewType, setSelectedViewType] = useState({
-    label: "Side peek",
-    icon: "SidePeek",
-  });
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
 
   const mainForm = useForm({
     defaultValues: {
@@ -597,7 +598,7 @@ const TableView = ({
         />
 
         {Boolean(open && projectInfo?.new_layout) &&
-        selectedViewType?.icon === "SidePeek" ? (
+        selectedViewType === "SidePeek" ? (
           <DrawerDetailPage
             projectInfo={projectInfo}
             open={open}
@@ -613,7 +614,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : selectedViewType?.icon === "CenterPeek" ? (
+        ) : selectedViewType === "CenterPeek" ? (
           <NewModalDetailPage
             projectInfo={projectInfo}
             open={open}

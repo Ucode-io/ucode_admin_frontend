@@ -48,6 +48,8 @@ import FixColumnsTableView from "./components/FixColumnsTableView";
 import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
+import {mergeStringAndState} from "../../utils/jsonPath";
+import useTabRouter from "../../hooks/useTabRouter";
 
 const ViewsWithGroups = ({
   views,
@@ -69,11 +71,13 @@ const ViewsWithGroups = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
+  const {navigateToForm} = useTabRouter();
   const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [layoutType, setLayoutType] = useState("SimpleLayout");
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -242,6 +246,48 @@ const ViewsWithGroups = ({
     await saveOrUpdateSearchText(db, tableSlug, searchText);
   };
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
+  const navigateToEditPage = (row) => {
+    if (layoutType === "PopupLayout") {
+      setOpen(true);
+    } else {
+      navigateToDetailPage(row);
+    }
+  };
+
   useEffect(() => {
     initDB();
   }, [tableSlug]);
@@ -345,6 +391,7 @@ const ViewsWithGroups = ({
             )}
           </FiltersBlock>
           <AgGridTableView
+            navigateToEditPage={navigateToEditPage}
             selectedTabIndex={selectedTabIndex}
             view={view}
             views={views}
@@ -728,6 +775,9 @@ const ViewsWithGroups = ({
                           />
                         ) : (
                           <TableView
+                            navigateToEditPage={navigateToEditPage}
+                            setLayoutType={setLayoutType}
+                            layoutType={layoutType}
                             isVertical
                             setCurrentPage={setCurrentPage}
                             currentPage={currentPage}
@@ -774,6 +824,9 @@ const ViewsWithGroups = ({
                         />
                       ) : (
                         <TableView
+                          navigateToEditPage={navigateToEditPage}
+                          setLayoutType={setLayoutType}
+                          layoutType={layoutType}
                           visibleColumns={visibleColumns}
                           setCurrentPage={setCurrentPage}
                           currentPage={currentPage}

@@ -98,7 +98,9 @@ const TableView = ({
   const projectId = useSelector((state) => state.auth.projectId);
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") ?? "SidePeek"
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
   );
 
   const mainForm = useForm({

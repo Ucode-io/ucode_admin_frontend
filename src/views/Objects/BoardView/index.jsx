@@ -60,7 +60,7 @@ const BoardView = ({
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
-
+  console.log("viewsviewsviewsviews", views);
   useEffect(() => {
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
@@ -86,11 +86,11 @@ const BoardView = ({
   );
 
   const updateView = (tabs) => {
-    setBoardTab(tabs);
+    console.log("unfction tabs", tabs);
     const computedData = {
-      ...selectedView,
+      ...view,
       attributes: {
-        ...selectedView?.attributes,
+        ...view?.attributes,
         tabs: tabs,
       },
     };
@@ -114,7 +114,7 @@ const BoardView = ({
 
   const onDrop = (dropResult) => {
     const result = applyDrag(boardTab, dropResult);
-
+    setBoardTab(result);
     if (result) {
       updateView(result);
     }
@@ -151,6 +151,15 @@ const BoardView = ({
       };
     },
   });
+
+  useEffect(() => {
+    const updatedTabs = views?.[selectedTabIndex]?.attributes?.tabs;
+    if (tabs?.length === updatedTabs?.length) {
+      setBoardTab(updatedTabs);
+    } else {
+      setBoardTab(tabs);
+    }
+  }, [tabs, views, selectedTabIndex]);
 
   return (
     <div>
@@ -235,6 +244,7 @@ const BoardView = ({
           queryGenerator={queryGenerator}
           groupField={groupField}
           filters={filters}
+          boardTab={boardTab}
         />
       </div>
 
@@ -290,7 +300,7 @@ const BoardView = ({
   );
 };
 
-const queryGenerator = (groupField, filters = {}, updateView, lan) => {
+const queryGenerator = (groupField, filters = {}, lan) => {
   if (!groupField)
     return {
       queryFn: () => {},

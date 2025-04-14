@@ -14,6 +14,7 @@ export default function BoardGroupButton({
   text = "Tab group",
   tabs,
   currentView,
+  boardTab,
 }) {
   const form = useForm();
   const {tableSlug} = useParams();
@@ -120,12 +121,6 @@ export default function BoardGroupButton({
       });
   };
 
-  useEffect(() => {
-    if (tabs) {
-      updateView(tabs);
-    }
-  }, [tabs]);
-
   return (
     <div>
       <Button
@@ -222,6 +217,8 @@ export default function BoardGroupButton({
             selectedView={currentView}
             form={form}
             views={views}
+            tabs={tabs}
+            boardTab={boardTab}
             selectedTabIndex={selectedTabIndex}
           />
         )}

@@ -35,12 +35,10 @@ const BoardGroupsTab = ({
   columns,
   form,
   selectedView,
-  updateView,
+  updateView = () => {},
   isLoading,
   updateLoading,
   views,
-  sele,
-  selectedTabIndex,
 }) => {
   const selectedColumns = form?.watch("group_fields");
   const {i18n} = useTranslation();

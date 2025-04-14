@@ -103,10 +103,11 @@ function AgGridTableView(props) {
   const [groupTab, setGroupTab] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedViewType, setSelectedViewType] = useState({
-    label: "Side peek",
-    icon: "SidePeek",
-  });
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
   const {navigateToForm} = useTabRouter();
 
   const groupFieldId = view?.group_fields?.[0];
@@ -210,7 +211,6 @@ function AgGridTableView(props) {
     queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
-      console.log("ressssssssssss", res?.data?.fields);
       return {
         fiedlsarray: res?.data?.fields?.map((item, index) => {
           const columnDef = {
@@ -625,7 +625,7 @@ function AgGridTableView(props) {
       />
 
       {Boolean(open && projectInfo?.new_layout) &&
-      selectedViewType?.icon === "SidePeek" ? (
+      selectedViewType === "SidePeek" ? (
         <DrawerDetailPage
           projectInfo={projectInfo}
           open={open}
@@ -640,7 +640,7 @@ function AgGridTableView(props) {
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToDetailPage}
         />
-      ) : selectedViewType?.icon === "CenterPeek" ? (
+      ) : selectedViewType === "CenterPeek" ? (
         <NewModalDetailPage
           projectInfo={projectInfo}
           open={open}

@@ -317,22 +317,18 @@ export const NewUiViewsWithGroups = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (projectInfo?.new_layout) {
+    if (layoutType === "SimpleLayout") {
+      navigateToForm(
+        tableSlug,
+        "EDIT",
+        row,
+        {},
+        searchParams.get("menuId") ?? appId
+      );
+    }
+    if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
-    } else {
-      if (layoutType === "PopupLayout") {
-        setSelectedRow(row);
-        setOpen(true);
-      } else {
-        navigateToForm(
-          tableSlug,
-          "EDIT",
-          row,
-          {},
-          searchParams.get("menuId") ?? appId
-        );
-      }
     }
   };
 

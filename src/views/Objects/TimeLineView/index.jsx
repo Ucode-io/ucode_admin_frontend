@@ -57,6 +57,7 @@ import ViewTypeList from "../components/ViewTypeList";
 import { computedViewTypes } from "../../../utils/constants/viewTypes";
 import { useGetLang } from "../../../hooks/useGetLang";
 import { getColumnIcon } from "../../table-redesign/icons";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -75,6 +76,9 @@ export default function TimeLineView({
   setViews,
   isViewLoading,
 }) {
+  const { handleScroll, calendarRef, months, setMonths, firstDate, lastDate } =
+    useDateLineProps();
+
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -102,16 +106,14 @@ export default function TimeLineView({
     .filter((el) => el);
 
   const datesList = useMemo(() => {
-    if (!dateFilters?.[0] || !dateFilters?.[1]) return [];
-
-    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0]);
+    const differenceDays = differenceInDays(lastDate, firstDate);
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], { days: i }));
+      result.push(add(firstDate, { days: i }));
     }
     return result;
-  }, [dateFilters]);
+  }, [lastDate, firstDate]);
 
   const recursionFunctionForAddIsOpen = (data) => {
     return data?.map((el) => {
@@ -134,15 +136,17 @@ export default function TimeLineView({
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, filters, dateFilters, view },
+      { tableSlug, filters, dateFilters, view, months },
     ],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
           view_type: "TIMELINE",
-          gte: dateFilters[0],
-          lte: dateFilters[1],
+          gte: firstDate,
+          lte: lastDate,
+          // gte: dateFilters[0],
+          // lte: dateFilters[1],
           with_relations: true,
           builder_service_view_id:
             view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
@@ -388,18 +392,22 @@ export default function TimeLineView({
     }
   }, [selectedType]);
 
-  const { handleScroll, calendarRef, months, scrollToMonth } =
-    useDateLineProps();
-
-  const scrollToToday = () => {
+  const scrollToToday = (todayElement) => {
     const container = calendarRef.current;
     if (!container) return;
 
     const today = format(new Date(), "dd.MM.yyyy");
-    const todayElement = container.querySelector(`[data-date='${today}']`);
+    const todayElementInner = container.querySelector(`[data-date='${today}']`);
 
     if (todayElement) {
       const offset = todayElement.offsetLeft - container.offsetLeft;
+
+      container.scrollTo({
+        left: offset - container.clientWidth / 2,
+        behavior: "smooth",
+      });
+    } else {
+      const offset = todayElementInner.offsetLeft - container.offsetLeft;
 
       container.scrollTo({
         left: offset - container.clientWidth / 2,
@@ -409,8 +417,9 @@ export default function TimeLineView({
   };
 
   return (
-    <div>
-      {/* <FiltersBlock>
+    <MaterialUIProvider>
+      <div>
+        {/* <FiltersBlock>
         <ViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -426,339 +435,347 @@ export default function TimeLineView({
         />
       </FiltersBlock> */}
 
-      <div
-        className={style.search}
-        style={{
-          padding: "3px 10px",
-          background: "#fff",
-          borderBottom: "1px solid #E5E9EB",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
         <div
+          className={style.search}
           style={{
+            padding: "3px 10px",
+            background: "#fff",
+            borderBottom: "1px solid #E5E9EB",
             display: "flex",
             alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <CRangePicker
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {/* <CRangePicker
             interval={"months"}
             value={dateFilters}
             onChange={setDateFilters}
-          />
-          <Button
-            variant="text"
-            sx={{
-              margin: "0 5px",
-              color: "#888",
+          /> */}
+            <Button
+              variant="text"
+              sx={{
+                margin: "0 5px",
+                color: "#888",
+              }}
+              onClick={() => scrollToToday()}
+            >
+              Today
+            </Button>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
             }}
-            onClick={scrollToToday}
           >
-            Today
-          </Button>
+            <Divider orientation="vertical" flexItem />
+
+            <Button
+              onClick={handleClickType}
+              style={{
+                margin: "0 5px",
+                color: "#888",
+                display: "flex",
+                alignItems: "center",
+                gap: "3px",
+              }}
+            >
+              <span>
+                {types.find((item) => item.value === selectedType).title}
+              </span>
+              {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </Button>
+
+            <Divider orientation="vertical" flexItem />
+
+            <Menu
+              open={openType}
+              onClose={handleCloseType}
+              anchorEl={anchorElType}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  padding: "5px 0",
+                }}
+              >
+                {types.map((el) => (
+                  <Button
+                    onClick={() => setSelectedType(el.value)}
+                    variant="text"
+                    sx={{
+                      margin: "0 5px",
+                      color: "#888",
+                      minWidth: "100px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {el.title}
+                    {el.value === selectedType && <CheckIcon />}
+                  </Button>
+                ))}
+              </div>
+            </Menu>
+
+            {/* 
+            Temp data:
+           */}
+
+            <Button
+              onClick={handleClickSettings}
+              style={{
+                margin: "0 5px",
+                color: "#888",
+                display: "flex",
+                alignItems: "center",
+                gap: "3px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "3px",
+                }}
+              >
+                <SettingsIcon />
+                <span>Settings</span>
+              </div>
+              {openSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </Button>
+
+            <Divider orientation="vertical" flexItem />
+
+            <Menu
+              open={openSettings}
+              onClose={handleCloseSettings}
+              anchorEl={anchorElSettings}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  minWidth: "200px",
+                  padding: "10px",
+                }}
+              >
+                <div>
+                  <FRow label="Time from">
+                    <HFSelect
+                      options={computedColumns}
+                      control={form.control}
+                      name="calendar_from_slug"
+                    />
+                  </FRow>
+                  <FRow label="Time to">
+                    <HFSelect
+                      options={computedColumns}
+                      control={form.control}
+                      name="calendar_to_slug"
+                    />
+                  </FRow>
+                  <FRow label="Visible field">
+                    <HFSelect
+                      options={listToLanOptions(
+                        fields,
+                        "label",
+                        "slug",
+                        i18n?.language
+                      )}
+                      control={form.control}
+                      name="visible_field"
+                    />
+                  </FRow>
+                </div>
+                <Button variant="contained" onClick={saveSettings}>
+                  Save
+                </Button>
+              </div>
+            </Menu>
+
+            <Button
+              onClick={handleClickGroup}
+              style={{
+                margin: "0 5px",
+                color: "#888",
+                display: "flex",
+                alignItems: "center",
+                gap: "3px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "3px",
+                }}
+              >
+                <WorkspacesIcon />
+                <span>Group</span>
+              </div>
+              {openGroup ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </Button>
+
+            <Divider orientation="vertical" flexItem />
+
+            <Menu
+              open={openGroup}
+              onClose={handleCloseGroup}
+              anchorEl={anchorElGroup}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: "200px",
+                }}
+              >
+                <TimeLineGroupBy
+                  columns={computedColumnsFor}
+                  isLoading={isLoading}
+                  updateLoading={updateLoading}
+                  updateView={updateView}
+                  selectedView={views?.[selectedTabIndex]}
+                  form={form}
+                />
+              </div>
+            </Menu>
+
+            <Divider orientation="vertical" flexItem />
+            {/* __ */}
+          </div>
         </div>
 
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Divider orientation="vertical" flexItem />
-
-          <Button
-            onClick={handleClickType}
-            style={{
-              margin: "0 5px",
-              color: "#888",
-              display: "flex",
-              alignItems: "center",
-              gap: "3px",
-            }}
-          >
-            <span>
-              {types.find((item) => item.value === selectedType).title}
-            </span>
-            {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Button>
-
-          <Divider orientation="vertical" flexItem />
-
-          <Menu
-            open={openType}
-            onClose={handleCloseType}
-            anchorEl={anchorElType}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  // width: 100,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  left: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-                padding: "5px 0",
-              }}
-            >
-              {types.map((el) => (
-                <Button
-                  onClick={() => setSelectedType(el.value)}
-                  variant="text"
-                  sx={{
-                    margin: "0 5px",
-                    color: "#888",
-                    minWidth: "100px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  {el.title}
-                  {el.value === selectedType && <CheckIcon />}
-                </Button>
-              ))}
-            </div>
-          </Menu>
-
-          <Button
-            onClick={handleClickSettings}
-            style={{
-              margin: "0 5px",
-              color: "#888",
-              display: "flex",
-              alignItems: "center",
-              gap: "3px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "3px",
-              }}
-            >
-              <SettingsIcon />
-              <span>Settings</span>
-            </div>
-            {openSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Button>
-
-          <Divider orientation="vertical" flexItem />
-
-          <Menu
-            open={openSettings}
-            onClose={handleCloseSettings}
-            anchorEl={anchorElSettings}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  // width: 100,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  left: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-                minWidth: "200px",
-                padding: "10px",
-              }}
-            >
-              <div>
-                <FRow label="Time from">
-                  <HFSelect
-                    options={computedColumns}
-                    control={form.control}
-                    name="calendar_from_slug"
-                  />
-                </FRow>
-                <FRow label="Time to">
-                  <HFSelect
-                    options={computedColumns}
-                    control={form.control}
-                    name="calendar_to_slug"
-                  />
-                </FRow>
-                <FRow label="Visible field">
-                  <HFSelect
-                    options={listToLanOptions(
-                      fields,
-                      "label",
-                      "slug",
-                      i18n?.language
-                    )}
-                    control={form.control}
-                    name="visible_field"
-                  />
-                </FRow>
-              </div>
-              <Button variant="contained" onClick={saveSettings}>
-                Save
-              </Button>
-            </div>
-          </Menu>
-
-          <Button
-            onClick={handleClickGroup}
-            style={{
-              margin: "0 5px",
-              color: "#888",
-              display: "flex",
-              alignItems: "center",
-              gap: "3px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "3px",
-              }}
-            >
-              <WorkspacesIcon />
-              <span>Group</span>
-            </div>
-            {openGroup ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Button>
-
-          <Divider orientation="vertical" flexItem />
-
-          <Menu
-            open={openGroup}
-            onClose={handleCloseGroup}
-            anchorEl={anchorElGroup}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  // width: 100,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  left: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                minWidth: "200px",
-              }}
-            >
-              <TimeLineGroupBy
-                columns={computedColumnsFor}
-                isLoading={isLoading}
-                updateLoading={updateLoading}
-                updateView={updateView}
-                selectedView={views?.[selectedTabIndex]}
-                form={form}
-              />
-            </div>
-          </Menu>
-
-          <Divider orientation="vertical" flexItem />
-        </div>
-      </div>
-
-      <div
-        className={styles.wrapper}
-        style={
-          {
-            // height: "calc(100vh - 92px)",
+          className={styles.wrapper}
+          style={
+            {
+              // height: "calc(100vh - 92px)",
+            }
           }
-        }
-        ref={calendarRef}
-        // onScroll={handleScroll}
-      >
-        {isLoading || tableInfoLoading || isViewLoading ? (
-          <PageFallback />
-        ) : (
-          <TimeLineBlock
-            setDataFromQuery={setDataFromQuery}
-            dataFromQuery={dataFromQuery}
-            scrollToToday={scrollToToday}
-            isLoading={isLoading}
-            computedColumnsFor={computedColumnsFor}
-            view={view}
-            dateFilters={dateFilters}
-            setDateFilters={setDateFilters}
-            zoomPosition={zoomPosition}
-            data={data}
-            selectedType={selectedType}
-            fieldsMap={fieldsMap}
-            datesList={datesList}
-            tabs={tabs}
-            calendar_from_slug={view?.attributes?.calendar_from_slug}
-            calendar_to_slug={view?.attributes?.calendar_to_slug}
-            visible_field={view?.attributes?.visible_field}
-            months={months}
-          />
-        )}
+          ref={calendarRef}
+          onScroll={handleScroll}
+        >
+          {tableInfoLoading || isViewLoading ? (
+            <PageFallback />
+          ) : (
+            <TimeLineBlock
+              setDataFromQuery={setDataFromQuery}
+              dataFromQuery={dataFromQuery}
+              scrollToToday={scrollToToday}
+              isLoading={isLoading}
+              computedColumnsFor={computedColumnsFor}
+              view={view}
+              dateFilters={dateFilters}
+              setDateFilters={setDateFilters}
+              zoomPosition={zoomPosition}
+              data={data}
+              selectedType={selectedType}
+              fieldsMap={fieldsMap}
+              datesList={datesList}
+              tabs={tabs}
+              calendar_from_slug={view?.attributes?.calendar_from_slug}
+              calendar_to_slug={view?.attributes?.calendar_to_slug}
+              visible_field={view?.attributes?.visible_field}
+              months={months}
+              // setMonths={setMonths}
+              // handleScroll={handleScroll}
+            />
+          )}
+        </div>
+        {/* )} */}
       </div>
-      {/* )} */}
-    </div>
+    </MaterialUIProvider>
   );
 }
 

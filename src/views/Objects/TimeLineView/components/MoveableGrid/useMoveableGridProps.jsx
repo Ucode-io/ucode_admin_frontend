@@ -1,36 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { differenceInDays, format, parseISO } from "date-fns";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export const useDateLineProps = () => {
-  const [months, setMonths] = useState([]);
+export const useMoveableGridProps = ({months, setMonths}) => {
+  const [focusedDays, setFocusedDays] = useState([]);
+
   const calendarRef = useRef(null);
   const isLoading = useRef(false);
 
-  let firstDate = null;
-  let lastDate = null;
+  const getTaskWidth = (start, end, dayWidth) => {
+    const startDate = parseISO(start); // например "2024-08-05"
+    const endDate = parseISO(end);
+    const days = differenceInDays(endDate, startDate) + 1;
+    return days * dayWidth;
+  };
 
-  if (months.length > 0) {
-    const [firstMonthName, firstYear] = months[0].month.split(" ");
-    const [lastMonthName, lastYear] =
-      months[months.length - 1].month.split(" ");
-
-    const monthMap = {
-      January: 0,
-      February: 1,
-      March: 2,
-      April: 3,
-      May: 4,
-      June: 5,
-      July: 6,
-      August: 7,
-      September: 8,
-      October: 9,
-      November: 10,
-      December: 11,
-    };
-
-    firstDate = new Date(Number(firstYear), monthMap[firstMonthName], 1);
-    lastDate = new Date(Number(lastYear), monthMap[lastMonthName] + 1, 0);
-  }
+  const calculatedDays = useMemo(() => {
+    return months.reduce((acc, month) => {
+      return month.days.length + acc
+    }, 0)
+  }, [months])
 
   const generateMonth = (monthIndex, year) => {
     const date = new Date(year, monthIndex, 1);
@@ -100,35 +88,7 @@ export const useDateLineProps = () => {
     });
   };
 
-  useEffect(() => {
-    const initialMonths = [];
-    const currentDate = new Date();
-    for (let i = -3; i <= 3; i++) {
-      const date = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + i,
-        1
-      );
-      const newMonth = generateMonth(date.getMonth(), date.getFullYear());
-      if (!initialMonths.some((m) => m.month === newMonth.month)) {
-        initialMonths.push(newMonth);
-      }
-    }
-    setMonths(initialMonths);
-  }, []);
-
-  const scrollToMonth = (monthName) => {
-    if (!calendarRef.current) return;
-    const cards = calendarRef.current.querySelectorAll(".month-card");
-    cards.forEach((card) => {
-      if (card.dataset.month === monthName) {
-        card.scrollIntoView({ behavior: "smooth", inline: "center" });
-      }
-    });
-  };
-
   const handleScroll = () => {
-    console.log("SCROLL");
     if (!calendarRef.current || isLoading.current) return;
 
     const { scrollLeft, scrollWidth, clientWidth } = calendarRef.current;
@@ -141,13 +101,28 @@ export const useDateLineProps = () => {
     }
   };
 
-  return {
-    handleScroll,
-    scrollToMonth,
-    calendarRef,
-    months,
-    setMonths,
-    firstDate,
-    lastDate,
+  const scrollToToday = () => {
+    const container = calendarRef.current;
+    if (!container) return;
+
+    const today = format(new Date(), "dd.MM.yyyy");
+    const todayElement = container.querySelector(`[data-date='${today}']`);
+
+    if (todayElement) {
+      const offset = todayElement.offsetLeft - container.offsetLeft;
+
+      container.scrollTo({
+        left: offset - container.clientWidth / 2,
+        behavior: "smooth",
+      });
+    }
   };
-};
+
+  return {
+    focusedDays,
+    calendarRef,
+    getTaskWidth,
+    calculatedDays,
+    handleScroll,
+  }
+}

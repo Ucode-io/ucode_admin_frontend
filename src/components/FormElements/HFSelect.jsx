@@ -8,10 +8,10 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import {Controller} from "react-hook-form";
+import { Controller } from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
 import ClearIcon from "@mui/icons-material/Clear";
-import {columnIcons} from "../../utils/constants/columnIcons";
+import { columnIcons } from "../../utils/constants/columnIcons";
 
 const HFSelect = ({
   control,
@@ -68,11 +68,6 @@ const HFSelect = ({
               inputProps={{ placeholder }}
               fullWidth
               id={idSet}
-              just
-              following
-              attributes
-              into
-              select
               displayEmpty
               renderValue={
                 value !== ""

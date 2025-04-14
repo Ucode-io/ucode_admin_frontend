@@ -7,6 +7,13 @@
   position: relative;
 }
 
+.dayBlockWrapper {
+  height: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
 .datesRow {
   display: flex;
 
@@ -18,6 +25,7 @@
       padding: 0 20px;
       height: 32px;
       border: 1px solid #e5e9eb;
+      border-bottom: none;
       border-left: none;
       margin: -1px -1px 0 0;
       position: relative;
@@ -35,15 +43,17 @@
 
     .daysRow {
       display: flex;
+      box-shadow: rgb(233, 233, 231) 0px -1px 0px 0px inset;
     }
 
     .dayBlock {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 32px;
+      height: 22px;
       min-width: 60px;
-      border: 1px solid #e5e9eb;
+      color: rgba(55, 53, 47, 0.5);
+      // border: 1px solid #e5e9eb;
 
       &:first-of-type {
         border-left: none;
@@ -249,7 +259,7 @@
   justify-content: center;
   // height: calc(100vh - 167px);
   min-width: 60px;
-  border: 1px solid #e5e9eb;
+  // border: 1px solid #e5e9eb;
   height: 100%;
   // position: relative;
 }
@@ -257,11 +267,26 @@
 .monthText {
   display: block;
   position: sticky;
-  left: 0;
+  left: 200px;
+  color: rgb(55, 53, 47);
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .dayOff {
-  background-color: #f2f4f7;
+  background-color: rgb(247, 247, 247);
+}
+
+.firstSelectedDay {
+  border-top-left-radius: 11px;
+  border-bottom-left-radius: 11px;
+  color: rgb(55, 53, 47) !important;
+}
+
+.lastSelectedDay {
+  border-top-right-radius: 11px;
+  border-bottom-right-radius: 11px;
+  color: rgb(55, 53, 47) !important;
 }
 
 .today {
@@ -269,8 +294,31 @@
   top: 50px;
   width: 2px;
   height: calc(100% - 50px);
-  background-color: #d63b30;
+  background-color: rgb(211, 79, 67);
   z-index: 0;
+}
+
+.todayTopRow {
+  position: relative;
+  color: #fff !important;
+
+  .day {
+    position: relative;
+    z-index: 20;
+  }
+
+  &::before {
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(211, 79, 67);
+    border-radius: 50%;
+    content: "";
+  }
 }
 
 .moreButton {
@@ -341,9 +389,10 @@
   left: 120px;
   width: 60px;
   height: 32px;
-  background-color: #f2f2f2;
-  border-radius: 4px;
-  border: 1px solid #87909e;
+  background-color: #fff;
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px inset, rgba(15, 15, 15, 0.1) 0px 1px 2px;
+  border-radius: 6px;
+  // border: 1px solid #87909e;
   display: flex;
   align-items: center;
   padding-left: 3px;
@@ -784,7 +833,7 @@
 
 .main_container {
   display: flex;
-  width: 100vw;
+  // width: 100vw;
   height: max-content;
   min-height: calc(100vh - 127px);
   position: relative;
@@ -851,5 +900,10 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  border-radius: 6px;
   -webkit-line-clamp: 1;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
 }

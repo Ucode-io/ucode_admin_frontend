@@ -6,10 +6,10 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import React, {useMemo} from "react";
+import React, { useEffect, useMemo } from "react";
 import styles from "./styles.module.scss";
 import TimeLineDayBlock from "./TimeLineDayBlock";
-import {Popover, Typography} from "@mui/material";
+import { Popover, Typography } from "@mui/material";
 import TimelineMonthBlock from "./TimeLineMonth";
 
 export default function TimeLineDatesRow({
@@ -18,6 +18,7 @@ export default function TimeLineDatesRow({
   selectedType,
   focusedDays,
   months,
+  scrollToToday,
 }) {
   const computedDatesList = useMemo(() => {
     const result = {};
@@ -99,7 +100,7 @@ export default function TimeLineDatesRow({
     >
       {/* <div className={styles.mockBlock} /> */}
 
-      {computedDatesList.map(({ month, days }) => (
+      {months.map(({ month, days }) => (
         <div
           className={styles.dateBlock}
           style={{
@@ -127,6 +128,8 @@ export default function TimeLineDatesRow({
                     focusedDays={focusedDays}
                     zoomPosition={zoomPosition}
                     selectedType={selectedType}
+                    month={month}
+                    scrollToToday={scrollToToday}
                   />
                 ))}
               </div>

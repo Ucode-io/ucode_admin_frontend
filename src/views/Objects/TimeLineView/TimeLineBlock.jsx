@@ -25,8 +25,8 @@ export default function TimeLineBlock({
   calendar_to_slug,
   visible_field,
   computedColumnsFor,
-  isLoading,
   months,
+  // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
   const [focusedDays, setFocusedDays] = useState([]);
@@ -36,16 +36,15 @@ export default function TimeLineBlock({
   const handleOpenSidebar = () => setIsSidebarOpen(true);
   const handleCloseSidebar = () => setIsSidebarOpen(false);
 
+  const calendarRef = useRef(null);
+  const isLoading = useRef(null);
+
   const dispatch = useDispatch();
   const groupbyFields = useMemo(() => {
     return view?.group_fields?.map((field) => {
       return fieldsMap?.[field];
     });
   }, [view?.group_fields, fieldsMap]);
-
-  useEffect(() => {
-    scrollToToday();
-  }, []);
 
   useEffect(() => {
     if (Boolean(calendar_from_slug) && Boolean(calendar_to_slug)) {
@@ -121,12 +120,95 @@ export default function TimeLineBlock({
     );
   }
 
+  // const generateMonth = (monthIndex, year) => {
+  //   const date = new Date(year, monthIndex, 1);
+  //   const days = [];
+  //   const monthName = date.toLocaleDateString("en-US", {
+  //     month: "long",
+  //     year: "numeric",
+  //   });
+
+  //   while (date.getMonth() === monthIndex) {
+  //     const day = new Date(date);
+  //     const dayName = day.toLocaleDateString("en-US", { weekday: "long" });
+  //     days.push(`${day.getDate()}/${dayName}`);
+  //     date.setDate(date.getDate() + 1);
+  //   }
+
+  //   return { month: monthName, days };
+  // };
+
+  // const loadMoreMonths = (direction) => {
+  //   if (isLoading.current) return;
+  //   isLoading.current = true;
+
+  //   requestAnimationFrame(() => {
+  //     setMonths((prev) => {
+  //       const newMonths = [...prev];
+  //       const lastMonth = newMonths[newMonths.length - 1];
+  //       const firstMonth = newMonths[0];
+
+  //       if (direction === "right") {
+  //         const [monthName, year] = lastMonth.month.split(" ");
+  //         const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
+  //         for (let i = 0; i < 3; i++) {
+  //           const newMonth = generateMonth(
+  //             (monthIndex + 1 + i) % 12,
+  //             parseInt(year) + (monthIndex + 1 + i > 11 ? 1 : 0)
+  //           );
+  //           if (!newMonths.some((m) => m.month === newMonth.month)) {
+  //             newMonths.push(newMonth);
+  //           }
+  //         }
+  //       } else if (direction === "left") {
+  //         const [monthName, year] = firstMonth.month.split(" ");
+  //         const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
+  //         for (let i = 0; i < 3; i++) {
+  //           const newMonth = generateMonth(
+  //             (monthIndex - 1 - i + 12) % 12,
+  //             parseInt(year) - (monthIndex - 1 - i < 0 ? 1 : 0)
+  //           );
+  //           if (!newMonths.some((m) => m.month === newMonth.month)) {
+  //             newMonths.unshift(newMonth);
+  //           }
+  //         }
+
+  //         requestAnimationFrame(() => {
+  //           if (calendarRef.current) {
+  //             const scrollAmount =
+  //               (calendarRef.current.scrollWidth / months.length) * 3;
+  //             calendarRef.current.scrollLeft += scrollAmount;
+  //           }
+  //         });
+  //       }
+
+  //       isLoading.current = false;
+  //       return newMonths;
+  //     });
+  //   });
+  // };
+  // const handleScroll = () => {
+  //   if (!calendarRef.current || isLoading.current) return;
+
+  //   const { scrollLeft, scrollWidth, clientWidth } = calendarRef.current;
+  //   if (scrollLeft <= 100) {
+  //     loadMoreMonths("left");
+  //   }
+
+  //   if (scrollLeft + clientWidth >= scrollWidth - 100) {
+  //     loadMoreMonths("right");
+  //   }
+  // };
+
   return (
     <div
       className={styles.main_container}
       style={{
         height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
+        // overflow: "scroll",
       }}
+      // onScroll={handleScroll}
+      // ref={calendarRef}
     >
       {/* {view?.attributes?.group_by_columns?.length !== 0 && (
         <div className={styles.group_by}>
@@ -178,6 +260,14 @@ export default function TimeLineBlock({
           zoomPosition={zoomPosition}
         />
       )}
+      {/* <MoveableGrid
+        computedData={computedData}
+        selectedType={selectedType}
+        months={months}
+        datesList={datesList}
+        zoomPosition={zoomPosition}
+        setMonths={setMonths}
+      /> */}
       <div className={styles.gantt}>
         <TimeLineDatesRow
           focusedDays={focusedDays}
@@ -185,6 +275,7 @@ export default function TimeLineBlock({
           zoomPosition={zoomPosition}
           selectedType={selectedType}
           months={months}
+          scrollToToday={scrollToToday}
         />
 
         {calendar_from_slug !== calendar_to_slug && (

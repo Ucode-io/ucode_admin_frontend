@@ -35,7 +35,7 @@ export default function TimeLineDays({date, zoomPosition, selectedType}) {
           style={{
             position: "absolute",
             top: "20px",
-            color: "#d63b30",
+            color: "rgb(211, 79, 67)",
             transform: "rotate(90deg)",
           }}
         >

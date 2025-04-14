@@ -58,9 +58,9 @@ export const Sidebar = ({
           )}
         </div>
         {/* <SidebarButton
-          className={cls.sidebarBtn}
-          onClick={handleCloseSidebar}
-        /> */}
+        className={cls.sidebarBtn}
+        onClick={handleCloseSidebar}
+      /> */}
       </div>
 
       {view?.attributes?.calendar_from_slug !==

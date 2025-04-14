@@ -18,7 +18,7 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
   }, [expireDate]);
 
   if (projectStatus === "inactive")
-    return <SubscribeExpired onCLick={handleOpenBilling} />;
+    return <SubscribeExpired onClick={handleOpenBilling} />;
   else if (projectStatus === "active" && daysLeft <= 7) {
     <WarningBanner
       onClick={handleOpenBilling}

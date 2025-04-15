@@ -18,7 +18,7 @@ export default function useTabRouter() {
     state,
     menuId = ""
   ) => {
-    if (type === "CREATE") {
+    if (type === "CREATE" || !Object.is(state)) {
       const id = generateID();
 
       const link = `/main/${appId}/object/${tableSlug}/create/${id}?menuId=${menuId}`;

@@ -5,7 +5,7 @@ import TimeLineRecursiveRow from "./TimeLineRecursiveRow";
 import styles from "./styles.module.scss";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
-import {isSameDay, isWithinInterval} from "date-fns";
+import { isSameDay, isValid, isWithinInterval } from "date-fns";
 import { Sidebar } from "./components/Sidebar";
 import { Button, Divider, Menu } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -171,18 +171,75 @@ export default function TimeLineBlock({
     }
   }, [data]);
 
-  function hasSameDay(startDate1, endDate1, startDate2, endDate2) {
-    return (
-      isSameDay(startDate1, startDate2) ||
-      isSameDay(startDate1, endDate2) ||
-      isSameDay(endDate1, startDate2) ||
-      isSameDay(endDate1, endDate2) ||
-      isWithinInterval(startDate2, { start: startDate1, end: endDate1 }) ||
-      isWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
-      isWithinInterval(startDate1, { start: startDate2, end: endDate2 }) ||
-      isWithinInterval(endDate1, { start: startDate2, end: endDate2 })
-    );
+  function safeIsWithinInterval(date, interval) {
+    const { start, end } = interval || {};
+    const isValidDate = (d) => d instanceof Date && !isNaN(d);
+
+    if (!isValidDate(date) || !isValidDate(start) || !isValidDate(end)) {
+      return false;
+    }
+
+    if (start > end) {
+      return false;
+    }
+
+    try {
+      return isWithinInterval(date, { start, end });
+    } catch (err) {
+      console.error("safeIsWithinInterval error:", err);
+      return false;
+    }
   }
+
+  function hasSameDay(startDate1, endDate1, startDate2, endDate2) {
+    if (
+      isValid(startDate1) &&
+      isValid(endDate1) &&
+      isValid(startDate2) &&
+      isValid(endDate2)
+    ) {
+      return (
+        isSameDay(startDate1, startDate2) ||
+        isSameDay(startDate1, endDate2) ||
+        isSameDay(endDate1, startDate2) ||
+        isSameDay(endDate1, endDate2) ||
+        safeIsWithinInterval(startDate2, {
+          start: startDate1,
+          end: endDate1,
+        }) ||
+        safeIsWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
+        safeIsWithinInterval(startDate1, {
+          start: startDate2,
+          end: endDate2,
+        }) ||
+        safeIsWithinInterval(endDate1, { start: startDate2, end: endDate2 })
+      );
+    }
+
+    return false;
+  }
+
+  // function hasSameDay(startDate1, endDate1, startDate2, endDate2) {
+  //   if (
+  //     isValid(startDate1) &&
+  //     isValid(endDate1) &&
+  //     isValid(startDate2) &&
+  //     isValid(endDate2)
+  //   ) {
+  //     return (
+  //       isSameDay(startDate1, startDate2) ||
+  //       isSameDay(startDate1, endDate2) ||
+  //       isSameDay(endDate1, startDate2) ||
+  //       isSameDay(endDate1, endDate2) ||
+  //       isWithinInterval(startDate2, { start: startDate1, end: endDate1 }) ||
+  //       isWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
+  //       isWithinInterval(startDate1, { start: startDate2, end: endDate2 }) ||
+  //       isWithinInterval(endDate1, { start: startDate2, end: endDate2 })
+  //     );
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   // const generateMonth = (monthIndex, year) => {
   //   const date = new Date(year, monthIndex, 1);

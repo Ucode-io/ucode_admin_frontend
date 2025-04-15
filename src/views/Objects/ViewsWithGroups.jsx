@@ -317,7 +317,8 @@ const ViewsWithGroups = ({
                       height: "35px",
                       padding: "0px",
                       minWidth: "35px",
-                    }}>
+                    }}
+                  >
                     <SettingsIcon
                       style={{
                         color: "#A8A8A8",
@@ -326,7 +327,8 @@ const ViewsWithGroups = ({
                   </Button>
                 </PermissionWrapperV2>
               </>
-            }>
+            }
+          >
             <ViewTabSelector
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
@@ -364,7 +366,8 @@ const ViewsWithGroups = ({
                       height: "35px",
                       padding: "0px",
                       minWidth: "35px",
-                    }}>
+                    }}
+                  >
                     <SettingsIcon
                       style={{
                         color: "#A8A8A8",
@@ -373,7 +376,8 @@ const ViewsWithGroups = ({
                   </Button>
                 </PermissionWrapperV2>
               </>
-            }>
+            }
+          >
             <ViewTabSelector
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
@@ -411,8 +415,9 @@ const ViewsWithGroups = ({
         <Box>
           {updateLoading && (
             <Backdrop
-              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-              open={true}>
+              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+              open={true}
+            >
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -433,7 +438,8 @@ const ViewsWithGroups = ({
                       height: "35px",
                       padding: "0px",
                       minWidth: "35px",
-                    }}>
+                    }}
+                  >
                     <SettingsIcon
                       style={{
                         color: "#A8A8A8",
@@ -442,7 +448,8 @@ const ViewsWithGroups = ({
                   </Button>
                 </PermissionWrapperV2>
               </>
-            }>
+            }
+          >
             <ViewTabSelector
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
@@ -464,7 +471,8 @@ const ViewsWithGroups = ({
             className={style.extraNavbar}
             style={{
               minHeight: "42px",
-            }}>
+            }}
+          >
             <div className={style.extraWrapper}>
               <div className={style.search}>
                 <Badge
@@ -477,7 +485,8 @@ const ViewsWithGroups = ({
                     setFilterVisible((prev) => !prev);
                   }}
                   badgeContent={filterCount}
-                  color="primary">
+                  color="primary"
+                >
                   <FilterAltOutlinedIcon color={"#A8A8A8"} />
                 </Badge>
 
@@ -497,7 +506,8 @@ const ViewsWithGroups = ({
                     onClick={handleClickSearch}
                     style={{
                       paddingRight: "10px",
-                    }}>
+                    }}
+                  >
                     <MoreHorizIcon />
                   </button>
                 )}
@@ -531,7 +541,8 @@ const ViewsWithGroups = ({
                         zIndex: 0,
                       },
                     },
-                  }}>
+                  }}
+                >
                   <SearchParams
                     checkedColumns={checkedColumns}
                     setCheckedColumns={setCheckedColumns}
@@ -607,12 +618,14 @@ const ViewsWithGroups = ({
                             zIndex: 0,
                           },
                         },
-                      }}>
+                      }}
+                    >
                       <div className={style.menuBar}>
                         {tableHeightOptions.map((el) => (
                           <div
                             className={style.template}
-                            onClick={() => handleHeightControl(el.value)}>
+                            onClick={() => handleHeightControl(el.value)}
+                          >
                             <span>{el.label}</span>
 
                             <Switch
@@ -638,7 +651,8 @@ const ViewsWithGroups = ({
                       color: "#A8A8A8",
                       borderColor: "#A8A8A8",
                       minWidth: "auto",
-                    }}>
+                    }}
+                  >
                     <MoreVertOutlined
                       style={{
                         color: "#888",
@@ -684,7 +698,8 @@ const ViewsWithGroups = ({
                         zIndex: 0,
                       },
                     },
-                  }}>
+                  }}
+                >
                   <div className={style.menuBar}>
                     <ExcelButtons
                       computedVisibleFields={computedVisibleFields}
@@ -695,14 +710,16 @@ const ViewsWithGroups = ({
                     />
                     <div
                       className={style.template}
-                      onClick={() => setSelectedTabIndex(views?.length)}>
+                      onClick={() => setSelectedTabIndex(views?.length)}
+                    >
                       <div
                         className={`${style.element} ${
                           selectedTabIndex === views?.length ? style.active : ""
-                        }`}>
+                        }`}
+                      >
                         <Description
                           className={style.icon}
-                          style={{color: "#6E8BB7"}}
+                          style={{ color: "#6E8BB7" }}
                         />
                       </div>
                       <span>Template</span>
@@ -717,16 +734,17 @@ const ViewsWithGroups = ({
             <TableCard type="withoutPadding">
               {tabs?.length > 0 && (
                 <div className={style.tableCardHeader}>
-                  <div style={{display: "flex", alignItems: "center"}}>
-                    <div className="title" style={{marginRight: "20px"}}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="title" style={{ marginRight: "20px" }}>
                       <h3>{view.table_label}</h3>
                     </div>
-                    <TabList style={{border: "none"}}>
+                    <TabList style={{ border: "none" }}>
                       {tabs?.map((tab) => (
                         <Tab
                           key={tab.value}
                           selectedClassName={style.activeTab}
-                          className={`${style.disableTab} react-tabs__tab`}>
+                          className={`${style.disableTab} react-tabs__tab`}
+                        >
                           {tab.label}
                         </Tab>
                       ))}

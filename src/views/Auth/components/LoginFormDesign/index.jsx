@@ -196,6 +196,9 @@ const LoginFormDesign = ({
             "newUi",
             res?.companies?.[0]?.projects?.[0]?.new_design
           );
+          res?.companies?.[0]?.projects?.[0]?.new_layout
+            ? localStorage.setItem("detailPage", "SidePeek")
+            : localStorage.setItem("detailPage", "");
           localStorage.setItem(
             "newLayout",
             res?.companies?.[0]?.projects?.[0]?.new_layout

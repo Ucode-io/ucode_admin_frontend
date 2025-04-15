@@ -13,9 +13,9 @@ export default function TimeLineDayBlock({
   scrollToToday,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const splittedDay = day.split("/");
-  const splittedMonth = month.split(" ")[0];
-  const year = month.split(" ")[1];
+  const splittedDay = day?.split("/");
+  const splittedMonth = month?.split(" ")[0];
+  const year = month?.split(" ")[1];
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,6 +57,7 @@ export default function TimeLineDayBlock({
   // }, [focusedDays, day]);
 
   const date = `${splittedDay[0]} ${splittedMonth}, ${year}`;
+  // console.log({ date });
 
   // const isFocusedDay = () => {
   //   if (focusedDays?.length) return null;

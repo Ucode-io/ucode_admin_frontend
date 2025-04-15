@@ -222,28 +222,28 @@ export default function TimeLineView({
 
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
-  const [zoomPosition, setZoomPosition] = useState(2);
+  // const [zoomPosition, setZoomPosition] = useState(2);
 
-  const zoom = (e) => {
-    if (e === "zoomin" && zoomPosition === 3) {
-      return;
-    } else if (e === "zoomout" && zoomPosition === 1) {
-      return;
-    } else if (e === "zoomin") {
-      setZoomPosition(zoomPosition + 1);
-    } else if (e === "zoomout") {
-      setZoomPosition(zoomPosition - 1);
-    }
-  };
+  // const zoom = (e) => {
+  //   if (e === "zoomin" && zoomPosition === 3) {
+  //     return;
+  //   } else if (e === "zoomout" && zoomPosition === 1) {
+  //     return;
+  //   } else if (e === "zoomin") {
+  //     setZoomPosition(zoomPosition + 1);
+  //   } else if (e === "zoomout") {
+  //     setZoomPosition(zoomPosition - 1);
+  //   }
+  // };
 
-  const [anchorElType, setAnchorElType] = useState(null);
-  const openType = Boolean(anchorElType);
-  const handleClickType = (event) => {
-    setAnchorElType(event.currentTarget);
-  };
-  const handleCloseType = () => {
-    setAnchorElType(null);
-  };
+  // const [anchorElType, setAnchorElType] = useState(null);
+  // const openType = Boolean(anchorElType);
+  // const handleClickType = (event) => {
+  //   setAnchorElType(event.currentTarget);
+  // };
+  // const handleCloseType = () => {
+  //   setAnchorElType(null);
+  // };
 
   const [anchorElSettings, setAnchorElSettings] = useState(null);
   const openSettings = Boolean(anchorElSettings);
@@ -263,22 +263,22 @@ export default function TimeLineView({
     setAnchorElGroup(null);
   };
 
-  const types = [
-    {
-      title: "Day",
-      value: "day",
-    },
-    {
-      title: "Week",
-      value: "week",
-    },
-    {
-      title: "Month",
-      value: "month",
-    },
-  ];
+  // const types = [
+  //   {
+  //     title: "Day",
+  //     value: "day",
+  //   },
+  //   {
+  //     title: "Week",
+  //     value: "week",
+  //   },
+  //   {
+  //     title: "Month",
+  //     value: "month",
+  //   },
+  // ];
 
-  const [selectedType, setSelectedType] = useState("day");
+  // const [selectedType, setSelectedType] = useState("day");
 
   // const handleScrollClick = () => {
   //   const scrollToDiv = document.getElementById("todayDate");
@@ -334,13 +334,13 @@ export default function TimeLineView({
       });
   };
 
-  useEffect(() => {
-    if (selectedType === "month") {
-      setZoomPosition(1);
-    } else if (selectedType === "week") {
-      setZoomPosition(2);
-    }
-  }, [selectedType]);
+  // useEffect(() => {
+  //   if (selectedType === "month") {
+  //     setZoomPosition(1);
+  //   } else if (selectedType === "week") {
+  //     setZoomPosition(2);
+  //   }
+  // }, [selectedType]);
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -350,12 +350,12 @@ export default function TimeLineView({
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
 
-  const computedFelds = useMemo(() => {
-    return fields?.map((el) => ({
-      label: el?.attributes[`label_${i18n?.language}`],
-      value: el["id"],
-    }));
-  }, [fields]);
+  // const computedFelds = useMemo(() => {
+  //   return fields?.map((el) => ({
+  //     label: el?.attributes[`label_${i18n?.language}`],
+  //     value: el["id"],
+  //   }));
+  // }, [fields]);
 
   const [updateLoading, setUpdateLoading] = useState(false);
 
@@ -386,11 +386,11 @@ export default function TimeLineView({
     form.setValue("group_fields", view?.group_fields);
   }, [view, form]);
 
-  useEffect(() => {
-    if (selectedType === "day") {
-      setZoomPosition(2);
-    }
-  }, [selectedType]);
+  // useEffect(() => {
+  //   if (selectedType === "day") {
+  //     setZoomPosition(2);
+  //   }
+  // }, [selectedType]);
 
   const scrollToToday = (todayElement) => {
     const container = calendarRef.current;
@@ -443,20 +443,20 @@ export default function TimeLineView({
             borderBottom: "1px solid #E5E9EB",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
           }}
         >
-          <div
+          {/* <div
             style={{
               display: "flex",
               alignItems: "center",
             }}
           >
-            {/* <CRangePicker
-            interval={"months"}
-            value={dateFilters}
-            onChange={setDateFilters}
-          /> */}
+            <CRangePicker
+              interval={"months"}
+              value={dateFilters}
+              onChange={setDateFilters}
+            />
             <Button
               variant="text"
               sx={{
@@ -467,7 +467,7 @@ export default function TimeLineView({
             >
               Today
             </Button>
-          </div>
+          </div> */}
 
           <div
             style={{
@@ -475,7 +475,7 @@ export default function TimeLineView({
               alignItems: "center",
             }}
           >
-            <Divider orientation="vertical" flexItem />
+            {/* <Divider orientation="vertical" flexItem />
 
             <Button
               onClick={handleClickType}
@@ -552,11 +552,7 @@ export default function TimeLineView({
                   </Button>
                 ))}
               </div>
-            </Menu>
-
-            {/* 
-            Temp data:
-           */}
+            </Menu> */}
 
             <Button
               onClick={handleClickSettings}
@@ -732,7 +728,6 @@ export default function TimeLineView({
             </Menu>
 
             <Divider orientation="vertical" flexItem />
-            {/* __ */}
           </div>
         </div>
 
@@ -758,9 +753,10 @@ export default function TimeLineView({
               view={view}
               dateFilters={dateFilters}
               setDateFilters={setDateFilters}
-              zoomPosition={zoomPosition}
+              // zoomPosition={zoomPosition}
               data={data}
-              selectedType={selectedType}
+              // selectedType={selectedType}
+              // setSelectedType={setSelectedType}
               fieldsMap={fieldsMap}
               datesList={datesList}
               tabs={tabs}

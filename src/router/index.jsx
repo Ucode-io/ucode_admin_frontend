@@ -75,6 +75,7 @@ import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDes
 import {ClientTypes} from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
+import ChartDb from "../views/ChartDb";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -284,6 +285,10 @@ const Router = () => {
 
           <Route path=":appId/website">
             <Route index element={<WebsitePage />} />
+          </Route>
+
+          <Route path=":appId/chartDb">
+            <Route index element={<ChartDb />} />
           </Route>
 
           <Route path=":appId/openfaas-functions">

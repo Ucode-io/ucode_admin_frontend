@@ -80,11 +80,14 @@ export default function TimeLineDatesRow({
           week: format(weekStart, "w"),
           days: [day],
           weekDays: [weekStart, weekEnd],
+          month: format(date, "MMMM yyyy"),
         };
     });
 
     return Object.values(result);
   }, [datesList]);
+
+  console.log({ computedWeekList, months });
 
   return (
     <div
@@ -101,8 +104,9 @@ export default function TimeLineDatesRow({
     >
       {/* <div className={styles.mockBlock} /> */}
 
-      {months.map(({ month, days }) => (
+      {months.map(({ month, days }, index) => (
         <div
+          key={`${selectedType}-${index}`}
           className={styles.dateBlock}
           style={{
             display:
@@ -141,8 +145,8 @@ export default function TimeLineDatesRow({
               </div>
             </>
           ) : selectedType === "week" ? (
-            computedWeekList.map(({ week, days, weekDays }) => (
-              <div className={styles.weekBlock}>
+            computedWeekList.map(({ week, days, weekDays, month }, index) => (
+              <div className={styles.weekBlock} key={`${week}-${index}`}>
                 <div
                   className={styles.weekNumber}
                   style={{
@@ -169,7 +173,14 @@ export default function TimeLineDatesRow({
                 </div>
                 <div className={styles.daysRow}>
                   {days?.map((day) => (
-                    <TimeLineDayBlock day={day} zoomPosition={zoomPosition} />
+                    <TimeLineDayBlock
+                      day={day}
+                      month={month}
+                      focusedDays={focusedDays}
+                      scrollToToday={scrollToToday}
+                      selectedType={selectedType}
+                      zoomPosition={zoomPosition}
+                    />
                   ))}
                 </div>
               </div>

@@ -128,7 +128,6 @@ export const useDateLineProps = () => {
   };
 
   const handleScroll = () => {
-    console.log("SCROLL");
     if (!calendarRef.current || isLoading.current) return;
 
     const { scrollLeft, scrollWidth, clientWidth } = calendarRef.current;

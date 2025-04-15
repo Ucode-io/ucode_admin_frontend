@@ -33,7 +33,7 @@ export const useTimelineRecursiveRowProps = ({
           lastLabels?.length ? lastLabels + "." + item?.label : item?.label,
         ];
 
-        if (newOpenedRows.length === computedData.length) {
+        if (newOpenedRows.length === computedData?.length) {
           setIsAllOpen(true);
         }
         return newOpenedRows;

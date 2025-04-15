@@ -9,8 +9,8 @@ import {
 import React, { useEffect, useMemo } from "react";
 import styles from "./styles.module.scss";
 import TimeLineDayBlock from "./TimeLineDayBlock";
-import { Popover, Typography } from "@mui/material";
 import TimelineMonthBlock from "./TimeLineMonth";
+import { useSelector } from "react-redux";
 
 export default function TimeLineDatesRow({
   datesList,
@@ -19,6 +19,7 @@ export default function TimeLineDatesRow({
   focusedDays,
   months,
   scrollToToday,
+  sidebarIsOpen,
 }) {
   const computedDatesList = useMemo(() => {
     const result = {};
@@ -95,7 +96,7 @@ export default function TimeLineDatesRow({
         left: 0,
         top: 0,
         background: "#fff",
-        zIndex: 4,
+        zIndex: 20,
       }}
     >
       {/* <div className={styles.mockBlock} /> */}
@@ -113,7 +114,12 @@ export default function TimeLineDatesRow({
           {selectedType === "day" ? (
             <>
               <div className={styles.monthBlock}>
-                <span className={styles.monthText}>{month}</span>
+                <span
+                  className={styles.monthText}
+                  style={{ left: sidebarIsOpen ? "200px" : "0" }}
+                >
+                  {month}
+                </span>
               </div>
 
               <div

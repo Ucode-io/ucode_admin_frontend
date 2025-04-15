@@ -230,9 +230,12 @@ export default function TimeLineDayDataBlockItem({
 
   const onResize = ({ target, width, drag }) => {
     const beforeTranslate = drag.beforeTranslate;
+
     if (beforeTranslate[1] < 0) return null;
+
     target.style.width = `${width}px`;
     target.style.transform = `translateX(${beforeTranslate[0]}px)`;
+
     setFocusedDays([
       datesList[
         startDate +
@@ -262,6 +265,22 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
+  const handleMouseEnter = () => {
+    setFocusedDays([
+      datesList[startDate],
+      addDays(
+        datesList[
+          startDate +
+            Math.round(
+              frame.translate[0] /
+                (zoomPosition * (selectedType === "month" ? 20 : 30))
+            )
+        ],
+        ref.current.offsetWidth / (zoomPosition * 30) - 1
+      ),
+    ]);
+  };
+
   return (
     <>
       <div
@@ -278,6 +297,7 @@ export default function TimeLineDayDataBlockItem({
         onClick={handleOpen}
         ref={ref}
         key={data?.id_order}
+        onMouseEnter={handleMouseEnter}
       >
         <div
           className={styles.dataBlockInner}

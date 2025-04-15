@@ -1,6 +1,7 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Backdrop,
+  Menu,
   Box as MuiBox,
   Button as MuiButton,
   Popover as MuiPopover,
@@ -27,13 +28,18 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
-import {endOfMonth, startOfMonth} from "date-fns";
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { endOfMonth, startOfMonth } from "date-fns";
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
@@ -41,13 +47,15 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import InlineSVG from "react-inlinesvg";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useFieldSearchUpdateMutation } from "@/services/constructorFieldService";
 import {
   getSearchText,
   openDB,
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
-import {queryGenerator} from "@/utils/queryGenerator";
+import { queryGenerator } from "@/utils/queryGenerator";
 import TableView from "./table-view";
 import style from "@/views/Objects/style.module.scss";
 import {
@@ -56,41 +64,48 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import SVG from "react-inlinesvg";
-import {viewsActions} from "@/store/views/view.slice";
+import { viewsActions } from "@/store/views/view.slice";
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
-import {computedViewTypes} from "@/utils/constants/viewTypes";
-import {filterActions} from "@/store/filter/filter.slice";
-import {Filter} from "./FilterGenerator";
+import { computedViewTypes } from "@/utils/constants/viewTypes";
+import { filterActions } from "@/store/filter/filter.slice";
+import { Filter } from "./FilterGenerator";
 import constructorViewService from "@/services/constructorViewService";
-import {quickFiltersActions} from "@/store/filter/quick_filter";
+import { quickFiltersActions } from "@/store/filter/quick_filter";
 import useTabRouter from "@/hooks/useTabRouter";
 import layoutService from "@/services/layoutService";
 import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploadModal";
 import constructorObjectService from "@/services/constructorObjectService";
 import useDownloader from "@/hooks/useDownloader";
-import {getColumnIcon} from "@/views/table-redesign/icons";
-import {Container, Draggable} from "react-smooth-dnd";
-import {applyDrag} from "@/utils/applyDrag";
-import {mainActions} from "@/store/main/main.slice";
+import { getColumnIcon } from "@/views/table-redesign/icons";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "@/utils/applyDrag";
+import { mainActions } from "@/store/main/main.slice";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
 import ShareModal from "@/views/Objects/ShareModal/ShareModal";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
-import {useGetLang} from "../../hooks/useGetLang";
-import {getAllFromDB} from "../../utils/languageDB";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {LayoutPopup} from "./LayoutPopup";
-import {useTableByIdQuery} from "../../services/constructorTableService";
-import {generateGUID} from "../../utils/generateID";
-import {useProjectGetByIdQuery} from "../../services/projectService";
+import { useGetLang } from "../../hooks/useGetLang";
+import { getAllFromDB } from "../../utils/languageDB";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { LayoutPopup } from "./LayoutPopup";
+import constructorTableService, {
+  useTableByIdQuery,
+} from "../../services/constructorTableService";
+import { generateGUID } from "../../utils/generateID";
+import { useProjectGetByIdQuery } from "../../services/projectService";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import ViewSettings from "../Objects/components/ViewSettings";
 import ViewSettingsModal from "./ViewSettings";
 import TimeLineView from "../Objects/TimeLineView";
+import FRow from "../../components/FormElements/FRow";
+import HFSelect from "../../components/FormElements/HFSelect";
+import listToLanOptions from "../../utils/listToLanOptions";
+import listToOptions from "../../utils/listToOptions";
+import { listToMap } from "../../utils/listToMap";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -758,7 +773,11 @@ export const NewUiViewsWithGroups = ({
             />
           )}
 
-          <Tabs direction={"ltr"} defaultIndex={0}>
+          <Tabs
+            direction={"ltr"}
+            defaultIndex={0}
+            // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+          >
             {tabs?.length > 0 && view?.type !== "GRID" && (
               <div id="tabsHeight" className={style.tableCardHeader}>
                 <div style={{display: "flex", alignItems: "center"}}>
@@ -844,6 +863,7 @@ export const NewUiViewsWithGroups = ({
                   </>
                 )}
                 {!groupTable?.length &&
+                  view.type !== "TIMELINE" &&
                   tabs?.map((tab) => (
                     <TabPanel key={tab.value}>
                       {view?.type === "GRID" ? (
@@ -923,7 +943,9 @@ export const NewUiViewsWithGroups = ({
                     </TabPanel>
                   ))}
 
-                {!tabs?.length && !groupTable?.length ? (
+                {!tabs?.length &&
+                !groupTable?.length &&
+                view.type !== "TIMELINE" ? (
                   <>
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
@@ -1016,7 +1038,7 @@ export const NewUiViewsWithGroups = ({
   );
 };
 
-const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
+const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
@@ -1058,7 +1080,8 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
           justifyContent="center"
           color="#fff"
           borderRadius="50%"
-          fontSize="10px">
+          fontSize="10px"
+        >
           {view?.attributes?.quick_filters?.length}
         </Flex>
       )}
@@ -1075,7 +1098,7 @@ const FilterPopover = ({
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Popover>
@@ -1115,13 +1138,13 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
-  const {new_list} = useSelector((state) => state.filter);
+  const { tableSlug } = useParams();
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
   useEffect(() => {
@@ -1196,12 +1219,14 @@ const FiltersList = ({
       gap="6px"
       borderBottom="1px solid #EAECF0"
       flexWrap="wrap"
-      id="filterHeight">
+      id="filterHeight"
+    >
       <FilterPopover
         tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
-        refetchViews={refetchViews}>
+        refetchViews={refetchViews}
+      >
         <Flex
           alignItems="center"
           columnGap="4px"
@@ -1211,7 +1236,8 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
-          _hover={{bg: "#f3f3f3"}}>
+          _hover={{ bg: "#f3f3f3" }}
+        >
           <InlineSVG
             src="/img/plus-icon.svg"
             width={14}
@@ -1240,9 +1266,9 @@ const FiltersList = ({
   );
 };
 
-const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
+  const { tableSlug } = useParams();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
@@ -1266,8 +1292,8 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
-    ...checkedColumns.map((c) => ({...c, checked: true})),
-    ...unCheckedColumns.map((c) => ({...c, checked: false})),
+    ...checkedColumns.map((c) => ({ ...c, checked: true })),
+    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
   ].filter((column) =>
     search === ""
       ? true
@@ -1292,7 +1318,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
 
     await mutation.mutateAsync({
       ...view,
-      attributes: {...view?.attributes, quick_filters: result},
+      attributes: { ...view?.attributes, quick_filters: result },
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -1333,9 +1359,10 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -1365,8 +1392,8 @@ const ViewOptions = ({
   selectedTabIndex,
   setIsChanged = () => {},
 }) => {
-  const {appId, tableSlug} = useParams();
-  const {i18n, t} = useTranslation();
+  const { appId, tableSlug } = useParams();
+  const { i18n, t } = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1384,7 +1411,7 @@ const ViewOptions = ({
   }, [openedMenu]);
 
   const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", {tableSlug}],
+    queryKey: ["GET_LAYOUT", { tableSlug }],
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
@@ -1411,6 +1438,92 @@ const ViewOptions = ({
   const visibleColumnsCount = view?.columns?.length ?? 0;
   const tabGroupColumnsCount = view?.group_fields?.length;
 
+  // const queryClient = useQueryClient();
+
+  // const [anchorElSettings, setAnchorElSettings] = useState(null);
+  // const openSettings = Boolean(anchorElSettings);
+
+  // const handleClickSettings = (event) => {
+  //   setAnchorElSettings(event.currentTarget);
+  // };
+
+  // const handleCloseSettings = () => {
+  //   setAnchorElSettings(null);
+  // };
+
+  // const form = useForm({
+  //   defaultValues: {
+  //     calendar_from_slug: "",
+  //     calendar_to_slug: "",
+  //   },
+  // });
+
+  // const {
+  //   data: { fields, visibleColumns } = { data: [] },
+  //   isLoading: tableInfoLoading,
+  // } = useQuery(
+  //   ["GET_TABLE_INFO", { tableSlug }],
+  //   () => {
+  //     return constructorTableService.getTableInfo(tableSlug, {
+  //       data: {},
+  //     });
+  //   },
+  //   {
+  //     cacheTime: 10,
+  //     select: (res) => {
+  //       const fields = res.data?.fields ?? [];
+  //       const relationFields =
+  //         res?.data?.relation_fields?.map((el) => ({
+  //           ...el,
+  //           label: `${el.label} (${el.table_label})`,
+  //         })) ?? [];
+  //       const fieldsMap = listToMap([...fields, ...relationFields]);
+  //       const data = res.data?.response?.map((row) => ({
+  //         ...row,
+  //       }));
+
+  //       return {
+  //         fieldsMap,
+  //         data,
+  //         fields,
+  //         visibleColumns: res?.data?.fields ?? [],
+  //         visibleRelationColumns:
+  //           res?.data?.relation_fields?.map((el) => ({
+  //             ...el,
+  //             label: `${el.label} (${el.table_label})`,
+  //           })) ?? [],
+  //       };
+  //     },
+  //   }
+  // );
+
+  // const computedColumns = useMemo(() => {
+  //   const filteredFields = fields?.filter(
+  //     (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+  //   );
+  //   return listToOptions(filteredFields, "label", "slug");
+  // }, [fields]);
+
+  // const saveSettings = () => {
+  //   const computedData = {
+  //     ...view,
+  //     attributes: {
+  //       ...view.attributes,
+  //       calendar_from_slug: form.getValues("calendar_from_slug"),
+  //       calendar_to_slug: form.getValues("calendar_to_slug"),
+  //       visible_field: form.getValues("visible_field"),
+  //     },
+  //   };
+
+  //   constructorViewService
+  //     .update(tableSlug, {
+  //       ...computedData,
+  //     })
+  //     .then(() => {
+  //       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+  //     });
+  // };
+
   return (
     <Popover
       offset={[-145, 8]}
@@ -1423,7 +1536,8 @@ const ViewOptions = ({
             adaptive: false,
           },
         },
-      ]}>
+      ]}
+    >
       <PopoverTrigger>
         <IconButton
           aria-label="more"
@@ -1435,7 +1549,8 @@ const ViewOptions = ({
       <PopoverContent
         ref={ref}
         w="320px"
-        p={openedMenu === null ? "0px" : "8px"}>
+        p={openedMenu === null ? "0px" : "8px"}
+      >
         {openedMenu === null && (
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
@@ -1449,7 +1564,8 @@ const ViewOptions = ({
                   borderRadius={6}
                   border="1px solid #D0D5DD"
                   alignItems="center"
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -1476,7 +1592,7 @@ const ViewOptions = ({
                 columnGap="4px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 as="span"
                 onClick={handleOpenPopup}
                 // to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}
@@ -1485,7 +1601,8 @@ const ViewOptions = ({
                   minW="36px"
                   h="28px"
                   alignItems="center"
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -1521,9 +1638,10 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("columns-visibility")}>
+                  onClick={() => setOpenedMenu("columns-visibility")}
+                >
                   <Image src="/img/eye.svg" alt="Visibility" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -1551,9 +1669,10 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("group")}>
+                  onClick={() => setOpenedMenu("group")}
+                >
                   <Image src="/img/copy-01.svg" alt="Group by" />
                   <ViewOptionTitle>
                     {generateLangaugeText(tableLan, i18n?.language, "Group") ||
@@ -1581,9 +1700,10 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("tab-group")}>
+                  onClick={() => setOpenedMenu("tab-group")}
+                >
                   <Image src="/img/browser.svg" alt="Group by" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -1614,9 +1734,10 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("fix-column")}>
+                  onClick={() => setOpenedMenu("fix-column")}
+                >
                   <Image src="/img/layout-left.svg" alt="Fix columns" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -1648,9 +1769,10 @@ const ViewOptions = ({
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                onClick={onDocsClick}>
+                onClick={onDocsClick}
+              >
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import cls from "./styles.module.scss";
 import { SidebarButton } from "../SidebarButton";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
 
 export const Sidebar = ({
@@ -17,8 +17,10 @@ export const Sidebar = ({
   setFocusedDays,
   datesList,
   zoomPosition,
+  hasSameDay,
 }) => {
   const [isAllOpen, setIsAllOpen] = useState(false);
+
   const handleAllOpen = () => {
     setIsAllOpen(true);
     setOpenedRows(computedData?.map((item) => item?.label));
@@ -58,9 +60,9 @@ export const Sidebar = ({
           )}
         </div>
         {/* <SidebarButton
-          className={cls.sidebarBtn}
-          onClick={handleCloseSidebar}
-        /> */}
+        className={cls.sidebarBtn}
+        onClick={handleCloseSidebar}
+      /> */}
       </div>
 
       {view?.attributes?.calendar_from_slug !==

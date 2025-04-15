@@ -19,7 +19,6 @@ const LoginMicrofrontend = ({microfrontendUrl, isLoading}) => {
         loginAction={(authData) => dispatch(loginAction(authData))}
         key={microfrontendLink}
         link={microfrontendLink}
-        t={t}
         i18n={i18n}
       />
       <Outlet />

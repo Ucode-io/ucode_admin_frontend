@@ -71,6 +71,7 @@ import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {GreyLoader} from "../Loaders/GreyLoader";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import StorageIcon from "@mui/icons-material/Storage";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -88,8 +89,10 @@ const LayoutSidebar = ({
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
 
   const projectId = store.getState().company.projectId;
+  const envId = store.getState().company?.environmentId;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState(null);
   const [folderModalType, setFolderModalType] = useState(null);
@@ -586,6 +589,34 @@ const LayoutSidebar = ({
               </SidebarActionTooltip>
             </>
           )}
+          {Boolean(permissions?.chat) && (
+            <>
+              <Box
+                display={sidebarIsOpen ? "block" : "none"}
+                w="1px"
+                h={20}
+                bg="#D0D5DD"
+              />
+              <SidebarActionTooltip id="ai-chat" title="AI Chat">
+                <Flex
+                  w={sidebarIsOpen ? "100%" : 36}
+                  h={36}
+                  alignItems="center"
+                  justifyContent="center"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  mb={sidebarIsOpen ? 0 : 4}
+                  onClick={() => {
+                    navigate(
+                      `/main/${appId}/chartDb?project_id=${projectId}&environment_id=${envId}`
+                    );
+                  }}>
+                  <StorageIcon />
+                </Flex>
+              </SidebarActionTooltip>
+            </>
+          )}
         </Flex>
 
         {(modalType === "create" ||
@@ -808,8 +839,7 @@ const Header = ({
     <Popover
       offset={[sidebarIsOpen ? 50 : 95, 5]}
       isOpen={isOpen}
-      onClose={handleClose}
-    >
+      onClose={handleClose}>
       <PopoverTrigger>
         <Flex
           w="calc(100% - 8px)"
@@ -820,19 +850,17 @@ const Header = ({
           p={5}
           borderRadius={8}
           bg="#fff"
-          _hover={{ bg: "#EAECF0" }}
+          _hover={{bg: "#EAECF0"}}
           cursor="pointer"
           onClick={() => (!isOpen ? onOpen() : null)}
-          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
-        >
+          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}>
           <Flex
             w={36}
             h={36}
             position="absolute"
             left={0}
             alignItems="center"
-            justifyContent="center"
-          >
+            justifyContent="center">
             {Boolean(projectInfo?.logo) && (
               <img src={projectInfo?.logo} alt="" width={20} height={20} />
             )}
@@ -847,8 +875,7 @@ const Header = ({
                 alignItems="center"
                 justifyContent="center"
                 fontSize={14}
-                fontWeight={500}
-              >
+                fontWeight={500}>
                 {projectInfo?.title?.[0]?.toUpperCase()}
               </Flex>
             )}
@@ -861,11 +888,10 @@ const Header = ({
             fontSize={13}
             fontWeight={500}
             overflow="hidden"
-            textOverflow="ellipsis"
-          >
+            textOverflow="ellipsis">
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{ marginLeft: "auto", fontSize: 20 }} />
+          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent
@@ -877,8 +903,7 @@ const Header = ({
         boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
         zIndex={999}
         onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
-        onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}
-      >
+        onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}>
         <>
           <ProfilePanel
             menuLanguages={menuLanguages}
@@ -1215,8 +1240,7 @@ const Companies = ({onSelectEnvironment}) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{ bg: "#EAECF0" }}
-            >
+              _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}
                 h={20}
@@ -1226,8 +1250,7 @@ const Companies = ({onSelectEnvironment}) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff"
-              >
+                color="#fff">
                 {company?.name?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">

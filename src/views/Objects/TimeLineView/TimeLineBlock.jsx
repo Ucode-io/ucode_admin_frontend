@@ -12,6 +12,8 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
 import { SidebarButton } from "./components/SidebarButton";
+import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
+import clsx from "clsx";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -299,6 +301,20 @@ export default function TimeLineBlock({
     }
   }, [selectedType]);
 
+  const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
+
+  const [isAllOpen, setIsAllOpen] = useState(false);
+
+  const handleAllOpen = () => {
+    setIsAllOpen(true);
+    setOpenedRows(computedData?.map((item) => item?.label));
+  };
+
+  const handleAllClose = () => {
+    setOpenedRows([]);
+    setIsAllOpen(false);
+  };
+
   return (
     <div
       className={styles.main_container}
@@ -344,6 +360,38 @@ export default function TimeLineBlock({
           )}
         </div>
       )} */}
+
+      {/* <div>
+        <div className={clsx(styles.fakeDiv)}>
+          <div className={styles.header}>
+            <span
+              className={styles.title}
+              style={{ marginTop: isAssignee ? "6px" : "16px" }}
+            >
+              Columns
+            </span>
+            {isAssignee && (
+              <button
+                className={styles.expendCollapseBtn}
+                onClick={isAllOpen ? handleAllClose : handleAllOpen}
+              >
+                <span className={styles.expendCollapseBtnInner}>
+                  <span>{isAllOpen ? "Collapse all" : "Expend all"}</span>
+                  <KeyboardDoubleArrowDownOutlinedIcon
+                    sx={{
+                      transform: isAllOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
+                  />
+                </span>
+              </button>
+            )}
+          </div>
+          <SidebarButton
+                className={cls.sidebarBtn}
+                onClick={handleCloseSidebar}
+              />
+        </div>
+      </div> */}
 
       {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
         <Sidebar

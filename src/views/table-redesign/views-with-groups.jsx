@@ -793,7 +793,7 @@ export const NewUiViewsWithGroups = ({
           <Tabs
             direction={"ltr"}
             defaultIndex={0}
-            style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+            // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
           >
             {tabs?.length > 0 && view?.type !== "GRID" && (
               <div id="tabsHeight" className={style.tableCardHeader}>

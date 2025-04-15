@@ -58,6 +58,7 @@ import { computedViewTypes } from "../../../utils/constants/viewTypes";
 import { useGetLang } from "../../../hooks/useGetLang";
 import { getColumnIcon } from "../../table-redesign/icons";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import TimeLineDatesRow from "./TimeLineDatesRow";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -435,17 +436,7 @@ export default function TimeLineView({
         />
       </FiltersBlock> */}
 
-        <div
-          className={style.search}
-          style={{
-            padding: "3px 10px",
-            background: "#fff",
-            borderBottom: "1px solid #E5E9EB",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-          }}
-        >
+        <div className={style.search}>
           {/* <div
             style={{
               display: "flex",
@@ -733,11 +724,11 @@ export default function TimeLineView({
 
         <div
           className={styles.wrapper}
-          style={
-            {
-              // height: "calc(100vh - 92px)",
-            }
-          }
+          style={{
+            // height: "calc(100vh - 92px)",
+            overflow: "auto",
+            height: "100vh",
+          }}
           ref={calendarRef}
           onScroll={handleScroll}
         >

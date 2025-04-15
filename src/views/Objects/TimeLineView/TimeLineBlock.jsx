@@ -31,6 +31,8 @@ export default function TimeLineBlock({
   visible_field,
   computedColumnsFor,
   months,
+  setSelectedType,
+  selectedType,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -278,7 +280,7 @@ export default function TimeLineBlock({
   ];
 
   const [anchorElType, setAnchorElType] = useState(null);
-  const [selectedType, setSelectedType] = useState("day");
+  // const [selectedType, setSelectedType] = useState("day");
   const [zoomPosition, setZoomPosition] = useState(2);
 
   const openType = Boolean(anchorElType);

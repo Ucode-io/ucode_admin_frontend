@@ -23,7 +23,6 @@ export default function TimeLineDayDataBlock({
   openedRows,
   setOpenedRows,
 }) {
-  console.log({ data });
   return (
     <>
       <div

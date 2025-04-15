@@ -36,6 +36,8 @@ export default function TimeLineDataRecursiveRow({
     }
   }, [item, openedRows, lastLabels]);
 
+  console.log({ item });
+
   return (
     <>
       <div
@@ -73,7 +75,12 @@ export default function TimeLineDataRecursiveRow({
           option?.data &&
           option?.data?.map((optionItem, optionIdex) => {
             return (
-              <Collapse in={open} timeout="auto" unmountOnExit>
+              <Collapse
+                in={open}
+                timeout="auto"
+                unmountOnExit
+                key={optionItem?.title}
+              >
                 <TimeLineDataRecursiveRow
                   lastLabels={
                     lastLabels?.length

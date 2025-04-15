@@ -265,6 +265,8 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
+  console.log({ startDate, level });
+
   const handleMouseEnter = () => {
     setFocusedDays([
       datesList[startDate],

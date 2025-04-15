@@ -133,11 +133,13 @@ export default function TimeLineView({
     });
   };
 
+  const [selectedType, setSelectedType] = useState("day");
+
   // FOR DATA
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, filters, dateFilters, view, months },
+      { tableSlug, filters, dateFilters, view, months, selectedType },
     ],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
@@ -746,8 +748,8 @@ export default function TimeLineView({
               setDateFilters={setDateFilters}
               // zoomPosition={zoomPosition}
               data={data}
-              // selectedType={selectedType}
-              // setSelectedType={setSelectedType}
+              selectedType={selectedType}
+              setSelectedType={setSelectedType}
               fieldsMap={fieldsMap}
               datesList={datesList}
               tabs={tabs}

@@ -842,6 +842,19 @@
   border: 0;
 }
 
+.weekMonth {
+  flex-direction: column;
+  position: sticky;
+  left: 199px;
+  width: 120px;
+  font-size: 14px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 30px;
+  background: rgb(255, 255, 255);
+}
+
 .timelineRightAddon {
   height: 32px;
   position: sticky;

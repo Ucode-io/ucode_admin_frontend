@@ -9,16 +9,16 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { Flex } from "@chakra-ui/react";
+import {Flex} from "@chakra-ui/react";
 import clsx from "clsx";
-import { SettingsPopupProvider } from "./providers";
-import { isValidElement } from "react";
+import {SettingsPopupProvider} from "./providers";
+import {isValidElement} from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
-import { FolderCreateModal } from "./components/FolderCreateModal";
-import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
+import {FolderCreateModal} from "./components/FolderCreateModal";
+import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 
-const TabTitle = ({ tab, children, ...props }) => {
+const TabTitle = ({tab, children, ...props}) => {
   return (
     <Flex columnGap="8px" cursor="pointer" {...props}>
       {tab?.icon && tab?.icon}
@@ -29,7 +29,7 @@ const TabTitle = ({ tab, children, ...props }) => {
   );
 };
 
-export const SettingsPopup = ({ open, onClose }) => {
+export const SettingsPopup = ({open, onClose}) => {
   const {
     handleClose,
     t,
@@ -46,7 +46,7 @@ export const SettingsPopup = ({ open, onClose }) => {
     handleCloseClientTypeModal,
     isClientTypeModalOpen,
     permissionChild,
-  } = useSettingsPopupProps({ onClose });
+  } = useSettingsPopupProps({onClose});
 
   return (
     <SettingsPopupProvider
@@ -58,8 +58,7 @@ export const SettingsPopup = ({ open, onClose }) => {
         updateSearchParam,
         handleClose,
         permissionChild,
-      }}
-    >
+      }}>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -70,9 +69,8 @@ export const SettingsPopup = ({ open, onClose }) => {
             maxWidth: "1150px !important",
             width: "100% !important",
           },
-        }}
-      >
-        <DialogContent className={cls.dialogContent} sx={{ padding: 0 }}>
+        }}>
+        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
           <Box className={cls.content}>
             <Box className={cls.leftBarWrapper}>
               <Box className={cls.leftBar}>
@@ -101,8 +99,7 @@ export const SettingsPopup = ({ open, onClose }) => {
                                     paddingLeft: "12px",
                                     paddingRight: "12px",
                                   },
-                                }}
-                              >
+                                }}>
                                 <AccordionSummary
                                   expandIcon={<ExpandMoreIcon />}
                                   aria-controls="panel1-content"
@@ -113,8 +110,7 @@ export const SettingsPopup = ({ open, onClose }) => {
                                       backgroundColor:
                                         "rgba(55, 53, 47, 0.06) !important",
                                     },
-                                  }}
-                                >
+                                  }}>
                                   <TabTitle tab={tab}>{tab?.title}</TabTitle>
                                 </AccordionSummary>
                                 <AccordionDetails>
@@ -127,22 +123,19 @@ export const SettingsPopup = ({ open, onClose }) => {
                                           child?.guid === activeChildId
                                             ? "rgba(55, 53, 47, 0.06)"
                                             : "transparent",
-                                      }}
-                                    >
+                                      }}>
                                       <TabTitle
                                         tab={child}
                                         onClick={() =>
                                           handlePermissionClick(child)
-                                        }
-                                      >
+                                        }>
                                         {child?.name}
                                       </TabTitle>
                                     </Box>
                                   ))}
                                   <button
                                     className={cls.addClientTypeBtn}
-                                    onClick={handleOpenClientTypeModal}
-                                  >
+                                    onClick={handleOpenClientTypeModal}>
                                     <span>
                                       <span className={cls.addIcon}>
                                         <AddIcon />
@@ -159,8 +152,7 @@ export const SettingsPopup = ({ open, onClose }) => {
                                 })}
                                 onClick={() => handleChangeTab(tab?.key)}
                                 alignItems="center"
-                                key={tabIndex}
-                              >
+                                key={tabIndex}>
                                 <TabTitle tab={tab}>{tab?.title}</TabTitle>
                               </Flex>
                             )}
@@ -177,8 +169,7 @@ export const SettingsPopup = ({ open, onClose }) => {
                 [cls.smPadding]:
                   searchParams.get("tab") ===
                   TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
-              })}
-            >
+              })}>
               {isValidElement(tabComponents[activeTab])
                 ? tabComponents[activeTab]
                 : (tabComponents[activeTab]?.[searchParams.get("tab")] ??

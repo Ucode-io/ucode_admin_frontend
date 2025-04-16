@@ -7,6 +7,7 @@ import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {
   CheckboxEditorModule,
+  ColumnApiModule,
   NumberEditorModule,
   TextEditorModule,
   ValidationModule,
@@ -53,6 +54,7 @@ import layoutService from "../../../services/layoutService";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import {useSelector} from "react-redux";
 import useTabRouter from "../../../hooks/useTabRouter";
+import useDebounce from "../../../hooks/useDebounce";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -68,6 +70,7 @@ ModuleRegistry.registerModules([
   TextEditorModule,
   CheckboxEditorModule,
   NumberEditorModule,
+  ColumnApiModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -81,11 +84,13 @@ function AgGridTableView(props) {
     view,
     menuItem,
     fieldsMap,
+    searchText,
     selectedRow,
     projectInfo,
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
+
     computedVisibleFields,
     setOpen = () => {},
     setLayoutType = () => {},
@@ -101,7 +106,6 @@ function AgGridTableView(props) {
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
-  const [searchText, setSearchText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -292,13 +296,21 @@ function AgGridTableView(props) {
             );
           },
         },
-        ...fiedlsarray
-          ?.filter((item) => view?.columns?.includes(item?.columnID))
-          .map((el, index) => ({
-            ...el,
-            colIndex: index,
-            onRowClick: navigateToEditPage,
-          })),
+        ...view?.columns
+          ?.map((columnID, index) => {
+            const field = fiedlsarray?.find(
+              (item) => item.columnID === columnID
+            );
+            if (field) {
+              return {
+                ...field,
+                colIndex: index,
+                onRowClick: navigateToEditPage,
+              };
+            }
+            return null;
+          })
+          .filter(Boolean),
         {
           ...ActionsColumn,
           view,
@@ -314,7 +326,7 @@ function AgGridTableView(props) {
         },
       ];
     }
-  }, [fiedlsarray, view]);
+  }, [fiedlsarray, view?.columns]);
 
   function addRow(data) {
     setLoading(true);
@@ -352,12 +364,14 @@ function AgGridTableView(props) {
     }
   }
 
-  const updateView = (pinnedField) => {
+  const updateView = (pinnedField, updatedColumns = []) => {
+    console.log("pinFieldsRefpinFieldsRef", pinFieldsRef);
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
 
     constructorViewService
       .update(tableSlug, {
         ...view,
+        columns: updatedColumns?.length ? updatedColumns : view?.columns,
         attributes: {
           ...view.attributes,
           pinnedFields: pinFieldsRef.current,
@@ -465,10 +479,18 @@ function AgGridTableView(props) {
     }
   };
 
+  const debouncedUpdateView = useCallback(
+    useDebounce((ids) => updateView(undefined, ids), 600),
+    []
+  );
+
   const getColumnsUpdated = (event) => {
-    const newColumnOrder = event.api.getAllGridColumns();
-    console.log("eventeventevent", event);
-    console.log("eventtttttt", gridApi.current);
+    const updatedColumns = event.api.getColumnDefs();
+    const updatedIds = updatedColumns
+      ?.filter((el) => el?.columnID)
+      ?.map((item) => item?.columnID);
+
+    debouncedUpdateView(updatedIds);
   };
 
   useEffect(() => {

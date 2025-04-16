@@ -568,7 +568,7 @@ const TableView = ({
 
     return 32;
   }, [projectInfo, isWarningActive]);
-  console.log("calculatedHeightcalculatedHeight", calculatedHeight);
+
   return (
     <div id="wrapper_drag" className={styles.wrapper}>
       {

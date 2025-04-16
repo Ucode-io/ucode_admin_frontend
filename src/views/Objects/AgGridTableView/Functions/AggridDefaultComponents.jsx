@@ -84,6 +84,8 @@ export const IndexColumn = {
   suppressMenu: true,
   suppressMovable: true,
   lockPinned: true,
+  lockPosition: "left",
+  cellClass: "locked-col",
   cellClass: "indexClass",
   suppressSizeToFit: true,
   cellRenderer: RowIndexField,

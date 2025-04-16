@@ -785,6 +785,7 @@ export const NewUiViewsWithGroups = ({
                       <MaterialUIProvider>
                         {" "}
                         <AgGridTableView
+                          searchText={searchText}
                           open={open}
                           setOpen={setOpen}
                           selectedRow={selectedRow}
@@ -837,6 +838,7 @@ export const NewUiViewsWithGroups = ({
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
                           <AgGridTableView
+                            searchText={searchText}
                             open={open}
                             setOpen={setOpen}
                             selectedRow={selectedRow}
@@ -916,6 +918,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          searchText={searchText}
                           open={open}
                           setOpen={setOpen}
                           selectedRow={selectedRow}

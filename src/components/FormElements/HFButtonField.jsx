@@ -31,11 +31,11 @@ function HFButtonField({
       })
       .then((res) => {
         dispatch(showAlert("Success", "success"));
-        navigate("/reloadRelations", {
-          state: {
-            redirectUrl: window.location.pathname,
-          },
-        });
+        // navigate("/reloadRelations", {
+        //   state: {
+        //     redirectUrl: window.location.pathname,
+        //   },
+        // });
       })
       .finally(() => setBtnLoader(false));
   };

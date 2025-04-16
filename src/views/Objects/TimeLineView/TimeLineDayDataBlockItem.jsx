@@ -265,22 +265,27 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
-  console.log({ startDate, level });
-
   const handleMouseEnter = () => {
-    setFocusedDays([
-      datesList[startDate],
-      addDays(
-        datesList[
-          startDate +
-            Math.round(
-              frame.translate[0] /
-                (zoomPosition * (selectedType === "month" ? 20 : 30))
-            )
-        ],
-        ref.current.offsetWidth / (zoomPosition * 30) - 1
-      ),
-    ]);
+    if (selectedType === "month") {
+      setFocusedDays([
+        datesList[startDate],
+        datesList[startDate + differenceInDays],
+      ]);
+    } else {
+      setFocusedDays([
+        datesList[startDate],
+        addDays(
+          datesList[
+            startDate +
+              Math.round(
+                frame.translate[0] /
+                  (zoomPosition * (selectedType === "month" ? 20 : 30))
+              )
+          ],
+          ref.current.offsetWidth / (zoomPosition * 30) - 1
+        ),
+      ]);
+    }
   };
 
   return (

@@ -87,7 +87,44 @@ export default function TimeLineDatesRow({
     return Object.values(result);
   }, [datesList]);
 
-  console.log({ computedWeekList, months });
+  // const computedWeekListV2 = useMemo(() => {
+  //   const result = [];
+  //   months.forEach((month) => {
+  //     const splittedMonth = month?.month?.split(" ");
+
+  //     const innerDays = {};
+  //     month.days.forEach((day) => {
+  //       const splittedDay = day?.split("/");
+  //       const date = new Date(
+  //         `${splittedDay[0]} ${splittedMonth[0]}, ${splittedMonth[1]}`
+  //       );
+
+  //       const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+  //       const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
+
+  //       const formattedDay = format(date, "dd/EEEE");
+
+  //       if (innerDays[weekStart]) innerDays[weekStart].days.push(formattedDay);
+  //       else
+  //         innerDays[weekStart] = {
+  //           week: format(weekStart, "w"),
+  //           days: [formattedDay],
+  //           weekDays: [weekStart, weekEnd],
+  //           month: format(date, "MMMM yyyy"),
+  //           year: format(date, "yyyy"),
+  //         };
+  //     });
+
+  //     result.push({
+  //       month: splittedMonth[0],
+  //       days: Object.values(innerDays),
+  //     });
+  //   });
+
+  //   return result;
+  // }, [months]);
+
+  // console.log({ computedWeekList, computedWeekListV2, months });
 
   return (
     <div
@@ -103,50 +140,11 @@ export default function TimeLineDatesRow({
       }}
     >
       {/* <div className={styles.mockBlock} /> */}
-
-      {months.map(({ month, days }, index) => (
-        <div
-          key={`${selectedType}-${index}`}
-          className={styles.dateBlock}
-          style={{
-            display:
-              selectedType === "day" || selectedType === "month"
-                ? "block"
-                : "flex",
-          }}
-        >
-          {selectedType === "day" ? (
-            <>
-              <div className={styles.monthBlock}>
-                <span
-                  className={styles.monthText}
-                  style={{ left: sidebarIsOpen ? "200px" : "0" }}
-                >
-                  {month}
-                </span>
-              </div>
-
-              <div
-                className={styles.daysRow}
-                style={{
-                  height: selectedType === "month" ? 0 : "auto",
-                }}
-              >
-                {days?.map((day) => (
-                  <TimeLineDayBlock
-                    day={day}
-                    focusedDays={focusedDays}
-                    zoomPosition={zoomPosition}
-                    selectedType={selectedType}
-                    month={month}
-                    scrollToToday={scrollToToday}
-                  />
-                ))}
-              </div>
-            </>
-          ) : selectedType === "week" ? (
-            computedWeekList.map(({ week, days, weekDays, month }, index) => (
-              <div className={styles.weekBlock} key={`${week}-${index}`}>
+      {selectedType === "week"
+        ? computedWeekList.map(({ week, days, weekDays, month }, index) => (
+            <div className={styles.weekBlockWrapper}>
+              {/* {days?.map(({ weekDays, days, year }) => ( */}
+              <div className={styles.weekBlock} key={`${month}-${index}`}>
                 <div
                   className={styles.weekNumber}
                   style={{
@@ -176,6 +174,7 @@ export default function TimeLineDatesRow({
                     <TimeLineDayBlock
                       day={day}
                       month={month}
+                      // year={year}
                       focusedDays={focusedDays}
                       scrollToToday={scrollToToday}
                       selectedType={selectedType}
@@ -184,32 +183,78 @@ export default function TimeLineDatesRow({
                   ))}
                 </div>
               </div>
-            ))
-          ) : (
-            <>
-              <div className={styles.monthBlock}>
-                <span className={styles.monthText}>{month}</span>
-              </div>
+              {/* ))} */}
+            </div>
+          ))
+        : months.map(({ month, days }, index) => (
+            <div
+              key={`${selectedType}-${index}`}
+              className={styles.dateBlock}
+              style={{
+                display:
+                  selectedType === "day" || selectedType === "month"
+                    ? "block"
+                    : "flex",
+              }}
+            >
+              {selectedType === "day" ? (
+                <>
+                  <div className={styles.monthBlock}>
+                    <span
+                      className={styles.monthText}
+                      style={{ left: sidebarIsOpen ? "200px" : "0" }}
+                    >
+                      {month}
+                    </span>
+                  </div>
 
-              <div
-                className={styles.daysRow}
-                style={{
-                  height: selectedType === "month" ? 0 : "auto",
-                }}
-              >
-                {days?.map((day) => (
-                  <TimelineMonthBlock
-                    day={day}
-                    focusedDays={focusedDays}
-                    zoomPosition={zoomPosition}
-                    selectedType={selectedType}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      ))}
+                  <div
+                    className={styles.daysRow}
+                    style={{
+                      height: selectedType === "month" ? 0 : "auto",
+                    }}
+                  >
+                    {days?.map((day) => (
+                      <TimeLineDayBlock
+                        day={day}
+                        focusedDays={focusedDays}
+                        zoomPosition={zoomPosition}
+                        selectedType={selectedType}
+                        month={month}
+                        scrollToToday={scrollToToday}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.monthBlock}>
+                    <span className={styles.monthText}>{month}</span>
+                  </div>
+
+                  <div
+                    className={styles.daysRow}
+                    style={
+                      {
+                        // height: selectedType === "month" ? 0 : "auto",
+                        // boxShadow: "rgb(233, 233, 231) 0px -1px 0px 0px inset",
+                      }
+                    }
+                  >
+                    {days?.map((day) => (
+                      <TimelineMonthBlock
+                        day={day}
+                        month={month}
+                        focusedDays={focusedDays}
+                        zoomPosition={zoomPosition}
+                        selectedType={selectedType}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
     </div>
   );
 }

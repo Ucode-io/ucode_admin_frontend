@@ -11,11 +11,12 @@ export default function TimeLineDayBlock({
   focusedDays,
   month,
   scrollToToday,
+  year,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const splittedDay = day?.split("/");
   const splittedMonth = month?.split(" ")[0];
-  const year = month?.split(" ")[1];
+  const splittedYear = month?.split(" ")[1];
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,7 +57,7 @@ export default function TimeLineDayBlock({
   //   );
   // }, [focusedDays, day]);
 
-  const date = `${splittedDay[0]} ${splittedMonth}, ${year}`;
+  const date = `${splittedDay[0]} ${splittedMonth}, ${year || splittedYear}`;
   // console.log({ date });
 
   // const isFocusedDay = () => {
@@ -87,7 +88,7 @@ export default function TimeLineDayBlock({
     selectedType !== "month";
 
   useEffect(() => {
-    if (isToday) {
+    if (isToday && selectedType !== "week") {
       scrollToToday(dayBlockRef.current);
     }
   }, []);
@@ -110,7 +111,12 @@ export default function TimeLineDayBlock({
         {splittedDay[0]}
       </div> */}
 
-      <div className={styles.dayBlockWrapper}>
+      <div
+        className={styles.dayBlockWrapper}
+        style={{
+          justifyContent: selectedType === "week" ? "center" : "flex-start",
+        }}
+      >
         <div
           style={{
             minWidth: `${zoomPosition * 30}px`,

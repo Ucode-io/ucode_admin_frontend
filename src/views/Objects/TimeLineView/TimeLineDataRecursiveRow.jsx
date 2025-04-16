@@ -36,8 +36,6 @@ export default function TimeLineDataRecursiveRow({
     }
   }, [item, openedRows, lastLabels]);
 
-  console.log({ item });
-
   return (
     <>
       <div

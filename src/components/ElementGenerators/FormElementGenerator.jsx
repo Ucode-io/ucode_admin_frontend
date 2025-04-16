@@ -893,12 +893,12 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
-            InputProps={{
-              readOnly: true,
-              style: {
-                background: "#c0c0c039",
-              },
-            }}
+            // InputProps={{
+            //   style: {
+            //     height: "35px",
+            //     // background: "#c0c0c039",
+            //   },
+            // }}
             {...props}
           />
         </FRow>

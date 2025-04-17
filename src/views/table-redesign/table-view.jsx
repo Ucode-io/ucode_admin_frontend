@@ -435,7 +435,9 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (projectInfo?.new_layout) {
+    if (view?.attributes?.url_object) {
+      navigateToDetailPage(row);
+    } else if (projectInfo?.new_layout) {
       setSelectedRow(row);
       setOpen(true);
     } else {

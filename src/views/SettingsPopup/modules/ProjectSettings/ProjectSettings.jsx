@@ -1,21 +1,16 @@
-import cls from './styles.module.scss';
-import { useProjectSettings } from "./useProjectSettings";
-import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import cls from "./styles.module.scss";
+import {useProjectSettings} from "./useProjectSettings";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
-import { SaveCancelBtns } from "../../components/SaveCancelBtns";
-import {
-  Box,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-} from "@mui/material";
-import { ContentTitle } from "../../components/ContentTitle";
-import { Field } from "../../components/Field";
-import { Flex } from "@chakra-ui/react";
+import {SaveCancelBtns} from "../../components/SaveCancelBtns";
+import {Box, Checkbox, FormControlLabel, FormGroup, Grid} from "@mui/material";
+import {ContentTitle} from "../../components/ContentTitle";
+import {Field} from "../../components/Field";
+import {Flex} from "@chakra-ui/react";
+import {E} from "@formulajs/formulajs";
 
 export const ProjectSettings = () => {
   const {
@@ -64,8 +59,7 @@ export const ProjectSettings = () => {
                 "Language"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFMultipleSelect
                 options={languageOptions}
                 name="language"
@@ -81,8 +75,7 @@ export const ProjectSettings = () => {
                 "Currency"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFAutocomplete
                 disabledHelperText
                 options={currencyOptions}
@@ -99,8 +92,7 @@ export const ProjectSettings = () => {
                 "Timezone"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFAutocomplete
                 disabledHelperText
                 options={timezoneOptions}
@@ -111,33 +103,32 @@ export const ProjectSettings = () => {
             </FRow>
           </Grid>
         </Grid>
-        <ContentTitle style={{ marginTop: "24px" }}>Beta version</ContentTitle>
+        <ContentTitle style={{marginTop: "24px"}}>Beta version</ContentTitle>
         <FormGroup
           style={{
             display: "flex",
             flexDirection: "row",
             columnGap: "16px",
             marginTop: "16px",
-          }}
-        >
+          }}>
           <FormControlLabel
-            style={{ marginLeft: "0", columnGap: "5px" }}
+            style={{marginLeft: "0", columnGap: "5px"}}
             labelPlacement="start"
-            label={<span style={{ fontWeight: "bold" }}>Design: </span>}
+            label={<span style={{fontWeight: "bold"}}>Design: </span>}
             control={
               <Checkbox
                 icon={
                   <img
                     src="/img/checbkox.svg"
                     alt="checkbox"
-                    style={{ width: 20 }}
+                    style={{width: 20}}
                   />
                 }
                 checkedIcon={
                   <img
                     src="/img/checkbox-checked.svg"
                     alt="checked"
-                    style={{ width: 20 }}
+                    style={{width: 20}}
                   />
                 }
                 style={{
@@ -146,30 +137,32 @@ export const ProjectSettings = () => {
                   padding: "4px",
                 }}
                 checked={watch("new_design")}
-                onChange={() => setValue("new_design", !watch("new_design"))}
+                onChange={() => {
+                  setValue("new_design", !watch("new_design"));
+                }}
                 {...register("new_design")}
                 color="primary"
               />
             }
           />
           <FormControlLabel
-            style={{ marginLeft: "0", columnGap: "5px" }}
+            style={{marginLeft: "0", columnGap: "5px"}}
             labelPlacement="start"
-            label={<span style={{ fontWeight: "bold" }}>Layout: </span>}
+            label={<span style={{fontWeight: "bold"}}>Layout: </span>}
             control={
               <Checkbox
                 icon={
                   <img
                     src="/img/checbkox.svg"
                     alt="checkbox"
-                    style={{ width: 20 }}
+                    style={{width: 20}}
                   />
                 }
                 checkedIcon={
                   <img
                     src="/img/checkbox-checked.svg"
                     alt="checked"
-                    style={{ width: 20 }}
+                    style={{width: 20}}
                   />
                 }
                 style={{
@@ -178,7 +171,15 @@ export const ProjectSettings = () => {
                   padding: "4px",
                 }}
                 checked={watch("new_layout")}
-                onChange={() => setValue("new_layout", !watch("new_layout"))}
+                onChange={(e) => {
+                  e.target.checked
+                    ? (localStorage.setItem("detailPage", "SidePeek"),
+                      localStorage.setItem("newLayout", true))
+                    : (localStorage.setItem("detailPage", ""),
+                      localStorage.setItem("newLayout", false));
+
+                  setValue("new_layout", !watch("new_layout"));
+                }}
                 color="primary"
               />
             }

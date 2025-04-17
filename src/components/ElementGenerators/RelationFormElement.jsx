@@ -384,7 +384,6 @@ const AutoCompleteElement = ({
       field?.attributes?.object_id_from_jwt &&
       field?.id?.split("#")?.[0] === "client_type"
     ) {
-      console.log("valueeee setClient", value);
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
     }

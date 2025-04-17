@@ -31,6 +31,7 @@ export const CTable = ({
   isRelationTable,
   filterVisible,
   navigateToEditPage,
+  navigateCreatePage = () => {},
   parentRef,
   getAllData = () => {},
   control,
@@ -72,6 +73,7 @@ export const CTable = ({
           selectedTab={selectedTab}
           isRelationTable={isRelationTable}
           navigateToEditPage={navigateToEditPage}
+          navigateCreatePage={navigateCreatePage}
           getAllData={getAllData}
           control={control}
         />

@@ -26,6 +26,7 @@ const CPagination = ({
   disablePagination,
   filterVisible,
   navigateToEditPage = () => {},
+  navigateCreatePage = () => {},
   selectedTab,
   isRelationTable,
   getAllData = () => {},
@@ -162,7 +163,7 @@ const CPagination = ({
                         {id: id},
                         menuId
                       )
-                    : navigateToEditPage(tableSlug);
+                    : navigateCreatePage();
                 }
               }}>
               <AddIcon style={{color: "#007AFF"}} />

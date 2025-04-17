@@ -158,14 +158,23 @@ const RecursiveBlock = ({
     }
   }, []);
 
+  const getMenuLabel = (item) => {
+    const label =
+      item?.attributes?.[`label_${defaultLanguage}`] ??
+      item?.attributes?.[`title_${defaultLanguage}`] ??
+      item?.label ??
+      item?.name;
+
+    return label?.length > 18 ? `${label?.slice(0, 18)}...` : label;
+  };
+
   return (
     <Draggable key={index}>
-      <Box sx={{ padding: "0 5px" }} style={{ marginBottom: 5 }}>
+      <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
         <div
           className="parent-block column-drag-handle"
           key={element.id}
-          style={{ marginBottom: 5 }}
-        >
+          style={{marginBottom: 5}}>
           {permission && (
             <Button
               id="more-button"
@@ -181,8 +190,7 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
-              }}
-            >
+              }}>
               <div className="label">
                 {element?.type === "USER" && (
                   <PersonIcon
@@ -194,7 +202,7 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                {MenuFolderArrows({ element, childBlockVisible })}
+                {MenuFolderArrows({element, childBlockVisible})}
                 <IconGenerator
                   icon={
                     element?.icon ||
@@ -211,15 +219,9 @@ const RecursiveBlock = ({
                     alignItems: "center",
                     width: "100%",
                     position: "relative",
-                  }}
-                >
+                  }}>
                   <Box>
-                    <p>
-                      {element?.attributes?.[`label_${defaultLanguage}`] ??
-                        element?.attributes?.[`title_${defaultLanguage}`] ??
-                        element?.label ??
-                        element?.name}
-                    </p>
+                    <p>{getMenuLabel(element)}</p>
                   </Box>
                   {settingsButtonPermission && !userType && (
                     <Box
@@ -231,8 +233,7 @@ const RecursiveBlock = ({
                         // backgroundColor: "#EAECF0",
                         padding: "2px 4px",
                         borderRadius: 4,
-                      }}
-                    >
+                      }}>
                       {(element?.data?.permission?.delete ||
                         element?.data?.permission?.update ||
                         element?.data?.permission?.write) && (

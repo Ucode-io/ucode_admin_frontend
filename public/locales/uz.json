@@ -274,5 +274,6 @@
   "show": "Ko'rsatish",
   "outOf": "dan",
   "delete_selected": "Tanlanganlarning barchasini o'chirish",
-  "add_child": "Farzand qo'shish"
+  "add_child": "Farzand qo'shish",
+  "row": "Qator"
 }

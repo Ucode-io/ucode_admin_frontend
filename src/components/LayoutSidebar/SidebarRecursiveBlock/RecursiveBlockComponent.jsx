@@ -165,7 +165,7 @@ const RecursiveBlock = ({
       item?.label ??
       item?.name;
 
-    return label?.length > 18 ? `${label?.slice(0, 18)}...` : label;
+    return label?.length > 18 ? `${label?.slice(0, 18)}..` : label;
   };
 
   return (

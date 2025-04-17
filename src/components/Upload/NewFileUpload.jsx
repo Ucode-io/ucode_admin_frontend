@@ -6,6 +6,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {Box, Button, Popover, Typography} from "@mui/material";
 import React, {useRef, useState} from "react";
 import fileService from "../../services/fileService";
+import {useTranslation} from "react-i18next";
 
 export default function NewFileUpload({
   value,
@@ -17,6 +18,7 @@ export default function NewFileUpload({
   drawerDetail = false,
 }) {
   const inputRef = useRef("");
+  const {i18n, t} = useTranslation();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -132,7 +134,7 @@ export default function NewFileUpload({
                   justifyContent: "flex-start",
                 }}>
                 <OpenInFullIcon />
-                Show file
+                {t("show_file")}
               </Button>
               <Button
                 sx={{
@@ -144,7 +146,7 @@ export default function NewFileUpload({
                 disabled={disabled}
                 onClick={(e) => closeButtonHandler(e)}>
                 <DeleteIcon />
-                Remove file
+                {t("remove_file")}
               </Button>
               <Button
                 sx={{
@@ -159,7 +161,7 @@ export default function NewFileUpload({
                   inputRef.current.click();
                 }}>
                 <ChangeCircleIcon />
-                Change file
+                {t("change_file")}
               </Button>
             </Box>
             <input

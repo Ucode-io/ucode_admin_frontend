@@ -243,5 +243,16 @@
 
   "subscription_expired": "Your subscription has expired. ",
   "click_here_upgrade": "Please click here to upgrade your plan. ",
-  "expired_content": "Please renew to continue accessing our services. "
+  "expired_content": "Please renew to continue accessing our services. ",
+
+  "show_file": "Show file",
+  "remove_file": "Remove file",
+  "change_file": "Change file",
+  "add_photo": "Add Photo",
+  "save_btn": "Save",
+  "sure_delete": "Are you sure you want to delete?",
+  "show": "Show",
+  "outOf": "out of",
+  "delete_selected": "Delete all selected",
+  "add_child": "Add Child"
 }

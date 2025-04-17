@@ -103,13 +103,17 @@ const HFNumberField = ({
                 ...styles,
                 height: newUi ? "25px" : "38px",
                 width: "100%",
-                border: isNewTableView ? "none" : "1px solid #D4D2D2",
+                border: isNewTableView
+                  ? "none"
+                  : error?.message
+                    ? "1px solid red"
+                    : "1px solid #D4D2D2",
                 borderRadius: "4px",
                 paddingLeft: "8px",
               }}
               {...props}
             />
-            {!disabledHelperText && error?.message && (
+            {error?.message && (
               <FormHelperText
                 sx={{
                   position: "absolute",

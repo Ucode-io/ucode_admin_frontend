@@ -254,5 +254,6 @@
   "show": "Show",
   "outOf": "out of",
   "delete_selected": "Delete all selected",
-  "add_child": "Add Child"
+  "add_child": "Add Child",
+  "row": "Rows"
 }

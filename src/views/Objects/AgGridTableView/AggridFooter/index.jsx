@@ -8,16 +8,6 @@ import RectangleIconButton from "../../../../components/Buttons/RectangleIconBut
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
 
-const options = [
-  {value: 10, label: "10 Rows"},
-  {value: 15, label: "15 Rows"},
-  {value: 20, label: "20 Rows"},
-  {value: 25, label: "25 Rows"},
-  {value: 30, label: "30 Rows"},
-  {value: 35, label: "35 Rows"},
-  {value: 40, label: "40 Rows"},
-];
-
 function AggridFooter({
   view,
   count,
@@ -35,6 +25,16 @@ function AggridFooter({
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const {i18n, t} = useTranslation();
+
+  const options = [
+    {value: 10, label: `10 ${t("row")}`},
+    {value: 15, label: `15 ${t("row")}`},
+    {value: 20, label: `20 ${t("row")}`},
+    {value: 25, label: `25 ${t("row")}`},
+    {value: 30, label: `30 ${t("row")}`},
+    {value: 35, label: `35 ${t("row")}`},
+    {value: 40, label: `40 ${t("row")}`},
+  ];
 
   const multipleDelete = () => {
     constructorObjectService

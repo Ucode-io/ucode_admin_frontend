@@ -500,9 +500,9 @@ const TableView = ({
 
       const matches = replaceUrlVariables(urlTemplate, row);
 
-      navigate(`${matches}${params ? "?" + params : ""}`);
+      // navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id || appId);
     }
   };
 
@@ -631,6 +631,7 @@ const TableView = ({
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
           data={tableData}
+          navigateCreatePage={navigateCreatePage}
           navigateToEditPage={navigateCreatePage}
           summaries={view?.attributes?.summaries}
           disableFilters

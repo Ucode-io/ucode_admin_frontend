@@ -52,6 +52,7 @@ const ObjectDataTable = ({
   control,
   setFormValue,
   navigateToEditPage,
+  navigateCreatePage,
   dataLength,
   onDeleteClick,
   onRowClick = () => {},
@@ -252,6 +253,7 @@ const ObjectDataTable = ({
       view={view}
       filterVisible={filterVisible}
       navigateToEditPage={navigateToEditPage}
+      navigateCreatePage={navigateCreatePage}
       parentRef={parentRef}
       getAllData={getAllData}
       control={control}>

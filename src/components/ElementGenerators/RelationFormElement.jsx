@@ -268,7 +268,6 @@ const AutoCompleteElement = ({
       },
     }
   );
-  console.log("fieldfieldfield", field, tableSlug);
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
@@ -537,18 +536,18 @@ const AutoCompleteElement = ({
             value={localValue ?? []}
             required={required}
             defaultValue={value ?? ""}
-            onMenuOpen={() => {
-              if (isModal) {
-                setTimeout(() => {
-                  const modal = document.querySelector(
-                    `.${modalClass}` || ".modal-class"
-                  );
-                  if (modal) {
-                    modal.scrollTop = modal.scrollHeight;
-                  }
-                }, 100);
-              }
-            }}
+            // onMenuOpen={() => {
+            //   if (isModal) {
+            //     setTimeout(() => {
+            //       const modal = document.querySelector(
+            //         `.${modalClass}` || ".modal-class"
+            //       );
+            //       if (modal) {
+            //         modal.scrollTop = modal.scrollHeight;
+            //       }
+            //     }, 100);
+            //   }
+            // }}
             onChange={(e) => {
               changeHandler(e);
             }}

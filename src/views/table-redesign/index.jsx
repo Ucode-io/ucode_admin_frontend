@@ -646,8 +646,11 @@ export const DynamicTable = ({
         />
 
         {selectedObjectsForDelete?.length > 0 && (
-          <RectangleIconButton color="error" onClick={multipleDelete}>
-            <Button variant="outlined" color="error">
+          <RectangleIconButton
+            style={{minWidth: "160px", border: "none"}}
+            color="error"
+            onClick={multipleDelete}>
+            <Button style={{width: "120px"}} variant="outlined" color="error">
               {generateLangaugeText(
                 tableLan,
                 i18n?.language,

@@ -23,7 +23,7 @@ const ChartDb = () => {
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
         data,
-        "https://chartdb.u-code.io"
+        "http://localhost:5173"
       );
       console.log("✅ Data sent to iframe:", data);
     } else {
@@ -34,7 +34,7 @@ const ChartDb = () => {
   useEffect(() => {
     const handleIframeReady = (event) => {
       if (
-        event.origin === "https://chartdb.u-code.io" &&
+        event.origin === "http://localhost:5173" &&
         event.data?.type === "READY"
       ) {
         sendDataToChartDB();
@@ -48,9 +48,10 @@ const ChartDb = () => {
   return (
     <iframe
       ref={iframeRef}
-      src="https://chartdb.u-code.io"
+      src="http://localhost:5173"
       width="100%"
       height="100%"
+      style={{border: "1px solid transparent"}}
       onLoad={() => {
         setIsIframeLoaded(true);
       }}

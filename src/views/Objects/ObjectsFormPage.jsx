@@ -61,6 +61,7 @@ const ObjectsFormPage = ({
   const menuId = searchParams.get("menuId");
 
   const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
+  const test = useParams();
 
   const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
   const microPathCloseMonth = `/main/${idFromParam}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${idFromParam}`;
@@ -69,8 +70,8 @@ const ObjectsFormPage = ({
     return (
       state?.[`${tableSlugFromParam}_id`] ||
       idFromParam ||
-      selectedRow?.guid ||
-      appId
+      appId ||
+      selectedRow?.guid
     );
   }, [idFromParam, selectedRow, appId, state]);
 

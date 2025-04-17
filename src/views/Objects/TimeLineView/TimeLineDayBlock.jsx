@@ -88,10 +88,12 @@ export default function TimeLineDayBlock({
     selectedType !== "month";
 
   useEffect(() => {
-    if (isToday && selectedType !== "week") {
-      scrollToToday(dayBlockRef.current);
+    if (isToday && dayBlockRef.current) {
+      setTimeout(() => {
+        scrollToToday(dayBlockRef.current);
+      }, 100);
     }
-  }, []);
+  }, [isToday, dayBlockRef.current]);
 
   return (
     <>

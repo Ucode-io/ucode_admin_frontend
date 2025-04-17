@@ -21,6 +21,8 @@ export default function TimeLineDataRecursiveRow({
   openedRows,
   setOpenedRows,
   lastLabels = "",
+  menuItem,
+  fieldsMapPopup,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -49,6 +51,7 @@ export default function TimeLineDataRecursiveRow({
       >
         {!item?.data && (
           <TimeLineDayDataBlockItem
+            menuItem={menuItem}
             key={item?.guid}
             dateFilters={dateFilters}
             selectedType={selectedType}
@@ -64,6 +67,7 @@ export default function TimeLineDataRecursiveRow({
             calendar_from_slug={calendar_from_slug}
             calendar_to_slug={calendar_to_slug}
             visible_field={visible_field}
+            fieldsMapPopup={fieldsMapPopup}
           />
         )}
       </div>
@@ -101,6 +105,7 @@ export default function TimeLineDataRecursiveRow({
                   calendar_to_slug={calendar_to_slug}
                   visible_field={visible_field}
                   groupByList={groupByList}
+                  fieldsMapPopup={fieldsMapPopup}
                 />
               </Collapse>
             );

@@ -33,6 +33,8 @@ export default function TimeLineBlock({
   months,
   setSelectedType,
   selectedType,
+  menuItem,
+  fieldsMapPopup,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -511,6 +513,8 @@ export default function TimeLineBlock({
             calendar_from_slug={calendar_from_slug}
             calendar_to_slug={calendar_to_slug}
             visible_field={visible_field}
+            menuItem={menuItem}
+            fieldsMapPopup={fieldsMapPopup}
           />
         )}
       </div>

@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 
 const DeleteWrapperModal = ({children, onDelete, id}) => {
   const [modalIsVisible, setModalIsVisible] = useState(false);
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const tableLan = useGetLang("Table");
   const closeModal = () => setModalIsVisible(false);
   const openModal = () => setModalIsVisible(true);
@@ -24,15 +24,7 @@ const DeleteWrapperModal = ({children, onDelete, id}) => {
         onClose={closeModal}
         onClick={(e) => e.stopPropagation()}>
         <Card className={styles.card}>
-          <div className={styles.body}>
-            {" "}
-            {generateLangaugeText(
-              tableLan,
-              i18n?.language,
-              "Are you sure you want to delete"
-            ) || "Are you sure you want to delete"}{" "}
-            ?
-          </div>
+          <div className={styles.body}> {t("sure_delete")}</div>
 
           <div className={styles.footer}>
             <SecondaryButton className={styles.button} onClick={closeModal}>

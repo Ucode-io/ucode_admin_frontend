@@ -223,6 +223,18 @@ const RelationSectionForModal = ({
     updateLayout(newTabs);
   };
 
+  const getRelatonLabel = (tab) => {
+    const label =
+      tab?.type === "relation"
+        ? tab?.relation?.attributes?.[`label_to_${i18n?.language}`] ||
+          tab?.relation?.attributes?.label ||
+          tab?.relation?.attributes?.[`label_to_${i18n?.language}`] ||
+          tab?.attributes?.[`label_to_${i18n?.language}`]
+        : tab?.attributes?.[`label_${i18n?.language}`] || tab?.label;
+
+    return label;
+  };
+
   return (
     <>
       {selectedManyToManyRelation && (
@@ -284,17 +296,7 @@ const RelationSectionForModal = ({
                               </>
                             )}
                             <div className="flex align-center gap-2 text-nowrap">
-                              {(el?.relation &&
-                                el?.relation?.table_from?.label) ||
-                                el?.relation?.attributes?.[
-                                  `label_to_${i18n?.language}`
-                                ] ||
-                                el?.attributes?.[`label_${i18n.language}`] ||
-                                el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ] ||
-                                el?.label ||
-                                el?.title}
+                              {getRelatonLabel(el)}
                             </div>
                           </Tab>
 
@@ -336,17 +338,7 @@ const RelationSectionForModal = ({
                             </>
                           )}
                           <div className="flex align-center gap-2 text-nowrap">
-                            {(el?.relation &&
-                              el?.relation?.table_from?.label) ||
-                              el?.relation?.attributes?.[
-                                `label_to_${i18n?.language}`
-                              ] ||
-                              el?.attributes?.[`label_${i18n.language}`] ||
-                              el?.relation?.attributes?.[
-                                `label_${i18n.language}`
-                              ] ||
-                              el?.label ||
-                              el?.title}
+                            {getRelatonLabel(el)}
                           </div>
                         </Tab>
                       )

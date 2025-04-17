@@ -8,6 +8,7 @@ import fileService from "../../../services/fileService";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import {useTranslation} from "react-i18next";
 
 const style = {
   position: "absolute",
@@ -36,7 +37,7 @@ function MultiImageUpload({
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
-
+  const {i18n, t} = useTranslation();
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
@@ -236,7 +237,7 @@ function MultiImageUpload({
                 }}>
                 <AddIcon style={{width: "24px", height: "24px"}} />
 
-                <span>Add Photo</span>
+                <span>{t("add_photo")}</span>
               </Box>
             </Box>
           )}
@@ -342,7 +343,7 @@ function MultiImageUpload({
                 isTableView && updateObject();
                 handleClose();
               }}>
-              Save
+              {t("save_btn")}
             </Button>
           </Box>
         </Box>

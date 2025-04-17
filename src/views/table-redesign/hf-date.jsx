@@ -161,7 +161,6 @@ const getValue = (value) => {
       if (value.includes("Z")) {
         const parsedISO = new Date(value);
         if (isValid(parsedISO)) {
-          console.log("entered 3");
           return parsedISO;
         }
       } else {

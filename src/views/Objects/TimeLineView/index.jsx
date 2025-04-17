@@ -76,6 +76,8 @@ export default function TimeLineView({
   selectedTable,
   setViews,
   isViewLoading,
+  menuItem,
+  fieldsMap: fieldsMapPopup,
 }) {
   const { handleScroll, calendarRef, months, setMonths, firstDate, lastDate } =
     useDateLineProps();
@@ -438,8 +440,8 @@ export default function TimeLineView({
         />
       </FiltersBlock> */}
 
-        <div className={style.search}>
-          {/* <div
+        {/* <div className={style.search}> */}
+        {/* <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -462,13 +464,13 @@ export default function TimeLineView({
             </Button>
           </div> */}
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {/* <Divider orientation="vertical" flexItem />
+        {/* <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        > */}
+        {/* <Divider orientation="vertical" flexItem />
 
             <Button
               onClick={handleClickType}
@@ -545,7 +547,7 @@ export default function TimeLineView({
                   </Button>
                 ))}
               </div>
-            </Menu> */}
+            </Menu>
 
             <Button
               onClick={handleClickSettings}
@@ -568,8 +570,8 @@ export default function TimeLineView({
                 <span>Settings</span>
               </div>
               {openSettings ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </Button>
-
+            </Button> */}
+        {/* 
             <Divider orientation="vertical" flexItem />
 
             <Menu
@@ -720,9 +722,9 @@ export default function TimeLineView({
               </div>
             </Menu>
 
-            <Divider orientation="vertical" flexItem />
-          </div>
-        </div>
+            <Divider orientation="vertical" flexItem /> */}
+        {/* </div> */}
+        {/* </div> */}
 
         <div
           className={styles.wrapper}
@@ -744,6 +746,8 @@ export default function TimeLineView({
               isLoading={isLoading}
               computedColumnsFor={computedColumnsFor}
               view={view}
+              menuItem={menuItem}
+              fieldsMapPopup={fieldsMapPopup}
               dateFilters={dateFilters}
               setDateFilters={setDateFilters}
               // zoomPosition={zoomPosition}

@@ -1,15 +1,23 @@
 import {addDays, format} from "date-fns";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import Moveable from "react-moveable";
-import {useDispatch} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {useParams} from "react-router-dom";
 import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
 import constructorObjectService from "@/services/constructorObjectService";
 import { showAlert } from "@/store/alert/alert.thunk";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
-import {useQueryClient} from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import useFilters from "@/hooks/useFilters";
+import { LayoutPopup } from "../../table-redesign/LayoutPopup";
+import { useTableByIdQuery } from "../../../services/constructorTableService";
+import { useForm } from "react-hook-form";
+import { generateGUID } from "../../../utils/generateID";
+import { useGetLang } from "../../../hooks/useGetLang";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
+import layoutService from "../../../services/layoutService";
 
 export default function TimeLineDayDataBlockItem({
   data,
@@ -26,9 +34,11 @@ export default function TimeLineDayDataBlockItem({
   groupByList,
   selectedType,
   dateFilters,
+  menuItem,
+  fieldsMapPopup: fieldsMap,
 }) {
   const ref = useRef();
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [target, setTarget] = useState();
   const [open, setOpen] = useState(false);
@@ -288,6 +298,49 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
+  // const projectId = useSelector((state) => state.company?.projectId);
+
+  // const [authInfo, setAuthInfo] = useState(null);
+  // const tableLan = useGetLang("Table");
+
+  // const {
+  //     data: {layout} = {
+  //       layout: [],
+  //     },
+  //   } = useQuery({
+  //     queryKey: [
+  //       "GET_LAYOUT",
+  //       {
+  //         tableSlug,
+  //       },
+  //     ],
+  //     queryFn: () => {
+  //       return layoutService.getLayout(tableSlug, appId);
+  //     },
+  //     select: (data) => {
+  //       return {
+  //         layout: data ?? {},
+  //       };
+  //     },
+  //     onError: (error) => {
+  //       console.error("Error", error);
+  //     },
+  //   });
+
+  //  const {
+  //     control,
+  //     reset,
+  //     setValue: setFormValue,
+  //     getValues,
+  //     watch,
+  //   } = useForm({
+  //     defaultValues: {
+  //       multi: [],
+  //     },
+  //   });
+
+  // const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
   return (
     <>
       <div
@@ -329,6 +382,22 @@ export default function TimeLineDayDataBlockItem({
         setOpen={setOpen}
         selectedRow={selectedRow}
       />
+
+      {/* <DrawerDetailPage
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          /> */}
 
       {startDate === -1 || level === -1 ? (
         ""

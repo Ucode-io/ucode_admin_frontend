@@ -202,7 +202,7 @@ export default function TimeLineDatesRow({
                   <div className={styles.monthBlock}>
                     <span
                       className={styles.monthText}
-                      style={{ left: sidebarIsOpen ? "200px" : "0" }}
+                      style={{ left: sidebarIsOpen ? "216px" : "16px" }}
                     >
                       {month}
                     </span>
@@ -229,7 +229,12 @@ export default function TimeLineDatesRow({
               ) : (
                 <>
                   <div className={styles.monthBlock}>
-                    <span className={styles.monthText}>{month}</span>
+                    <span
+                      className={styles.monthText}
+                      style={{ left: sidebarIsOpen ? "216px" : "16px" }}
+                    >
+                      {month}
+                    </span>
                   </div>
 
                   <div
@@ -248,6 +253,7 @@ export default function TimeLineDatesRow({
                         focusedDays={focusedDays}
                         zoomPosition={zoomPosition}
                         selectedType={selectedType}
+                        scrollToToday={scrollToToday}
                       />
                     ))}
                   </div>

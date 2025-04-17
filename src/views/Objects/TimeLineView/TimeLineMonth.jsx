@@ -6,7 +6,7 @@ import {
   isValid,
   isWithinInterval,
 } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
 import clsx from "clsx";
 
@@ -16,8 +16,11 @@ const TimelineMonthBlock = ({
   selectedType,
   focusedDays,
   month,
+  scrollToToday,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const dayBlockRef = useRef(null);
 
   const splittedDay = day.split("/");
   const splittedMonth = month?.split(" ")[0];
@@ -76,11 +79,12 @@ const TimelineMonthBlock = ({
     isWithinInterval(targetDate, { start, end });
 
   const isMonday = getDay(new Date(format(new Date(date), "yyyy-MM-dd"))) === 1;
+  const formattedDate = format(new Date(date), "dd.MM.yyyy");
 
   const isFirstSelectedDay =
-    format(start, "dd.MM.yyyy") === format(new Date(date), "dd.MM.yyyy");
+    isValid(start) && format(start, "dd.MM.yyyy") === formattedDate;
   const isLastSelectedDay =
-    format(end, "dd.MM.yyyy") === format(new Date(date), "dd.MM.yyyy");
+    isValid(end) && format(end, "dd.MM.yyyy") === formattedDate;
 
   const isVisible =
     today === format(new Date(date), "dd.MM.yyyy") ||
@@ -88,9 +92,18 @@ const TimelineMonthBlock = ({
     isLastSelectedDay ||
     isFirstSelectedDay;
 
+  useEffect(() => {
+    if (formattedDate === today && dayBlockRef.current) {
+      setTimeout(() => {
+        scrollToToday(dayBlockRef.current);
+      }, 100);
+    }
+  }, [formattedDate, today, dayBlockRef.current]);
+
   return (
     <>
       <div
+        ref={dayBlockRef}
         style={{
           minWidth: `${zoomPosition * 20}px`,
           color: isInFocus ? "#fff" : "rgba(70, 68, 64, 0.45)",

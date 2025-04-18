@@ -455,6 +455,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    console.log("layoutTypelayoutType", layoutType);
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
@@ -500,7 +501,7 @@ const TableView = ({
 
       const matches = replaceUrlVariables(urlTemplate, row);
 
-      // navigate(`${matches}${params ? "?" + params : ""}`);
+      navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id || appId);
     }

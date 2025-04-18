@@ -13,6 +13,7 @@ import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import HFSwitch from "../../../components/FormElements/HFSwitch";
 
 const headerStyle = {
   width: "100",
@@ -165,6 +166,29 @@ const Form = ({
               resurceType={resurceType}
               disabled={isEditPage}
             />
+
+            {resurceType === 2 && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Do you need superset
+                </Box>
+                <HFSwitch
+                  control={control}
+                  onChange={() => {
+                    onResourceTypeChange(11);
+                  }}
+                  required
+                  name="is_superset"
+                  resurceType={resurceType}
+                  disabled={isEditPage}
+                />
+              </>
+            )}
 
             {Boolean(resurceType === 7 || type === "SMTP") && (
               <>

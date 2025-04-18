@@ -4,8 +4,8 @@ import Footer from "@/components/Footer";
 import HFSelect from "@/components/FormElements/HFSelect";
 import HFTextField from "@/components/FormElements/HFTextField";
 import {resources} from "@/utils/resourceConstants";
-import { generateLangaugeText } from "../../../../utils/generateLanguageText";
-import { useTranslation } from "react-i18next";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 const headerStyle = {
   width: "100",
@@ -16,8 +16,7 @@ const headerStyle = {
 };
 
 const GitForm = ({control, btnLoading, selectedEnvironment, settingLan}) => {
-
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   return (
     <Box

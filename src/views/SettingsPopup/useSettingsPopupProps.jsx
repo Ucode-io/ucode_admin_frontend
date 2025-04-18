@@ -21,31 +21,31 @@ import ProjectSettingsIcon from "@/assets/icons/setting.svg";
 import EnvironmentsIcon from "@/assets/icons/environment.svg";
 import LanguageIcon from "@/assets/icons/language.svg";
 import cls from "./styles.module.scss";
-import { Fares } from "./modules/Fares";
-import { Account } from "./modules/Account";
-import { Billing } from "./modules/Billing";
+import {Fares} from "./modules/Fares";
+import {Account} from "./modules/Account";
+import {Billing} from "./modules/Billing";
 import LanguageControl from "../../components/LayoutSidebar/Components/LanguageControl";
-import { Storage } from "@mui/icons-material";
-import { ApiKeys } from "./modules/ApiKeys";
-import { ApiKeysDetail } from "./modules/ApiKeysDetail";
-import { Redirect } from "./modules/Redirect";
-import { RedirectForm } from "./modules/RedirectForm";
-import { ActivityLogs } from "./modules/ActivityLogs";
-import { ActivityLogsDetail } from "./modules/ActivityLogsDetail";
-import { Models } from "./modules/Models";
-import { Functions } from "./modules/Functions";
-import { FunctionsDetail } from "./modules/FunctionsDetail";
-import { MicroFrontend } from "./modules/MicroFrontend";
-import { MicroFrontendDetail } from "./modules/MicroFrontendDetail";
+import {Storage} from "@mui/icons-material";
+import {ApiKeys} from "./modules/ApiKeys";
+import {ApiKeysDetail} from "./modules/ApiKeysDetail";
+import {Redirect} from "./modules/Redirect";
+import {RedirectForm} from "./modules/RedirectForm";
+import {ActivityLogs} from "./modules/ActivityLogs";
+import {ActivityLogsDetail} from "./modules/ActivityLogsDetail";
+import {Models} from "./modules/Models";
+import {Functions} from "./modules/Functions";
+import {FunctionsDetail} from "./modules/FunctionsDetail";
+import {MicroFrontend} from "./modules/MicroFrontend";
+import {MicroFrontendDetail} from "./modules/MicroFrontendDetail";
 import {Permissions} from "./modules/Permissions";
 import {PermissionsDetail} from "./modules/PermissionsDetail";
 import {PermissionsRoleDetail} from "./modules/PermissionsRoleDetail";
 import {Resources} from "./modules/Resources";
 import {ResourcesDetail} from "./modules/ResourcesDetail";
-import { store } from "../../store";
-import { useQuery } from "react-query";
+import {store} from "../../store";
+import {useQuery} from "react-query";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
+import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 
 const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -65,8 +65,8 @@ const permissionFolder = {
   },
 };
 
-export const useSettingsPopupProps = ({ onClose }) => {
-  const { t, i18n } = useTranslation();
+export const useSettingsPopupProps = ({onClose}) => {
+  const {t, i18n} = useTranslation();
 
   const userInfo = useSelector((state) => state?.auth?.userInfo);
   const globalPermissions = useSelector(

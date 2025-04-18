@@ -263,5 +263,17 @@
   "input_err": "Noto'g'ri kiritildi",
   "regex_text": "Kamida 8 ta belgidan iborat bo‘lishi kerak, kamida 1 ta katta harf, kamida 1 ta raqam (0–9), kamida 1 ta maxsus belgi bo‘lishi kerak",
   "password_missmatch": "Parollar mos kelmaydi",
-  "email_wrong": "Elektron pochta yoki parol noto'g'ri."
+  "email_wrong": "Elektron pochta yoki parol noto'g'ri.",
+
+  "show_file": "Faylni korsatish",
+  "remove_file": "Faylni olib tashlash",
+  "change_file": "Faylni o'zgartirish",
+  "add_photo": "Rasm qo'shish",
+  "save_btn": "Saqlash",
+  "sure_delete": "Haqiqatan ham o'chirmoqchimisiz?",
+  "show": "Ko'rsatish",
+  "outOf": "dan",
+  "delete_selected": "Tanlanganlarning barchasini o'chirish",
+  "add_child": "Farzand qo'shish",
+  "row": "Qator"
 }

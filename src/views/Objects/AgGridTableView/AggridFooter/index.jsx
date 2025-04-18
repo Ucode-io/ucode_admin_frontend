@@ -8,16 +8,6 @@ import RectangleIconButton from "../../../../components/Buttons/RectangleIconBut
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
 
-const options = [
-  {value: 10, label: "10 Rows"},
-  {value: 15, label: "15 Rows"},
-  {value: 20, label: "20 Rows"},
-  {value: 25, label: "25 Rows"},
-  {value: 30, label: "30 Rows"},
-  {value: 35, label: "35 Rows"},
-  {value: 40, label: "40 Rows"},
-];
-
 function AggridFooter({
   view,
   count,
@@ -34,7 +24,17 @@ function AggridFooter({
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
+
+  const options = [
+    {value: 10, label: `10 ${t("row")}`},
+    {value: 15, label: `15 ${t("row")}`},
+    {value: 20, label: `20 ${t("row")}`},
+    {value: 25, label: `25 ${t("row")}`},
+    {value: 30, label: `30 ${t("row")}`},
+    {value: 35, label: `35 ${t("row")}`},
+    {value: 40, label: `40 ${t("row")}`},
+  ];
 
   const multipleDelete = () => {
     constructorObjectService
@@ -51,7 +51,7 @@ function AggridFooter({
   return (
     <div className={style.footer}>
       <div className={style.limitCount}>
-        <div>Show </div>
+        <div>{t("show")} </div>
         {limit && (
           <div className={style.limitSide}>
             <CSelect
@@ -72,7 +72,9 @@ function AggridFooter({
             />
           </div>
         )}
-        <div>out of {count}</div>
+        <div>
+          {t("outOf")} {count}
+        </div>
       </div>
 
       <div className={style.pagination}>
@@ -93,7 +95,7 @@ function AggridFooter({
           {Boolean(selectedRows?.length) && (
             <RectangleIconButton color="error" onClick={multipleDelete}>
               <Button variant="outlined" color="error">
-                Delete all selected
+                {t("delete_selected")}
               </Button>
             </RectangleIconButton>
           )}
@@ -102,7 +104,7 @@ function AggridFooter({
             selectedRows?.length === 1 && view?.attributes?.treeData
           ) && (
             <Button variant="outlined" onClick={createChild}>
-              Add Child
+              {t("add_child")}
             </Button>
           )}
         </div>

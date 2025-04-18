@@ -313,10 +313,7 @@ const NewRelationSection = ({
 
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-  console.log(
-    "localStorage.getItemlocalStorage.getItem",
-    Boolean(localStorage.getItem("newLayout"))
-  );
+
   return (
     <>
       {selectedManyToManyRelation && (

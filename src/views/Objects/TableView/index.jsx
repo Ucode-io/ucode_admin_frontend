@@ -455,6 +455,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    console.log("layoutTypelayoutType", layoutType);
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
@@ -502,7 +503,7 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id || appId);
     }
   };
 
@@ -631,6 +632,7 @@ const TableView = ({
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
           data={tableData}
+          navigateCreatePage={navigateCreatePage}
           navigateToEditPage={navigateCreatePage}
           summaries={view?.attributes?.summaries}
           disableFilters

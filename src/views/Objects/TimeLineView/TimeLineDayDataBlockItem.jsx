@@ -36,6 +36,9 @@ export default function TimeLineDayDataBlockItem({
   dateFilters,
   menuItem,
   fieldsMapPopup: fieldsMap,
+  refetch = () => {},
+  setLayoutType,
+  navigateToDetailPage,
 }) {
   const ref = useRef();
   const { tableSlug, appId } = useParams();
@@ -298,48 +301,54 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
-  // const projectId = useSelector((state) => state.company?.projectId);
+  const projectId = useSelector((state) => state.company?.projectId);
 
-  // const [authInfo, setAuthInfo] = useState(null);
-  // const tableLan = useGetLang("Table");
+  const [authInfo, setAuthInfo] = useState(null);
+  const tableLan = useGetLang("Table");
 
-  // const {
-  //     data: {layout} = {
-  //       layout: [],
-  //     },
-  //   } = useQuery({
-  //     queryKey: [
-  //       "GET_LAYOUT",
-  //       {
-  //         tableSlug,
-  //       },
-  //     ],
-  //     queryFn: () => {
-  //       return layoutService.getLayout(tableSlug, appId);
-  //     },
-  //     select: (data) => {
-  //       return {
-  //         layout: data ?? {},
-  //       };
-  //     },
-  //     onError: (error) => {
-  //       console.error("Error", error);
-  //     },
-  //   });
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
 
-  //  const {
-  //     control,
-  //     reset,
-  //     setValue: setFormValue,
-  //     getValues,
-  //     watch,
-  //   } = useForm({
-  //     defaultValues: {
-  //       multi: [],
-  //     },
-  //   });
+  const {
+    control,
+    reset,
+    setValue: setFormValue,
+    getValues,
+    watch,
+  } = useForm({
+    defaultValues: {
+      multi: [],
+    },
+  });
 
-  // const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   return (
     <>
@@ -377,27 +386,27 @@ export default function TimeLineDayDataBlockItem({
           />
         </div>
       </div>
-      <ModalDetailPage
+      {/* <ModalDetailPage
         open={open}
         setOpen={setOpen}
         selectedRow={selectedRow}
-      />
+      /> */}
 
-      {/* <DrawerDetailPage
-            projectInfo={projectInfo}
-            open={open}
-            setFormValue={setFormValue}
-            setOpen={setOpen}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          /> */}
+      <DrawerDetailPage
+        projectInfo={projectInfo}
+        open={open}
+        setFormValue={setFormValue}
+        setOpen={setOpen}
+        selectedRow={selectedRow}
+        menuItem={menuItem}
+        layout={layout}
+        fieldsMap={fieldsMap}
+        refetch={refetch}
+        setLayoutType={setLayoutType}
+        selectedViewType={selectedViewType}
+        setSelectedViewType={setSelectedViewType}
+        navigateToEditPage={navigateToDetailPage}
+      />
 
       {startDate === -1 || level === -1 ? (
         ""

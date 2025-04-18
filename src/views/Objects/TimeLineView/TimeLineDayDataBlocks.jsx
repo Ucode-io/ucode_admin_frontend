@@ -24,6 +24,9 @@ export default function TimeLineDayDataBlock({
   setOpenedRows,
   menuItem,
   fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
 }) {
   return (
     <>
@@ -76,6 +79,9 @@ export default function TimeLineDayDataBlock({
                 calendar_to_slug={calendar_to_slug}
                 visible_field={visible_field}
                 groupByList={groupByList}
+                setLayoutType={setLayoutType}
+                refetch={refetch}
+                navigateToDetailPage={navigateToDetailPage}
               />
             ))}
           </div>
@@ -102,6 +108,9 @@ export default function TimeLineDayDataBlock({
                   visible_field={visible_field}
                   menuItem={menuItem}
                   fieldsMapPopup={fieldsMapPopup}
+                  refetch={refetch}
+                  setLayoutType={setLayoutType}
+                  navigateToDetailPage={navigateToDetailPage}
                 />
               ))}
             </div>

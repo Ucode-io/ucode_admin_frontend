@@ -23,6 +23,9 @@ export default function TimeLineDataRecursiveRow({
   lastLabels = "",
   menuItem,
   fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -68,6 +71,9 @@ export default function TimeLineDataRecursiveRow({
             calendar_to_slug={calendar_to_slug}
             visible_field={visible_field}
             fieldsMapPopup={fieldsMapPopup}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            navigateToDetailPage={navigateToDetailPage}
           />
         )}
       </div>
@@ -106,6 +112,9 @@ export default function TimeLineDataRecursiveRow({
                   visible_field={visible_field}
                   groupByList={groupByList}
                   fieldsMapPopup={fieldsMapPopup}
+                  refetch={refetch}
+                  setLayoutType={setLayoutType}
+                  navigateToDetailPage={navigateToDetailPage}
                 />
               </Collapse>
             );

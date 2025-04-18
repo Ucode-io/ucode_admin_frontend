@@ -33,6 +33,12 @@ export default function TimeLineBlock({
   months,
   setSelectedType,
   selectedType,
+  menuItem,
+  fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
+  setNoDates,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -67,6 +73,7 @@ export default function TimeLineBlock({
 
   const computedDataRef = useRef([]);
   const [computedData, setComputedData] = useState([]);
+  // const [noDates, setNoDates] = useState([]);
 
   // const computedData = useMemo(() => {
   //   let result = [];
@@ -170,6 +177,34 @@ export default function TimeLineBlock({
       setComputedData(result);
     }
   }, [data]);
+
+  function findEmptyDates(data) {
+    const result = [];
+
+    function traverse(items) {
+      for (const item of items) {
+        if (Array.isArray(item.data)) {
+          traverse(item.data);
+        } else {
+          const from = item?.[calendar_from_slug];
+          const to = item?.[calendar_to_slug];
+          if (!from && !to) {
+            result.push(item);
+          }
+        }
+      }
+    }
+
+    traverse(data);
+    return result;
+  }
+
+  useEffect(() => {
+    if (computedData?.length) {
+      const result = findEmptyDates(computedData);
+      setNoDates(result);
+    }
+  }, [computedData]);
 
   function safeIsWithinInterval(date, interval) {
     const { start, end } = interval || {};
@@ -511,6 +546,11 @@ export default function TimeLineBlock({
             calendar_from_slug={calendar_from_slug}
             calendar_to_slug={calendar_to_slug}
             visible_field={visible_field}
+            menuItem={menuItem}
+            fieldsMapPopup={fieldsMapPopup}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            navigateToDetailPage={navigateToDetailPage}
           />
         )}
       </div>

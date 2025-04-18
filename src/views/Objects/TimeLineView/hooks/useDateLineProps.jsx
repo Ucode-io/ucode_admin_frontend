@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { add, differenceInDays } from "date-fns";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export const useDateLineProps = () => {
+export const useDateLineProps = ({ setCenterDate = () => {} }) => {
   const [months, setMonths] = useState([]);
   const calendarRef = useRef(null);
   const isLoading = useRef(false);
@@ -31,6 +32,16 @@ export const useDateLineProps = () => {
     firstDate = new Date(Number(firstYear), monthMap[firstMonthName], 1);
     lastDate = new Date(Number(lastYear), monthMap[lastMonthName] + 1, 0);
   }
+
+  const datesList = useMemo(() => {
+    const differenceDays = differenceInDays(lastDate, firstDate);
+
+    const result = [];
+    for (let i = 0; i <= differenceDays; i++) {
+      result.push(add(firstDate, { days: i }));
+    }
+    return result;
+  }, [lastDate, firstDate]);
 
   const generateMonth = (monthIndex, year) => {
     const date = new Date(year, monthIndex, 1);
@@ -138,6 +149,22 @@ export const useDateLineProps = () => {
     if (scrollLeft + clientWidth >= scrollWidth - 100) {
       loadMoreMonths("right");
     }
+
+    // const timelineDays = calendarRef.current.querySelector("#timelineDays");
+
+    // const rect = calendarRef.current.getBoundingClientRect();
+    // const centerX = rect.left + rect.width / 2;
+    // const centerY = rect.top + rect.height / 2;
+
+    // const visibleCenter = document.elementFromPoint(centerX, centerY);
+
+    const scrollable = calendarRef.current;
+
+    const leftScroll = scrollable.scrollLeft;
+    const visibleCenterX = leftScroll + scrollable.clientWidth / 2;
+
+    const centerIndex = Math.floor(visibleCenterX / 60);
+    setCenterDate(datesList[centerIndex]);
   };
 
   return {
@@ -148,5 +175,6 @@ export const useDateLineProps = () => {
     setMonths,
     firstDate,
     lastDate,
+    datesList,
   };
 };

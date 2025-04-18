@@ -19,6 +19,7 @@
   position: sticky;
   top: 0;
   z-index: 30;
+  box-shadow: rgb(233, 233, 231) 0px -1px 0px 0px inset;
 
   .dateBlock {
     .monthBlock {
@@ -270,7 +271,7 @@
 .monthText {
   display: block;
   position: sticky;
-  // left: 200px;
+  // left: 216px;
   color: rgb(55, 53, 47);
   font-weight: 600;
   font-size: 14px;
@@ -856,7 +857,7 @@
 }
 
 .timelineRightAddon {
-  height: 32px;
+  height: 30px;
   position: sticky;
   right: 0;
   top: 0;
@@ -868,7 +869,7 @@
 }
 
 .timelineLeftAddon {
-  height: 32px;
+  height: 30px;
   position: sticky;
   left: 0;
   top: 0;
@@ -953,4 +954,35 @@
   &:hover {
     background-color: rgba(55, 53, 47, 0.06);
   }
+}
+
+.weekBlockWrapper {
+  display: flex;
+}
+
+.daysRow {
+  display: flex;
+
+  .dayBlock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    min-width: 60px;
+    color: rgba(55, 53, 47, 0.5);
+    // border: 1px solid #e5e9eb;
+
+    &:first-of-type {
+      border-left: none;
+    }
+  }
+}
+
+.monthBlockDay {
+  text-align: center;
+  color: rgb(50, 48, 44);
+}
+
+.monthBlockFocused {
+  background-color: rgb(247, 247, 247);
 }

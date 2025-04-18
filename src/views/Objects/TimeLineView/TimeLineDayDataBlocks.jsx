@@ -22,6 +22,11 @@ export default function TimeLineDayDataBlock({
   groupByList,
   openedRows,
   setOpenedRows,
+  menuItem,
+  fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
 }) {
   return (
     <>
@@ -31,7 +36,7 @@ export default function TimeLineDayDataBlock({
           position: "relative",
         }}
       >
-        <div className={styles.days}>
+        <div className={styles.days} id="timelineDays">
           {datesList.map((date) => (
             <TimeLineDays
               date={date}
@@ -55,6 +60,8 @@ export default function TimeLineDayDataBlock({
           >
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
+                menuItem={menuItem}
+                fieldsMapPopup={fieldsMapPopup}
                 dateFilters={dateFilters}
                 openedRows={openedRows}
                 setOpenedRows={setOpenedRows}
@@ -72,6 +79,9 @@ export default function TimeLineDayDataBlock({
                 calendar_to_slug={calendar_to_slug}
                 visible_field={visible_field}
                 groupByList={groupByList}
+                setLayoutType={setLayoutType}
+                refetch={refetch}
+                navigateToDetailPage={navigateToDetailPage}
               />
             ))}
           </div>
@@ -96,6 +106,11 @@ export default function TimeLineDayDataBlock({
                   calendar_from_slug={calendar_from_slug}
                   calendar_to_slug={calendar_to_slug}
                   visible_field={visible_field}
+                  menuItem={menuItem}
+                  fieldsMapPopup={fieldsMapPopup}
+                  refetch={refetch}
+                  setLayoutType={setLayoutType}
+                  navigateToDetailPage={navigateToDetailPage}
                 />
               ))}
             </div>

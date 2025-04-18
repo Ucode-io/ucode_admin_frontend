@@ -37,6 +37,11 @@ function DrawerFormDetailPage({
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
 
+  const slugSplit = (slug) => {
+    const parts = slug.split("_");
+    return parts[parts.length - 1];
+  };
+
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
 
   const [sections, setSections] = useState(

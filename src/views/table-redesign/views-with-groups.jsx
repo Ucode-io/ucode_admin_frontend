@@ -5,6 +5,7 @@ import {
   Box as MuiBox,
   Button as MuiButton,
   Popover as MuiPopover,
+  Typography,
 } from "@mui/material";
 import {
   Box,
@@ -28,7 +29,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
-import { endOfMonth, startOfMonth } from "date-fns";
+import { addDays, endOfMonth, startOfMonth } from "date-fns";
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -106,6 +107,30 @@ import HFSelect from "../../components/FormElements/HFSelect";
 import listToLanOptions from "../../utils/listToLanOptions";
 import listToOptions from "../../utils/listToOptions";
 import { listToMap } from "../../utils/listToMap";
+import { TimelineSettings } from "./components/TimelineSettings";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import AppsIcon from "@mui/icons-material/Apps";
+import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import ColorizeIcon from "@mui/icons-material/Colorize";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import EmailIcon from "@mui/icons-material/Email";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import FunctionsIcon from "@mui/icons-material/Functions";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import InsertInvitationIcon from "@mui/icons-material/InsertInvitation";
+import LinkIcon from "@mui/icons-material/Link";
+import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
+import LooksOneIcon from "@mui/icons-material/LooksOne";
+import MapIcon from "@mui/icons-material/Map";
+import PasswordIcon from "@mui/icons-material/Password";
+import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -126,20 +151,20 @@ export const NewUiViewsWithGroups = ({
   visibleColumns,
   refetchViews,
 }) => {
-  const {tableSlug, id} = useParams();
+  const { tableSlug, id } = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(view);
   const [searchText, setSearchText] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams] = useSearchParams();
 
@@ -152,8 +177,47 @@ export const NewUiViewsWithGroups = ({
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [noDates, setNoDates] = useState([]);
+  const [centerDate, setCenterDate] = useState(null);
 
-  const {navigateToForm} = useTabRouter();
+  const groupByFields = useMemo(() => {
+    return view?.group_fields?.map((field) => {
+      return fieldsMap?.[field];
+    });
+  }, [view?.group_fields, fieldsMap]);
+
+  const { mutate: updateObject } = useMutation(
+    (data) =>
+      constructorObjectService.update(tableSlug, {
+        data,
+      }),
+    {
+      onSuccess: () => {
+        refetchViews();
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+      },
+    }
+  );
+
+  const settingsForm = useForm({
+    defaultValues: {
+      calendar_from_slug: "",
+      calendar_to_slug: "",
+    },
+  });
+
+  const handleAddDate = (item) => {
+    const startDate = new Date(centerDate).toISOString();
+    const endDate = addDays(new Date(centerDate), 5).toISOString();
+
+    updateObject({
+      ...item,
+      [settingsForm.getValues()["calendar_from_slug"]]: startDate,
+      [settingsForm.getValues()["calendar_to_slug"]]: endDate,
+    });
+  };
+
+  const { navigateToForm } = useTabRouter();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -213,12 +277,12 @@ export const NewUiViewsWithGroups = ({
     control: mainForm?.control,
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -228,9 +292,9 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const projectId = useSelector((state) => state.company?.projectId);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
@@ -300,7 +364,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const {isLoading} = useTableByIdQuery({
+  const { isLoading } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -325,7 +389,7 @@ export const NewUiViewsWithGroups = ({
           tableSlug,
           "CREATE",
           {},
-          {id},
+          { id },
           searchParams.get("menuId")
         );
       }
@@ -378,7 +442,8 @@ export const NewUiViewsWithGroups = ({
                     height: "35px",
                     padding: "0px",
                     minWidth: "35px",
-                  }}>
+                  }}
+                >
                   <SettingsIcon
                     style={{
                       color: "#A8A8A8",
@@ -387,7 +452,8 @@ export const NewUiViewsWithGroups = ({
                 </MuiButton>
               </PermissionWrapperV2>
             </>
-          }>
+          }
+        >
           <ViewTabSelector
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
@@ -489,11 +555,13 @@ export const NewUiViewsWithGroups = ({
           h={`100vh`}
           overflow={"hidden"}
           flexDirection="column"
-          bg={"white"}>
+          bg={"white"}
+        >
           {updateLoading && (
             <Backdrop
-              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-              open={true}>
+              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+              open={true}
+            >
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -505,7 +573,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="8px">
+            columnGap="8px"
+          >
             <IconButton
               aria-label="back"
               icon={<ArrowBackIcon fontSize={20} color="#344054" />}
@@ -532,7 +601,8 @@ export const NewUiViewsWithGroups = ({
               color="#344054"
               fontWeight={500}
               alignItems="center"
-              columnGap="8px">
+              columnGap="8px"
+            >
               <Flex
                 w="16px"
                 h="16px"
@@ -543,7 +613,8 @@ export const NewUiViewsWithGroups = ({
                 fontWeight={500}
                 fontSize={11}
                 justifyContent="center"
-                alignItems="center">
+                alignItems="center"
+              >
                 {tableName?.[0]}
               </Flex>
               {tableName}
@@ -559,7 +630,8 @@ export const NewUiViewsWithGroups = ({
                 borderColor="#D0D5DD"
                 color="#344054"
                 leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                borderRadius="8px">
+                borderRadius="8px"
+              >
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -576,7 +648,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="5px">
+            columnGap="5px"
+          >
             {(views ?? []).map((view, index) => (
               <Button
                 key={view.id}
@@ -596,15 +669,16 @@ export const NewUiViewsWithGroups = ({
                 color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                 bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
                 _hover={
-                  selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
+                  selectedTabIndex === index ? { bg: "#D1E9FF" } : undefined
                 }
                 onClick={() => {
                   setSelectedView(view);
                   dispatch(
-                    viewsActions.setViewTab({tableSlug, tabIndex: index})
+                    viewsActions.setViewTab({ tableSlug, tabIndex: index })
                   );
                   setSelectedTabIndex(index);
-                }}>
+                }}
+              >
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||
                   view.type}
@@ -617,7 +691,8 @@ export const NewUiViewsWithGroups = ({
                 variant="ghost"
                 colorScheme="gray"
                 color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}
+              >
                 {generateLangaugeText(tableLan, i18n?.language, "View") ||
                   "View"}
               </Button>
@@ -634,7 +709,8 @@ export const NewUiViewsWithGroups = ({
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
-              }}>
+              }}
+            >
               <ViewTypeList
                 views={views}
                 computedViewTypes={computedViewTypes}
@@ -686,7 +762,8 @@ export const NewUiViewsWithGroups = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto">
+                overflow="auto"
+              >
                 {columnsForSearch.map((column) => (
                   <Flex
                     key={column.id}
@@ -695,9 +772,10 @@ export const NewUiViewsWithGroups = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
-                    cursor="pointer">
-                    {getColumnIcon({column})}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                  >
+                    {getColumnIcon({ column })}
                     <ViewOptionTitle>
                       {column?.attributes?.[`label_${i18n.language}`] ||
                         column?.label}
@@ -710,7 +788,7 @@ export const NewUiViewsWithGroups = ({
                           data: {
                             fields: columnsForSearch.map((c) =>
                               c.id === column.id
-                                ? {...c, is_search: e.target.checked}
+                                ? { ...c, is_search: e.target.checked }
                                 : c
                             ),
                           },
@@ -727,15 +805,58 @@ export const NewUiViewsWithGroups = ({
               tableLan={tableLan}
               view={view}
               visibleColumns={visibleColumns}
-              refetchViews={refetchViews}>
+              refetchViews={refetchViews}
+            >
               <FilterButton view={view} />
             </FilterPopover>
+
+            {view?.type === "TIMELINE" && noDates.length > 0 && (
+              <Popover>
+                <PopoverTrigger>
+                  <Button
+                    variant="text"
+                    _hover={{ backgroundColor: "rgba(0, 122, 255, 0.08)" }}
+                    fontWeight={400}
+                    color={"#888"}
+                  >
+                    No date ({noDates.length})
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
+                    {noDates.map((item) => (
+                      <Box
+                        p="8px"
+                        h="32px"
+                        columnGap="8px"
+                        alignItems="center"
+                        borderRadius={6}
+                        _hover={{ bg: "#EAECF0" }}
+                        cursor="pointer"
+                        key={item?.guid}
+                        fontSize={12}
+                        onClick={() => handleAddDate(item)}
+                      >
+                        {
+                          item?.[
+                            groupByFields?.find(
+                              (item) => item?.type === "SINGLE_LINE"
+                            )?.slug
+                          ]
+                        }
+                      </Box>
+                    ))}
+                  </Box>
+                </PopoverContent>
+              </Popover>
+            )}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="write">
               <Button
                 h={"30px"}
                 rightIcon={<ChevronDownIcon fontSize={18} />}
-                onClick={() => navigateCreatePage()}>
+                onClick={() => navigateCreatePage()}
+              >
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,
@@ -760,6 +881,8 @@ export const NewUiViewsWithGroups = ({
               searchText={searchText}
               computedVisibleFields={computedVisibleFields}
               handleOpenPopup={handleOpenPopup}
+              queryClient={queryClient}
+              settingsForm={settingsForm}
             />
           </Flex>
 
@@ -780,16 +903,17 @@ export const NewUiViewsWithGroups = ({
           >
             {tabs?.length > 0 && view?.type !== "GRID" && (
               <div id="tabsHeight" className={style.tableCardHeader}>
-                <div style={{display: "flex", alignItems: "center"}}>
-                  <div className="title" style={{marginRight: "20px"}}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className="title" style={{ marginRight: "20px" }}>
                     <h3>{view.table_label}</h3>
                   </div>
-                  <TabList style={{border: "none"}}>
+                  <TabList style={{ border: "none" }}>
                     {tabs?.map((tab) => (
                       <Tab
                         key={tab.value}
                         selectedClassName={style.activeTab}
-                        className={`${style.disableTab} react-tabs__tab`}>
+                        className={`${style.disableTab} react-tabs__tab`}
+                      >
                         {tab.label}
                       </Tab>
                     ))}
@@ -854,11 +978,15 @@ export const NewUiViewsWithGroups = ({
                         view={view}
                         // selectedTable={selectedTable}
                         setViews={() => {}}
+                        menuItem={menuItem}
                         selectedTabIndex={selectedTabIndex}
                         setSelectedTabIndex={setSelectedTabIndex}
                         views={views}
                         fieldsMap={fieldsMap}
                         isViewLoading={isLoading}
+                        setNoDates={setNoDates}
+                        setLayoutType={setLayoutType}
+                        setCenterDate={setCenterDate}
                       />
                     ) : null}
                   </>
@@ -1394,7 +1522,10 @@ const ViewOptions = ({
   isChanged,
   selectedTabIndex,
   setIsChanged = () => {},
+  settingsForm,
+  // queryClient,
 }) => {
+  const queryClient = useQueryClient();
   const { appId, tableSlug } = useParams();
   const { i18n, t } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -1407,6 +1538,8 @@ const ViewOptions = ({
 
   const [openedMenu, setOpenedMenu] = useState(null);
 
+  const isTimelineView = view?.type === "TIMELINE";
+
   useEffect(() => {
     if (ref.current) {
       ref.current.focus();
@@ -1418,17 +1551,53 @@ const ViewOptions = ({
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
+  useEffect(() => {
+    settingsForm.setValue(
+      "calendar_from_slug",
+      view?.attributes?.calendar_from_slug
+    );
+    settingsForm.setValue(
+      "calendar_to_slug",
+      view?.attributes?.calendar_to_slug
+    );
+    settingsForm.setValue("group_fields", view?.group_fields);
+  }, [view]);
+
   const updateView = useMutation({
     mutationFn: async (value) => {
       await constructorViewService.update(tableSlug, {
         ...view,
         id: view.id,
         columns: view.columns,
-        attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
+        attributes: { ...view?.attributes, [`name_${i18n?.language}`]: value },
       });
       return await refetchViews();
     },
   });
+
+  // const updateViewColumns = () => {
+  //   // setUpdateLoading(true);
+  //   constructorViewService
+  //     .update(tableSlug, {
+  //       ...views?.[selectedTabIndex],
+  //       attributes: {
+  //         ...views?.[selectedTabIndex]?.attributes,
+  //         group_by_columns: form
+  //           .watch("group_fields")
+  //           ?.filter((el) => el !== "" && el !== null && el !== undefined),
+  //       },
+  //       group_fields: form
+  //         .watch("group_fields")
+  //         ?.filter((el) => el !== "" && el !== null && el !== undefined),
+  //     })
+  //     .then(() => {})
+  //     .finally(() => {
+  //       // setUpdateLoading(false);
+  //       queryClient.refetchQueries(["GET_TABLE_INFO"]);
+  //       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+  //       queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+  //     });
+  // };
 
   const onViewNameChange = useDebounce((ev) => {
     updateView.mutate(ev.target.value);
@@ -1461,51 +1630,81 @@ const ViewOptions = ({
   //   },
   // });
 
-  // const {
-  //   data: { fields, visibleColumns } = { data: [] },
-  //   isLoading: tableInfoLoading,
-  // } = useQuery(
-  //   ["GET_TABLE_INFO", { tableSlug }],
-  //   () => {
-  //     return constructorTableService.getTableInfo(tableSlug, {
-  //       data: {},
-  //     });
-  //   },
-  //   {
-  //     cacheTime: 10,
-  //     select: (res) => {
-  //       const fields = res.data?.fields ?? [];
-  //       const relationFields =
-  //         res?.data?.relation_fields?.map((el) => ({
-  //           ...el,
-  //           label: `${el.label} (${el.table_label})`,
-  //         })) ?? [];
-  //       const fieldsMap = listToMap([...fields, ...relationFields]);
-  //       const data = res.data?.response?.map((row) => ({
-  //         ...row,
-  //       }));
+  const {
+    data: { fields, visibleColumns } = { data: [] },
+    isLoading: tableInfoLoading,
+    refetch: refetchGetTableInfo,
+  } = useQuery(
+    ["GET_TABLE_INFO", { tableSlug }],
+    () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
+      });
+    },
+    {
+      cacheTime: 10,
+      select: (res) => {
+        const fields = res.data?.fields ?? [];
+        const relationFields =
+          res?.data?.relation_fields?.map((el) => ({
+            ...el,
+            label: `${el.label} (${el.table_label})`,
+          })) ?? [];
+        const fieldsMap = listToMap([...fields, ...relationFields]);
+        const data = res.data?.response?.map((row) => ({
+          ...row,
+        }));
 
-  //       return {
-  //         fieldsMap,
-  //         data,
-  //         fields,
-  //         visibleColumns: res?.data?.fields ?? [],
-  //         visibleRelationColumns:
-  //           res?.data?.relation_fields?.map((el) => ({
-  //             ...el,
-  //             label: `${el.label} (${el.table_label})`,
-  //           })) ?? [],
-  //       };
-  //     },
-  //   }
-  // );
+        return {
+          fieldsMap,
+          data,
+          fields,
+          visibleColumns: res?.data?.fields ?? [],
+          visibleRelationColumns:
+            res?.data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
+        };
+      },
+    }
+  );
 
-  // const computedColumns = useMemo(() => {
-  //   const filteredFields = fields?.filter(
-  //     (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
-  //   );
-  //   return listToOptions(filteredFields, "label", "slug");
-  // }, [fields]);
+  const computedColumns = useMemo(() => {
+    const filteredFields = fields?.filter(
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+    );
+    return listToOptions(filteredFields, "label", "slug");
+  }, [fields]);
+
+  const saveSettings = () => {
+    const computedData = {
+      ...view,
+      attributes: {
+        ...view.attributes,
+        calendar_from_slug: settingsForm.getValues("calendar_from_slug"),
+        calendar_to_slug: settingsForm.getValues("calendar_to_slug"),
+        // visible_field: settingsForm.getValues("visible_field"),
+      },
+    };
+
+    constructorViewService
+      .update(tableSlug, {
+        ...computedData,
+      })
+      .then(() => {
+        refetchViews();
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+      });
+  };
+
+  const computedColumnsFor = useMemo(() => {
+    if (view.type !== "CALENDAR" && view.type !== "GANTT") {
+      return visibleColumns;
+    } else {
+      return [...visibleColumns, ...visibleRelationColumns];
+    }
+  }, [visibleColumns, visibleRelationColumns, view.type]);
 
   // const saveSettings = () => {
   //   const computedData = {
@@ -1696,41 +1895,77 @@ const ViewOptions = ({
                   </Flex>
                 </Flex>
               )}
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) && (
-                <Flex
-                  p="8px"
-                  h="32px"
-                  columnGap="8px"
-                  alignItems="center"
-                  borderRadius={6}
-                  _hover={{ bg: "#EAECF0" }}
-                  cursor="pointer"
-                  onClick={() => setOpenedMenu("tab-group")}
-                >
-                  <Image src="/img/browser.svg" alt="Group by" />
-                  <ViewOptionTitle>
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Tab Group"
-                    ) || "Tab Group"}
-                  </ViewOptionTitle>
-                  <Flex ml="auto" alignItems="center" columnGap="8px">
-                    {Boolean(tabGroupColumnsCount) && (
-                      <ViewOptionSubtitle>
-                        {tabGroupColumnsCount}{" "}
-                        {generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Group"
-                        ) || "Group"}
-                      </ViewOptionSubtitle>
-                    )}
-                    <ChevronRightIcon fontSize={22} />
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
+                !isTimelineView && (
+                  <Flex
+                    p="8px"
+                    h="32px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                    onClick={() => setOpenedMenu("tab-group")}
+                  >
+                    <Image src="/img/browser.svg" alt="Group by" />
+                    <ViewOptionTitle>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Tab Group"
+                      ) || "Tab Group"}
+                    </ViewOptionTitle>
+                    <Flex ml="auto" alignItems="center" columnGap="8px">
+                      {Boolean(tabGroupColumnsCount) && (
+                        <ViewOptionSubtitle>
+                          {tabGroupColumnsCount}{" "}
+                          {generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Group"
+                          ) || "Group"}
+                        </ViewOptionSubtitle>
+                      )}
+                      <ChevronRightIcon fontSize={22} />
+                    </Flex>
                   </Flex>
-                </Flex>
-              )}
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
+                )}
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+                !isTimelineView && (
+                  <Flex
+                    p="8px"
+                    h="32px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                    onClick={() => setOpenedMenu("fix-column")}
+                  >
+                    <Image src="/img/layout-left.svg" alt="Fix columns" />
+                    <ViewOptionTitle>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Fix columns"
+                      ) || "Fix columns"}
+                    </ViewOptionTitle>
+                    <Flex ml="auto" alignItems="center" columnGap="8px">
+                      {Boolean(fixedColumnsCount) && (
+                        <ViewOptionSubtitle>
+                          {fixedColumnsCount}{" "}
+                          {generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Fixed"
+                          ) || "Fixed"}
+                        </ViewOptionSubtitle>
+                      )}
+                      <ChevronRightIcon fontSize={22} />
+                    </Flex>
+                  </Flex>
+                )}
+              {isTimelineView && (
                 <Flex
                   p="8px"
                   h="32px"
@@ -1739,27 +1974,17 @@ const ViewOptions = ({
                   borderRadius={6}
                   _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("fix-column")}
+                  onClick={() => setOpenedMenu("timeline-settings")}
                 >
-                  <Image src="/img/layout-left.svg" alt="Fix columns" />
+                  <Image src="/img/settings.svg" alt="Settings" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Fix columns"
-                    ) || "Fix columns"}
+                      "Settings"
+                    ) || "Settings"}
                   </ViewOptionTitle>
-                  <Flex ml="auto" alignItems="center" columnGap="8px">
-                    {Boolean(fixedColumnsCount) && (
-                      <ViewOptionSubtitle>
-                        {fixedColumnsCount}{" "}
-                        {generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Fixed"
-                        ) || "Fixed"}
-                      </ViewOptionSubtitle>
-                    )}
+                  <Flex ml="auto">
                     <ChevronRightIcon fontSize={22} />
                   </Flex>
                 </Flex>
@@ -1808,6 +2033,10 @@ const ViewOptions = ({
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
             onBackClick={() => setOpenedMenu(null)}
+            settingsForm={settingsForm}
+            columns={computedColumnsFor}
+            queryClient={queryClient}
+            refetchGetTableInfo={refetchGetTableInfo}
           />
         )}
 
@@ -1829,6 +2058,7 @@ const ViewOptions = ({
             refetchViews={refetchViews}
             visibleRelationColumns={visibleRelationColumns}
             onBackClick={() => setOpenedMenu(null)}
+            visibleColumns={visibleColumns}
           />
         )}
 
@@ -1839,6 +2069,18 @@ const ViewOptions = ({
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
             onBackClick={() => setOpenedMenu(null)}
+          />
+        )}
+        {openedMenu === "timeline-settings" && (
+          <TimelineSettings
+            control={settingsForm.control}
+            computedColumns={computedColumns}
+            onBackClick={() => setOpenedMenu(null)}
+            saveSettings={saveSettings}
+            title={
+              generateLangaugeText(tableLan, i18n?.language, "Settings") ||
+              "Settings"
+            }
           />
         )}
       </PopoverContent>
@@ -1853,8 +2095,8 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const {i18n, t} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n, t } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -1899,10 +2141,20 @@ const ColumnsVisibility = ({
         ? column.relation_id
         : column.id;
 
-    mutation.mutate({
-      ...view,
-      columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
-    });
+    if (view?.type === "TIMELINE") {
+      mutation.mutate({
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          visible_field: checked ? column?.slug : "",
+        },
+      });
+    } else {
+      mutation.mutate({
+        ...view,
+        columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
+      });
+    }
   };
 
   const onShowAllChange = (checked) => {
@@ -1949,7 +2201,8 @@ const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}>
+          onClick={onBackClick}
+        >
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
@@ -1959,13 +2212,15 @@ const ColumnsVisibility = ({
           </Box>
         </Button>
 
-        <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
-          <Switch
-            isChecked={allColumns?.length === visibleFields?.length}
-            onChange={(ev) => onShowAllChange(ev.target.checked)}
-          />
-          {t("show_all")}
-        </Flex>
+        {view?.type !== "TIMELINE" && (
+          <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
+            <Switch
+              isChecked={allColumns?.length === visibleFields?.length}
+              onChange={(ev) => onShowAllChange(ev.target.checked)}
+            />
+            {t("show_all")}
+          </Flex>
+        )}
       </Flex>
       <InputGroup mt="10px">
         <InputLeftElement>
@@ -1988,7 +2243,124 @@ const ColumnsVisibility = ({
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
-        overflow="auto">
+        overflow="auto"
+      >
+        {/* {view?.type === "TIMELINE" ? (
+          checkedColumns?.length || unCheckedColumns?.length ? (
+            <Container
+              groupName="1"
+              onDrop={onDrop}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              getChildPayload={(i) => ({
+                ...allColumnsForTimeline?.checkedColumns[i],
+                field_name:
+                  allColumnsForTimeline?.checkedColumns[i]?.label ??
+                  allColumnsForTimeline?.checkedColumns[i]?.title,
+              })}
+            >
+              {allColumnsForTimeline?.checkedColumns?.map((column) => (
+                <Draggable
+                  key={column?.id}
+                  style={{
+                    overflow: "visible",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "move",
+                    borderBottom: "1px solid #e5e5e5",
+                    padding: "5px 0",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <div>{columnIcons[column?.type] ?? <LinkIcon />}</div>
+                    <div>
+                      {column?.attributes?.[`label_${i18n.language}`] ??
+                        column?.label}
+                    </div>
+                  </div>
+
+                  <Switch
+                    size="small"
+                    // disabled={isLoading || updateLoading}
+                    checked={
+                      allColumns?.checkedColumns?.includes(column?.id) ||
+                      view?.group_fields?.includes(column?.id)
+                    }
+                    onChange={(e, val) => changeHandler(e, val, column?.id)}
+                  />
+                </Draggable>
+              ))}
+
+              {allColumnsForTimeline?.unCheckedColumns?.map((item) => (
+                <div
+                  key={item?.id}
+                  style={{
+                    overflow: "visible",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderBottom: "1px solid #e5e5e5",
+                    padding: "5px 0",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <div>{columnIcons[item?.type] ?? <LinkIcon />}</div>
+                    <div>
+                      {item?.attributes?.[`label_${i18n.language}`] ??
+                        item?.label}
+                    </div>
+                  </div>
+
+                  <Switch
+                    sx={{
+                      "& .MuiSwitch-switchBase": {
+                        transitionDuration: "0ms",
+                      },
+
+                      "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                        {
+                          backgroundColor: "#3f51b5",
+                        },
+
+                      "& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track":
+                        {
+                          backgroundColor: "#e5e5e5",
+                        },
+
+                      "& .MuiSwitch-switchBase.Mui-disabled": {
+                        color: "#e5e5e5",
+                      },
+
+                      "& .MuiSwitch-colorSecondary.Mui-checked": {
+                        color: "#3f51b5",
+                      },
+                    }}
+                    size="small"
+                    // disabled={isLoading || updateLoading}
+                    checked={false}
+                    onChange={(e, val) => changeHandler(e, val, item?.id)}
+                  />
+                </div>
+              ))}
+            </Container>
+          ) : (
+            <Box style={{ padding: "10px" }}>
+              <Typography>No columns to set group!</Typography>
+            </Box>
+          )
+        ) : ( */}
         <Container onDrop={onDrop}>
           {renderFields.map((column) => (
             <Draggable key={column.id}>
@@ -1999,32 +2371,39 @@ const ColumnsVisibility = ({
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                zIndex={999999}>
-                {column?.type && getColumnIcon({column})}
+                zIndex={999999}
+              >
+                {column?.type && getColumnIcon({ column })}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Switch
                   ml="auto"
                   onChange={(ev) => onChange(column, ev.target.checked)}
-                  isChecked={view?.columns?.includes(
-                    column?.type === "LOOKUP" || column?.type === "LOOKUPS"
-                      ? column?.relation_id
-                      : column?.id
-                  )}
+                  isChecked={
+                    view?.type === "TIMELINE"
+                      ? view?.attributes?.visible_field === column?.slug
+                      : view?.columns?.includes(
+                          column?.type === "LOOKUP" ||
+                            column?.type === "LOOKUPS"
+                            ? column?.relation_id
+                            : column?.id
+                        )
+                  }
                 />
               </Flex>
             </Draggable>
           ))}
         </Container>
+        {/* )} */}
       </Flex>
     </Box>
   );
 };
 
-const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2081,7 +2460,8 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
             "Group columns"}
@@ -2112,9 +2492,10 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -2139,9 +2520,10 @@ const TabGroup = ({
   visibleRelationColumns,
   onBackClick,
   tableLan,
+  visibleColumns,
 }) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2158,6 +2540,14 @@ const TabGroup = ({
   const columns = (computedColumns ?? []).filter((column) =>
     ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT"].includes(column.type)
   );
+
+  // const computedColumnsFor = useMemo(() => {
+  //   if (view.type !== "CALENDAR" && view.type !== "GANTT") {
+  //     return visibleColumns;
+  //   } else {
+  //     return [...visibleColumns, ...visibleRelationColumns];
+  //   }
+  // }, [visibleColumns, visibleRelationColumns, view.type]);
 
   const getLabel = (column) =>
     column?.attributes?.[`label_${i18n.language}`] || column?.label;
@@ -2189,7 +2579,8 @@ const TabGroup = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(
             tableLan,
@@ -2223,9 +2614,10 @@ const TabGroup = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"

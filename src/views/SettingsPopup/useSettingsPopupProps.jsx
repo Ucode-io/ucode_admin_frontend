@@ -46,6 +46,7 @@ import {store} from "../../store";
 import {useQuery} from "react-query";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
+import NewResourceDetail from "./modules/ResourcesDetail/NewResourceDetail";
 
 const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -295,7 +296,7 @@ export const useSettingsPopupProps = ({onClose}) => {
     // },
     resources: {
       resources: <Resources />,
-      resourcesDetail: <ResourcesDetail />,
+      resourcesDetail: <NewResourceDetail handleClose={handleClose} />,
     },
     apiKeys: {
       apiKeys: <ApiKeys />,

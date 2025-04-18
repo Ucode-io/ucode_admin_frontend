@@ -7,7 +7,7 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
-import {useSearchParams} from "react-router-dom";
+import {useLocation, useSearchParams} from "react-router-dom";
 import githubService from "../../../services/githubService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
@@ -33,6 +33,7 @@ const Form = ({
   setValue = () => {},
 }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
@@ -119,6 +120,12 @@ const Form = ({
       setValue("token", token);
     }
   }, [token]);
+
+  useEffect(() => {
+    if (location?.state?.onFill) {
+      setValue("resource_type", location?.state?.id);
+    }
+  }, []);
 
   return (
     <Box

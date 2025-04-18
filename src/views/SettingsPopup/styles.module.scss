@@ -70,7 +70,7 @@
     border-radius: 50%;
     background-color: #344054;
     transform: translateY(-50%);
-    content: '';
+    content: "";
   }
 
   &:hover {
@@ -99,7 +99,7 @@
 
 .rightContent {
   flex-grow: 1;
-  padding: 36px 60px;
+  padding: 30px 40px 10px;
   overflow: auto;
 }
 
@@ -132,7 +132,7 @@
   border-radius: 4px;
   margin-top: 6px;
   background-color: transparent;
-  color: #D0D5DD;
+  color: #d0d5dd;
   cursor: pointer;
 
   span {

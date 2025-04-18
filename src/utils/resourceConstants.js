@@ -52,6 +52,11 @@ export const resourceTypes = [
     value: 8,
     icon: SiPostgresql,
   },
+  {
+    label: "Superset",
+    value: 11,
+    icon: SiPostgresql,
+  },
 ];
 export const resources = [
   {

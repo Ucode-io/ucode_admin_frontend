@@ -36,7 +36,7 @@ export default function TimeLineDayDataBlock({
           position: "relative",
         }}
       >
-        <div className={styles.days}>
+        <div className={styles.days} id="timelineDays">
           {datesList.map((date) => (
             <TimeLineDays
               date={date}

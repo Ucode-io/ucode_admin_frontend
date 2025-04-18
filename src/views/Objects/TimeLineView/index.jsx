@@ -81,9 +81,18 @@ export default function TimeLineView({
   menuItem,
   fieldsMap: fieldsMapPopup,
   setLayoutType,
+  setNoDates = () => {},
+  setCenterDate = () => {},
 }) {
-  const { handleScroll, calendarRef, months, setMonths, firstDate, lastDate } =
-    useDateLineProps();
+  const {
+    handleScroll,
+    calendarRef,
+    months,
+    setMonths,
+    firstDate,
+    lastDate,
+    datesList,
+  } = useDateLineProps({ setCenterDate });
 
   const { tableSlug, appId } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
@@ -110,16 +119,6 @@ export default function TimeLineView({
   const groupFields = groupFieldIds
     .map((id) => fieldsMap[id])
     .filter((el) => el);
-
-  const datesList = useMemo(() => {
-    const differenceDays = differenceInDays(lastDate, firstDate);
-
-    const result = [];
-    for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(firstDate, { days: i }));
-    }
-    return result;
-  }, [lastDate, firstDate]);
 
   const recursionFunctionForAddIsOpen = (data) => {
     return data?.map((el) => {
@@ -814,6 +813,7 @@ export default function TimeLineView({
               setLayoutType={setLayoutType}
               refetch={refetchInfo}
               navigateToDetailPage={navigateToDetailPage}
+              setNoDates={setNoDates}
               // setMonths={setMonths}
               // handleScroll={handleScroll}
             />

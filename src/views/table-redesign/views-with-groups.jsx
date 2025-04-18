@@ -29,7 +29,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import chakraUITheme from "@/theme/chakraUITheme";
-import { endOfMonth, startOfMonth } from "date-fns";
+import { addDays, endOfMonth, startOfMonth } from "date-fns";
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -177,6 +177,45 @@ export const NewUiViewsWithGroups = ({
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [noDates, setNoDates] = useState([]);
+  const [centerDate, setCenterDate] = useState(null);
+
+  const groupByFields = useMemo(() => {
+    return view?.group_fields?.map((field) => {
+      return fieldsMap?.[field];
+    });
+  }, [view?.group_fields, fieldsMap]);
+
+  const { mutate: updateObject } = useMutation(
+    (data) =>
+      constructorObjectService.update(tableSlug, {
+        data,
+      }),
+    {
+      onSuccess: () => {
+        refetchViews();
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+      },
+    }
+  );
+
+  const settingsForm = useForm({
+    defaultValues: {
+      calendar_from_slug: "",
+      calendar_to_slug: "",
+    },
+  });
+
+  const handleAddDate = (item) => {
+    const startDate = new Date(centerDate).toISOString();
+    const endDate = addDays(new Date(centerDate), 5).toISOString();
+
+    updateObject({
+      ...item,
+      [settingsForm.getValues()["calendar_from_slug"]]: startDate,
+      [settingsForm.getValues()["calendar_to_slug"]]: endDate,
+    });
+  };
 
   const { navigateToForm } = useTabRouter();
   const permissions = useSelector(
@@ -771,6 +810,47 @@ export const NewUiViewsWithGroups = ({
               <FilterButton view={view} />
             </FilterPopover>
 
+            {view?.type === "TIMELINE" && noDates.length > 0 && (
+              <Popover>
+                <PopoverTrigger>
+                  <Button
+                    variant="text"
+                    _hover={{ backgroundColor: "rgba(0, 122, 255, 0.08)" }}
+                    fontWeight={400}
+                    color={"#888"}
+                  >
+                    No date ({noDates.length})
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
+                    {noDates.map((item) => (
+                      <Box
+                        p="8px"
+                        h="32px"
+                        columnGap="8px"
+                        alignItems="center"
+                        borderRadius={6}
+                        _hover={{ bg: "#EAECF0" }}
+                        cursor="pointer"
+                        key={item?.guid}
+                        fontSize={12}
+                        onClick={() => handleAddDate(item)}
+                      >
+                        {
+                          item?.[
+                            groupByFields?.find(
+                              (item) => item?.type === "SINGLE_LINE"
+                            )?.slug
+                          ]
+                        }
+                      </Box>
+                    ))}
+                  </Box>
+                </PopoverContent>
+              </Popover>
+            )}
+
             <PermissionWrapperV2 tableSlug={tableSlug} type="write">
               <Button
                 h={"30px"}
@@ -802,6 +882,7 @@ export const NewUiViewsWithGroups = ({
               computedVisibleFields={computedVisibleFields}
               handleOpenPopup={handleOpenPopup}
               queryClient={queryClient}
+              settingsForm={settingsForm}
             />
           </Flex>
 
@@ -903,7 +984,9 @@ export const NewUiViewsWithGroups = ({
                         views={views}
                         fieldsMap={fieldsMap}
                         isViewLoading={isLoading}
+                        setNoDates={setNoDates}
                         setLayoutType={setLayoutType}
+                        setCenterDate={setCenterDate}
                       />
                     ) : null}
                   </>
@@ -1439,8 +1522,10 @@ const ViewOptions = ({
   isChanged,
   selectedTabIndex,
   setIsChanged = () => {},
-  queryClient,
+  settingsForm,
+  // queryClient,
 }) => {
+  const queryClient = useQueryClient();
   const { appId, tableSlug } = useParams();
   const { i18n, t } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -1466,14 +1551,15 @@ const ViewOptions = ({
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
-  const settingsForm = useForm({
-    defaultValues: {
-      calendar_from_slug: "",
-      calendar_to_slug: "",
-    },
-  });
-
   useEffect(() => {
+    settingsForm.setValue(
+      "calendar_from_slug",
+      view?.attributes?.calendar_from_slug
+    );
+    settingsForm.setValue(
+      "calendar_to_slug",
+      view?.attributes?.calendar_to_slug
+    );
     settingsForm.setValue("group_fields", view?.group_fields);
   }, [view]);
 
@@ -1608,6 +1694,7 @@ const ViewOptions = ({
       })
       .then(() => {
         refetchViews();
+        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
 

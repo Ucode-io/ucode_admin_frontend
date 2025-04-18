@@ -1,14 +1,10 @@
-import {useEffect} from "react";
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {useSettingsPopupContext} from "../../providers";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {store} from "../../../../store";
+import {useTranslation} from "react-i18next";
 import {useForm} from "react-hook-form";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import {Box, Button} from "@mui/material";
-import {useEnvironmentsListQuery} from "@/services/environmentService";
 import resourceService, {
   useCreateResourceMutationV1,
   useResourceConfigureMutation,
@@ -20,41 +16,23 @@ import resourceService, {
   useResourceReconnectMutation,
   useResourceUpdateMutation,
   useResourceUpdateMutationV2,
-} from "@/services/resourceService";
-import {store} from "@/store";
-import ResourceeEnvironments from "./ResourceEnvironment";
-import Form from "./Form";
-import AllowList from "./AllowList";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import {resourceTypes} from "@/utils/resourceConstants";
-import resourceVariableService from "@/services/resourceVariableService";
-import {useDispatch, useSelector} from "react-redux";
-import {showAlert} from "@/store/alert/alert.thunk";
-import {useGithubLoginMutation} from "@/services/githubService";
-import GitForm from "./GitForm";
-import ClickHouseForm from "./ClickHouseForm";
+} from "../../../../services/resourceService";
 import {useQuery} from "react-query";
-import {useGitlabLoginMutation} from "@/services/githubService";
-import GitLabForm from "./GitlabForm";
-import {useTranslation} from "react-i18next";
-import {getAllFromDB} from "@/utils/languageDB";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
-import {ContentTitle} from "../../components/ContentTitle";
-import {useSettingsPopupContext} from "../../providers";
-import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
-import {SMSType} from "./SMSType";
+import {useEnvironmentsListQuery} from "../../../../services/environmentService";
+import {
+  useGithubLoginMutation,
+  useGitlabLoginMutation,
+} from "../../../../services/githubService";
+import resourceVariableService from "../../../../services/resourceVariableService";
+import {showAlert} from "../../../../store/alert/alert.thunk";
+import {
+  groupedResources,
+  resourceTypes,
+} from "../../../../utils/resourceConstants";
+import {getAllFromDB} from "../../../../utils/languageDB";
+import {Box} from "@mui/material";
 
-const headerStyle = {
-  width: "100%",
-  height: "50px",
-  borderBottom: "1px solid #e5e9eb",
-  display: "flex",
-  alignItems: "center",
-  padding: "15px",
-  justifyContent: "space-between",
-};
-
-export const ResourcesDetail = () => {
+function NewResourceDetail({handleClose = () => {}}) {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
@@ -62,27 +40,23 @@ export const ResourcesDetail = () => {
   } = useSettingsPopupContext();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // const {projectId, resourceId, resourceType} = useParams();
   const resourceId = settingSearchParams.get("resourceId");
   const resourceType = settingSearchParams.get("resourceType");
-
   const projectId = useSelector((state) => state?.auth?.projectId);
-
   const location = useLocation();
-  const [selectedEnvironment, setSelectedEnvironment] = useState(null);
-  const [selectedGitlab, setSelectedGitlab] = useState();
-
-  const [variables, setVariables] = useState();
   const navigate = useNavigate();
-  const company = store.getState().company;
-  const authStore = store.getState().auth;
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
+  const company = store.getState().company;
+  const authStore = store.getState().auth;
+
+  const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+  const [selectedGitlab, setSelectedGitlab] = useState();
+  const [variables, setVariables] = useState();
   const [settingLan, setSettingLan] = useState(null);
+  const [activeBtn, setActiveBtn] = useState("");
 
   const isEditPage = !!resourceId;
-
-  console.log({isEditPage});
 
   const {control, reset, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
@@ -248,9 +222,7 @@ export const ResourcesDetail = () => {
       onSuccess: (res) => {
         setSearchParams({access_token: res.access_token});
       },
-      onError: () => {
-        // navigate(microfrontendListPageLink);
-      },
+      onError: () => {},
     });
 
   const {mutate: gitlabLogin, isLoading: gitlabLoginIsLoading} =
@@ -259,9 +231,7 @@ export const ResourcesDetail = () => {
         setSearchParams({access_token: res.access_token});
         setSelectedGitlab(res);
       },
-      onError: () => {
-        // navigate(microfrontendListPageLink);
-      },
+      onError: () => {},
     });
 
   useEffect(() => {
@@ -407,6 +377,34 @@ export const ResourcesDetail = () => {
     }
   };
 
+  const onResourceTypeChange = (value) => {
+    if (value !== 5 && value !== 8) {
+      handleClose();
+      navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/resources/create`, {
+        state: {
+          onFill: true,
+          id: value,
+        },
+      });
+    }
+    if (value === 5) {
+      const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
+
+      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else if (value === 8) {
+      const clientId = import.meta.env.VITE_CLIENT_ID_GITLAB;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
+
+      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+    i;
+  };
+
   useEffect(() => {
     if (!selectedEnvironment?.length) return;
 
@@ -452,158 +450,74 @@ export const ResourcesDetail = () => {
       isMounted = false;
     };
   }, []);
-
   return (
-    <Box sx={{background: "#fff"}}>
-      <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
-        {resourceType === "SMS" ? (
-          <SMSType
-            settingLan={settingLan}
-            i18n={i18n}
-            control={control}
-            selectedEnvironment={selectedEnvironment}
-            setSelectedEnvironment={setSelectedEnvironment}
-            projectEnvironments={projectEnvironments}
-            isEditPage={isEditPage}
-            configureLoading={configureLoading}
-            updateLoading={updateLoading}
-            watch={watch}
-            setValue={setValue}
-            setSettingsSearchParams={setSettingsSearchParams}
-            resourceType={resourceType}
-            resource_type={resource_type}
-            clickHouseList={clickHouseList}
-            createLoading={createLoading}
-            reconnectResource={reconnectResource}
-            resourceId={resourceId}
-            reconnectLoading={reconnectLoading}
-            variables={variables}
-          />
-        ) : (
-          <>
-            <ContentTitle
-              withBackBtn
-              onBackClick={() => setSettingsSearchParams({tab: "resources"})}
-              style={{marginBottom: 0}}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}>
-                <span>
-                  {generateLangaugeText(
-                    settingLan,
-                    i18n?.language,
-                    "Resource settings"
-                  ) || "Resource settings"}
-                </span>
-                <Box>
-                  {(resourceType === "CLICK_HOUSE"
-                    ? !isEditPage
-                    : resource_type !== 2 ||
-                      (resource_type === 2 &&
-                        !isEditPage &&
-                        clickHouseList?.length === 0)) && (
-                    <Button
-                      bg="primary"
-                      type="submit"
-                      sx={{fontSize: "14px", margin: "0 10px"}}
-                      isLoading={createLoading}>
-                      {generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Save changes"
-                      ) || "Save changes"}
-                    </Button>
-                  )}
-
-                  {isEditPage && variables?.type !== "REST" && (
-                    <Button
-                      sx={{
-                        color: "#fff",
-                        background: "#38A169",
-                        marginRight: "10px",
-                      }}
-                      hidden={!isEditPage}
-                      color={"success"}
-                      variant="contained"
-                      onClick={() => reconnectResource({id: resourceId})}
-                      isLoading={reconnectLoading}>
-                      {generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Reconnect"
-                      ) || "Reconnect"}
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-            </ContentTitle>
-
-            <Box sx={{display: "flex"}}>
-              {isEditPage && (
-                <ResourceeEnvironments
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                />
-              )}
-              {formLoading || isLoading ? (
-                <Box sx={{maxWidth: "289px", width: "100%"}}>
-                  <GreyLoader />
-                </Box>
-              ) : resourceType === "GITHUB" ? (
-                <GitForm
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                />
-              ) : resourceType === "CLICK_HOUSE" ? (
-                <ClickHouseForm
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                />
-              ) : resourceType === "GITLAB" ? (
-                <GitLabForm
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                />
-              ) : (
-                <Form
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                  setValue={setValue}
-                />
-              )}
-
-              <AllowList />
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {groupedResources?.map((element) => (
+          <Box sx={{padding: "20px 16px 16px"}}>
+            <FRLabel children={<>{element?.head}</>} />
+            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+              {element?.items?.map((val) => (
+                <ResourceButton
+                  val={val}
+                  activeBtn={activeBtn}
+                  onClick={() => {
+                    setActiveBtn(val?.label);
+                    onResourceTypeChange(val?.value);
+                  }}>
+                  {getElementIcon(val?.icon)}
+                  <p>{val?.label}</p>
+                </ResourceButton>
+              ))}
             </Box>
-          </>
-        )}
+          </Box>
+        ))}
       </form>
+    </div>
+  );
+}
+
+const FRLabel = ({children}) => {
+  return (
+    <Box sx={{color: "#344054", fontWeight: 600, fontSize: "12px"}}>
+      {children}
     </Box>
   );
 };
+
+const ResourceButton = ({children, onClick = () => {}, activeBtn, val}) => {
+  return activeBtn === val?.label ? (
+    <Box className={"resourceBtnActive"} onClick={onClick}>
+      <img src="/public/img/Checkbox.svg" alt="" />
+      <p>{activeBtn}</p>
+    </Box>
+  ) : (
+    <Box className={"resourceBtn"} onClick={onClick}>
+      {children}
+    </Box>
+  );
+};
+
+const getElementIcon = (element) => {
+  switch (element) {
+    case "mongodb":
+      return <img src="/public/img/mongodb.svg" alt="" />;
+    case "postgres":
+      return <img src="/public/img/postgres.svg" alt="" />;
+    case "restapi":
+      return <img src="/public/img/resapi.svg" alt="" />;
+    case "github":
+      return <img src="/public/img/github.svg" alt="" />;
+    case "gitlab":
+      return <img src="/public/img/gitlab.svg" alt="" />;
+    case "superset":
+      return <img src="/public/img/superset.svg" alt="" />;
+    case "clickhouse":
+      return <img src="/public/img/clickhouse.svg" alt="" />;
+
+    default:
+      return <img src="/public/img/mongodb.svg" alt="" />;
+  }
+};
+
+export default NewResourceDetail;

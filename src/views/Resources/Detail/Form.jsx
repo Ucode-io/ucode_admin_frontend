@@ -7,12 +7,13 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
-import {useSearchParams} from "react-router-dom";
+import {useLocation, useSearchParams} from "react-router-dom";
 import githubService from "../../../services/githubService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import HFSwitch from "../../../components/FormElements/HFSwitch";
 
 const headerStyle = {
   width: "100",
@@ -32,6 +33,7 @@ const Form = ({
   setValue = () => {},
 }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
@@ -119,6 +121,12 @@ const Form = ({
     }
   }, [token]);
 
+  useEffect(() => {
+    if (location?.state?.onFill) {
+      setValue("resource_type", location?.state?.id);
+    }
+  }, []);
+
   return (
     <Box
       flex={1}
@@ -165,6 +173,29 @@ const Form = ({
               resurceType={resurceType}
               disabled={isEditPage}
             />
+
+            {resurceType === 2 && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Do you need superset
+                </Box>
+                <HFSwitch
+                  control={control}
+                  onChange={() => {
+                    onResourceTypeChange(11);
+                  }}
+                  required
+                  name="is_superset"
+                  resurceType={resurceType}
+                  disabled={isEditPage}
+                />
+              </>
+            )}
 
             {Boolean(resurceType === 7 || type === "SMTP") && (
               <>

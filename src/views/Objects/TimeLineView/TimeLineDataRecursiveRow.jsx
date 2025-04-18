@@ -41,6 +41,8 @@ export default function TimeLineDataRecursiveRow({
     }
   }, [item, openedRows, lastLabels]);
 
+  // console.log({ item, groupbyFields, calendar_from_slug, calendar_to_slug });
+
   return (
     <>
       <div

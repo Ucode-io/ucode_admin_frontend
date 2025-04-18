@@ -770,6 +770,7 @@ const ViewsWithGroups = ({
                       views={views}
                       fieldsMap={fieldsMap}
                       isViewLoading={false}
+                      setLayoutType={setLayoutType}
                     />
                   )}
                   {!tabs?.length && (

@@ -375,6 +375,8 @@ function DrawerDetailPage({
   useEffect(() => {
     if (drawerRef.current) {
       drawerRef.current.style.width = `${drawerWidth}px`;
+      drawerRef.current.closest(".chakra-portal").style.position = "relative";
+      drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
 
@@ -393,14 +395,16 @@ function DrawerDetailPage({
               ref={drawerRef}
               bg={"white"}
               resize={"both"}
-              position={"relative"}>
+              position={"relative"}
+            >
               <DrawerHeader
                 px="12px"
                 bg="white"
                 display={"flex"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                pr={6}>
+                pr={6}
+              >
                 <Flex h={"44px"} align="center" justify="space-between">
                   <Box
                     onClick={handleClose}
@@ -409,9 +413,10 @@ function DrawerDetailPage({
                     alignItems="center"
                     justifyContent="center"
                     width="24px"
-                    height="24px">
+                    height="24px"
+                  >
                     <KeyboardDoubleArrowRightIcon
-                      style={{color: "rgba(55, 53, 47, 0.45)"}}
+                      style={{ color: "rgba(55, 53, 47, 0.45)" }}
                       w={6}
                       h={6}
                     />
@@ -460,8 +465,9 @@ function DrawerDetailPage({
                         h={18}
                         display={"flex"}
                         alignItems={"center"}
-                        variant="outlined">
-                        <SpaceDashboardIcon style={{color: "#808080"}} />
+                        variant="outlined"
+                      >
+                        <SpaceDashboardIcon style={{ color: "#808080" }} />
                       </Button>
                       <Box
                         sx={{
@@ -478,7 +484,8 @@ function DrawerDetailPage({
                     style={{
                       borderBottom: "none",
                       overflowX: "auto",
-                    }}>
+                    }}
+                  >
                     {data?.tabs?.map((el, index) => (
                       <Tab
                         onClick={(e) => {
@@ -492,7 +499,8 @@ function DrawerDetailPage({
                           padding: "0 10px",
                           fontSize: "11px",
                           fontWeight: "500",
-                        }}>
+                        }}
+                      >
                         {el?.type === "relation"
                           ? el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
@@ -513,7 +521,8 @@ function DrawerDetailPage({
                   bg={"#007aff"}
                   color={"#fff"}
                   w={100}
-                  h={10}>
+                  h={10}
+                >
                   Save
                 </Button>
                 {/* )} */}
@@ -523,7 +532,8 @@ function DrawerDetailPage({
                 <DrawerBody
                   position={"relative"}
                   p="0px 50px"
-                  overflow={"auto"}>
+                  overflow={"auto"}
+                >
                   <DrawerFormDetailPage
                     projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}

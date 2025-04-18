@@ -35,6 +35,9 @@ export default function TimeLineBlock({
   selectedType,
   menuItem,
   fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -515,6 +518,9 @@ export default function TimeLineBlock({
             visible_field={visible_field}
             menuItem={menuItem}
             fieldsMapPopup={fieldsMapPopup}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            navigateToDetailPage={navigateToDetailPage}
           />
         )}
       </div>

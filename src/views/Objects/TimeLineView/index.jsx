@@ -18,7 +18,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueries, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
 import FiltersBlock from "../../../components/FiltersBlock";
 import FRow from "../../../components/FormElements/FRow";
@@ -59,6 +59,8 @@ import { useGetLang } from "../../../hooks/useGetLang";
 import { getColumnIcon } from "../../table-redesign/icons";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import TimeLineDatesRow from "./TimeLineDatesRow";
+import { mergeStringAndState } from "../../../utils/jsonPath";
+import useTabRouter from "../../../hooks/useTabRouter";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -78,11 +80,12 @@ export default function TimeLineView({
   isViewLoading,
   menuItem,
   fieldsMap: fieldsMapPopup,
+  setLayoutType,
 }) {
   const { handleScroll, calendarRef, months, setMonths, firstDate, lastDate } =
     useDateLineProps();
 
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
@@ -137,8 +140,49 @@ export default function TimeLineView({
 
   const [selectedType, setSelectedType] = useState("day");
 
+  const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
+
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
   // FOR DATA
-  const { data: { data } = { data: [] }, isLoading } = useQuery(
+  const {
+    data: { data } = { data: [] },
+    isLoading,
+    refetch: refetchData,
+  } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
       { tableSlug, filters, dateFilters, view, months, selectedType },
@@ -185,6 +229,7 @@ export default function TimeLineView({
   const {
     data: { fields, visibleColumns, visibleRelationColumns } = { data: [] },
     isLoading: tableInfoLoading,
+    refetch: refetchTableInfo,
   } = useQuery(
     ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
     () => {
@@ -224,6 +269,11 @@ export default function TimeLineView({
       },
     }
   );
+
+  const refetchInfo = () => {
+    refetchData();
+    refetchTableInfo();
+  };
 
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
   const tabs = tabResponses?.map((response) => response?.data);
@@ -761,6 +811,9 @@ export default function TimeLineView({
               calendar_to_slug={view?.attributes?.calendar_to_slug}
               visible_field={view?.attributes?.visible_field}
               months={months}
+              setLayoutType={setLayoutType}
+              refetch={refetchInfo}
+              navigateToDetailPage={navigateToDetailPage}
               // setMonths={setMonths}
               // handleScroll={handleScroll}
             />

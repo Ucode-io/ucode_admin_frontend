@@ -903,6 +903,7 @@ export const NewUiViewsWithGroups = ({
                         views={views}
                         fieldsMap={fieldsMap}
                         isViewLoading={isLoading}
+                        setLayoutType={setLayoutType}
                       />
                     ) : null}
                   </>

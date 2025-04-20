@@ -92,6 +92,8 @@ export default function TimeLineView({
     firstDate,
     lastDate,
     datesList,
+    selectedType,
+    setSelectedType,
   } = useDateLineProps({ setCenterDate });
 
   const { tableSlug, appId } = useParams();
@@ -136,8 +138,6 @@ export default function TimeLineView({
       }
     });
   };
-
-  const [selectedType, setSelectedType] = useState("day");
 
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();

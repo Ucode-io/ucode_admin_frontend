@@ -111,6 +111,69 @@ export const serviceTypes = [
     value: 2,
   },
 ];
+export const groupedResources = [
+  {
+    head: "Databases",
+    items: [
+      {
+        label: "MongoDB",
+        value: 1,
+        icon: "mongo",
+      },
+      {
+        label: "Click House",
+        value: 2,
+        icon: "clickhouse",
+      },
+      {
+        label: "PostgreSQL",
+        value: 3,
+        icon: "postgres",
+      },
+    ],
+  },
+  {
+    head: "API",
+    items: [
+      {
+        label: "Playmobile",
+        value: 1,
+        disabled: true,
+        icon: "restapi",
+      },
+      {
+        label: "SMTP",
+        value: 7,
+        icon: "restapi",
+      },
+    ],
+  },
+  {
+    head: "Source Code Version Control",
+    items: [
+      {
+        label: "Github",
+        value: 5,
+        icon: "github",
+      },
+      {
+        label: "Gitlab",
+        value: 8,
+        icon: "gitlab",
+      },
+    ],
+  },
+  {
+    head: "Dashboard tool",
+    items: [
+      {
+        label: "Superset",
+        value: 11,
+        icon: "superset",
+      },
+    ],
+  },
+];
 
 export const getResourceTypeByID = (type) => {
   return resourceTypes.find((el) => el.value === type)?.label;

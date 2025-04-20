@@ -25,11 +25,14 @@ import {
 } from "../../../../services/githubService";
 import resourceVariableService from "../../../../services/resourceVariableService";
 import {showAlert} from "../../../../store/alert/alert.thunk";
-import {resourceTypes} from "../../../../utils/resourceConstants";
+import {
+  groupedResources,
+  resourceTypes,
+} from "../../../../utils/resourceConstants";
 import {getAllFromDB} from "../../../../utils/languageDB";
 import {Box} from "@mui/material";
 
-function NewResourceDetail() {
+function NewResourceDetail({handleClose = () => {}}) {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
@@ -51,6 +54,7 @@ function NewResourceDetail() {
   const [selectedGitlab, setSelectedGitlab] = useState();
   const [variables, setVariables] = useState();
   const [settingLan, setSettingLan] = useState(null);
+  const [activeBtn, setActiveBtn] = useState("");
 
   const isEditPage = !!resourceId;
 
@@ -373,6 +377,34 @@ function NewResourceDetail() {
     }
   };
 
+  const onResourceTypeChange = (value) => {
+    if (value !== 5 && value !== 8) {
+      handleClose();
+      navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/resources/create`, {
+        state: {
+          onFill: true,
+          id: value,
+        },
+      });
+    }
+    if (value === 5) {
+      const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
+
+      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else if (value === 8) {
+      const clientId = import.meta.env.VITE_CLIENT_ID_GITLAB;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
+
+      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+    i;
+  };
+
   useEffect(() => {
     if (!selectedEnvironment?.length) return;
 
@@ -420,8 +452,27 @@ function NewResourceDetail() {
   }, []);
   return (
     <div>
-      <FRLabel />
-      <ResourceButton />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {groupedResources?.map((element) => (
+          <Box sx={{padding: "20px 16px 16px"}}>
+            <FRLabel children={<>{element?.head}</>} />
+            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+              {element?.items?.map((val) => (
+                <ResourceButton
+                  val={val}
+                  activeBtn={activeBtn}
+                  onClick={() => {
+                    setActiveBtn(val?.label);
+                    onResourceTypeChange(val?.value);
+                  }}>
+                  {getElementIcon(val?.icon)}
+                  <p>{val?.label}</p>
+                </ResourceButton>
+              ))}
+            </Box>
+          </Box>
+        ))}
+      </form>
     </div>
   );
 }
@@ -429,29 +480,44 @@ function NewResourceDetail() {
 const FRLabel = ({children}) => {
   return (
     <Box sx={{color: "#344054", fontWeight: 600, fontSize: "12px"}}>
-      Databases
+      {children}
     </Box>
   );
 };
 
-const ResourceButton = ({children}) => {
-  return (
-    <Box
-      sx={{
-        marginTop: "20px",
-        width: "110px",
-        height: "40px",
-        border: "1px solid #EAECF0",
-        padding: "10px 8px",
-        borderRadius: "8px",
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-      }}>
-      <img src="/public/img/mongodb.svg" alt="" />
-      <p>MongoDB</p>
+const ResourceButton = ({children, onClick = () => {}, activeBtn, val}) => {
+  return activeBtn === val?.label ? (
+    <Box className={"resourceBtnActive"} onClick={onClick}>
+      <img src="/public/img/Checkbox.svg" alt="" />
+      <p>{activeBtn}</p>
+    </Box>
+  ) : (
+    <Box className={"resourceBtn"} onClick={onClick}>
+      {children}
     </Box>
   );
+};
+
+const getElementIcon = (element) => {
+  switch (element) {
+    case "mongodb":
+      return <img src="/public/img/mongodb.svg" alt="" />;
+    case "postgres":
+      return <img src="/public/img/postgres.svg" alt="" />;
+    case "restapi":
+      return <img src="/public/img/resapi.svg" alt="" />;
+    case "github":
+      return <img src="/public/img/github.svg" alt="" />;
+    case "gitlab":
+      return <img src="/public/img/gitlab.svg" alt="" />;
+    case "superset":
+      return <img src="/public/img/superset.svg" alt="" />;
+    case "clickhouse":
+      return <img src="/public/img/clickhouse.svg" alt="" />;
+
+    default:
+      return <img src="/public/img/mongodb.svg" alt="" />;
+  }
 };
 
 export default NewResourceDetail;

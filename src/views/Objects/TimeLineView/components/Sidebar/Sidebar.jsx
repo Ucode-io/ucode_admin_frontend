@@ -4,6 +4,7 @@ import { SidebarButton } from "../SidebarButton";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
 import { useEffect, useMemo, useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -92,6 +93,11 @@ export const Sidebar = ({
           ))}
         </div>
       )}
+      {/* <button className={cls.newBtn}>
+        <span>
+          <AddRoundedIcon /> New
+        </span>
+      </button> */}
     </div>
   );
 };

@@ -976,6 +976,7 @@ export const NewUiViewsWithGroups = ({
                     ) : view.type === "TIMELINE" ? (
                       <TimeLineView
                         view={view}
+                        noDates={noDates}
                         // selectedTable={selectedTable}
                         setViews={() => {}}
                         menuItem={menuItem}

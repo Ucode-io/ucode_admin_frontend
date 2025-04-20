@@ -39,18 +39,17 @@ export default function TimeLineDayDataBlockItem({
   refetch = () => {},
   setLayoutType,
   navigateToDetailPage,
+  setSelectedRow,
+  setOpenDrawerModal,
 }) {
   const ref = useRef();
   const { tableSlug, appId } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [target, setTarget] = useState();
-  const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState("");
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const handleOpen = () => {
-    setOpen(true);
+    setOpenDrawerModal(true);
     setSelectedRow(data);
   };
 
@@ -156,7 +155,7 @@ export default function TimeLineDayDataBlockItem({
         data: computedData,
       })
       .then((res) => {
-        dispatch(showAlert("Успешно обновлено", "success"));
+        // dispatch(showAlert("Успешно обновлено", "success"));
         // queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
         queryClient.setQueryData(
           [
@@ -197,13 +196,12 @@ export default function TimeLineDayDataBlockItem({
       [calendar_to_slug]: newDatePosition[1],
     };
 
-    constructorObjectService
-      .update(tableSlug, {
-        data: computedData,
-      })
-      .then((res) => {
-        dispatch(showAlert("Успешно обновлено", "success"));
-      });
+    constructorObjectService.update(tableSlug, {
+      data: computedData,
+    });
+    // .then((res) => {
+    //   dispatch(showAlert("Успешно обновлено", "success"));
+    // });
   };
 
   const onDrag = ({ target, width, beforeTranslate }) => {
@@ -244,7 +242,9 @@ export default function TimeLineDayDataBlockItem({
   const onResize = ({ target, width, drag }) => {
     const beforeTranslate = drag.beforeTranslate;
 
-    if (beforeTranslate[1] < 0) return null;
+    const minWidth = selectedType === "month" ? 20 : 60;
+
+    if (beforeTranslate[1] < 0 || width < minWidth) return null;
 
     target.style.width = `${width}px`;
     target.style.transform = `translateX(${beforeTranslate[0]}px)`;
@@ -306,49 +306,49 @@ export default function TimeLineDayDataBlockItem({
   const [authInfo, setAuthInfo] = useState(null);
   const tableLan = useGetLang("Table");
 
-  const {
-    data: { layout } = {
-      layout: [],
-    },
-  } = useQuery({
-    queryKey: [
-      "GET_LAYOUT",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
-    },
-    select: (data) => {
-      return {
-        layout: data ?? {},
-      };
-    },
-    onError: (error) => {
-      console.error("Error", error);
-    },
-  });
+  // const {
+  //   data: { layout } = {
+  //     layout: [],
+  //   },
+  // } = useQuery({
+  //   queryKey: [
+  //     "GET_LAYOUT",
+  //     {
+  //       tableSlug,
+  //     },
+  //   ],
+  //   queryFn: () => {
+  //     return layoutService.getLayout(tableSlug, appId);
+  //   },
+  //   select: (data) => {
+  //     return {
+  //       layout: data ?? {},
+  //     };
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error", error);
+  //   },
+  // });
 
-  const {
-    control,
-    reset,
-    setValue: setFormValue,
-    getValues,
-    watch,
-  } = useForm({
-    defaultValues: {
-      multi: [],
-    },
-  });
+  // const {
+  //   control,
+  //   reset,
+  //   setValue: setFormValue,
+  //   getValues,
+  //   watch,
+  // } = useForm({
+  //   defaultValues: {
+  //     multi: [],
+  //   },
+  // });
 
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
-  );
+  // const [selectedViewType, setSelectedViewType] = useState(
+  //   localStorage?.getItem("detailPage") === "FullPage"
+  //     ? "SidePeek"
+  //     : localStorage?.getItem("detailPage")
+  // );
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  // const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   return (
     <>
@@ -368,16 +368,7 @@ export default function TimeLineDayDataBlockItem({
         key={data?.id_order}
         onMouseEnter={handleMouseEnter}
       >
-        <div
-          className={styles.dataBlockInner}
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "relative",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+        <div className={styles.dataBlockInner}>
           <CellElementGenerator
             row={data}
             field={computedColumnsFor?.find(
@@ -392,7 +383,7 @@ export default function TimeLineDayDataBlockItem({
         selectedRow={selectedRow}
       /> */}
 
-      <DrawerDetailPage
+      {/* <DrawerDetailPage
         projectInfo={projectInfo}
         open={open}
         setFormValue={setFormValue}
@@ -406,7 +397,7 @@ export default function TimeLineDayDataBlockItem({
         selectedViewType={selectedViewType}
         setSelectedViewType={setSelectedViewType}
         navigateToEditPage={navigateToDetailPage}
-      />
+      /> */}
 
       {startDate === -1 || level === -1 ? (
         ""

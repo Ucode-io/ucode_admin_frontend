@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import TimeLineDays from "./TimeLineDays";
 import styles from "./styles.module.scss";
 import TimeLineDataRecursiveRow from "./TimeLineDataRecursiveRow";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import layoutService from "../../../services/layoutService";
 
 export default function TimeLineDayDataBlock({
   data,
@@ -27,7 +34,47 @@ export default function TimeLineDayDataBlock({
   refetch,
   setLayoutType,
   navigateToDetailPage,
+  noDates,
+  calendarRef,
 }) {
+  const projectId = useSelector((state) => state.company?.projectId);
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
+
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  const { tableSlug, appId } = useParams();
+
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
+
   return (
     <>
       <div
@@ -37,27 +84,22 @@ export default function TimeLineDayDataBlock({
         }}
       >
         <div className={styles.days} id="timelineDays">
-          {datesList.map((date) => (
+          {datesList.map((date, index) => (
             <TimeLineDays
               date={date}
               zoomPosition={zoomPosition}
               selectedType={selectedType}
+              index={index}
+              data={data}
+              noDates={noDates}
+              view={view}
+              calendarRef={calendarRef}
             />
           ))}
         </div>
 
         {view?.attributes?.group_by_columns?.length !== 0 && (
-          <div
-            className={styles.dataContainer}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              display: "flex",
-              flexDirection: "column",
-              top: 0,
-            }}
-          >
+          <div className={styles.dataContainer}>
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
                 menuItem={menuItem}
@@ -68,6 +110,7 @@ export default function TimeLineDayDataBlock({
                 key={item?.label}
                 item={item}
                 index={index}
+                firstIndex={index}
                 groupbyFields={groupbyFields}
                 selectedType={selectedType}
                 computedColumnsFor={computedColumnsFor}
@@ -82,8 +125,12 @@ export default function TimeLineDayDataBlock({
                 setLayoutType={setLayoutType}
                 refetch={refetch}
                 navigateToDetailPage={navigateToDetailPage}
+                calendarRef={calendarRef}
+                setOpenDrawerModal={setOpenDrawerModal}
+                setSelectedRow={setSelectedRow}
               />
             ))}
+            {/* <div className={styles.addNewTask}></div> */}
           </div>
         )}
 
@@ -111,10 +158,27 @@ export default function TimeLineDayDataBlock({
                   refetch={refetch}
                   setLayoutType={setLayoutType}
                   navigateToDetailPage={navigateToDetailPage}
+                  setOpenDrawerModal={setOpenDrawerModal}
+                  setSelectedRow={setSelectedRow}
                 />
               ))}
             </div>
           )}
+
+        <DrawerDetailPage
+          projectInfo={projectInfo}
+          open={openDrawerModal}
+          setOpen={setOpenDrawerModal}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
       </div>
     </>
   );

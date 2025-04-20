@@ -39,6 +39,8 @@ export default function TimeLineBlock({
   setLayoutType,
   navigateToDetailPage,
   setNoDates,
+  noDates,
+  calendarRef,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -49,7 +51,6 @@ export default function TimeLineBlock({
   const handleOpenSidebar = () => setIsSidebarOpen(true);
   const handleCloseSidebar = () => setIsSidebarOpen(false);
 
-  const calendarRef = useRef(null);
   const isLoading = useRef(null);
 
   const dispatch = useDispatch();
@@ -412,10 +413,12 @@ export default function TimeLineBlock({
   return (
     <div
       className={styles.main_container}
-      style={{
-        height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
-        // overflow: "scroll",
-      }}
+      style={
+        {
+          // height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
+          // overflow: "scroll",
+        }
+      }
       // onScroll={handleScroll}
       // ref={calendarRef}
     >
@@ -551,6 +554,8 @@ export default function TimeLineBlock({
             refetch={refetch}
             setLayoutType={setLayoutType}
             navigateToDetailPage={navigateToDetailPage}
+            noDates={noDates}
+            calendarRef={calendarRef}
           />
         )}
       </div>

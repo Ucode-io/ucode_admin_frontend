@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 export const useDateLineProps = ({ setCenterDate = () => {} }) => {
   const [months, setMonths] = useState([]);
+  const [selectedType, setSelectedType] = useState("day");
   const calendarRef = useRef(null);
   const isLoading = useRef(false);
 
@@ -158,12 +159,14 @@ export const useDateLineProps = ({ setCenterDate = () => {} }) => {
 
     // const visibleCenter = document.elementFromPoint(centerX, centerY);
 
+    const dayWidth = selectedType === "month" ? 20 : 60;
+
     const scrollable = calendarRef.current;
 
     const leftScroll = scrollable.scrollLeft;
     const visibleCenterX = leftScroll + scrollable.clientWidth / 2;
 
-    const centerIndex = Math.floor(visibleCenterX / 60);
+    const centerIndex = Math.floor(visibleCenterX / dayWidth);
     setCenterDate(datesList[centerIndex]);
   };
 
@@ -176,5 +179,7 @@ export const useDateLineProps = ({ setCenterDate = () => {} }) => {
     firstDate,
     lastDate,
     datesList,
+    selectedType,
+    setSelectedType,
   };
 };

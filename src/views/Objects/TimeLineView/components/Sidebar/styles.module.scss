@@ -138,3 +138,15 @@
     }
   }
 }
+
+.newBtn {
+  width: 100%;
+  padding: 6px 8px;
+  color: rgba(70, 68, 64, 0.45);
+
+  span {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+  }
+}

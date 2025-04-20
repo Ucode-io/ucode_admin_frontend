@@ -87,6 +87,16 @@ function DrawerFormDetailPage({
   };
 
   useEffect(() => {
+    if (selectedRow?.IS_NO_DATE) {
+      setFormValue(
+        selectedRow?.FROM_DATE_SLUG,
+        selectedRow?.[selectedRow?.FROM_DATE_SLUG]
+      );
+      setFormValue(
+        selectedRow?.TO_DATE_SLUG,
+        selectedRow?.[selectedRow?.TO_DATE_SLUG]
+      );
+    }
     setFormValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading

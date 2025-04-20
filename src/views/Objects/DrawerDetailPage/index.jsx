@@ -253,6 +253,13 @@ function DrawerDetailPage({
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
+        queryClient.refetchQueries(
+          "GET_OBJECTS_LIST_WITH_RELATIONS",
+          tableSlug,
+          {
+            table_slug: tableSlug,
+          }
+        );
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {

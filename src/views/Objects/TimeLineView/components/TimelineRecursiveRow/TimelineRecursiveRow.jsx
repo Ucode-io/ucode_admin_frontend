@@ -51,7 +51,7 @@ export const TimelineRecursiveRow = ({
         >
           <div
             className={cls.group_by_column_header_inner}
-            style={{ paddingLeft: sub ? `${level * 6}px` : "" }}
+            style={{ paddingLeft: sub ? `${level * 27}px` : "" }}
           >
             {item?.data?.[0]?.data && (
               <button

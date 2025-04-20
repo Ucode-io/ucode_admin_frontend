@@ -83,6 +83,7 @@ export default function TimeLineView({
   setLayoutType,
   setNoDates = () => {},
   setCenterDate = () => {},
+  noDates,
 }) {
   const {
     handleScroll,
@@ -778,9 +779,9 @@ export default function TimeLineView({
         <div
           className={styles.wrapper}
           style={{
-            // height: "calc(100vh - 92px)",
+            height: "calc(100vh - 135px)",
             overflow: "auto",
-            height: "100vh",
+            // height: "100vh",
           }}
           ref={calendarRef}
           onScroll={handleScroll}
@@ -800,6 +801,7 @@ export default function TimeLineView({
               dateFilters={dateFilters}
               setDateFilters={setDateFilters}
               // zoomPosition={zoomPosition}
+              calendarRef={calendarRef}
               data={data}
               selectedType={selectedType}
               setSelectedType={setSelectedType}
@@ -814,6 +816,7 @@ export default function TimeLineView({
               refetch={refetchInfo}
               navigateToDetailPage={navigateToDetailPage}
               setNoDates={setNoDates}
+              noDates={noDates}
               // setMonths={setMonths}
               // handleScroll={handleScroll}
             />

@@ -1,7 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
-import {Collapse} from "@mui/material";
-import { MoveableTask } from "./components/MoveableTask";
+import { Collapse } from "@mui/material";
+import cls from "./styles.module.scss";
+import { addDays, format } from "date-fns";
+import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import DrawerDetailPage from "../DrawerDetailPage";
 
 export default function TimeLineDataRecursiveRow({
   item,
@@ -26,8 +30,32 @@ export default function TimeLineDataRecursiveRow({
   refetch,
   setLayoutType,
   navigateToDetailPage,
+  calendarRef,
+  setOpenDrawerModal,
+  setSelectedRow,
 }) {
   const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [cursorPosX, setCursorPosX] = useState(0);
+  const [hoveredDate, setHoveredDate] = useState(null);
+  const [isHintTaskShow, setIsHintTaskShow] = useState(false);
+
+  const timelineRecursiveRowRef = useRef(null);
+
+  const hintWidth = (selectedType === "month" ? 20 : 60) * 5;
+
+  const handleOpenModal = () => {
+    setOpenDrawerModal(true);
+    const data = {
+      ...item,
+      [calendar_from_slug]: hoveredDate,
+      [calendar_to_slug]: addDays(hoveredDate, 5),
+      IS_NO_DATE: true,
+      FROM_DATE_SLUG: calendar_from_slug,
+      TO_DATE_SLUG: calendar_to_slug,
+    };
+    setSelectedRow(data);
+  };
 
   useEffect(() => {
     if (
@@ -41,19 +69,82 @@ export default function TimeLineDataRecursiveRow({
     }
   }, [item, openedRows, lastLabels]);
 
-  // console.log({ item, groupbyFields, calendar_from_slug, calendar_to_slug });
+  const isTaskWithoutDate =
+    !item?.data && !item?.[calendar_from_slug] && !item?.[calendar_to_slug];
+
+  const handleMouseMove = (e) => {
+    const scrollContainer = calendarRef.current;
+    if (!scrollContainer) return;
+
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const scrollLeft = scrollContainer.scrollLeft;
+
+    const mouseXInContainer = e.clientX - containerRect.left + scrollLeft;
+
+    const columnWidth = selectedType === "month" ? 20 : 60;
+    const offsetLeft = 3 * columnWidth;
+    const columnIndex = Math.floor(
+      (mouseXInContainer - offsetLeft) / columnWidth
+    );
+
+    const hoveredColumnData = datesList[columnIndex];
+
+    setHoveredDate(hoveredColumnData);
+
+    // for hint task
+
+    const container = timelineRecursiveRowRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const scrollLeftRow = container.scrollLeft;
+
+    const mouseX = Math.floor(e.clientX) - rect.left + scrollLeftRow;
+
+    const snappedX = Math.floor(mouseX / columnWidth) * columnWidth;
+
+    setCursorPosX(snappedX);
+
+    setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 5)]);
+  };
 
   return (
     <>
       <div
-        style={{
-          width: "100%",
-          height: "32px",
-          minHeight: "32px",
-          position: "relative",
-          zIndex: 1,
+        className={cls.timelineRecursiveRow}
+        onMouseMove={(e) => {
+          if (isTaskWithoutDate) {
+            handleMouseMove(e);
+          }
         }}
+        onMouseEnter={() => {
+          if (isTaskWithoutDate) {
+            setIsHintTaskShow(true);
+          }
+        }}
+        onMouseLeave={() => {
+          if (isTaskWithoutDate) {
+            setIsHintTaskShow(false);
+          }
+        }}
+        ref={timelineRecursiveRowRef}
       >
+        {isHintTaskShow && (
+          <span
+            className={cls.timelineRecursiveRowLine}
+            style={{ left: cursorPosX, width: `${hintWidth}px` }}
+            onClick={handleOpenModal}
+          >
+            {hoveredDate && (
+              <span className={cls.timelineRecursiveRowHint}>
+                {format(new Date(hoveredDate), "LLLL-dd")}
+                <ArrowRightAltRoundedIcon />
+                {format(addDays(new Date(hoveredDate), 5), "LLLL-dd")}
+              </span>
+            )}
+            {item?.[visible_field?.split("/")?.[0]]}
+          </span>
+        )}
         {!item?.data && (
           <TimeLineDayDataBlockItem
             menuItem={menuItem}
@@ -76,6 +167,8 @@ export default function TimeLineDataRecursiveRow({
             refetch={refetch}
             setLayoutType={setLayoutType}
             navigateToDetailPage={navigateToDetailPage}
+            setOpenDrawerModal={setOpenDrawerModal}
+            setSelectedRow={setSelectedRow}
           />
         )}
       </div>
@@ -117,10 +210,24 @@ export default function TimeLineDataRecursiveRow({
                   refetch={refetch}
                   setLayoutType={setLayoutType}
                   navigateToDetailPage={navigateToDetailPage}
+                  calendarRef={calendarRef}
+                  setOpenDrawerModal={setOpenDrawerModal}
+                  setSelectedRow={setSelectedRow}
                 />
               </Collapse>
             );
           })
+      )}
+      {openModal && (
+        <ModalDetailPage
+          open={openModal}
+          setOpen={setOpenModal}
+          selectedRow={{
+            ...item,
+            [calendar_from_slug]: hoveredDate,
+            [calendar_to_slug]: addDays(new Date(hoveredDate), 5),
+          }}
+        />
       )}
     </>
   );

@@ -116,16 +116,19 @@ export const groupedResources = [
     head: "Databases",
     items: [
       {
+        type: "mongo",
         label: "MongoDB",
         value: 1,
         icon: "mongo",
       },
       {
+        type: "CLICK_HOUSE",
         label: "Click House",
         value: 2,
         icon: "clickhouse",
       },
       {
+        type: "POSGRESQL",
         label: "PostgreSQL",
         value: 3,
         icon: "postgres",
@@ -136,9 +139,9 @@ export const groupedResources = [
     head: "API",
     items: [
       {
+        type: "SMS",
         label: "Playmobile",
         value: 1,
-        disabled: true,
         icon: "restapi",
       },
       {

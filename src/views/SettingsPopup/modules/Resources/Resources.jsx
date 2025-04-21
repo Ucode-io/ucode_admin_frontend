@@ -5,7 +5,7 @@ import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {ContentList} from "../../components/ContentList";
 import {Button} from "../../components/Button";
 
-export const Resources = () => {
+export const Resources = ({handleClose = () => {}}) => {
   const {
     computedResources,
     i18n,
@@ -30,6 +30,7 @@ export const Resources = () => {
         </Box>
       </ContentTitle>
       <ContentList
+        handleClose={handleClose}
         sx={{marginTop: "36px"}}
         arr={computedResources}
         onItemClick={(row) => handleItemClick(row)}

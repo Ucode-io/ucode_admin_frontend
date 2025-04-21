@@ -837,13 +837,7 @@ export const NewUiViewsWithGroups = ({
                         fontSize={12}
                         onClick={() => handleAddDate(item)}
                       >
-                        {
-                          item?.[
-                            groupByFields?.find(
-                              (item) => item?.type === "SINGLE_LINE"
-                            )?.slug
-                          ]
-                        }
+                        {item?.[view?.attributes?.visible_field?.split("/")[0]]}
                       </Box>
                     ))}
                   </Box>

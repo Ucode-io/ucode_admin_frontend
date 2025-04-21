@@ -295,7 +295,7 @@ export const useSettingsPopupProps = ({onClose}) => {
     //   permissionsRoleDetail: <PermissionsRoleDetail />,
     // },
     resources: {
-      resources: <Resources />,
+      resources: <Resources handleClose={handleClose} />,
       resourcesDetail: <NewResourceDetail handleClose={handleClose} />,
     },
     apiKeys: {

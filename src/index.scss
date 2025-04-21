@@ -1195,7 +1195,7 @@ div:has(.chakra-tooltip) {
 }
 
 .resourceBtn {
-  cursor: pointer;
+  cursor: not-allowed;
   margin-top: 20px;
   min-width: 83px;
   max-width: 135px;
@@ -1226,4 +1226,21 @@ div:has(.chakra-tooltip) {
   background: #d1e9ff;
   color: #175cd3;
   font-weight: 500;
+}
+
+.resourceDisabled {
+  min-width: 83px;
+  max-width: 135px;
+  height: 40px;
+  border: 1px solid #eaecf0;
+  padding: 10px 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #d1e9ff;
+  color: #344054;
+  font-weight: 500;
+  cursor: pointer;
 }

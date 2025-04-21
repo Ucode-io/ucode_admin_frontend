@@ -589,34 +589,6 @@ const LayoutSidebar = ({
               </SidebarActionTooltip>
             </>
           )}
-          {Boolean(permissions?.chat) && (
-            <>
-              <Box
-                display={sidebarIsOpen ? "block" : "none"}
-                w="1px"
-                h={20}
-                bg="#D0D5DD"
-              />
-              <SidebarActionTooltip id="ai-chat" title="AI Chat">
-                <Flex
-                  w={sidebarIsOpen ? "100%" : 36}
-                  h={36}
-                  alignItems="center"
-                  justifyContent="center"
-                  borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
-                  cursor="pointer"
-                  mb={sidebarIsOpen ? 0 : 4}
-                  onClick={() => {
-                    navigate(
-                      `/main/${appId}/chartDb?project_id=${projectId}&environment_id=${envId}`
-                    );
-                  }}>
-                  <StorageIcon />
-                </Flex>
-              </SidebarActionTooltip>
-            </>
-          )}
         </Flex>
 
         {(modalType === "create" ||

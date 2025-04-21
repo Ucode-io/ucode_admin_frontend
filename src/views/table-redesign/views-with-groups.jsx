@@ -2143,11 +2143,22 @@ const ColumnsVisibility = ({
         : column.id;
 
     if (view?.type === "TIMELINE") {
+      let visible_field = view?.attributes?.visible_field;
+      if (checked) {
+        visible_field = visible_field
+          ? visible_field + "/" + column?.slug
+          : column?.slug;
+      } else {
+        visible_field = visible_field
+          ?.split("/")
+          ?.filter((item) => item !== column?.slug)
+          ?.join("/");
+      }
       mutation.mutate({
         ...view,
         attributes: {
           ...view?.attributes,
-          visible_field: checked ? column?.slug : "",
+          visible_field: visible_field,
         },
       });
     } else {
@@ -2383,7 +2394,7 @@ const ColumnsVisibility = ({
                   onChange={(ev) => onChange(column, ev.target.checked)}
                   isChecked={
                     view?.type === "TIMELINE"
-                      ? view?.attributes?.visible_field === column?.slug
+                      ? view?.attributes?.visible_field?.includes(column?.slug)
                       : view?.columns?.includes(
                           column?.type === "LOOKUP" ||
                             column?.type === "LOOKUPS"

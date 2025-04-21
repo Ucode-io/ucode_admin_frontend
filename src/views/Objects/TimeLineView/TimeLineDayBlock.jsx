@@ -93,7 +93,7 @@ export default function TimeLineDayBlock({
         scrollToToday(dayBlockRef.current);
       }, 100);
     }
-  }, [isToday, dayBlockRef.current]);
+  }, []);
 
   return (
     <>

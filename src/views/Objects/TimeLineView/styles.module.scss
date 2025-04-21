@@ -984,6 +984,7 @@
   height: 100%;
   position: relative;
   display: flex;
+  column-gap: 6px;
   align-items: center;
   border-radius: 6px;
   -webkit-line-clamp: 1;
@@ -1041,4 +1042,8 @@
 
 .monthBlockFocused {
   background-color: rgb(247, 247, 247);
+}
+
+.multiSelectBadge {
+  min-width: auto !important;
 }

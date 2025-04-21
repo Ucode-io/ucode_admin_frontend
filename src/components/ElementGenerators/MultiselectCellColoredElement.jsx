@@ -1,11 +1,13 @@
 import {useMemo} from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
+import clsx from "clsx";
 
 const MultiselectCellColoredElement = ({
   field,
   value = [],
   style,
   resize,
+  className,
   ...props
 }) => {
   const tags = useMemo(() => {
@@ -30,13 +32,14 @@ const MultiselectCellColoredElement = ({
   if (!value?.length) return "";
   return (
     <div
-      className="flex align-center gap-1"
+      className={clsx(className, "flex align-center gap-1")}
       style={{
         flexWrap: "wrap",
         // justifyContent: "center",
         alignItems: "center",
         minWidth: "150px",
-      }}>
+      }}
+    >
       {tags?.map((tag) => (
         <div
           style={{
@@ -48,13 +51,14 @@ const MultiselectCellColoredElement = ({
             display: "flex",
             ...style,
           }}
-          {...props}>
+          {...props}
+        >
           {hasIcon && (
             <IconGenerator
               icon={tag.icon}
               size={14}
               className="mr-1"
-              style={{transform: "translateY(2px)"}}
+              style={{ transform: "translateY(2px)" }}
             />
           )}
 

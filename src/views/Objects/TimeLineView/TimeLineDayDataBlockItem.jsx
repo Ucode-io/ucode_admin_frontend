@@ -369,12 +369,26 @@ export default function TimeLineDayDataBlockItem({
         onMouseEnter={handleMouseEnter}
       >
         <div className={styles.dataBlockInner}>
-          <CellElementGenerator
-            row={data}
-            field={computedColumnsFor?.find(
-              (field) => field?.slug === visible_field
-            )}
-          />
+          {visible_field?.split("/")?.length > 1 ? (
+            visible_field
+              ?.split("/")
+              ?.map((fieldItem) => (
+                <CellElementGenerator
+                  row={data}
+                  field={computedColumnsFor?.find(
+                    (field) => field?.slug === fieldItem
+                  )}
+                  multiSelectClassName={styles.multiSelectBadge}
+                />
+              ))
+          ) : (
+            <CellElementGenerator
+              row={data}
+              field={computedColumnsFor?.find(
+                (field) => field?.slug === visible_field?.split("/")?.[0]
+              )}
+            />
+          )}
         </div>
       </div>
       {/* <ModalDetailPage

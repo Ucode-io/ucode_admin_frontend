@@ -32,6 +32,7 @@ const Form = ({
   watch = () => {},
   setValue = () => {},
 }) => {
+  console.log("watchwatch", watch());
   const dispatch = useDispatch();
   const location = useLocation();
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -193,6 +194,67 @@ const Form = ({
                   name="is_superset"
                   resurceType={resurceType}
                   disabled={isEditPage}
+                />
+              </>
+            )}
+
+            {resurceType === 11 && isEditPage && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Password
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.password"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Password",
+                  }}
+                />
+
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Name
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.url"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "URL",
+                  }}
+                />
+
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Username
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.username"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Username",
+                  }}
                 />
               </>
             )}

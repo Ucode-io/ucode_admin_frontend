@@ -555,7 +555,7 @@ const ResourceDetail = () => {
             />
           )}
 
-          <AllowList />
+          {/* <AllowList /> */}
         </Box>
       </form>
     </Box>

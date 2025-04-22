@@ -13,11 +13,7 @@ import {
   useDisclosure,
   IconButton,
 } from "@chakra-ui/react";
-import {
-  ChevronDownIcon,
-  ArrowBackIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
+
 import PageFallback from "@/components/PageFallback";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {useUsersListQuery} from "@/services/userService";
@@ -46,13 +42,13 @@ const limitOptions = [
 
 export const UserClientTypes = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const createDrawer = useDisclosure();
   const [editUserGuid, setEditUserGuid] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
   const [userInviteLan, setUserInviteLan] = useState(null);
   const {i18n} = useTranslation();
+  const {isOpen, onOpen, onClose} = useDisclosure();
 
   const clientTypesQuery = useClientTypesQuery();
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
@@ -64,7 +60,7 @@ export const UserClientTypes = () => {
   });
   const users = usersListQuery.data?.users ?? [];
   const usersCount = usersListQuery.data?.count;
-
+  console.log("usersusersusers", users, editUserGuid);
   const rolesQuery = useRoleListQuery();
   const roles = rolesQuery.data?.data?.response ?? [];
 
@@ -84,7 +80,7 @@ export const UserClientTypes = () => {
 
   return (
     <ChakraProvider theme={chakraUITheme}>
-      <CreateDrawer
+      {/* <CreateDrawer
         userInviteLan={userInviteLan}
         isOpen={createDrawer.isOpen}
         onClose={() => {
@@ -92,89 +88,56 @@ export const UserClientTypes = () => {
           usersListQuery.refetch();
         }}
         clientTypeId={clientTypeId}
-      />
-      <EditDrawer
+      /> */}
+      {/* <EditDrawer
         userInviteLan={userInviteLan}
         guid={editUserGuid}
         client_type_id={
           users.find((user) => user.id === editUserGuid)?.client_type_id
         }
         onClose={() => setEditUserGuid(null)}
-      />
+      /> */}
 
       <Box h="100%" display="flex" flexDirection="column" bg="#fff">
-        <Flex
-          minH="56px"
-          h="56px"
-          px="16px"
-          alignItems="center"
-          borderBottom="1px solid #EAECF0">
-          <Flex columnGap="8px" alignItems="center">
-            <IconButton
-              aria-label="back"
-              icon={<ArrowBackIcon fontSize={20} color="#344054" />}
-              variant="ghost"
-              colorScheme="gray"
-              onClick={() => navigate(-1)}
-            />
-            <IconButton
-              aria-label="home"
-              icon={<img src="/img/home.svg" alt="home" />}
-              variant="ghost"
-              colorScheme="gray"
-              onClick={() => navigate("/main")}
-            />
-            <ChevronRightIcon fontSize={20} color="#344054" />
-            <Box
-              p="8px"
-              bg="#EAECF0"
-              borderRadius={6}
-              color="#344054"
-              fontWeight={500}>
-              {generateLangaugeText(userInviteLan, i18n?.language, "Users") ||
-                "Users"}
-            </Box>
-          </Flex>
-
-          <Button
-            ml="auto"
-            fontSize={13}
-            rightIcon={<ChevronDownIcon fontSize={20} />}
-            borderRadius={8}
-            onClick={createDrawer.onOpen}>
-            {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
-              "Invite"}
-          </Button>
-
-          <InviteModal userInviteLan={userInviteLan} />
-        </Flex>
-        <Box pt="10px">
+        <Flex pt="10px">
           <Tabs index={tabIndex} onChange={onTabChange}>
             <TabList className={styles.react_tab}>
-              {/* <Flex
+              <Flex
                 p={"4px"}
                 bg={"#f9fafb"}
                 borderRadius={"8px"}
                 h={"32px"}
                 mb={"5px"}
-                border={"1px solid #e9ecf0y"}> */}
-              {clientTypes.map((type, index) => (
-                <Tab
-                  className={`${tabIndex === index ? styles.reactTabIteActive : styles.reactTabItem}`}
-                  sx={{fontSize: "12px"}}
-                  key={type.guid}>
-                  {type.name}
-                </Tab>
-              ))}
-              {/* </Flex> */}
+                border={"1px solid #EAECF0"}>
+                {clientTypes.map((type, index) => (
+                  <Tab
+                    className={`${tabIndex === index ? styles.reactTabIteActive : styles.reactTabItem}`}
+                    sx={{fontSize: "12px"}}
+                    key={type.guid}>
+                    {type.name}
+                  </Tab>
+                ))}
+              </Flex>
             </TabList>
           </Tabs>
-        </Box>
+          <InviteModal
+            isOpen={isOpen}
+            onClose={() => {
+              onClose();
+              setEditUserGuid(null);
+            }}
+            onOpen={onOpen}
+            guid={editUserGuid}
+            users={users}
+            userInviteLan={userInviteLan}
+          />
+        </Flex>
 
-        <Box overflowX="auto" flexGrow={1}>
+        <Box borderTop="1px solid #EAECF0" overflowX="auto" flexGrow={1}>
           <Grid
             templateColumns={templateColumns}
-            borderBottom="1px solid #EAECF0">
+            borderBottom="1px solid #EAECF0"
+            borderLeft="1px solid #EAECF0">
             <Th justifyContent="center">
               <img src="/img/hash.svg" alt="index" />
             </Th>
@@ -205,7 +168,8 @@ export const UserClientTypes = () => {
             <Grid
               key={user.id}
               templateColumns={templateColumns}
-              borderBottom="1px solid #EAECF0">
+              borderBottom="1px solid #EAECF0"
+              borderLeft="1px solid #EAECF0">
               <Td display="flex" justifyContent="center" fontWeight={600}>
                 {index + 1}
               </Td>
@@ -219,7 +183,10 @@ export const UserClientTypes = () => {
                   h={"25px"}
                   aria-label="edit"
                   icon={<Image src="/img/edit.svg" alt="edit" />}
-                  onClick={() => setEditUserGuid(user?.id)}
+                  onClick={() => {
+                    onOpen();
+                    setEditUserGuid(user?.id);
+                  }}
                   variant="ghost"
                   colorScheme="gray"
                 />

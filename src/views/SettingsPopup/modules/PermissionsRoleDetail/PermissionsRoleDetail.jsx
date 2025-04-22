@@ -1,15 +1,15 @@
-import { Box } from "@mui/material";
-import { usePermissionsRoleDetail } from "./usePermissionsRoleDetail";
-import { ContentTitle } from "../../components/ContentTitle";
-import { Button } from "../../components/Button";
+import {Box} from "@mui/material";
+import {usePermissionsRoleDetail} from "./usePermissionsRoleDetail";
+import {ContentTitle} from "../../components/ContentTitle";
+import {Button} from "../../components/Button";
 import Permissions from "./Permissions";
 import AddIcon from "@mui/icons-material/Add";
 import cls from "./styles.module.scss";
 import clsx from "clsx";
 import RoleCreateModal from "./RoleCreateModal";
-import { FolderCreateModal } from "../../components/FolderCreateModal";
-import { EditIcon } from "@/assets/icons/icon";
-import { GreyLoader } from "@/components/Loaders/GreyLoader";
+import {FolderCreateModal} from "../../components/FolderCreateModal";
+import {EditIcon} from "@/assets/icons/icon";
+import {GreyLoader} from "@/components/Loaders/GreyLoader";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 
 export const PermissionsRoleDetail = () => {
@@ -51,8 +51,7 @@ export const PermissionsRoleDetail = () => {
             justifyContent: "space-between",
             alignItems: "center",
             width: "100%",
-          }}
-        >
+          }}>
           <Box display={"flex"} alignItems={"center"} columnGap={"8px"}>
             <span className={cls.clientType}>{activeClientType?.name}</span>
             <button className={cls.iconBtn} onClick={handleOpenUpdateModal}>
@@ -83,8 +82,7 @@ export const PermissionsRoleDetail = () => {
             className={cls.saveBtn}
             primary
             onClick={handleSubmit(onSubmit)}
-            variant="contained"
-          >
+            variant="contained">
             Save
           </Button>
         </Box>
@@ -93,8 +91,7 @@ export const PermissionsRoleDetail = () => {
       <Box
         display="flex"
         alignItems={"center"}
-        justifyContent={"space-between"}
-      >
+        justifyContent={"space-between"}>
         <Box className={cls.tabs}>
           {roles?.map((el, index) => (
             <button
@@ -104,8 +101,7 @@ export const PermissionsRoleDetail = () => {
               key={el?.guid}
               onClick={() => {
                 onTabClick(el, index);
-              }}
-            >
+              }}>
               {el?.name}
             </button>
           ))}
@@ -121,8 +117,7 @@ export const PermissionsRoleDetail = () => {
             onClick={(e) => {
               e.stopPropagation();
               isCategoryOpen ? handleCloseCategory() : handleOpenCategory();
-            }}
-          >
+            }}>
             <span className={cls.categoryDropdownBtnInner}>
               <span>Category: {categories[activeTab]}</span>
               <ExpandMoreOutlinedIcon
@@ -140,13 +135,11 @@ export const PermissionsRoleDetail = () => {
                 <li className={cls.categoryItem}>
                   <div
                     className={cls.categoryLabel}
-                    onClick={() => handleChangeTab("table")}
-                  >
+                    onClick={() => handleChangeTab("table")}>
                     <span
                       className={clsx(cls.customRadio, {
                         [cls.active]: activeTab === "table",
-                      })}
-                    >
+                      })}>
                       <span></span>
                     </span>
                     <span className={clsx(cls.categoryLabelBadge, cls.table)}>
@@ -157,13 +150,11 @@ export const PermissionsRoleDetail = () => {
                 <li className={cls.categoryItem}>
                   <div
                     className={cls.categoryLabel}
-                    onClick={() => handleChangeTab("menu")}
-                  >
+                    onClick={() => handleChangeTab("menu")}>
                     <span
                       className={clsx(cls.customRadio, {
                         [cls.active]: activeTab === "menu",
-                      })}
-                    >
+                      })}>
                       <span></span>
                     </span>
                     <span className={clsx(cls.categoryLabelBadge, cls.menu)}>
@@ -174,18 +165,15 @@ export const PermissionsRoleDetail = () => {
                 <li className={cls.categoryItem}>
                   <div
                     className={cls.categoryLabel}
-                    onClick={() => handleChangeTab("permission")}
-                  >
+                    onClick={() => handleChangeTab("permission")}>
                     <span
                       className={clsx(cls.customRadio, {
                         [cls.active]: activeTab === "permission",
-                      })}
-                    >
+                      })}>
                       <span></span>
                     </span>
                     <span
-                      className={clsx(cls.categoryLabelBadge, cls.permission)}
-                    >
+                      className={clsx(cls.categoryLabelBadge, cls.permission)}>
                       Global Permissions
                     </span>
                   </div>

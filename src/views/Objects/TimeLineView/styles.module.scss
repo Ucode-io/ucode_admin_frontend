@@ -408,8 +408,8 @@
 }
 
 .container {
-  // height: 100%;
-  height: calc(100% - 63px);
+  height: 100%;
+  // height: calc(100% - 63px);
   .datas {
     .dataBlock {
       position: absolute;
@@ -443,6 +443,13 @@
 }
 
 .datas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+
   .dataBlock {
     // position: absolute;
     top: 64px;

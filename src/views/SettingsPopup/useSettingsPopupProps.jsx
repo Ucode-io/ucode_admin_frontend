@@ -48,6 +48,7 @@ import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import NewResourceDetail from "./modules/ResourcesDetail/NewResourceDetail";
 import {UserClientTypes} from "./client-types";
+import PersonIcon from "@mui/icons-material/Person";
 
 const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -179,7 +180,7 @@ export const useSettingsPopupProps = ({onClose}) => {
         {
           key: "users",
           title: generateLangaugeText(lang, i18n?.language, "Users") || "Users",
-          icon: <img src={LanguageIcon} alt="" width={20} height={20} />,
+          icon: <PersonIcon />,
         },
       ],
     },

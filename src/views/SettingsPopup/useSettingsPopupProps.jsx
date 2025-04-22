@@ -194,7 +194,7 @@ export const useSettingsPopupProps = ({onClose}) => {
           title:
             generateLangaugeText(lang, i18n?.language, "Permissions") ||
             "Permissions",
-          icon: <img src={PermissionsIcon} alt="" width={15} height={15} />,
+          icon: <img src={PermissionsIcon} alt="" width={20} height={20} />,
           children: permissionChild,
         },
         {

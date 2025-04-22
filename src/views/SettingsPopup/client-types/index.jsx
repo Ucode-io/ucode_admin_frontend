@@ -60,7 +60,7 @@ export const UserClientTypes = () => {
   });
   const users = usersListQuery.data?.users ?? [];
   const usersCount = usersListQuery.data?.count;
-  console.log("usersusersusers", users, editUserGuid);
+
   const rolesQuery = useRoleListQuery();
   const roles = rolesQuery.data?.data?.response ?? [];
 

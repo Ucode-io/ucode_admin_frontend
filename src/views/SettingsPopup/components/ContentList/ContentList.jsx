@@ -146,22 +146,22 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
 const getElementIcon = (element) => {
   switch (element) {
     case "mongodb":
-      return <img src="/public/img/mongodb.svg" alt="" />;
+      return <img src="/img/mongodb.svg" alt="" />;
     case "postgres":
-      return <img src="/public/img/postgres.svg" alt="" />;
+      return <img src="/img/postgres.svg" alt="" />;
     case "restapi":
-      return <img src="/public/img/resapi.svg" alt="" />;
+      return <img src="/img/resapi.svg" alt="" />;
     case "github":
-      return <img src="/public/img/github.svg" alt="" />;
+      return <img src="/img/github.svg" alt="" />;
     case "gitlab":
-      return <img src="/public/img/gitlab.svg" alt="" />;
+      return <img src="/img/gitlab.svg" alt="" />;
     case "superset":
-      return <img src="/public/img/superset.svg" alt="" />;
+      return <img src="/img/superset.svg" alt="" />;
     case "clickhouse":
-      return <img src="/public/img/clickhouse.svg" alt="" />;
+      return <img src="/img/clickhouse.svg" alt="" />;
 
     default:
-      return <img src="/public/img/mongodb.svg" alt="" />;
+      return <img src="/img/mongodb.svg" alt="" />;
   }
 };
 

@@ -11,6 +11,7 @@ import BillingIcon from "@/assets/icons/billing.svg";
 import TariffsIcon from "@/assets/icons/fares.svg";
 import ResourcesIcon from "@/assets/icons/rows.svg";
 import ApiKeyIcon from "@/assets/icons/key-outline.svg";
+import UserIcon from "@/assets/icons/user.svg";
 import CodeIcon from "@/assets/icons/code-square.svg";
 import MicroFrontendIcon from "@/assets/icons/server.svg";
 import ModelsIcon from "@/assets/icons/share.svg";
@@ -180,7 +181,7 @@ export const useSettingsPopupProps = ({onClose}) => {
         {
           key: "users",
           title: generateLangaugeText(lang, i18n?.language, "Users") || "Users",
-          icon: <PersonIcon />,
+          icon: <img src={UserIcon} alt="" width={20} height={20} />,
         },
       ],
     },

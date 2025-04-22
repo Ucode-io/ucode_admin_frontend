@@ -65,17 +65,17 @@ export const useTimelineRecursiveRowProps = ({
       .join(" ");
   }, [viewFields]);
 
-  useEffect(() => {
-    if (item?.group_by_type === "LOOKUP") {
-      constructorObjectService
-        .getById(item?.group_by_slug, item?.label)
-        .then((res) => {
-          if (res?.data?.response) {
-            // setLabel(res?.data?.response);
-          }
-        });
-    }
-  }, [item]);
+  // useEffect(() => {
+  //   if (item?.group_by_type === "LOOKUP") {
+  //     constructorObjectService
+  //       .getById(item?.group_by_slug, item?.label)
+  //       .then((res) => {
+  //         if (res?.data?.response) {
+  //           // setLabel(res?.data?.response);
+  //         }
+  //       });
+  //   }
+  // }, [item]);
 
   useEffect(() => {
     if (

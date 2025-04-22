@@ -454,21 +454,23 @@ export default function TimeLineView({
     const today = format(new Date(), "dd.MM.yyyy");
     const todayElementInner = container.querySelector(`[data-date='${today}']`);
 
-    if (todayElement) {
-      const offset = todayElement.offsetLeft - container.offsetLeft;
+    requestAnimationFrame(() => {
+      if (todayElement) {
+        const offset = todayElement.offsetLeft - container.offsetLeft;
 
-      container.scrollTo({
-        left: offset - container.clientWidth / 2,
-        behavior: "smooth",
-      });
-    } else {
-      const offset = todayElementInner.offsetLeft - container.offsetLeft;
+        container.scrollTo({
+          left: offset - container.clientWidth / 2,
+          behavior: "smooth",
+        });
+      } else {
+        const offset = todayElementInner.offsetLeft - container.offsetLeft;
 
-      container.scrollTo({
-        left: offset - container.clientWidth / 2,
-        behavior: "smooth",
-      });
-    }
+        container.scrollTo({
+          left: offset - container.clientWidth / 2,
+          behavior: "smooth",
+        });
+      }
+    });
   };
 
   return (

@@ -89,11 +89,11 @@ export default function TimeLineDayBlock({
 
   useEffect(() => {
     if (isToday && dayBlockRef.current) {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         scrollToToday(dayBlockRef.current);
-      }, 100);
+      });
     }
-  }, []);
+  }, [selectedType]);
 
   return (
     <>

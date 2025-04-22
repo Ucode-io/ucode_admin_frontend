@@ -2436,7 +2436,7 @@ const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
   const renderFields = [...visibleFields, ...invisibleFields].filter(
     (column) =>
       search === ""
-        ? true
+        ? column
         : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 

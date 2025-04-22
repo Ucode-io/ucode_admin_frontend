@@ -20,7 +20,7 @@ import {
   Tabs,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, {forwardRef, useMemo, useRef, useState} from "react";
+import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm, useWatch} from "react-hook-form";
@@ -30,17 +30,28 @@ import {useClientTypesQuery} from "../../client-types/utils";
 import {useRoleListQuery} from "../../../services/roleServiceV2";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import PhoneNumberInput from "react-phone-number-input";
-import {useUserCreateMutation} from "../../../services/auth/userService";
+import {
+  useUserCreateMutation,
+  useUserGetByIdQuery,
+} from "../../../services/auth/userService";
 import {useSelector} from "react-redux";
 
-function InviteModal({userInviteLan}) {
-  const {isOpen, onOpen, onClose} = useDisclosure();
+function InviteModal({
+  userInviteLan,
+  isOpen,
+  onOpen,
+  onClose,
+  guid = "",
+  users = [],
+}) {
   const finalRef = useRef(null);
   const {i18n} = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const project_id = useSelector((state) => state.company.projectId);
+
+  const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
 
   const createMutation = useUserCreateMutation({
     onSuccess: () => {
@@ -54,7 +65,7 @@ function InviteModal({userInviteLan}) {
   });
   const onSubmit = (data) => {
     setLoading(true);
-    data = {
+    const value = {
       ...data,
       role_id: data?.role_id?.guid,
       client_type_id:
@@ -65,13 +76,40 @@ function InviteModal({userInviteLan}) {
       project_id,
     };
 
-    createMutation.mutate(data);
+    if (Boolean(guid)) {
+      createMutation.mutate(data);
+    } else createMutation.mutate(value);
   };
+
+  const userQuery = useUserGetByIdQuery({
+    userId: guid,
+    params: {
+      "client-type-id": clientTypeId,
+    },
+    queryParams: {
+      enabled: Boolean(guid),
+      onSuccess: (data) => {
+        console.log("dataaaaaaaaaa", data);
+      },
+    },
+  });
+  console.log("userQueryuserQuery", userQuery);
+  useEffect(() => {
+    if (userQuery.data) {
+      mainForm.reset(userQuery.data);
+    }
+  }, [userQuery.data]);
 
   const onTabChange = (index) => {
     setTabIndex(index);
   };
   const errors = mainForm.formState.errors;
+
+  useEffect(() => {
+    if (!guid) {
+      mainForm.reset({});
+    }
+  }, [guid]);
   return (
     <>
       <Button
@@ -86,7 +124,7 @@ function InviteModal({userInviteLan}) {
       <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>
-          <ModalContent>
+          <ModalContent borderRadius={"12px"} maxW={"500px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
 
@@ -102,7 +140,7 @@ function InviteModal({userInviteLan}) {
                     borderRadius={"8px"}
                     h={"32px"}
                     mb={"5px"}
-                    border={"1px solid #e9ecf0y"}>
+                    border={"1px solid #EAECF0"}>
                     <Tab
                       className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
                       Login
@@ -119,7 +157,7 @@ function InviteModal({userInviteLan}) {
                 </TabList>
                 <TabPanels>
                   <TabPanel h={"180px"} mt={0} p={"0"}>
-                    <LoginForm form={mainForm} />
+                    <LoginForm guid={guid} form={mainForm} />
                   </TabPanel>
                   <TabPanel h={"180px"} mt={0} p={"0"}>
                     <Controller
@@ -180,10 +218,10 @@ function InviteModal({userInviteLan}) {
                         </Box>
                       )}
                     />
-                    <TypesComponent form={mainForm} />
+                    <TypesComponent guid={guid} form={mainForm} />
                   </TabPanel>
                   <TabPanel p={"0"} h={"180px"}>
-                    <EmailComponent form={mainForm} />
+                    <EmailComponent guid={guid} form={mainForm} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>
@@ -194,9 +232,8 @@ function InviteModal({userInviteLan}) {
                 isLoading={loading}
                 w={"100px"}
                 type="submit"
-                bg={"#007aff"}
-                mr={3}>
-                Save
+                bg={"#007aff"}>
+                Invite
               </Button>
             </ModalFooter>
           </ModalContent>
@@ -260,7 +297,7 @@ const LoginForm = ({form, placeholder = ""}) => {
         <Input
           placeholder="Login"
           size="lg"
-          {...form.register("name", {required: true})}
+          {...form.register("login", {required: true})}
           isInvalid={errors?.name}
         />
       </Box>
@@ -300,9 +337,16 @@ const UserType = ({control, placeholder = "", form}) => {
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
 
   const value = useMemo(() => {
-    return clientTypes.find(
-      (type) => type.guid === form.watch("client_type_id")?.guid
-    );
+    let result;
+    if (typeof form.watch("client_type_id") === "string") {
+      result = clientTypes.find(
+        (type) => type.guid === form.watch("client_type_id")
+      );
+    } else
+      result = clientTypes.find(
+        (type) => type.guid === form.watch("client_type_id")?.guid
+      );
+    return result;
   }, [form.watch("client_type_id")]);
   return (
     <Controller
@@ -335,7 +379,12 @@ const Role = ({control, placeholder = "", form}) => {
   const roles = rolesQuery.data?.data?.response ?? [];
 
   const value = useMemo(() => {
-    return roles?.find((type) => type.guid === form.watch("role_id")?.guid);
+    let result;
+    if (typeof form.watch("role_id") === "string") {
+      result = roles?.find((type) => type.guid === form.watch("role_id"));
+    } else
+      result = roles?.find((type) => type.guid === form.watch("role_id")?.guid);
+    return result;
   }, [form.watch("role_id")]);
 
   return (

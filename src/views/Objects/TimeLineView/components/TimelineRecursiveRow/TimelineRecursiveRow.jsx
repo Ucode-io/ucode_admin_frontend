@@ -2,6 +2,8 @@ import cls from "./styles.module.scss";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import { Collapse } from "@mui/material";
 import { useTimelineRecursiveRowProps } from "./useTimelineRecursiveRowProps";
 import clsx from "clsx";
@@ -51,7 +53,7 @@ export const TimelineRecursiveRow = ({
         >
           <div
             className={cls.group_by_column_header_inner}
-            style={{ paddingLeft: sub ? `${level * 27}px` : "" }}
+            style={{ paddingLeft: sub ? `${level * 24}px` : "" }}
           >
             {item?.data?.[0]?.data && (
               <button
@@ -60,7 +62,7 @@ export const TimelineRecursiveRow = ({
                 })}
               >
                 <span className={cls.group_by_column_header_btn_inner}>
-                  <PlayArrowRoundedIcon color="inherit" fontSize="medium" />
+                  <ExpandMoreRoundedIcon color="inherit" fontSize="medium" />
                 </span>
               </button>
               // <>{open ? <ExpandLess /> : <ExpandMore />}</>

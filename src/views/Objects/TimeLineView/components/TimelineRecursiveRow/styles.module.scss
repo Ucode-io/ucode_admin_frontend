@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  column-gap: 8px;
+  // column-gap: 8px;
 }
 
 .group_by_column_header_text {
@@ -40,10 +40,11 @@
   background-color: transparent;
   border: none;
   color: rgba(55, 53, 47, 0.45);
-
+  transform: rotate(270deg);
+  
   &.open {
     color: rgba(55, 53, 47, 0.85);
-    transform: rotate(90deg);
+    transform: rotate(0deg);
   }
 }
 

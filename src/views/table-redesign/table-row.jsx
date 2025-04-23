@@ -9,6 +9,8 @@ import CellElementGenerator from "@/components/ElementGenerators/CellElementGene
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import TableDataForm from "@/components/ElementGenerators/TableDataForm";
 import {usePermission} from "../../hooks/usePermission";
+import GeneratePdfFromTable from "../../components/DataTable/GeneratePdfFromTable";
+import {store} from "../../store";
 
 const TableRow = ({
   relOptions,
@@ -44,7 +46,7 @@ const TableRow = ({
   firstRowWidth = 80,
 }) => {
   const navigate = useNavigate();
-
+  const projectId = store.getState().auth?.projectId;
   const hasPermission = usePermission({tableSlug, type: "delete_all"});
 
   const changeSetDelete = (row) => {
@@ -252,6 +254,9 @@ const TableRow = ({
                     </RectangleIconButton>
                   </PermissionWrapperV2>
                 </CTableCell>
+                {projectId === "b9029a9f-9431-4a44-b5e4-be148e4cc573" && (
+                  <GeneratePdfFromTable view={view} row={row} />
+                )}
                 {/*<PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>*/}
                 {/*  <GeneratePdfFromTable view={view} row={row}/>*/}
                 {/*</PermissionWrapperV2>*/}

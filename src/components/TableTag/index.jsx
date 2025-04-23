@@ -1,10 +1,11 @@
 
+import clsx from "clsx";
 import style from "./style.module.scss"
 
-const TableTag = ({ color, children }) => {
-  return ( <div className={`${style.tag} ${style[color] ?? ''}`} >
-    {children}
-  </div> );
-}
+const TableTag = ({ color, children, className }) => {
+  return (
+    <div className={clsx(style.tag, className, [style[color]])}>{children}</div>
+  );
+};
  
 export default TableTag;

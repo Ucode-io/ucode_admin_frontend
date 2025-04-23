@@ -156,7 +156,8 @@ export default function TimeLineDatesRow({
                     alignItems: "center",
                     minHeight: "32px",
                     width: `${days.length > 2 ? "100%" : zoomPosition * 30}px`,
-                    border: "1px solid #e0e0e0",
+                    borderLeft: "1px solid #e0e0e0",
+                    borderBottom: "1px solid #e0e0e0",
                   }}
                 >
                   {days.length > 2 ? (

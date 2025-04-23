@@ -17,7 +17,7 @@ import TableTag from "../TableTag";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 
-const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
+const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -52,7 +52,7 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? { ...el.table, ...el } : el;
+        return el.table ? {...el.table, ...el} : el;
       }) ?? []
     );
   }, [field.attributes?.dynamic_tables]);
@@ -117,8 +117,7 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
         <span
           dangerouslySetInnerHTML={{
             __html: `${value.slice(0, 200)}${value.length > 200 ? "..." : ""}`,
-          }}
-        ></span>
+          }}></span>
       </div>
     ),
     DATE_TIME_WITHOUT_TIME_ZONE: () => timeValue,
@@ -127,8 +126,7 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
         <span
           dangerouslySetInnerHTML={{
             __html: "*".repeat(value?.length),
-          }}
-        ></span>
+          }}></span>
       </div>
     ),
     CHECKBOX: () =>
@@ -166,8 +164,7 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-        }}
-      >
+        }}>
         <LogoDisplay url={value} />
       </span>
     ),
@@ -180,8 +177,7 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
             value?.split(",")?.[1]
           )}`}
           rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
+          onClick={(e) => e.stopPropagation()}>
           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
         </a>
       ) : (
@@ -194,33 +190,30 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <span
               style={{
                 marginRight: "10px",
-              }}
-            >
+              }}>
               {computedFileExtension(getFileName(value)) === "pdf" ? (
-                <PictureAsPdfIcon style={{ color: "red" }} />
+                <PictureAsPdfIcon style={{color: "red"}} />
               ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
-                <BackupTableIcon style={{ color: "green" }} />
+                <BackupTableIcon style={{color: "green"}} />
               ) : computedFileExtension(getFileName(value)) === "png" ||
                 computedFileExtension(getFileName(value)) === "jpeg" ||
                 computedFileExtension(getFileName(value)) === "jpg" ? (
-                <PhotoLibraryIcon style={{ color: "green" }} />
+                <PhotoLibraryIcon style={{color: "green"}} />
               ) : computedFileExtension(getFileName(value)) === "txt" ||
                 computedFileExtension(getFileName(value)) === "docx" ? (
-                <DescriptionIcon style={{ color: "#007AFF" }} />
+                <DescriptionIcon style={{color: "#007AFF"}} />
               ) : (
-                <AttachFileIcon style={{ color: "blue" }} />
+                <AttachFileIcon style={{color: "blue"}} />
               )}
             </span>
             {getFileName(value)}
@@ -232,10 +225,9 @@ const CellElementGenerator = ({ field = {}, row, multiSelectClassName }) => {
               download
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              rel="noreferrer"
-            >
+              rel="noreferrer">
               <DownloadIcon
-                style={{ width: "25px", height: "25px", fontSize: "30px" }}
+                style={{width: "25px", height: "25px", fontSize: "30px"}}
               />
             </a>
           </div>

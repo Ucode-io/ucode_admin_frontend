@@ -50,7 +50,7 @@ const ObjectDataTable = ({
   relatedTableSlug,
   watch,
   control,
-  setFormValue,
+  setFormValue = () => {},
   navigateToEditPage,
   navigateCreatePage,
   dataLength,
@@ -228,7 +228,7 @@ const ObjectDataTable = ({
     return totalWidth;
   };
   const parentRef = useRef(null);
-
+  console.log("getValuesgetValues", getValues());
   return (
     <CTable
       custom_events={custom_events}

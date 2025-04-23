@@ -36,10 +36,9 @@ export const getRelationFieldTabsLabel = (field, option, lang) => {
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
     else if (el?.type === "NUMBER") result = numberWithSpaces(option[el?.slug]);
     else {
-
       const pattern = new RegExp(`_${lang}`);
 
-      if(lang && pattern.test(el?.slug)) {
+      if (lang && pattern.test(el?.slug)) {
         langLabel = option?.[el?.slug] ?? " ";
       }
 

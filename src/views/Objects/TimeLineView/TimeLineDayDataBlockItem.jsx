@@ -374,6 +374,7 @@ export default function TimeLineDayDataBlockItem({
               ?.split("/")
               ?.map((fieldItem) => (
                 <CellElementGenerator
+                  isTimelineVariant
                   row={data}
                   field={computedColumnsFor?.find(
                     (field) => field?.slug === fieldItem
@@ -383,6 +384,7 @@ export default function TimeLineDayDataBlockItem({
               ))
           ) : (
             <CellElementGenerator
+              isTimelineVariant
               row={data}
               field={computedColumnsFor?.find(
                 (field) => field?.slug === visible_field?.split("/")?.[0]

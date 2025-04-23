@@ -11,7 +11,7 @@ import BillingIcon from "@/assets/icons/billing.svg";
 import TariffsIcon from "@/assets/icons/fares.svg";
 import ResourcesIcon from "@/assets/icons/rows.svg";
 import ApiKeyIcon from "@/assets/icons/key-outline.svg";
-import UserIcon from "@/assets/icons/user.svg";
+import UserIcon from "@/assets/icons/profile.svg";
 import CodeIcon from "@/assets/icons/code-square.svg";
 import MicroFrontendIcon from "@/assets/icons/server.svg";
 import ModelsIcon from "@/assets/icons/share.svg";

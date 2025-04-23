@@ -486,34 +486,36 @@ function DrawerDetailPage({
                     </>
                   )}
 
-                  <TabList
-                    style={{
-                      borderBottom: "none",
-                      overflowX: "auto",
-                    }}>
-                    {data?.tabs?.map((el, index) => (
-                      <Tab
-                        onClick={(e) => {
-                          setSelectTab(el);
-                          setSelectedTabIndex(index);
-                        }}
-                        key={index}
-                        style={{
-                          whiteSpace: "nowrap",
-                          height: "24px",
-                          padding: "0 10px",
-                          fontSize: "11px",
-                          fontWeight: "500",
-                        }}>
-                        {el?.type === "relation"
-                          ? el?.relation?.attributes?.[
-                              `label_to_${i18n?.language}`
-                            ]
-                          : el?.attributes?.[`label_${i18n?.language}`] ||
-                            el?.label}
-                      </Tab>
-                    ))}
-                  </TabList>
+                  {!layout?.is_visible_section && (
+                    <TabList
+                      style={{
+                        borderBottom: "none",
+                        overflowX: "auto",
+                      }}>
+                      {data?.tabs?.map((el, index) => (
+                        <Tab
+                          onClick={(e) => {
+                            setSelectTab(el);
+                            setSelectedTabIndex(index);
+                          }}
+                          key={index}
+                          style={{
+                            whiteSpace: "nowrap",
+                            height: "24px",
+                            padding: "0 10px",
+                            fontSize: "11px",
+                            fontWeight: "500",
+                          }}>
+                          {el?.type === "relation"
+                            ? el?.relation?.attributes?.[
+                                `label_to_${i18n?.language}`
+                              ]
+                            : el?.attributes?.[`label_${i18n?.language}`] ||
+                              el?.label}
+                        </Tab>
+                      ))}
+                    </TabList>
+                  )}
                 </Flex>
 
                 {/* {selectedTabIndex === 0 && ( */}

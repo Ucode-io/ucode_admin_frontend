@@ -103,6 +103,7 @@ import listToLanOptions from "../../utils/listToLanOptions";
 import listToOptions from "../../utils/listToOptions";
 import {listToMap} from "../../utils/listToMap";
 import {mergeStringAndState} from "../../utils/jsonPath";
+import {TimelineSettings} from "./components/TimelineSettings";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",

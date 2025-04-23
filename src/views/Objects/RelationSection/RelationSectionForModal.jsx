@@ -48,7 +48,7 @@ const RelationSectionForModal = ({
   relatedTable,
   control,
   reset,
-  setFormValue,
+  setFormValue = () => {},
   watch,
   setSelectTab,
   selectedTab,
@@ -59,6 +59,7 @@ const RelationSectionForModal = ({
   setEditAccess,
   data,
   setData,
+  getValues,
 }) => {
   const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -493,6 +494,7 @@ const RelationSectionForModal = ({
                     />
                   ) : (
                     <RelationTable
+                      getValues={getValues}
                       ref={myRef}
                       loader={loader}
                       remove={remove}

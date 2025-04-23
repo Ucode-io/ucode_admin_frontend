@@ -26,7 +26,7 @@ import {useMenuGetByIdQuery} from "../../../services/menuService";
 const RelationTable = forwardRef(
   (
     {
-      getValues,
+      getValues = () => {},
       relation,
       shouldGet,
       createFormVisible,
@@ -41,7 +41,7 @@ const RelationTable = forwardRef(
       reset,
       selectedTabIndex,
       control,
-      setFormValue,
+      setFormValue = () => {},
       fields,
       setFormVisible,
       formVisible,

@@ -475,39 +475,11 @@ const ResourceDetail = () => {
                 ) || "Save changes"}
               </Button>
             )}
-
-            {isEditPage && variables?.type !== "REST" && (
-              <Button
-                sx={{
-                  color: "#fff",
-                  background: "#38A169",
-                  marginRight: "10px",
-                }}
-                hidden={!isEditPage}
-                color={"success"}
-                variant="contained"
-                onClick={() => reconnectResource({id: resourceId})}
-                isLoading={reconnectLoading}>
-                {generateLangaugeText(
-                  settingLan,
-                  i18n?.language,
-                  "Reconnect"
-                ) || "Reconnect"}
-              </Button>
-            )}
           </Box>
         </Box>
 
         <Box sx={{display: "flex"}}>
-          {isEditPage && (
-            <ResourceeEnvironments
-              control={control}
-              selectedEnvironment={selectedEnvironment}
-              setSelectedEnvironment={setSelectedEnvironment}
-            />
-          )}
           {formLoading || isLoading ? (
-            // <SimpleLoader flex={1} />
             <h2>Loader</h2>
           ) : resourceType === "GITHUB" ? (
             <GitForm
@@ -554,8 +526,6 @@ const ResourceDetail = () => {
               setValue={setValue}
             />
           )}
-
-          {/* <AllowList /> */}
         </Box>
       </form>
     </Box>

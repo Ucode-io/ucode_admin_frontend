@@ -28,9 +28,11 @@ function SingleLine({field, value, row}) {
   }, [field, row]);
 
   return typeof value === "object" ? (
-    <Box className={classes.box}>{JSON.stringify(computedValue)}</Box>
+    <Box className={classes.box}>
+      {computedValue ? JSON.stringify(computedValue) : ""}
+    </Box>
   ) : (
-    <Box className={classes.box}>{computedValue}</Box>
+    <Box className={classes.box}>{computedValue ?? ""}</Box>
   );
 }
 

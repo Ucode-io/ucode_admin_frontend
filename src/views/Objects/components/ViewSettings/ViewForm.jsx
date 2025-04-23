@@ -282,7 +282,7 @@ const ViewForm = ({
                     </FRow>
                   </div>
                   <div className={styles.formRow}>
-                    <FRow label="Disable Table edit">
+                    <FRow label="Table edit">
                       <HFSwitch
                         control={form.control}
                         name={`attributes.table_editable`}

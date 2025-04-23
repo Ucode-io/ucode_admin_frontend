@@ -79,6 +79,7 @@ const ObjectsFormPageForModal = ({
     reset,
     setValue: setFormValue,
     watch,
+    getValues,
     formState: {errors},
   } = useForm({
     defaultValues: {
@@ -330,6 +331,7 @@ const ObjectsFormPageForModal = ({
 
       <div className={styles.formArea}>
         <RelationSectionForModal
+          getValues={getValues}
           getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}

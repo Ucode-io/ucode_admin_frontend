@@ -13,12 +13,16 @@ import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -164,6 +168,12 @@ const AutoCompleteElement = ({
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const {i18n} = useTranslation();
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
+
+  console.log("languageslanguages", languages);
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -391,7 +401,11 @@ const AutoCompleteElement = ({
       return true;
     } else return false;
   }, [autoFiltersValue]);
-  console.log(",fielddddddddd", field);
+  console.log(
+    "fielddlddddd multi",
+    field?.attributes?.enable_multilanguage,
+    field
+  );
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -483,7 +497,14 @@ const AutoCompleteElement = ({
         menuShouldScrollIntoView
         styles={customStyles}
         getOptionLabel={(option) =>
-          `${getRelationFieldTabsLabel(field, option)}`
+          !field?.attributes?.enable_multi_language
+            ? getRelationFieldTabsLabelLang(
+                field,
+                option,
+                i18n?.language,
+                languages
+              )
+            : `${getRelationFieldTabsLabel(field, option)}`
         }
         getOptionValue={(option) => option.value}
         isOptionSelected={(option, value) =>

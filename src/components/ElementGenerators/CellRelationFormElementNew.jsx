@@ -172,8 +172,6 @@ const AutoCompleteElement = ({
     (el) => el.slug
   );
 
-  console.log("languageslanguages", languages);
-
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -401,11 +399,7 @@ const AutoCompleteElement = ({
       return true;
     } else return false;
   }, [autoFiltersValue]);
-  console.log(
-    "fielddlddddd multi",
-    field?.attributes?.enable_multilanguage,
-    field
-  );
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes.creatable && (
@@ -497,7 +491,7 @@ const AutoCompleteElement = ({
         menuShouldScrollIntoView
         styles={customStyles}
         getOptionLabel={(option) =>
-          !field?.attributes?.enable_multi_language
+          field?.attributes?.enable_multi_language
             ? getRelationFieldTabsLabelLang(
                 field,
                 option,

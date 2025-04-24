@@ -22,13 +22,14 @@ export const getRelationFieldLabel = (field, option) => {
 };
 
 export const getRelationFieldTabsLabel = (field, option, lang) => {
-  if (!Array.isArray(field?.view_fields)) return "";
+  if (!Array.isArray(field?.view_fields ?? field?.attributes?.view_fields))
+    return "";
 
   let label = "";
 
   let langLabel = "";
 
-  field?.view_fields?.forEach((el) => {
+  (field?.view_fields ?? field?.attributes?.view_fields)?.forEach((el) => {
     let result = "";
     if (el?.type === "DATE")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy");

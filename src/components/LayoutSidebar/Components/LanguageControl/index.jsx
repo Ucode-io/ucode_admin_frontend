@@ -1,18 +1,20 @@
-import {Box, Button, Flex, Text} from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import {Box, Button, Flex, Spinner, Text} from "@chakra-ui/react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
-import { useForm, useFieldArray } from "react-hook-form";
-import HFTextField from "../../../FormElements/HFTextField";
-import { useSelector } from "react-redux";
-import { getAllFromDB } from "../../../../utils/languageDB";
+import {useNavigate} from "react-router-dom";
+import {useForm, useFieldArray} from "react-hook-form";
+import {useSelector} from "react-redux";
+import {getAllFromDB} from "../../../../utils/languageDB";
 import HFTextFieldLanguage from "../../../FormElements/HFTextFieldLanguage";
+import {LinearProgress} from "@mui/material";
 
-function LanguageControl({ withHeader = true }) {
-  const { control, handleSubmit, reset } = useForm();
+function LanguageControl({withHeader = true}) {
+  const boxRef = useRef();
+  const {control, handleSubmit, reset} = useForm();
+  const [visibleCount, setVisibleCount] = useState(2);
   const languages = useSelector((state) => state.languages.list);
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "translations",
   });
@@ -30,7 +32,7 @@ function LanguageControl({ withHeader = true }) {
           ...item,
           translations: item.translations || {},
         }));
-        reset({ translations: formattedData });
+        reset({translations: formattedData});
       }
     });
 
@@ -39,16 +41,44 @@ function LanguageControl({ withHeader = true }) {
     };
   }, []);
 
+  const handleScroll = () => {
+    if (!boxRef?.current) return;
+
+    const {scrollTop, scrollHeight, clientHeight} = boxRef.current;
+
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      setVisibleCount((prev) => prev + 1);
+    }
+  };
+
+  useEffect(() => {
+    const ref = boxRef.current;
+    if (ref) {
+      ref.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      if (ref) {
+        ref.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
   return (
     <>
       {withHeader && <Header />}
-      <Box h={"calc(100vh - 45px)"} overflow={"auto"} bg={"#fff"}>
+      <Box
+        ref={boxRef}
+        className="scrollbarNone"
+        h={"calc(100vh - 140px)"}
+        overflow={"auto"}
+        bg={"#fff"}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box>
             <LanguageKey
               fields={fields}
               control={control}
               languages={languages}
+              visibleCount={visibleCount}
             />
           </Box>
         </form>
@@ -67,25 +97,22 @@ const Header = () => {
       height={45}
       p={10}
       borderBottom={"1px solid #eee"}
-      bg={"#fff"}
-    >
+      bg={"#fff"}>
       <Flex
         alignItems={"center"}
         fontSize={14}
         color={"#475467"}
-        fontWeight={"500"}
-      >
+        fontWeight={"500"}>
         <Button
           border="none"
           bg={"none"}
           cursor={"pointer"}
           w={50}
-          _hover={{ bg: "#eee" }}
+          _hover={{bg: "#eee"}}
           borderRadius={6}
           h={25}
           mr={10}
-          onClick={() => navigate(-1)}
-        >
+          onClick={() => navigate(-1)}>
           <ArrowBackIcon />
         </Button>
         Language control
@@ -94,7 +121,7 @@ const Header = () => {
   );
 };
 
-const LanguageKey = ({ fields, control, languages }) => {
+const LanguageKey = ({fields, control, languages, visibleCount = 0}) => {
   return (
     <Box>
       <Flex position="sticky" top={0} zIndex={999} bg="white" mb={15}>
@@ -104,8 +131,7 @@ const LanguageKey = ({ fields, control, languages }) => {
           justifyContent="space-between"
           borderBottom="1px solid #eee"
           pt={10}
-          pb={10}
-        >
+          pb={10}>
           {languages?.map((el) => (
             <Box key={el.slug} pl={10} fontSize={14} w="100%">
               {el?.slug.toUpperCase() ?? ""}
@@ -114,7 +140,7 @@ const LanguageKey = ({ fields, control, languages }) => {
         </Flex>
       </Flex>
 
-      {fields?.map((categoryItem, categoryIndex) => (
+      {fields?.slice(0, visibleCount)?.map((categoryItem, categoryIndex) => (
         <Box key={categoryItem?.id} borderBottom="1px solid #eee" py={15}>
           <Text fontWeight="bold" ml={20} fontSize="14px">
             {categoryItem?.key}
@@ -129,6 +155,11 @@ const LanguageKey = ({ fields, control, languages }) => {
               languages={languages}
             />
           ))}
+          {/* {isLoading && (
+            <Flex w={"100%"} alignItems={"center"} justifyContent={"center"}>
+              Loading...
+            </Flex>
+          )} */}
         </Box>
       ))}
     </Box>

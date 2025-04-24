@@ -42,7 +42,7 @@ export default function TimeLineRecursiveRow({
       setOpen(false);
     }
   }, [item, openedRows, lastLabels]);
-  console.log("itemitem", item);
+
   const handleClick = () => {
     const isCurrentlyOpen = openedRows.includes(
       lastLabels?.length ? lastLabels + "." + item?.label : item?.label

@@ -127,6 +127,7 @@ export default function TimeLineDayDataBlock({
                 calendarRef={calendarRef}
                 setOpenDrawerModal={setOpenDrawerModal}
                 setSelectedRow={setSelectedRow}
+                deepLength={view?.attributes?.group_by_columns?.length}
               />
             ))}
             {/* <div className={styles.addNewTask}></div> */}

@@ -1,6 +1,5 @@
 import {get} from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
-import constructorObjectService from "@/services/constructorObjectService";
 
 export const useTimelineRecursiveRowProps = ({
   item,

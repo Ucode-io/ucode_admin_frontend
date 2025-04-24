@@ -32,6 +32,7 @@ export const TimelineRecursiveRow = ({
   computedData,
   setIsAllOpen,
 }) => {
+
   const { handleClick, computedValue, open } = useTimelineRecursiveRowProps({
     item,
     fieldsMap,

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
 import { Popover, Typography } from "@mui/material";
-import { eachDayOfInterval, format } from "date-fns";
+import { eachDayOfInterval, format, isValid } from "date-fns";
 import clsx from "clsx";
 
 export default function TimeLineDayBlock({
@@ -30,11 +30,16 @@ export default function TimeLineDayBlock({
 
   function generateDateRange(startDate, endDate) {
     if (!startDate || !endDate) return [];
+
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    const dateRange = eachDayOfInterval({ start, end });
-    return dateRange;
+    if (isValid(start) && isValid(end)) {
+      const dateRange = eachDayOfInterval({ start, end });
+      return dateRange;
+    }
+
+    return [];
   }
 
   const [isFocusedDay, setIsFocusedDay] = useState(false);

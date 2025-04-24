@@ -322,14 +322,9 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
     return (
       uniqueObjects?.map((option) => ({
-        label: option?.attributes?.enable_multilanguage
-          ? getRelationFieldTabsLabel(field, option)
-          : getRelationFieldTabsLabelLang(
-              field,
-              option,
-              i18n?.language,
-              languages
-            ),
+        label: option?.attributes?.enable_multi_language
+          ? getRelationFieldTabsLabelLang(field, option)
+          : getRelationFieldTabsLabel(field, option, i18n?.language, languages),
         value: option?.guid,
       })) ?? []
     );

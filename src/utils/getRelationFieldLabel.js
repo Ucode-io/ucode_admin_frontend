@@ -57,12 +57,15 @@ export const getRelationFieldTabsLabelLang = (
   lang,
   languages = []
 ) => {
-  if (!Array.isArray(field?.view_fields)) return "";
+  if (!Array.isArray(field?.view_fields ?? field?.attributes?.view_fields))
+    return "";
 
   let label = "";
   let langLabel = "";
 
-  const filteredViewFields = field?.view_fields.filter((el) => {
+  const filteredViewFields = (
+    field?.view_fields ?? field?.attributes?.view_fields
+  ).filter((el) => {
     if (["DATE", "DATE_TIME", "NUMBER"].includes(el?.type)) return true;
 
     const langMatch = languages?.find((lng) => el?.slug?.endsWith(`_${lng}`));

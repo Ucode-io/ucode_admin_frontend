@@ -1017,7 +1017,8 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 
   const logoutClickHandler = () => {
     authService.sendAccessToken({access_token: accessToken}).then((res) => {
-      clearDB();
+      indexedDB.deleteDatabase("SearchTextDB");
+      indexedDB.deleteDatabase("ChartDB");
       store.dispatch(authActions.logout());
       dispatch(companyActions.setCompanies([]));
     });

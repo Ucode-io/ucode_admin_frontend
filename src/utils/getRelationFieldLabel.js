@@ -36,10 +36,9 @@ export const getRelationFieldTabsLabel = (field, option, lang) => {
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
     else if (el?.type === "NUMBER") result = numberWithSpaces(option[el?.slug]);
     else {
-
       const pattern = new RegExp(`_${lang}`);
 
-      if(lang && pattern.test(el?.slug)) {
+      if (lang && pattern.test(el?.slug)) {
         langLabel = option?.[el?.slug] ?? " ";
       }
 
@@ -50,6 +49,47 @@ export const getRelationFieldTabsLabel = (field, option, lang) => {
   });
 
   return langLabel ? langLabel : label;
+};
+
+export const getRelationFieldTabsLabelLang = (
+  field,
+  option,
+  lang,
+  languages = []
+) => {
+  if (!Array.isArray(field?.view_fields)) return "";
+
+  let label = "";
+  let langLabel = "";
+
+  const filteredViewFields = field?.view_fields.filter((el) => {
+    if (["DATE", "DATE_TIME", "NUMBER"].includes(el?.type)) return true;
+
+    const langMatch = languages?.find((lng) => el?.slug?.endsWith(`_${lng}`));
+    return !langMatch || el?.slug?.endsWith(`_${lang}`);
+  });
+
+  filteredViewFields.forEach((el) => {
+    let result = "";
+
+    if (el?.type === "DATE") {
+      result = format(new Date(option[el?.slug]), "dd.MM.yyyy");
+    } else if (el?.type === "DATE_TIME") {
+      result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
+    } else if (el?.type === "NUMBER") {
+      result = numberWithSpaces(option[el?.slug]);
+    } else {
+      if (el?.slug?.endsWith(`_${lang}`)) {
+        langLabel = option?.[el?.slug] ?? " ";
+      }
+
+      result = option?.[el?.slug];
+    }
+
+    label += `${result ?? ""} `;
+  });
+
+  return langLabel ? langLabel : label.trim();
 };
 
 export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {

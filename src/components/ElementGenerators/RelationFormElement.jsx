@@ -18,6 +18,10 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "../../utils/getRelationFieldLabel";
 
 const RelationFormElement = ({
   control,
@@ -178,7 +182,10 @@ const AutoCompleteElement = ({
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
   const {state} = useLocation();
-  const languages = useSelector((state) => state.languages.list);
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
+
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -440,25 +447,6 @@ const AutoCompleteElement = ({
     }
   }
 
-  const computedViewFields = useMemo(() => {
-    if (field?.attributes?.enable_multi_language) {
-      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
-      const computedLanguages = languages?.map((item) => item?.slug);
-
-      const activeLangView = viewFields?.filter((el) =>
-        el?.includes(activeLang ?? i18n?.language)
-      );
-
-      const filteredData = viewFields.filter((key) => {
-        return !computedLanguages.some((lang) => key.includes(lang));
-      });
-
-      return [...activeLangView, ...filteredData] ?? [];
-    } else {
-      return field?.attributes?.view_fields?.map((el) => el?.slug);
-    }
-  }, [field, activeLang, i18n?.language]);
-
   useEffect(() => {
     if (field?.attributes?.object_id_from_jwt === true) {
       const foundOption = allOptions?.find((el) => el?.guid === isUserId);
@@ -536,18 +524,6 @@ const AutoCompleteElement = ({
             value={localValue ?? []}
             required={required}
             defaultValue={value ?? ""}
-            // onMenuOpen={() => {
-            //   if (isModal) {
-            //     setTimeout(() => {
-            //       const modal = document.querySelector(
-            //         `.${modalClass}` || ".modal-class"
-            //       );
-            //       if (modal) {
-            //         modal.scrollTop = modal.scrollHeight;
-            //       }
-            //     }, 100);
-            //   }
-            // }}
             onChange={(e) => {
               changeHandler(e);
             }}
@@ -558,13 +534,14 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              computedViewFields?.map((el) => {
-                if (field?.attributes?.enable_multi_language) {
-                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
-                } else {
-                  return `${option[el]} `;
-                }
-              })
+              field?.attributes?.enable_multi_language
+                ? getRelationFieldTabsLabelLang(
+                    field,
+                    option,
+                    i18n?.language,
+                    languages
+                  )
+                : `${getRelationFieldTabsLabel(field, option)}`
             }
             getOptionValue={(option) =>
               option?.guid ?? option?.id ?? option?.client_type_id

@@ -14,7 +14,10 @@ import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
@@ -156,6 +159,9 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -316,7 +322,9 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
     return (
       uniqueObjects?.map((option) => ({
-        label: getRelationFieldTabsLabel(field, option),
+        label: option?.attributes?.enable_multi_language
+          ? getRelationFieldTabsLabelLang(field, option)
+          : getRelationFieldTabsLabel(field, option, i18n?.language, languages),
         value: option?.guid,
       })) ?? []
     );

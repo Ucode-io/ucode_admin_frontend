@@ -1,19 +1,15 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
-import TimeLineRecursiveRow from "./TimeLineRecursiveRow";
 import styles from "./styles.module.scss";
-import {useDispatch} from "react-redux";
-import {showAlert} from "../../../store/alert/alert.thunk";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../store/alert/alert.thunk";
 import { isSameDay, isValid, isWithinInterval } from "date-fns";
 import { Sidebar } from "./components/Sidebar";
-import { Button, Divider, Menu } from "@mui/material";
+import { Button, Menu } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
-import { SidebarButton } from "./components/SidebarButton";
-import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
-import clsx from "clsx";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -72,58 +68,11 @@ export default function TimeLineBlock({
     }
   }, [calendar_from_slug, calendar_to_slug]);
 
-  const computedDataRef = useRef([]);
+  const computedDataRef = useRef({
+    refData: [],
+    refGroupByFields: [],
+  });
   const [computedData, setComputedData] = useState([]);
-  // const [noDates, setNoDates] = useState([]);
-
-  // const computedData = useMemo(() => {
-  //   let result = [];
-
-  //   data?.forEach((record) => {
-  //     let shouldDuplicate = false;
-
-  //     if (!record?.data?.length) {
-  //       result.push(record);
-  //       return;
-  //     }
-
-  //     for (let i = 0; i < record.data.length; i++) {
-  //       let { start_date, end_date } = record.data[i];
-  //       let startDate = start_date ? new Date(start_date) : null;
-  //       let endDate = end_date ? new Date(end_date) : null;
-
-  //       if (!startDate || !endDate || isNaN(startDate) || isNaN(endDate))
-  //         continue;
-
-  //       for (let j = i + 1; j < record.data.length; j++) {
-  //         let { start_date: otherStartDate, end_date: otherEndDate } =
-  //           record.data[j];
-  //         let otherStart = otherStartDate ? new Date(otherStartDate) : null;
-  //         let otherEnd = otherEndDate ? new Date(otherEndDate) : null;
-
-  //         if (!otherStart || !otherEnd || isNaN(otherStart) || isNaN(otherEnd))
-  //           continue;
-
-  //         if (hasSameDay(startDate, endDate, otherStart, otherEnd)) {
-  //           shouldDuplicate = true;
-  //           break;
-  //         }
-  //       }
-
-  //       if (shouldDuplicate) break;
-  //     }
-
-  //     if (shouldDuplicate) {
-  //       result.push({ ...record, data: record.data.slice(1) });
-
-  //       result.push({ ...record, data: [record.data[0]] });
-  //     } else {
-  //       result.push(record);
-  //     }
-  //   });
-
-  //   return result;
-  // }, [data]);
 
   useEffect(() => {
     let result = [];
@@ -171,13 +120,20 @@ export default function TimeLineBlock({
       }
     });
 
-    if (computedDataRef.current.length > result.length) {
-      result = computedDataRef.current;
+    const { refData, refGroupByFields } = computedDataRef.current;
+
+    if (
+      refData.length > result.length &&
+      refGroupByFields.length === view?.attributes?.group_by_columns?.length
+    ) {
+      result = refData;
     } else {
-      computedDataRef.current = result;
+      computedDataRef.current.refData = result;
+      computedDataRef.current.refGroupByFields =
+        view?.attributes?.group_by_columns;
       setComputedData(result);
     }
-  }, [data]);
+  }, [data, view?.attributes?.group_by_columns]);
 
   function findEmptyDates(data) {
     const result = [];
@@ -255,108 +211,6 @@ export default function TimeLineBlock({
     return false;
   }
 
-  // function hasSameDay(startDate1, endDate1, startDate2, endDate2) {
-  //   if (
-  //     isValid(startDate1) &&
-  //     isValid(endDate1) &&
-  //     isValid(startDate2) &&
-  //     isValid(endDate2)
-  //   ) {
-  //     return (
-  //       isSameDay(startDate1, startDate2) ||
-  //       isSameDay(startDate1, endDate2) ||
-  //       isSameDay(endDate1, startDate2) ||
-  //       isSameDay(endDate1, endDate2) ||
-  //       isWithinInterval(startDate2, { start: startDate1, end: endDate1 }) ||
-  //       isWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
-  //       isWithinInterval(startDate1, { start: startDate2, end: endDate2 }) ||
-  //       isWithinInterval(endDate1, { start: startDate2, end: endDate2 })
-  //     );
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
-  // const generateMonth = (monthIndex, year) => {
-  //   const date = new Date(year, monthIndex, 1);
-  //   const days = [];
-  //   const monthName = date.toLocaleDateString("en-US", {
-  //     month: "long",
-  //     year: "numeric",
-  //   });
-
-  //   while (date.getMonth() === monthIndex) {
-  //     const day = new Date(date);
-  //     const dayName = day.toLocaleDateString("en-US", { weekday: "long" });
-  //     days.push(`${day.getDate()}/${dayName}`);
-  //     date.setDate(date.getDate() + 1);
-  //   }
-
-  //   return { month: monthName, days };
-  // };
-
-  // const loadMoreMonths = (direction) => {
-  //   if (isLoading.current) return;
-  //   isLoading.current = true;
-
-  //   requestAnimationFrame(() => {
-  //     setMonths((prev) => {
-  //       const newMonths = [...prev];
-  //       const lastMonth = newMonths[newMonths.length - 1];
-  //       const firstMonth = newMonths[0];
-
-  //       if (direction === "right") {
-  //         const [monthName, year] = lastMonth.month.split(" ");
-  //         const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
-  //         for (let i = 0; i < 3; i++) {
-  //           const newMonth = generateMonth(
-  //             (monthIndex + 1 + i) % 12,
-  //             parseInt(year) + (monthIndex + 1 + i > 11 ? 1 : 0)
-  //           );
-  //           if (!newMonths.some((m) => m.month === newMonth.month)) {
-  //             newMonths.push(newMonth);
-  //           }
-  //         }
-  //       } else if (direction === "left") {
-  //         const [monthName, year] = firstMonth.month.split(" ");
-  //         const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth();
-  //         for (let i = 0; i < 3; i++) {
-  //           const newMonth = generateMonth(
-  //             (monthIndex - 1 - i + 12) % 12,
-  //             parseInt(year) - (monthIndex - 1 - i < 0 ? 1 : 0)
-  //           );
-  //           if (!newMonths.some((m) => m.month === newMonth.month)) {
-  //             newMonths.unshift(newMonth);
-  //           }
-  //         }
-
-  //         requestAnimationFrame(() => {
-  //           if (calendarRef.current) {
-  //             const scrollAmount =
-  //               (calendarRef.current.scrollWidth / months.length) * 3;
-  //             calendarRef.current.scrollLeft += scrollAmount;
-  //           }
-  //         });
-  //       }
-
-  //       isLoading.current = false;
-  //       return newMonths;
-  //     });
-  //   });
-  // };
-  // const handleScroll = () => {
-  //   if (!calendarRef.current || isLoading.current) return;
-
-  //   const { scrollLeft, scrollWidth, clientWidth } = calendarRef.current;
-  //   if (scrollLeft <= 100) {
-  //     loadMoreMonths("left");
-  //   }
-
-  //   if (scrollLeft + clientWidth >= scrollWidth - 100) {
-  //     loadMoreMonths("right");
-  //   }
-  // };
-
   const types = [
     {
       title: "Day",
@@ -373,7 +227,7 @@ export default function TimeLineBlock({
   ];
 
   const [anchorElType, setAnchorElType] = useState(null);
-  // const [selectedType, setSelectedType] = useState("day");
+
   const [zoomPosition, setZoomPosition] = useState(2);
 
   const openType = Boolean(anchorElType);
@@ -422,74 +276,6 @@ export default function TimeLineBlock({
       // onScroll={handleScroll}
       // ref={calendarRef}
     >
-      {/* {view?.attributes?.group_by_columns?.length !== 0 && (
-        <div className={styles.group_by}>
-          <div
-            className={`${styles.fakeDiv} ${
-              selectedType === "month" ? styles.month : ""
-            }`}
-          >
-            Columns
-          </div>
-
-          {calendar_from_slug !== calendar_to_slug && (
-            <div className={styles.group_by_columns}>
-              {computedData?.map((item, index) => (
-                <TimeLineRecursiveRow
-                  openedRows={openedRows}
-                  setOpenedRows={setOpenedRows}
-                  level={0}
-                  groupItem={item}
-                  fieldsMap={fieldsMap}
-                  view={view}
-                  groupbyFields={groupbyFields}
-                  selectedType={selectedType}
-                  computedColumnsFor={computedColumnsFor}
-                  setFocusedDays={setFocusedDays}
-                  datesList={datesList}
-                  zoomPosition={zoomPosition}
-                  calendar_from_slug={calendar_from_slug}
-                  calendar_to_slug={calendar_to_slug}
-                  visible_field={visible_field}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )} */}
-
-      {/* <div>
-        <div className={clsx(styles.fakeDiv)}>
-          <div className={styles.header}>
-            <span
-              className={styles.title}
-              style={{ marginTop: isAssignee ? "6px" : "16px" }}
-            >
-              Columns
-            </span>
-            {isAssignee && (
-              <button
-                className={styles.expendCollapseBtn}
-                onClick={isAllOpen ? handleAllClose : handleAllOpen}
-              >
-                <span className={styles.expendCollapseBtnInner}>
-                  <span>{isAllOpen ? "Collapse all" : "Expend all"}</span>
-                  <KeyboardDoubleArrowDownOutlinedIcon
-                    sx={{
-                      transform: isAllOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    }}
-                  />
-                </span>
-              </button>
-            )}
-          </div>
-          <SidebarButton
-                className={cls.sidebarBtn}
-                onClick={handleCloseSidebar}
-              />
-        </div>
-      </div> */}
-
       {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
         <Sidebar
           view={view}
@@ -510,14 +296,6 @@ export default function TimeLineBlock({
           <SidebarButton onClick={handleOpenSidebar} />
         </div>
       )} */}
-      {/* <MoveableGrid
-        computedData={computedData}
-        selectedType={selectedType}
-        months={months}
-        datesList={datesList}
-        zoomPosition={zoomPosition}
-        setMonths={setMonths}
-      /> */}
       <div className={styles.gantt}>
         <TimeLineDatesRow
           focusedDays={focusedDays}

@@ -33,6 +33,7 @@ export default function TimeLineDataRecursiveRow({
   calendarRef,
   setOpenDrawerModal,
   setSelectedRow,
+  deepLength,
 }) {
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -108,6 +109,8 @@ export default function TimeLineDataRecursiveRow({
     setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 5)]);
   };
 
+  const isSingleGroup = deepLength === 1;
+
   return (
     <>
       <div
@@ -145,15 +148,15 @@ export default function TimeLineDataRecursiveRow({
             {item?.[visible_field?.split("/")?.[0]]}
           </span>
         )}
-        {!item?.data && (
+        {(!item?.data || isSingleGroup) && (
           <TimeLineDayDataBlockItem
             menuItem={menuItem}
-            key={item?.guid}
+            key={isSingleGroup ? item?.data?.[0]?.guid : item?.guid}
             dateFilters={dateFilters}
             selectedType={selectedType}
             computedColumnsFor={computedColumnsFor}
             groupbyFields={groupbyFields}
-            data={item}
+            data={isSingleGroup ? item?.data?.[0] : item}
             levelIndex={index}
             groupByList={groupByList}
             setFocusedDays={setFocusedDays}

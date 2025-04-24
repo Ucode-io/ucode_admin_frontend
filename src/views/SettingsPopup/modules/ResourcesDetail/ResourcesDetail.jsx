@@ -54,7 +54,7 @@ const headerStyle = {
   justifyContent: "space-between",
 };
 
-export const ResourcesDetail = () => {
+export const ResourcesDetail = ({openResource}) => {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
@@ -62,7 +62,6 @@ export const ResourcesDetail = () => {
   } = useSettingsPopupContext();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // const {projectId, resourceId, resourceType} = useParams();
   const resourceId = settingSearchParams.get("resourceId");
   const resourceType = settingSearchParams.get("resourceType");
 
@@ -81,8 +80,6 @@ export const ResourcesDetail = () => {
   const [settingLan, setSettingLan] = useState(null);
 
   const isEditPage = !!resourceId;
-
-  console.log({isEditPage});
 
   const {control, reset, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
@@ -453,6 +450,15 @@ export const ResourcesDetail = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (location?.state?.onFill || Number(searchParams.get("resource_type"))) {
+      setValue(
+        "resource_type",
+        location?.state?.id ?? Number(searchParams.get("resource_type"))
+      );
+    }
+  }, []);
+
   return (
     <Box sx={{background: "#fff"}}>
       <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
@@ -483,7 +489,9 @@ export const ResourcesDetail = () => {
           <>
             <ContentTitle
               withBackBtn
-              onBackClick={() => setSettingsSearchParams({tab: "resources"})}
+              onBackClick={() =>
+                setSettingsSearchParams({tab: "resourcesDetails"})
+              }
               style={{marginBottom: 0}}>
               <Box
                 sx={{
@@ -598,8 +606,6 @@ export const ResourcesDetail = () => {
                   setValue={setValue}
                 />
               )}
-
-              <AllowList />
             </Box>
           </>
         )}

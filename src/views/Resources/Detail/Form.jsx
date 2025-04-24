@@ -15,14 +15,6 @@ import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import HFSwitch from "../../../components/FormElements/HFSwitch";
 
-const headerStyle = {
-  width: "100",
-  height: "50px",
-  borderBottom: "1px solid #e5e9eb",
-  display: "flex",
-  padding: "15px",
-};
-
 const Form = ({
   control,
   setSelectedEnvironment,
@@ -32,7 +24,6 @@ const Form = ({
   watch = () => {},
   setValue = () => {},
 }) => {
-  console.log("watchwatch", watch());
   const dispatch = useDispatch();
   const location = useLocation();
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -132,10 +123,6 @@ const Form = ({
     <Box
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
-      <Box sx={headerStyle}>
-        <h2 variant="h6">Resource info</h2>
-      </Box>
-
       <Box
         style={{
           overflow: "auto",

@@ -1,19 +1,7 @@
-import {
-  Badge,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
-  Skeleton,
-} from "@mui/material";
-import {RiPencilFill} from "react-icons/ri";
-import DeleteWrapperModal from "../../../../components/DeleteWrapperModal";
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import {Delete} from "@mui/icons-material";
-import {groupedResources} from "../../../../utils/resourceConstants";
+import {Badge, Box, Menu, Skeleton} from "@mui/material";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
+import {groupedResources} from "../../../../utils/resourceConstants";
 
 export const ContentList = ({
   arr,

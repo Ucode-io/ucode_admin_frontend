@@ -1,26 +1,17 @@
-import {Box, Stack, Typography} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useWatch} from "react-hook-form";
-import Footer from "@/components/Footer";
+import HFNumberField from "@/components/FormElements/HFNumberField";
 import HFSelect from "@/components/FormElements/HFSelect";
 import HFTextField from "@/components/FormElements/HFTextField";
 import VariableResources from "@/components/LayoutSidebar/Components/Resources/VariableResource";
-import {resourceTypes, resources} from "@/utils/resourceConstants";
-import HFNumberField from "@/components/FormElements/HFNumberField";
-import {useSearchParams} from "react-router-dom";
 import githubService from "@/services/githubService";
-import {useDispatch} from "react-redux";
 import {showAlert} from "@/store/alert/alert.thunk";
-import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "@/utils/generateLanguageText";
-
-const headerStyle = {
-  width: "100",
-  height: "50px",
-  borderBottom: "1px solid #e5e9eb",
-  display: "flex",
-  padding: "15px",
-};
+import {resourceTypes} from "@/utils/resourceConstants";
+import {Box, Stack} from "@mui/material";
+import React, {useEffect, useMemo} from "react";
+import {useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useDispatch} from "react-redux";
+import {useSearchParams} from "react-router-dom";
 
 const Form = ({
   control,
@@ -123,10 +114,6 @@ const Form = ({
     <Box
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
-      <Box sx={headerStyle}>
-        <h2 variant="h6">Resource info</h2>
-      </Box>
-
       <Box
         style={{
           overflow: "auto",

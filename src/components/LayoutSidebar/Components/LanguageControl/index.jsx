@@ -1,12 +1,11 @@
-import {Box, Button, Flex, Spinner, Text} from "@chakra-ui/react";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import {Box, Button, Flex, Text} from "@chakra-ui/react";
+import React, {useEffect, useRef, useState} from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {useNavigate} from "react-router-dom";
 import {useForm, useFieldArray} from "react-hook-form";
 import {useSelector} from "react-redux";
 import {getAllFromDB} from "../../../../utils/languageDB";
 import HFTextFieldLanguage from "../../../FormElements/HFTextFieldLanguage";
-import {LinearProgress} from "@mui/material";
 
 function LanguageControl({withHeader = true}) {
   const boxRef = useRef();

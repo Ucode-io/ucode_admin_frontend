@@ -32,11 +32,14 @@ export const ContentList = ({
   const {appId} = useParams();
   const [openResource, setOpenResource] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [resourceVal, setResourceVal] = useState();
 
   const clickHandler = (element) => {
-    console.log("elementttttttttt", element);
-
-    if (element?.value !== 5 && element?.value !== 8) {
+    console.log("elementttttttt", element);
+    if (element?.id) {
+      setResourceVal(element);
+      setOpenResource(true);
+    } else if (element?.value !== 5 && element?.value !== 8 && !element?.id) {
       setOpenResource(element?.value);
       setSearchParams({tab: "resources", resource_type: element?.value});
     }
@@ -67,6 +70,7 @@ export const ContentList = ({
             <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
               {element?.items?.map((val) => (
                 <ResourceButton
+                  setResourceVal={setResourceVal}
                   clickHandler={clickHandler}
                   arr={arr}
                   val={val}
@@ -79,7 +83,11 @@ export const ContentList = ({
           </Box>
         ))
       ) : (
-        <ResourcesDetail setOpenResource={setOpenResource} />
+        <ResourcesDetail
+          setResourceVal={setResourceVal}
+          resourceVal={resourceVal}
+          setOpenResource={setOpenResource}
+        />
       )}
     </>
   );
@@ -93,12 +101,19 @@ const FRLabel = ({children}) => {
   );
 };
 
-const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
+const ResourceButton = ({
+  children,
+  val,
+  arr = [],
+  clickHandler = () => {},
+  setResourceVal = () => {},
+}) => {
   const computedElements = arr?.filter((el) => el?.type === val?.type);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [chosenResource, setChosenResource] = useState();
   const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const [searchParams, setSearchParams] = useSearchParams();
   const handleClose = () => setAnchorEl(null);
 
   return (
@@ -117,6 +132,7 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
           onClick={(e) => {
             handleClick(e);
             setChosenResource(val);
+            setSearchParams({tab: "resources"});
           }}
           sx={{marginTop: "20px"}}
           badgeContent={computedElements?.length}
@@ -130,7 +146,16 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
           {computedElements?.map((el) => (
             <Box
               key={el?.id}
-              onClick={() => clickHandler(el)}
+              onClick={() => {
+                clickHandler(el);
+                setSearchParams({
+                  tab: "resources",
+                  resource_type: val?.value,
+                  edit: true,
+                });
+                console.log("valalllllllll", val);
+                setChosenResource(val);
+              }}
               sx={{
                 padding: "5px 15px",
                 display: "flex",
@@ -146,6 +171,7 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
             </Box>
           ))}
           <Box
+            onClick={() => clickHandler(val)}
             sx={{
               borderTop: "1px solid #efefef",
               cursor: "pointer",

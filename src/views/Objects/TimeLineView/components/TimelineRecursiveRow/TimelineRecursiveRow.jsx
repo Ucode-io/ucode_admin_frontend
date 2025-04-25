@@ -44,71 +44,75 @@ export const TimelineRecursiveRow = ({
     computedData,
     setIsAllOpen,
   });
-
-  return (
-    <div>
-      <div className={cls.group_by_column}>
+console.log(view?.visible_field);
+return (
+  <div>
+    <div className={cls.group_by_column}>
+      <div
+        onClick={item?.data?.[0]?.data ? handleClick : null}
+        className={cls.group_by_column_header}
+      >
         <div
-          onClick={item?.data?.[0]?.data ? handleClick : null}
-          className={cls.group_by_column_header}
+          className={cls.group_by_column_header_inner}
+          style={{ paddingLeft: sub ? `${level * 30}px` : "" }}
         >
-          <div
-            className={cls.group_by_column_header_inner}
-            style={{ paddingLeft: sub ? `${level * 30}px` : "" }}
-          >
-            {item?.data?.[0]?.data && (
-              <button
-                className={clsx(cls.group_by_column_header_btn, {
-                  [cls.open]: open,
-                })}
-              >
-                <span className={cls.group_by_column_header_btn_inner}>
-                  <ExpandMoreRoundedIcon color="inherit" fontSize="medium" />
-                </span>
-              </button>
-              // <>{open ? <ExpandLess /> : <ExpandMore />}</>
-            )}
-            <span className={cls.group_by_column_header_text}>
-              {item?.group_by_type === "LOOKUP" ? computedValue : item?.label}
-            </span>
-          </div>
-        </div>
-        {item?.data &&
-          item?.data?.map(
-            (option, index) =>
-              option?.data &&
-              option?.data?.map((optionItem, optionIndex) => (
-                <Collapse in={open} timeout="auto" unmountOnExit>
-                  <TimelineRecursiveRow
-                    isFirst={false}
-                    openedRows={openedRows}
-                    setOpenedRows={setOpenedRows}
-                    sub={true}
-                    level={
-                      option?.data?.length ? level + 1 : index + 1 + (level + 1)
-                    }
-                    groupItem={option}
-                    fieldsMap={fieldsMap}
-                    view={view}
-                    groupByFields={groupByFields}
-                    selectedType={selectedType}
-                    computedColumnsFor={computedColumnsFor}
-                    setFocusedDays={setFocusedDays}
-                    datesList={datesList}
-                    zoomPosition={zoomPosition}
-                    calendar_from_slug={calendar_from_slug}
-                    calendar_to_slug={calendar_to_slug}
-                    visible_field={visible_field}
-                    lastLabels={
-                      lastLabels?.length
-                        ? lastLabels + "." + item?.label
-                        : item?.label
-                    }
-                  />
-                </Collapse>
-              ))
+          {item?.data?.[0]?.data && (
+            <button
+              className={clsx(cls.group_by_column_header_btn, {
+                [cls.open]: open,
+              })}
+            >
+              <span className={cls.group_by_column_header_btn_inner}>
+                <ExpandMoreRoundedIcon color="inherit" fontSize="medium" />
+              </span>
+            </button>
+            // <>{open ? <ExpandLess /> : <ExpandMore />}</>
           )}
+          <span className={cls.group_by_column_header_text}>
+            {level === 0 && !item?.data
+              ? item?.[view?.attributes?.visible_field?.split("/")[0]]
+              : item?.group_by_type === "LOOKUP"
+                ? computedValue
+                : item?.label}
+          </span>
+        </div>
       </div>
+      {item?.data &&
+        item?.data?.map(
+          (option, index) =>
+            option?.data &&
+            option?.data?.map((optionItem, optionIndex) => (
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <TimelineRecursiveRow
+                  isFirst={false}
+                  openedRows={openedRows}
+                  setOpenedRows={setOpenedRows}
+                  sub={true}
+                  level={
+                    option?.data?.length ? level + 1 : index + 1 + (level + 1)
+                  }
+                  groupItem={option}
+                  fieldsMap={fieldsMap}
+                  view={view}
+                  groupByFields={groupByFields}
+                  selectedType={selectedType}
+                  computedColumnsFor={computedColumnsFor}
+                  setFocusedDays={setFocusedDays}
+                  datesList={datesList}
+                  zoomPosition={zoomPosition}
+                  calendar_from_slug={calendar_from_slug}
+                  calendar_to_slug={calendar_to_slug}
+                  visible_field={visible_field}
+                  lastLabels={
+                    lastLabels?.length
+                      ? lastLabels + "." + item?.label
+                      : item?.label
+                  }
+                />
+              </Collapse>
+            ))
+        )}
     </div>
-  );
+  </div>
+);
 };

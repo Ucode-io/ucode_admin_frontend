@@ -10,6 +10,7 @@ const MultiselectCellColoredElement = ({
   className,
   ...props
 }) => {
+
   const tags = useMemo(() => {
     if (typeof value === "string" || typeof value === "number")
       return [

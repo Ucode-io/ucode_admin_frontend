@@ -11,9 +11,16 @@ import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
+import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
 
-const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
-  const {tableSlug} = useParams();
+const BoardColumn = ({
+  tab,
+  data = [],
+  fieldsMap,
+  view = {},
+  computedColumnsFor,
+}) => {
+  const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState();
   const [index, setIndex] = useState();
@@ -26,8 +33,8 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
     })
   );
 
-  const {mutate} = useMutation(
-    ({data, index}) => {
+  const { mutate } = useMutation(
+    ({ data, index }) => {
       return constructorObjectService.update(tableSlug, {
         data: {
           ...data,
@@ -48,9 +55,9 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
     if (result?.length > computedData?.length) {
-      mutate({data: dropResult.payload, index: dropResult.addedIndex});
+      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
     } else if (result?.length === computedData?.length) {
-      mutate({data: dropResult.payload, index: dropResult.addedIndex});
+      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
     }
   };
 
@@ -75,55 +82,81 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
   };
   const navigateToCreatePage = (slug) => {
     setOpen(true);
-    setDateInfo({[tab.slug]: tab.value});
+    setDateInfo({ [tab.slug]: tab.value });
     setSelectedRow(null);
   };
+  const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
+
+  console.log({ computedColumnsFor, tab });
+
+  const hasColor = field?.attributes?.has_color;
+  const color = field?.attributes?.options?.find(
+    (item) => item?.value === tab?.value
+  )?.color;
 
   return (
     <>
       <div className={styles.column}>
         <div className={`${styles.columnHeaderBlock} column-header`}>
-          <div className={styles.title}>{tab.label}</div>
+          <div className={styles.leftSide}>
+            <div className={styles.title}>
+              <span
+                style={{
+                  background: hasColor ? color + 33 : "rgb(139, 150, 160)",
+                  color: hasColor ? color - 50 : "rgb(139, 150, 160)",
+                }}
+                className={styles.tabBlockStatus}
+              >
+                <span
+                  className={styles.dot}
+                  style={{ background: color }}
+                ></span>
+                {tab.label}
+              </span>
+              {/* <MultiselectCellColoredElement
+                className={styles.tabBlockStatus}
+                {...tab}
+                field={computedColumnsFor?.find(
+                  (field) => field?.slug === tab?.slug
+                )}
+              /> */}
+              {/* {tab.label} */}
+            </div>
+            <div className={styles.counter}>{computedData?.length ?? 0}</div>
+          </div>
           <div className={styles.rightSide}>
             <IconButton
-              color="primary"
+              className={styles.addButton}
+              color="inherit"
               onClick={(e) => {
                 e.stopPropagation();
                 navigateToCreatePage();
-              }}>
+              }}
+            >
               <Add />
             </IconButton>
-            <div className={styles.counter}>{computedData?.length ?? 0}</div>
           </div>
         </div>
 
         <Container
-          style={{
-            height: "calc(100vh - 220px)",
-            overflow: "auto",
-            borderRadius: "6px",
-            minHeight: "0",
-          }}
           groupName="subtask"
           getChildPayload={(i) => computedData[i]}
           onDrop={(e) => {
             onDrop(e);
           }}
-          dropPlaceholder={{className: "drag-row-drop-preview"}}>
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
           {computedData.map((el) => (
             <Draggable
               key={el.guid}
               index={index}
-              style={{
-                background: "#fff",
-                borderRadius: "12px",
-                marginBottom: "6px",
-                cursor: "pointer",
-              }}>
+              className={styles.cardWrapper}
+            >
               <div
                 className={styles.card}
                 key={el.guid}
-                onClick={() => navigateToEditPage(el)}>
+                onClick={() => navigateToEditPage(el)}
+              >
                 {viewFields.map((field) => (
                   <BoardPhotoGenerator key={field.id} field={field} el={el} />
                 ))}
@@ -135,7 +168,7 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
           ))}
         </Container>
 
-        <div className={`${styles.columnFooterBlock}`}>
+        <div className={styles.columnFooterBlock}>
           <Button
             id={`addBoardItem`}
             variant="contain"
@@ -143,7 +176,8 @@ const BoardColumn = ({tab, data = [], fieldsMap, view = []}) => {
             onClick={(e) => {
               e.stopPropagation();
               navigateToCreatePage();
-            }}>
+            }}
+          >
             <Add /> Add new
           </Button>
         </div>

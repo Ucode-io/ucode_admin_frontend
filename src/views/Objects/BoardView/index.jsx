@@ -1,13 +1,13 @@
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Badge, Box, Button} from "@mui/material";
-import {useEffect, useId, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useEffect, useId, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -16,8 +16,8 @@ import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
-import {applyDrag} from "../../../utils/applyDrag";
-import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import { applyDrag } from "../../../utils/applyDrag";
+import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
 import ColumnVisible from "../ColumnVisible";
 import ShareModal from "../ShareModal/ShareModal";
 import FastFilter from "../components/FastFilter";
@@ -37,14 +37,16 @@ const BoardView = ({
   fieldsMapRel,
   selectedTable,
   menuItem,
+  visibleColumns,
+  visibleRelationColumns,
 }) => {
   const visibleForm = useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {tableSlug, appId} = useParams();
-  const {new_list} = useSelector((state) => state.filter);
+  const { tableSlug, appId } = useParams();
+  const { new_list } = useSelector((state) => state.filter);
   const id = useId();
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -53,8 +55,8 @@ const BoardView = ({
 
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
-  const {navigateToForm} = useTabRouter();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { navigateToForm } = useTabRouter();
+  const { filters } = useFilters(tableSlug, view.id);
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
@@ -70,7 +72,7 @@ const BoardView = ({
     isLoading: dataLoader,
     refetch,
   } = useQuery(
-    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters, filterTab}],
+    ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters, filterTab }],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
@@ -81,7 +83,7 @@ const BoardView = ({
       });
     },
     {
-      select: ({data}) => data?.response ?? [],
+      select: ({ data }) => data?.response ?? [],
     }
   );
 
@@ -102,7 +104,7 @@ const BoardView = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel[groupFieldId];
 
-  const {data: tabs, isLoading: tabsLoader} = useQuery(
+  const { data: tabs, isLoading: tabsLoader } = useQuery(
     queryGenerator(groupField, filters, i18n?.language)
   );
 
@@ -120,37 +122,37 @@ const BoardView = ({
     }
   };
 
-  const {
-    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
-      visibleViews: [],
-      visibleColumns: [],
-      visibleRelationColumns: [],
-    },
-    isVisibleLoading,
-  } = useQuery({
-    queryKey: [
-      "GET_TABLE_INFO",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {},
-      });
-    },
-    select: (res) => {
-      return {
-        visibleViews: res?.data?.views ?? [],
-        visibleColumns: res?.data?.fields ?? [],
-        visibleRelationColumns:
-          res?.data?.relation_fields?.map((el) => ({
-            ...el,
-            label: `${el.label} (${el.table_label})`,
-          })) ?? [],
-      };
-    },
-  });
+  // const {
+  //   data: {visibleViews, visibleColumns, visibleRelationColumns} = {
+  //     visibleViews: [],
+  //     visibleColumns: [],
+  //     visibleRelationColumns: [],
+  //   },
+  //   isVisibleLoading,
+  // } = useQuery({
+  //   queryKey: [
+  //     "GET_TABLE_INFO",
+  //     {
+  //       tableSlug,
+  //     },
+  //   ],
+  //   queryFn: () => {
+  //     return constructorTableService.getTableInfo(tableSlug, {
+  //       data: {},
+  //     });
+  //   },
+  //   select: (res) => {
+  //     return {
+  //       visibleViews: res?.data?.views ?? [],
+  //       visibleColumns: res?.data?.fields ?? [],
+  //       visibleRelationColumns:
+  //         res?.data?.relation_fields?.map((el) => ({
+  //           ...el,
+  //           label: `${el.label} (${el.table_label})`,
+  //         })) ?? [],
+  //     };
+  //   },
+  // });
 
   useEffect(() => {
     const updatedTabs = views?.[selectedTabIndex]?.attributes?.tabs;
@@ -161,9 +163,17 @@ const BoardView = ({
     }
   }, [tabs, views, selectedTabIndex]);
 
+  const computedColumnsFor = useMemo(() => {
+    if (view.type !== "CALENDAR" && view.type !== "GANTT") {
+      return visibleColumns;
+    } else {
+      return [...visibleColumns, ...visibleRelationColumns];
+    }
+  }, [visibleColumns, visibleRelationColumns, view.type]);
+
   return (
     <div>
-      <FiltersBlock
+      {/* <FiltersBlock
         extra={
           <>
             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
@@ -204,7 +214,7 @@ const BoardView = ({
           setSelectedView={setSelectedView}
           setTab={setTab}
         />
-      </FiltersBlock>
+      </FiltersBlock> */}
 
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
@@ -219,7 +229,8 @@ const BoardView = ({
                 setFilterVisible((prev) => !prev);
               }}
               badgeContent={view?.quick_filters?.length}
-              color="primary">
+              color="primary"
+            >
               <FilterAltOutlinedIcon color={"#A8A8A8"} />
             </Badge>
           </div>
@@ -231,7 +242,7 @@ const BoardView = ({
           views={views}
           columns={visibleColumns}
           relationColumns={visibleRelationColumns}
-          isLoading={isVisibleLoading}
+          isLoading={false}
           form={visibleForm}
           text={"Columns"}
           refetch={refetch}
@@ -258,7 +269,8 @@ const BoardView = ({
             <div
               className={
                 filterVisible ? styles.filters : styles.filtersVisiblitiy
-              }>
+              }
+            >
               <Box className={styles.block}>
                 <p>{t("filters")}</p>
                 <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
@@ -279,10 +291,12 @@ const BoardView = ({
                 showOnTop: true,
                 className: "drag-cards-drop-preview",
               }}
-              style={{display: "flex", gap: 24}}>
+              style={{ display: "flex", gap: 24 }}
+            >
               {boardTab?.map((tab) => (
                 <Draggable key={tab.value}>
                   <BoardColumn
+                    computedColumnsFor={computedColumnsFor}
                     key={tab.value}
                     tab={tab}
                     data={data}

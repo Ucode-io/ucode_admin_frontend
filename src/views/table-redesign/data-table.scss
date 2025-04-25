@@ -115,6 +115,10 @@
 
 .smooth-dnd-container {
   min-height: auto !important;
+  
+  &.vertical > .smooth-dnd-draggable-wrapper {
+    overflow: visible !important;
+  }
 }
 
 .math {

@@ -228,17 +228,19 @@ const ObjectsPage = () => {
     setSelectedTabIndex: setSelectedTabIndex,
     views: views,
     fieldsMap: fieldsMap,
+    menuItem,
+    fieldsMapRel,
   };
 
   const renderView = {
-    BOARD: (props) => (
-      <BoardView
-        menuItem={menuItem}
-        fieldsMapRel={fieldsMapRel}
-        {...defaultProps}
-        {...props}
-      />
-    ),
+    // BOARD: (props) => (
+    //   <BoardView
+    //     menuItem={menuItem}
+    //     fieldsMapRel={fieldsMapRel}
+    //     {...defaultProps}
+    //     {...props}
+    //   />
+    // ),
     CALENDAR: (props) => (
       <CalendarView menuItem={menuItem} {...defaultProps} {...props} />
     ),

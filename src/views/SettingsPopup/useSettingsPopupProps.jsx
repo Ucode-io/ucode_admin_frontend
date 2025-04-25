@@ -138,11 +138,11 @@ export const useSettingsPopupProps = ({onClose}) => {
       title: "Billing",
       icon: <img src={BillingIcon} alt="" width={20} height={20} />,
     },
-    {
-      key: "fares",
-      title: "Fares",
-      icon: <img src={TariffsIcon} alt="" width={20} height={20} />,
-    },
+    // {
+    //   key: "fares",
+    //   title: "Fares",
+    //   icon: <img src={TariffsIcon} alt="" width={20} height={20} />,
+    // },
   ];
 
   const tabs = [
@@ -287,7 +287,7 @@ export const useSettingsPopupProps = ({onClose}) => {
   const tabComponents = {
     profile: <Account />,
     billing: <Billing />,
-    fares: <Fares />,
+    // fares: <Fares />,
     projectSettings: <ProjectSettings />,
     environments: {
       environments: <Environment />,

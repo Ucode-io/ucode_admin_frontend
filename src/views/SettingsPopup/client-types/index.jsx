@@ -45,7 +45,6 @@ export const UserClientTypes = () => {
   const [editUserGuid, setEditUserGuid] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const navigate = useNavigate();
   const [userInviteLan, setUserInviteLan] = useState(null);
   const {i18n} = useTranslation();
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -80,24 +79,6 @@ export const UserClientTypes = () => {
 
   return (
     <ChakraProvider theme={chakraUITheme}>
-      {/* <CreateDrawer
-        userInviteLan={userInviteLan}
-        isOpen={createDrawer.isOpen}
-        onClose={() => {
-          createDrawer.onClose();
-          usersListQuery.refetch();
-        }}
-        clientTypeId={clientTypeId}
-      /> */}
-      {/* <EditDrawer
-        userInviteLan={userInviteLan}
-        guid={editUserGuid}
-        client_type_id={
-          users.find((user) => user.id === editUserGuid)?.client_type_id
-        }
-        onClose={() => setEditUserGuid(null)}
-      /> */}
-
       <Box h="100%" display="flex" flexDirection="column" bg="#fff">
         <Flex pt="10px">
           <Tabs index={tabIndex} onChange={onTabChange}>
@@ -197,7 +178,7 @@ export const UserClientTypes = () => {
         </Box>
 
         <Flex
-          p="16px"
+          p="8px 16px 0px"
           borderTop="1px solid #EAECF0"
           justifyContent="space-between">
           <Flex

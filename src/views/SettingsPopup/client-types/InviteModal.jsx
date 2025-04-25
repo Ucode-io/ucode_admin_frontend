@@ -59,7 +59,6 @@ function InviteModal({
       setLoading(false);
     },
     onError: (err) => {
-      console.log("errerrerr", err);
       setLoading(false);
     },
   });
@@ -88,12 +87,10 @@ function InviteModal({
     },
     queryParams: {
       enabled: Boolean(guid),
-      onSuccess: (data) => {
-        console.log("dataaaaaaaaaa", data);
-      },
+      onSuccess: (data) => {},
     },
   });
-  console.log("userQueryuserQuery", userQuery);
+
   useEffect(() => {
     if (userQuery.data) {
       mainForm.reset(userQuery.data);
@@ -156,10 +153,10 @@ function InviteModal({
                   </Flex>
                 </TabList>
                 <TabPanels>
-                  <TabPanel h={"180px"} mt={0} p={"0"}>
+                  <TabPanel h={"230px"} mt={0} p={"0"}>
                     <LoginForm guid={guid} form={mainForm} />
                   </TabPanel>
-                  <TabPanel h={"180px"} mt={0} p={"0"}>
+                  <TabPanel h={"190px"} mt={0} p={"0"}>
                     <Controller
                       name="phone"
                       control={mainForm.control}
@@ -220,7 +217,7 @@ function InviteModal({
                     />
                     <TypesComponent guid={guid} form={mainForm} />
                   </TabPanel>
-                  <TabPanel p={"0"} h={"180px"}>
+                  <TabPanel p={"0"} h={"190px"}>
                     <EmailComponent guid={guid} form={mainForm} />
                   </TabPanel>
                 </TabPanels>
@@ -317,18 +314,24 @@ const LoginForm = ({form, placeholder = ""}) => {
 
 const TypesComponent = ({form}) => {
   return (
-    <>
+    <Box
+      sx={{
+        marginTop: "10px",
+        flexWrap: "wrap",
+        gap: "15px",
+        padding: "15px",
+        border: "1px solid #eee",
+        borderRadius: "8px",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+      }}>
+      <Box sx={{fontSize: "14px", fontWeight: 600}}>User Info</Box>
       <Box mt={2}>
-        <UserType
-          placeholder="Choose user"
-          form={form}
-          control={form.control}
-        />
+        <UserType placeholder="User type" form={form} control={form.control} />
       </Box>
       <Box mt={2}>
-        <Role placeholder="Choose role" form={form} control={form.control} />
+        <Role placeholder="Role" form={form} control={form.control} />
       </Box>
-    </>
+    </Box>
   );
 };
 

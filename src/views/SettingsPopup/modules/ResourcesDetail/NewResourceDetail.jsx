@@ -445,7 +445,7 @@ function NewResourceDetail({handleClose = () => {}}) {
     };
   }, []);
   return (
-    <>
+    <Box>
       {Boolean(!openResource) ? (
         <div>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -471,7 +471,7 @@ function NewResourceDetail({handleClose = () => {}}) {
       ) : (
         <ResourcesDetail setOpenResource={setOpenResource} />
       )}
-    </>
+    </Box>
   );
 }
 

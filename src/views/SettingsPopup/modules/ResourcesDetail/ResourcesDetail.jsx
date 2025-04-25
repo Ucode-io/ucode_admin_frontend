@@ -54,7 +54,12 @@ const headerStyle = {
   justifyContent: "space-between",
 };
 
-export const ResourcesDetail = ({setOpenResource = () => {}}) => {
+export const ResourcesDetail = ({
+  setOpenResource = () => {},
+  openResource,
+  resourceVal,
+  setResourceVal = () => {},
+}) => {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
@@ -64,10 +69,10 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
 
   const resourceId = settingSearchParams.get("resourceId");
   const resourceType = settingSearchParams.get("resourceType");
-
   const projectId = useSelector((state) => state?.auth?.projectId);
 
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [selectedGitlab, setSelectedGitlab] = useState();
 
@@ -199,6 +204,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
+        setLoading(false);
       },
     });
 
@@ -207,6 +213,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
+        setLoading(false);
       },
     });
 
@@ -214,6 +221,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
     useResourceConfigureMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
+        setLoading(false);
       },
     });
 
@@ -229,6 +237,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
       onSuccess: () => {
         dispatch(showAlert("Resources are updated!", "success"));
         setSelectedEnvironment(null);
+        setLoading(false);
       },
     });
 
@@ -272,6 +281,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
   const resource_type = watch("resource_type");
 
   const onSubmit = (values) => {
+    setLoading(true);
     const computedValues2 = {
       ...values,
       type: values?.resource_type,
@@ -366,7 +376,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
       user_id: authStore?.userId,
     };
 
-    if (isEditPage) {
+    if (Boolean(searchParams.get("edit"))) {
       updateResourceV2({
         name: values?.name,
         type: values?.type || undefined,
@@ -383,6 +393,9 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
         })
         .catch((err) => {
           dispatch(showAlert(err, "error"));
+        })
+        .finally(() => {
+          setLoading(false);
         });
     } else {
       if (values?.resource_type === 4) {
@@ -451,11 +464,20 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
   }, []);
 
   useEffect(() => {
-    if (location?.state?.onFill || Number(searchParams.get("resource_type"))) {
-      setValue(
-        "resource_type",
-        location?.state?.id ?? Number(searchParams.get("resource_type"))
-      );
+    const setNum =
+      Number(searchParams.get("resource_type")) || location?.state?.id;
+
+    if (setNum) {
+      setValue("resource_type", setNum);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (resourceVal?.id) {
+      reset({
+        ...resourceVal,
+        resource_type: searchParams.get("resource_type"),
+      });
     }
   }, []);
 
@@ -492,6 +514,7 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
               onBackClick={() => {
                 setSearchParams({tab: "resources"});
                 setOpenResource(null);
+                setResourceVal(null);
               }}
               style={{marginBottom: 0}}>
               <Box
@@ -515,15 +538,23 @@ export const ResourcesDetail = ({setOpenResource = () => {}}) => {
                         !isEditPage &&
                         clickHouseList?.length === 0)) && (
                     <Button
-                      bg="primary"
+                      loading={loading}
                       type="submit"
-                      sx={{fontSize: "14px", margin: "0 10px"}}
+                      sx={{
+                        fontSize: "14px",
+                        margin: "0 10px",
+                        background: "#007aff",
+                        color: "#fff",
+                        "&:hover": {
+                          background: "#007aff",
+                        },
+                      }}
                       isLoading={createLoading}>
                       {generateLangaugeText(
                         settingLan,
                         i18n?.language,
-                        "Save changes"
-                      ) || "Save changes"}
+                        "Save"
+                      ) || "Save"}
                     </Button>
                   )}
 

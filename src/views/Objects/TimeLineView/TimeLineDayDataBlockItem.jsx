@@ -43,8 +43,11 @@ export default function TimeLineDayDataBlockItem({
   const { tableSlug, appId } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [target, setTarget] = useState();
+  const [isFocus, setIsFocus] = useState(false);
   const queryClient = useQueryClient();
   const innerStartDate = useRef(null);
+
+  const currentWidth = selectedType === "month" ? 20 : 60;
 
   const handleOpen = () => {
     setOpenDrawerModal(true);
@@ -86,7 +89,7 @@ export default function TimeLineDayDataBlockItem({
   const datesListObj = useMemo(
     () =>
       Object.fromEntries(
-        datesList.map((key) => [format(key, "dd.MM.yyyy"), key])
+        datesList.map((key, index) => [format(key, "dd.MM.yyyy"), index])
       ),
     [datesList]
   );
@@ -120,6 +123,48 @@ export default function TimeLineDayDataBlockItem({
   ]);
 
   const targetRef = useRef(null);
+
+  const onDragEndToUpdate1 = (position, width) => {
+    if (!position) return null;
+
+    let newDatePosition = [
+      datesList[innerStartDate.current || startDate],
+      addDays(
+        datesList[innerStartDate.current || startDate],
+        width / currentWidth
+      ),
+    ];
+
+    const computedData = {
+      ...data,
+      [calendar_from_slug]: newDatePosition[0],
+      [calendar_to_slug]: newDatePosition[1],
+    };
+
+    constructorObjectService
+      .update(tableSlug, {
+        data: computedData,
+      })
+      .then((res) => {
+        // dispatch(showAlert("Успешно обновлено", "success"));
+        // queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+        queryClient.setQueryData(
+          [
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            { tableSlug, filters, dateFilters, view },
+          ],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              data: oldData.data.map((item) =>
+                item.guid === computedData.guid ? computedData : item
+              ),
+            };
+          }
+        );
+      });
+  };
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -259,9 +304,10 @@ export default function TimeLineDayDataBlockItem({
   };
 
   const onDragEnd = ({ lastEvent }) => {
+    console.log({ lastEvent });
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
-      onDragEndToUpdate(lastEvent, lastEvent.width);
+      onDragEndToUpdate1(lastEvent, lastEvent.width);
       setFocusedDays([]);
     }
   };
@@ -329,23 +375,21 @@ export default function TimeLineDayDataBlockItem({
   };
 
   const handleMouseEnter1 = () => {
+    console.log(data[calendar_from_slug], data[calendar_to_slug]);
     if (selectedType === "month") {
       setFocusedDays([
         datesList[innerStartDate.current || startDate],
-        datesList[startDate + differenceInDays],
+        addDays(
+          datesList[innerStartDate.current || startDate],
+          targetRef.current.offsetWidth / currentWidth - 1
+        ),
       ]);
     } else {
       setFocusedDays([
         datesList[innerStartDate.current || startDate],
         addDays(
-          datesList[
-            (innerStartDate.current || startDate) +
-              Math.round(
-                frame.translate[0] /
-                  (zoomPosition * (selectedType === "month" ? 20 : 30))
-              )
-          ],
-          targetRef.current.offsetWidth / (zoomPosition * 30) - 1
+          datesList[innerStartDate.current || startDate],
+          targetRef.current.offsetWidth / currentWidth - 1
         ),
       ]);
     }
@@ -378,13 +422,17 @@ export default function TimeLineDayDataBlockItem({
       transformX: matrix.m41 || 0,
     };
 
-    innerStartDate.current = Math.floor(initialRef.current.transformX / 60);
+    innerStartDate.current = Math.floor(
+      initialRef.current.transformX / currentWidth
+    );
+
+    console.log(datesList[innerStartDate.current || startDate]);
 
     setFocusedDays([
-      datesList[startDate + roundedAppendDays],
+      datesList[innerStartDate.current || startDate],
       addDays(
-        datesList[startDate + roundedAppendDays],
-        width / (zoomPosition * 30) - 1
+        datesList[innerStartDate.current || startDate],
+        width / currentWidth - 1
       ),
     ]);
   };
@@ -411,24 +459,25 @@ export default function TimeLineDayDataBlockItem({
     target.style.width = `${width}px`;
   };
 
-  // if (data?.title === "Dropdown menu not displaying options") {
-  //   console.log({
-  //     width:
-  //       zoomPosition * (selectedType === "month" ? 20 : 30) * differenceInDays,
-  //   });
-  //   console.log({ selectedType, differenceInDays, startDate });
+  // if (data?.title === "Database migration script fails on deploy") {
+  //   console.log({ data, differenceInDays });
   // }
+
+  const showItem = differenceInDays > 0 && startDate !== -1 && level !== -1;
 
   return (
     <>
       <div
-        ref={targetRef}
+        className={styles.dataBlock}
         style={{
-          visibility: startDate === -1 || level === -1 ? "hidden" : "visible",
+          visibility: showItem ? "visible" : "hidden",
           height: "100%",
           transform: `translateX(${startDate * (zoomPosition * (selectedType === "month" ? 20 : 30))}px)`,
           width: `${zoomPosition * (selectedType === "month" ? 20 : 30) * differenceInDays}px`,
         }}
+        onClick={handleOpen}
+        ref={targetRef}
+        key={data?.id_order}
       >
         <div
           className={styles.dataBlockInner}
@@ -472,11 +521,21 @@ export default function TimeLineDayDataBlockItem({
           keepRatio={false}
           origin={false}
           renderDirections={["w", "e"]}
+          onDragStart={() => setIsFocus(true)}
           onDrag={onDrag1}
-          onDragEnd={onDragEnd}
-          onResizeStart={onResizeStart}
+          onDragEnd={(e) => {
+            setIsFocus(false);
+            onDragEnd(e);
+          }}
+          onResizeStart={(e) => {
+            setIsFocus(true);
+            onResizeStart(e);
+          }}
           onResize={onResize1}
-          onResizeEnd={onResizeEnd}
+          onResizeEnd={(e) => {
+            setIsFocus(false);
+            onResizeEnd(e);
+          }}
         />
       </div>
 

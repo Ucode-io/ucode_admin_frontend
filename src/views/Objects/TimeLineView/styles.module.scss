@@ -127,7 +127,7 @@
     margin: -1px -1px 0 0;
 
     &.hasData {
-      background-color: #e2f4e6;
+      // background-color: #e2f4e6;
 
       &:hover {
         background-color: #aad4b3;
@@ -433,9 +433,9 @@
 }
 
 .dataBlock {
-  position: absolute;
+  // position: absolute;
   // top: 64px;
-  left: 120px;
+  // left: 120px;
   width: 60px;
   height: 32px;
   background-color: #fff;
@@ -455,9 +455,9 @@
     white-space: nowrap;
   }
 
-  &:hover {
-    background-color: rgba(55, 53, 47, 0.06);
-  }
+  // &:hover {
+  //   background-color: rgba(55, 53, 47, 0.06);
+  // }
 }
 
 .datas {
@@ -466,6 +466,7 @@
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
 
 
   .dataBlock {
@@ -1013,15 +1014,15 @@
   padding-left: 12px;
   border-radius: 6px;
   -webkit-line-clamp: 1;
-  border: 1px solid #e5e9eb;
-  background-color: #fff;
+  // border: 1px solid #e5e9eb;
+  // background-color: #fff;
   
   div {
     white-space: nowrap;
   }
 
   &:hover {
-    // background-color: rgba(55, 53, 47, 0.06);
+    background-color: rgba(55, 53, 47, 0.06);
   }
 }
 

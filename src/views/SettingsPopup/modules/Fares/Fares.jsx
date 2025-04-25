@@ -23,7 +23,7 @@ export const Fares = () => {
           </Button>
         ))}
       </Box>
-      <Flex columnGap="12px" mt="0px" justifyContent="center">
+      <Flex columnGap="12px" mt="10px" justifyContent="center">
         {fares?.fares?.map((plan, index) => (
           <BillingFares
             element={activeTab}

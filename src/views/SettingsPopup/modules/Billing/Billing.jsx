@@ -78,13 +78,22 @@ export const Billing = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                  <AttachMoney color="success" fontSize="large" />
+                  {/* <AttachMoney color="success" fontSize="large" /> */}
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: "700",
+                      color: "#18c19d",
+                    }}>
+                    UZS
+                  </Typography>
                   <Box>
                     <Typography variant="h6">Tariff</Typography>
                     <Typography variant="h6" color="success.main">
                       {data?.name}
                       <Typography variant="subtitle1" sx={{color: "#000"}}>
-                        {data?.price} {data?.currency?.toUpperCase()}
+                        {numberWithSpaces(data?.price * 12927.17)}
+                        {data?.currency?.toUpperCase()}
                       </Typography>
                     </Typography>
                   </Box>

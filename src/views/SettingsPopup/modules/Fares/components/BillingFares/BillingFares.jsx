@@ -1,11 +1,12 @@
 import clsx from "clsx";
-import cls from './styles.module.scss';
-import { useEffect, useState } from "react";
-import { store } from "@/store";
+import cls from "./styles.module.scss";
+import {useEffect, useState} from "react";
+import {store} from "@/store";
 import billingService from "@/services/billingService";
-import { Box, Typography } from "@mui/material";
-import { Button } from "../../../../components/Button";
-import { PaymentDialog } from "../PaymentDialog/PaymentDialog";
+import {Box, Typography} from "@mui/material";
+import {Button} from "../../../../components/Button";
+import {PaymentDialog} from "../PaymentDialog/PaymentDialog";
+import {numberWithSpaces} from "../../../../../../utils/formatNumbers";
 
 export const BillingFares = ({plan, tabIndex, discounts, element}) => {
   const isBestPlan = plan?.bestValue;
@@ -36,6 +37,10 @@ export const BillingFares = ({plan, tabIndex, discounts, element}) => {
   useEffect(() => {
     setSelectedTab(discounts?.[tabIndex]);
   }, [tabIndex, discounts]);
+  const farePrice =
+    ((calculateDiscountPrice(plan, element) * 12927.17) /
+      Number(element?.months)) *
+    element?.months;
 
   return (
     <Box className={clsx(cls.billingCard)}>
@@ -80,10 +85,8 @@ export const BillingFares = ({plan, tabIndex, discounts, element}) => {
         ) : (
           <>
             <span>
-              $
-              {Number(calculateDiscountPrice(plan, element)) /
-                Number(element?.months)}{" "}
-              / monthly
+              {numberWithSpaces(farePrice)}
+              {` UZS (${calculateDiscountPrice(plan, element)}$) `}/ monthly
             </span>
           </>
         )}
@@ -114,8 +117,7 @@ export const BillingFares = ({plan, tabIndex, discounts, element}) => {
         onClick={() => {
           calculatePrice(plan);
           handleClick();
-        }}
-      >
+        }}>
         Choose Plan
       </Button>
       <PaymentDialog
@@ -144,7 +146,7 @@ const calculateDiscountPrice = (plan, element) => {
   return discountedPrice;
 };
 
-function DiscountRate ({text = "10% OFF"}) {
+function DiscountRate({text = "10% OFF"}) {
   return (
     <Box
       sx={{
@@ -182,4 +184,4 @@ function DiscountRate ({text = "10% OFF"}) {
       {text}
     </Box>
   );
-};
+}

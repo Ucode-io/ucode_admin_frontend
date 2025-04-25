@@ -480,7 +480,7 @@ export const ResourcesDetail = ({
   }
 
   return (
-    <Box sx={{background: "#fff"}}>
+    <Box className="scrollbarNone" sx={{height: "670px", overflow: "hidden"}}>
       <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
         {resourceType === "SMS" ? (
           <SMSType

@@ -465,7 +465,6 @@ const AutoCompleteElement = ({
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
-  console.log("allOptionsallOptions", allOptions);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

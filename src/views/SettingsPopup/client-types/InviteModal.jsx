@@ -109,15 +109,17 @@ function InviteModal({
   }, [guid]);
   return (
     <>
-      <Button
-        ml="auto"
-        fontSize={13}
-        rightIcon={<ChevronDownIcon fontSize={20} />}
-        borderRadius={8}
-        onClick={onOpen}>
-        {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
-          "Invite"}
-      </Button>
+      <Box>
+        <Button
+          ml="auto"
+          fontSize={13}
+          rightIcon={<ChevronDownIcon fontSize={20} />}
+          borderRadius={8}
+          onClick={onOpen}>
+          {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
+            "Invite"}
+        </Button>
+      </Box>
       <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>
@@ -225,13 +227,16 @@ function InviteModal({
             </ModalBody>
 
             <ModalFooter>
-              <Button
-                isLoading={loading}
-                w={"100px"}
-                type="submit"
-                bg={"#007aff"}>
-                Invite
-              </Button>
+              <Box>
+                <Button
+                  ml={"10px"}
+                  isLoading={loading}
+                  w={"100px"}
+                  type="submit"
+                  bg={"#007aff"}>
+                  Invite
+                </Button>
+              </Box>
             </ModalFooter>
           </ModalContent>
         </form>
@@ -240,34 +245,36 @@ function InviteModal({
   );
 }
 
-const PasswordInput = forwardRef((props, ref, placeholder = "") => {
-  const [show, setShow] = useState(false);
-  return (
-    <InputGroup>
-      <Input
-        placeholder={placeholder}
-        type={show ? "text" : "password"}
-        ref={ref}
-        {...props}
-      />
-      <InputRightElement height="100%" pr="10px">
-        {show ? (
-          <Visibility
-            onClick={() => setShow(!show)}
-            cursor="pointer"
-            style={{color: "#667085"}}
-          />
-        ) : (
-          <VisibilityOff
-            onClick={() => setShow(!show)}
-            cursor="pointer"
-            style={{color: "#667085"}}
-          />
-        )}
-      </InputRightElement>
-    </InputGroup>
-  );
-});
+const PasswordInput = forwardRef(
+  (props, ref, placeholder = "", loading = false) => {
+    const [show, setShow] = useState(false);
+    return (
+      <InputGroup>
+        <Input
+          placeholder={placeholder}
+          type={show ? "text" : "password"}
+          ref={ref}
+          {...props}
+        />
+        <InputRightElement height="100%" pr="10px">
+          {show ? (
+            <Visibility
+              onClick={() => setShow(!show)}
+              cursor="pointer"
+              style={{color: "#667085"}}
+            />
+          ) : (
+            <VisibilityOff
+              onClick={() => setShow(!show)}
+              cursor="pointer"
+              style={{color: "#667085"}}
+            />
+          )}
+        </InputRightElement>
+      </InputGroup>
+    );
+  }
+);
 
 const EmailComponent = ({form, placeholder = "Email"}) => {
   const errors = form.formState.errors;
@@ -286,6 +293,7 @@ const EmailComponent = ({form, placeholder = "Email"}) => {
 };
 
 const LoginForm = ({form, placeholder = ""}) => {
+  const [changePassword, setChangePassword] = useState(false);
   const errors = form.formState.errors;
 
   return (
@@ -298,14 +306,33 @@ const LoginForm = ({form, placeholder = ""}) => {
           isInvalid={errors?.name}
         />
       </Box>
-      <Box mt={2}>
-        <PasswordInput
-          placeholder="Password"
-          size="lg"
-          {...form.register("password", {required: true})}
-          isInvalid={errors?.password}
-        />
-      </Box>
+      <Flex w={"100%"}>
+        {!changePassword && (
+          <Button
+            onClick={() => setChangePassword(!changePassword)}
+            w={"130px"}
+            type="button"
+            bg={"#fff"}
+            color={"#007aff"}
+            ml={"auto"}
+            h={"26px"}
+            _hover={{
+              background: "#fff",
+            }}>
+            Change Password
+          </Button>
+        )}
+      </Flex>
+      {changePassword && (
+        <Box mt={2}>
+          <PasswordInput
+            placeholder="Enter new password"
+            size="lg"
+            {...form.register("new_password", {required: true})}
+            isInvalid={errors?.password}
+          />
+        </Box>
+      )}
 
       <TypesComponent form={form} />
     </>
@@ -316,7 +343,7 @@ const TypesComponent = ({form}) => {
   return (
     <Box
       sx={{
-        marginTop: "10px",
+        marginTop: "7px",
         flexWrap: "wrap",
         gap: "15px",
         padding: "15px",

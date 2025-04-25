@@ -71,8 +71,15 @@ export default function TimeLineDataRecursiveRow({
   }, [item, openedRows, lastLabels]);
 
   const isTaskWithoutDate =
-    !item?.data && !item?.[calendar_from_slug] && !item?.[calendar_to_slug];
+    (deepLength === 1 ? !item?.data?.[0]?.data : !item?.data) &&
+    (deepLength === 1
+      ? !item?.data?.[0]?.[calendar_from_slug]
+      : !item?.[calendar_from_slug]) &&
+    (deepLength === 1
+      ? !item?.data?.[0]?.[calendar_to_slug]
+      : !item?.[calendar_to_slug]);
 
+  
   const handleMouseMove = (e) => {
     const scrollContainer = calendarRef.current;
     if (!scrollContainer) return;

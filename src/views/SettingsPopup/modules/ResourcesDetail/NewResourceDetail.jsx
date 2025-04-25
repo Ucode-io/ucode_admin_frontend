@@ -469,7 +469,7 @@ function NewResourceDetail({handleClose = () => {}}) {
           </form>
         </div>
       ) : (
-        <ResourcesDetail openResoure={openResource} />
+        <ResourcesDetail setOpenResource={setOpenResource} />
       )}
     </>
   );

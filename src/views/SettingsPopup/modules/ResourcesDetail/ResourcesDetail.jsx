@@ -54,7 +54,7 @@ const headerStyle = {
   justifyContent: "space-between",
 };
 
-export const ResourcesDetail = ({openResource}) => {
+export const ResourcesDetail = ({setOpenResource = () => {}}) => {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
@@ -489,9 +489,10 @@ export const ResourcesDetail = ({openResource}) => {
           <>
             <ContentTitle
               withBackBtn
-              onBackClick={() =>
-                setSettingsSearchParams({tab: "resourcesDetails"})
-              }
+              onBackClick={() => {
+                setSearchParams({tab: "resources"});
+                setOpenResource(null);
+              }}
               style={{marginBottom: 0}}>
               <Box
                 sx={{

@@ -193,26 +193,7 @@ const Form = ({
                     marginTop: "20px",
                     marginBottom: "10px",
                   }}>
-                  Password
-                </Box>
-                <HFTextField
-                  control={control}
-                  required
-                  disabled
-                  name="settings.superset.password"
-                  fullWidth
-                  inputProps={{
-                    placeholder: "Password",
-                  }}
-                />
-
-                <Box
-                  sx={{
-                    fontSize: "12px",
-                    marginTop: "20px",
-                    marginBottom: "10px",
-                  }}>
-                  Name
+                  Link
                 </Box>
                 <HFTextField
                   control={control}
@@ -224,7 +205,6 @@ const Form = ({
                     placeholder: "URL",
                   }}
                 />
-
                 <Box
                   sx={{
                     fontSize: "12px",
@@ -241,6 +221,24 @@ const Form = ({
                   fullWidth
                   inputProps={{
                     placeholder: "Username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Password
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.password"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Password",
                   }}
                 />
               </>

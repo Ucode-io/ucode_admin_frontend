@@ -4,6 +4,7 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {groupedResources} from "../../../../utils/resourceConstants";
 import AddIcon from "@mui/icons-material/Add";
 import {ResourcesDetail} from "../../modules/ResourcesDetail";
+import {useQueryClient} from "react-query";
 
 export const ContentList = ({
   arr,
@@ -35,7 +36,6 @@ export const ContentList = ({
   const [resourceVal, setResourceVal] = useState();
 
   const clickHandler = (element) => {
-    console.log("elementttttttt", element);
     if (element?.id) {
       setResourceVal(element);
       setOpenResource(true);
@@ -101,14 +101,16 @@ const FRLabel = ({children}) => {
   );
 };
 
-const ResourceButton = ({
-  children,
-  val,
-  arr = [],
-  clickHandler = () => {},
-  setResourceVal = () => {},
-}) => {
-  const computedElements = arr?.filter((el) => el?.type === val?.type);
+const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
+  const computedElements = arr?.filter(
+    (el) =>
+      el?.type?.toLowerCase() ===
+      (val?.type === "CLICK_HOUSE" || val?.type === "SMS"
+        ? val?.type
+        : val?.label
+      )?.toLowerCase()
+  );
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [chosenResource, setChosenResource] = useState();
@@ -142,7 +144,7 @@ const ResourceButton = ({
       )}
 
       <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
-        <Box sx={{width: "140px"}}>
+        <Box sx={{minWidth: "140px"}}>
           {computedElements?.map((el) => (
             <Box
               key={el?.id}
@@ -153,7 +155,6 @@ const ResourceButton = ({
                   resource_type: val?.value,
                   edit: true,
                 });
-                console.log("valalllllllll", val);
                 setChosenResource(val);
               }}
               sx={{
@@ -213,60 +214,3 @@ const getElementIcon = (element) => {
       return <img src="/img/mongodb.svg" alt="" />;
   }
 };
-
-// return (
-//   <List {...props}>
-//     {arr?.map((row) => {
-//       return (
-//         <ListItem
-//           key={row.id || row.guid || row.name}
-//           sx={{ borderBottom: "1px solid #E0E0E0", cursor: "pointer" }}
-//           onClick={() => onItemClick(row)}
-//         >
-//           <Box
-//             sx={{
-//               display: "flex",
-//               justifyContent: "space-between",
-//               alignItems: "center",
-//               width: "100%",
-//             }}
-//           >
-//             <ListItemText>{row?.[selectedFieldKey]}</ListItemText>
-//             {(canEdit || canDelete) && (
-//               <Box display="flex" alignItems="center" gap="10px">
-//                 {canEdit && (
-//                   <RiPencilFill
-//                     cursor="pointer"
-//                     size={13}
-//                     onClick={(e) => {
-//                       e.stopPropagation();
-//                       handleEdit(e, row);
-//                     }}
-//                     style={{
-//                       color: "#475467",
-//                     }}
-//                   />
-//                 )}
-//                 {canDelete && (
-//                   <Box className="extra_icon">
-//                     <DeleteWrapperModal onDelete={() => handleDelete(row)}>
-//                       <RectangleIconButton style={{ border: "none" }}>
-//                         <Delete
-//                           size={13}
-//                           style={{
-//                             color: "#475467",
-//                           }}
-//                         />
-//                       </RectangleIconButton>
-//                     </DeleteWrapperModal>
-//                   </Box>
-//                 )}
-//               </Box>
-//             )}
-//           </Box>
-//         </ListItem>
-//       );
-//     })}
-//   </List>
-// );
-// };

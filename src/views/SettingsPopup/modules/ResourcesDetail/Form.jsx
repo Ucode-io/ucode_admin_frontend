@@ -12,6 +12,7 @@ import {useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
 import {useSearchParams} from "react-router-dom";
+import HFResourceField from "../../../../components/FormElements/HFResourceField";
 
 const Form = ({
   control,
@@ -192,7 +193,83 @@ const Form = ({
               </Box>
             )}
 
-            {Boolean(resurceType === 7 || type === "SMTP") && (
+            {Number(resurceType) === 11 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: "20px",
+                }}>
+                <Box sx={{width: "48%"}}>
+                  <FieldLabel
+                    children={
+                      generateLangaugeText(
+                        settingLan,
+                        i18n?.language,
+                        "Link"
+                      ) || "Link"
+                    }
+                  />
+                  <HFResourceField
+                    isLink={true}
+                    control={control}
+                    required
+                    disabled
+                    name="settings.superset.url"
+                    fullWidth
+                    inputProps={{
+                      placeholder: "URL",
+                    }}
+                  />
+                </Box>
+                <Box sx={{width: "48%"}}>
+                  <FieldLabel
+                    children={
+                      generateLangaugeText(
+                        settingLan,
+                        i18n?.language,
+                        "Username"
+                      ) || "Username"
+                    }
+                  />
+                  <HFResourceField
+                    control={control}
+                    required
+                    disabled
+                    name="settings.superset.username"
+                    fullWidth
+                    inputProps={{
+                      placeholder: "Username",
+                    }}
+                  />
+                </Box>
+                <Box sx={{width: "48%"}}>
+                  <FieldLabel
+                    children={
+                      generateLangaugeText(
+                        settingLan,
+                        i18n?.language,
+                        "Password"
+                      ) || "Password"
+                    }
+                  />
+                  <HFResourceField
+                    control={control}
+                    required
+                    disabled
+                    name="settings.superset.password"
+                    fullWidth
+                    inputProps={{
+                      placeholder: "Password",
+                    }}
+                  />
+                </Box>
+              </Box>
+            )}
+
+            {Boolean(Number(resurceType) === 7 || type === "SMTP") && (
               <Box
                 sx={{
                   display: "flex",
@@ -289,7 +366,7 @@ const Form = ({
               </Box>
             )}
 
-            {Boolean(resurceType === 6 || type === "SMS") && (
+            {Boolean(Number(resurceType) === 6 || type === "SMS") && (
               <Box
                 sx={{
                   display: "flex",
@@ -405,7 +482,7 @@ const Form = ({
               </Box>
             )}
 
-            {resurceType === 5 || type === "GITHUB" ? (
+            {Number(resurceType) === 5 || type === "GITHUB" ? (
               <>
                 <FieldLabel
                   children={
@@ -444,7 +521,7 @@ const Form = ({
               </>
             ) : null}
 
-            {resurceType === 8 ? (
+            {Number(resurceType) === 8 ? (
               <>
                 <FieldLabel
                   children={

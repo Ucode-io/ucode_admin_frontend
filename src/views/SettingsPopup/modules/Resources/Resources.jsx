@@ -18,14 +18,6 @@ export const Resources = ({handleClose = () => {}}) => {
 
   return (
     <Box>
-      <ContentTitle>
-        <Box sx={{display: "flex", justifyContent: "space-between"}}>
-          <span>
-            {generateLangaugeText(lang, i18n?.language, "Resources") ||
-              "Resources"}
-          </span>
-        </Box>
-      </ContentTitle>
       <ContentList
         handleClose={handleClose}
         sx={{marginTop: "36px"}}

@@ -7,7 +7,7 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {Box, Button} from "@mui/material";
+import {Box, Button, CircularProgress} from "@mui/material";
 import {useEnvironmentsListQuery} from "@/services/environmentService";
 import resourceService, {
   useCreateResourceMutationV1,
@@ -24,8 +24,6 @@ import resourceService, {
 import {store} from "@/store";
 import ResourceeEnvironments from "./ResourceEnvironment";
 import Form from "./Form";
-import AllowList from "./AllowList";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import {resourceTypes} from "@/utils/resourceConstants";
 import resourceVariableService from "@/services/resourceVariableService";
 import {useDispatch, useSelector} from "react-redux";
@@ -33,7 +31,7 @@ import {showAlert} from "@/store/alert/alert.thunk";
 import {useGithubLoginMutation} from "@/services/githubService";
 import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useGitlabLoginMutation} from "@/services/githubService";
 import GitLabForm from "./GitlabForm";
 import {useTranslation} from "react-i18next";
@@ -43,16 +41,6 @@ import {ContentTitle} from "../../components/ContentTitle";
 import {useSettingsPopupContext} from "../../providers";
 import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
-
-const headerStyle = {
-  width: "100%",
-  height: "50px",
-  borderBottom: "1px solid #e5e9eb",
-  display: "flex",
-  alignItems: "center",
-  padding: "15px",
-  justifyContent: "space-between",
-};
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},
@@ -75,7 +63,7 @@ export const ResourcesDetail = ({
   const [loading, setLoading] = useState(false);
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [selectedGitlab, setSelectedGitlab] = useState();
-
+  const queryClient = useQueryClient();
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
   const company = store.getState().company;
@@ -205,6 +193,7 @@ export const ResourcesDetail = ({
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
         setLoading(false);
+        backBtn();
       },
     });
 
@@ -214,6 +203,7 @@ export const ResourcesDetail = ({
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
         setLoading(false);
+        backBtn();
       },
     });
 
@@ -389,6 +379,7 @@ export const ResourcesDetail = ({
           variables: computedValues2?.variables,
         })
         .then(() => {
+          backBtn();
           dispatch(showAlert("Resource variable updated!", "success"));
         })
         .catch((err) => {
@@ -481,6 +472,13 @@ export const ResourcesDetail = ({
     }
   }, []);
 
+  function backBtn() {
+    setSearchParams({tab: "resources"});
+    setOpenResource(null);
+    setResourceVal(null);
+    queryClient.refetchQueries(["RESOURCESV2"]);
+  }
+
   return (
     <Box sx={{background: "#fff"}}>
       <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
@@ -512,9 +510,7 @@ export const ResourcesDetail = ({
             <ContentTitle
               withBackBtn
               onBackClick={() => {
-                setSearchParams({tab: "resources"});
-                setOpenResource(null);
-                setResourceVal(null);
+                backBtn();
               }}
               style={{marginBottom: 0}}>
               <Box
@@ -550,11 +546,17 @@ export const ResourcesDetail = ({
                         },
                       }}
                       isLoading={createLoading}>
-                      {generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Save"
-                      ) || "Save"}
+                      {loading ? (
+                        <CircularProgress
+                          style={{color: "#fff", width: "20px", height: "20px"}}
+                        />
+                      ) : (
+                        generateLangaugeText(
+                          settingLan,
+                          i18n?.language,
+                          "Save"
+                        ) || "Save"
+                      )}
                     </Button>
                   )}
 

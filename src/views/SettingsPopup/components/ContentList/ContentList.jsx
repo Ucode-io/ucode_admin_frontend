@@ -1,19 +1,10 @@
-import {
-  Badge,
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Menu,
-  Skeleton,
-} from "@mui/material";
-import {RiPencilFill} from "react-icons/ri";
-import DeleteWrapperModal from "../../../../components/DeleteWrapperModal";
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import {Delete} from "@mui/icons-material";
-import {groupedResources} from "../../../../utils/resourceConstants";
+import {Badge, Box, Menu, Skeleton} from "@mui/material";
 import {useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {groupedResources} from "../../../../utils/resourceConstants";
+import AddIcon from "@mui/icons-material/Add";
+import {ResourcesDetail} from "../../modules/ResourcesDetail";
+import {useQueryClient} from "react-query";
 
 export const ContentList = ({
   arr,
@@ -40,35 +31,65 @@ export const ContentList = ({
   }
   const navigate = useNavigate();
   const {appId} = useParams();
+  const [openResource, setOpenResource] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [resourceVal, setResourceVal] = useState();
+
   const clickHandler = (element) => {
-    handleClose();
-    navigate(`/main/${appId}/resources/${element?.id}/${element.type}`, {
-      state: {
-        type: element?.type,
-      },
-    });
+    if (element?.id) {
+      setResourceVal(element);
+      setOpenResource(true);
+    } else if (element?.value !== 5 && element?.value !== 8 && !element?.id) {
+      setOpenResource(element?.value);
+      setSearchParams({tab: "resources", resource_type: element?.value});
+    }
+
+    if (element?.value === 5) {
+      const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
+
+      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else if (element?.value === 8) {
+      const clientId = import.meta.env.VITE_CLIENT_ID_GITLAB;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
+
+      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
-    <div>
-      {groupedResources?.map((element) => (
-        <Box sx={{padding: "20px 16px 16px"}}>
-          <FRLabel children={<>{element?.head}</>} />
-          <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
-            {element?.items?.map((val) => (
-              <ResourceButton
-                clickHandler={clickHandler}
-                arr={arr}
-                val={val}
-                onItemClick={onItemClick}>
-                {getElementIcon(val?.icon)}
-                <p>{val?.label}</p>
-              </ResourceButton>
-            ))}
+    <>
+      {Boolean(!openResource) ? (
+        groupedResources?.map((element) => (
+          <Box sx={{padding: "20px 16px 16px"}}>
+            <FRLabel children={<>{element?.head}</>} />
+            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+              {element?.items?.map((val) => (
+                <ResourceButton
+                  setResourceVal={setResourceVal}
+                  clickHandler={clickHandler}
+                  arr={arr}
+                  val={val}
+                  onItemClick={onItemClick}>
+                  {getElementIcon(val?.icon)}
+                  <p>{val?.label}</p>
+                </ResourceButton>
+              ))}
+            </Box>
           </Box>
-        </Box>
-      ))}
-    </div>
+        ))
+      ) : (
+        <ResourcesDetail
+          setResourceVal={setResourceVal}
+          resourceVal={resourceVal}
+          setOpenResource={setOpenResource}
+        />
+      )}
+    </>
   );
 };
 
@@ -81,35 +102,39 @@ const FRLabel = ({children}) => {
 };
 
 const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
-  const computedElements = arr?.filter((el) => el?.type === val?.type);
+  const computedElements = arr?.filter(
+    (el) =>
+      el?.type?.toLowerCase() ===
+      (val?.type === "CLICK_HOUSE" || val?.type === "SMS"
+        ? val?.type
+        : val?.label
+      )?.toLowerCase()
+  );
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [chosenResource, setChosenResource] = useState();
   const handleClick = (e) => setAnchorEl(e.currentTarget);
+  const [searchParams, setSearchParams] = useSearchParams();
   const handleClose = () => setAnchorEl(null);
 
   return (
     <>
       {computedElements?.length === 0 ? (
-        <Box className={"resourceBtn"}>
+        <Box
+          onClick={() => {
+            clickHandler(val);
+          }}
+          className={"resourceBtn"}>
           {getElementIcon(val?.icon)}
           <p>{val?.label}</p>
-        </Box>
-      ) : computedElements?.length === 1 ? (
-        <Box
-          sx={{marginTop: "20px"}}
-          onClick={() => {
-            computedElements?.length === 1 &&
-              clickHandler(computedElements?.[0]);
-          }}
-          className={"resourceDisabled"}>
-          {children}
         </Box>
       ) : (
         <Badge
           onClick={(e) => {
             handleClick(e);
             setChosenResource(val);
+            setSearchParams({tab: "resources"});
           }}
           sx={{marginTop: "20px"}}
           badgeContent={computedElements?.length}
@@ -119,12 +144,21 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
       )}
 
       <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
-        <Box sx={{width: "120px"}}>
+        <Box sx={{minWidth: "140px"}}>
           {computedElements?.map((el) => (
             <Box
-              onClick={() => clickHandler(el)}
+              key={el?.id}
+              onClick={() => {
+                clickHandler(el);
+                setSearchParams({
+                  tab: "resources",
+                  resource_type: val?.value,
+                  edit: true,
+                });
+                setChosenResource(val);
+              }}
               sx={{
-                padding: "5px",
+                padding: "5px 15px",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
@@ -137,6 +171,22 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
               <p>{el?.name}</p>
             </Box>
           ))}
+          <Box
+            onClick={() => clickHandler(val)}
+            sx={{
+              borderTop: "1px solid #efefef",
+              cursor: "pointer",
+              padding: "5px 15px",
+              "&:hover": {
+                background: "#efefef",
+              },
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}>
+            <AddIcon />
+            <p>Add resource</p>
+          </Box>
         </Box>
       </Menu>
     </>
@@ -164,60 +214,3 @@ const getElementIcon = (element) => {
       return <img src="/img/mongodb.svg" alt="" />;
   }
 };
-
-// return (
-//   <List {...props}>
-//     {arr?.map((row) => {
-//       return (
-//         <ListItem
-//           key={row.id || row.guid || row.name}
-//           sx={{ borderBottom: "1px solid #E0E0E0", cursor: "pointer" }}
-//           onClick={() => onItemClick(row)}
-//         >
-//           <Box
-//             sx={{
-//               display: "flex",
-//               justifyContent: "space-between",
-//               alignItems: "center",
-//               width: "100%",
-//             }}
-//           >
-//             <ListItemText>{row?.[selectedFieldKey]}</ListItemText>
-//             {(canEdit || canDelete) && (
-//               <Box display="flex" alignItems="center" gap="10px">
-//                 {canEdit && (
-//                   <RiPencilFill
-//                     cursor="pointer"
-//                     size={13}
-//                     onClick={(e) => {
-//                       e.stopPropagation();
-//                       handleEdit(e, row);
-//                     }}
-//                     style={{
-//                       color: "#475467",
-//                     }}
-//                   />
-//                 )}
-//                 {canDelete && (
-//                   <Box className="extra_icon">
-//                     <DeleteWrapperModal onDelete={() => handleDelete(row)}>
-//                       <RectangleIconButton style={{ border: "none" }}>
-//                         <Delete
-//                           size={13}
-//                           style={{
-//                             color: "#475467",
-//                           }}
-//                         />
-//                       </RectangleIconButton>
-//                     </DeleteWrapperModal>
-//                   </Box>
-//                 )}
-//               </Box>
-//             )}
-//           </Box>
-//         </ListItem>
-//       );
-//     })}
-//   </List>
-// );
-// };

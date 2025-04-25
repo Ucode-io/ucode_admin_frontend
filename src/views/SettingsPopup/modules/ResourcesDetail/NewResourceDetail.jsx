@@ -31,6 +31,7 @@ import {
 } from "../../../../utils/resourceConstants";
 import {getAllFromDB} from "../../../../utils/languageDB";
 import {Box} from "@mui/material";
+import {ResourcesDetail} from "./ResourcesDetail";
 
 function NewResourceDetail({handleClose = () => {}}) {
   const {
@@ -54,7 +55,7 @@ function NewResourceDetail({handleClose = () => {}}) {
   const [selectedGitlab, setSelectedGitlab] = useState();
   const [variables, setVariables] = useState();
   const [settingLan, setSettingLan] = useState(null);
-  const [activeBtn, setActiveBtn] = useState("");
+  const [openResource, setOpenResource] = useState(null);
 
   const isEditPage = !!resourceId;
 
@@ -242,8 +243,6 @@ function NewResourceDetail({handleClose = () => {}}) {
     }
   }, [searchParams.get("code")]);
 
-  const resource_type = watch("resource_type");
-
   const onSubmit = (values) => {
     const computedValues2 = {
       ...values,
@@ -379,13 +378,9 @@ function NewResourceDetail({handleClose = () => {}}) {
 
   const onResourceTypeChange = (value) => {
     if (value !== 5 && value !== 8) {
-      handleClose();
-      navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/resources/create`, {
-        state: {
-          onFill: true,
-          id: value,
-        },
-      });
+      setOpenResource(value);
+      const tab = searchParams.get("tab");
+      setSearchParams({tab: tab, resource_type: value});
     }
     if (value === 5) {
       const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -402,7 +397,6 @@ function NewResourceDetail({handleClose = () => {}}) {
 
       window.open(url, "_blank", "noopener,noreferrer");
     }
-    i;
   };
 
   useEffect(() => {
@@ -451,29 +445,33 @@ function NewResourceDetail({handleClose = () => {}}) {
     };
   }, []);
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {groupedResources?.map((element) => (
-          <Box sx={{padding: "20px 16px 16px"}}>
-            <FRLabel children={<>{element?.head}</>} />
-            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
-              {element?.items?.map((val) => (
-                <ResourceButton
-                  val={val}
-                  activeBtn={activeBtn}
-                  onClick={() => {
-                    setActiveBtn(val?.label);
-                    onResourceTypeChange(val?.value);
-                  }}>
-                  {getElementIcon(val?.icon)}
-                  <p>{val?.label}</p>
-                </ResourceButton>
-              ))}
-            </Box>
-          </Box>
-        ))}
-      </form>
-    </div>
+    <>
+      {Boolean(!openResource) ? (
+        <div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {groupedResources?.map((element) => (
+              <Box sx={{padding: "20px 16px 16px"}}>
+                <FRLabel children={<>{element?.head}</>} />
+                <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+                  {element?.items?.map((val) => (
+                    <ResourceButton
+                      val={val}
+                      onClick={() => {
+                        onResourceTypeChange(val?.value);
+                      }}>
+                      {getElementIcon(val?.icon)}
+                      <p>{val?.label}</p>
+                    </ResourceButton>
+                  ))}
+                </Box>
+              </Box>
+            ))}
+          </form>
+        </div>
+      ) : (
+        <ResourcesDetail setOpenResource={setOpenResource} />
+      )}
+    </>
   );
 }
 
@@ -485,14 +483,9 @@ const FRLabel = ({children}) => {
   );
 };
 
-const ResourceButton = ({children, onClick = () => {}, activeBtn, val}) => {
-  return activeBtn === val?.label ? (
-    <Box className={"resourceBtnActive"} onClick={onClick}>
-      <img src="/public/img/Checkbox.svg" alt="" />
-      <p>{activeBtn}</p>
-    </Box>
-  ) : (
-    <Box className={"resourceBtn"} onClick={onClick}>
+const ResourceButton = ({children, onClick = () => {}, val}) => {
+  return (
+    <Box className={"resourceBtnAdd"} onClick={onClick}>
       {children}
     </Box>
   );

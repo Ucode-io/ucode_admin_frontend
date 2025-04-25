@@ -7,7 +7,7 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {Box, Button} from "@mui/material";
+import {Box, Button, CircularProgress} from "@mui/material";
 import {useEnvironmentsListQuery} from "@/services/environmentService";
 import resourceService, {
   useCreateResourceMutationV1,
@@ -24,8 +24,6 @@ import resourceService, {
 import {store} from "@/store";
 import ResourceeEnvironments from "./ResourceEnvironment";
 import Form from "./Form";
-import AllowList from "./AllowList";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import {resourceTypes} from "@/utils/resourceConstants";
 import resourceVariableService from "@/services/resourceVariableService";
 import {useDispatch, useSelector} from "react-redux";
@@ -33,7 +31,7 @@ import {showAlert} from "@/store/alert/alert.thunk";
 import {useGithubLoginMutation} from "@/services/githubService";
 import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useGitlabLoginMutation} from "@/services/githubService";
 import GitLabForm from "./GitlabForm";
 import {useTranslation} from "react-i18next";
@@ -44,17 +42,12 @@ import {useSettingsPopupContext} from "../../providers";
 import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
 
-const headerStyle = {
-  width: "100%",
-  height: "50px",
-  borderBottom: "1px solid #e5e9eb",
-  display: "flex",
-  alignItems: "center",
-  padding: "15px",
-  justifyContent: "space-between",
-};
-
-export const ResourcesDetail = () => {
+export const ResourcesDetail = ({
+  setOpenResource = () => {},
+  openResource,
+  resourceVal,
+  setResourceVal = () => {},
+}) => {
   const {
     setSearchParams: setSettingsSearchParams,
     searchParams: settingSearchParams,
@@ -62,16 +55,15 @@ export const ResourcesDetail = () => {
   } = useSettingsPopupContext();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // const {projectId, resourceId, resourceType} = useParams();
   const resourceId = settingSearchParams.get("resourceId");
   const resourceType = settingSearchParams.get("resourceType");
-
   const projectId = useSelector((state) => state?.auth?.projectId);
 
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
   const [selectedGitlab, setSelectedGitlab] = useState();
-
+  const queryClient = useQueryClient();
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
   const company = store.getState().company;
@@ -81,8 +73,6 @@ export const ResourcesDetail = () => {
   const [settingLan, setSettingLan] = useState(null);
 
   const isEditPage = !!resourceId;
-
-  console.log({isEditPage});
 
   const {control, reset, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
@@ -202,6 +192,8 @@ export const ResourcesDetail = () => {
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
+        setLoading(false);
+        backBtn();
       },
     });
 
@@ -210,6 +202,8 @@ export const ResourcesDetail = () => {
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
+        setLoading(false);
+        backBtn();
       },
     });
 
@@ -217,6 +211,7 @@ export const ResourcesDetail = () => {
     useResourceConfigureMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
+        setLoading(false);
       },
     });
 
@@ -232,6 +227,7 @@ export const ResourcesDetail = () => {
       onSuccess: () => {
         dispatch(showAlert("Resources are updated!", "success"));
         setSelectedEnvironment(null);
+        setLoading(false);
       },
     });
 
@@ -275,6 +271,7 @@ export const ResourcesDetail = () => {
   const resource_type = watch("resource_type");
 
   const onSubmit = (values) => {
+    setLoading(true);
     const computedValues2 = {
       ...values,
       type: values?.resource_type,
@@ -369,7 +366,7 @@ export const ResourcesDetail = () => {
       user_id: authStore?.userId,
     };
 
-    if (isEditPage) {
+    if (Boolean(searchParams.get("edit"))) {
       updateResourceV2({
         name: values?.name,
         type: values?.type || undefined,
@@ -382,10 +379,14 @@ export const ResourcesDetail = () => {
           variables: computedValues2?.variables,
         })
         .then(() => {
+          backBtn();
           dispatch(showAlert("Resource variable updated!", "success"));
         })
         .catch((err) => {
           dispatch(showAlert(err, "error"));
+        })
+        .finally(() => {
+          setLoading(false);
         });
     } else {
       if (values?.resource_type === 4) {
@@ -453,6 +454,31 @@ export const ResourcesDetail = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const setNum =
+      Number(searchParams.get("resource_type")) || location?.state?.id;
+
+    if (setNum) {
+      setValue("resource_type", setNum);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (resourceVal?.id) {
+      reset({
+        ...resourceVal,
+        resource_type: searchParams.get("resource_type"),
+      });
+    }
+  }, []);
+
+  function backBtn() {
+    setSearchParams({tab: "resources"});
+    setOpenResource(null);
+    setResourceVal(null);
+    queryClient.refetchQueries(["RESOURCESV2"]);
+  }
+
   return (
     <Box sx={{background: "#fff"}}>
       <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
@@ -483,7 +509,9 @@ export const ResourcesDetail = () => {
           <>
             <ContentTitle
               withBackBtn
-              onBackClick={() => setSettingsSearchParams({tab: "resources"})}
+              onBackClick={() => {
+                backBtn();
+              }}
               style={{marginBottom: 0}}>
               <Box
                 sx={{
@@ -506,15 +534,29 @@ export const ResourcesDetail = () => {
                         !isEditPage &&
                         clickHouseList?.length === 0)) && (
                     <Button
-                      bg="primary"
+                      loading={loading}
                       type="submit"
-                      sx={{fontSize: "14px", margin: "0 10px"}}
+                      sx={{
+                        fontSize: "14px",
+                        margin: "0 10px",
+                        background: "#007aff",
+                        color: "#fff",
+                        "&:hover": {
+                          background: "#007aff",
+                        },
+                      }}
                       isLoading={createLoading}>
-                      {generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Save changes"
-                      ) || "Save changes"}
+                      {loading ? (
+                        <CircularProgress
+                          style={{color: "#fff", width: "20px", height: "20px"}}
+                        />
+                      ) : (
+                        generateLangaugeText(
+                          settingLan,
+                          i18n?.language,
+                          "Save"
+                        ) || "Save"
+                      )}
                     </Button>
                   )}
 
@@ -598,8 +640,6 @@ export const ResourcesDetail = () => {
                   setValue={setValue}
                 />
               )}
-
-              <AllowList />
             </Box>
           </>
         )}

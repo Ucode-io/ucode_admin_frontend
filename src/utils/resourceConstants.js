@@ -141,7 +141,7 @@ export const groupedResources = [
       {
         type: "SMS",
         label: "Playmobile",
-        value: 1,
+        value: 6,
         icon: "restapi",
       },
       {
@@ -167,7 +167,7 @@ export const groupedResources = [
     ],
   },
   {
-    head: "Dashboard tool",
+    head: "BI tool",
     items: [
       {
         label: "Superset",

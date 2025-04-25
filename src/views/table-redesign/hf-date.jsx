@@ -56,7 +56,7 @@ export const HFDateTimePicker = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      // defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
@@ -153,7 +153,7 @@ export const HFTimePicker = ({
 };
 
 const getValue = (value) => {
-  if (!value) return null;
+  if (!value || value === "CURRENT_TIMESTAMP") return null;
   if (value instanceof Date && isValid(value)) return value;
   try {
     if (typeof value === "string") {

@@ -1,7 +1,9 @@
 import {Badge, Box, Menu, Skeleton} from "@mui/material";
 import {useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {groupedResources} from "../../../../utils/resourceConstants";
+import AddIcon from "@mui/icons-material/Add";
+import {ResourcesDetail} from "../../modules/ResourcesDetail";
 
 export const ContentList = ({
   arr,
@@ -28,35 +30,58 @@ export const ContentList = ({
   }
   const navigate = useNavigate();
   const {appId} = useParams();
+  const [openResource, setOpenResource] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const clickHandler = (element) => {
-    handleClose();
-    navigate(`/main/${appId}/resources/${element?.id}/${element.type}`, {
-      state: {
-        type: element?.type,
-      },
-    });
+    console.log("elementttttttttt", element);
+
+    if (element?.value !== 5 && element?.value !== 8) {
+      setOpenResource(element?.value);
+      setSearchParams({tab: "resources", resource_type: element?.value});
+    }
+
+    if (element?.value === 5) {
+      const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
+
+      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else if (element?.value === 8) {
+      const clientId = import.meta.env.VITE_CLIENT_ID_GITLAB;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
+
+      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
-    <div>
-      {groupedResources?.map((element) => (
-        <Box sx={{padding: "20px 16px 16px"}}>
-          <FRLabel children={<>{element?.head}</>} />
-          <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
-            {element?.items?.map((val) => (
-              <ResourceButton
-                clickHandler={clickHandler}
-                arr={arr}
-                val={val}
-                onItemClick={onItemClick}>
-                {getElementIcon(val?.icon)}
-                <p>{val?.label}</p>
-              </ResourceButton>
-            ))}
+    <>
+      {Boolean(!openResource) ? (
+        groupedResources?.map((element) => (
+          <Box sx={{padding: "20px 16px 16px"}}>
+            <FRLabel children={<>{element?.head}</>} />
+            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+              {element?.items?.map((val) => (
+                <ResourceButton
+                  clickHandler={clickHandler}
+                  arr={arr}
+                  val={val}
+                  onItemClick={onItemClick}>
+                  {getElementIcon(val?.icon)}
+                  <p>{val?.label}</p>
+                </ResourceButton>
+              ))}
+            </Box>
           </Box>
-        </Box>
-      ))}
-    </div>
+        ))
+      ) : (
+        <ResourcesDetail setOpenResource={setOpenResource} />
+      )}
+    </>
   );
 };
 
@@ -79,19 +104,13 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
   return (
     <>
       {computedElements?.length === 0 ? (
-        <Box className={"resourceBtn"}>
+        <Box
+          onClick={() => {
+            clickHandler(val);
+          }}
+          className={"resourceBtn"}>
           {getElementIcon(val?.icon)}
           <p>{val?.label}</p>
-        </Box>
-      ) : computedElements?.length === 1 ? (
-        <Box
-          sx={{marginTop: "20px"}}
-          onClick={() => {
-            computedElements?.length === 1 &&
-              clickHandler(computedElements?.[0]);
-          }}
-          className={"resourceDisabled"}>
-          {children}
         </Box>
       ) : (
         <Badge
@@ -107,12 +126,13 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
       )}
 
       <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
-        <Box sx={{width: "120px"}}>
+        <Box sx={{width: "140px"}}>
           {computedElements?.map((el) => (
             <Box
+              key={el?.id}
               onClick={() => clickHandler(el)}
               sx={{
-                padding: "5px",
+                padding: "5px 15px",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
@@ -125,6 +145,21 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
               <p>{el?.name}</p>
             </Box>
           ))}
+          <Box
+            sx={{
+              borderTop: "1px solid #efefef",
+              cursor: "pointer",
+              padding: "5px 15px",
+              "&:hover": {
+                background: "#efefef",
+              },
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}>
+            <AddIcon />
+            <p>Add resource</p>
+          </Box>
         </Box>
       </Menu>
     </>

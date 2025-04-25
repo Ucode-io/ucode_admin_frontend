@@ -24,9 +24,6 @@ export const Resources = ({handleClose = () => {}}) => {
             {generateLangaugeText(lang, i18n?.language, "Resources") ||
               "Resources"}
           </span>
-          <Box>
-            <Button onClick={handleAddClick}>{t("add_resource")}</Button>
-          </Box>
         </Box>
       </ContentTitle>
       <ContentList

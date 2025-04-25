@@ -151,12 +151,12 @@ export default function TimeLineDataRecursiveRow({
         {(!item?.data || isSingleGroup) && (
           <TimeLineDayDataBlockItem
             menuItem={menuItem}
-            key={isSingleGroup ? item?.data?.[0]?.guid : item?.guid}
+            key={isSingleGroup ? (item?.data?.[0] || item)?.guid : item?.guid}
             dateFilters={dateFilters}
             selectedType={selectedType}
             computedColumnsFor={computedColumnsFor}
             groupbyFields={groupbyFields}
-            data={isSingleGroup ? item?.data?.[0] : item}
+            data={isSingleGroup ? item?.data?.[0] || item : item}
             levelIndex={index}
             groupByList={groupByList}
             setFocusedDays={setFocusedDays}

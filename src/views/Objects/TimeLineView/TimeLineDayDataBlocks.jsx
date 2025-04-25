@@ -74,7 +74,7 @@ export default function TimeLineDayDataBlock({
       console.error("Error", error);
     },
   });
-console.log({ data });
+
   return (
     <>
       <div

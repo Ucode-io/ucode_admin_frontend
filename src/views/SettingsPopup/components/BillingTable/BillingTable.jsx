@@ -59,8 +59,8 @@ export const BillingTable = ({handClickBalance}) => {
         component={Paper}
         sx={{
           borderRadius: 1,
-          borderTop: "1px solid #eee",
-          height: "calc(100vh - 450px)",
+          borderTop: "2px solid #dbe0e4",
+          height: "calc(100vh - 550px)",
         }}
         className="scrollbarNone">
         <Table sx={{position: "relative"}} stickyHeader>
@@ -160,12 +160,16 @@ export const BillingTable = ({handClickBalance}) => {
                 sx={{
                   position: "absolute",
                   width: "100%",
-                  height: "400px",
+                  height: "250px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexDirection: "column",
                   fontSize: "16px",
+                  border: "2px solid #dbe0e4",
+                  borderTop: "0px",
+                  borderBottomLeftRadius: "8px",
+                  borderBottomRightRadius: "8px",
                 }}>
                 No transactions are found.
                 <Box sx={{marginTop: "12px"}}>
@@ -186,9 +190,13 @@ const TableHeadCell = ({children, ...props}) => {
       sx={{
         "&:last-of-type": {
           paddingRight: "15px",
+          borderBottomRightRadius: "0px",
+          borderRight: "2px solid #dbe0e4",
         },
         "&:first-of-type": {
           paddingLeft: "15px",
+          borderBottomLeftRadius: "0px",
+          borderLeft: "2px solid #dbe0e4",
         },
         fontWeight: "bold",
         fontSize: "14px",

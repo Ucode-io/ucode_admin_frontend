@@ -44,7 +44,7 @@ export const TimelineRecursiveRow = ({
     computedData,
     setIsAllOpen,
   });
-console.log(view?.visible_field);
+
 return (
   <div>
     <div className={cls.group_by_column}>

@@ -64,7 +64,7 @@ const BoardView = ({
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
-  console.log("viewsviewsviewsviews", views);
+
   useEffect(() => {
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
@@ -90,7 +90,6 @@ const BoardView = ({
   );
 
   const updateView = (tabs) => {
-    console.log("unfction tabs", tabs);
     const computedData = {
       ...view,
       attributes: {
@@ -158,7 +157,7 @@ const BoardView = ({
 
   useEffect(() => {
     const updatedTabs = views?.[selectedTabIndex]?.attributes?.tabs;
-    if (tabs?.length === updatedTabs?.length) {
+    if (tabs?.length === updatedTabs?.length && view?.type !== "BOARD") {
       setBoardTab(updatedTabs);
     } else {
       setBoardTab(tabs);
@@ -296,7 +295,7 @@ const BoardView = ({
               style={{ display: "flex", gap: 24 }}
             >
               {boardTab?.map((tab) => (
-                <Draggable key={tab.value}>
+                <Draggable key={tab.value} className={styles.draggable}>
                   <BoardColumn
                     computedColumnsFor={computedColumnsFor}
                     key={tab.value}
@@ -326,7 +325,7 @@ const queryGenerator = (groupField, filters = {}, lan) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
+  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
@@ -339,6 +338,31 @@ const queryGenerator = (groupField, filters = {}, lan) => {
         })),
     };
   }
+  if (groupField?.type === "STATUS") {
+    return {
+      queryKey: ["GET_GROUP_OPTIONS", groupField.id],
+      queryFn: () => [
+        ...groupField?.attributes?.progress?.options?.map((el) => ({
+          label: el.label,
+          value: el.label,
+          slug: el.label,
+          color: el?.color,
+        })),
+        ...groupField?.attributes?.todo?.options?.map((el) => ({
+          label: el.label,
+          value: el.label,
+          slug: el.label,
+          color: el?.color,
+        })),
+        ...groupField?.attributes?.complete?.options?.map((el) => ({
+          label: el.label,
+          value: el.label,
+          slug: el.label,
+          color: el?.color,
+        })),
+      ],
+    };
+  }
 
   if (groupField?.type === "LOOKUP") {
     const queryFn = () =>
@@ -349,7 +373,7 @@ const queryGenerator = (groupField, filters = {}, lan) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        {tableSlug: groupField.table_slug, filters: computedFilters},
+        { tableSlug: groupField.table_slug, filters: computedFilters },
       ],
       queryFn,
       select: (res) => {

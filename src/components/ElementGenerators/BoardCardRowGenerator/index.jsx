@@ -7,8 +7,17 @@ import styles from "./style.module.scss";
 import {Box} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
-const BoardCardRowGenerator = ({field, el}) => {
-  const {i18n} = useTranslation();
+const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
+  let statusTypeOptions = [];
+  if (isStatus) {
+    statusTypeOptions = [
+      ...field?.attributes?.complete?.options,
+      ...field?.attributes?.todo?.options,
+      ...field?.attributes?.progress?.options,
+    ];
+  }
+
+  const { i18n } = useTranslation();
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "");
     return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
@@ -20,7 +29,7 @@ const BoardCardRowGenerator = ({field, el}) => {
 
     case "LOOKUP":
       return (
-        <Box sx={{padding: "12px 12px 0"}}>
+        <Box sx={{ padding: "12px 12px 0" }}>
           {field?.attributes?.[`label_${i18n?.language}`]}
           <Box>
             {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
@@ -36,6 +45,22 @@ const BoardCardRowGenerator = ({field, el}) => {
             value={value}
             field={field}
             style={{ padding: "2px 5px" }}
+          />
+        </div>
+      );
+
+    case "STATUS":
+      return (
+        <div key={field.id} className={styles.row}>
+          {/* <div className={styles.label}>{field.label}:</div> */}
+          <MultiselectCellColoredElement
+            value={value}
+            field={field}
+            style={{ padding: "2px 5px" }}
+            statusTypeOptions={statusTypeOptions}
+            el={el}
+            fieldsMap={fieldsMap}
+            slug={slug}
           />
         </div>
       );

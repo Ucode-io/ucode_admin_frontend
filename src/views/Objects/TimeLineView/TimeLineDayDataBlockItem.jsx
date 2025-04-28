@@ -124,6 +124,7 @@ export default function TimeLineDayDataBlockItem({
   ]);
 
   const targetRef = useRef(null);
+  console.log("ITEM");
 
   const onDragEndToUpdate1 = (position, width) => {
     if (!position) return null;

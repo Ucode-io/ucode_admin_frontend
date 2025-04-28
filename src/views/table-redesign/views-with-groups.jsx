@@ -1564,6 +1564,7 @@ const ViewOptions = ({
   const [openedMenu, setOpenedMenu] = useState(null);
 
   const isTimelineView = view?.type === "TIMELINE";
+  const isBoardView = view?.type === "BOARD";
 
   useEffect(() => {
     if (ref.current) {
@@ -1952,7 +1953,7 @@ const ViewOptions = ({
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Tab Group"
+                        isBoardView ? "Group" : "Tab Group"
                       ) || "Tab Group"}
                     </ViewOptionTitle>
                     <Flex ml="auto" alignItems="center" columnGap="8px">
@@ -1971,7 +1972,8 @@ const ViewOptions = ({
                   </Flex>
                 )}
               {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
-                !isTimelineView && (
+                !isTimelineView &&
+                !isBoardView && (
                   <Flex
                     p="8px"
                     h="32px"
@@ -2099,6 +2101,8 @@ const ViewOptions = ({
             visibleRelationColumns={visibleRelationColumns}
             onBackClick={() => setOpenedMenu(null)}
             visibleColumns={visibleColumns}
+            label={isBoardView ? "Group" : ""}
+            isBoardView={isBoardView}
           />
         )}
 
@@ -2572,6 +2576,8 @@ const TabGroup = ({
   onBackClick,
   tableLan,
   visibleColumns,
+  label = "Tab group columns",
+  isBoardView,
 }) => {
   const { i18n } = useTranslation();
   const { tableSlug } = useParams();
@@ -2589,7 +2595,9 @@ const TabGroup = ({
       ? Object.values(fieldsMap)
       : [...Object.values(fieldsMap), ...visibleRelationColumns];
   const columns = (computedColumns ?? []).filter((column) =>
-    ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT"].includes(column.type)
+    ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+      column.type
+    )
   );
 
   // const computedColumnsFor = useMemo(() => {
@@ -2609,8 +2617,13 @@ const TabGroup = ({
       : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const [selected, setSelected] = useState(view?.group_fields[0] ?? null);
   const onChange = (column, checked) => {
-    console.log({ renderFields });
+    if (isBoardView && selected === column.id) {
+      return;
+    } else if (isBoardView && selected !== column.id) {
+      setSelected(column.id);
+    }
     mutation.mutate({
       ...view,
       group_fields: checked
@@ -2634,11 +2647,8 @@ const TabGroup = ({
         onClick={onBackClick}
       >
         <Box color="#475467" fontSize={16} fontWeight={600}>
-          {generateLangaugeText(
-            tableLan,
-            i18n?.language,
-            "Tab group columns"
-          ) || "Tab group columns"}
+          {generateLangaugeText(tableLan, i18n?.language, label) ||
+            "Tab group columns"}
         </Box>
       </Button>
       <InputGroup mt="10px">
@@ -2671,16 +2681,29 @@ const TabGroup = ({
           >
             {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-            <Switch
-              ml="auto"
-              onChange={(ev) => onChange(column, ev.target.checked)}
-              disabled={view?.group_fields?.length === 1}
-              isChecked={(view?.group_fields ?? []).includes(
-                column?.type === "LOOKUP" || column?.type === "LOOKUPS"
-                  ? column?.relation_id
-                  : column?.id
-              )}
-            />
+            {isBoardView ? (
+              <Switch
+                ml="auto"
+                checked={selected === column?.id}
+                onChange={(ev) => onChange(column, ev.target.checked)}
+                // disabled={view?.group_fields?.length === 1}
+                isChecked={(view?.group_fields ?? []).includes(
+                  column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                    ? column?.relation_id
+                    : column?.id
+                )}
+              />
+            ) : (
+              <Switch
+                ml="auto"
+                onChange={(ev) => onChange(column, ev.target.checked)}
+                isChecked={(view?.group_fields ?? []).includes(
+                  column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                    ? column?.relation_id
+                    : column?.id
+                )}
+              />
+            )}
           </Flex>
         ))}
       </Flex>

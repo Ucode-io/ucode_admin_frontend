@@ -29,6 +29,10 @@ const BoardColumn = ({
   setLayoutType,
 }) => {
   const projectId = useSelector((state) => state.company?.projectId);
+  const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
+
+  const isStatusType = selectedGroupField?.type === "STATUS";
+
   const { tableSlug, appId } = useParams();
   const queryClient = useQueryClient();
 
@@ -37,12 +41,18 @@ const BoardColumn = ({
 
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
+  const [defaultValue, setDefaultValue] = useState(null);
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
   const [computedData, setComputedData] = useState(
     data.filter((el) => {
-      if (Array.isArray(el[tab.slug])) return el[tab.slug].includes(tab.value);
-      return el[tab.slug] === tab.value;
+      if (isStatusType) {
+        return el?.[selectedGroupField?.slug];
+      } else {
+        if (Array.isArray(el[tab.slug]))
+          return el[tab.slug].includes(tab.value);
+        return el[tab.slug] === tab.value;
+      }
     })
   );
 
@@ -56,12 +66,19 @@ const BoardColumn = ({
 
   const { mutate } = useMutation(
     ({ data, index }) => {
+      const mutateData = {
+        ...data,
+        board_order: index + 1,
+      };
+
+      if (isStatusType) {
+        mutateData[selectedGroupField?.slug] = tab.value;
+      } else {
+        mutateData[tab.slug] = tab.value;
+      }
+
       return constructorObjectService.update(tableSlug, {
-        data: {
-          ...data,
-          [tab.slug]: tab.value,
-          board_order: index + 1,
-        },
+        data: mutateData,
       });
     },
     {
@@ -112,10 +129,14 @@ const BoardColumn = ({
 
   useEffect(() => {
     setComputedData(
-      data?.filter((el) => {
-        if (Array.isArray(el[tab.slug]))
-          return el[tab.slug].includes(tab.value);
-        return el[tab.slug] === tab.value;
+      data.filter((el) => {
+        if (isStatusType) {
+          return el?.[selectedGroupField?.slug] === tab?.label;
+        } else {
+          if (Array.isArray(el[tab.slug]))
+            return el[tab.slug].includes(tab.value);
+          return el[tab.slug] === tab.value;
+        }
       })
     );
   }, [data]);
@@ -127,34 +148,24 @@ const BoardColumn = ({
   };
   const navigateToCreatePage = (slug) => {
     setOpenDrawerModal(true);
-    setDateInfo({ [tab.slug]: tab.value });
     setSelectedRow(null);
+    setDefaultValue({
+      field: tab.slug,
+      value: [tab.value],
+    });
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  const hasColor = field?.attributes?.has_color;
-  const color = field?.attributes?.options?.find(
-    (item) => item?.value === tab?.value
-  )?.color;
+  const hasColor = tab?.color || field?.attributes?.has_color;
+  const color =
+    tab?.color ||
+    field?.attributes?.options?.find((item) => item?.value === tab?.value)
+      ?.color;
 
   const refetch = () => {
     queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
     queryClient.refetchQueries(["GET_TABLE_INFO"]);
   };
-
-  console.log({
-    projectInfo,
-    openDrawerModal,
-    setOpenDrawerModal,
-    selectedRow,
-    menuItem,
-    layout,
-    fieldsMap,
-    setLayoutType,
-    selectedViewType,
-    setSelectedViewType,
-    dateInfo,
-  });
 
   return (
     <>
@@ -226,7 +237,14 @@ const BoardColumn = ({
                   <BoardPhotoGenerator key={field.id} field={field} el={el} />
                 ))}
                 {viewFields.map((field) => (
-                  <BoardCardRowGenerator key={field.id} field={field} el={el} />
+                  <BoardCardRowGenerator
+                    key={field.id}
+                    isStatus={field?.type === "STATUS"}
+                    field={field}
+                    el={el}
+                    fieldsMap={fieldsMap}
+                    slug={selectedGroupField?.slug}
+                  />
                 ))}
               </div>
             </Draggable>
@@ -235,6 +253,7 @@ const BoardColumn = ({
 
         <div className={styles.columnFooterBlock}>
           <Button
+            style={{ height: "41px" }}
             id={`addBoardItem`}
             variant="contain"
             fullWidth
@@ -262,6 +281,7 @@ const BoardColumn = ({
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={() => {}}
           dateInfo={dateInfo}
+          defaultValue={defaultValue}
         />
       </MaterialUIProvider>
       {/* <BoardModalDetailPage

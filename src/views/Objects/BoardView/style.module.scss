@@ -30,13 +30,12 @@
     gap: 24px;
     width: 100%;
     overflow: auto;
-    height: calc(100vh - 85px);
+    height: calc(100vh - 121px);
+    padding-bottom: 1px;
   }
 }
 
 .columnHeaderBlock {
-  // background-color: #fff;
-  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -44,9 +43,8 @@
   top: 0;
   z-index: 10;
   background-color: #fff;
-  // border-radius: 6px;
-  padding: 0 8px;
-  margin-bottom: 16px;
+  padding: 18px 8px 6px 8px;
+  margin-bottom: 1px;
 }
 
 .title {
@@ -65,7 +63,7 @@
 }
 
 .rightSide {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 5px;
   color: rgba(70, 68, 64, 0.45);
@@ -90,10 +88,16 @@
 }
 
 .column {
-  width: 300px;
+  width: 278px;
   border-radius: 12px;
   background: transparent;
   // padding: 0 8px;
+
+  &:hover {
+    .rightSide {
+      display: flex;
+    }
+  }
 }
 
 .tabBlockStatus {
@@ -116,6 +120,8 @@
 }
 
 .cardWrapper {
+  max-width: 260px;
+
   &:not(:last-child) {
     margin-bottom: 8px;
   }
@@ -140,6 +146,8 @@
 .columnFooterBlock {
   margin-top: 8px;
   padding: 0 8px;
+  max-width: 276px;
+  height: 41px;
 
   button {
     justify-content: flex-start;

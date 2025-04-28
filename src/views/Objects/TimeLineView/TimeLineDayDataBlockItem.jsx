@@ -7,6 +7,7 @@ import constructorObjectService from "@/services/constructorObjectService";
 import styles from "./styles.module.scss";
 import { useQueryClient } from "react-query";
 import useFilters from "@/hooks/useFilters";
+import clsx from "clsx";
 
 const getTranslateXFromMatrix = (element) => {
   const transform = window.getComputedStyle(element).transform;
@@ -480,7 +481,7 @@ export default function TimeLineDayDataBlockItem({
         key={data?.id_order}
       >
         <div
-          className={styles.dataBlockInner}
+          className={clsx(styles.dataBlockInner, { [styles.focus]: isFocus })}
           onClick={handleOpen}
           onMouseEnter={handleMouseEnter1}
         >

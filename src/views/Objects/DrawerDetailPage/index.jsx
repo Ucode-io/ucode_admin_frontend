@@ -35,7 +35,7 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 function DrawerDetailPage({
   open,
   layout,
-  refetch,
+  refetch = () => {},
   setOpen = () => {},
   menuItem,
   fieldsMap,
@@ -51,16 +51,16 @@ function DrawerDetailPage({
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
   const handleClose = () => setOpen(false);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
 
-  const {id: idFromParam, tableSlug, appId} = useParams();
+  const { id: idFromParam, tableSlug, appId } = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -72,7 +72,7 @@ function DrawerDetailPage({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -97,7 +97,10 @@ function DrawerDetailPage({
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
 
       const layout1 = {
         ...layout,
@@ -233,7 +236,7 @@ function DrawerDetailPage({
     watch,
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     setValue: setFormValue,
     getValues,
   } = useForm({
@@ -248,7 +251,7 @@ function DrawerDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
@@ -270,7 +273,7 @@ function DrawerDetailPage({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         updateLayout();
         setOpen(false);

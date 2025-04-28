@@ -31,11 +31,11 @@ const BoardCardRowGenerator = ({field, el}) => {
     case "MULTISELECT":
       return (
         <div key={field.id} className={styles.row}>
-          <div className={styles.label}>{field.label}:</div>
+          {/* <div className={styles.label}>{field.label}:</div> */}
           <MultiselectCellColoredElement
             value={value}
             field={field}
-            style={{padding: "2px 5px"}}
+            style={{ padding: "2px 5px" }}
           />
         </div>
       );
@@ -43,7 +43,7 @@ const BoardCardRowGenerator = ({field, el}) => {
     case "DATE":
       return (
         <div key={field.id} className={styles.row}>
-          <div className={styles.label}>{field.label}:</div>
+          {/* <div className={styles.label}>{field.label}:</div> */}
           <div className={styles.value}>
             {value ? format(new Date(value), "dd.MM.yyyy") : "---"}
           </div>
@@ -53,7 +53,7 @@ const BoardCardRowGenerator = ({field, el}) => {
     case "DATE_TIME":
       return (
         <div key={field.id} className={styles.row}>
-          <div className={styles.label}>{field.label}:</div>
+          {/* <div className={styles.label}>{field.label}:</div> */}
           <div className={styles.value}>
             {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"}
           </div>
@@ -63,7 +63,7 @@ const BoardCardRowGenerator = ({field, el}) => {
     default:
       return (
         <div key={field.id} className={styles.row}>
-          <div className={styles.label}>{field.label}:</div>
+          {/* <div className={styles.label}>{field.label}:</div> */}
           <div className={styles.value}>{value}</div>
         </div>
       );

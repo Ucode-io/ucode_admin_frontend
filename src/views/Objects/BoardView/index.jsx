@@ -39,6 +39,8 @@ const BoardView = ({
   menuItem,
   visibleColumns,
   visibleRelationColumns,
+  layoutType,
+  setLayoutType,
 }) => {
   const visibleForm = useForm();
   const navigate = useNavigate();
@@ -216,7 +218,7 @@ const BoardView = ({
         />
       </FiltersBlock> */}
 
-      <div className={style.extraNavbar}>
+      {/* <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
             <Badge
@@ -257,7 +259,7 @@ const BoardView = ({
           filters={filters}
           boardTab={boardTab}
         />
-      </div>
+      </div> */}
 
       {loader ? (
         <PageFallback />
@@ -302,7 +304,10 @@ const BoardView = ({
                     data={data}
                     fieldsMap={fieldsMap}
                     view={view}
+                    menuItem={menuItem}
                     navigateToCreatePage={navigateToCreatePage}
+                    layoutType={layoutType}
+                    setLayoutType={setLayoutType}
                   />
                 </Draggable>
               ))}

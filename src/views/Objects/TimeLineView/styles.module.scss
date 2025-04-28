@@ -447,7 +447,7 @@
 
 
   column-gap: 6px;
-  padding-left: 12px;
+  // padding-left: 12px;
   border-radius: 6px;
   -webkit-line-clamp: 1;
 
@@ -1023,6 +1023,10 @@
 
   &:hover {
     background-color: rgba(55, 53, 47, 0.06);
+  }
+
+  &.focus {
+    background-color: rgba(35, 131, 226, 0.14);
   }
 }
 

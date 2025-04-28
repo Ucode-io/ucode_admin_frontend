@@ -30,23 +30,20 @@ export default function ModalDetailPage({
   };
 
   const lang = useGetLang("Layout");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
-      sx={{ width: "1120px", margin: "0 auto" }}
-      className="child-position-center"
-    >
+      sx={{width: "1120px", margin: "0 auto"}}
+      className="child-position-center">
       <Card
-        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}
-      >
+        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}>
         <div className={styles.header}>
           <div
-            style={{ display: " flex", alignItems: "center", gap: "5px" }}
-            className={styles.cardTitle}
-          >
+            style={{display: " flex", alignItems: "center", gap: "5px"}}
+            className={styles.cardTitle}>
             <span>
               {generateLangaugeText(lang, i18n?.language, "Detailed")}
             </span>
@@ -56,8 +53,7 @@ export default function ModalDetailPage({
                 height: "14px",
                 margin: "0 6px",
                 background: "rgba(55, 53, 47, 0.16)",
-              }}
-            ></Box>
+              }}></Box>
             <ScreenOptions
               selectedViewType={selectedViewType}
               setSelectedViewType={setSelectedViewType}
@@ -71,8 +67,7 @@ export default function ModalDetailPage({
             onClick={() => {
               setFullScreen((prev) => !prev);
               handleClose();
-            }}
-          >
+            }}>
             <Close className={styles.closeIcon} />
           </IconButton>
         </div>

@@ -60,7 +60,7 @@ const BoardView = ({
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
-  console.log("viewsviewsviewsviews", views);
+
   useEffect(() => {
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);

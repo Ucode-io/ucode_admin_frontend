@@ -58,7 +58,7 @@ export const useFunctionsDetailProps = () => {
 
   const resourceId = mainForm.watch("resource_id");
   const selectedRepo = mainForm.watch("repo_name");
-
+  console.log("resourceIdresourceId", resourceId, mainForm.watch());
   const {data: resources} = useResourceListQueryV2({
     params: {
       type: "GIT",
@@ -172,7 +172,9 @@ export const useFunctionsDetailProps = () => {
 
         knativeForm.setValue("path", res?.path);
         setFormerScale(res?.max_scale);
-        mainForm.reset({...res});
+        if (!Boolean(res?.resource_id)) {
+          mainForm.reset({...res, resource_id: "ucode_gitlab"});
+        } else mainForm.reset({...res});
       },
     },
   });

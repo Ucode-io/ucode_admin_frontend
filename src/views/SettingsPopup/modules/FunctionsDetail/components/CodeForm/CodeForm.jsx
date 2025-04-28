@@ -24,7 +24,7 @@ export const CodeForm = ({
   type,
 }) => {
   const {i18n} = useTranslation();
-
+  console.log("resourceOptionsresourceOptions", resourceOptions);
   return (
     <Box marginTop={2}>
       <form onSubmit={onSubmit}>

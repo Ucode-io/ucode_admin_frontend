@@ -56,10 +56,6 @@ export const Functions = () => {
             </Box>
           </Box>
         </ContentTitle>
-        {/* 
-    <FiltersBlock>
-      <SearchInput onChange={(e) => inputChangeHandler(e)} />
-    </FiltersBlock> */}
 
         <TableCard type={"withoutPadding"}>
           <CTable disablePagination removableHeight={140}>
@@ -71,6 +67,9 @@ export const Functions = () => {
               <CTableCell className={cls.tableHeadCell}>Status</CTableCell>
               <CTableCell className={cls.tableHeadCell}>Path</CTableCell>
               <CTableCell className={cls.tableHeadCell}>Type</CTableCell>
+              <CTableCell className={cls.tableHeadCell}>
+                Replice count
+              </CTableCell>
               <CTableCell className={cls.tableHeadCell} width={60}></CTableCell>
             </CTableHead>
             <CTableBody
@@ -93,6 +92,9 @@ export const Functions = () => {
                   </CTableCell>
                   <CTableCell className={cls.tBodyCell}>
                     {element?.type === "FUNCTION" ? "OPENFAAS" : element?.type}
+                  </CTableCell>
+                  <CTableCell className={cls.tBodyCell}>
+                    {element?.max_scale}
                   </CTableCell>
                   <CTableCell className={cls.tBodyCell}>
                     <RectangleIconButton

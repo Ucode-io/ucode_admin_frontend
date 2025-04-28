@@ -147,6 +147,11 @@ export const UserClientTypes = () => {
 
           {users.map((user, index) => (
             <Grid
+              onClick={() => {
+                onOpen();
+                setEditUserGuid(user?.id);
+              }}
+              cursor={"pointer"}
               key={user.id}
               templateColumns={templateColumns}
               borderBottom="1px solid #EAECF0"
@@ -160,17 +165,13 @@ export const UserClientTypes = () => {
               <Td>{user.email}</Td>
               <Td>{user.phone}</Td>
               <Td display="flex" justifyContent="center" columnGap="6px">
-                <IconButton
+                {/* <IconButton
                   h={"25px"}
                   aria-label="edit"
                   icon={<Image src="/img/edit.svg" alt="edit" />}
-                  onClick={() => {
-                    onOpen();
-                    setEditUserGuid(user?.id);
-                  }}
                   variant="ghost"
                   colorScheme="gray"
-                />
+                /> */}
                 <DeleteButton user={user} />
               </Td>
             </Grid>

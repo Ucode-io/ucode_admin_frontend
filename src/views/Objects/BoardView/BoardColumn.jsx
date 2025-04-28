@@ -2,16 +2,21 @@ import {Add} from "@mui/icons-material";
 import {Button, IconButton} from "@mui/material";
 import {useEffect, useMemo} from "react";
 import {useState} from "react";
-import {useMutation, useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
+import { applyDrag, applyDragIndex } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
+import { useSelector } from "react-redux";
+import layoutService from "../../../services/layoutService";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 const BoardColumn = ({
   tab,
@@ -19,19 +24,35 @@ const BoardColumn = ({
   fieldsMap,
   view = {},
   computedColumnsFor,
+  menuItem,
+  layoutType,
+  setLayoutType,
 }) => {
-  const { tableSlug } = useParams();
+  const projectId = useSelector((state) => state.company?.projectId);
+  const { tableSlug, appId } = useParams();
   const queryClient = useQueryClient();
+
   const [open, setOpen] = useState();
   const [index, setIndex] = useState();
+
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
+
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
   const [computedData, setComputedData] = useState(
     data.filter((el) => {
       if (Array.isArray(el[tab.slug])) return el[tab.slug].includes(tab.value);
       return el[tab.slug] === tab.value;
     })
   );
+
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const { mutate } = useMutation(
     ({ data, index }) => {
@@ -49,6 +70,30 @@ const BoardColumn = ({
       },
     }
   );
+
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
 
   const onDrop = (dropResult) => {
     const result = applyDrag(computedData, dropResult);
@@ -76,23 +121,40 @@ const BoardColumn = ({
   }, [data]);
 
   const navigateToEditPage = (el) => {
-    setOpen(true);
+    setOpenDrawerModal(true);
     setSelectedRow(el);
     setDateInfo({});
   };
   const navigateToCreatePage = (slug) => {
-    setOpen(true);
+    setOpenDrawerModal(true);
     setDateInfo({ [tab.slug]: tab.value });
     setSelectedRow(null);
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  console.log({ computedColumnsFor, tab });
-
   const hasColor = field?.attributes?.has_color;
   const color = field?.attributes?.options?.find(
     (item) => item?.value === tab?.value
   )?.color;
+
+  const refetch = () => {
+    queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+    queryClient.refetchQueries(["GET_TABLE_INFO"]);
+  };
+
+  console.log({
+    projectInfo,
+    openDrawerModal,
+    setOpenDrawerModal,
+    selectedRow,
+    menuItem,
+    layout,
+    fieldsMap,
+    setLayoutType,
+    selectedViewType,
+    setSelectedViewType,
+    dateInfo,
+  });
 
   return (
     <>
@@ -145,6 +207,9 @@ const BoardColumn = ({
             onDrop(e);
           }}
           dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          style={{
+            padding: "0 8px",
+          }}
         >
           {computedData.map((el) => (
             <Draggable
@@ -182,12 +247,29 @@ const BoardColumn = ({
           </Button>
         </div>
       </div>
-      <BoardModalDetailPage
+      <MaterialUIProvider>
+        <DrawerDetailPage
+          projectInfo={projectInfo}
+          open={openDrawerModal}
+          setOpen={setOpenDrawerModal}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          // refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={() => {}}
+          dateInfo={dateInfo}
+        />
+      </MaterialUIProvider>
+      {/* <BoardModalDetailPage
         open={open}
         setOpen={setOpen}
         dateInfo={dateInfo}
         selectedRow={selectedRow}
-      />
+      /> */}
     </>
   );
 };

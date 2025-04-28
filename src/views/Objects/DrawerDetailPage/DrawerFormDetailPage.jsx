@@ -329,13 +329,15 @@ const HeadingOptions = ({
           justifyContent: "space-between",
           paddingLeft: "3px",
           gap: "10px",
-        }}>
+        }}
+      >
         <Flex
           onClick={(e) =>
             !Boolean(watch("attributes.layout_heading")) && handleClick(e)
           }
           flexDirection={"column"}
-          justifyContent={"flex-start"}>
+          justifyContent={"flex-start"}
+        >
           <CHTextField
             placeholder={
               Boolean(watch("attributes.layout_heading")) ? "" : "Select field"
@@ -347,13 +349,14 @@ const HeadingOptions = ({
           />
         </Flex>
 
-        <Box sx={{cursor: "pointer"}}>
+        <Box sx={{ cursor: "pointer" }}>
           <Flex
             p={"5px"}
             borderRadius={6}
             onClick={handleClick}
             gap={2}
-            alignItems={"center"}>
+            alignItems={"center"}
+          >
             <Text>
               {
                 fieldsList?.find(
@@ -369,8 +372,9 @@ const HeadingOptions = ({
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "180px", padding: "4px 0"}}>
+        onClose={() => handleClose(null)}
+      >
+        <Box sx={{ width: "180px", padding: "4px 0" }}>
           {fieldsList
             .filter(
               (field) => field?.type === "SINGLE_LINE" || field?.type === "TEXT"
@@ -387,13 +391,15 @@ const HeadingOptions = ({
                   height: "32px",
                 }}
                 key={option.label}
-                onClick={() => handleClose(option)}>
+                onClick={() => handleClose(option)}
+              >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: "5px",
-                  }}>
+                  }}
+                >
                   {option.label}
                 </Box>
 

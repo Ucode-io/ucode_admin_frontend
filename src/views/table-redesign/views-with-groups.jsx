@@ -1010,6 +1010,8 @@ export const NewUiViewsWithGroups = ({
                     views={views}
                     fieldsMap={fieldsMap}
                     view={view}
+                    layoutType={layoutType}
+                    setLayoutType={setLayoutType}
                   />
                 )}
                 {!groupTable?.length &&
@@ -1191,7 +1193,7 @@ export const NewUiViewsWithGroups = ({
   );
 };
 
-const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
+const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
@@ -1233,7 +1235,8 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
           justifyContent="center"
           color="#fff"
           borderRadius="50%"
-          fontSize="10px">
+          fontSize="10px"
+        >
           {view?.attributes?.quick_filters?.length}
         </Flex>
       )}
@@ -1250,7 +1253,7 @@ const FilterPopover = ({
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Popover>
@@ -1290,13 +1293,13 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
-  const {new_list} = useSelector((state) => state.filter);
+  const { tableSlug } = useParams();
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
   useEffect(() => {
@@ -1371,12 +1374,14 @@ const FiltersList = ({
       gap="6px"
       borderBottom="1px solid #EAECF0"
       flexWrap="wrap"
-      id="filterHeight">
+      id="filterHeight"
+    >
       <FilterPopover
         tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
-        refetchViews={refetchViews}>
+        refetchViews={refetchViews}
+      >
         <Flex
           alignItems="center"
           columnGap="4px"
@@ -1386,7 +1391,8 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
-          _hover={{bg: "#f3f3f3"}}>
+          _hover={{ bg: "#f3f3f3" }}
+        >
           <InlineSVG
             src="/img/plus-icon.svg"
             width={14}
@@ -1415,9 +1421,9 @@ const FiltersList = ({
   );
 };
 
-const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
+  const { tableSlug } = useParams();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
@@ -1441,8 +1447,8 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
-    ...checkedColumns.map((c) => ({...c, checked: true})),
-    ...unCheckedColumns.map((c) => ({...c, checked: false})),
+    ...checkedColumns.map((c) => ({ ...c, checked: true })),
+    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
   ].filter((column) =>
     search === ""
       ? true
@@ -1467,7 +1473,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
 
     await mutation.mutateAsync({
       ...view,
-      attributes: {...view?.attributes, quick_filters: result},
+      attributes: { ...view?.attributes, quick_filters: result },
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -1508,9 +1514,10 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -1543,8 +1550,8 @@ const ViewOptions = ({
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
-  const {appId, tableSlug} = useParams();
-  const {i18n, t} = useTranslation();
+  const { appId, tableSlug } = useParams();
+  const { i18n, t } = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1564,7 +1571,7 @@ const ViewOptions = ({
   }, [openedMenu]);
 
   const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", {tableSlug}],
+    queryKey: ["GET_LAYOUT", { tableSlug }],
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
@@ -1586,7 +1593,7 @@ const ViewOptions = ({
         ...view,
         id: view.id,
         columns: view.columns,
-        attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
+        attributes: { ...view?.attributes, [`name_${i18n?.language}`]: value },
       });
       return await refetchViews();
     },
@@ -1650,11 +1657,11 @@ const ViewOptions = ({
   // });
 
   const {
-    data: {fields, visibleColumns} = {data: []},
+    data: { fields, visibleColumns } = { data: [] },
     isLoading: tableInfoLoading,
     refetch: refetchGetTableInfo,
   } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug}],
+    ["GET_TABLE_INFO", { tableSlug }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -1892,37 +1899,41 @@ const ViewOptions = ({
                 </Flex>
               )}
 
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
-                <Flex
-                  p="8px"
-                  h="32px"
-                  columnGap="8px"
-                  alignItems="center"
-                  borderRadius={6}
-                  _hover={{ bg: "#EAECF0" }}
-                  cursor="pointer"
-                  onClick={() => setOpenedMenu("group")}
-                >
-                  <Image src="/img/copy-01.svg" alt="Group by" />
-                  <ViewOptionTitle>
-                    {generateLangaugeText(tableLan, i18n?.language, "Group") ||
-                      "Group"}
-                  </ViewOptionTitle>
-                  <Flex ml="auto" alignItems="center" columnGap="8px">
-                    {Boolean(groupByColumnsCount) && (
-                      <ViewOptionSubtitle>
-                        {groupByColumnsCount}{" "}
-                        {generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Group"
-                        ) || "Group"}
-                      </ViewOptionSubtitle>
-                    )}
-                    <ChevronRightIcon fontSize={22} />
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                view.type !== "BOARD" && (
+                  <Flex
+                    p="8px"
+                    h="32px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                    onClick={() => setOpenedMenu("group")}
+                  >
+                    <Image src="/img/copy-01.svg" alt="Group by" />
+                    <ViewOptionTitle>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Group"
+                      ) || "Group"}
+                    </ViewOptionTitle>
+                    <Flex ml="auto" alignItems="center" columnGap="8px">
+                      {Boolean(groupByColumnsCount) && (
+                        <ViewOptionSubtitle>
+                          {groupByColumnsCount}{" "}
+                          {generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Group"
+                          ) || "Group"}
+                        </ViewOptionSubtitle>
+                      )}
+                      <ChevronRightIcon fontSize={22} />
+                    </Flex>
                   </Flex>
-                </Flex>
-              )}
+                )}
               {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
                 !isTimelineView && (
                   <Flex
@@ -2123,8 +2134,8 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const {i18n, t} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n, t } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2240,7 +2251,8 @@ const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}>
+          onClick={onBackClick}
+        >
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
@@ -2281,7 +2293,8 @@ const ColumnsVisibility = ({
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
-        overflow="auto">
+        overflow="auto"
+      >
         {/* {view?.type === "TIMELINE" ? (
           checkedColumns?.length || unCheckedColumns?.length ? (
             <Container
@@ -2408,10 +2421,11 @@ const ColumnsVisibility = ({
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                zIndex={999999}>
-                {column?.type && getColumnIcon({column})}
+                zIndex={999999}
+              >
+                {column?.type && getColumnIcon({ column })}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Switch
                   ml="auto"
@@ -2437,9 +2451,9 @@ const ColumnsVisibility = ({
   );
 };
 
-const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2496,7 +2510,8 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
             "Group columns"}
@@ -2527,9 +2542,10 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -2556,8 +2572,8 @@ const TabGroup = ({
   tableLan,
   visibleColumns,
 }) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2593,6 +2609,7 @@ const TabGroup = ({
   );
 
   const onChange = (column, checked) => {
+    console.log({ renderFields });
     mutation.mutate({
       ...view,
       group_fields: checked
@@ -2613,7 +2630,8 @@ const TabGroup = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(
             tableLan,
@@ -2647,13 +2665,15 @@ const TabGroup = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
               onChange={(ev) => onChange(column, ev.target.checked)}
+              disabled={view?.group_fields?.length === 1}
               isChecked={(view?.group_fields ?? []).includes(
                 column?.type === "LOOKUP" || column?.type === "LOOKUPS"
                   ? column?.relation_id

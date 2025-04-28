@@ -92,7 +92,7 @@ export default function MultiLineCellFormElement({
           }>
           {stripHtmlTags(
             value
-              ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
+              ? `${value?.slice(0, 36)}${value?.length > 200 ? "..." : ""}`
               : ""
           )}
         </p>

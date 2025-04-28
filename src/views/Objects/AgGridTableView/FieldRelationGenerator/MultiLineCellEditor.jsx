@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import RowClickButton from "../RowClickButton";
 
 function MultiLineCellEditor(props) {
+  const {value} = props;
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -80,7 +81,7 @@ function MultiLineCellEditor(props) {
           }>
           {stripHtmlTags(
             props?.value
-              ? `${props?.value?.slice(0, 200)}${props?.value?.length > 200 ? "..." : ""}`
+              ? `${props?.value?.slice(0, 30)}${props?.value?.length > 200 ? "..." : ""}`
               : ""
           )}
         </p>

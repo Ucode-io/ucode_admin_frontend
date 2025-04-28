@@ -6,10 +6,13 @@ import AggridFooter from "./AggridFooter";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {
+  CellStyleModule,
   CheckboxEditorModule,
   ColumnApiModule,
+  DateEditorModule,
   NumberEditorModule,
   TextEditorModule,
+  UndoRedoEditModule,
   ValidationModule,
   themeQuartz,
 } from "ag-grid-community";
@@ -71,6 +74,9 @@ ModuleRegistry.registerModules([
   CheckboxEditorModule,
   NumberEditorModule,
   ColumnApiModule,
+  CellStyleModule,
+  DateEditorModule,
+  UndoRedoEditModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -365,9 +371,7 @@ function AgGridTableView(props) {
   }
 
   const updateView = (pinnedField, updatedColumns = []) => {
-    console.log("pinFieldsRefpinFieldsRef", pinFieldsRef);
     pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
-
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -587,12 +591,12 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={45}
+                  rowBuffer={15}
                   theme={myTheme}
                   gridOptions={{
-                    rowBuffer: 50,
-                    cacheBlockSize: 100,
-                    maxBlocksInCache: 100,
+                    rowBuffer: 10,
+                    cacheBlockSize: 10,
+                    maxBlocksInCache: 10,
                   }}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
@@ -609,7 +613,7 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
-                  suppressColumnVirtualisation={false}
+                  suppressColumnVirtualisation={true}
                   treeData={view?.attributes?.treeData}
                   suppressColumnMoveAnimation={true}
                   autoGroupColumnDef={autoGroupColumnDef}

@@ -68,13 +68,14 @@ function AddConnectionDetail() {
                 </CTableCell>
                 <CTableCell className={cls.tBodyCell}>
                   <Button
+                    disabled={element?.is_tracked}
                     onClick={() => trackConnection(element?.id)}
-                    color="primary"
+                    color={element?.is_tracked ? "success" : "primary"}
                     variant={element?.is_tracked ? "contained" : "outlined"}>
                     {loadingId === element.id ? (
                       <CircularProgress size={20} />
                     ) : element?.is_tracked ? (
-                      "Untrack"
+                      "Tracked"
                     ) : (
                       "Track"
                     )}

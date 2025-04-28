@@ -61,6 +61,7 @@ export const BillingTable = ({handClickBalance}) => {
           borderRadius: 1,
           // borderTop: "2px solid #dbe0e4",
           maxHeight: "calc(100vh - 550px)",
+          minHeight: "calc(100vh - 650px)",
           marginBottom: "15px",
         }}
         className="scrollbarNone">
@@ -168,7 +169,7 @@ export const BillingTable = ({handClickBalance}) => {
                 sx={{
                   position: "absolute",
                   width: "100%",
-                  height: "250px",
+                  height: "150px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

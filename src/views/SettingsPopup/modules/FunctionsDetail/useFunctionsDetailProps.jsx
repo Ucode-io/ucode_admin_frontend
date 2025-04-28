@@ -1,12 +1,10 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {useResourceListQueryV2} from "@/services/resourceService";
 import listToOptions from "@/utils/listToOptions";
-import {
-  useMicrofrontendCreateWebhookMutation,
-} from "@/services/microfrontendService";
+import {useMicrofrontendCreateWebhookMutation} from "@/services/microfrontendService";
 import {
   useGithubBranchesQuery,
   useGithubRepositoriesQuery,
@@ -23,15 +21,14 @@ import {
 import {useTranslation} from "react-i18next";
 
 import {showAlert} from "@/store/alert/alert.thunk";
-import { useGetLang } from "@/hooks/useGetLang";
-import { useSettingsPopupContext } from "../../providers";
+import {useGetLang} from "@/hooks/useGetLang";
+import {useSettingsPopupContext} from "../../providers";
 
 export const useFunctionsDetailProps = () => {
-
   const lang = useGetLang("Functions");
-  const { appId } = useParams();
+  const {appId} = useParams();
 
-  const { searchParams, setSearchParams, } = useSettingsPopupContext();
+  const {searchParams, setSearchParams} = useSettingsPopupContext();
 
   const functionId = searchParams.get("functionId");
 
@@ -40,6 +37,7 @@ export const useFunctionsDetailProps = () => {
   const [loader, setLoader] = useState(false);
   const [logsList, setLogsList] = useState(null);
   const [btnLoader, setBtnLoader] = useState();
+  const [formerScale, setFormerScale] = useState();
 
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
@@ -78,8 +76,8 @@ export const useFunctionsDetailProps = () => {
   }, [resources]);
 
   const handleBackClick = () => {
-    setSearchParams({ });
-  }
+    setSearchParams({});
+  };
 
   const selectedResource = useMemo(() => {
     if (resourceId === "ucode_gitlab") return null;
@@ -173,13 +171,19 @@ export const useFunctionsDetailProps = () => {
         );
 
         knativeForm.setValue("path", res?.path);
+        setFormerScale(res?.max_scale);
         mainForm.reset({...res});
       },
     },
   });
 
   const onSubmit = (data) => {
-    if (functionId) updateFunction(data);
+    const computedData = {
+      ...data,
+      former_max_scale:
+        data?.max_scale !== formerScale ? formerScale : undefined,
+    };
+    if (functionId) updateFunction(computedData);
     else {
       if (resourceId === "ucode_gitlab") createFunction(data);
       else
@@ -224,7 +228,6 @@ export const useFunctionsDetailProps = () => {
   const resourcesOptions = repositories?.length
     ? repositories
     : listToOptions(repositoriesGitlab, "name", "name");
-
 
   return {
     functionId,

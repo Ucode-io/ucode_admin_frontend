@@ -1,4 +1,3 @@
-
 import PageFallback from "@/components/PageFallback";
 import HeaderSettings from "@/components/HeaderSettings";
 import SecondaryButton from "@/components/Buttons/SecondaryButton";
@@ -10,14 +9,13 @@ import {Box} from "@mui/material";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 // import KnativeLogs from "./KnativeLogs";
 import {generateLangaugeText} from "@/utils/generateLanguageText";
-import { useFunctionsDetailProps } from "./useFunctionsDetailProps";
-import { CodeForm } from "./components/CodeForm";
-import { ContentTitle } from "../../components/ContentTitle";
-import { KnativeLogs } from "./components/KnativeLogs";
-import { SaveCancelBtns } from "../../components/SaveCancelBtns";
+import {useFunctionsDetailProps} from "./useFunctionsDetailProps";
+import {CodeForm} from "./components/CodeForm";
+import {ContentTitle} from "../../components/ContentTitle";
+import {KnativeLogs} from "./components/KnativeLogs";
+import {SaveCancelBtns} from "../../components/SaveCancelBtns";
 
-export const FunctionsDetail = ({ create }) => {
-
+export const FunctionsDetail = ({create}) => {
   const {
     functionId,
     navigate,
@@ -133,4 +131,4 @@ export const FunctionsDetail = ({ create }) => {
       </Tabs>
     </div>
   );
-}
+};

@@ -18,7 +18,6 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  useDisclosure,
 } from "@chakra-ui/react";
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
@@ -107,9 +106,10 @@ function InviteModal({
       mainForm.reset({});
     }
   }, [guid]);
+
   return (
     <>
-      <Box>
+      <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
         <Button
           ml="auto"
           fontSize={13}
@@ -276,7 +276,7 @@ const PasswordInput = forwardRef(
   }
 );
 
-const EmailComponent = ({form, placeholder = "Email"}) => {
+const EmailComponent = ({form, placeholder = "Email", guid}) => {
   const errors = form.formState.errors;
   return (
     <Box mt={2}>
@@ -292,7 +292,7 @@ const EmailComponent = ({form, placeholder = "Email"}) => {
   );
 };
 
-const LoginForm = ({form, placeholder = ""}) => {
+const LoginForm = ({form, placeholder = "", guid}) => {
   const [changePassword, setChangePassword] = useState(false);
   const errors = form.formState.errors;
 
@@ -307,7 +307,7 @@ const LoginForm = ({form, placeholder = ""}) => {
         />
       </Box>
       <Flex w={"100%"}>
-        {!changePassword && (
+        {!changePassword && Boolean(guid) && (
           <Button
             onClick={() => setChangePassword(!changePassword)}
             w={"130px"}

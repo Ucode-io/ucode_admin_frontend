@@ -59,11 +59,19 @@ export const BillingTable = ({handClickBalance}) => {
         component={Paper}
         sx={{
           borderRadius: 1,
-          borderTop: "2px solid #dbe0e4",
-          height: "calc(100vh - 550px)",
+          // borderTop: "2px solid #dbe0e4",
+          maxHeight: "calc(100vh - 550px)",
+          marginBottom: "15px",
         }}
         className="scrollbarNone">
-        <Table sx={{position: "relative"}} stickyHeader>
+        <Table
+          sx={{
+            position: "relative",
+            borderTop: "0px",
+            border: "1px solid #dbe0e4",
+            borderRadius: "8px",
+          }}
+          stickyHeader>
           <TableHead>
             <TableRow>
               {tableHeads?.map((item, index) => (
@@ -190,13 +198,13 @@ const TableHeadCell = ({children, ...props}) => {
       sx={{
         "&:last-of-type": {
           paddingRight: "15px",
-          borderBottomRightRadius: "0px",
-          borderRight: "2px solid #dbe0e4",
+          borderRadius: "0",
+          borderTopRightRadius: "8px",
         },
         "&:first-of-type": {
           paddingLeft: "15px",
-          borderBottomLeftRadius: "0px",
-          borderLeft: "2px solid #dbe0e4",
+          borderRadius: "0",
+          borderTopLeftRadius: "8px",
         },
         fontWeight: "bold",
         fontSize: "14px",

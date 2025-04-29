@@ -1,7 +1,7 @@
 import {Add} from "@mui/icons-material";
 import {Button, IconButton} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useState} from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -17,6 +17,7 @@ import { useProjectGetByIdQuery } from "../../../services/projectService";
 import { useSelector } from "react-redux";
 import layoutService from "../../../services/layoutService";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import useDebounce from "../../../hooks/useDebounce";
 
 const BoardColumn = ({
   tab,
@@ -27,6 +28,8 @@ const BoardColumn = ({
   menuItem,
   layoutType,
   setLayoutType,
+  refetch: refetchListQueries,
+  boardRef,
 }) => {
   const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
@@ -38,6 +41,7 @@ const BoardColumn = ({
 
   const [open, setOpen] = useState();
   const [index, setIndex] = useState();
+  const [onDropData, setOndropData] = useState(null);
 
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
@@ -88,6 +92,28 @@ const BoardColumn = ({
     }
   );
 
+  const mutateDrop = useDebounce(({ data, index }) => {
+    const mutateData = {
+      ...data,
+      board_order: index + 1,
+    };
+
+    if (isStatusType) {
+      mutateData[selectedGroupField?.slug] = tab.value;
+    } else {
+      mutateData[tab.slug] = tab.value;
+    }
+
+    constructorObjectService
+      .update(tableSlug, {
+        data: mutateData,
+      })
+      .then(() => {
+        // queryClient.refetchListQueriesQueries(["GET_OBJECT_LIST_ALL"]);
+        // refetchListQueries();
+      });
+  }, 0);
+
   const {
     data: { layout } = {
       layout: [],
@@ -116,12 +142,40 @@ const BoardColumn = ({
     const result = applyDrag(computedData, dropResult);
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
-    if (result?.length > computedData?.length) {
-      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
-    } else if (result?.length === computedData?.length) {
-      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
+    setOndropData({ dropResult, result });
+
+    if (result?.length >= computedData?.length) {
+      mutateDrop({ data: dropResult.payload, index: dropResult.addedIndex });
     }
   };
+
+  // const timerRef = useRef(null);
+
+  // useEffect(() => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //   }
+
+  //   if (onDropData) {
+  //     const { dropResult, result } = onDropData;
+
+  //     timerRef.current = setTimeout(() => {
+  //       if (result?.length >= computedData?.length) {
+  //         console.log("MUTATE");
+  //         mutateDrop({
+  //           data: dropResult.payload,
+  //           index: dropResult.addedIndex,
+  //         });
+  //       }
+  //     }, 2000);
+  //   }
+
+  //   return () => {
+  //     if (timerRef.current) {
+  //       clearTimeout(timerRef.current);
+  //     }
+  //   };
+  // }, [onDropData, computedData]);
 
   const viewFields = useMemo(() => {
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
@@ -175,10 +229,31 @@ const BoardColumn = ({
     queryClient.refetchQueries(["GET_TABLE_INFO"]);
   };
 
+  const fixedElement = useRef(null);
+
+  useEffect(() => {
+    const board = boardRef.current;
+    const el = fixedElement.current;
+    if (!board || !el) return;
+
+    const onScroll = () => {
+      el.style.top = `${board.scrollTop}px`;
+    };
+
+    board.addEventListener("scroll", onScroll);
+
+    return () => {
+      board.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <>
       <div className={styles.column}>
-        <div className={`${styles.columnHeaderBlock} column-header`}>
+        <div
+          ref={fixedElement}
+          className={`${styles.columnHeaderBlock} column-header`}
+        >
           <div className={styles.leftSide}>
             <div className={styles.title}>
               <span
@@ -225,39 +300,50 @@ const BoardColumn = ({
           onDrop={(e) => {
             onDrop(e);
           }}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          dropPlaceholder={{
+            className: "drag-row-drop-preview",
+            showOnTop: true,
+            animationDuration: 150,
+          }}
           style={{
-            padding: "0 8px",
+            padding: "50px 8px 0 8px",
           }}
           animationDuration={300}
         >
-          {computedData.map((el) => (
-            <Draggable
-              key={el.guid}
-              index={index}
-              className={styles.cardWrapper}
-            >
-              <div
-                className={styles.card}
+          {computedData?.length > 0 ? (
+            computedData.map((el) => (
+              <Draggable
                 key={el.guid}
-                onClick={() => navigateToEditPage(el)}
+                index={index}
+                className={styles.cardWrapper}
               >
-                {viewFields.map((field) => (
-                  <BoardPhotoGenerator key={field.id} field={field} el={el} />
-                ))}
-                {viewFields.map((field) => (
-                  <BoardCardRowGenerator
-                    key={field.id}
-                    isStatus={field?.type === "STATUS"}
-                    field={field}
-                    el={el}
-                    fieldsMap={fieldsMap}
-                    slug={selectedGroupField?.slug}
-                  />
-                ))}
-              </div>
-            </Draggable>
-          ))}
+                <div
+                  className={styles.card}
+                  key={el.guid}
+                  onClick={() => navigateToEditPage(el)}
+                >
+                  {viewFields.map((field) => (
+                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                  ))}
+                  {viewFields.map((field) => (
+                    <BoardCardRowGenerator
+                      key={field.id}
+                      isStatus={field?.type === "STATUS"}
+                      field={field}
+                      el={el}
+                      fieldsMap={fieldsMap}
+                      slug={selectedGroupField?.slug}
+                    />
+                  ))}
+                </div>
+              </Draggable>
+            ))
+          ) : (
+            <Draggable
+              key="placeholder"
+              className={styles.draggablePlaceholder}
+            />
+          )}
         </Container>
 
         <div className={styles.columnFooterBlock}>

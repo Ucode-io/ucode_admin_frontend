@@ -1,7 +1,7 @@
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Badge, Box, Button} from "@mui/material";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
@@ -45,6 +45,7 @@ const BoardView = ({
   const visibleForm = useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
@@ -59,6 +60,8 @@ const BoardView = ({
   const [tab, setTab] = useState();
   const { navigateToForm } = useTabRouter();
   const { filters } = useFilters(tableSlug, view.id);
+
+  const boardRef = useRef(null);
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
@@ -279,7 +282,15 @@ const BoardView = ({
             </div>
           )}
 
-          <div className={styles.board}>
+          <div
+            className={styles.board}
+            style={{
+              height: isFilterOpen
+                ? "calc(100vh - 121px)"
+                : "calc(100vh - 83px)",
+            }}
+            ref={boardRef}
+          >
             <Container
               lockAxis="x"
               onDrop={onDrop}
@@ -307,6 +318,8 @@ const BoardView = ({
                     navigateToCreatePage={navigateToCreatePage}
                     layoutType={layoutType}
                     setLayoutType={setLayoutType}
+                    refetch={refetch}
+                    boardRef={boardRef}
                   />
                 </Draggable>
               ))}

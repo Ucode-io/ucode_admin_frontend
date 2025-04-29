@@ -29,6 +29,7 @@ const BoardColumn = ({
   layoutType,
   setLayoutType,
   refetch: refetchListQueries,
+  boardRef,
 }) => {
   const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
@@ -228,10 +229,31 @@ const BoardColumn = ({
     queryClient.refetchQueries(["GET_TABLE_INFO"]);
   };
 
+  const fixedElement = useRef(null);
+
+  useEffect(() => {
+    const board = boardRef.current;
+    const el = fixedElement.current;
+    if (!board || !el) return;
+
+    const onScroll = () => {
+      el.style.top = `${board.scrollTop}px`;
+    };
+
+    board.addEventListener("scroll", onScroll);
+
+    return () => {
+      board.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <>
       <div className={styles.column}>
-        <div className={`${styles.columnHeaderBlock} column-header`}>
+        <div
+          ref={fixedElement}
+          className={`${styles.columnHeaderBlock} column-header`}
+        >
           <div className={styles.leftSide}>
             <div className={styles.title}>
               <span
@@ -284,7 +306,7 @@ const BoardColumn = ({
             animationDuration: 150,
           }}
           style={{
-            padding: "0 8px",
+            padding: "50px 8px 0 8px",
           }}
           animationDuration={300}
         >

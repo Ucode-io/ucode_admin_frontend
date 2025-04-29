@@ -30,17 +30,17 @@
     gap: 24px;
     width: 100%;
     overflow: auto;
-    height: calc(100vh - 121px);
     padding-bottom: 1px;
   }
 }
 
 .columnHeaderBlock {
+  width: 278px;
+  height: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
+  position: absolute;
   z-index: 10;
   background-color: #fff;
   padding: 18px 8px 6px 8px;

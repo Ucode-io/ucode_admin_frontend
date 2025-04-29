@@ -33,6 +33,7 @@ export default function TimeLineDataRecursiveRow({
   calendarRef,
   setOpenDrawerModal,
   setSelectedRow,
+  deepLength,
 }) {
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -70,8 +71,15 @@ export default function TimeLineDataRecursiveRow({
   }, [item, openedRows, lastLabels]);
 
   const isTaskWithoutDate =
-    !item?.data && !item?.[calendar_from_slug] && !item?.[calendar_to_slug];
+    (deepLength === 1 ? !item?.data?.[0]?.data : !item?.data) &&
+    (deepLength === 1
+      ? !item?.data?.[0]?.[calendar_from_slug]
+      : !item?.[calendar_from_slug]) &&
+    (deepLength === 1
+      ? !item?.data?.[0]?.[calendar_to_slug]
+      : !item?.[calendar_to_slug]);
 
+  
   const handleMouseMove = (e) => {
     const scrollContainer = calendarRef.current;
     if (!scrollContainer) return;
@@ -107,6 +115,8 @@ export default function TimeLineDataRecursiveRow({
 
     setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 5)]);
   };
+
+  const isSingleGroup = deepLength === 1;
 
   return (
     <>
@@ -145,15 +155,15 @@ export default function TimeLineDataRecursiveRow({
             {item?.[visible_field?.split("/")?.[0]]}
           </span>
         )}
-        {!item?.data && (
+        {(!item?.data || isSingleGroup) && (
           <TimeLineDayDataBlockItem
             menuItem={menuItem}
-            key={item?.guid}
+            key={isSingleGroup ? (item?.data?.[0] || item)?.guid : item?.guid}
             dateFilters={dateFilters}
             selectedType={selectedType}
             computedColumnsFor={computedColumnsFor}
             groupbyFields={groupbyFields}
-            data={item}
+            data={isSingleGroup ? item?.data?.[0] || item : item}
             levelIndex={index}
             groupByList={groupByList}
             setFocusedDays={setFocusedDays}

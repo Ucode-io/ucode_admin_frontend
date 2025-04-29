@@ -1,8 +1,8 @@
-import { Checkbox } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {Checkbox} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 import CreateButton from "../../../components/Buttons/CreateButton";
 import DataTable from "../../../components/DataTable";
 import LargeModalCard from "../../../components/LargeModalCard";
@@ -10,14 +10,14 @@ import SearchInput from "../../../components/SearchInput";
 import useDebounce from "../../../hooks/useDebounce";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { generateID } from "../../../utils/generateID";
-import { objectToArray } from "../../../utils/objectToArray";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import { useSelector } from "react-redux";
+import {generateID} from "../../../utils/generateID";
+import {objectToArray} from "../../../utils/objectToArray";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import {useSelector} from "react-redux";
 
-const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
-  const { tableSlug, id } = useParams();
-  const { navigateToForm } = useTabRouter();
+const ManyToManyRelationCreateModal = ({relation, closeModal}) => {
+  const {tableSlug, id} = useParams();
+  const {navigateToForm} = useTabRouter();
   const queryClient = useQueryClient();
   const [limit, setLimit] = useState(10);
 
@@ -27,7 +27,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const [checkedElements, setCheckedElements] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState({});
-  const [filteredData, setFilteredData] = useState([])
+  const [filteredData, setFilteredData] = useState([]);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
@@ -38,19 +38,17 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     return getObject?.pageLimit ?? limit;
   }, [paginationInfo]);
 
-
-
   const getSearchViewFields = useMemo(() => {
     return relation?.view_fields?.map((item) => item?.slug);
   }, [relation]);
-  
+
   const filteredDataIds = useMemo(() => {
-    return filteredData.filter((item) => !item?.render).map((el) => el?.slug)
-  }, [filteredData])
-  
+    return filteredData.filter((item) => !item?.render).map((el) => el?.slug);
+  }, [filteredData]);
+
   const {
     isLoading: loader,
-    data: { tableData, pageCount, fields } = {
+    data: {tableData, pageCount, fields} = {
       tableData: [],
       pageCount: 1,
       fields: [],
@@ -78,7 +76,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
       });
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         const pageCount = Math.ceil(data?.count / paginiation);
         return {
           fields: data?.fields ?? [],
@@ -104,10 +102,12 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
 
     return [...staticFields, ...fields];
   }, [fields, checkedElements]);
-  
+
   const filteredColumns = useMemo(() => {
-    return computedFields.filter(item => relation?.columns?.includes(item?.id) || item?.render)
-  }, [computedFields, relation?.columns])
+    return computedFields.filter(
+      (item) => relation?.columns?.includes(item?.id) || item?.render
+    );
+  }, [computedFields, relation?.columns]);
 
   const onCheck = (e, id) => {
     if (e.target.checked) {
@@ -144,20 +144,19 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     }
   };
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
-  
+
   const getFilteredData = () => {
-    setFilteredData(filteredColumns ?? [])
-  }
+    setFilteredData(filteredColumns ?? []);
+  };
 
   useEffect(() => {
     if (isNaN(parseInt(relation?.default_limit))) setLimit(10);
     else setLimit(parseInt(relation?.default_limit));
   }, [relation?.default_limit]);
-  
+
   useEffect(() => {
-    getFilteredData()
-  }, [filteredColumns])
-  
+    getFilteredData();
+  }, [filteredColumns]);
 
   return (
     <LargeModalCard
@@ -166,11 +165,10 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
       btnLoader={btnLoader}
       oneColumn
       onSaveButtonClick={onSubmit}
-      onClose={closeModal}
-    >
+      onClose={closeModal}>
       <div className="flex align-center gap-2 mb-2">
         <SearchInput
-          style={{ flex: 1 }}
+          style={{flex: 1}}
           autoFocus
           onChange={(e) => inputChangeHandler(e)}
         />

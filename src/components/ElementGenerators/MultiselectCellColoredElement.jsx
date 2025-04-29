@@ -8,6 +8,10 @@ const MultiselectCellColoredElement = ({
   style,
   resize,
   className,
+  statusTypeOptions,
+  el,
+  fieldsMap,
+  slug,
   ...props
 }) => {
   const tags = useMemo(() => {
@@ -29,6 +33,10 @@ const MultiselectCellColoredElement = ({
   const hasColor = field?.attributes?.has_color;
   const hasIcon = field?.attributes?.has_icon;
 
+  const color = statusTypeOptions?.find(
+    (option) => option?.label === el?.[slug]
+  )?.color;
+
   if (!value?.length) return "";
   return (
     <div
@@ -43,8 +51,12 @@ const MultiselectCellColoredElement = ({
       {tags?.map((tag) => (
         <div
           style={{
-            color: hasColor ? tag.color : "#000",
-            backgroundColor: hasColor ? tag.color + 33 : "#c0c0c039",
+            color: color || hasColor ? tag.color : "#000",
+            backgroundColor: color
+              ? color + 33
+              : hasColor
+                ? tag.color + 33
+                : "#c0c0c039",
             padding: resize ? "0px 5px" : "5px 12px",
             width: "fit-content",
             borderRadius: 6,

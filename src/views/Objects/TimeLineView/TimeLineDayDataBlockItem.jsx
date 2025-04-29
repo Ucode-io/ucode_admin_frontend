@@ -1,23 +1,21 @@
 import {addDays, format} from "date-fns";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import Moveable from "react-moveable";
-import { useDispatch, useSelector } from "react-redux";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
 import constructorObjectService from "@/services/constructorObjectService";
-import { showAlert } from "@/store/alert/alert.thunk";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import useFilters from "@/hooks/useFilters";
-import { LayoutPopup } from "../../table-redesign/LayoutPopup";
-import { useTableByIdQuery } from "../../../services/constructorTableService";
-import { useForm } from "react-hook-form";
-import { generateGUID } from "../../../utils/generateID";
-import { useGetLang } from "../../../hooks/useGetLang";
-import DrawerDetailPage from "../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
-import layoutService from "../../../services/layoutService";
+import clsx from "clsx";
+
+const getTranslateXFromMatrix = (element) => {
+  const transform = window.getComputedStyle(element).transform;
+  if (transform === "none") return 0;
+
+  const match = transform.match(/matrix.*\(([^,]+),[^,]+,[^,]+,[^,]+,([^,]+),/);
+  return match ? parseFloat(match[2]) : 0;
+};
 
 export default function TimeLineDayDataBlockItem({
   data,
@@ -46,7 +44,11 @@ export default function TimeLineDayDataBlockItem({
   const { tableSlug, appId } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const [target, setTarget] = useState();
+  const [isFocus, setIsFocus] = useState(false);
   const queryClient = useQueryClient();
+  const innerStartDate = useRef(null);
+
+  const currentWidth = selectedType === "month" ? 20 : 60;
 
   const handleOpen = () => {
     setOpenDrawerModal(true);
@@ -85,6 +87,14 @@ export default function TimeLineDayDataBlockItem({
       : null;
   }, [datesList, calendar_from_slug, data]);
 
+  const datesListObj = useMemo(
+    () =>
+      Object.fromEntries(
+        datesList.map((key, index) => [format(key, "dd.MM.yyyy"), index])
+      ),
+    [datesList]
+  );
+
   const differenceInDays = useMemo(() => {
     const days = Math.ceil(
       (new Date(data?.[calendar_to_slug]) -
@@ -95,8 +105,9 @@ export default function TimeLineDayDataBlockItem({
   }, [data, calendar_from_slug, calendar_to_slug]);
 
   useEffect(() => {
-    if (!ref.current) return null;
-    setTarget(ref.current);
+    if (!target && ref.current) {
+      setTarget(ref.current);
+    }
   }, [
     ref,
     view,
@@ -109,7 +120,53 @@ export default function TimeLineDayDataBlockItem({
     levelIndex,
     datesList,
     zoomPosition,
+    target,
   ]);
+
+  const targetRef = useRef(null);
+  console.log("ITEM");
+
+  const onDragEndToUpdate1 = (position, width) => {
+    if (!position) return null;
+
+    let newDatePosition = [
+      datesList[innerStartDate.current || startDate],
+      addDays(
+        datesList[innerStartDate.current || startDate],
+        width / currentWidth
+      ),
+    ];
+
+    const computedData = {
+      ...data,
+      [calendar_from_slug]: newDatePosition[0],
+      [calendar_to_slug]: newDatePosition[1],
+    };
+
+    constructorObjectService
+      .update(tableSlug, {
+        data: computedData,
+      })
+      .then((res) => {
+        // dispatch(showAlert("Успешно обновлено", "success"));
+        // queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+        queryClient.setQueryData(
+          [
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            { tableSlug, filters, dateFilters, view },
+          ],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              data: oldData.data.map((item) =>
+                item.guid === computedData.guid ? computedData : item
+              ),
+            };
+          }
+        );
+      });
+  };
 
   const onDragEndToUpdate = (position, width) => {
     if (!position) return null;
@@ -204,42 +261,62 @@ export default function TimeLineDayDataBlockItem({
     // });
   };
 
+  const onResizeEndToUpdate1 = (position, width) => {
+    const x = getTranslateXFromMatrix(targetRef.current);
+    if (!position) return null;
+    let newDatePosition = [
+      datesList[x / (zoomPosition * (selectedType === "month" ? 20 : 30))],
+      addDays(
+        datesList[x / (zoomPosition * (selectedType === "month" ? 20 : 30))],
+        width / (zoomPosition * (selectedType === "month" ? 20 : 30))
+      ),
+    ];
+    const computedData = {
+      ...data,
+      [calendar_from_slug]: newDatePosition[0],
+      [calendar_to_slug]: newDatePosition[1],
+    };
+
+    constructorObjectService.update(tableSlug, {
+      data: computedData,
+    });
+    // .then((res) => {
+    //   dispatch(showAlert("Успешно обновлено", "success"));
+    // });
+  };
+
   const onDrag = ({ target, width, beforeTranslate }) => {
     if (beforeTranslate[1] < 0) return null;
-    const [x, y] = beforeTranslate;
+    const [x] = beforeTranslate;
     target.style.transform = `translate(${x}px, 0)`;
+
+    const roundedAppendDays = Math.round(
+      beforeTranslate[0] / (zoomPosition * (selectedType === "month" ? 20 : 30))
+    );
+
+    innerStartDate.current = startDate + roundedAppendDays;
+
     setFocusedDays([
-      datesList[
-        startDate +
-          Math.round(
-            beforeTranslate[0] /
-              (zoomPosition * (selectedType === "month" ? 20 : 30))
-          )
-      ],
+      datesList[startDate + roundedAppendDays],
       addDays(
-        datesList[
-          startDate +
-            Math.round(
-              beforeTranslate[0] /
-                (zoomPosition * (selectedType === "month" ? 20 : 30))
-            )
-        ],
+        datesList[startDate + roundedAppendDays],
         width / (zoomPosition * 30) - 1
       ),
     ]);
   };
 
   const onDragEnd = ({ lastEvent }) => {
+    console.log({ lastEvent });
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
-      onDragEndToUpdate(lastEvent, lastEvent.width);
+      onDragEndToUpdate1(lastEvent, lastEvent.width);
       setFocusedDays([]);
     }
   };
 
   // ----------RESIZE ACTIONS----------------------
 
-  const onResize = ({ target, width, drag }) => {
+  const onResize = ({ target, width, drag, direction }) => {
     const beforeTranslate = drag.beforeTranslate;
 
     const minWidth = selectedType === "month" ? 20 : 60;
@@ -247,24 +324,21 @@ export default function TimeLineDayDataBlockItem({
     if (beforeTranslate[1] < 0 || width < minWidth) return null;
 
     target.style.width = `${width}px`;
-    target.style.transform = `translateX(${beforeTranslate[0]}px)`;
+
+    if (direction[0] === -1) {
+      target.style.transform = `translateX(${beforeTranslate[0]}px)`;
+    }
+
+    const roundedAppendDays = Math.round(
+      beforeTranslate[0] / (zoomPosition * (selectedType === "month" ? 20 : 30))
+    );
+
+    innerStartDate.current = startDate + roundedAppendDays;
 
     setFocusedDays([
-      datesList[
-        startDate +
-          Math.round(
-            beforeTranslate[0] /
-              (zoomPosition * (selectedType === "month" ? 20 : 30))
-          )
-      ],
+      datesList[innerStartDate.current || startDate + roundedAppendDays],
       addDays(
-        datesList[
-          startDate +
-            Math.round(
-              beforeTranslate[0] /
-                (zoomPosition * (selectedType === "month" ? 20 : 30))
-            )
-        ],
+        datesList[innerStartDate.current || startDate + roundedAppendDays],
         width / (zoomPosition * 30) - 1
       ),
     ]);
@@ -272,8 +346,8 @@ export default function TimeLineDayDataBlockItem({
 
   const onResizeEnd = ({ lastEvent }) => {
     if (lastEvent) {
-      frame.translate = lastEvent.drag.beforeTranslate;
-      onResizeEndToUpdate(lastEvent, lastEvent.width);
+      // frame.translate = lastEvent.drag.beforeTranslate;
+      onResizeEndToUpdate1(lastEvent, lastEvent.width);
       setFocusedDays([]);
     }
   };
@@ -281,19 +355,20 @@ export default function TimeLineDayDataBlockItem({
   const handleMouseEnter = () => {
     if (selectedType === "month") {
       setFocusedDays([
-        datesList[startDate],
+        datesList[innerStartDate.current || startDate],
         datesList[startDate + differenceInDays],
       ]);
     } else {
       setFocusedDays([
-        datesList[startDate],
+        datesList[innerStartDate.current || startDate],
         addDays(
           datesList[
-            startDate +
-              Math.round(
-                frame.translate[0] /
-                  (zoomPosition * (selectedType === "month" ? 20 : 30))
-              )
+            innerStartDate.current ||
+              startDate +
+                Math.round(
+                  frame.translate[0] /
+                    (zoomPosition * (selectedType === "month" ? 20 : 30))
+                )
           ],
           ref.current.offsetWidth / (zoomPosition * 30) - 1
         ),
@@ -301,58 +376,172 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
-  const projectId = useSelector((state) => state.company?.projectId);
+  const handleMouseEnter1 = () => {
+    console.log(data[calendar_from_slug], data[calendar_to_slug]);
+    if (selectedType === "month") {
+      setFocusedDays([
+        datesList[innerStartDate.current || startDate],
+        addDays(
+          datesList[innerStartDate.current || startDate],
+          targetRef.current.offsetWidth / currentWidth - 1
+        ),
+      ]);
+    } else {
+      setFocusedDays([
+        datesList[innerStartDate.current || startDate],
+        addDays(
+          datesList[innerStartDate.current || startDate],
+          targetRef.current.offsetWidth / currentWidth - 1
+        ),
+      ]);
+    }
+  };
 
-  const [authInfo, setAuthInfo] = useState(null);
-  const tableLan = useGetLang("Table");
+  const transformRef = useRef(
+    startDate * (zoomPosition * (selectedType === "month" ? 20 : 30))
+  );
 
-  // const {
-  //   data: { layout } = {
-  //     layout: [],
-  //   },
-  // } = useQuery({
-  //   queryKey: [
-  //     "GET_LAYOUT",
-  //     {
-  //       tableSlug,
-  //     },
-  //   ],
-  //   queryFn: () => {
-  //     return layoutService.getLayout(tableSlug, appId);
-  //   },
-  //   select: (data) => {
-  //     return {
-  //       layout: data ?? {},
-  //     };
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error", error);
-  //   },
-  // });
+  const initialRef = useRef({
+    width: 0,
+    transformX: 0,
+  });
 
-  // const {
-  //   control,
-  //   reset,
-  //   setValue: setFormValue,
-  //   getValues,
-  //   watch,
-  // } = useForm({
-  //   defaultValues: {
-  //     multi: [],
-  //   },
-  // });
+  const onDrag1 = ({ target, width, beforeTranslate, transform }) => {
+    if (beforeTranslate[1] < 0) return null;
+    const [x] = beforeTranslate;
+    target.style.transform = `${transform?.split(" ")[0]} translateY(0) translate(${x}px, 0)`;
 
-  // const [selectedViewType, setSelectedViewType] = useState(
-  //   localStorage?.getItem("detailPage") === "FullPage"
-  //     ? "SidePeek"
-  //     : localStorage?.getItem("detailPage")
-  // );
+    const roundedAppendDays = Math.round(
+      beforeTranslate[0] / (zoomPosition * (selectedType === "month" ? 20 : 30))
+    );
 
-  // const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+    const style = window.getComputedStyle(target);
+
+    const matrix = new DOMMatrixReadOnly(style.transform);
+
+    initialRef.current = {
+      width: target.offsetWidth,
+      transformX: matrix.m41 || 0,
+    };
+
+    innerStartDate.current = Math.floor(
+      initialRef.current.transformX / currentWidth
+    );
+
+    console.log(datesList[innerStartDate.current || startDate]);
+
+    setFocusedDays([
+      datesList[innerStartDate.current || startDate],
+      addDays(
+        datesList[innerStartDate.current || startDate],
+        width / currentWidth - 1
+      ),
+    ]);
+  };
+
+  const onResizeStart = ({ target }) => {
+    const style = window.getComputedStyle(target);
+    const matrix = new DOMMatrixReadOnly(style.transform);
+
+    initialRef.current = {
+      width: target.offsetWidth,
+      transformX: matrix.m41 || 0,
+    };
+  };
+
+  const onResize1 = ({ target, width, direction }) => {
+    const { width: initialWidth, transformX } = initialRef.current;
+
+    if (direction[0] === -1) {
+      const dx = initialWidth - width;
+      target.style.transform = `translateX(${transformX + dx}px)`;
+      innerStartDate.current = (transformX + dx) / 60;
+    }
+
+    target.style.width = `${width}px`;
+  };
+
+  // if (data?.title === "Database migration script fails on deploy") {
+  //   console.log({ data, differenceInDays });
+  // }
+
+  const showItem = differenceInDays > 0 && startDate !== -1 && level !== -1;
 
   return (
     <>
       <div
+        className={styles.dataBlock}
+        style={{
+          visibility: showItem ? "visible" : "hidden",
+          height: "100%",
+          transform: `translateX(${startDate * (zoomPosition * (selectedType === "month" ? 20 : 30))}px)`,
+          width: `${zoomPosition * (selectedType === "month" ? 20 : 30) * differenceInDays}px`,
+        }}
+        onClick={handleOpen}
+        ref={targetRef}
+        key={data?.id_order}
+      >
+        <div
+          className={clsx(styles.dataBlockInner, { [styles.focus]: isFocus })}
+          onClick={handleOpen}
+          onMouseEnter={handleMouseEnter1}
+        >
+          {visible_field?.split("/")?.length > 1 ? (
+            visible_field
+              ?.split("/")
+              ?.map((fieldItem) => (
+                <CellElementGenerator
+                  isTimelineVariant
+                  row={data}
+                  field={computedColumnsFor?.find(
+                    (field) => field?.slug === fieldItem
+                  )}
+                  multiSelectClassName={styles.multiSelectBadge}
+                />
+              ))
+          ) : (
+            <CellElementGenerator
+              isTimelineVariant
+              row={data}
+              field={computedColumnsFor?.find(
+                (field) => field?.slug === visible_field?.split("/")?.[0]
+              )}
+            />
+          )}
+        </div>
+
+        <Moveable
+          className="moveable3"
+          target={targetRef}
+          draggable
+          resizable
+          edgeDraggable={false}
+          startDragRotate={0}
+          throttleDragRotate={0}
+          throttleDrag={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          throttleResize={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          keepRatio={false}
+          origin={false}
+          renderDirections={["w", "e"]}
+          onDragStart={() => setIsFocus(true)}
+          onDrag={onDrag1}
+          onDragEnd={(e) => {
+            setIsFocus(false);
+            onDragEnd(e);
+          }}
+          onResizeStart={(e) => {
+            setIsFocus(true);
+            onResizeStart(e);
+          }}
+          onResize={onResize1}
+          onResizeEnd={(e) => {
+            setIsFocus(false);
+            onResizeEnd(e);
+          }}
+        />
+      </div>
+
+      {/* <div
         className={styles.dataBlock}
         style={{
           top:
@@ -374,6 +563,7 @@ export default function TimeLineDayDataBlockItem({
               ?.split("/")
               ?.map((fieldItem) => (
                 <CellElementGenerator
+                  isTimelineVariant
                   row={data}
                   field={computedColumnsFor?.find(
                     (field) => field?.slug === fieldItem
@@ -383,6 +573,7 @@ export default function TimeLineDayDataBlockItem({
               ))
           ) : (
             <CellElementGenerator
+              isTimelineVariant
               row={data}
               field={computedColumnsFor?.find(
                 (field) => field?.slug === visible_field?.split("/")?.[0]
@@ -391,28 +582,6 @@ export default function TimeLineDayDataBlockItem({
           )}
         </div>
       </div>
-      {/* <ModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        selectedRow={selectedRow}
-      /> */}
-
-      {/* <DrawerDetailPage
-        projectInfo={projectInfo}
-        open={open}
-        setFormValue={setFormValue}
-        setOpen={setOpen}
-        selectedRow={selectedRow}
-        menuItem={menuItem}
-        layout={layout}
-        fieldsMap={fieldsMap}
-        refetch={refetch}
-        setLayoutType={setLayoutType}
-        selectedViewType={selectedViewType}
-        setSelectedViewType={setSelectedViewType}
-        navigateToEditPage={navigateToDetailPage}
-      /> */}
-
       {startDate === -1 || level === -1 ? (
         ""
       ) : (
@@ -433,7 +602,7 @@ export default function TimeLineDayDataBlockItem({
           onResize={onResize}
           onResizeEnd={onResizeEnd}
         />
-      )}
+      )} */}
     </>
   );
 }

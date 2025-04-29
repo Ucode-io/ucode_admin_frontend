@@ -67,14 +67,14 @@ const HFMultipleAutocomplete = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
+      // defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,
       }}
       render={({
-        field: {onChange: onFormChange, value},
-        fieldState: {error},
+        field: { onChange: onFormChange, value },
+        fieldState: { error },
       }) => {
         return (
           <AutoCompleteElement
@@ -103,7 +103,8 @@ const HFMultipleAutocomplete = ({
             newUi={newUi}
           />
         );
-      }}></Controller>
+      }}
+    ></Controller>
   );
 };
 

@@ -1,10 +1,8 @@
 import clsx from "clsx";
 import cls from "./styles.module.scss";
-import { SidebarButton } from "../SidebarButton";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -33,7 +31,7 @@ export const Sidebar = ({
   };
 
   const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
-
+console.log({ computedData });
   return (
     <div className={cls.group_by}>
       <div className={clsx(cls.fakeDiv)}>

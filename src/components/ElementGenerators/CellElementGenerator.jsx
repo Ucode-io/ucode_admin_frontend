@@ -16,8 +16,14 @@ import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
+import {isValid, parse} from "date-fns";
 
-const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
+const CellElementGenerator = ({
+  field = {},
+  row,
+  multiSelectClassName,
+  isTimelineVariant,
+}) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -33,20 +39,26 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
   const timeValue = useMemo(() => {
     if (typeof value === "object") return JSON.stringify(value);
 
-    let dateObj = new Date(value);
+    const formatString = "dd.MM.yyyy HH:mm";
 
-    let formattedDate = dateObj.toLocaleString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-      timeZone: "UTC",
-    });
+    const parsedDate = parse(value, formatString, new Date());
 
-    return formattedDate;
+    if (isValid(parsedDate)) {
+      let formattedDate = parsedDate.toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      });
+
+      return formattedDate;
+    } else {
+      return value;
+    }
   }, [field, value]);
 
   const tablesList = useMemo(() => {
@@ -112,6 +124,13 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
         value={value}
       />
     ),
+    STATUS: () => (
+      <MultiselectCellColoredElement
+        className={multiSelectClassName}
+        field={field}
+        value={value}
+      />
+    ),
     MULTI_LINE: () => (
       <div className=" text_overflow_line">
         <span
@@ -120,7 +139,9 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
           }}></span>
       </div>
     ),
-    DATE_TIME_WITHOUT_TIME_ZONE: () => timeValue,
+    DATE_TIME_WITHOUT_TIME_ZONE: () => {
+      return timeValue;
+    },
     PASSWORD: () => (
       <div className="text-overflow">
         <span
@@ -131,21 +152,21 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
     ),
     CHECKBOX: () =>
       parseBoolean(value) ? (
-        <TableTag color="success">
+        <TableTag className={multiSelectClassName} color="success">
           {field.attributes?.text_true ?? "Да"}
         </TableTag>
       ) : (
-        <TableTag color="error">
+        <TableTag className={multiSelectClassName} color="error">
           {field.attributes?.text_false ?? "Нет"}
         </TableTag>
       ),
     SWITCH: () =>
       parseBoolean(value) ? (
-        <TableTag color="success">
+        <TableTag className={multiSelectClassName} color="success">
           {field.attributes?.text_true ?? "Да"}
         </TableTag>
       ) : (
-        <TableTag color="error">
+        <TableTag className={multiSelectClassName} color="error">
           {field.attributes?.text_false ?? "Нет"}
         </TableTag>
       ),
@@ -158,18 +179,22 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
           ? value
           : "",
     ICO: () => <IconGenerator icon={value} />,
-    PHOTO: () => (
-      <span
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-        <LogoDisplay url={value} />
-      </span>
-    ),
-    MAP: () =>
+    PHOTO: () =>
       value ? (
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <LogoDisplay url={value} />
+        </span>
+      ) : (
+        ""
+      ),
+    MAP: () => {
+      if (typeof value === "function") return "";
+      return value ? (
         <a
           target="_blank"
           href={`${generateLink(
@@ -182,7 +207,8 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
         </a>
       ) : (
         ""
-      ),
+      );
+    },
     FILE: () =>
       value ? (
         <div
@@ -235,12 +261,26 @@ const CellElementGenerator = ({field = {}, row, multiSelectClassName}) => {
       ) : (
         ""
       ),
+    MONEY: () => {
+      if (!value[0])
+        return (
+          <span style={{whiteSpace: "nowrap"}}>
+            [{0}, {value[1]}]
+          </span>
+        );
+    },
   };
 
+  if (!value) return "";
+
   return renderInputValues[field?.type] ? (
-    renderInputValues[field?.type]()
+    <div style={{whiteSpace: isTimelineVariant ? "nowrap" : "wrap"}}>
+      {renderInputValues[field?.type]()}
+    </div>
   ) : (
-    <div>{typeof value === "object" ? JSON.stringify(value) : value}</div>
+    <div style={{whiteSpace: isTimelineVariant ? "nowrap" : "wrap"}}>
+      {typeof value === "object" ? JSON.stringify(value) : value}
+    </div>
   );
 };
 

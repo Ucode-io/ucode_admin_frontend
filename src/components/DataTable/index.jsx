@@ -53,7 +53,7 @@ const DataTable = ({
   checkboxValue,
   onCheckboxChange,
   filteredColumns,
-  setSelectedField,
+  setSelectedField = () => {},
   defaultLimit,
 }) => {
   const location = useLocation();

@@ -61,6 +61,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import { mergeStringAndState } from "../../../utils/jsonPath";
 import useTabRouter from "../../../hooks/useTabRouter";
+import { gte } from "lodash-es";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -177,6 +178,7 @@ export default function TimeLineView({
     }
   };
 
+  console.log({ filters });
   // FOR DATA
   const {
     data: { data } = { data: [] },
@@ -188,18 +190,26 @@ export default function TimeLineView({
       { tableSlug, filters, dateFilters, view, months, selectedType },
     ],
     () => {
+      let data = {
+        ...filters,
+        view_type: "TIMELINE",
+        gte: firstDate,
+        lte: lastDate,
+        // gte: dateFilters[0],
+        // lte: dateFilters[1],
+        with_relations: true,
+        builder_service_view_id:
+          view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
+      };
+      if (Object.keys(filters)?.some((key) => Boolean(filters[key]))) {
+        delete data.gte;
+        delete data.lte;
+        delete data.builder_service_view_id;
+        // data.view_fields = Object.keys(filters);
+        data.row_view_id = view?.id;
+      }
       return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...filters,
-          view_type: "TIMELINE",
-          gte: firstDate,
-          lte: lastDate,
-          // gte: dateFilters[0],
-          // lte: dateFilters[1],
-          with_relations: true,
-          builder_service_view_id:
-            view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
-        },
+        data,
       });
     },
     {

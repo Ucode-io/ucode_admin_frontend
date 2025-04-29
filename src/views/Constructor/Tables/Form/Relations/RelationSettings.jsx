@@ -643,6 +643,7 @@ const RelationSettings = ({
 
                     <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue} /> */}
                     <RelationDefault
+                      isModal={true}
                       control={control}
                       watch={watch}
                       columnsList={values.columnsList}

@@ -276,7 +276,6 @@ const AutoCompleteElement = ({
       },
     }
   );
-
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
@@ -315,7 +314,6 @@ const AutoCompleteElement = ({
       onSuccess: (data) => {
         if (page > 1) {
           setAllOptions((prevOptions) => {
-            // Removing duplicated options
             const mergedData = [...prevOptions, ...data.options];
             const uniqueData = Array.from(
               new Map(mergedData.map((item) => [item.guid, item])).values()
@@ -467,7 +465,6 @@ const AutoCompleteElement = ({
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
-
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

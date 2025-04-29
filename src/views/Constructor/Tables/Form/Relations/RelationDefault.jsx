@@ -4,7 +4,7 @@ import FormElementGenerator from "../../../../../components/ElementGenerators/Fo
 import styles from "./style.module.scss";
 import {Typography} from "@mui/material";
 
-const RelationDefault = ({control, watch, columnsList}) => {
+const RelationDefault = ({control, watch, columnsList, isModal = false}) => {
   const {tableSlug} = useParams();
   const relation = watch();
   const relatedTableSlug =
@@ -37,7 +37,7 @@ const RelationDefault = ({control, watch, columnsList}) => {
       <div>
         <Typography variant="h6">Default value</Typography>
         <FormElementGenerator
-          isModal={true}
+          isModal={isModal}
           disabled={false}
           field={computedRelation}
           control={control}

@@ -50,6 +50,7 @@ import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import NewResourceDetail from "./modules/ResourcesDetail/NewResourceDetail";
 import {UserClientTypes} from "./client-types";
 import PersonIcon from "@mui/icons-material/Person";
+import AddConnectionDetail from "../ExternalDatabases/AddConnectionDetail";
 
 const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 

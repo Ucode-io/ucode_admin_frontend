@@ -10,15 +10,13 @@ import {
   CTableRow,
 } from "@/components/CTable";
 import TableCard from "@/components/TableCard";
-import TableRowButton from "@/components/TableRowButton";
-import HeaderSettings from "@/components/HeaderSettings";
 import SearchInput from "@/components/SearchInput";
-import FiltersBlock from "@/components/FiltersBlock";
 import {ContentTitle} from "../../components/ContentTitle";
 import {Box} from "@mui/material";
 import clsx from "clsx";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import ChartDb from "../../../ChartDb";
+import ExternalDatabases from "../../../ExternalDatabases";
 
 export const Models = () => {
   const {tables, loader, setSearchText, navigateToEditForm, deleteTable} =
@@ -30,6 +28,7 @@ export const Models = () => {
         <TabList style={{borderBottom: "none", marginBottom: "10px"}}>
           <Tab style={{padding: "10px"}}>Models</Tab>
           <Tab style={{padding: "10px"}}>ChartDB</Tab>
+          <Tab style={{padding: "10px"}}>External Databases</Tab>
         </TabList>
         <TabPanel>
           <div>
@@ -47,21 +46,8 @@ export const Models = () => {
               </Box>
             </ContentTitle>
 
-            {/* <FiltersBlock>
-          <div className="p-1">
-            
-          </div>
-        </FiltersBlock> */}
             <TableCard type={"withoutPadding"}>
-              <CTable
-                tableStyle={
-                  {
-                    // borderRadius: "0px",
-                    // border: "none",
-                  }
-                }
-                disablePagination
-                removableHeight={120}>
+              <CTable disablePagination removableHeight={120}>
                 <CTableHead>
                   <CTableCell className={cls.tableHeadCell} width={10}>
                     №
@@ -75,7 +61,9 @@ export const Models = () => {
                 <CTableBody columnsCount={4} dataLength={1} loader={loader}>
                   {tables?.tables?.map((element, index) => (
                     <CTableRow key={element.id}>
-                      <CTableCell className={cls.tBodyCell}>
+                      <CTableCell
+                        style={{textAlign: "center"}}
+                        className={cls.tBodyCell}>
                         {index + 1}
                       </CTableCell>
                       <CTableCell className={cls.tBodyCell}>
@@ -105,6 +93,12 @@ export const Models = () => {
         <TabPanel>
           <Box sx={{height: "585px"}}>
             <ChartDb />
+          </Box>
+        </TabPanel>
+
+        <TabPanel>
+          <Box sx={{height: "585px"}}>
+            <ExternalDatabases />
           </Box>
         </TabPanel>
       </Tabs>

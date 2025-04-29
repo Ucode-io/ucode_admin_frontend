@@ -6,9 +6,7 @@ import constructorTableService, {
 } from "@/services/constructorTableService";
 import {useQueryClient} from "react-query";
 
-
 export const useModelsProps = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
 

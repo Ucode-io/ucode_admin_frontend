@@ -145,14 +145,22 @@ const BoardColumn = ({
     setOpenDrawerModal(true);
     setSelectedRow(el);
     setDateInfo({});
+    setDefaultValue({});
   };
   const navigateToCreatePage = (slug) => {
     setOpenDrawerModal(true);
     setSelectedRow(null);
-    setDefaultValue({
-      field: tab.slug,
-      value: [tab.value],
-    });
+    if (isStatusType) {
+      setDefaultValue({
+        field: selectedGroupField?.slug,
+        value: [tab?.label],
+      });
+    } else {
+      setDefaultValue({
+        field: tab.slug,
+        value: [tab.value],
+      });
+    }
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
@@ -221,6 +229,7 @@ const BoardColumn = ({
           style={{
             padding: "0 8px",
           }}
+          animationDuration={300}
         >
           {computedData.map((el) => (
             <Draggable

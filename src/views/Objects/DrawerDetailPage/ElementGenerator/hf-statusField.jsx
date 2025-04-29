@@ -42,15 +42,16 @@ function HFStatusField({
               }}
               fullWidth
               renderValue={(selected) => {
+                const isArray = Array.isArray(selected);
                 const selectedOption =
-                  field?.attributes?.todo?.options?.find(
-                    (el) => el.label === selected
+                  field?.attributes?.todo?.options?.find((el) =>
+                    el.label === isArray ? selected[0] : selected
                   ) ||
-                  field?.attributes?.progress?.options?.find(
-                    (el) => el.label === selected
+                  field?.attributes?.progress?.options?.find((el) =>
+                    el.label === isArray ? selected[0] : selected
                   ) ||
-                  field?.attributes?.complete?.options?.find(
-                    (el) => el.label === selected
+                  field?.attributes?.complete?.options?.find((el) =>
+                    el.label === isArray ? selected[0] : selected
                   );
 
                 return (

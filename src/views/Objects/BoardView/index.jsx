@@ -292,7 +292,7 @@ const BoardView = ({
                 showOnTop: true,
                 className: "drag-cards-drop-preview",
               }}
-              style={{ display: "flex", gap: 24 }}
+              style={{ display: "flex", gap: 8 }}
             >
               {boardTab?.map((tab) => (
                 <Draggable key={tab.value} className={styles.draggable}>

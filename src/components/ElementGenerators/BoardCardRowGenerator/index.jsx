@@ -44,7 +44,7 @@ const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
           <MultiselectCellColoredElement
             value={value}
             field={field}
-            style={{ padding: "2px 5px" }}
+            style={{ padding: "0 6px", fontsize: "12px", lineHeight: "18px" }}
           />
         </div>
       );
@@ -56,7 +56,7 @@ const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
           <MultiselectCellColoredElement
             value={value}
             field={field}
-            style={{ padding: "2px 5px" }}
+            style={{ padding: "0 6px", fontsize: "12px", lineHeight: "18px" }}
             statusTypeOptions={statusTypeOptions}
             el={el}
             fieldsMap={fieldsMap}

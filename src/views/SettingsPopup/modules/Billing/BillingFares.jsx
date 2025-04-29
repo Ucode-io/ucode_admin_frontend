@@ -9,9 +9,8 @@ import {numberWithSpaces} from "@/utils/formatNumbers";
 import {BillingTable} from "../../components/BillingTable";
 import {TopUpBalance} from "../../components/TopUpBalance";
 import {Fares} from "../Fares";
-import {useSearchParams} from "react-router-dom";
 
-export const Billing = () => {
+export const BillingFares = () => {
   const {
     project,
     data,
@@ -25,8 +24,6 @@ export const Billing = () => {
     loading,
     reset,
   } = useBillingProps();
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   return (
     <>
@@ -93,7 +90,7 @@ export const Billing = () => {
                     <Typography
                       sx={{cursor: "pointer"}}
                       onClick={() => {
-                        setSearchParams({tab: "fares"});
+                        setSearchParams({page: "fares"});
                       }}
                       variant="h6"
                       color="success.main">
@@ -155,6 +152,8 @@ export const Billing = () => {
           />
         </Modal>
       </Box>
+
+      <Fares />
     </>
   );
 };

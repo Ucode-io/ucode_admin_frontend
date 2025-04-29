@@ -20,6 +20,7 @@ import {Flex, Text} from "@chakra-ui/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import layoutService from "../../services/layoutService";
+import {useSelector} from "react-redux";
 
 const FullpagePeekMaininfo = ({
   control,
@@ -33,7 +34,6 @@ const FullpagePeekMaininfo = ({
   updateCurrentLayout = () => {},
 }) => {
   const {tableSlug, appId, id} = useParams();
-  const test = useParams();
   const {i18n} = useTranslation();
   const navigate = useNavigate();
   const [isShow, setIsShow] = useState(true);
@@ -46,6 +46,10 @@ const FullpagePeekMaininfo = ({
   const auth = store.getState().auth;
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
 
   const fieldsList = useMemo(() => {
     const fields = [];
@@ -79,6 +83,20 @@ const FullpagePeekMaininfo = ({
 
     setSections(newSections);
     updateCurrentLayout(newSections);
+  };
+
+  const filterFields = (field) => {
+    const slugParts = field?.slug?.split("_");
+    const lastPart = slugParts?.[slugParts.length - 1];
+
+    const isLangSpecific = languages.includes(lastPart);
+
+    if (!isLangSpecific) {
+      return true;
+    }
+    const lang = activeLang ?? i18n?.language;
+
+    return lastPart === lang;
   };
 
   if (loader) return <PageFallback />;
@@ -163,7 +181,9 @@ const FullpagePeekMaininfo = ({
                   onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
                   {section?.fields
                     ?.filter(
-                      (el) => el?.slug !== watch("attributes.layout_heading")
+                      (el) =>
+                        el?.slug !== watch("attributes.layout_heading") &&
+                        filterFields(el)
                     )
                     .map((field, fieldIndex) => (
                       <Draggable

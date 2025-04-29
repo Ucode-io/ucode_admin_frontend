@@ -15,6 +15,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import {Flex, Text} from "@chakra-ui/react";
 import {store} from "../../store";
+import {useSelector} from "react-redux";
 
 function NewModalFormPage({
   control,
@@ -36,6 +37,10 @@ function NewModalFormPage({
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const [sections, setSections] = useState(data?.tabs?.[0]?.sections || []);
+
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
 
   useEffect(() => {
     setSections(data?.tabs?.[0]?.sections || []);
@@ -110,6 +115,20 @@ function NewModalFormPage({
     }
   }, [isMultiLanguage, projectInfo]);
 
+  const filterFields = (field) => {
+    const slugParts = field?.slug?.split("_");
+    const lastPart = slugParts?.[slugParts.length - 1];
+
+    const isLangSpecific = languages.includes(lastPart);
+
+    if (!isLangSpecific) {
+      return true;
+    }
+    const lang = activeLang ?? i18n?.language;
+
+    return lastPart === lang;
+  };
+
   return (
     <>
       <Box id="newModalDetail" mt="10px" pb={"10px"}>
@@ -145,73 +164,78 @@ function NewModalFormPage({
               dragClass="drag-item"
               onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
               {section?.fields?.length &&
-                section?.fields.map((field, fieldIndex) => {
-                  const isHidden =
-                    field?.slug === watch("attributes.layout_heading");
-                  return (
-                    <Draggable
-                      key={fieldIndex}
-                      className={Boolean(defaultAdmin) ? `drag-handles` : ""}>
-                      <Box
-                        className={dragAction ? "rowDragCol" : "rowCol"}
-                        display={isHidden ? "none" : "flex"}
-                        alignItems="center"
-                        height={"34px"}
-                        py="8px">
+                section?.fields
+                  ?.filter((el) => filterFields(el))
+                  .map((field, fieldIndex) => {
+                    const isHidden =
+                      field?.slug === watch("attributes.layout_heading");
+                    return (
+                      <Draggable
+                        key={fieldIndex}
+                        className={Boolean(defaultAdmin) ? `drag-handles` : ""}>
                         <Box
-                          display="flex"
+                          className={dragAction ? "rowDragCol" : "rowCol"}
+                          display={isHidden ? "none" : "flex"}
                           alignItems="center"
-                          justifyContent={"space-between"}
-                          padding="5px"
-                          borderRadius={"4px"}
-                          width="200px"
-                          sx={{
-                            "&:hover": {
-                              backgroundColor: "#F7F7F7",
-                            },
-                          }}>
+                          height={"34px"}
+                          py="8px">
                           <Box
-                            width="18px"
-                            height="16px"
-                            mr="8px"
                             display="flex"
                             alignItems="center"
-                            sx={{color: "#787774"}}>
-                            <span className={"drag"}>
-                              <DragIndicatorIcon
-                                style={{width: "16px", height: "16px"}}
-                              />
-                            </span>
-                            <span style={{color: "#787774"}} className={"icon"}>
-                              {getColumnIcon({
-                                column: {
-                                  type: field?.type ?? field?.relation_type,
-                                  table_slug: field?.table_slug ?? field?.slug,
-                                },
-                              })}
-                            </span>
+                            justifyContent={"space-between"}
+                            padding="5px"
+                            borderRadius={"4px"}
+                            width="200px"
+                            sx={{
+                              "&:hover": {
+                                backgroundColor: "#F7F7F7",
+                              },
+                            }}>
+                            <Box
+                              width="18px"
+                              height="16px"
+                              mr="8px"
+                              display="flex"
+                              alignItems="center"
+                              sx={{color: "#787774"}}>
+                              <span className={"drag"}>
+                                <DragIndicatorIcon
+                                  style={{width: "16px", height: "16px"}}
+                                />
+                              </span>
+                              <span
+                                style={{color: "#787774"}}
+                                className={"icon"}>
+                                {getColumnIcon({
+                                  column: {
+                                    type: field?.type ?? field?.relation_type,
+                                    table_slug:
+                                      field?.table_slug ?? field?.slug,
+                                  },
+                                })}
+                              </span>
+                            </Box>
+                            <Box
+                              fontSize="14px"
+                              color="#787774"
+                              fontWeight="500"
+                              width="100%">
+                              {getFieldLanguageLabel(field)}
+                            </Box>
                           </Box>
-                          <Box
-                            fontSize="14px"
-                            color="#787774"
-                            fontWeight="500"
-                            width="100%">
-                            {getFieldLanguageLabel(field)}
+                          <Box sx={{minWidth: "500px"}}>
+                            <DrawerFieldGenerator
+                              activeLang={activeLang}
+                              drawerDetail={true}
+                              control={control}
+                              field={field}
+                              watch={watch}
+                            />
                           </Box>
                         </Box>
-                        <Box sx={{minWidth: "500px"}}>
-                          <DrawerFieldGenerator
-                            activeLang={activeLang}
-                            drawerDetail={true}
-                            control={control}
-                            field={field}
-                            watch={watch}
-                          />
-                        </Box>
-                      </Box>
-                    </Draggable>
-                  );
-                })}
+                      </Draggable>
+                    );
+                  })}
             </Container>
           ))}
       </Box>

@@ -53,7 +53,6 @@ function AddConnectionDetail() {
             </CTableCell>
             <CTableCell className={cls.tableHeadCell}>Name</CTableCell>
             <CTableCell className={cls.tableHeadCell}>Tracked</CTableCell>
-            <CTableCell className={cls.tableHeadCell} width={60} />
           </CTableHead>
           <CTableBody columnsCount={4} dataLength={1} loader={false}>
             {tables?.map((element, index) => (
@@ -80,15 +79,6 @@ function AddConnectionDetail() {
                       "Track"
                     )}
                   </Button>
-                </CTableCell>
-
-                <CTableCell className={clsx(cls.tBodyCell, cls.tBodyAction)}>
-                  <RectangleIconButton
-                    id="delete_btn"
-                    color="error"
-                    size="small">
-                    <Delete color="error" />
-                  </RectangleIconButton>
                 </CTableCell>
               </CTableRow>
             ))}

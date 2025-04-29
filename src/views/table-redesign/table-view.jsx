@@ -618,7 +618,7 @@ const TableView = ({
           />
         ) : selectedViewType === "CenterPeek" ? (
           <NewModalDetailPage
-            moda={true}
+            modal={true}
             projectInfo={projectInfo}
             open={open}
             setFormValue={setFormValue}

@@ -255,7 +255,7 @@ function NewModalDetailPage({
         setBtnLoader(false);
       });
   };
-  console.log("modalmodal", modal);
+
   const create = (data) => {
     setBtnLoader(true);
 

@@ -1100,7 +1100,8 @@ export const NewUiViewsWithGroups = ({
 
                 {!tabs?.length &&
                 !groupTable?.length &&
-                view.type !== "TIMELINE" ? (
+                view.type !== "TIMELINE" &&
+                view.type !== "BOARD" ? (
                   <>
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>

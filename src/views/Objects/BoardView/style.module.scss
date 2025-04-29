@@ -261,3 +261,9 @@
     justify-content: center;
   }
 }
+
+.draggablePlaceholder {
+  height: 120px;
+  width: 100%;
+  pointer-events: none;
+}

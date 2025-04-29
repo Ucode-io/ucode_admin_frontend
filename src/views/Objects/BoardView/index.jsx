@@ -307,6 +307,7 @@ const BoardView = ({
                     navigateToCreatePage={navigateToCreatePage}
                     layoutType={layoutType}
                     setLayoutType={setLayoutType}
+                    refetch={refetch}
                   />
                 </Draggable>
               ))}

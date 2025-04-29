@@ -668,6 +668,7 @@ function AgGridTableView(props) {
         />
       ) : selectedViewType === "CenterPeek" ? (
         <NewModalDetailPage
+          modal={true}
           projectInfo={projectInfo}
           open={open}
           setOpen={setOpen}

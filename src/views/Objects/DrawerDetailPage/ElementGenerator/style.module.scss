@@ -168,3 +168,22 @@
     transform: scale(1.2);
   }
 }
+
+.inputTable {
+  margin-left: 12px;
+  outline: none;
+  input {
+    height: 35px;
+    border: 0px solid #eee;
+    padding: 3px;
+    outline: none;
+    background: transparent;
+
+    &:focus {
+    }
+
+    &:hover {
+      outline: none;
+    }
+  }
+}

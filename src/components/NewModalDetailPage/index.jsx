@@ -21,6 +21,7 @@ import {sortSections} from "../../utils/sectionsOrderNumber";
 import NewModalFormPage from "./NewModalFormPage";
 import NewModalRelationTable from "./NewModalRelationTable";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {showAlert} from "../../store/alert/alert.thunk";
 
 function NewModalDetailPage({
   open,
@@ -32,6 +33,7 @@ function NewModalDetailPage({
   selectedRow,
   projectInfo,
   dateInfo = {},
+  modal = false,
   selectedViewType,
   fullScreen = false,
   setLayoutType = () => {},
@@ -45,7 +47,7 @@ function NewModalDetailPage({
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
-  const handleClose = () => setOpen(false);
+
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -74,6 +76,11 @@ function NewModalDetailPage({
     const savedWidth = localStorage.getItem("drawerWidth");
     return savedWidth ? parseInt(savedWidth, 10) : 650;
   });
+
+  const handleClose = () => {
+    setOpen(false);
+    setData({});
+  };
 
   const getAllData = async () => {
     setLoader(true);
@@ -248,7 +255,7 @@ function NewModalDetailPage({
         setBtnLoader(false);
       });
   };
-
+  console.log("modalmodal", modal);
   const create = (data) => {
     setBtnLoader(true);
 
@@ -270,13 +277,7 @@ function NewModalDetailPage({
         });
         if (modal) {
           handleClose();
-          queryClient.refetchQueries(
-            "GET_OBJECTS_LIST_WITH_RELATIONS",
-            tableSlug,
-            {
-              table_slug: tableSlug,
-            }
-          );
+
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
           navigate(-1);

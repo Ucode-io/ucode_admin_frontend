@@ -39,6 +39,7 @@ import {Lock} from "@mui/icons-material";
 import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
 import {numberWithSpaces} from "../../../../utils/formatNumbers";
 import MultiLineInput from "./MultiLineInput";
+import HFInternationalPhone from "./hf-internationalPhone";
 
 function DrawerFieldGenerator({
   field,
@@ -332,6 +333,9 @@ function DrawerFieldGenerator({
           field={field}
         />
       );
+
+    case "INTERNATION_PHONE":
+      return <HFInternationalPhone control={control} name={computedSlug} />;
 
     default:
       return (

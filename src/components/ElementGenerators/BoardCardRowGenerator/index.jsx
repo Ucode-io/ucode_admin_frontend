@@ -45,6 +45,7 @@ const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
             value={value}
             field={field}
             style={{ padding: "0 6px", fontsize: "12px", lineHeight: "18px" }}
+            fieldsMap={fieldsMap}
           />
         </div>
       );

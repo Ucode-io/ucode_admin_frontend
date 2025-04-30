@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import layoutService from "../../../services/layoutService";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import useDebounce from "../../../hooks/useDebounce";
+import { getColumnIcon } from "../../table-redesign/icons";
 
 const BoardColumn = ({
   tab,

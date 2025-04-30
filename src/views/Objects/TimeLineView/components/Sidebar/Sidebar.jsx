@@ -3,6 +3,8 @@ import cls from "./styles.module.scss";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
 import { useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
+import { SidebarButton } from "../SidebarButton";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -17,6 +19,7 @@ export const Sidebar = ({
   datesList,
   zoomPosition,
   hasSameDay,
+  isSidebarOpen,
 }) => {
   const [isAllOpen, setIsAllOpen] = useState(false);
 
@@ -33,7 +36,7 @@ export const Sidebar = ({
   const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
 
   return (
-    <div className={cls.group_by}>
+    <div className={clsx(cls.group_by, { [cls.isHidden]: !isSidebarOpen })}>
       <div className={clsx(cls.fakeDiv)}>
         <div className={cls.header}>
           <span
@@ -58,10 +61,10 @@ export const Sidebar = ({
             </button>
           )}
         </div>
-        {/* <SidebarButton
-        className={cls.sidebarBtn}
-        onClick={handleCloseSidebar}
-      /> */}
+        <SidebarButton
+          className={cls.sidebarBtn}
+          onClick={handleCloseSidebar}
+        />
       </div>
 
       {view?.attributes?.calendar_from_slug !==

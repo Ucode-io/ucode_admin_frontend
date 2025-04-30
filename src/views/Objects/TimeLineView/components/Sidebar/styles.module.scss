@@ -139,8 +139,16 @@
   }
 }
 
+.group_by.isHidden {
+  visibility: hidden;
+}
+
 .newBtn {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
   padding: 6px 8px;
   color: rgba(70, 68, 64, 0.45);
 

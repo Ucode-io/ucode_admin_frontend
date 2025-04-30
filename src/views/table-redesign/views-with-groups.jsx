@@ -985,6 +985,8 @@ export const NewUiViewsWithGroups = ({
                         view={view}
                         noDates={noDates}
                         // selectedTable={selectedTable}
+                        searchText={searchText}
+                        columnsForSearch={columnsForSearch}
                         setViews={() => {}}
                         menuItem={menuItem}
                         selectedTabIndex={selectedTabIndex}

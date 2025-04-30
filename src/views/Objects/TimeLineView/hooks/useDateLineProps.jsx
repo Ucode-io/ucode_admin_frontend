@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 export const useDateLineProps = ({ setCenterDate = () => {} }) => {
   const [months, setMonths] = useState([]);
   const [selectedType, setSelectedType] = useState("day");
+
   const calendarRef = useRef(null);
   const isLoading = useRef(false);
 

@@ -41,6 +41,7 @@ export const SettingsPopup = ({open, onClose}) => {
     setSearchParams,
     updateSearchParam,
     handlePermissionClick,
+    handleFilesClick,
     activeChildId,
     handleOpenClientTypeModal,
     handleCloseClientTypeModal,
@@ -78,7 +79,7 @@ export const SettingsPopup = ({open, onClose}) => {
                   return (
                     <Box mb="20px" key={index}>
                       <Typography className={cls.leftBarTitle} variant="h2">
-                        {tab?.title}
+                        {tab?.title ?? tab?.label}
                       </Typography>
                       {tab?.tabs?.map((tab, tabIndex) => {
                         return (
@@ -126,10 +127,12 @@ export const SettingsPopup = ({open, onClose}) => {
                                       }}>
                                       <TabTitle
                                         tab={child}
-                                        onClick={() =>
-                                          handlePermissionClick(child)
-                                        }>
-                                        {child?.name}
+                                        onClick={() => {
+                                          child?.type === "MINIO_FOLDER"
+                                            ? handleFilesClick(child)
+                                            : handlePermissionClick(child);
+                                        }}>
+                                        {child?.name ?? child?.label}
                                       </TabTitle>
                                     </Box>
                                   ))}

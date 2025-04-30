@@ -226,9 +226,13 @@ const LayoutSidebar = ({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
-        setMenuList(res.menus);
+        const computedMenus = res?.menus?.filter(
+          (el) =>
+            el?.id !== "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9" &&
+            el?.id !== "9e988322-cffd-484c-9ed6-460d8701551b"
+        );
+        setMenuList(computedMenus);
         setIsMenuListLoading(false);
-        console.log({menu: res.menus});
       })
       .catch((error) => {
         setIsMenuListLoading(false);

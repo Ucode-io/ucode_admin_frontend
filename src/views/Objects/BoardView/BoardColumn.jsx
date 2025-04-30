@@ -30,6 +30,7 @@ const BoardColumn = ({
   setLayoutType,
   refetch: refetchListQueries,
   boardRef,
+  index: columnIndex,
 }) => {
   const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
@@ -333,6 +334,7 @@ const BoardColumn = ({
                       el={el}
                       fieldsMap={fieldsMap}
                       slug={selectedGroupField?.slug}
+                      columnIndex={columnIndex}
                     />
                   ))}
                 </div>

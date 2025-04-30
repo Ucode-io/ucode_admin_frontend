@@ -13,6 +13,7 @@ const MultiselectCellColoredElement = ({
   el,
   fieldsMap,
   slug,
+  columnIndex,
   ...props
 }) => {
   const tags = useMemo(() => {
@@ -77,7 +78,11 @@ const MultiselectCellColoredElement = ({
           )}
 
           {tag.label ?? tag.value}
-          <span className={cls.cellColoredElementLabelPopup}>
+          <span
+            className={clsx(cls.cellColoredElementLabelPopup, {
+              [cls.fromLeft]: columnIndex === 0,
+            })}
+          >
             {field?.label}
           </span>
         </div>

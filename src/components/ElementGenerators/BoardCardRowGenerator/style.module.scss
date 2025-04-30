@@ -1,4 +1,7 @@
 .row {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
   padding: 0 8px;
 
   &:first-child {

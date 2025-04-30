@@ -267,3 +267,9 @@
   width: 100%;
   pointer-events: none;
 }
+
+.viewFieldWrapper {
+  display: flex;
+  // align-items: center;
+  column-gap: 5px;
+}

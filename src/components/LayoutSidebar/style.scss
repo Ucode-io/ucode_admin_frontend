@@ -509,3 +509,16 @@ $main-color: #0365f2;
   justify-content: flex-end;
   gap: 10px;
 }
+
+.docsBtn {
+  width: 36px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #f3f3f3;
+    border-radius: 6px;
+  }
+}

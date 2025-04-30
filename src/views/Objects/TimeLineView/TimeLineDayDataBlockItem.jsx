@@ -8,6 +8,7 @@ import styles from "./styles.module.scss";
 import { useQueryClient } from "react-query";
 import useFilters from "@/hooks/useFilters";
 import clsx from "clsx";
+import { useTimelineBlockContext } from "./providers/TimelineBlockProvider";
 
 const getTranslateXFromMatrix = (element) => {
   const transform = window.getComputedStyle(element).transform;
@@ -124,7 +125,6 @@ export default function TimeLineDayDataBlockItem({
   ]);
 
   const targetRef = useRef(null);
-  console.log("ITEM");
 
   const onDragEndToUpdate1 = (position, width) => {
     if (!position) return null;
@@ -376,8 +376,10 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
+  const { setHoveredRowId } = useTimelineBlockContext();
+
   const handleMouseEnter1 = () => {
-    console.log(data[calendar_from_slug], data[calendar_to_slug]);
+    setHoveredRowId(data?.guid);
     if (selectedType === "month") {
       setFocusedDays([
         datesList[innerStartDate.current || startDate],
@@ -485,6 +487,7 @@ export default function TimeLineDayDataBlockItem({
           className={clsx(styles.dataBlockInner, { [styles.focus]: isFocus })}
           onClick={handleOpen}
           onMouseEnter={handleMouseEnter1}
+          onMouseLeave={() => setHoveredRowId(null)}
         >
           {visible_field?.split("/")?.length > 1 ? (
             visible_field

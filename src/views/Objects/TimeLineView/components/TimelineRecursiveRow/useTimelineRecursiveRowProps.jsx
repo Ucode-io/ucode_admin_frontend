@@ -1,5 +1,6 @@
 import {get} from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
+import { useTimelineBlockContext } from "../../providers/TimelineBlockProvider";
 
 export const useTimelineRecursiveRowProps = ({
   item,
@@ -13,6 +14,8 @@ export const useTimelineRecursiveRowProps = ({
   setIsAllOpen,
 }) => {
   const [open, setOpen] = useState(false);
+
+  const { hoveredRowId } = useTimelineBlockContext();
 
   const viewFields = Object.values(fieldsMap)
     .find((field) => field?.table_slug === item?.group_by_slug)
@@ -92,5 +95,6 @@ export const useTimelineRecursiveRowProps = ({
     handleClick,
     computedValue,
     open,
+    hoveredRowId,
   };
 };

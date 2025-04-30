@@ -10,6 +10,7 @@ import { Button, Menu } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
+import { TimelineBlockProvider } from "./providers/TimelineBlockProvider";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -264,175 +265,181 @@ export default function TimeLineBlock({
     setIsAllOpen(false);
   };
 
+  const [hoveredRowId, setHoveredRowId] = useState(null);
+
   return (
-    <div
-      className={styles.main_container}
-      style={
-        {
-          // height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
-          // overflow: "scroll",
-        }
-      }
-      // onScroll={handleScroll}
-      // ref={calendarRef}
+    <TimelineBlockProvider
+      state={{ isSidebarOpen, setIsSidebarOpen, hoveredRowId, setHoveredRowId }}
     >
-      {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
-        <Sidebar
-          view={view}
-          computedData={computedData}
-          hasSameDay={hasSameDay}
-          openedRows={openedRows}
-          setOpenedRows={setOpenedRows}
-          fieldsMap={fieldsMap}
-          groupByFields={groupbyFields}
-          computedColumnsFor={computedColumnsFor}
-          setFocusedDays={setFocusedDays}
-          datesList={datesList}
-          zoomPosition={zoomPosition}
-        />
-      )}
-      {/* {view?.attributes?.group_by_columns?.length !== 0 && !isSidebarOpen && (
+      <div
+        className={styles.main_container}
+        style={
+          {
+            // height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
+            // overflow: "scroll",
+          }
+        }
+        // onScroll={handleScroll}
+        // ref={calendarRef}
+      >
+        {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
+          <Sidebar
+            view={view}
+            computedData={computedData}
+            hasSameDay={hasSameDay}
+            openedRows={openedRows}
+            setOpenedRows={setOpenedRows}
+            fieldsMap={fieldsMap}
+            groupByFields={groupbyFields}
+            computedColumnsFor={computedColumnsFor}
+            setFocusedDays={setFocusedDays}
+            datesList={datesList}
+            zoomPosition={zoomPosition}
+          />
+        )}
+        {/* {view?.attributes?.group_by_columns?.length !== 0 && !isSidebarOpen && (
         <div className={styles.timelineLeftAddon}>
           <SidebarButton onClick={handleOpenSidebar} />
         </div>
       )} */}
-      <div className={styles.gantt}>
-        <TimeLineDatesRow
-          focusedDays={focusedDays}
-          datesList={datesList}
-          zoomPosition={zoomPosition}
-          selectedType={selectedType}
-          months={months}
-          scrollToToday={scrollToToday}
-          sidebarIsOpen={
-            view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen
-          }
-        />
-
-        {calendar_from_slug !== calendar_to_slug && (
-          <TimeLineDayDataBlock
-            dateFilters={dateFilters}
-            openedRows={openedRows}
-            setOpenedRows={setOpenedRows}
-            computedColumnsFor={computedColumnsFor}
-            groupbyFields={groupbyFields}
-            setFocusedDays={setFocusedDays}
-            selectedType={selectedType}
-            zoomPosition={zoomPosition}
-            data={computedData}
-            fieldsMap={fieldsMap}
-            view={view}
-            tabs={tabs}
+        <div className={styles.gantt}>
+          <TimeLineDatesRow
+            focusedDays={focusedDays}
             datesList={datesList}
-            calendar_from_slug={calendar_from_slug}
-            calendar_to_slug={calendar_to_slug}
-            visible_field={visible_field}
-            menuItem={menuItem}
-            fieldsMapPopup={fieldsMapPopup}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            navigateToDetailPage={navigateToDetailPage}
-            noDates={noDates}
-            calendarRef={calendarRef}
+            zoomPosition={zoomPosition}
+            selectedType={selectedType}
+            months={months}
+            scrollToToday={scrollToToday}
+            sidebarIsOpen={
+              view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen
+            }
           />
-        )}
-      </div>
-      <div className={styles.timelineRightAddon}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Button
-            onClick={handleClickType}
+
+          {calendar_from_slug !== calendar_to_slug && (
+            <TimeLineDayDataBlock
+              dateFilters={dateFilters}
+              openedRows={openedRows}
+              setOpenedRows={setOpenedRows}
+              computedColumnsFor={computedColumnsFor}
+              groupbyFields={groupbyFields}
+              setFocusedDays={setFocusedDays}
+              selectedType={selectedType}
+              zoomPosition={zoomPosition}
+              data={computedData}
+              fieldsMap={fieldsMap}
+              view={view}
+              tabs={tabs}
+              datesList={datesList}
+              calendar_from_slug={calendar_from_slug}
+              calendar_to_slug={calendar_to_slug}
+              visible_field={visible_field}
+              menuItem={menuItem}
+              fieldsMapPopup={fieldsMapPopup}
+              refetch={refetch}
+              setLayoutType={setLayoutType}
+              navigateToDetailPage={navigateToDetailPage}
+              noDates={noDates}
+              calendarRef={calendarRef}
+            />
+          )}
+        </div>
+        <div className={styles.timelineRightAddon}>
+          <div
             style={{
-              color: "rgb(120, 119, 116)",
-              fontSize: "14px",
-              fontWeight: "400",
               display: "flex",
               alignItems: "center",
-              gap: "3px",
-              padding: "0px",
             }}
           >
-            <span>
-              {types.find((item) => item.value === selectedType).title}
-            </span>
-            {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Button>
-          <Menu
-            open={openType}
-            onClose={handleCloseType}
-            anchorEl={anchorElType}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  // width: 100,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  left: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-          >
-            <div
+            <Button
+              onClick={handleClickType}
               style={{
+                color: "rgb(120, 119, 116)",
+                fontSize: "14px",
+                fontWeight: "400",
                 display: "flex",
-                flexDirection: "column",
-                gap: "5px",
+                alignItems: "center",
+                gap: "3px",
+                padding: "0px",
               }}
             >
-              {types.map((el) => (
-                <Button
-                  onClick={() => setSelectedType(el.value)}
-                  variant="text"
-                  sx={{
-                    margin: "0 5px",
-                    color: "#888",
-                    minWidth: "100px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  {el.title}
-                  {el.value === selectedType && <CheckIcon />}
-                </Button>
-              ))}
-            </div>
-          </Menu>
+              <span>
+                {types.find((item) => item.value === selectedType).title}
+              </span>
+              {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </Button>
+            <Menu
+              open={openType}
+              onClose={handleCloseType}
+              anchorEl={anchorElType}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                {types.map((el) => (
+                  <Button
+                    onClick={() => setSelectedType(el.value)}
+                    variant="text"
+                    sx={{
+                      margin: "0 5px",
+                      color: "#888",
+                      minWidth: "100px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {el.title}
+                    {el.value === selectedType && <CheckIcon />}
+                  </Button>
+                ))}
+              </div>
+            </Menu>
+          </div>
+          <Button
+            variant="text"
+            sx={{
+              margin: "0 5px",
+              padding: "0px",
+              color: "rgb(50, 48, 44)",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+            onClick={() => scrollToToday()}
+          >
+            Today
+          </Button>
         </div>
-        <Button
-          variant="text"
-          sx={{
-            margin: "0 5px",
-            padding: "0px",
-            color: "rgb(50, 48, 44)",
-            fontSize: "14px",
-            fontWeight: "400",
-          }}
-          onClick={() => scrollToToday()}
-        >
-          Today
-        </Button>
       </div>
-    </div>
+    </TimelineBlockProvider>
   );
 }

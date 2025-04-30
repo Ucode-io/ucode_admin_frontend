@@ -112,7 +112,7 @@ const BoardCardRowGenerator = ({
       return (
         <div key={field.id} className={styles.row}>
           {/* <div className={styles.label}>{field.label}:</div> */}
-          <span style={{ width: "16px", height: "16px" }}>
+          <span style={{ width: "16px", height: "16px", flexShrink: "0" }}>
             {getColumnIcon({ column: field })}
           </span>
           <div className={styles.value}>{value}</div>

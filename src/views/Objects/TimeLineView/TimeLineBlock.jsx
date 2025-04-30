@@ -11,6 +11,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
 import { TimelineBlockProvider } from "./providers/TimelineBlockProvider";
+import { SidebarButton } from "./components/SidebarButton";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -269,7 +270,13 @@ export default function TimeLineBlock({
 
   return (
     <TimelineBlockProvider
-      state={{ isSidebarOpen, setIsSidebarOpen, hoveredRowId, setHoveredRowId }}
+      state={{
+        isSidebarOpen,
+        setIsSidebarOpen,
+        hoveredRowId,
+        setHoveredRowId,
+        setFocusedDays,
+      }}
     >
       <div
         className={styles.main_container}
@@ -282,7 +289,7 @@ export default function TimeLineBlock({
         // onScroll={handleScroll}
         // ref={calendarRef}
       >
-        {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
+        {view?.attributes?.group_by_columns?.length !== 0 && (
           <Sidebar
             view={view}
             computedData={computedData}
@@ -295,13 +302,15 @@ export default function TimeLineBlock({
             setFocusedDays={setFocusedDays}
             datesList={datesList}
             zoomPosition={zoomPosition}
+            handleCloseSidebar={handleCloseSidebar}
+            isSidebarOpen={isSidebarOpen}
           />
         )}
-        {/* {view?.attributes?.group_by_columns?.length !== 0 && !isSidebarOpen && (
-        <div className={styles.timelineLeftAddon}>
-          <SidebarButton onClick={handleOpenSidebar} />
-        </div>
-      )} */}
+        {view?.attributes?.group_by_columns?.length !== 0 && !isSidebarOpen && (
+          <div className={styles.timelineLeftAddon}>
+            <SidebarButton variant="opener" onClick={handleOpenSidebar} />
+          </div>
+        )}
         <div className={styles.gantt}>
           <TimeLineDatesRow
             focusedDays={focusedDays}

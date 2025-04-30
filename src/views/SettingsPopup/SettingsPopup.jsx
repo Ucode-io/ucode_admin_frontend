@@ -116,36 +116,40 @@ export const SettingsPopup = ({open, onClose}) => {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                   {tab?.children?.map((child) => (
-                                    <Box
-                                      className={cls.tabChildren}
-                                      key={child?.id}
-                                      sx={{
-                                        backgroundColor:
-                                          child?.guid === activeChildId
-                                            ? "rgba(55, 53, 47, 0.06)"
-                                            : "transparent",
-                                      }}>
-                                      <TabTitle
-                                        tab={child}
-                                        onClick={() => {
-                                          child?.type === "MINIO_FOLDER"
-                                            ? handleFilesClick(child)
-                                            : handlePermissionClick(child);
+                                    <>
+                                      <Box
+                                        className={cls.tabChildren}
+                                        key={child?.id}
+                                        sx={{
+                                          backgroundColor:
+                                            child?.guid === activeChildId
+                                              ? "rgba(55, 53, 47, 0.06)"
+                                              : "transparent",
                                         }}>
-                                        {child?.name ?? child?.label}
-                                      </TabTitle>
-                                    </Box>
+                                        <TabTitle
+                                          tab={child}
+                                          onClick={() => {
+                                            child?.type === "MINIO_FOLDER"
+                                              ? handleFilesClick(child)
+                                              : handlePermissionClick(child);
+                                          }}>
+                                          {child?.name ?? child?.label}
+                                        </TabTitle>
+                                      </Box>
+                                      {child?.type !== "MINIO_FOLDER" && (
+                                        <button
+                                          className={cls.addClientTypeBtn}
+                                          onClick={handleOpenClientTypeModal}>
+                                          <span>
+                                            <span className={cls.addIcon}>
+                                              <AddIcon />
+                                            </span>
+                                            <span>Add client type</span>
+                                          </span>
+                                        </button>
+                                      )}
+                                    </>
                                   ))}
-                                  <button
-                                    className={cls.addClientTypeBtn}
-                                    onClick={handleOpenClientTypeModal}>
-                                    <span>
-                                      <span className={cls.addIcon}>
-                                        <AddIcon />
-                                      </span>
-                                      <span>Add client type</span>
-                                    </span>
-                                  </button>
                                 </AccordionDetails>
                               </Accordion>
                             ) : (

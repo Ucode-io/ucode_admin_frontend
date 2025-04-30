@@ -62,7 +62,7 @@ function DocsChatwootModal({
                     cursor="pointer"
                     mb={sidebarIsOpen ? 0 : 0}
                     {...getActionProps("documentation")}>
-                    <img src="/img/documentation.svg" alt="merge" />
+                    <img src="/img/document.svg" alt="merge" />
                   </Box>
                 </SidebarActionTooltip>
 

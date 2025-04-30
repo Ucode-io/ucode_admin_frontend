@@ -71,7 +71,7 @@ import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {GreyLoader} from "../Loaders/GreyLoader";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import StorageIcon from "@mui/icons-material/Storage";
+import DocsChatwootModal from "./DocsChatwootModal";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -82,17 +82,12 @@ const LayoutSidebar = ({
   const [menuItem, setMenuItem] = useState(null);
   const {appId} = useParams();
 
-  const sidebarIsOpen = useSelector(
-    (state) => state.main.settingsSidebarIsOpen
-  );
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
-
   const projectId = store.getState().company.projectId;
-  const envId = store.getState().company?.environmentId;
 
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState(null);
   const [folderModalType, setFolderModalType] = useState(null);
@@ -115,7 +110,10 @@ const LayoutSidebar = ({
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
-  const {i18n} = useTranslation();
+
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen
+  );
 
   const setSubMenuIsOpen = (val) => {
     dispatch(mainActions.setSubMenuIsOpen(val));
@@ -533,8 +531,9 @@ const LayoutSidebar = ({
         <Flex
           display={sidebarIsOpen ? "flex" : "block"}
           mt="auto"
-          py={4}
+          py={10}
           alignItems="center"
+          justifyContent={"space-between"}
           columnGap={16}
           px={8}
           borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
@@ -543,48 +542,8 @@ const LayoutSidebar = ({
               ? undefined
               : () => dispatch(mainActions.setSidebarHighlightedAction(null))
           }>
-          {Boolean(permissions?.gitbook_button) && (
-            <>
-              <SidebarActionTooltip id="documentation" title="Documentation">
-                <Flex
-                  as="a"
-                  href="https://ucode.gitbook.io/ucode-docs"
-                  target="_blank"
-                  w={sidebarIsOpen ? "100%" : 36}
-                  h={36}
-                  alignItems="center"
-                  justifyContent="center"
-                  borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
-                  cursor="pointer"
-                  mb={sidebarIsOpen ? 0 : 4}
-                  {...getActionProps("documentation")}>
-                  <img src="/img/documentation.svg" alt="merge" />
-                </Flex>
-              </SidebarActionTooltip>
-              <Box
-                display={sidebarIsOpen ? "block" : "none"}
-                w="1px"
-                h={20}
-                bg="#D0D5DD"
-              />
-            </>
-          )}
-          <></>
-          {Boolean(permissions?.chatwoot_button) && (
-            <SidebarActionTooltip id="chat" title="Chat">
-              <Chatwoot open={sidebarIsOpen} {...getActionProps("chat")} />
-            </SidebarActionTooltip>
-          )}
-
           {Boolean(permissions?.chat) && (
             <>
-              <Box
-                display={sidebarIsOpen ? "block" : "none"}
-                w="1px"
-                h={20}
-                bg="#D0D5DD"
-              />
               <SidebarActionTooltip id="ai-chat" title="AI Chat">
                 <AIChat
                   sidebarOpen={sidebarIsOpen}
@@ -593,6 +552,12 @@ const LayoutSidebar = ({
               </SidebarActionTooltip>
             </>
           )}
+
+          <DocsChatwootModal
+            sidebarIsOpen={sidebarIsOpen}
+            getActionProps={getActionProps}
+            permissions={permissions}
+          />
         </Flex>
 
         {(modalType === "create" ||
@@ -743,12 +708,14 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   return (
     <>
       <Flex
-        w={sidebarOpen ? "100%" : 36}
-        h={36}
+        w={sidebarOpen ? "30px" : 36}
         alignItems="center"
         justifyContent="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        _hover={{
+          background: "#37352F0F",
+        }}
+        h={"25px"}
         cursor="pointer"
         mb={sidebarOpen ? 0 : 4}
         ref={ref}

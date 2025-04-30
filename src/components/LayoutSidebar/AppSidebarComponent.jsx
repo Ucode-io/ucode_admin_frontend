@@ -155,7 +155,7 @@ const AppSidebar = ({
     conditionalProps.onMouseEnter = () =>
       dispatch(mainActions.setSidebarHighlightedMenu(element?.id));
   }
-  console.log("elementttttttt", element);
+
   return (
     <Draggable key={index}>
       <SidebarAppTooltip id={element?.id} title={title}>

@@ -305,7 +305,7 @@ const BoardView = ({
               }}
               style={{ display: "flex", gap: 8 }}
             >
-              {boardTab?.map((tab) => (
+              {boardTab?.map((tab, index) => (
                 <Draggable key={tab.value} className={styles.draggable}>
                   <BoardColumn
                     computedColumnsFor={computedColumnsFor}
@@ -320,6 +320,7 @@ const BoardView = ({
                     setLayoutType={setLayoutType}
                     refetch={refetch}
                     boardRef={boardRef}
+                    index={index}
                   />
                 </Draggable>
               ))}

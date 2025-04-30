@@ -7,7 +7,14 @@ import styles from "./style.module.scss";
 import {Box} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
-const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
+const BoardCardRowGenerator = ({
+  field,
+  el,
+  isStatus,
+  fieldsMap,
+  slug,
+  columnIndex,
+}) => {
   let statusTypeOptions = [];
   if (isStatus) {
     statusTypeOptions = [
@@ -46,6 +53,7 @@ const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
             field={field}
             style={{ padding: "0 6px", fontsize: "12px", lineHeight: "18px" }}
             fieldsMap={fieldsMap}
+            columnIndex={columnIndex}
           />
         </div>
       );
@@ -62,6 +70,7 @@ const BoardCardRowGenerator = ({ field, el, isStatus, fieldsMap, slug }) => {
             el={el}
             fieldsMap={fieldsMap}
             slug={slug}
+            columnIndex={columnIndex}
           />
         </div>
       );

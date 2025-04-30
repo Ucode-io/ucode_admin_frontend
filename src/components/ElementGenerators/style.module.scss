@@ -498,4 +498,9 @@
   line-height: 1.4;
   font-weight: 500;
   white-space: nowrap;
+
+  &.fromLeft {
+    right: auto;
+    left: calc(100% + 10px);
+  }
 }

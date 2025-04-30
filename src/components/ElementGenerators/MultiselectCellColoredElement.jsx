@@ -1,6 +1,7 @@
 import {useMemo} from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
 import clsx from "clsx";
+import cls from "./style.module.scss";
 
 const MultiselectCellColoredElement = ({
   field,
@@ -50,6 +51,7 @@ const MultiselectCellColoredElement = ({
     >
       {tags?.map((tag) => (
         <div
+          className={cls.cellColoredElementLabel}
           style={{
             color: color || hasColor ? tag.color : "#000",
             backgroundColor: color
@@ -75,6 +77,9 @@ const MultiselectCellColoredElement = ({
           )}
 
           {tag.label ?? tag.value}
+          <span className={cls.cellColoredElementLabelPopup}>
+            {field?.label}
+          </span>
         </div>
       ))}
     </div>

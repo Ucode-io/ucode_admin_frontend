@@ -379,6 +379,7 @@ export default function TimeLineDayDataBlockItem({
   const { setHoveredRowId } = useTimelineBlockContext();
 
   const handleMouseEnter1 = () => {
+    console.log(data?.guid);
     setHoveredRowId(data?.guid);
     if (selectedType === "month") {
       setFocusedDays([

@@ -92,7 +92,7 @@ function DrawerFormDetailPage({
   };
 
   useEffect(() => {
-    if (selectedRow?.IS_NO_DATE) {
+    if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
       setFormValue(
         selectedRow?.FROM_DATE_SLUG,
         selectedRow?.[selectedRow?.FROM_DATE_SLUG]

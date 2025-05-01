@@ -1,15 +1,8 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import TimeLineDays from "./TimeLineDays";
 import styles from "./styles.module.scss";
 import TimeLineDataRecursiveRow from "./TimeLineDataRecursiveRow";
-import DrawerDetailPage from "../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import layoutService from "../../../services/layoutService";
 
 export default function TimeLineDayDataBlock({
   data,
@@ -36,45 +29,9 @@ export default function TimeLineDayDataBlock({
   navigateToDetailPage,
   noDates,
   calendarRef,
+  setOpenDrawerModal,
+  setSelectedRow,
 }) {
-  const projectId = useSelector((state) => state.company?.projectId);
-  const [openDrawerModal, setOpenDrawerModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState("");
-
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
-  );
-
-  const { tableSlug, appId } = useParams();
-
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
-
-  const {
-    data: { layout } = {
-      layout: [],
-    },
-  } = useQuery({
-    queryKey: [
-      "GET_LAYOUT",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
-    },
-    select: (data) => {
-      return {
-        layout: data ?? {},
-      };
-    },
-    onError: (error) => {
-      console.error("Error", error);
-    },
-  });
-
   return (
     <>
       <div
@@ -173,21 +130,6 @@ export default function TimeLineDayDataBlock({
               ))}
             </div>
           )}
-
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={openDrawerModal}
-          setOpen={setOpenDrawerModal}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-        />
       </div>
     </>
   );

@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import { isSameDay, isValid, isWithinInterval } from "date-fns";
 import { Sidebar } from "./components/Sidebar";
@@ -12,6 +12,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
 import { TimelineBlockProvider } from "./providers/TimelineBlockProvider";
 import { SidebarButton } from "./components/SidebarButton";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
+import layoutService from "../../../services/layoutService";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -252,21 +257,45 @@ export default function TimeLineBlock({
     }
   }, [selectedType]);
 
-  const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
-
-  const [isAllOpen, setIsAllOpen] = useState(false);
-
-  const handleAllOpen = () => {
-    setIsAllOpen(true);
-    setOpenedRows(computedData?.map((item) => item?.label));
-  };
-
-  const handleAllClose = () => {
-    setOpenedRows([]);
-    setIsAllOpen(false);
-  };
+  const { tableSlug, appId } = useParams();
 
   const [hoveredRowId, setHoveredRowId] = useState(null);
+
+  const projectId = useSelector((state) => state.company?.projectId);
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
+
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
 
   return (
     <TimelineBlockProvider
@@ -276,19 +305,13 @@ export default function TimeLineBlock({
         hoveredRowId,
         setHoveredRowId,
         setFocusedDays,
+        setSelectedRow,
+        setOpenDrawerModal,
+        calendar_from_slug,
+        calendar_to_slug,
       }}
     >
-      <div
-        className={styles.main_container}
-        style={
-          {
-            // height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
-            // overflow: "scroll",
-          }
-        }
-        // onScroll={handleScroll}
-        // ref={calendarRef}
-      >
+      <div className={styles.main_container}>
         {view?.attributes?.group_by_columns?.length !== 0 && (
           <Sidebar
             view={view}
@@ -349,6 +372,8 @@ export default function TimeLineBlock({
               navigateToDetailPage={navigateToDetailPage}
               noDates={noDates}
               calendarRef={calendarRef}
+              setOpenDrawerModal={setOpenDrawerModal}
+              setSelectedRow={setSelectedRow}
             />
           )}
         </div>
@@ -449,6 +474,20 @@ export default function TimeLineBlock({
           </Button>
         </div>
       </div>
+      <DrawerDetailPage
+        projectInfo={projectInfo}
+        open={openDrawerModal}
+        setOpen={setOpenDrawerModal}
+        selectedRow={selectedRow}
+        menuItem={menuItem}
+        layout={layout}
+        fieldsMap={fieldsMap}
+        refetch={refetch}
+        setLayoutType={setLayoutType}
+        selectedViewType={selectedViewType}
+        setSelectedViewType={setSelectedViewType}
+        navigateToEditPage={navigateToDetailPage}
+      />
     </TimelineBlockProvider>
   );
 }

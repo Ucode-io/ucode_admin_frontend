@@ -1,7 +1,15 @@
 import "./style.scss";
-import {Tooltip} from "@mui/material";
-import {Box, Flex} from "@chakra-ui/react";
-import {useEffect} from "react";
+
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Flex,
+} from "@chakra-ui/react";
+import {useEffect, useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
@@ -16,6 +24,9 @@ import {relationTabActions} from "../../store/relationTab/relationTab.slice";
 import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import {mainActions} from "@/store/main/main.slice";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import NewSubMenu from "./NewSubMenu";
+import {useMenuListQuery} from "../../services/menuService";
+import {Skeleton, Tooltip} from "@mui/material";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -32,13 +43,25 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
+  setMenuItem,
+  menuItem,
   menuLanguages,
+  openFolderCreateModal,
+  setFolderModalType,
+  setTableModal,
+  setLinkedTableModal,
+  setSubSearchText,
+  languageData,
+  subMenuIsOpen,
+  subSearchText,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const auth = store.getState().auth;
   const {appId} = useParams();
+  const [child, setChild] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -52,7 +75,7 @@ const AppSidebar = ({
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }
-
+    setMenuItem(element);
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
     setSelectedApp(element);
@@ -113,7 +136,7 @@ const AppSidebar = ({
 
   const [searchParams] = useSearchParams();
 
-  const menuItem = searchParams.get("menuId");
+  const menuId = searchParams.get("menuId");
 
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
@@ -121,14 +144,28 @@ const AppSidebar = ({
       .replace("{user_id}", userId);
   }
 
-  useEffect(() => {
-    setElement(element);
-  }, [element]);
+  // useEffect(() => {
+  //   setElement(element);
+  // }, [element]);
+
+  const {isLoading} = useMenuListQuery({
+    params: {
+      parent_id: menuItem?.id,
+      search: subSearchText,
+    },
+    queryParams: {
+      enabled: Boolean(menuItem?.id),
+      onSuccess: (res) => {
+        setChild(res.menus ?? []);
+        setLoading(false);
+      },
+    },
+  });
 
   const activeMenu =
     element?.type === "FOLDER"
       ? Boolean(selectedApp?.id === element?.id)
-      : element?.id === menuItem;
+      : element?.id === menuId;
 
   if (!permission) {
     return;
@@ -158,200 +195,399 @@ const AppSidebar = ({
 
   return (
     <Draggable key={index}>
-      <SidebarAppTooltip id={element?.id} title={title}>
-        <Flex
-          key={index}
-          onClick={(e) => {
-            e.stopPropagation();
-            clickHandler();
-            dispatch(mainActions.setSidebarHighlightedMenu(null));
-          }}
-          position="relative"
-          h={32}
-          mx={8}
-          mb={4}
-          alignItems="center"
-          whiteSpace="nowrap"
-          borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer"
-          className="parent-folder column-drag-handle"
-          bg={
-            activeMenu
-              ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
-              : menuStyle?.background
-          }
-          color={
-            Boolean(
-              appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                appId === element?.id
-            ) || menuItem === element?.id
-              ? "#fff"
-              : "#A8A8A8"
-          }
-          {...conditionalProps}>
+      {element?.type !== "FOLDER" && (
+        <SidebarAppTooltip id={element?.id} title={title}>
           <Flex
-            position="absolute"
-            w={36}
-            h={36}
+            key={index}
+            onClick={(e) => {
+              e.stopPropagation();
+              clickHandler();
+              dispatch(mainActions.setSidebarHighlightedMenu(null));
+            }}
+            position="relative"
+            h={32}
+            mx={8}
+            mb={4}
             alignItems="center"
-            justifyContent="center">
-            <IconGenerator
-              icon={!icon || icon === "folder.svg" ? "folder-new.svg" : icon}
-              size={iconSize}
-              style={{
-                color:
-                  icon && icon !== "folder.svg"
-                    ? menuStyle?.text || "#475467"
-                    : "#fff",
-              }}
-            />
-          </Flex>
-
-          <Box
-            color={
-              activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467"
+            whiteSpace="nowrap"
+            borderRadius={6}
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer"
+            className="parent-folder column-drag-handle"
+            bg={
+              activeMenu
+                ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
+                : menuStyle?.background
             }
-            pl={48}
-            fontSize={14}
-            mr="auto"
-            overflow="hidden"
-            textOverflow="ellipsis">
-            {title}
-          </Box>
+            color={
+              Boolean(
+                appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                  appId === element?.id
+              ) || menuId === element?.id
+                ? "#fff"
+                : "#A8A8A8"
+            }
+            {...conditionalProps}>
+            <Flex
+              position="absolute"
+              w={36}
+              h={36}
+              alignItems="center"
+              justifyContent="center">
+              <IconGenerator
+                icon={!icon || icon === "folder.svg" ? "folder-new.svg" : icon}
+                size={iconSize}
+                style={{
+                  color:
+                    icon && icon !== "folder.svg"
+                      ? menuStyle?.text || "#475467"
+                      : "#fff",
+                }}
+              />
+            </Flex>
 
-          {element?.type === "FOLDER" &&
-          sidebarIsOpen &&
-          !element?.is_static ? (
-            <>
-              {(element?.data?.permission?.delete ||
-                element?.data?.permission?.update ||
-                element?.data?.permission?.write) && (
-                <Tooltip title="Folder settings" placement="top">
-                  <div className="extra_icon">
-                    <BsThreeDots
-                      id={"three_dots"}
-                      size={13}
+            <Box
+              color={
+                activeMenu
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "#475467"
+              }
+              pl={48}
+              fontSize={14}
+              mr="auto"
+              overflow="hidden"
+              textOverflow="ellipsis">
+              {title}
+            </Box>
+
+            {element?.type === "FOLDER" &&
+            sidebarIsOpen &&
+            !element?.is_static ? (
+              <>
+                {(element?.data?.permission?.delete ||
+                  element?.data?.permission?.update ||
+                  element?.data?.permission?.write) && (
+                  <Tooltip title="Folder settings" placement="top">
+                    <div className="extra_icon">
+                      <BsThreeDots
+                        id={"three_dots"}
+                        size={13}
+                        onClick={(e) => {
+                          handleOpenNotify(e, "FOLDER");
+                        }}
+                        style={{
+                          color: activeMenu
+                            ? menuStyle?.active_text
+                            : (menuStyle?.text ?? "#fff"),
+                        }}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
+
+                {element?.data?.permission?.create && (
+                  <Tooltip title="Create folder" placement="top">
+                    <div
+                      id={"create_folder"}
+                      className="extra_icon"
                       onClick={(e) => {
-                        handleOpenNotify(e, "FOLDER");
-                      }}
+                        handleOpenNotify(e, "CREATE_TO_FOLDER");
+                      }}>
+                      <AddIcon
+                        size={13}
+                        style={{
+                          color: activeMenu
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                        }}
+                      />
+                    </div>
+                  </Tooltip>
+                )}
+              </>
+            ) : (
+              ""
+            )}
+            {element?.type === "TABLE" && (
+              <MenuIcon
+                id={"menu_icon"}
+                title="Table settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "TABLE");
+                  setElement(element);
+                }}
+                style={{
+                  color: activeMenu
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+                }}
+                element={element}
+              />
+            )}
+            {element?.type === "LINK" && (
+              <MenuIcon
+                id={"menu_icon"}
+                title="Table settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "LINK");
+                  setElement(element);
+                }}
+                style={{
+                  color: activeMenu
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+                }}
+                element={element}
+              />
+            )}
+            {element?.type === "MICROFRONTEND" && (
+              <MenuIcon
+                id={"menu_icon"}
+                title="Microfrontend settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "MICROFRONTEND");
+                  setElement(element);
+                }}
+                style={{
+                  color:
+                    selectedApp?.id === element.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
+                }}
+                element={element}
+              />
+            )}
+            {element?.type === "WEBPAGE" && (
+              <MenuIcon
+                id={"menu_icon"}
+                title="Webpage settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "WEBPAGE");
+                  setElement(element);
+                }}
+                style={{
+                  color: activeMenu
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+                }}
+              />
+            )}
+            {sidebarIsOpen && element?.type === "FOLDER" ? (
+              <KeyboardArrowDownIcon
+                style={{
+                  color: activeMenu
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+                  transform: selectedApp?.id === element.id && "rotate(-90deg)",
+                  transition: "transform 250ms ease-out",
+                  marginRight: 4,
+                }}
+              />
+            ) : (
+              ""
+            )}
+          </Flex>
+        </SidebarAppTooltip>
+      )}
+
+      {element?.type === "FOLDER" && (
+        <Accordion border={"none"} allowToggle>
+          <SidebarAppTooltip id={element?.id} title={title}>
+            <AccordionItem>
+              <AccordionButton
+                pt={"4px"}
+                border={"none"}
+                w={"100%"}
+                bg={"white"}
+                onClick={(e) => {
+                  clickHandler();
+                  element?.id !== menuItem?.id && setLoading(true);
+                  dispatch(mainActions.setSidebarHighlightedMenu(null));
+                }}>
+                <Flex
+                  width={sidebarIsOpen ? "100%" : "36px"}
+                  key={index}
+                  position="relative"
+                  h={32}
+                  mx={8}
+                  mb={4}
+                  alignItems="center"
+                  whiteSpace="nowrap"
+                  borderRadius={6}
+                  _hover={{bg: "#EAECF0"}}
+                  cursor="pointer"
+                  className="parent-folder column-drag-handle"
+                  bg={
+                    activeMenu
+                      ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
+                      : menuStyle?.background
+                  }
+                  color={
+                    Boolean(
+                      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                        appId === element?.id
+                    ) || menuId === element?.id
+                      ? "#fff"
+                      : "#A8A8A8"
+                  }
+                  {...conditionalProps}>
+                  <Flex
+                    position="absolute"
+                    w={36}
+                    h={36}
+                    alignItems="center"
+                    justifyContent="center">
+                    <IconGenerator
+                      icon={
+                        !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                      }
+                      size={iconSize}
                       style={{
-                        color: activeMenu
-                          ? menuStyle?.active_text
-                          : (menuStyle?.text ?? "#fff"),
+                        color:
+                          icon && icon !== "folder.svg"
+                            ? menuStyle?.text || "#475467"
+                            : "#fff",
                       }}
                     />
-                  </div>
-                </Tooltip>
-              )}
+                  </Flex>
 
-              {element?.data?.permission?.create && (
-                <Tooltip title="Create folder" placement="top">
-                  <div
-                    id={"create_folder"}
-                    className="extra_icon"
-                    onClick={(e) => {
-                      handleOpenNotify(e, "CREATE_TO_FOLDER");
-                    }}>
-                    <AddIcon
-                      size={13}
+                  <Box
+                    color={
+                      activeMenu
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "#475467"
+                    }
+                    pl={48}
+                    fontSize={14}
+                    mr="auto"
+                    overflow="hidden"
+                    textOverflow="ellipsis">
+                    {title}
+                  </Box>
+
+                  {element?.type === "FOLDER" &&
+                  sidebarIsOpen &&
+                  !element?.is_static ? (
+                    <>
+                      {(element?.data?.permission?.delete ||
+                        element?.data?.permission?.update ||
+                        element?.data?.permission?.write) && (
+                        <Tooltip title="Folder settings" placement="top">
+                          <div className="extra_icon">
+                            <BsThreeDots
+                              id={"three_dots"}
+                              size={13}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenNotify(e, "FOLDER");
+                              }}
+                              style={{
+                                color: activeMenu
+                                  ? menuStyle?.active_text
+                                  : (menuStyle?.text ?? "#fff"),
+                              }}
+                            />
+                          </div>
+                        </Tooltip>
+                      )}
+
+                      {element?.data?.permission?.create && (
+                        <Tooltip title="Create folder" placement="top">
+                          <div
+                            id={"create_folder"}
+                            className="extra_icon"
+                            onClick={(e) => {
+                              handleOpenNotify(e, "CREATE_TO_FOLDER");
+                            }}>
+                            <AddIcon
+                              size={13}
+                              style={{
+                                color: activeMenu
+                                  ? menuStyle?.active_text
+                                  : menuStyle?.text || "",
+                              }}
+                            />
+                          </div>
+                        </Tooltip>
+                      )}
+                    </>
+                  ) : (
+                    ""
+                  )}
+                  {sidebarIsOpen && element?.type === "FOLDER" ? (
+                    <AccordionIcon
+                      w={"18px"}
+                      h={"18px"}
                       style={{
                         color: activeMenu
                           ? menuStyle?.active_text
                           : menuStyle?.text || "",
+                        transform:
+                          selectedApp?.id === element.id && "rotate(-90deg)",
+                        transition: "transform 250ms ease-out",
+                        marginRight: 4,
                       }}
                     />
-                  </div>
-                </Tooltip>
+                  ) : (
+                    // <KeyboardArrowDownIcon
+                    //   style={{
+                    //     color: activeMenu
+                    //       ? menuStyle?.active_text
+                    //       : menuStyle?.text || "",
+                    //     transform:
+                    //       selectedApp?.id === element.id && "rotate(-90deg)",
+                    //     transition: "transform 250ms ease-out",
+                    //     marginRight: 4,
+                    //   }}
+                    // />
+                    ""
+                  )}
+                </Flex>
+              </AccordionButton>
+
+              {element?.id === menuItem?.id && (
+                <AccordionPanel>
+                  {loading ? (
+                    <Skeleton
+                      animation="wave"
+                      variant="text"
+                      style={{
+                        width: "95%",
+                        height: "52px",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  ) : (
+                    <NewSubMenu
+                      menuLanguages={menuLanguages}
+                      child={child}
+                      subMenuIsOpen={subMenuIsOpen}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      openFolderCreateModal={openFolderCreateModal}
+                      setFolderModalType={setFolderModalType}
+                      setTableModal={setTableModal}
+                      setLinkedTableModal={setLinkedTableModal}
+                      setSubSearchText={setSubSearchText}
+                      handleOpenNotify={handleOpenNotify}
+                      setElement={setElement}
+                      selectedApp={selectedApp}
+                      subSearchText={subSearchText}
+                      menuStyle={menuStyle}
+                      setSelectedApp={setSelectedApp}
+                      menuItem={menuItem}
+                      languageData={languageData}
+                    />
+                  )}
+                </AccordionPanel>
               )}
-            </>
-          ) : (
-            ""
-          )}
-          {element?.type === "TABLE" && (
-            <MenuIcon
-              id={"menu_icon"}
-              title="Table settings"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpenNotify(e, "TABLE");
-                setElement(element);
-              }}
-              style={{
-                color: activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-              }}
-              element={element}
-            />
-          )}
-          {element?.type === "LINK" && (
-            <MenuIcon
-              id={"menu_icon"}
-              title="Table settings"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpenNotify(e, "LINK");
-                setElement(element);
-              }}
-              style={{
-                color: activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-              }}
-              element={element}
-            />
-          )}
-          {element?.type === "MICROFRONTEND" && (
-            <MenuIcon
-              id={"menu_icon"}
-              title="Microfrontend settings"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpenNotify(e, "MICROFRONTEND");
-                setElement(element);
-              }}
-              style={{
-                color:
-                  selectedApp?.id === element.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
-              }}
-              element={element}
-            />
-          )}
-          {element?.type === "WEBPAGE" && (
-            <MenuIcon
-              id={"menu_icon"}
-              title="Webpage settings"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpenNotify(e, "WEBPAGE");
-                setElement(element);
-              }}
-              style={{
-                color: activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-              }}
-            />
-          )}
-          {sidebarIsOpen && element?.type === "FOLDER" ? (
-            <KeyboardArrowDownIcon
-              style={{
-                color: activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-                transform: selectedApp?.id === element.id && "rotate(-90deg)",
-                transition: "transform 250ms ease-out",
-                marginRight: 4,
-              }}
-            />
-          ) : (
-            ""
-          )}
-        </Flex>
-      </SidebarAppTooltip>
+            </AccordionItem>
+          </SidebarAppTooltip>
+        </Accordion>
+      )}
     </Draggable>
   );
 };

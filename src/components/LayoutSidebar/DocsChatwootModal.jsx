@@ -34,6 +34,7 @@ function DocsChatwootModal({
           <Box sx={{height: "80px", width: "208px", padding: "8px 4px"}}>
             {Boolean(permissions?.gitbook_button) && (
               <Box
+                onClick={handleClose}
                 as="a"
                 href="https://ucode.gitbook.io/ucode-docs"
                 target="_blank"
@@ -72,7 +73,10 @@ function DocsChatwootModal({
 
             {Boolean(permissions?.chatwoot_button) && (
               <Box
-                onClick={originalButtonFunction}
+                onClick={() => {
+                  originalButtonFunction();
+                  handleClose();
+                }}
                 sx={{
                   display: "flex",
                   alignItems: "center",

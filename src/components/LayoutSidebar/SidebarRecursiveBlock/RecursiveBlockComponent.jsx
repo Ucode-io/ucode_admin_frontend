@@ -43,6 +43,7 @@ const RecursiveBlock = ({
   userType = false,
   buttonProps,
   projectSettingLan,
+  menuStyles,
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -87,6 +88,13 @@ const RecursiveBlock = ({
       },
     },
   });
+
+  const activeMenu =
+    element?.type === "FOLDER"
+      ? Boolean(selectedApp?.id === element?.id)
+      : element?.id === menuItem?.id;
+
+  console.log("activeMenuactiveMenu", activeMenu);
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -185,8 +193,12 @@ const RecursiveBlock = ({
                 borderRadius: "8px",
                 color: "#475767",
                 height: "32px",
+                background: activeMenu
+                  ? menuStyles?.active_background
+                  : menuStyles?.background,
+                color: activeMenu ? menuStyles?.active_text : menuStyles?.text,
               }}
-              className={`nav-element highlight-on-hover ${buttonProps?.className ?? ""}`}
+              className={`nav-element `}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);

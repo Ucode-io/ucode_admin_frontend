@@ -142,19 +142,6 @@ const LayoutSidebar = ({
     setMenu(null);
   };
 
-  const {isLoading} = useMenuListQuery({
-    params: {
-      parent_id: appId || menuItem?.id,
-      search: subSearchText,
-    },
-    queryParams: {
-      enabled: Boolean(appId) || Boolean(menuItem?.id),
-      onSuccess: (res) => {
-        setChild(res.menus ?? []);
-      },
-    },
-  });
-
   const closeWebsiteModal = () => {
     setWebsiteModal(null);
   };
@@ -315,7 +302,7 @@ const LayoutSidebar = ({
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
       onSuccess: (res) => {
-        setMenuItem(res);
+        // setMenuItem(res);
       },
     },
   });
@@ -468,6 +455,8 @@ const LayoutSidebar = ({
                 onDrop={onDrop}>
                 {menuList.map((element, index) => (
                   <AppSidebar
+                    index={index}
+                    child={child}
                     key={index}
                     element={element}
                     sidebarIsOpen={sidebarIsOpen}
@@ -479,6 +468,16 @@ const LayoutSidebar = ({
                     selectedApp={selectedApp}
                     menuTemplate={menuTemplate}
                     menuLanguages={menuLanguages}
+                    setMenuItem={setMenuItem}
+                    menuItem={menuItem}
+                    openFolderCreateModal={openFolderCreateModal}
+                    setFolderModalType={setFolderModalType}
+                    setTableModal={setTableModal}
+                    setLinkedTableModal={setLinkedTableModal}
+                    setSubSearchText={setSubSearchText}
+                    menuStyle={menuStyle}
+                    languageData={languageData}
+                    subSearchText={subSearchText}
                   />
                 ))}
               </Container>
@@ -620,7 +619,7 @@ const LayoutSidebar = ({
         )}
       </Flex>
 
-      <SubMenu
+      {/* <SubMenu
         menuLanguages={menuLanguages}
         child={child}
         subMenuIsOpen={subMenuIsOpen}
@@ -635,11 +634,10 @@ const LayoutSidebar = ({
         selectedApp={selectedApp}
         isLoading={isLoading}
         menuStyle={menuStyle}
-        setChild={setChild}
         setSelectedApp={setSelectedApp}
         menuItem={menuItem}
         languageData={languageData}
-      />
+      /> */}
 
       {menu?.type?.length ? (
         <ButtonsMenu

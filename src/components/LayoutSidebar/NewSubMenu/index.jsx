@@ -1,35 +1,25 @@
-import {Box, Button, Skeleton} from "@mui/material";
-import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
-import "./style.scss";
-import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
-import {useDispatch, useSelector} from "react-redux";
-import {mainActions} from "../../../store/main/main.slice";
+import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
-import Permissions from "../Components/Permission";
-import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
-import Users from "../Components/Users";
-import Resources from "../Components/Resources";
-import {Container} from "react-smooth-dnd";
-import {applyDrag} from "../../../utils/applyDrag";
-import menuService from "../../../services/menuService";
-import {useState} from "react";
 import {useQueryClient} from "react-query";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DoneIcon from "@mui/icons-material/Done";
-import {store} from "../../../store";
-import {menuActions} from "../../../store/menuItem/menuItem.slice";
+import {useDispatch, useSelector} from "react-redux";
 import {useSearchParams} from "react-router-dom";
-import ActivityFeedButton from "../Components/ActivityFeedButton";
-import ProjectSettings from "../Components/ProjectSettings";
-import ApiMenu from "../Components/ApiMenu/Index";
+import {store} from "../../../store";
+import menuService, {useMenuListQuery} from "../../../services/menuService";
+import {Box, Button, Skeleton} from "@mui/material";
+import DoneIcon from "@mui/icons-material/Done";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {Container} from "react-smooth-dnd";
+import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
-import {GreyLoader} from "../../Loaders/GreyLoader";
+import ProjectSettings from "../Components/ProjectSettings";
+import Permissions from "../Components/Permission";
+import Resources from "../Components/Resources";
+import ApiMenu from "../Components/ApiMenu/Index";
+import Users from "../Components/Users";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
-const SubMenu = ({
-  child,
+function NewSubMenu({
   subMenuIsOpen,
   openFolderCreateModal,
   setFolderModalType,
@@ -45,7 +35,8 @@ const SubMenu = ({
   menuItem,
   menuLanguages,
   languageData = [],
-}) => {
+  child,
+}) {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -112,95 +103,20 @@ const SubMenu = ({
     height: "32px",
     marginTop: "5px",
   };
-
   return (
     <div
-      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
+      className={``}
       style={{
-        background: "#fff",
         position: "relative",
+        minHeight: "32px",
+        padding: "0 0 0 15px",
       }}>
       <div className="body">
-        <div className="header" onClick={() => {}} style={{height: 45}}>
-          {subMenuIsOpen && (
-            <h2
-              style={{
-                color: "#000",
-                fontSize: 14,
-                marginLeft: 8,
-                width: 120,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
-                selectedApp?.label}
-            </h2>
-          )}
-          <Box className="buttons">
-            <div className="dots">
-              {selectedApp?.id === "744d63e6-0ab7-4f16-a588-d9129cf959d1" &&
-                (isCopied ? (
-                  <DoneIcon
-                    style={{
-                      color: menuStyles?.text,
-                    }}
-                    size={13}
-                  />
-                ) : (
-                  <ContentCopyIcon
-                    size={13}
-                    onClick={handleClick}
-                    style={{
-                      color: menuStyles?.text,
-                    }}
-                  />
-                ))}
-              {!selectedApp?.is_static && (
-                <img
-                  src="/img/dots-vertical.svg"
-                  alt="settings"
-                  id={"three_dots"}
-                  onClick={(e) => {
-                    handleOpenNotify(e, "FOLDER");
-                    setElement(selectedApp);
-                  }}
-                  style={{
-                    color: menuStyles?.text,
-                  }}
-                />
-              )}
-              <img
-                src="/img/pin.svg"
-                alt="pin"
-                onClick={() => {
-                  if (!pinIsEnabled) setPinIsEnabledFunc(true);
-                  else setPinIsEnabledFunc(false);
-                }}
-                style={{
-                  rotate: pinIsEnabled ? "" : "-45deg",
-                  color: menuStyles?.text,
-                }}
-              />
-            </div>
-            <div
-              className="close-btn"
-              onClick={() => {
-                setSelectedApp({});
-                setSubMenuIsOpen(false);
-              }}>
-              <img src="/img/close-icon.svg" alt="close" />
-            </div>
-          </Box>
-        </div>
-
         <Box
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "calc(100% - 56px)",
-            // paddingTop: "20px"
           }}>
           <div>
             <Box className="nav-block">
@@ -264,6 +180,7 @@ const SubMenu = ({
                     onDrop={onDrop}>
                     {child?.map((element, index) => (
                       <RecursiveBlock
+                        menuStyles={menuStyles}
                         projectSettingLan={projectSettingLan}
                         key={element.id}
                         element={element}
@@ -284,70 +201,13 @@ const SubMenu = ({
                     ))}
                   </Container>
                 ) : null}
-                {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                  <DocumentsSidebar
-                    menuStyle={menuStyleNew}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    menuItem={menuItem}
-                    level={2}
-                  />
-                )}
-                {selectedApp?.id === adminId && (
-                  <ActivityFeedButton
-                    projectSettingLan={projectSettingLan}
-                    menuStyle={menuStyleNew}
-                    menuItem={menuItem}
-                    level={2}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    pinIsEnabled={pinIsEnabled}
-                  />
-                )}
               </div>
             </Box>
-            {selectedApp?.data?.permission?.write && exception && (
-              <div>
-                <Button
-                  id="create_btn"
-                  className="menu-button active-with-child"
-                  onClick={clickHandler}
-                  openFolderCreateModal={openFolderCreateModal}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#475467",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    borderRadius: 6,
-                    height: "32px",
-                  }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      flex: 1,
-                      whiteSpace: "nowrap",
-                      columnGap: "8px",
-                      color: "#475467",
-                      cursor: "pointer",
-                    }}>
-                    <img src="/img/plus-icon.svg" alt="Add" />
-                    {generateLangaugeText(
-                      menuLanguages,
-                      i18n?.language,
-                      "Create"
-                    )}
-                  </div>
-                </Button>
-              </div>
-            )}
           </div>
         </Box>
       </div>
     </div>
   );
-};
+}
 
-export default SubMenu;
+export default NewSubMenu;

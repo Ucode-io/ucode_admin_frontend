@@ -5,6 +5,7 @@ import { useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
 import { SidebarButton } from "../SidebarButton";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { useTimelineBlockContext } from "../../providers/TimelineBlockProvider";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -21,6 +22,8 @@ export const Sidebar = ({
   hasSameDay,
   isSidebarOpen,
 }) => {
+  const { setOpenDrawerModal } = useTimelineBlockContext();
+
   const [isAllOpen, setIsAllOpen] = useState(false);
 
   const handleAllOpen = () => {
@@ -94,11 +97,11 @@ export const Sidebar = ({
           ))}
         </div>
       )}
-      {/* <button className={cls.newBtn}>
+      <button className={cls.newBtn} onClick={() => setOpenDrawerModal(true)}>
         <span>
           <AddRoundedIcon /> New
         </span>
-      </button> */}
+      </button>
     </div>
   );
 };

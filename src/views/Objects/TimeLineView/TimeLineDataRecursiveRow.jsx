@@ -112,7 +112,7 @@ export default function TimeLineDataRecursiveRow({
 
     setCursorPosX(snappedX);
 
-    setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 5)]);
+    setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 4)]);
   };
 
   const isSingleGroup = deepLength === 1;

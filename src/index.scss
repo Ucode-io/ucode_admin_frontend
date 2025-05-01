@@ -289,6 +289,9 @@ div {
 
 .ql-editor {
   min-height: 100px;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 .PlatformModal,
@@ -609,9 +612,12 @@ div {
 
 #react_quill {
   .ql-editor {
-    min-width: 300px;
+    width: 300px;
     height: 200px;
     overflow: auto;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
   }
 }
 

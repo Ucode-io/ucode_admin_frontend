@@ -42,7 +42,7 @@ export const Models = () => {
   const trackConnection = (id) => {
     setLoadingId(id);
     conectionDatabaseService
-      .trackTable(id, {
+      .trackTable(selectedConnection?.id, {
         table_ids: [id],
       })
       .then((res) => refetch())

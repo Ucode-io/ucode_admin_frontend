@@ -117,7 +117,7 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleClose = () => setAnchorEl(null);
-
+  console.log("computedElementscomputedElements", computedElements);
   return (
     <>
       {computedElements?.length === 0 ? (
@@ -168,7 +168,7 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
                 cursor: "pointer",
               }}>
               {getElementIcon(chosenResource?.icon)}
-              <p>{el?.name}</p>
+              <p>{el?.name ?? el?.settings?.postgres?.connection_name}</p>
             </Box>
           ))}
           <Box

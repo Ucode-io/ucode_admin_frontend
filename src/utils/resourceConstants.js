@@ -17,11 +17,11 @@ export const resourceTypes = [
   //   value: 2,
   //   icon: HiOutlineDatabase,
   // },
-  // {
-  //   label: "PosgreSQL",
-  //   value: 3,
-  //   icon: SiPostgresql,
-  // },
+  {
+    label: "PosgreSQL",
+    value: 3,
+    icon: SiPostgresql,
+  },
   {
     label: "Rest",
     value: 4,

@@ -14,6 +14,7 @@ import useDebounce from "../../../../hooks/useDebounce";
 // import {Select} from "@chakra-ui/react";
 import Select from "react-select";
 import {Box} from "@mui/material";
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 
 const RelationField = ({
   control,

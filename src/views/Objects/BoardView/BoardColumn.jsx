@@ -19,6 +19,7 @@ import layoutService from "../../../services/layoutService";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import useDebounce from "../../../hooks/useDebounce";
 import { getColumnIcon } from "../../table-redesign/icons";
+import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
 
 const BoardColumn = ({
   tab,
@@ -32,6 +33,8 @@ const BoardColumn = ({
   refetch: refetchListQueries,
   boardRef,
   index: columnIndex,
+  subGroupById,
+  subGroupData,
 }) => {
   const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
@@ -51,7 +54,7 @@ const BoardColumn = ({
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
   const [computedData, setComputedData] = useState(
-    data.filter((el) => {
+    (subGroupById ? subGroupData : data).filter((el) => {
       if (isStatusType) {
         return el?.[selectedGroupField?.slug];
       } else {
@@ -141,6 +144,7 @@ const BoardColumn = ({
   });
 
   const onDrop = (dropResult) => {
+    console.log({ dropResult });
     const result = applyDrag(computedData, dropResult);
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
@@ -185,7 +189,7 @@ const BoardColumn = ({
 
   useEffect(() => {
     setComputedData(
-      data.filter((el) => {
+      (subGroupById ? subGroupData : data).filter((el) => {
         if (isStatusType) {
           return el?.[selectedGroupField?.slug] === tab?.label;
         } else {
@@ -195,7 +199,7 @@ const BoardColumn = ({
         }
       })
     );
-  }, [data]);
+  }, [data, subGroupById, subGroupData]);
 
   const navigateToEditPage = (el) => {
     setOpenDrawerModal(true);
@@ -220,81 +224,48 @@ const BoardColumn = ({
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  const hasColor = tab?.color || field?.attributes?.has_color;
-  const color =
-    tab?.color ||
-    field?.attributes?.options?.find((item) => item?.value === tab?.value)
-      ?.color;
+  // const hasColor = tab?.color || field?.attributes?.has_color;
+  // const color =
+  //   tab?.color ||
+  //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
+  //     ?.color;
 
-  const refetch = () => {
-    queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-    queryClient.refetchQueries(["GET_TABLE_INFO"]);
-  };
+  // const refetch = () => {
+  //   queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+  //   queryClient.refetchQueries(["GET_TABLE_INFO"]);
+  // };
 
-  const fixedElement = useRef(null);
+  // const fixedElement = useRef(null);
 
-  useEffect(() => {
-    const board = boardRef.current;
-    const el = fixedElement.current;
-    if (!board || !el) return;
+  // useEffect(() => {
+  //   const board = boardRef.current;
+  //   const el = fixedElement.current;
+  //   if (!board || !el) return;
 
-    const onScroll = () => {
-      el.style.top = `${board.scrollTop}px`;
-    };
+  //   const onScroll = () => {
+  //     el.style.top = `${board.scrollTop}px`;
+  //   };
 
-    board.addEventListener("scroll", onScroll);
+  //   board.addEventListener("scroll", onScroll);
 
-    return () => {
-      board.removeEventListener("scroll", onScroll);
-    };
-  }, []);
+  //   return () => {
+  //     board.removeEventListener("scroll", onScroll);
+  //   };
+  // }, []);
 
   return (
     <>
       <div className={styles.column}>
-        <div
-          ref={fixedElement}
-          className={`${styles.columnHeaderBlock} column-header`}
-        >
-          <div className={styles.leftSide}>
-            <div className={styles.title}>
-              <span
-                style={{
-                  background: hasColor ? color + 33 : "rgb(139, 150, 160)",
-                  color: hasColor ? color - 50 : "rgb(139, 150, 160)",
-                }}
-                className={styles.tabBlockStatus}
-              >
-                <span
-                  className={styles.dot}
-                  style={{ background: color }}
-                ></span>
-                {tab.label}
-              </span>
-              {/* <MultiselectCellColoredElement
-                className={styles.tabBlockStatus}
-                {...tab}
-                field={computedColumnsFor?.find(
-                  (field) => field?.slug === tab?.slug
-                )}
-              /> */}
-              {/* {tab.label} */}
-            </div>
-            <div className={styles.counter}>{computedData?.length ?? 0}</div>
-          </div>
-          <div className={styles.rightSide}>
-            <IconButton
-              className={styles.addButton}
-              color="inherit"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateToCreatePage();
-              }}
-            >
-              <Add />
-            </IconButton>
-          </div>
-        </div>
+        {!subGroupById && (
+          <ColumnHeaderBlock
+            field={field}
+            tab={tab}
+            computedData={computedData}
+            boardRef={boardRef}
+            navigateToCreatePage={navigateToCreatePage}
+            fixed
+          />
+        )}
 
         <Container
           groupName="subtask"
@@ -308,7 +279,7 @@ const BoardColumn = ({
             animationDuration: 150,
           }}
           style={{
-            padding: "50px 8px 0 8px",
+            padding: "10px 8px 0 8px",
           }}
           animationDuration={300}
         >

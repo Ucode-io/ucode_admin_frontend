@@ -415,11 +415,10 @@ const AppSidebar = ({
                 pt={"4px"}
                 border={"none"}
                 w={"100%"}
-                bg={"white"}
+                bg={menuStyle?.background}
                 height={"32px"}
                 onClick={(e) => {
                   e.stopPropagation();
-
                   clickHandler();
                   element?.id !== menuItem?.id && setLoading(true);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));

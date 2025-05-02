@@ -345,17 +345,17 @@ function NewResourceDetail({handleClose = () => {}}) {
         id: values?.id,
         settings: {...values?.settings},
       });
-      resourceVariableService
-        .updateV2({
-          project_resource_id: variables?.id,
-          variables: computedValues2?.variables,
-        })
-        .then(() => {
-          dispatch(showAlert("Resource variable updated!", "success"));
-        })
-        .catch((err) => {
-          dispatch(showAlert(err, "error"));
-        });
+      // resourceVariableService
+      //   .updateV2({
+      //     project_resource_id: variables?.id,
+      //     variables: computedValues2?.variables,
+      //   })
+      //   .then(() => {
+      //     dispatch(showAlert("Resource variable updated!", "success"));
+      //   })
+      //   .catch((err) => {
+      //     dispatch(showAlert(err, "error"));
+      //   });
     } else {
       if (values?.resource_type === 4) {
         createResourceV2(computedValues2);

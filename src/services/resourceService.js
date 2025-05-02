@@ -40,6 +40,7 @@ const resourceService = {
       params: {"project-id": projectId},
     });
   },
+  resourceCreate: (data) => requestV2.post(`company/project/resource`, data),
 };
 
 export const useResourceListQuery = ({params = {}, queryParams} = {}) => {
@@ -170,6 +171,13 @@ export const useResourceCreateMutation = (mutationSettings) => {
 export const useResourceCreateMutationV2 = (mutationSettings) => {
   return useMutation(
     (data) => resourceService.createV2(data),
+    mutationSettings
+  );
+};
+
+export const useResourcePostgreCreateMutationV2 = (mutationSettings) => {
+  return useMutation(
+    (data) => resourceService.resourceCreate(data),
     mutationSettings
   );
 };

@@ -167,18 +167,22 @@ const Resources = ({
         className="parent-block column-drag-handle"
         style={{marginBottom: 5}}>
         <Button
-          className="nav-element highlight-on-hover"
+          className="nav-element childMenuFolderBtn highlight-on-hover"
           style={{borderRadius: "8px", color: "#475767", height: "32px"}}
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label">
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
-            <IconGenerator icon={"database.svg"} size={18} />
+            <div className="childMenuFolderArrow">
+              {childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+            </div>
+            <div className="childMenuIcon">
+              <IconGenerator icon={"database.svg"} size={18} />
+            </div>
             {generateLangaugeText(
               projectSettingLan,
               i18n?.language,

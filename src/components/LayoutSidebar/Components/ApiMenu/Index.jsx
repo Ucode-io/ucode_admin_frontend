@@ -46,17 +46,21 @@ function ApiMenu({level = 1, menuStyle, projectSettingLan}) {
         style={{marginBottom: 5}}>
         <Button
           style={menuStyle}
-          className="nav-element highlight-on-hover"
+          className="nav-element childMenuFolderBtn highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label">
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
-            <IconGenerator icon={"lock.svg"} size={18} />
+            <div className="childMenuFolderArrow">
+              {childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+            </div>
+            <div className="childMenuIcon">
+              <IconGenerator icon={"lock.svg"} size={18} />
+            </div>
             API
           </div>
         </Button>

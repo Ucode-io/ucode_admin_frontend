@@ -9,7 +9,7 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
@@ -62,6 +62,7 @@ const AppSidebar = ({
   const {appId} = useParams();
   const [child, setChild] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [openAccordionId, setOpenAccordionId] = useState(null);
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -193,6 +194,15 @@ const AppSidebar = ({
       dispatch(mainActions.setSidebarHighlightedMenu(element?.id));
   }
 
+  const getMenuColor = (element) => {
+    if (element?.label === "Settings") {
+      return "#fff";
+    } else
+      return activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467";
+  };
+
+  console.log("openAccordionIdopenAccordionId", openAccordionId);
+
   return (
     <Draggable key={index}>
       {element?.type !== "FOLDER" && (
@@ -205,7 +215,7 @@ const AppSidebar = ({
               dispatch(mainActions.setSidebarHighlightedMenu(null));
             }}
             position="relative"
-            h={32}
+            h={30}
             mx={8}
             mb={4}
             alignItems="center"
@@ -252,7 +262,7 @@ const AppSidebar = ({
                   ? menuStyle?.active_text
                   : menuStyle?.text || "#475467"
               }
-              pl={48}
+              pl={35}
               fontSize={14}
               mr="auto"
               overflow="hidden"
@@ -395,7 +405,10 @@ const AppSidebar = ({
       )}
 
       {element?.type === "FOLDER" && (
-        <Accordion border={"none"} allowToggle>
+        <Accordion
+          index={openAccordionId === element.id ? 0 : -1}
+          border={"none"}
+          allowToggle>
           <SidebarAppTooltip id={element?.id} title={title}>
             <AccordionItem>
               <AccordionButton
@@ -403,22 +416,36 @@ const AppSidebar = ({
                 border={"none"}
                 w={"100%"}
                 bg={"white"}
+                height={"32px"}
                 onClick={(e) => {
+                  e.stopPropagation();
+
                   clickHandler();
                   element?.id !== menuItem?.id && setLoading(true);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));
+
+                  if (openAccordionId === element.id) setOpenAccordionId(null);
+                  else setOpenAccordionId(element.id);
                 }}>
                 <Flex
                   width={sidebarIsOpen ? "100%" : "36px"}
                   key={index}
                   position="relative"
-                  h={32}
+                  h={30}
                   mx={8}
                   mb={4}
                   alignItems="center"
                   whiteSpace="nowrap"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{
+                    bg: "#EAECF0",
+                    ".accordionFolderIcon": {
+                      display: "none",
+                    },
+                    ".accordionIcon": {
+                      display: "block",
+                    },
+                  }}
                   cursor="pointer"
                   className="parent-folder column-drag-handle"
                   bg={
@@ -441,18 +468,32 @@ const AppSidebar = ({
                     h={36}
                     alignItems="center"
                     justifyContent="center">
-                    <IconGenerator
-                      icon={
-                        !icon || icon === "folder.svg" ? "folder-new.svg" : icon
-                      }
-                      size={iconSize}
-                      style={{
-                        color:
-                          icon && icon !== "folder.svg"
-                            ? menuStyle?.text || "#475467"
-                            : "#fff",
-                      }}
-                    />
+                    <Box display={"none"} className="accordionIcon">
+                      {sidebarIsOpen && element?.type === "FOLDER" && (
+                        <AccordionIcon
+                          w={"20px"}
+                          h={"20px"}
+                          style={{
+                            color: activeMenu
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box className="accordionFolderIcon">
+                      <IconGenerator
+                        icon={
+                          !icon || icon === "folder.svg"
+                            ? "folder-new.svg"
+                            : icon
+                        }
+                        size={iconSize}
+                        style={{
+                          color: getMenuColor(element, icon),
+                        }}
+                      />
+                    </Box>
                   </Flex>
 
                   <Box
@@ -461,7 +502,7 @@ const AppSidebar = ({
                         ? menuStyle?.active_text
                         : menuStyle?.text || "#475467"
                     }
-                    pl={48}
+                    pl={35}
                     fontSize={14}
                     mr="auto"
                     overflow="hidden"
@@ -518,34 +559,6 @@ const AppSidebar = ({
                   ) : (
                     ""
                   )}
-                  {sidebarIsOpen && element?.type === "FOLDER" ? (
-                    <AccordionIcon
-                      w={"18px"}
-                      h={"18px"}
-                      style={{
-                        color: activeMenu
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                        transform:
-                          selectedApp?.id === element.id && "rotate(-90deg)",
-                        transition: "transform 250ms ease-out",
-                        marginRight: 4,
-                      }}
-                    />
-                  ) : (
-                    // <KeyboardArrowDownIcon
-                    //   style={{
-                    //     color: activeMenu
-                    //       ? menuStyle?.active_text
-                    //       : menuStyle?.text || "",
-                    //     transform:
-                    //       selectedApp?.id === element.id && "rotate(-90deg)",
-                    //     transition: "transform 250ms ease-out",
-                    //     marginRight: 4,
-                    //   }}
-                    // />
-                    ""
-                  )}
                 </Flex>
               </AccordionButton>
 
@@ -556,7 +569,8 @@ const AppSidebar = ({
                       animation="wave"
                       variant="text"
                       style={{
-                        width: "95%",
+                        width: "94%",
+                        margin: "0 auto",
                         height: "52px",
                         borderRadius: "8px",
                       }}

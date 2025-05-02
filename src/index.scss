@@ -1266,3 +1266,38 @@ div:has(.chakra-tooltip) {
   font-weight: 500;
   cursor: pointer;
 }
+
+.accordionIcon {
+  &:hover {
+    background: #37352f0f;
+    border-radius: 6px;
+  }
+}
+
+.childMenuIcon {
+  display: block;
+  height: 20px;
+  width: 20px;
+}
+.childMenuFolderArrow {
+  display: none;
+  height: 20px;
+  width: 20px;
+
+  &:hover {
+    background: #37352f0f;
+    border-radius: 6px;
+  }
+}
+
+.childMenuFolderBtn {
+  &:hover {
+    .childMenuFolderArrow {
+      display: block;
+    }
+
+    .childMenuIcon {
+      display: none;
+    }
+  }
+}

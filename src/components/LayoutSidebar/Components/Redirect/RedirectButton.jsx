@@ -41,10 +41,15 @@ const RedirectButton = ({
   };
 
   return (
-    <Box>
+    <Box sx={{paddingLeft: "10px"}}>
       <div className="parent-block column-drag-handle">
         <Button
-          style={{color: "#475465", height: "32px", borderRadius: "8px"}}
+          style={{
+            color: "#475465",
+            height: "32px",
+            borderRadius: "8px",
+            paddingLeft: "25px",
+          }}
           className="nav-element highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);

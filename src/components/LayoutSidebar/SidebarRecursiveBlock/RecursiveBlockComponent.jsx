@@ -94,8 +94,6 @@ const RecursiveBlock = ({
       ? Boolean(selectedApp?.id === element?.id)
       : element?.id === menuItem?.id;
 
-  console.log("activeMenuactiveMenu", activeMenu);
-
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
@@ -177,7 +175,7 @@ const RecursiveBlock = ({
   };
 
   return (
-    <Draggable key={index}>
+    <Draggable style={{height: "32px"}} key={index}>
       <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
         <div
           className="parent-block column-drag-handle"
@@ -189,16 +187,17 @@ const RecursiveBlock = ({
               data-cy="three-dots-button"
               key={element.id}
               style={{
-                marginTop: "5px",
+                marginTop: "2px",
+                marginBottom: "2px",
                 borderRadius: "8px",
                 color: "#475767",
-                height: "32px",
+                height: "30px",
                 background: activeMenu
                   ? menuStyles?.active_background
                   : menuStyles?.background,
-                color: activeMenu ? menuStyles?.active_text : menuStyles?.text,
+                color: activeMenu ? menuStyles?.active_text : "#465766",
               }}
-              className={`nav-element `}
+              className={`nav-element childMenuFolderBtn`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -214,15 +213,19 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                {MenuFolderArrows({element, childBlockVisible})}
-                <IconGenerator
-                  icon={
-                    element?.icon ||
-                    element?.data?.microfrontend?.icon ||
-                    element?.data?.webpage?.icon
-                  }
-                  size={18}
-                />
+                <div className="childMenuFolderArrow">
+                  {MenuFolderArrows({element, childBlockVisible})}
+                </div>
+                <div className="childMenuIcon">
+                  <IconGenerator
+                    icon={
+                      element?.icon ||
+                      element?.data?.microfrontend?.icon ||
+                      element?.data?.webpage?.icon
+                    }
+                    size={18}
+                  />
+                </div>
 
                 <Box
                   sx={{
@@ -231,6 +234,7 @@ const RecursiveBlock = ({
                     alignItems: "center",
                     width: "100%",
                     position: "relative",
+                    color: "#465766",
                   }}>
                   <Box>
                     <p>{getMenuLabel(element)}</p>
@@ -266,26 +270,6 @@ const RecursiveBlock = ({
                           </Box>
                         </Tooltip>
                       )}
-
-                      {/* {addButtonPermission &&
-                        element?.data?.permission?.write && (
-                          <Tooltip title="Create folder" placement="top">
-                            <Box className="extra_icon">
-                              <AddIcon
-                                size={13}
-                                onClick={(e) => {
-                                  menuAddClick(e);
-                                }}
-                                style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
-                                }}
-                              />
-                            </Box>
-                          </Tooltip>
-                        )} */}
                     </Box>
                   )}
                 </Box>

@@ -39,7 +39,7 @@ function ExternalDatabases({
         }}
         variant="outlined">
         <Box>
-          <span style={{fontWeight: "400"}}> Connections</span>:{" "}
+          <span style={{fontWeight: "400"}}> Resource</span>:{" "}
           {selectedConnection?.name || " "}{" "}
         </Box>
         <Box

@@ -388,12 +388,7 @@ const LayoutSidebar = ({
           )}
         </Flex>
 
-        <Flex
-          pl={8}
-          py={10}
-          h={45}
-          borderBottom="1px solid #EAECF0"
-          alignItems="center">
+        <Flex pl={8} py={4} h={42} alignItems="center">
           <Header
             sidebarIsOpen={sidebarIsOpen}
             toggleDarkMode={toggleDarkMode}
@@ -487,12 +482,13 @@ const LayoutSidebar = ({
                 <SidebarAppTooltip id="create" title="Create">
                   <Flex
                     position="relative"
-                    h={32}
+                    h={30}
                     alignItems="center"
                     borderRadius={6}
                     _hover={{bg: "#EAECF0"}}
                     cursor="pointer"
                     mx={8}
+                    marginTop={"5px"}
                     onClick={(e) => {
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
@@ -500,8 +496,8 @@ const LayoutSidebar = ({
                     {...itemConditionalProps}>
                     <Flex
                       position="absolute"
-                      w={36}
-                      h={36}
+                      w={32}
+                      h={32}
                       alignItems="center"
                       justifyContent="center">
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
@@ -513,7 +509,7 @@ const LayoutSidebar = ({
                         (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
                         "#475467"
                       }
-                      pl={48}
+                      pl={35}
                       fontSize={14}>
                       {generateLangaugeText(
                         menuLanguages,
@@ -784,8 +780,8 @@ const Header = ({
       onClose={handleClose}>
       <PopoverTrigger>
         <Flex
-          w="calc(100% - 8px)"
-          maxWidth="200px"
+          w="calc(100% - 0px)"
+          maxWidth={sidebarIsOpen ? "220px" : "36px"}
           position="relative"
           overflow="hidden"
           alignItems="center"
@@ -833,7 +829,7 @@ const Header = ({
             textOverflow="ellipsis">
             {projectInfo?.title}
           </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: "auto", fontSize: 20}} />
+          <KeyboardArrowDownIcon style={{marginLeft: "10px", fontSize: 20}} />
         </Flex>
       </PopoverTrigger>
       <PopoverContent

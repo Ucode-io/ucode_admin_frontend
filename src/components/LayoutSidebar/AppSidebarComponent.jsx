@@ -592,15 +592,15 @@ const AppSidebar = ({
               </AccordionButton>
 
               {element?.type === "FOLDER" && (
-                <AccordionPanel>
+                <AccordionPanel height={"38px"}>
                   {loading ? (
                     <Skeleton
                       animation="wave"
                       variant="text"
                       style={{
                         width: "94%",
-                        margin: "0 auto",
-                        height: "52px",
+                        margin: "-5px auto 0px",
+                        height: "42px",
                         borderRadius: "8px",
                       }}
                     />

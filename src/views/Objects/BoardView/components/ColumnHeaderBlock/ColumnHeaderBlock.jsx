@@ -39,9 +39,11 @@ export const ColumnHeaderBlock = ({
     }
   }, []);
 
-  return <div
+  return (
+    <div
       ref={fixedElement}
       className={`${cls.columnHeaderBlock} column-header`}
+      style={{ position: fixed ? "absolute" : "static" }}
     >
       <div className={cls.leftSide}>
         <div className={cls.title}>
@@ -73,5 +75,6 @@ export const ColumnHeaderBlock = ({
           <Add />
         </IconButton>
       </div>
-  </div>
+    </div>
+  );
 }

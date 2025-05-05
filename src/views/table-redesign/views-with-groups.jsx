@@ -2756,7 +2756,11 @@ const TabGroup = ({
                 ml="auto"
                 checked={selected === column?.id}
                 onChange={(ev) => onChange(column, ev.target.checked)}
-                // disabled={view?.group_fields?.length === 1}
+                disabled={
+                  isBoardView
+                    ? view?.attributes?.sub_group_by_id === column?.id
+                    : false
+                }
                 isChecked={(view?.group_fields ?? []).includes(
                   column?.type === "LOOKUP" || column?.type === "LOOKUPS"
                     ? column?.relation_id

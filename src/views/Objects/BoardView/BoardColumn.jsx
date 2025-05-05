@@ -35,6 +35,8 @@ const BoardColumn = ({
   index: columnIndex,
   subGroupById,
   subGroupData,
+  subItem,
+  subGroupFieldSlug,
 }) => {
   const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
@@ -46,7 +48,6 @@ const BoardColumn = ({
 
   const [open, setOpen] = useState();
   const [index, setIndex] = useState();
-  const [onDropData, setOndropData] = useState(null);
 
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
@@ -144,12 +145,27 @@ const BoardColumn = ({
   });
 
   const onDrop = (dropResult) => {
-    console.log({ dropResult });
-    const result = applyDrag(computedData, dropResult);
+    let dropResultTemp = { ...dropResult };
+
+    const payload = dropResultTemp.payload;
+
+    if (dropResult?.addedIndex !== null && subGroupById) {
+      payload[subGroupFieldSlug] = subItem;
+    }
+
+    if (isStatusType) {
+      payload[selectedGroupField?.slug] = tab?.label;
+    } else {
+      if (Array.isArray(payload[tab.slug]))
+        payload[tab.slug].includes(tab.value);
+      payload[tab.slug] = tab.value;
+    }
+
+    payload["color"] = tab?.color || color;
+
+    const result = applyDrag(computedData, dropResultTemp);
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
-    setOndropData({ dropResult, result });
-
     if (result?.length >= computedData?.length) {
       mutateDrop({ data: dropResult.payload, index: dropResult.addedIndex });
     }
@@ -221,6 +237,16 @@ const BoardColumn = ({
         value: [tab.value],
       });
     }
+
+    if (subGroupById) {
+      setDefaultValue((prev) => [
+        prev,
+        {
+          field: subGroupFieldSlug,
+          value: subItem,
+        },
+      ]);
+    }
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
@@ -253,9 +279,19 @@ const BoardColumn = ({
   //   };
   // }, []);
 
+  const color =
+    tab?.color ||
+    field?.attributes?.options?.find((item) => item?.value === tab?.value)
+      ?.color;
+
   return (
     <>
-      <div className={styles.column}>
+      <div
+        className={styles.column}
+        style={{
+          backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
+        }}
+      >
         {!subGroupById && (
           <ColumnHeaderBlock
             field={field}

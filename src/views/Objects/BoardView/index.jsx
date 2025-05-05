@@ -347,6 +347,8 @@ const BoardView = ({
                               index={index}
                               subGroupById={subGroupById}
                               subGroupData={subBoardData[el]}
+                              subItem={el}
+                              subGroupFieldSlug={subGroupFieldSlug}
                             />
                           </Draggable>
                         ))}
@@ -368,7 +370,7 @@ const BoardView = ({
                   showOnTop: true,
                   className: "drag-cards-drop-preview",
                 }}
-                style={{ display: "flex", gap: 8 }}
+                style={{ display: "flex", gap: 8, paddingTop: "48px" }}
               >
                 {boardTab?.map((tab, index) => (
                   <Draggable key={tab.value} className={styles.draggable}>

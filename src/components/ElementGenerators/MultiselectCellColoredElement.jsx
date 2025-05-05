@@ -16,11 +16,20 @@ const MultiselectCellColoredElement = ({
   columnIndex,
   ...props
 }) => {
+
+  const hasColor = field?.attributes?.has_color;
+  const hasIcon = field?.attributes?.has_icon;
+
   const tags = useMemo(() => {
     if (typeof value === "string" || typeof value === "number")
       return [
         {
           value,
+          color: hasColor
+            ? field.attributes?.options?.find(
+                (option) => option.value === value
+              )
+            : "",
         },
       ];
     if (Array.isArray(value)) {
@@ -31,9 +40,6 @@ const MultiselectCellColoredElement = ({
         ?.filter((el) => el);
     }
   }, [value, field?.attributes?.options]);
-
-  const hasColor = field?.attributes?.has_color;
-  const hasIcon = field?.attributes?.has_icon;
 
   const color = statusTypeOptions?.find(
     (option) => option?.label === el?.[slug]
@@ -54,11 +60,11 @@ const MultiselectCellColoredElement = ({
         <div
           className={cls.cellColoredElementLabel}
           style={{
-            color: color || hasColor ? tag.color : "#000",
+            color: color || hasColor ? tag.color?.color || tag?.color : "#000",
             backgroundColor: color
               ? color + 33
               : hasColor
-                ? tag.color + 33
+                ? (tag.color?.color || tag.color) + 33
                 : "#c0c0c039",
             padding: resize ? "0px 5px" : "5px 12px",
             width: "fit-content",

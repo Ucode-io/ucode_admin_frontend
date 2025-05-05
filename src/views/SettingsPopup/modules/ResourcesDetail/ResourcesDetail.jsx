@@ -41,6 +41,8 @@ import {ContentTitle} from "../../components/ContentTitle";
 import {useSettingsPopupContext} from "../../providers";
 import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
+import PostgresCreate from "./PostgresCreate";
+import {useResourcePostgreCreateMutationV2} from "../../../../services/resourceService";
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},
@@ -197,6 +199,19 @@ export const ResourcesDetail = ({
       },
     });
 
+  const createResourcePostgreV2 = (values) => {
+    if (!!loading) {
+      resourceService
+        .resourceCreate(values)
+        .then((res) => {
+          dispatch(showAlert("Successfully created", "success"));
+          backBtn();
+          setLoading(false);
+        })
+        .onError((er) => setLoading(false));
+    }
+  };
+
   const {mutate: createResourceV1, isLoading: createLoadingV1} =
     useCreateResourceMutationV1({
       onSuccess: () => {
@@ -244,9 +259,7 @@ export const ResourcesDetail = ({
       onSuccess: (res) => {
         setSearchParams({access_token: res.access_token});
       },
-      onError: () => {
-        // navigate(microfrontendListPageLink);
-      },
+      onError: () => {},
     });
 
   const {mutate: gitlabLogin, isLoading: gitlabLoginIsLoading} =
@@ -255,9 +268,7 @@ export const ResourcesDetail = ({
         setSearchParams({access_token: res.access_token});
         setSelectedGitlab(res);
       },
-      onError: () => {
-        // navigate(microfrontendListPageLink);
-      },
+      onError: () => {},
     });
 
   useEffect(() => {
@@ -366,6 +377,16 @@ export const ResourcesDetail = ({
       user_id: authStore?.userId,
     };
 
+    const computedPostgre = {
+      ...values,
+      default: false,
+      type: 3,
+      company_id: company?.companyId,
+      user_id: authStore?.userId,
+      environment_id: authStore.environmentId,
+      is_configured: true,
+    };
+
     if (Boolean(searchParams.get("edit"))) {
       updateResourceV2({
         name: values?.name,
@@ -389,6 +410,9 @@ export const ResourcesDetail = ({
           setLoading(false);
         });
     } else {
+      if (values?.resource_type === 3) {
+        createResourcePostgreV2(computedPostgre);
+      }
       if (values?.resource_type === 4) {
         createResourceV2(computedValues2);
       } else if (values?.resource_type === 5) {
@@ -427,6 +451,7 @@ export const ResourcesDetail = ({
     const matchingResource = resourceTypes.find(
       (type) => type?.label?.toLowerCase() === variables?.type?.toLowerCase()
     );
+
     if (matchingResource) {
       setValue("resource_type", matchingResource.value);
       setValue(
@@ -618,6 +643,17 @@ export const ResourcesDetail = ({
                 />
               ) : resourceType === "GITLAB" ? (
                 <GitLabForm
+                  settingLan={settingLan}
+                  control={control}
+                  selectedEnvironment={selectedEnvironment}
+                  btnLoading={configureLoading || updateLoading}
+                  setSelectedEnvironment={setSelectedEnvironment}
+                  projectEnvironments={projectEnvironments}
+                  isEditPage={isEditPage}
+                  watch={watch}
+                />
+              ) : Number(searchParams.get("resource_type")) === 3 ? (
+                <PostgresCreate
                   settingLan={settingLan}
                   control={control}
                   selectedEnvironment={selectedEnvironment}

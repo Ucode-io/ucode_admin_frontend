@@ -37,13 +37,14 @@ const ApiKeyButton = ({projectSettingLan}) => {
   };
 
   return (
-    <Box>
+    <Box sx={{paddingLeft: "10px"}}>
       <div className="parent-block column-drag-handle">
         <Button
           style={{
             borderRadius: "8px",
             height: "32px",
             color: "#475465",
+            paddingLeft: "25px",
           }}
           className="nav-element highlight-on-hover"
           onClick={(e) => {

@@ -511,6 +511,9 @@ $main-color: #0365f2;
 }
 
 .docsBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
   width: 36px;
   height: 28px;
   display: flex;

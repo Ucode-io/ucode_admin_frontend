@@ -81,12 +81,12 @@ const PermissionSidebarRecursiveBlock = ({
   };
 
   return (
-    <Box sx={{padding: "0 5px"}}>
+    <Box sx={{paddingLeft: "10px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         {permission ? (
           <Button
             key={element.id}
-            style={{height: "31px", borderRadius: "8px"}}
+            style={{height: "31px", borderRadius: "8px", paddingLeft: "25px"}}
             className="nav-element highlight-on-hover"
             onClick={(e) => {
               customFunc(e);
@@ -148,9 +148,9 @@ const PermissionSidebarRecursiveBlock = ({
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          gap: "10px",
+                          gap: "5px",
                         }}>
-                        <Box className="">
+                        <Box sx={{height: "20px"}}>
                           <RiPencilFill
                             size={13}
                             onClick={(e) => {

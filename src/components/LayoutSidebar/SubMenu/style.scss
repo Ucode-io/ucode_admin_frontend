@@ -1,7 +1,7 @@
 .highlight-on-hover {
   cursor: pointer !important;
   &:hover {
-    background-color: #EAECF0 !important;
+    background-color: #eaecf0 !important;
   }
 }
 
@@ -56,7 +56,7 @@
     margin: 10px;
     border-radius: 8px;
 
-    &>div>div {
+    & > div > div {
       background-color: #f7f7f7;
       border-radius: 6px;
       width: 100%;
@@ -91,7 +91,7 @@
     height: 56px;
     align-items: center;
     padding: 0 12px;
-    border-bottom: 1px solid #EAECF0;
+    border-bottom: 1px solid #eaecf0;
 
     .buttons {
       display: flex;
@@ -175,7 +175,7 @@
       color: #0365f2;
 
       &:hover {
-        background-color: #EAECF0 !important;
+        background-color: #eaecf0 !important;
       }
 
       .extra_icon {
@@ -287,7 +287,6 @@
           background-color: #0365f2;
           color: #fff;
 
-
           .extra_icon {
             display: none;
           }
@@ -302,7 +301,7 @@
           color: #0365f2;
 
           &:hover {
-            background-color: #EAECF0 !important;
+            background-color: #eaecf0 !important;
           }
 
           .extra_icon {
@@ -485,7 +484,6 @@
             background-color: #0365f2;
             color: #fff;
 
-
             .extra_icon {
               display: none;
             }
@@ -500,7 +498,7 @@
             color: #0365f2;
 
             &:hover {
-              background-color: #EAECF0 !important;
+              background-color: #eaecf0 !important;
             }
 
             .extra_icon {

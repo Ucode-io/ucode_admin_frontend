@@ -3,8 +3,6 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {Box, Button, Collapse, Tooltip} from "@mui/material";
 import React, {useState} from "react";
 import IconGenerator from "../../../IconPicker/IconGenerator";
-import AddIcon from "@mui/icons-material/Add";
-import activeStyles from "../MenuUtils/activeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import RecursiveBlock from "./RecursiveBlock";
@@ -41,20 +39,26 @@ function ProjectSettings({level = 1, menuStyle, projectSettingLan}) {
 
   return (
     <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
-      <div className="parent-block column-drag-handle">
+      <div className="parent-block column-drag-handle ">
         <Button
           style={menuStyle}
-          className="nav-element highlight-on-hover"
+          className="nav-element childMenuFolderBtn highlight-on-hover "
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label">
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
-            <IconGenerator icon={"lock.svg"} size={18} />
+            <div className="childMenuFolderArrow">
+              {childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+            </div>
+
+            <div className="childMenuIcon">
+              <IconGenerator icon={"lock.svg"} size={18} />
+            </div>
+
             {generateLangaugeText(
               projectSettingLan,
               i18n?.language,

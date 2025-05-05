@@ -197,7 +197,7 @@ const RecursiveBlock = ({
                   : menuStyles?.background,
                 color: activeMenu ? menuStyles?.active_text : "#465766",
               }}
-              className={`nav-element childMenuFolderBtn`}
+              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -213,10 +213,16 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                <div className="childMenuFolderArrow">
-                  {MenuFolderArrows({element, childBlockVisible})}
-                </div>
-                <div className="childMenuIcon">
+                {element?.type === "FOLDER" && (
+                  <div className="childMenuFolderArrowChild">
+                    {MenuFolderArrows({element, childBlockVisible})}
+                  </div>
+                )}
+                <div
+                  style={{
+                    marginRight: element?.icon ? "8px" : "0px",
+                  }}
+                  className="childMenuIcon">
                   <IconGenerator
                     icon={
                       element?.icon ||

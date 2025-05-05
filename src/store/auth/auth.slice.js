@@ -79,7 +79,6 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
       state.isAuth = true;
     },
     setPermission(state, {payload}) {
-      console.log("payloaddddddddd", payload);
       state.permissions =
         payload?.permissions?.reduce((acc, curr) => {
           acc[curr.table_slug] = {
@@ -108,8 +107,8 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
           return acc;
         }, {}) || [];
     },
-    updateUser(state, { payload }) {
-      state.userInfo[payload.key] = payload.value
+    updateUser(state, {payload}) {
+      state.userInfo[payload.key] = payload.value;
     },
     logout: (state) => initialState,
     setStatus(state, payload) {

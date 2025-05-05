@@ -22,7 +22,7 @@ function DrawerTablePagination({
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
-  console.log("pageCountpageCount", dataCount);
+
   const [limitOptions, setLimitOptions] = useState([
     {value: 10, label: "10 rows"},
     {value: 20, label: "20 rows"},

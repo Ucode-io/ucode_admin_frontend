@@ -525,19 +525,23 @@ const AppSidebar = ({
                     </Box>
                   </Flex>
 
-                  <Box
-                    color={
-                      activeMenu
-                        ? menuStyle?.active_text
-                        : menuStyle?.text || "#475467"
-                    }
-                    pl={35}
-                    fontSize={14}
-                    mr="auto"
-                    overflow="hidden"
-                    textOverflow="ellipsis">
-                    {title}
-                  </Box>
+                  <Tooltip
+                    title={title?.length > 14 ? title : ""}
+                    placement="top">
+                    <Box
+                      color={
+                        activeMenu
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "#475467"
+                      }
+                      pl={35}
+                      fontSize={14}
+                      mr="auto"
+                      overflow="hidden"
+                      textOverflow="ellipsis">
+                      {title?.length > 14 ? `${title?.slice(0, 14)}...` : title}
+                    </Box>
+                  </Tooltip>
 
                   {element?.type === "FOLDER" &&
                   sidebarIsOpen &&
@@ -565,25 +569,23 @@ const AppSidebar = ({
                         </Tooltip>
                       )}
 
-                      {element?.data?.permission?.create && (
-                        <Tooltip title="Create folder" placement="top">
-                          <div
-                            id={"create_folder"}
-                            className="extra_icon"
-                            onClick={(e) => {
-                              handleOpenNotify(e, "CREATE_TO_FOLDER");
-                            }}>
-                            <AddIcon
-                              size={13}
-                              style={{
-                                color: activeMenu
-                                  ? menuStyle?.active_text
-                                  : menuStyle?.text || "",
-                              }}
-                            />
-                          </div>
-                        </Tooltip>
-                      )}
+                      <Tooltip title="Create folder" placement="top">
+                        <div
+                          id={"create_folder"}
+                          className="extra_icon"
+                          onClick={(e) => {
+                            handleOpenNotify(e, "CREATE_TO_FOLDER");
+                          }}>
+                          <AddIcon
+                            size={13}
+                            style={{
+                              color: activeMenu
+                                ? menuStyle?.active_text
+                                : menuStyle?.text || "",
+                            }}
+                          />
+                        </div>
+                      </Tooltip>
                     </>
                   ) : (
                     ""
@@ -592,7 +594,7 @@ const AppSidebar = ({
               </AccordionButton>
 
               {element?.type === "FOLDER" && (
-                <AccordionPanel height={"38px"}>
+                <AccordionPanel>
                   {loading ? (
                     <Skeleton
                       animation="wave"

@@ -402,12 +402,11 @@ const LayoutSidebar = ({
 
         <Box
           className="scrollbarNone"
-          pt={8}
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
           {isMenuListLoading && (
-            <Box mx="8px">
+            <Box>
               <Box display="flex" columnGap="8px">
                 <Skeleton height="50px" width="36px" />
                 <Skeleton width="100%" height="50px" />

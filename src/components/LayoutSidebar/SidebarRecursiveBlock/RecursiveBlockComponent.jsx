@@ -14,7 +14,7 @@ import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import {MenuFolderArrows, NavigateByType} from "../Components/MenuSwitchCase";
-import activeStyles from "../Components/MenuUtils/activeStyles";
+
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
@@ -218,6 +218,7 @@ const RecursiveBlock = ({
                     {MenuFolderArrows({element, childBlockVisible})}
                   </div>
                 )}
+
                 <div
                   style={{
                     marginRight: element?.icon ? "8px" : "0px",

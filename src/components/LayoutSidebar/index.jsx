@@ -72,6 +72,7 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {GreyLoader} from "../Loaders/GreyLoader";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import DocsChatwootModal from "./DocsChatwootModal";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -988,6 +989,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     authService.sendAccessToken({access_token: accessToken}).then((res) => {
       indexedDB.deleteDatabase("SearchTextDB");
       indexedDB.deleteDatabase("ChartDB");
+      dispatch(menuAccordionActions.toggleMenuChilds({}));
       store.dispatch(authActions.logout());
       dispatch(companyActions.setCompanies([]));
     });

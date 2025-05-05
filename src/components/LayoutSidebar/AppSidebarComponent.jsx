@@ -9,13 +9,13 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import AddIcon from "@mui/icons-material/Add";
 import IconGenerator from "../IconPicker/IconGenerator";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {menuActions} from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
 import {useTranslation} from "react-i18next";
@@ -27,6 +27,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import NewSubMenu from "./NewSubMenu";
 import {useMenuListQuery} from "../../services/menuService";
 import {Skeleton, Tooltip} from "@mui/material";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -60,9 +61,10 @@ const AppSidebar = ({
   const {i18n} = useTranslation();
   const auth = store.getState().auth;
   const {appId} = useParams();
-  const [child, setChild] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [openAccordionId, setOpenAccordionId] = useState(null);
+  const [activeAccordionId, setActiveAccordionId] = useState(null);
+
+  const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -145,10 +147,6 @@ const AppSidebar = ({
       .replace("{user_id}", userId);
   }
 
-  // useEffect(() => {
-  //   setElement(element);
-  // }, [element]);
-
   const {isLoading} = useMenuListQuery({
     params: {
       parent_id: menuItem?.id,
@@ -157,7 +155,7 @@ const AppSidebar = ({
     queryParams: {
       enabled: Boolean(menuItem?.id),
       onSuccess: (res) => {
-        setChild(res.menus ?? []);
+        computeMenuChilds(menuItem?.id, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -201,7 +199,38 @@ const AppSidebar = ({
       return activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467";
   };
 
-  console.log("openAccordionIdopenAccordionId", openAccordionId);
+  function computeMenuChilds(id, children = []) {
+    const updated = {...menuChilds};
+    updated[id] = {open: true, children};
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  }
+
+  function clickElement(item) {
+    const updated = {...menuChilds};
+    updated[item?.id] = {...updated[item?.id], open: true};
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  }
+
+  const closeMenu = (id) => {
+    const updated = {...menuChilds};
+    updated[id] = {...updated[id], open: false};
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  };
+
+  const coontrolAccordionAction = (el) => {
+    const isOpen = menuChilds?.[el?.id]?.open;
+
+    if (isOpen) {
+      closeMenu(el?.id);
+      setActiveAccordionId(null);
+    } else {
+      setActiveAccordionId(el?.id);
+      clickElement(el);
+    }
+  };
 
   return (
     <Draggable key={index}>
@@ -406,10 +435,10 @@ const AppSidebar = ({
 
       {element?.type === "FOLDER" && (
         <Accordion
-          index={openAccordionId === element.id ? 0 : -1}
-          border={"none"}
-          allowToggle>
-          <SidebarAppTooltip id={element?.id} title={title}>
+          allowMultiple
+          index={activeAccordionId === element.id && sidebarIsOpen ? [0] : []}
+          border="none">
+          <SidebarAppTooltip title={title}>
             <AccordionItem>
               <AccordionButton
                 pt={"4px"}
@@ -420,11 +449,10 @@ const AppSidebar = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   clickHandler();
-                  element?.id !== menuItem?.id && setLoading(true);
-                  dispatch(mainActions.setSidebarHighlightedMenu(null));
+                  coontrolAccordionAction(element);
 
-                  if (openAccordionId === element.id) setOpenAccordionId(null);
-                  else setOpenAccordionId(element.id);
+                  dispatch(mainActions.setSidebarHighlightedMenu(null));
+                  element?.id !== menuItem?.id && setLoading(true);
                 }}>
                 <Flex
                   width={sidebarIsOpen ? "100%" : "36px"}
@@ -480,7 +508,9 @@ const AppSidebar = ({
                         />
                       )}
                     </Box>
-                    <Box className="accordionFolderIcon">
+                    <Box
+                      sx={{width: "20px", height: "20px"}}
+                      className={sidebarIsOpen ? "accordionFolderIcon" : ""}>
                       <IconGenerator
                         icon={
                           !icon || icon === "folder.svg"
@@ -561,7 +591,7 @@ const AppSidebar = ({
                 </Flex>
               </AccordionButton>
 
-              {element?.id === menuItem?.id && (
+              {element?.type === "FOLDER" && (
                 <AccordionPanel>
                   {loading ? (
                     <Skeleton
@@ -577,7 +607,8 @@ const AppSidebar = ({
                   ) : (
                     <NewSubMenu
                       menuLanguages={menuLanguages}
-                      child={child}
+                      element={element}
+                      menuChilds={menuChilds}
                       subMenuIsOpen={subMenuIsOpen}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       openFolderCreateModal={openFolderCreateModal}

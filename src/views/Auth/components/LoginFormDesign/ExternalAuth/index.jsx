@@ -40,27 +40,23 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
       </Tooltip>
       <ChatwootLogin />
 
-      {
-        !location?.pathname?.includes(
-          "invite-user" && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                marginTop: "24px",
-                justifyContent: "center",
-              }}>
-              <p>{t("account.not")}</p>
-              <Box
-                onClick={() => navigate("/registration")}
-                sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
-                {t("create.account")}
-              </Box>
-            </Box>
-          )
-        )
-      }
+      {!location?.pathname?.includes("invite-user") && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            marginTop: "24px",
+            justifyContent: "center",
+          }}>
+          <p>{t("account.not")}</p>
+          <Box
+            onClick={() => navigate("/registration")}
+            sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
+            {t("create.account")}
+          </Box>
+        </Box>
+      )}
     </>
   );
 }

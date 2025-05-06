@@ -46,6 +46,7 @@ function InviteModal({
   onClose,
   guid = "",
   users = [],
+  selectedClientType,
 }) {
   const dispatch = useDispatch();
   const finalRef = useRef(null);
@@ -127,7 +128,7 @@ function InviteModal({
     dispatch(showAlert("Invote link copied!", "success"));
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?y=${project_id}&env_id=${env_id}&role_id=${role_id}&client_type_id=${cl_type_id}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?y=${selectedClientType?.project_id}&env_id=${env_id}&role_id=${selectedClientType?.guid}&client_type_id=${selectedClientType?.client_type_id}`
       );
       setCopied(true);
     } catch (err) {

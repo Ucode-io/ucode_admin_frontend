@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {
   Box,
   Tabs,
@@ -77,6 +77,10 @@ export const UserClientTypes = () => {
     setPage(1);
   };
 
+  const selectedClientType = useMemo(() => {
+    return roles?.find((item) => item?.client_type_id === clientTypeId);
+  }, [roles, clientTypeId]);
+
   return (
     <ChakraProvider theme={chakraUITheme}>
       <Box h="100%" display="flex" flexDirection="column" bg="#fff">
@@ -102,6 +106,7 @@ export const UserClientTypes = () => {
             </TabList>
           </Tabs>
           <InviteModal
+            selectedClientType={selectedClientType}
             isOpen={isOpen}
             onClose={() => {
               onClose();

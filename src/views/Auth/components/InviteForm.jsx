@@ -4,7 +4,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
 import authService from "../../../services/auth/authService";
@@ -17,6 +17,7 @@ const InviteForm = () => {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const [inputMatch, setInputMatch] = useState(false);
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +27,18 @@ const InviteForm = () => {
   const project_id = urlParams.get("project_id");
   const envId = urlParams.get("environment_id");
   const clientTypeId = urlParams.get("client_type_id");
-  console.log("urlParamsurlParams", urlParams);
+  console.log("searchParams pr", searchParams.get("pr_id"));
+  console.log("searchParams env_id", searchParams.get("env_id"));
+  console.log("searchParams role_id", searchParams.get("role_id"));
+  console.log(
+    "search Params, client_type_id",
+    searchParams.get("client_type_id")
+  );
+
+  console.log("project_idproject_id", project_id);
+  console.log("envIdenvId", envId);
+  console.log("clientTypeIdclientTypeId", clientTypeId);
+
   const userInviteLogin = (data) => {
     inviteAuthUserService
       .login({

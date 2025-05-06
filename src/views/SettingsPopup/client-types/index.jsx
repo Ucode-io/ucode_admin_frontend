@@ -79,7 +79,7 @@ export const UserClientTypes = () => {
     setLimit(value);
     setPage(1);
   };
-  console.log("useMemo removed");
+
   return (
     <ChakraProvider theme={chakraUITheme}>
       <Box h="100%" display="flex" flexDirection="column" bg="#fff">

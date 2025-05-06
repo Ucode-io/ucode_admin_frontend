@@ -1,7 +1,7 @@
 @use "/src/scss/colors";
 
 .wrapper {
-  display: flex;
+
   padding: 0 0px;
 
   .filters {
@@ -30,18 +30,19 @@
     gap: 24px;
     width: 100%;
     overflow: auto;
-    height: calc(100vh - 121px);
     padding-bottom: 1px;
   }
 }
 
 .columnHeaderBlock {
+  width: 278px;
+  height: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
+  // position: absolute;
   z-index: 10;
+  will-change: top;
   background-color: #fff;
   padding: 18px 8px 6px 8px;
   margin-bottom: 1px;
@@ -89,8 +90,10 @@
 
 .column {
   width: 278px;
+  padding-bottom: 10px;
   border-radius: 12px;
-  background: transparent;
+  // background: transparent;
+  background-color: rgba(84, 72, 49, 0.04);
   // padding: 0 8px;
 
   &:hover {
@@ -128,11 +131,11 @@
 }
 
 .card {
+  min-height: 120px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow: hidden;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 4px 0px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
   transition: background-color 0.3s ease;
@@ -156,7 +159,7 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 1.2;
-    background: #fff;
+    background: transparent;
     color: rgba(70, 68, 64, 0.45);
     box-shadow: rgba(55, 53, 47, 0.09) 0px 0px 0px 1px;
   }
@@ -260,4 +263,69 @@
     align-items: center;
     justify-content: center;
   }
+}
+
+.draggablePlaceholder {
+  height: 120px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.viewFieldWrapper {
+  display: flex;
+  // align-items: center;
+  column-gap: 5px;
+}
+
+.boardSubGroupWrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  margin-top: 12px;
+}
+
+.boardSubGroupBtn {
+  max-width: 400px;
+  margin-bottom: 10px;
+}
+
+.boardSubGroupBtnInner {
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.iconWrapper {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: 0.2s;
+}
+
+.boardSubGroupBtnInner.selected .icon {
+  transform: rotate(90deg);
+}
+
+.boardSubGroupBtnLabel {
+  max-width: 100%;
+  padding: 3px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 120%;
+  font-size: 14px;
 }

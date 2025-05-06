@@ -1,7 +1,7 @@
 import {Add} from "@mui/icons-material";
 import {Button, IconButton} from "@mui/material";
-import {useEffect, useMemo} from "react";
-import {useState} from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -17,6 +17,9 @@ import { useProjectGetByIdQuery } from "../../../services/projectService";
 import { useSelector } from "react-redux";
 import layoutService from "../../../services/layoutService";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import useDebounce from "../../../hooks/useDebounce";
+import { getColumnIcon } from "../../table-redesign/icons";
+import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
 
 const BoardColumn = ({
   tab,
@@ -27,8 +30,18 @@ const BoardColumn = ({
   menuItem,
   layoutType,
   setLayoutType,
+  refetch: refetchListQueries,
+  boardRef,
+  index: columnIndex,
+  subGroupById,
+  subGroupData,
+  subItem,
+  subGroupFieldSlug,
+  setOpenDrawerModal,
+  setSelectedRow,
+  setDateInfo,
+  setDefaultValue,
 }) => {
-  const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -36,16 +49,10 @@ const BoardColumn = ({
   const { tableSlug, appId } = useParams();
   const queryClient = useQueryClient();
 
-  const [open, setOpen] = useState();
   const [index, setIndex] = useState();
 
-  const [dateInfo, setDateInfo] = useState({});
-  const [selectedRow, setSelectedRow] = useState({});
-  const [defaultValue, setDefaultValue] = useState(null);
-
-  const [openDrawerModal, setOpenDrawerModal] = useState(false);
   const [computedData, setComputedData] = useState(
-    data.filter((el) => {
+    (subGroupById ? subGroupData : data).filter((el) => {
       if (isStatusType) {
         return el?.[selectedGroupField?.slug];
       } else {
@@ -61,8 +68,6 @@ const BoardColumn = ({
       ? "SidePeek"
       : localStorage?.getItem("detailPage")
   );
-
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const { mutate } = useMutation(
     ({ data, index }) => {
@@ -88,40 +93,106 @@ const BoardColumn = ({
     }
   );
 
-  const {
-    data: { layout } = {
-      layout: [],
-    },
-  } = useQuery({
-    queryKey: [
-      "GET_LAYOUT",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
-    },
-    select: (data) => {
-      return {
-        layout: data ?? {},
-      };
-    },
-    onError: (error) => {
-      console.error("Error", error);
-    },
-  });
+  const mutateDrop = useDebounce(({ data, index }) => {
+    const mutateData = {
+      ...data,
+      board_order: index + 1,
+    };
+
+    if (isStatusType) {
+      mutateData[selectedGroupField?.slug] = tab.value;
+    } else {
+      mutateData[tab.slug] = tab.value;
+    }
+
+    constructorObjectService
+      .update(tableSlug, {
+        data: mutateData,
+      })
+      .then(() => {
+        // queryClient.refetchListQueriesQueries(["GET_OBJECT_LIST_ALL"]);
+        // refetchListQueries();
+      });
+  }, 0);
+
+  // const {
+  //   data: { layout } = {
+  //     layout: [],
+  //   },
+  // } = useQuery({
+  //   queryKey: [
+  //     "GET_LAYOUT",
+  //     {
+  //       tableSlug,
+  //     },
+  //   ],
+  //   queryFn: () => {
+  //     return layoutService.getLayout(tableSlug, appId);
+  //   },
+  //   select: (data) => {
+  //     return {
+  //       layout: data ?? {},
+  //     };
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error", error);
+  //   },
+  // });
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(computedData, dropResult);
+    let dropResultTemp = { ...dropResult };
+
+    const payload = dropResultTemp.payload;
+
+    if (dropResult?.addedIndex !== null && subGroupById) {
+      payload[subGroupFieldSlug] = subItem;
+    }
+
+    if (isStatusType) {
+      payload[selectedGroupField?.slug] = tab?.label;
+    } else {
+      if (Array.isArray(payload[tab.slug]))
+        payload[tab.slug].includes(tab.value);
+      payload[tab.slug] = tab.value;
+    }
+
+    payload["color"] = tab?.color || color;
+
+    const result = applyDrag(computedData, dropResultTemp);
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
-    if (result?.length > computedData?.length) {
-      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
-    } else if (result?.length === computedData?.length) {
-      mutate({ data: dropResult.payload, index: dropResult.addedIndex });
+    if (result?.length >= computedData?.length) {
+      mutateDrop({ data: dropResult.payload, index: dropResult.addedIndex });
     }
   };
+
+  // const timerRef = useRef(null);
+
+  // useEffect(() => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //   }
+
+  //   if (onDropData) {
+  //     const { dropResult, result } = onDropData;
+
+  //     timerRef.current = setTimeout(() => {
+  //       if (result?.length >= computedData?.length) {
+  //         console.log("MUTATE");
+  //         mutateDrop({
+  //           data: dropResult.payload,
+  //           index: dropResult.addedIndex,
+  //         });
+  //       }
+  //     }, 2000);
+  //   }
+
+  //   return () => {
+  //     if (timerRef.current) {
+  //       clearTimeout(timerRef.current);
+  //     }
+  //   };
+  // }, [onDropData, computedData]);
 
   const viewFields = useMemo(() => {
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
@@ -129,7 +200,7 @@ const BoardColumn = ({
 
   useEffect(() => {
     setComputedData(
-      data.filter((el) => {
+      (subGroupById ? subGroupData : data).filter((el) => {
         if (isStatusType) {
           return el?.[selectedGroupField?.slug] === tab?.label;
         } else {
@@ -139,7 +210,7 @@ const BoardColumn = ({
         }
       })
     );
-  }, [data]);
+  }, [data, subGroupById, subGroupData]);
 
   const navigateToEditPage = (el) => {
     setOpenDrawerModal(true);
@@ -161,63 +232,71 @@ const BoardColumn = ({
         value: [tab.value],
       });
     }
+
+    if (subGroupById) {
+      setDefaultValue((prev) => [
+        prev,
+        {
+          field: subGroupFieldSlug,
+          value: subItem,
+        },
+      ]);
+    }
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  const hasColor = tab?.color || field?.attributes?.has_color;
+  // const hasColor = tab?.color || field?.attributes?.has_color;
+  // const color =
+  //   tab?.color ||
+  //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
+  //     ?.color;
+
+  // const refetch = () => {
+  //   queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+  //   queryClient.refetchQueries(["GET_TABLE_INFO"]);
+  // };
+
+  // const fixedElement = useRef(null);
+
+  // useEffect(() => {
+  //   const board = boardRef.current;
+  //   const el = fixedElement.current;
+  //   if (!board || !el) return;
+
+  //   const onScroll = () => {
+  //     el.style.top = `${board.scrollTop}px`;
+  //   };
+
+  //   board.addEventListener("scroll", onScroll);
+
+  //   return () => {
+  //     board.removeEventListener("scroll", onScroll);
+  //   };
+  // }, []);
+
   const color =
     tab?.color ||
     field?.attributes?.options?.find((item) => item?.value === tab?.value)
       ?.color;
 
-  const refetch = () => {
-    queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-    queryClient.refetchQueries(["GET_TABLE_INFO"]);
-  };
-
   return (
     <>
-      <div className={styles.column}>
-        <div className={`${styles.columnHeaderBlock} column-header`}>
-          <div className={styles.leftSide}>
-            <div className={styles.title}>
-              <span
-                style={{
-                  background: hasColor ? color + 33 : "rgb(139, 150, 160)",
-                  color: hasColor ? color - 50 : "rgb(139, 150, 160)",
-                }}
-                className={styles.tabBlockStatus}
-              >
-                <span
-                  className={styles.dot}
-                  style={{ background: color }}
-                ></span>
-                {tab.label}
-              </span>
-              {/* <MultiselectCellColoredElement
-                className={styles.tabBlockStatus}
-                {...tab}
-                field={computedColumnsFor?.find(
-                  (field) => field?.slug === tab?.slug
-                )}
-              /> */}
-              {/* {tab.label} */}
-            </div>
-            <div className={styles.counter}>{computedData?.length ?? 0}</div>
-          </div>
-          <div className={styles.rightSide}>
-            <IconButton
-              className={styles.addButton}
-              color="inherit"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateToCreatePage();
-              }}
-            >
-              <Add />
-            </IconButton>
-          </div>
-        </div>
+      <div
+        className={styles.column}
+        style={{
+          backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
+        }}
+      >
+        {/* {!subGroupById && (
+          <ColumnHeaderBlock
+            field={field}
+            tab={tab}
+            computedData={computedData}
+            boardRef={boardRef}
+            navigateToCreatePage={navigateToCreatePage}
+            fixed
+          />
+        )} */}
 
         <Container
           groupName="subtask"
@@ -225,39 +304,51 @@ const BoardColumn = ({
           onDrop={(e) => {
             onDrop(e);
           }}
-          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          dropPlaceholder={{
+            className: "drag-row-drop-preview",
+            showOnTop: true,
+            animationDuration: 150,
+          }}
           style={{
-            padding: "0 8px",
+            padding: "10px 8px 0 8px",
           }}
           animationDuration={300}
         >
-          {computedData.map((el) => (
-            <Draggable
-              key={el.guid}
-              index={index}
-              className={styles.cardWrapper}
-            >
-              <div
-                className={styles.card}
+          {computedData?.length > 0 ? (
+            computedData.map((el) => (
+              <Draggable
                 key={el.guid}
-                onClick={() => navigateToEditPage(el)}
+                index={index}
+                className={styles.cardWrapper}
               >
-                {viewFields.map((field) => (
-                  <BoardPhotoGenerator key={field.id} field={field} el={el} />
-                ))}
-                {viewFields.map((field) => (
-                  <BoardCardRowGenerator
-                    key={field.id}
-                    isStatus={field?.type === "STATUS"}
-                    field={field}
-                    el={el}
-                    fieldsMap={fieldsMap}
-                    slug={selectedGroupField?.slug}
-                  />
-                ))}
-              </div>
-            </Draggable>
-          ))}
+                <div
+                  className={styles.card}
+                  key={el.guid}
+                  onClick={() => navigateToEditPage(el)}
+                >
+                  {viewFields.map((field) => (
+                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                  ))}
+                  {viewFields.map((field) => (
+                    <BoardCardRowGenerator
+                      key={field.id}
+                      isStatus={field?.type === "STATUS"}
+                      field={field}
+                      el={el}
+                      fieldsMap={fieldsMap}
+                      slug={selectedGroupField?.slug}
+                      columnIndex={columnIndex}
+                    />
+                  ))}
+                </div>
+              </Draggable>
+            ))
+          ) : (
+            <Draggable
+              key="placeholder"
+              className={styles.draggablePlaceholder}
+            />
+          )}
         </Container>
 
         <div className={styles.columnFooterBlock}>
@@ -275,24 +366,6 @@ const BoardColumn = ({
           </Button>
         </div>
       </div>
-      <MaterialUIProvider>
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={openDrawerModal}
-          setOpen={setOpenDrawerModal}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          // refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={() => {}}
-          dateInfo={dateInfo}
-          defaultValue={defaultValue}
-        />
-      </MaterialUIProvider>
       {/* <BoardModalDetailPage
         open={open}
         setOpen={setOpen}

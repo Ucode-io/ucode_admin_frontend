@@ -469,3 +469,38 @@
   -webkit-line-clamp: 3;
   white-space: pre-wrap;
 }
+
+.cellColoredElementLabel {
+  position: relative;
+
+  &:hover {
+    .cellColoredElementLabelPopup {
+      display: block;
+    }
+  }
+}
+
+.cellColoredElementLabelPopup {
+  display: none;
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 6px;
+  background: rgb(15, 15, 15);
+  backdrop-filter: none;
+  max-width: calc(-24px + 100vw);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &.fromLeft {
+    right: auto;
+    left: calc(100% + 10px);
+  }
+}

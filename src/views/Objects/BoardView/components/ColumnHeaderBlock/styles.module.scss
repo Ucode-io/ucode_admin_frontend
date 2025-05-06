@@ -1,0 +1,77 @@
+.columnHeaderBlock {
+  width: 278px;
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // position: absolute;
+  // top: 0;
+  // z-index: 10;
+  // will-change: top;
+  background-color: #fff;
+  padding: 6px 8px 6px 8px;
+  margin-bottom: 1px;
+}
+
+.title {
+  flex: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 20px;
+  // font-weight: 700;
+}
+
+.leftSide {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rightSide {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  color: rgba(70, 68, 64, 0.45);
+}
+
+.columnHeaderBlock:hover .rightSide {
+  display: flex;
+}
+
+.tabBlockStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  height: 20px;
+  align-items: center;
+  padding: 0 7px 0 9px !important;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+}
+
+.counter {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  color: rgba(70, 68, 64, 0.45);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.addButton {
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+}

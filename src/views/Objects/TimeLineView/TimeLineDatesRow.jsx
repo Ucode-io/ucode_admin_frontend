@@ -203,7 +203,7 @@ export default function TimeLineDatesRow({
                   <div className={styles.monthBlock}>
                     <span
                       className={styles.monthText}
-                      style={{ left: sidebarIsOpen ? "216px" : "16px" }}
+                      style={{ left: sidebarIsOpen ? "230px" : "60px" }}
                     >
                       {month}
                     </span>

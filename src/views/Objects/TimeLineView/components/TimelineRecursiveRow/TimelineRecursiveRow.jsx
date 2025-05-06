@@ -31,26 +31,32 @@ export const TimelineRecursiveRow = ({
   handleAllClose = () => {},
   computedData,
   setIsAllOpen,
+  childData,
 }) => {
-
-  const { handleClick, computedValue, open } = useTimelineRecursiveRowProps({
-    item,
-    fieldsMap,
-    openedRows,
-    setOpenedRows,
-    lastLabels,
-    handleAllOpen,
-    handleAllClose,
-    computedData,
-    setIsAllOpen,
-  });
+  const { handleClick, computedValue, open, hoveredRowId } =
+    useTimelineRecursiveRowProps({
+      item,
+      fieldsMap,
+      openedRows,
+      setOpenedRows,
+      lastLabels,
+      handleAllOpen,
+      handleAllClose,
+      computedData,
+      setIsAllOpen,
+    });
 
 return (
   <div>
     <div className={cls.group_by_column}>
       <div
         onClick={item?.data?.[0]?.data ? handleClick : null}
-        className={cls.group_by_column_header}
+        className={clsx(cls.group_by_column_header, {
+          [cls.hovered]:
+            hoveredRowId === childData?.guid || Array.isArray(item?.data)
+              ? item?.data?.find((item) => item?.guid === hoveredRowId)
+              : hoveredRowId === item?.guid,
+        })}
       >
         <div
           className={cls.group_by_column_header_inner}
@@ -92,6 +98,7 @@ return (
                     option?.data?.length ? level + 1 : index + 1 + (level + 1)
                   }
                   groupItem={option}
+                  childData={optionItem}
                   fieldsMap={fieldsMap}
                   view={view}
                   groupByFields={groupByFields}

@@ -1,4 +1,7 @@
 .row {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8px;
   padding: 0 8px;
 
   &:first-child {
@@ -16,6 +19,15 @@
   .image {
     border-radius: 6px;
   }
+}
+
+.value {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .photorow {

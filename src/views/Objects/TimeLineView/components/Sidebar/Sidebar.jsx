@@ -3,6 +3,9 @@ import cls from "./styles.module.scss";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
 import { useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
+import { SidebarButton } from "../SidebarButton";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { useTimelineBlockContext } from "../../providers/TimelineBlockProvider";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -17,7 +20,10 @@ export const Sidebar = ({
   datesList,
   zoomPosition,
   hasSameDay,
+  isSidebarOpen,
 }) => {
+  const { setOpenDrawerModal } = useTimelineBlockContext();
+
   const [isAllOpen, setIsAllOpen] = useState(false);
 
   const handleAllOpen = () => {
@@ -31,9 +37,9 @@ export const Sidebar = ({
   };
 
   const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
-console.log({ computedData });
+
   return (
-    <div className={cls.group_by}>
+    <div className={clsx(cls.group_by, { [cls.isHidden]: !isSidebarOpen })}>
       <div className={clsx(cls.fakeDiv)}>
         <div className={cls.header}>
           <span
@@ -58,10 +64,10 @@ console.log({ computedData });
             </button>
           )}
         </div>
-        {/* <SidebarButton
-        className={cls.sidebarBtn}
-        onClick={handleCloseSidebar}
-      /> */}
+        <SidebarButton
+          className={cls.sidebarBtn}
+          onClick={handleCloseSidebar}
+        />
       </div>
 
       {view?.attributes?.calendar_from_slug !==
@@ -91,11 +97,11 @@ console.log({ computedData });
           ))}
         </div>
       )}
-      {/* <button className={cls.newBtn}>
+      <button className={cls.newBtn} onClick={() => setOpenDrawerModal(true)}>
         <span>
           <AddRoundedIcon /> New
         </span>
-      </button> */}
+      </button>
     </div>
   );
 };

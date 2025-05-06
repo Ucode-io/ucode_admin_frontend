@@ -105,6 +105,8 @@ import {listToMap} from "../../utils/listToMap";
 import {mergeStringAndState} from "../../utils/jsonPath";
 import {TimelineSettings} from "./components/TimelineSettings";
 import BoardView from "../Objects/BoardView";
+import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
+import { SubGroup } from "./components/SubGroup";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -328,6 +330,12 @@ export const NewUiViewsWithGroups = ({
       setSearchText(savedSearch.searchText);
       setInputKey(inputKey + 1);
     }
+  };
+
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
   };
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
@@ -985,6 +993,8 @@ export const NewUiViewsWithGroups = ({
                         view={view}
                         noDates={noDates}
                         // selectedTable={selectedTable}
+                        searchText={searchText}
+                        columnsForSearch={columnsForSearch}
                         setViews={() => {}}
                         menuItem={menuItem}
                         selectedTabIndex={selectedTabIndex}
@@ -1488,15 +1498,23 @@ const FiltersSwitch = ({ view, visibleColumns, refetchViews, search }) => {
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];
 
-    !checked &&
-      dispatch(
-        filterActions.clearFilters({
-          tableSlug: tableSlug,
-          viewId: view?.id,
-          name: "specialities_id",
-          value: [`${queryParameters.get("specialities")}`],
-        })
-      );
+    !checked
+      ? dispatch(
+          filterActions.clearFilters({
+            tableSlug: tableSlug,
+            viewId: view?.id,
+            name: "specialities_id",
+            value: [`${queryParameters.get("specialities")}`],
+          })
+        )
+      : dispatch(
+          filterActions.setFilter({
+            tableSlug: tableSlug,
+            viewId: view?.id,
+            name: "specialities_id",
+            value: [`${queryParameters.get("specialities")}`],
+          })
+        );
 
     updateView(
       checked
@@ -1755,6 +1773,13 @@ const ViewOptions = ({
   //     });
   // };
 
+  const viewUpdateMutation = useMutation({
+    mutationFn: async (data) => {
+      await constructorViewService.update(tableSlug, data);
+      return await refetchViews();
+    },
+  });
+
   return (
     <Popover
       offset={[-145, 8]}
@@ -1972,6 +1997,38 @@ const ViewOptions = ({
                     </Flex>
                   </Flex>
                 )}
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                view.type === "BOARD" && (
+                  <Flex
+                    p="8px"
+                    h="32px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                    onClick={() => setOpenedMenu("sub-group")}
+                    color="#475467"
+                  >
+                    <HorizontalSplitOutlinedIcon color="inherit" />
+                    <ViewOptionTitle>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Sub group"
+                      ) || "Sub group"}
+                    </ViewOptionTitle>
+                    <Flex ml="auto" alignItems="center" columnGap="8px">
+                      {Boolean(tabGroupColumnsCount) && (
+                        <ViewOptionSubtitle>
+                          {fieldsMap?.[view?.attributes?.sub_group_by_id]
+                            ?.label || "None"}
+                        </ViewOptionSubtitle>
+                      )}
+                      <ChevronRightIcon fontSize={22} />
+                    </Flex>
+                  </Flex>
+                )}
               {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
                 !isTimelineView &&
                 !isBoardView && (
@@ -2090,6 +2147,18 @@ const ViewOptions = ({
             fieldsMap={fieldsMap}
             refetchViews={refetchViews}
             onBackClick={() => setOpenedMenu(null)}
+          />
+        )}
+
+        {openedMenu === "sub-group" && (
+          <SubGroup
+            tableLan={tableLan}
+            view={view}
+            fieldsMap={fieldsMap}
+            refetchViews={refetchViews}
+            onBackClick={() => setOpenedMenu(null)}
+            title={"Sub Group"}
+            viewUpdateMutation={viewUpdateMutation}
           />
         )}
 
@@ -2687,7 +2756,11 @@ const TabGroup = ({
                 ml="auto"
                 checked={selected === column?.id}
                 onChange={(ev) => onChange(column, ev.target.checked)}
-                // disabled={view?.group_fields?.length === 1}
+                disabled={
+                  isBoardView
+                    ? view?.attributes?.sub_group_by_id === column?.id
+                    : false
+                }
                 isChecked={(view?.group_fields ?? []).includes(
                   column?.type === "LOOKUP" || column?.type === "LOOKUPS"
                     ? column?.relation_id

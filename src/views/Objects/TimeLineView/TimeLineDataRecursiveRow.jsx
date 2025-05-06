@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import { Collapse } from "@mui/material";
 import cls from "./styles.module.scss";
-import { addDays, format } from "date-fns";
-import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
+import { addDays } from "date-fns";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import DrawerDetailPage from "../DrawerDetailPage";
+import { TimelineRowNewDateLine } from "./components/TimelineRowNewDateLine";
 
 export default function TimeLineDataRecursiveRow({
   item,
@@ -79,7 +79,6 @@ export default function TimeLineDataRecursiveRow({
       ? !item?.data?.[0]?.[calendar_to_slug]
       : !item?.[calendar_to_slug]);
 
-  
   const handleMouseMove = (e) => {
     const scrollContainer = calendarRef.current;
     if (!scrollContainer) return;
@@ -113,7 +112,7 @@ export default function TimeLineDataRecursiveRow({
 
     setCursorPosX(snappedX);
 
-    setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 5)]);
+    setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 4)]);
   };
 
   const isSingleGroup = deepLength === 1;
@@ -140,20 +139,13 @@ export default function TimeLineDataRecursiveRow({
         ref={timelineRecursiveRowRef}
       >
         {isHintTaskShow && (
-          <span
-            className={cls.timelineRecursiveRowLine}
-            style={{ left: cursorPosX, width: `${hintWidth}px` }}
+          <TimelineRowNewDateLine
+            left={cursorPosX}
+            width={hintWidth}
             onClick={handleOpenModal}
-          >
-            {hoveredDate && (
-              <span className={cls.timelineRecursiveRowHint}>
-                {format(new Date(hoveredDate), "LLLL-dd")}
-                <ArrowRightAltRoundedIcon />
-                {format(addDays(new Date(hoveredDate), 5), "LLLL-dd")}
-              </span>
-            )}
-            {item?.[visible_field?.split("/")?.[0]]}
-          </span>
+            hoveredDate={hoveredDate}
+            label={item?.[visible_field?.split("/")?.[0]]}
+          />
         )}
         {(!item?.data || isSingleGroup) && (
           <TimeLineDayDataBlockItem
@@ -228,7 +220,7 @@ export default function TimeLineDataRecursiveRow({
             );
           })
       )}
-      {openModal && (
+      {/* {openModal && (
         <ModalDetailPage
           open={openModal}
           setOpen={setOpenModal}
@@ -238,7 +230,7 @@ export default function TimeLineDataRecursiveRow({
             [calendar_to_slug]: addDays(new Date(hoveredDate), 5),
           }}
         />
-      )}
+      )} */}
     </>
   );
 }

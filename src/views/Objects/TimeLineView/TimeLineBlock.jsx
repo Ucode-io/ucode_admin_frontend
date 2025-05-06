@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import { isSameDay, isValid, isWithinInterval } from "date-fns";
 import { Sidebar } from "./components/Sidebar";
@@ -10,6 +10,13 @@ import { Button, Menu } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
+import { TimelineBlockProvider } from "./providers/TimelineBlockProvider";
+import { SidebarButton } from "./components/SidebarButton";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
+import layoutService from "../../../services/layoutService";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -250,189 +257,237 @@ export default function TimeLineBlock({
     }
   }, [selectedType]);
 
-  const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
+  const { tableSlug, appId } = useParams();
 
-  const [isAllOpen, setIsAllOpen] = useState(false);
+  const [hoveredRowId, setHoveredRowId] = useState(null);
 
-  const handleAllOpen = () => {
-    setIsAllOpen(true);
-    setOpenedRows(computedData?.map((item) => item?.label));
-  };
+  const projectId = useSelector((state) => state.company?.projectId);
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
 
-  const handleAllClose = () => {
-    setOpenedRows([]);
-    setIsAllOpen(false);
-  };
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
 
   return (
-    <div
-      className={styles.main_container}
-      style={
-        {
-          // height: `${view?.group_fields?.length ? "100$" : "calc(100vh - 103px"}`,
-          // overflow: "scroll",
-        }
-      }
-      // onScroll={handleScroll}
-      // ref={calendarRef}
+    <TimelineBlockProvider
+      state={{
+        isSidebarOpen,
+        setIsSidebarOpen,
+        hoveredRowId,
+        setHoveredRowId,
+        setFocusedDays,
+        setSelectedRow,
+        setOpenDrawerModal,
+        calendar_from_slug,
+        calendar_to_slug,
+      }}
     >
-      {view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen && (
-        <Sidebar
-          view={view}
-          computedData={computedData}
-          hasSameDay={hasSameDay}
-          openedRows={openedRows}
-          setOpenedRows={setOpenedRows}
-          fieldsMap={fieldsMap}
-          groupByFields={groupbyFields}
-          computedColumnsFor={computedColumnsFor}
-          setFocusedDays={setFocusedDays}
-          datesList={datesList}
-          zoomPosition={zoomPosition}
-        />
-      )}
-      {/* {view?.attributes?.group_by_columns?.length !== 0 && !isSidebarOpen && (
-        <div className={styles.timelineLeftAddon}>
-          <SidebarButton onClick={handleOpenSidebar} />
-        </div>
-      )} */}
-      <div className={styles.gantt}>
-        <TimeLineDatesRow
-          focusedDays={focusedDays}
-          datesList={datesList}
-          zoomPosition={zoomPosition}
-          selectedType={selectedType}
-          months={months}
-          scrollToToday={scrollToToday}
-          sidebarIsOpen={
-            view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen
-          }
-        />
-
-        {calendar_from_slug !== calendar_to_slug && (
-          <TimeLineDayDataBlock
-            dateFilters={dateFilters}
+      <div className={styles.main_container}>
+        {view?.attributes?.group_by_columns?.length !== 0 && (
+          <Sidebar
+            view={view}
+            computedData={computedData}
+            hasSameDay={hasSameDay}
             openedRows={openedRows}
             setOpenedRows={setOpenedRows}
-            computedColumnsFor={computedColumnsFor}
-            groupbyFields={groupbyFields}
-            setFocusedDays={setFocusedDays}
-            selectedType={selectedType}
-            zoomPosition={zoomPosition}
-            data={computedData}
             fieldsMap={fieldsMap}
-            view={view}
-            tabs={tabs}
+            groupByFields={groupbyFields}
+            computedColumnsFor={computedColumnsFor}
+            setFocusedDays={setFocusedDays}
             datesList={datesList}
-            calendar_from_slug={calendar_from_slug}
-            calendar_to_slug={calendar_to_slug}
-            visible_field={visible_field}
-            menuItem={menuItem}
-            fieldsMapPopup={fieldsMapPopup}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            navigateToDetailPage={navigateToDetailPage}
-            noDates={noDates}
-            calendarRef={calendarRef}
+            zoomPosition={zoomPosition}
+            handleCloseSidebar={handleCloseSidebar}
+            isSidebarOpen={isSidebarOpen}
           />
         )}
-      </div>
-      <div className={styles.timelineRightAddon}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Button
-            onClick={handleClickType}
+        {view?.attributes?.group_by_columns?.length !== 0 && !isSidebarOpen && (
+          <div className={styles.timelineLeftAddon}>
+            <SidebarButton variant="opener" onClick={handleOpenSidebar} />
+          </div>
+        )}
+        <div className={styles.gantt}>
+          <TimeLineDatesRow
+            focusedDays={focusedDays}
+            datesList={datesList}
+            zoomPosition={zoomPosition}
+            selectedType={selectedType}
+            months={months}
+            scrollToToday={scrollToToday}
+            sidebarIsOpen={
+              view?.attributes?.group_by_columns?.length !== 0 && isSidebarOpen
+            }
+          />
+
+          {calendar_from_slug !== calendar_to_slug && (
+            <TimeLineDayDataBlock
+              dateFilters={dateFilters}
+              openedRows={openedRows}
+              setOpenedRows={setOpenedRows}
+              computedColumnsFor={computedColumnsFor}
+              groupbyFields={groupbyFields}
+              setFocusedDays={setFocusedDays}
+              selectedType={selectedType}
+              zoomPosition={zoomPosition}
+              data={computedData}
+              fieldsMap={fieldsMap}
+              view={view}
+              tabs={tabs}
+              datesList={datesList}
+              calendar_from_slug={calendar_from_slug}
+              calendar_to_slug={calendar_to_slug}
+              visible_field={visible_field}
+              menuItem={menuItem}
+              fieldsMapPopup={fieldsMapPopup}
+              refetch={refetch}
+              setLayoutType={setLayoutType}
+              navigateToDetailPage={navigateToDetailPage}
+              noDates={noDates}
+              calendarRef={calendarRef}
+              setOpenDrawerModal={setOpenDrawerModal}
+              setSelectedRow={setSelectedRow}
+            />
+          )}
+        </div>
+        <div className={styles.timelineRightAddon}>
+          <div
             style={{
-              color: "rgb(120, 119, 116)",
-              fontSize: "14px",
-              fontWeight: "400",
               display: "flex",
               alignItems: "center",
-              gap: "3px",
-              padding: "0px",
             }}
           >
-            <span>
-              {types.find((item) => item.value === selectedType).title}
-            </span>
-            {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Button>
-          <Menu
-            open={openType}
-            onClose={handleCloseType}
-            anchorEl={anchorElType}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  // width: 100,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  left: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            }}
-          >
-            <div
+            <Button
+              onClick={handleClickType}
               style={{
+                color: "rgb(120, 119, 116)",
+                fontSize: "14px",
+                fontWeight: "400",
                 display: "flex",
-                flexDirection: "column",
-                gap: "5px",
+                alignItems: "center",
+                gap: "3px",
+                padding: "0px",
               }}
             >
-              {types.map((el) => (
-                <Button
-                  onClick={() => setSelectedType(el.value)}
-                  variant="text"
-                  sx={{
-                    margin: "0 5px",
-                    color: "#888",
-                    minWidth: "100px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  {el.title}
-                  {el.value === selectedType && <CheckIcon />}
-                </Button>
-              ))}
-            </div>
-          </Menu>
+              <span>
+                {types.find((item) => item.value === selectedType).title}
+              </span>
+              {openType ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </Button>
+            <Menu
+              open={openType}
+              onClose={handleCloseType}
+              anchorEl={anchorElType}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                }}
+              >
+                {types.map((el) => (
+                  <Button
+                    onClick={() => setSelectedType(el.value)}
+                    variant="text"
+                    sx={{
+                      margin: "0 5px",
+                      color: "#888",
+                      minWidth: "100px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {el.title}
+                    {el.value === selectedType && <CheckIcon />}
+                  </Button>
+                ))}
+              </div>
+            </Menu>
+          </div>
+          <Button
+            variant="text"
+            sx={{
+              margin: "0 5px",
+              padding: "0px",
+              color: "rgb(50, 48, 44)",
+              fontSize: "14px",
+              fontWeight: "400",
+            }}
+            onClick={() => scrollToToday()}
+          >
+            Today
+          </Button>
         </div>
-        <Button
-          variant="text"
-          sx={{
-            margin: "0 5px",
-            padding: "0px",
-            color: "rgb(50, 48, 44)",
-            fontSize: "14px",
-            fontWeight: "400",
-          }}
-          onClick={() => scrollToToday()}
-        >
-          Today
-        </Button>
       </div>
-    </div>
+      <DrawerDetailPage
+        projectInfo={projectInfo}
+        open={openDrawerModal}
+        setOpen={setOpenDrawerModal}
+        selectedRow={selectedRow}
+        menuItem={menuItem}
+        layout={layout}
+        fieldsMap={fieldsMap}
+        refetch={refetch}
+        setLayoutType={setLayoutType}
+        selectedViewType={selectedViewType}
+        setSelectedViewType={setSelectedViewType}
+        navigateToEditPage={navigateToDetailPage}
+      />
+    </TimelineBlockProvider>
   );
 }

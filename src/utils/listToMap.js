@@ -16,7 +16,11 @@ export const listToMapWithoutRel = (list = [], fieldName = "id") => {
   const map = {};
 
   list?.forEach((item) => {
-    map[item[fieldName]] = item;
+    if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
+      map[item["relation_id"]] = item;
+    } else {
+      map[item[fieldName]] = item;
+    }
   });
 
   return map;

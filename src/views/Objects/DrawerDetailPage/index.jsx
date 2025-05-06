@@ -255,7 +255,9 @@ function DrawerDetailPage({
           setFormValue(item?.field, item?.value);
         });
       } else {
-        setFormValue(defaultValue?.field, defaultValue?.value);
+        if (defaultValue?.field && defaultValue?.value) {
+          setFormValue(defaultValue?.field, defaultValue?.value);
+        }
       }
     }
   }, [defaultValue]);

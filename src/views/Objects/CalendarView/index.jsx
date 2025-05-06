@@ -39,6 +39,7 @@ import CalendarSceduleVisible from "./CalendarSceduleVisible";
 import CalendarGroupByButton from "./CalendarGroupColumns";
 import ShareModal from "../ShareModal/ShareModal";
 import constructorViewService from "../../../services/constructorViewService";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 const formatDate = [
   {
@@ -310,7 +311,7 @@ const CalendarView = ({
 
   return (
     <div>
-      <FiltersBlock
+      {/* <FiltersBlock
         extra={
           <>
             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
@@ -350,7 +351,7 @@ const CalendarView = ({
           setSelectedView={setSelectedView}
           setTab={setTab}
         />
-      </FiltersBlock>
+      </FiltersBlock> */}
       <Box className={style.navbar}>
         {date === "DAY" && (
           <CalendarDayRange
@@ -384,7 +385,7 @@ const CalendarView = ({
           />
         )}
         <Box className={style.extra}>
-          <CSelect
+          {/* <CSelect
             value={date}
             options={formatDate}
             disabledHelperText
@@ -392,7 +393,8 @@ const CalendarView = ({
               setDate(e.target.value);
               updateView(e.target?.value);
             }}
-          />
+          /> */}
+
           {/* <CalendarGroupByButton
             selectedTabIndex={selectedTabIndex}
             text="Group"
@@ -410,7 +412,7 @@ const CalendarView = ({
             text={"Schedule"}
             initialValues={view}
           /> */}
-          <ColumnVisible
+          {/* <ColumnVisible
             fieldsMap={fieldsMap}
             selectedTabIndex={selectedTabIndex}
             currentView={view}
@@ -420,15 +422,17 @@ const CalendarView = ({
             isLoading={isVisibleLoading}
             form={visibleForm}
             text={"Columns"}
-          />
-          <CalendarSettingsVisible
-            selectedTabIndex={selectedTabIndex}
-            views={visibleViews}
-            columns={visibleColumns}
-            isLoading={isVisibleLoading}
-            text={"Settings"}
-            initialValues={view}
-          />
+          /> */}
+          {/* <MaterialUIProvider>
+            <CalendarSettingsVisible
+              selectedTabIndex={selectedTabIndex}
+              views={visibleViews}
+              columns={visibleColumns}
+              isLoading={isVisibleLoading}
+              text={"Settings"}
+              initialValues={view}
+            />
+          </MaterialUIProvider> */}
         </Box>
       </Box>
       {isLoading || tabLoading ? (

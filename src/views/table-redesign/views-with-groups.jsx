@@ -107,6 +107,8 @@ import {TimelineSettings} from "./components/TimelineSettings";
 import BoardView from "../Objects/BoardView";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
 import { SubGroup } from "./components/SubGroup";
+import CalendarView from "../Objects/CalendarView";
+import { CalendarSettings } from "./components/CalendarSettings";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -896,6 +898,7 @@ export const NewUiViewsWithGroups = ({
               handleOpenPopup={handleOpenPopup}
               queryClient={queryClient}
               settingsForm={settingsForm}
+              views={views}
             />
           </Flex>
 
@@ -1025,6 +1028,16 @@ export const NewUiViewsWithGroups = ({
                     setLayoutType={setLayoutType}
                   />
                 )}
+                {view.type === "CALENDAR" && (
+                  <CalendarView
+                    menuItem={menuItem}
+                    selectedTabIndex={selectedTabIndex}
+                    setSelectedTabIndex={setSelectedTabIndex}
+                    view={view}
+                    views={views}
+                    key={"calendar"}
+                  />
+                )}
                 {!groupTable?.length &&
                   view.type !== "TIMELINE" &&
                   view.type !== "BOARD" &&
@@ -1111,7 +1124,8 @@ export const NewUiViewsWithGroups = ({
                 {!tabs?.length &&
                 !groupTable?.length &&
                 view.type !== "TIMELINE" &&
-                view.type !== "BOARD" ? (
+                view.type !== "BOARD" &&
+                view.type !== "CALENDAR" ? (
                   <>
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
@@ -1567,6 +1581,7 @@ const ViewOptions = ({
   selectedTabIndex,
   setIsChanged = () => {},
   settingsForm,
+  views,
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
@@ -1584,6 +1599,7 @@ const ViewOptions = ({
 
   const isTimelineView = view?.type === "TIMELINE";
   const isBoardView = view?.type === "BOARD";
+  const isCalendarView = view?.type === "CALENDAR";
 
   useEffect(() => {
     if (ref.current) {
@@ -1749,7 +1765,14 @@ const ViewOptions = ({
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
       return visibleColumns;
     } else {
-      return [...visibleColumns, ...visibleRelationColumns];
+      if (
+        Array.isArray(visibleRelationColumns) &&
+        Array.isArray(visibleColumns)
+      ) {
+        return [...visibleColumns, ...visibleRelationColumns];
+      } else {
+        return [];
+      }
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
 
@@ -2065,7 +2088,7 @@ const ViewOptions = ({
                     </Flex>
                   </Flex>
                 )}
-              {isTimelineView && (
+              {(isTimelineView || isCalendarView) && (
                 <Flex
                   p="8px"
                   h="32px"
@@ -2074,7 +2097,11 @@ const ViewOptions = ({
                   borderRadius={6}
                   _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
-                  onClick={() => setOpenedMenu("timeline-settings")}
+                  onClick={() =>
+                    setOpenedMenu(
+                      isTimelineView ? "timeline-settings" : "calendar-settings"
+                    )
+                  }
                 >
                   <Image src="/img/settings.svg" alt="Settings" />
                   <ViewOptionTitle>
@@ -2191,6 +2218,20 @@ const ViewOptions = ({
             computedColumns={computedColumns}
             onBackClick={() => setOpenedMenu(null)}
             saveSettings={saveSettings}
+            title={
+              generateLangaugeText(tableLan, i18n?.language, "Settings") ||
+              "Settings"
+            }
+          />
+        )}
+        {openedMenu === "calendar-settings" && (
+          <CalendarSettings
+            columns={visibleColumns}
+            onBackClick={() => setOpenedMenu(null)}
+            selectedTabIndex={selectedTabIndex}
+            views={views}
+            tableSlug={tableSlug}
+            initialValues={view}
             title={
               generateLangaugeText(tableLan, i18n?.language, "Settings") ||
               "Settings"

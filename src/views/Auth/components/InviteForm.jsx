@@ -4,7 +4,7 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
-import {useLocation, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
 import inviteAuthUserService from "../../../services/auth/inviteAuthUserService";
@@ -48,7 +48,7 @@ const InviteForm = () => {
             environment_id: envId,
           })
         );
-        dispatch(showAlert("Password successfully updated", "success"));
+        dispatch(showAlert("User successfully created", "success"));
       })
       .catch((err) => {
         dispatch(showAlert("Something went wrong on changing password"));

@@ -38,6 +38,7 @@ import {useSearchParams} from "react-router-dom";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LinkIcon from "@mui/icons-material/Link";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {ToastContainer, toast} from "react-toastify";
 
 function InviteModal({
   userInviteLan,
@@ -125,7 +126,8 @@ function InviteModal({
   }, [guid]);
 
   const copyToClipboard = async () => {
-    dispatch(showAlert("Invote link copied!", "success"));
+    // dispatch(showAlert("Invote link copied!", "success"));
+    notifyButton();
     try {
       await navigator.clipboard.writeText(
         `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${selectedClientType?.guid}&client_type_id=${selectedClientType?.client_type_id}`
@@ -134,6 +136,20 @@ function InviteModal({
       console.error("Failed to copy!", err);
     }
   };
+
+  function notifyButton() {
+    toast("Copied link to clipboard", {
+      toastId: "clipboard-toast",
+      position: "bottom-center",
+      autoClose: 200,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      closeButton: false,
+    });
+  }
 
   return (
     <>

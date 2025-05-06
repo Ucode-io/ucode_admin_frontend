@@ -33,10 +33,11 @@ import {
   useUserCreateMutation,
   useUserGetByIdQuery,
 } from "../../../services/auth/userService";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useSearchParams} from "react-router-dom";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LinkIcon from "@mui/icons-material/Link";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 function InviteModal({
   userInviteLan,
@@ -46,6 +47,7 @@ function InviteModal({
   guid = "",
   users = [],
 }) {
+  const dispatch = useDispatch();
   const finalRef = useRef(null);
   const {i18n} = useTranslation();
   const mainForm = useForm();
@@ -122,9 +124,10 @@ function InviteModal({
   }, [guid]);
 
   const copyToClipboard = async () => {
+    dispatch(showAlert("Invote link copied!", "success"));
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${role_id}&client_type_id=${cl_type_id}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?y=${project_id}&env_id=${env_id}&role_id=${role_id}&client_type_id=${cl_type_id}`
       );
       setCopied(true);
     } catch (err) {
@@ -156,7 +159,7 @@ function InviteModal({
           <ModalContent borderRadius={"12px"} maxW={"500px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
-            <Button className={styles.copyButton}>
+            <Button onClick={copyToClipboard} className={styles.copyButton}>
               <LinkIcon
                 style={{transform: "rotate(140deg)", color: "#A09F9D"}}
               />

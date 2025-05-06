@@ -32,9 +32,14 @@ const InviteForm = () => {
     inviteAuthUserService
       .login({
         data,
+        projectId: project_id,
+        params: {
+          Headers: {
+            " environment-id": envId,
+          },
+        },
       })
       .then((res) => {
-        console.log("resssssss=======>", res);
         dispatch(showAlert("Password successfuly updated", "success"));
         // navigate("/login");
       })

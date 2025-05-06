@@ -33,7 +33,12 @@ import {
   useUserCreateMutation,
   useUserGetByIdQuery,
 } from "../../../services/auth/userService";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {useSearchParams} from "react-router-dom";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import LinkIcon from "@mui/icons-material/Link";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {ToastContainer, toast} from "react-toastify";
 
 function InviteModal({
   userInviteLan,
@@ -42,15 +47,28 @@ function InviteModal({
   onClose,
   guid = "",
   users = [],
+  selectedClientType,
 }) {
+  const dispatch = useDispatch();
   const finalRef = useRef(null);
   const {i18n} = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const project_id = useSelector((state) => state.company.projectId);
+  const project_id = useSelector((state) => state.auth.projectId);
+  const env_id = useSelector((state) => state.auth?.environmentId);
+  const role_id = useSelector((state) => state.auth?.roleInfo?.id);
+  const cl_type_id = useSelector(
+    (state) => state.auth?.roleInfo?.client_type_id
+  );
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
+
+  const handleClose = () => {
+    onClose();
+    setSearchParams({});
+  };
 
   const createMutation = useUserCreateMutation({
     onSuccess: () => {
@@ -107,6 +125,31 @@ function InviteModal({
     }
   }, [guid]);
 
+  const copyToClipboard = async () => {
+    notifyButton();
+    try {
+      await navigator.clipboard.writeText(
+        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${selectedClientType?.guid}&client_type_id=${selectedClientType?.client_type_id}`
+      );
+    } catch (err) {
+      console.error("Failed to copy!", err);
+    }
+  };
+
+  function notifyButton() {
+    toast("Copied link to clipboard", {
+      toastId: "clipboard-toast",
+      position: "bottom-center",
+      autoClose: 200,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      closeButton: false,
+    });
+  }
+
   return (
     <>
       <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
@@ -115,17 +158,27 @@ function InviteModal({
           fontSize={13}
           rightIcon={<ChevronDownIcon fontSize={20} />}
           borderRadius={8}
-          onClick={onOpen}>
+          onClick={() => {
+            onOpen();
+            setSearchParams({invite: true});
+          }}>
           {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
             "Invite"}
         </Button>
       </Box>
-      <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
+      <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
+
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>
           <ModalContent borderRadius={"12px"} maxW={"500px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
+            <Button onClick={copyToClipboard} className={styles.copyButton}>
+              <LinkIcon
+                style={{transform: "rotate(140deg)", color: "#A09F9D"}}
+              />
+              Invite Link
+            </Button>
 
             <ModalBody>
               <Tabs
@@ -295,6 +348,7 @@ const EmailComponent = ({form, placeholder = "Email", guid}) => {
 const LoginForm = ({form, placeholder = "", guid}) => {
   const [changePassword, setChangePassword] = useState(false);
   const errors = form.formState.errors;
+  const [searchParams] = useSearchParams();
 
   return (
     <>
@@ -323,16 +377,17 @@ const LoginForm = ({form, placeholder = "", guid}) => {
           </Button>
         )}
       </Flex>
-      {changePassword && (
-        <Box mt={2}>
-          <PasswordInput
-            placeholder="Enter new password"
-            size="lg"
-            {...form.register("new_password", {required: true})}
-            isInvalid={errors?.password}
-          />
-        </Box>
-      )}
+      {changePassword ||
+        (searchParams.get("invite") === "true" && (
+          <Box mt={2}>
+            <PasswordInput
+              placeholder="Enter new password"
+              size="lg"
+              {...form.register("new_password", {required: true})}
+              isInvalid={errors?.password}
+            />
+          </Box>
+        ))}
 
       <TypesComponent form={form} />
     </>
@@ -346,12 +401,20 @@ const TypesComponent = ({form}) => {
         marginTop: "7px",
         flexWrap: "wrap",
         gap: "15px",
-        padding: "15px",
-        border: "1px solid #eee",
-        borderRadius: "8px",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        paddingTop: "10px",
+        // padding: "15px",
+        // border: "1px solid #eee",
+        // borderRadius: "8px",
+        // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
       }}>
-      <Box sx={{fontSize: "14px", fontWeight: 600}}>User Info</Box>
+      <Box
+        sx={{
+          fontSize: "13px",
+          fontWeight: 600,
+          color: "#91918E",
+        }}>
+        User Info
+      </Box>
       <Box mt={2}>
         <UserType placeholder="User type" form={form} control={form.control} />
       </Box>

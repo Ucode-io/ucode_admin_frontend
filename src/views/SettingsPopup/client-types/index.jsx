@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {
   Box,
   Tabs,
@@ -62,6 +62,9 @@ export const UserClientTypes = () => {
 
   const rolesQuery = useRoleListQuery();
   const roles = rolesQuery.data?.data?.response ?? [];
+  const selectedClientType = roles?.find(
+    (item) => item?.client_type_id === clientTypeId
+  );
 
   if (clientTypesQuery.isLoading || rolesQuery.isLoading) {
     return <PageFallback />;
@@ -102,6 +105,7 @@ export const UserClientTypes = () => {
             </TabList>
           </Tabs>
           <InviteModal
+            selectedClientType={selectedClientType}
             isOpen={isOpen}
             onClose={() => {
               onClose();

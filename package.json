@@ -181,6 +181,7 @@
     "react-tabs": "^5.1.0",
     "react-to-pdf": "^0.0.14",
     "react-to-print": "^2.14.10",
+    "react-toastify": "^11.0.5",
     "react-transition-group": "^4.4.5",
     "react-virtualized-auto-sizer": "^1.0.24",
     "react-virtuoso": "^4.4.2",

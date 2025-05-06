@@ -1,8 +1,14 @@
-import requestAuth from "../../utils/requestAuth";
+import requestAuthNoProjectId from "../../utils/requestAuthNoProjectId";
 
 const inviteAuthUserService = {
-  login: (data, projectId, params) =>
-    requestAuth.post(`/v2/register?project-id=${projectId}`, data, {params}),
+  login: ({data, params, Headers}) =>
+    requestAuthNoProjectId.post(
+      `/v2/register?project-id=${params?.projectId}`,
+      {data},
+      {
+        headers: Headers,
+      }
+    ),
 };
 
 export default inviteAuthUserService;

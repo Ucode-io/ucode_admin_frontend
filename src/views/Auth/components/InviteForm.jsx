@@ -4,27 +4,24 @@ import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
-import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {useLocation, useSearchParams} from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFTextFieldLogin from "../../../components/FormElements/HFTextFieldLogin";
-import authService from "../../../services/auth/authService";
+import inviteAuthUserService from "../../../services/auth/inviteAuthUserService";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {loginAction} from "../../../store/auth/auth.thunk";
 import classes from "../style.module.scss";
 import ExternalAuth from "./LoginFormDesign/ExternalAuth";
-import inviteAuthUserService from "../../../services/auth/inviteAuthUserService";
 
 const InviteForm = () => {
   const {t} = useTranslation();
-  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const [inputMatch, setInputMatch] = useState(false);
-  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const {control, handleSubmit} = useForm();
-  const urlParams = new URLSearchParams(location.search);
   const roleId = searchParams.get("role_id");
-  const project_id = searchParams.get("pr_id");
+  const project_id = searchParams.get("project-id");
   const envId = searchParams.get("env_id");
   const clientTypeId = searchParams.get("client_type_id");
 
@@ -32,16 +29,24 @@ const InviteForm = () => {
     inviteAuthUserService
       .login({
         data,
-        projectId: project_id,
         params: {
-          Headers: {
-            " environment-id": envId,
-          },
+          projectId: project_id,
+        },
+        Headers: {
+          "environment-id": envId,
         },
       })
       .then((res) => {
-        dispatch(showAlert("Password successfuly updated", "success"));
-        // navigate("/login");
+        dispatch(
+          loginAction({
+            username: data?.login,
+            password: data?.password,
+            project_id: project_id,
+            client_type: res?.client_type?.id,
+            environment_id: envId,
+          })
+        );
+        dispatch(showAlert("Password successfully updated", "success"));
       })
       .catch((err) => {
         dispatch(showAlert("Something went wrong on changing password"));

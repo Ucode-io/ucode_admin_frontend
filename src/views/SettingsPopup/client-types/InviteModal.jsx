@@ -51,8 +51,12 @@ function InviteModal({
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const project_id = useSelector((state) => state.company.projectId);
-  const env_id = useSelector((state) => state.company?.environmentId);
+  const project_id = useSelector((state) => state.auth.projectId);
+  const env_id = useSelector((state) => state.auth?.environmentId);
+  const role_id = useSelector((state) => state.auth?.roleInfo?.id);
+  const cl_type_id = useSelector(
+    (state) => state.auth?.roleInfo?.client_type_id
+  );
 
   const [searchParams, setSearchParams] = useSearchParams();
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
@@ -120,7 +124,7 @@ function InviteModal({
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        `https://app.u-code.io/invite-user?pr_id=${project_id}&env_id=${env_id}`
+        `https://app.u-code.io/invite-user?pr_id=${project_id}&env_id=${env_id}&role_id=${role_id}&client_type_id=${cl_type_id}`
       );
       setCopied(true);
     } catch (err) {

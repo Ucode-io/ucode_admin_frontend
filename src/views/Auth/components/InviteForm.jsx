@@ -11,6 +11,7 @@ import authService from "../../../services/auth/authService";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import classes from "../style.module.scss";
 import ExternalAuth from "./LoginFormDesign/ExternalAuth";
+import inviteAuthUserService from "../../../services/auth/inviteAuthUserService";
 
 const InviteForm = () => {
   const {t} = useTranslation();
@@ -25,20 +26,15 @@ const InviteForm = () => {
   const project_id = urlParams.get("project_id");
   const envId = urlParams.get("environment_id");
   const clientTypeId = urlParams.get("client_type_id");
-
-  const resetPasswordV2 = (oldPassword, newPassword) => {
-    authService
-      .resetUserPasswordV2({
-        password: newPassword,
-        old_password: oldPassword,
-        user_id: userId,
-        environment_id: envId,
-        project_id: project_id,
-        client_type_id: clientTypeId,
+  console.log("urlParamsurlParams", urlParams);
+  const userInviteLogin = (data) => {
+    inviteAuthUserService
+      .login({
+        data,
       })
       .then((res) => {
         dispatch(showAlert("Password successfuly updated", "success"));
-        navigate("/login");
+        // navigate("/login");
       })
       .catch((err) => {
         dispatch(showAlert("Something went wrong on changing password"));
@@ -46,17 +42,11 @@ const InviteForm = () => {
   };
 
   const onSubmit = (values) => {
-    const oldPassword = values?.old_password;
-    const newPassword = values?.new_password;
-    if (values?.new_password && values?.old_password) {
-      if (values?.new_password !== values?.confirm_password) {
-        dispatch(showAlert("Confirm Password fields do not match"));
-        setInputMatch(true);
-      } else {
-        resetPasswordV2(oldPassword, newPassword);
-        setInputMatch(false);
-      }
-    }
+    const data = {
+      ...values,
+    };
+
+    userInviteLogin(data);
   };
 
   return (
@@ -67,7 +57,7 @@ const InviteForm = () => {
           <HFTextFieldLogin
             required
             control={control}
-            name="username"
+            name="login"
             fullWidth
             placeholder={t("enter.login")}
             autoFocus

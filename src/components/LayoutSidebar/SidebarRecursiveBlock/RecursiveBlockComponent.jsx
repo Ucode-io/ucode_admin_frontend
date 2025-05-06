@@ -192,10 +192,8 @@ const RecursiveBlock = ({
                 borderRadius: "8px",
                 color: "#475767",
                 height: "30px",
-                background: activeMenu
-                  ? menuStyles?.active_background
-                  : menuStyles?.background,
-                color: activeMenu ? menuStyles?.active_text : "#465766",
+                background: activeMenu ? "#F0F0EF" : menuStyles?.background,
+                color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
               className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
               onClick={(e) => {

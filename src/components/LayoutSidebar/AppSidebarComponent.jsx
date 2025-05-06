@@ -195,8 +195,7 @@ const AppSidebar = ({
   const getMenuColor = (element) => {
     if (element?.label === "Settings") {
       return "#fff";
-    } else
-      return activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467";
+    } else return activeMenu ? "#5F5E5A" : menuStyle?.text || "#475467";
   };
 
   function computeMenuChilds(id, children = []) {
@@ -286,11 +285,7 @@ const AppSidebar = ({
             </Flex>
 
             <Box
-              color={
-                activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "#475467"
-              }
+              color={activeMenu ? "#F0F0EF" : menuStyle?.text || "#475467"}
               pl={35}
               fontSize={14}
               mr="auto"
@@ -477,7 +472,7 @@ const AppSidebar = ({
                   className="parent-folder column-drag-handle"
                   bg={
                     activeMenu
-                      ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
+                      ? `${"#F0F0EF"} !important`
                       : menuStyle?.background
                   }
                   color={
@@ -485,7 +480,7 @@ const AppSidebar = ({
                       appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
                         appId === element?.id
                     ) || menuId === element?.id
-                      ? "#fff"
+                      ? "#5F5E5A"
                       : "#A8A8A8"
                   }
                   {...conditionalProps}>
@@ -501,9 +496,7 @@ const AppSidebar = ({
                           w={"20px"}
                           h={"20px"}
                           style={{
-                            color: activeMenu
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
+                            color: activeMenu ? "#8E8D8C" : "#A7A7A5",
                           }}
                         />
                       )}
@@ -529,11 +522,7 @@ const AppSidebar = ({
                     title={title?.length > 14 ? title : ""}
                     placement="top">
                     <Box
-                      color={
-                        activeMenu
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "#475467"
-                      }
+                      color={activeMenu ? "#32302B" : "#5F5E5A"}
                       pl={35}
                       fontSize={14}
                       mr="auto"

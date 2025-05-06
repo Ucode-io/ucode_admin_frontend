@@ -23,21 +23,10 @@ const InviteForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const {control, handleSubmit} = useForm();
   const urlParams = new URLSearchParams(location.search);
-  const userId = urlParams.get("user_id");
-  const project_id = urlParams.get("project_id");
-  const envId = urlParams.get("environment_id");
-  const clientTypeId = urlParams.get("client_type_id");
-  console.log("searchParams pr", searchParams.get("pr_id"));
-  console.log("searchParams env_id", searchParams.get("env_id"));
-  console.log("searchParams role_id", searchParams.get("role_id"));
-  console.log(
-    "search Params, client_type_id",
-    searchParams.get("client_type_id")
-  );
-
-  console.log("project_idproject_id", project_id);
-  console.log("envIdenvId", envId);
-  console.log("clientTypeIdclientTypeId", clientTypeId);
+  const roleId = searchParams.get("role_id");
+  const project_id = searchParams.get("pr_id");
+  const envId = searchParams.get("env_id");
+  const clientTypeId = searchParams.get("client_type_id");
 
   const userInviteLogin = (data) => {
     inviteAuthUserService
@@ -45,6 +34,7 @@ const InviteForm = () => {
         data,
       })
       .then((res) => {
+        console.log("resssssss=======>", res);
         dispatch(showAlert("Password successfuly updated", "success"));
         // navigate("/login");
       })
@@ -56,6 +46,9 @@ const InviteForm = () => {
   const onSubmit = (values) => {
     const data = {
       ...values,
+      type: "login",
+      role_id: roleId,
+      client_type_id: clientTypeId,
     };
 
     userInviteLogin(data);

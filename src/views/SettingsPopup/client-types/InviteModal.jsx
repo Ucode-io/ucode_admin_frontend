@@ -124,7 +124,7 @@ function InviteModal({
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_BASE_DOMAIN}/invite-user?pr_id=${project_id}&env_id=${env_id}&role_id=${role_id}&client_type_id=${cl_type_id}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?pr_id=${project_id}&env_id=${env_id}&role_id=${role_id}&client_type_id=${cl_type_id}`
       );
       setCopied(true);
     } catch (err) {

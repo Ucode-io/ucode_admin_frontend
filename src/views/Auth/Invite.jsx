@@ -7,7 +7,7 @@ const Invite = () => {
 
   return (
     <div className={styles.outletInvite}>
-      <h1 className={styles.title}>Invite</h1>
+      <h1 className={styles.title}>Create User</h1>
 
       <InviteForm />
     </div>

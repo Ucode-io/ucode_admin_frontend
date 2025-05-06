@@ -338,7 +338,7 @@ const BoardView = ({
       ?.color ?? "";
 
   return (
-    <div>
+    <div className={styles.container}>
       {loader ? (
         <PageFallback />
       ) : (
@@ -359,12 +359,7 @@ const BoardView = ({
           )}
 
           {/* {subGroupById && ( */}
-          <Box
-            display="flex"
-            columnGap="8px"
-            paddingLeft="16px"
-            paddingRight="16px"
-          >
+          <div className={styles.header}>
             {boardTab?.map((tab) => (
               <ColumnHeaderBlock
                 key={tab.value}
@@ -377,7 +372,7 @@ const BoardView = ({
                 )}
               />
             ))}
-          </Box>
+          </div>
           {/* )} */}
 
           <div

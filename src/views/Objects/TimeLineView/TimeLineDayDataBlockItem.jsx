@@ -507,6 +507,7 @@ export default function TimeLineDayDataBlockItem({
             <CellElementGenerator
               isTimelineVariant
               row={data}
+              multiSelectClassName={styles.multiSelectBadge}
               field={computedColumnsFor?.find(
                 (field) => field?.slug === visible_field?.split("/")?.[0]
               )}

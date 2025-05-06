@@ -241,9 +241,9 @@ const ObjectsPage = () => {
     //     {...props}
     //   />
     // ),
-    CALENDAR: (props) => (
-      <CalendarView menuItem={menuItem} {...defaultProps} {...props} />
-    ),
+    // CALENDAR: (props) => (
+    //   <CalendarView menuItem={menuItem} {...defaultProps} {...props} />
+    // ),
     "CALENDAR HOUR": (props) => (
       <CalendarHourView {...defaultProps} {...props} />
     ),

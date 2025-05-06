@@ -126,7 +126,6 @@ function InviteModal({
   }, [guid]);
 
   const copyToClipboard = async () => {
-    // dispatch(showAlert("Invote link copied!", "success"));
     notifyButton();
     try {
       await navigator.clipboard.writeText(

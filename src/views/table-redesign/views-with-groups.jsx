@@ -1962,38 +1962,6 @@ const ViewOptions = ({
                     </Flex>
                   </Flex>
                 )}
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                view.type === "BOARD" && (
-                  <Flex
-                    p="8px"
-                    h="32px"
-                    columnGap="8px"
-                    alignItems="center"
-                    borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
-                    cursor="pointer"
-                    onClick={() => setOpenedMenu("sub-group")}
-                    color="#475467"
-                  >
-                    <HorizontalSplitOutlinedIcon color="inherit" />
-                    <ViewOptionTitle>
-                      {generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Sub group"
-                      ) || "Sub group"}
-                    </ViewOptionTitle>
-                    <Flex ml="auto" alignItems="center" columnGap="8px">
-                      {Boolean(tabGroupColumnsCount) && (
-                        <ViewOptionSubtitle>
-                          {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                            ?.label || "None"}
-                        </ViewOptionSubtitle>
-                      )}
-                      <ChevronRightIcon fontSize={22} />
-                    </Flex>
-                  </Flex>
-                )}
               {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
                 !isTimelineView && (
                   <Flex
@@ -2023,6 +1991,38 @@ const ViewOptions = ({
                             i18n?.language,
                             "Group"
                           ) || "Group"}
+                        </ViewOptionSubtitle>
+                      )}
+                      <ChevronRightIcon fontSize={22} />
+                    </Flex>
+                  </Flex>
+                )}
+              {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                view.type === "BOARD" && (
+                  <Flex
+                    p="8px"
+                    h="32px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                    onClick={() => setOpenedMenu("sub-group")}
+                    color="#475467"
+                  >
+                    <HorizontalSplitOutlinedIcon color="inherit" />
+                    <ViewOptionTitle>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Sub group"
+                      ) || "Sub group"}
+                    </ViewOptionTitle>
+                    <Flex ml="auto" alignItems="center" columnGap="8px">
+                      {Boolean(tabGroupColumnsCount) && (
+                        <ViewOptionSubtitle>
+                          {fieldsMap?.[view?.attributes?.sub_group_by_id]
+                            ?.label || "None"}
                         </ViewOptionSubtitle>
                       )}
                       <ChevronRightIcon fontSize={22} />

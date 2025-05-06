@@ -37,8 +37,11 @@ const BoardColumn = ({
   subGroupData,
   subItem,
   subGroupFieldSlug,
+  setOpenDrawerModal,
+  setSelectedRow,
+  setDateInfo,
+  setDefaultValue,
 }) => {
-  const projectId = useSelector((state) => state.company?.projectId);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -46,14 +49,8 @@ const BoardColumn = ({
   const { tableSlug, appId } = useParams();
   const queryClient = useQueryClient();
 
-  const [open, setOpen] = useState();
   const [index, setIndex] = useState();
 
-  const [dateInfo, setDateInfo] = useState({});
-  const [selectedRow, setSelectedRow] = useState({});
-  const [defaultValue, setDefaultValue] = useState(null);
-
-  const [openDrawerModal, setOpenDrawerModal] = useState(false);
   const [computedData, setComputedData] = useState(
     (subGroupById ? subGroupData : data).filter((el) => {
       if (isStatusType) {
@@ -71,8 +68,6 @@ const BoardColumn = ({
       ? "SidePeek"
       : localStorage?.getItem("detailPage")
   );
-
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const { mutate } = useMutation(
     ({ data, index }) => {
@@ -120,29 +115,29 @@ const BoardColumn = ({
       });
   }, 0);
 
-  const {
-    data: { layout } = {
-      layout: [],
-    },
-  } = useQuery({
-    queryKey: [
-      "GET_LAYOUT",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
-    },
-    select: (data) => {
-      return {
-        layout: data ?? {},
-      };
-    },
-    onError: (error) => {
-      console.error("Error", error);
-    },
-  });
+  // const {
+  //   data: { layout } = {
+  //     layout: [],
+  //   },
+  // } = useQuery({
+  //   queryKey: [
+  //     "GET_LAYOUT",
+  //     {
+  //       tableSlug,
+  //     },
+  //   ],
+  //   queryFn: () => {
+  //     return layoutService.getLayout(tableSlug, appId);
+  //   },
+  //   select: (data) => {
+  //     return {
+  //       layout: data ?? {},
+  //     };
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error", error);
+  //   },
+  // });
 
   const onDrop = (dropResult) => {
     let dropResultTemp = { ...dropResult };
@@ -292,7 +287,7 @@ const BoardColumn = ({
           backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
         }}
       >
-        {!subGroupById && (
+        {/* {!subGroupById && (
           <ColumnHeaderBlock
             field={field}
             tab={tab}
@@ -301,7 +296,7 @@ const BoardColumn = ({
             navigateToCreatePage={navigateToCreatePage}
             fixed
           />
-        )}
+        )} */}
 
         <Container
           groupName="subtask"
@@ -371,24 +366,6 @@ const BoardColumn = ({
           </Button>
         </div>
       </div>
-      <MaterialUIProvider>
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={openDrawerModal}
-          setOpen={setOpenDrawerModal}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          // refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={() => {}}
-          dateInfo={dateInfo}
-          defaultValue={defaultValue}
-        />
-      </MaterialUIProvider>
       {/* <BoardModalDetailPage
         open={open}
         setOpen={setOpen}

@@ -31,6 +31,10 @@ import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import clsx from "clsx";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
+import layoutService from "../../../services/layoutService";
 
 const BoardView = ({
   view,
@@ -50,6 +54,7 @@ const BoardView = ({
   const visibleForm = useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const projectId = useSelector((state) => state.company?.projectId);
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -68,6 +73,77 @@ const BoardView = ({
 
   const boardRef = useRef(null);
   const subGroupById = view?.attributes?.sub_group_by_id;
+
+  const [dateInfo, setDateInfo] = useState({});
+  const [selectedRow, setSelectedRow] = useState({});
+  const [defaultValue, setDefaultValue] = useState(null);
+
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
+
+  const navigateToEditPage = (el) => {
+    setOpenDrawerModal(true);
+    setSelectedRow(el);
+    setDateInfo({});
+    setDefaultValue({});
+  };
+
+  // const navigateToCreatePage = ({ tab }) => {
+  //   setOpenDrawerModal(true);
+  //   setSelectedRow({});
+  //   if (isStatusType) {
+  //     setDefaultValue({
+  //       field: selectedGroupField?.slug,
+  //       value: [tab?.label],
+  //     });
+  //   } else {
+  //     setDefaultValue({
+  //       field: tab.slug,
+  //       value: [tab.value],
+  //     });
+  //   }
+  // };
+
+  const navigateToCreatePage = ({ tab }) => {
+    setOpenDrawerModal(true);
+    setSelectedRow(null);
+    if (isStatusType) {
+      setDefaultValue({
+        field: selectedGroupField?.slug,
+        value: [tab?.label],
+      });
+    } else {
+      setDefaultValue({
+        field: tab.slug,
+        value: [tab.value],
+      });
+    }
+  };
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
@@ -120,9 +196,9 @@ const BoardView = ({
 
   const loader = dataLoader || tabsLoader;
 
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug);
-  };
+  // const navigateToCreatePage = () => {
+  //   navigateToForm(tableSlug);
+  // };
 
   const onDrop = (dropResult) => {
     const result = applyDrag(boardTab, dropResult);
@@ -185,6 +261,12 @@ const BoardView = ({
   const subGroupField = fieldsMap[subGroupById];
   const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
 
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
   useEffect(() => {
     setSubBoardData({});
     if (subGroupById) {
@@ -223,6 +305,34 @@ const BoardView = ({
     setOpenedGroups(Object.keys(subBoardData));
   }, [subBoardData]);
 
+  const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
+  const isStatusType = selectedGroupField?.type === "STATUS";
+
+  const statusGroupCounts = useMemo(() => {
+    const result = {};
+    if (subGroupById) {
+      Object.entries(subBoardData)?.forEach(([key, value]) => {
+        value?.forEach((item) => {
+          if (result[item?.[groupField?.slug]]) {
+            result[item?.[groupField?.slug]] += 1;
+          } else {
+            result[item?.[groupField?.slug]] = 1;
+          }
+        });
+      });
+    } else {
+      data?.forEach((item) => {
+        if (result[item?.[groupField?.slug]]) {
+          result[item?.[groupField?.slug]] += 1;
+        } else {
+          result[item?.[groupField?.slug]] = 1;
+        }
+      });
+    }
+
+    return result;
+  }, [subBoardData, groupField, data]);
+
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
@@ -248,37 +358,40 @@ const BoardView = ({
             </div>
           )}
 
-          {subGroupById && (
-            <Box
-              display="flex"
-              columnGap="8px"
-              paddingLeft="16px"
-              paddingRight="16px"
-            >
-              {boardTab?.map((tab) => (
-                <ColumnHeaderBlock
-                  key={tab.value}
-                  tab={tab}
-                  computedData={subBoardData[tab.value]}
-                  navigateToCreatePage={navigateToCreatePage}
-                  field={computedColumnsFor?.find(
-                    (field) => field?.slug === tab?.slug
-                  )}
-                />
-              ))}
-            </Box>
-          )}
+          {/* {subGroupById && ( */}
+          <Box
+            display="flex"
+            columnGap="8px"
+            paddingLeft="16px"
+            paddingRight="16px"
+          >
+            {boardTab?.map((tab) => (
+              <ColumnHeaderBlock
+                key={tab.value}
+                tab={tab}
+                computedData={subBoardData[tab.value]}
+                counts={statusGroupCounts}
+                navigateToCreatePage={navigateToCreatePage}
+                field={computedColumnsFor?.find(
+                  (field) => field?.slug === tab?.slug
+                )}
+              />
+            ))}
+          </Box>
+          {/* )} */}
 
           <div
             className={styles.board}
             style={{
               height: isFilterOpen
-                ? subGroupById
-                  ? "calc(100vh - 171px)"
-                  : "calc(100vh - 121px)"
-                : subGroupById
-                  ? "calc(100vh - 133px)"
-                  : "calc(100vh - 83px)",
+                ? "calc(100vh - 171px)"
+                : "calc(100vh - 133px)",
+              // ? subGroupById
+              //   ? "calc(100vh - 171px)"
+              //   : "calc(100vh - 121px)"
+              // : subGroupById
+              //   ? "calc(100vh - 133px)"
+              //   : "calc(100vh - 83px)",
             }}
             ref={boardRef}
           >
@@ -339,7 +452,6 @@ const BoardView = ({
                               fieldsMap={fieldsMap}
                               view={view}
                               menuItem={menuItem}
-                              navigateToCreatePage={navigateToCreatePage}
                               layoutType={layoutType}
                               setLayoutType={setLayoutType}
                               refetch={refetch}
@@ -349,6 +461,10 @@ const BoardView = ({
                               subGroupData={subBoardData[el]}
                               subItem={el}
                               subGroupFieldSlug={subGroupFieldSlug}
+                              setDateInfo={setDateInfo}
+                              setDefaultValue={setDefaultValue}
+                              setOpenDrawerModal={setOpenDrawerModal}
+                              setSelectedRow={setSelectedRow}
                             />
                           </Draggable>
                         ))}
@@ -370,7 +486,7 @@ const BoardView = ({
                   showOnTop: true,
                   className: "drag-cards-drop-preview",
                 }}
-                style={{ display: "flex", gap: 8, paddingTop: "48px" }}
+                style={{ display: "flex", gap: 8 }}
               >
                 {boardTab?.map((tab, index) => (
                   <Draggable key={tab.value} className={styles.draggable}>
@@ -382,7 +498,7 @@ const BoardView = ({
                       fieldsMap={fieldsMap}
                       view={view}
                       menuItem={menuItem}
-                      navigateToCreatePage={navigateToCreatePage}
+                      // navigateToCreatePage={navigateToCreatePage}
                       layoutType={layoutType}
                       setLayoutType={setLayoutType}
                       refetch={refetch}
@@ -390,6 +506,11 @@ const BoardView = ({
                       index={index}
                       subGroupById={subGroupById}
                       subGroupData={subBoardData.current}
+                      setOpenDrawerModal={setOpenDrawerModal}
+                      setDateInfo={setDateInfo}
+                      setDefaultValue={setDefaultValue}
+                      setSelectedRow={setSelectedRow}
+                      subGroupFieldSlug={subGroupFieldSlug}
                     />
                   </Draggable>
                 ))}
@@ -398,6 +519,24 @@ const BoardView = ({
           </div>
         </div>
       )}
+      <MaterialUIProvider>
+        <DrawerDetailPage
+          projectInfo={projectInfo}
+          open={openDrawerModal}
+          setOpen={setOpenDrawerModal}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          // refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToEditPage}
+          dateInfo={dateInfo}
+          defaultValue={defaultValue}
+        />
+      </MaterialUIProvider>
     </div>
   );
 };

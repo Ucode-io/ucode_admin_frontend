@@ -16,3 +16,27 @@
     box-shadow: 0 1px 2px #1018280f;
   }
 }
+
+.copyButton {
+  position: absolute;
+  top: 55px;
+  right: 20px;
+  padding: 3px 6px;
+  background: #fff;
+  color: white;
+  font-weight: medium;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #32302b;
+  border: 1px solid #dfdfde;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+
+  &:hover {
+    background: #37352f0f;
+  }
+}

@@ -62,6 +62,9 @@ export const UserClientTypes = () => {
 
   const rolesQuery = useRoleListQuery();
   const roles = rolesQuery.data?.data?.response ?? [];
+  const selectedClientType = roles?.find(
+    (item) => item?.client_type_id === clientTypeId
+  );
 
   if (clientTypesQuery.isLoading || rolesQuery.isLoading) {
     return <PageFallback />;
@@ -76,10 +79,6 @@ export const UserClientTypes = () => {
     setLimit(value);
     setPage(1);
   };
-
-  const selectedClientType = useMemo(() => {
-    return roles?.find((item) => item?.client_type_id === clientTypeId);
-  }, [clientTypeId]);
 
   return (
     <ChakraProvider theme={chakraUITheme}>

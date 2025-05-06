@@ -128,9 +128,8 @@ function InviteModal({
     dispatch(showAlert("Invote link copied!", "success"));
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?y=${selectedClientType?.project_id}&env_id=${env_id}&role_id=${selectedClientType?.guid}&client_type_id=${selectedClientType?.client_type_id}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${selectedClientType?.guid}&client_type_id=${selectedClientType?.client_type_id}`
       );
-      setCopied(true);
     } catch (err) {
       console.error("Failed to copy!", err);
     }
@@ -146,7 +145,6 @@ function InviteModal({
           borderRadius={8}
           onClick={() => {
             onOpen();
-            copyToClipboard();
             setSearchParams({invite: true});
           }}>
           {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||

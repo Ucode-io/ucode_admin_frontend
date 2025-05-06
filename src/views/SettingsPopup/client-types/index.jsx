@@ -79,7 +79,7 @@ export const UserClientTypes = () => {
 
   const selectedClientType = useMemo(() => {
     return roles?.find((item) => item?.client_type_id === clientTypeId);
-  }, [roles, clientTypeId]);
+  }, [clientTypeId]);
 
   return (
     <ChakraProvider theme={chakraUITheme}>

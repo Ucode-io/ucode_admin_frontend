@@ -1036,6 +1036,8 @@ export const NewUiViewsWithGroups = ({
                     view={view}
                     views={views}
                     key={"calendar"}
+                    layoutType={layoutType}
+                    setLayoutType={setLayoutType}
                   />
                 )}
                 {!groupTable?.length &&

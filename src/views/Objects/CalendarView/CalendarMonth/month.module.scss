@@ -6,9 +6,28 @@
     max-height: calc(100vh - 100px);
     overflow: auto;
     background-color: #fff;
-
+    position: relative;
 }
 
+.dateNumber {
+    width: 24px;
+    height: 24px;
+}
+
+.calendar.today .dateNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    border-radius: 50%;
+    background: rgb(235, 87, 87);
+}
+
+.calendarTemplateData {
+    height: calc(100vh - 180px);
+    overflow: auto;
+}
 
 
 .calendarTemplate {
@@ -30,7 +49,7 @@
         padding: 5px;
         height: 126px;
         justify-content: unset;
-        flex-direction: column-reverse;
+        flex-direction: column;
         align-items: end;
         position: relative;
         scrollbar-width: none;
@@ -54,8 +73,13 @@
 
             .infoBlockWrapper {
                 width: 100%;
-                padding: 5px;
+                padding-top: 6px;
                 height: 40px;
+
+                .infoText {
+                    font-size: 14px;
+                    font-weight: 400;
+                }
 
 
                 .infoCard {
@@ -90,15 +114,26 @@
 
         .desc {
             display: none;
-            align-items: center;
-            position: absolute;
-            bottom: 5px;
-            right: 20px;
+            // align-items: center;
+            // position: absolute;
+            // bottom: 5px;
+            // right: 20px;
 
             .addButton {
+                width: 24px;
+                height: 24px;
+                position: absolute;
                 display: flex;
-                align-items: center;
-                color: #007aff;
+                top: 6px;
+                left: 6px;
+                padding: 2px;
+                border-radius: 8px;
+                background: white;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+                color: rgba(55, 53, 47, 0.45);
+                // display: flex;
+                // align-items: center;
+                // color: #007aff;
 
                 &:hover {
                     cursor: pointer;

@@ -19,6 +19,7 @@ const InviteForm = () => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
   const {control, handleSubmit} = useForm();
   const roleId = searchParams.get("role_id");
   const project_id = searchParams.get("project-id");
@@ -26,6 +27,7 @@ const InviteForm = () => {
   const clientTypeId = searchParams.get("client_type_id");
 
   const userInviteLogin = (data) => {
+    setIsloading(true);
     inviteAuthUserService
       .login({
         data,
@@ -50,7 +52,8 @@ const InviteForm = () => {
       })
       .catch((err) => {
         dispatch(showAlert("Something went wrong on changing password"));
-      });
+      })
+      .finally(() => setIsloading(false));
   };
 
   const onSubmit = (values) => {
@@ -126,7 +129,13 @@ const InviteForm = () => {
         </div>
 
         <div className={classes.buttonsArea}>
-          <PrimaryButton size="large">{t("enter")}</PrimaryButton>
+          {isLoading ? (
+            <PrimaryButton type={"button"} loader={isLoading} size="large">
+              {t("enter")}
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton size="large">{t("enter")}</PrimaryButton>
+          )}
         </div>
       </form>
     </>

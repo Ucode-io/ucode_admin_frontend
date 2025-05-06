@@ -14,6 +14,7 @@ import {SettingsPopup} from "../../views/SettingsPopup/SettingsPopup";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
+import {ToastContainer} from "react-toastify";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const {appId} = useParams();
@@ -106,6 +107,7 @@ const MainLayout = ({setFavicon, favicon}) => {
                 : styles.content
             }>
             <Outlet />
+            <ToastContainer hideProgressBar />
           </div>
         </div>
 

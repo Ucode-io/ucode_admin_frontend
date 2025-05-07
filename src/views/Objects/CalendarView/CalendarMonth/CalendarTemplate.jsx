@@ -15,14 +15,15 @@ import { useParams } from "react-router-dom";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 import AddIcon from "@mui/icons-material/Add";
 import clsx from "clsx";
+import { useCalendarViewContext } from "../Providers";
 const daysOfWeek = [
-  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday",
 ];
 
 const CalendarTemplate = ({
@@ -32,6 +33,7 @@ const CalendarTemplate = ({
   fieldsMap,
   menuItem,
   setLayoutType,
+  currentDay,
 }) => {
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
@@ -97,6 +99,12 @@ const CalendarTemplate = ({
     },
   });
 
+  const today = dateValidFormat(new Date(), "dd.MM.yyyy");
+
+  const { calendarRef = {} } = useCalendarViewContext();
+
+  console.log({ month });
+
   return (
     <>
       <Box className={styles.calendarTemplate}>
@@ -114,16 +122,20 @@ const CalendarTemplate = ({
           </Box>
         ))}
       </Box>
-      <Box className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}>
+      <Box
+        className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}
+        ref={calendarRef}
+      >
         {Array.isArray(month) &&
           month?.map((date, index) => (
             <>
               <Box
                 key={index}
+                data-is-today={today === dateValidFormat(date, "dd.MM.yyyy")}
                 className={clsx(styles.calendar, {
-                  [styles.today]:
-                    dateValidFormat(new Date(), "dd.MM.yyyy") ===
-                    dateValidFormat(date, "dd.MM.yyyy"),
+                  [styles.today]: today === dateValidFormat(date, "dd.MM.yyyy"),
+                  [styles.activeMonth]:
+                    currentDay.getMonth() === date.getMonth(),
                 })}
                 style={{
                   // borderColor:

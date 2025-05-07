@@ -1,0 +1,8 @@
+.checkbox {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  margin-top: 30px;
+}
+.checkbox span {
+  padding: 2px;
+}/*# sourceMappingURL=popup.module.css.map */

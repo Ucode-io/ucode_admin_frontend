@@ -21,6 +21,7 @@ import {relationTabReducer} from "./relationTab/relationTab.slice";
 import {viewsReducer} from "./views/view.slice";
 import {isOnlineReducer} from "./isOnline/isOnline.slice";
 import {permissionsReducer} from "./permissions/permissions.slice";
+import {menuAccordionReducer} from "./menus/menus.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -44,6 +45,11 @@ const applicationPersistConfig = {
 
 const menuPersistConfig = {
   key: "menu",
+  storage,
+};
+
+const menuAccordionPersistConfig = {
+  key: "menuAccordion",
   storage,
 };
 
@@ -130,6 +136,10 @@ const rootReducer = combineReducers({
   ),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
+  menuAccordion: persistReducer(
+    menuAccordionPersistConfig,
+    menuAccordionReducer
+  ),
   quick_filter: persistReducer(quickFiltersCount, quickFiltersReducer),
   pagination: persistReducer(tablePagination, paginationReducer),
   languages: persistReducer(languagesPersistConfig, languagesReducer),

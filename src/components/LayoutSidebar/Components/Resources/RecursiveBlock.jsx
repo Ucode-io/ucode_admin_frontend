@@ -41,7 +41,7 @@ const RecursiveBlock = ({
   };
 
   return (
-    <Box>
+    <Box sx={{paddingLeft: "10px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         {element?.type === "REST" ? (
           <Button
@@ -51,6 +51,7 @@ const RecursiveBlock = ({
               borderRadius: "8px",
               height: "32px",
               fontSize: "13px",
+              paddingLeft: "25px",
             }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&
@@ -82,6 +83,7 @@ const RecursiveBlock = ({
               borderRadius: "8px",
               height: "32px",
               fontSize: "13px",
+              paddingLeft: "25px",
             }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&
@@ -109,7 +111,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{cursor: "pointer"}}>
+              sx={{cursor: "pointer", height: "20px"}}>
               <DeleteIcon />
             </Box>
           </Button>
@@ -121,6 +123,7 @@ const RecursiveBlock = ({
               borderRadius: "8px",
               height: "32px",
               fontSize: "13px",
+              paddingLeft: "25px",
             }}
             className={`nav-element highlight-on-hover ${
               element.isChild &&
@@ -147,7 +150,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{cursor: "pointer"}}>
+              sx={{cursor: "pointer", height: "20px"}}>
               <DeleteIcon />
             </Box>
             {element.type === "FOLDER" && (

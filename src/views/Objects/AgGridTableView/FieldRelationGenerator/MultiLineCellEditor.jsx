@@ -104,10 +104,6 @@ function MultiLineCellEditor(props) {
           value={props?.value}
           modules={modules}
           defaultValue={props?.value ?? ""}
-          // onChange={(val) => {
-          //   onChange(val);
-          //   isNewTableView && updateObject();
-          // }}
           tabIndex={1}
           autoFocus={false}
           style={{

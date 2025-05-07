@@ -203,7 +203,6 @@ const SubMenu = ({
             // paddingTop: "20px"
           }}>
           <div>
-            {/* // <GreyLoader size="100px" /> */}
             <Box className="nav-block">
               {selectedApp?.id === adminId && (
                 <ProjectSettings

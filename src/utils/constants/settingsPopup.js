@@ -14,6 +14,10 @@ export const TAB_COMPONENTS = {
     PERMISSIONS_DETAIL: "permissionsDetail",
     PERMISSIONS_ROLE_DETAIL: "permissionsRoleDetail",
   },
+  FILES: {
+    FILES: "files",
+    FILES_DETAIL: "filesDetail",
+  },
   RESOURCES: {
     RESOURCES: "resources",
     RESOURCES_DETAIL: "resourcesDetail",
@@ -38,4 +42,4 @@ export const TAB_COMPONENTS = {
     MICROFRONTEND: "microFrontend",
     MICROFRONTEND_DETAIL: "microFrontendDetail",
   },
-}
+};

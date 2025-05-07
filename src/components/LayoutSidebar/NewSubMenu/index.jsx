@@ -5,17 +5,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {useSearchParams} from "react-router-dom";
 import {store} from "../../../store";
 import menuService, {useMenuListQuery} from "../../../services/menuService";
-import {Box, Button, Skeleton} from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {Box, Skeleton} from "@mui/material";
 import {Container} from "react-smooth-dnd";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
-import ProjectSettings from "../Components/ProjectSettings";
-import Permissions from "../Components/Permission";
-import Resources from "../Components/Resources";
-import ApiMenu from "../Components/ApiMenu/Index";
-import Users from "../Components/Users";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -30,9 +22,7 @@ function NewSubMenu({
   selectedApp,
   isLoading,
   menuStyle: menuStyles,
-  setSelectedApp,
   setLinkedTableModal,
-  menuItem,
   menuLanguages,
   languageData = [],
   element,
@@ -205,7 +195,14 @@ function NewSubMenu({
                   </Container>
                 ) : (
                   <>
-                    <Box sx={{color: "#9f9898", paddingLeft: "25px"}}>
+                    <Box
+                      sx={{
+                        color: "#9f9898",
+                        paddingLeft: "25px",
+                        height: "30px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}>
                       No pages inside
                     </Box>
                   </>

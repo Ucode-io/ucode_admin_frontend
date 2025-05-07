@@ -163,7 +163,8 @@ const AppSidebar = ({
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(appId),
+      enabled:
+        Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
       onSuccess: (res) => {
         computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
@@ -447,7 +448,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   clickHandler(element);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));
-                  element?.id !== menuItem?.id && setLoading(true);
+                  setLoading(!loading);
                 }}>
                 <Flex
                   width={sidebarIsOpen ? "100%" : "36px"}

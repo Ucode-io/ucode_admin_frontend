@@ -124,7 +124,7 @@ const Router = () => {
         : companyDefaultLink
     )
       ? result
-      : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
+      : `/`;
   }, [
     location.pathname,
     applications,
@@ -193,7 +193,7 @@ const Router = () => {
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
         <Route path="client-types" element={<ClientTypes />} />
 
-        <Route path="main">
+        <Route path="/">
           <Route
             path=":appId/users-list"
             element={
@@ -378,27 +378,24 @@ const Router = () => {
           </Route>
 
           <Route
-            path=":appId/object/:tableSlug"
+            path="/:tableSlug"
             element={<ReloadWrapper component={ObjectsPage} />}
           />
 
-          <Route
-            path=":appId/object/:tableSlug/templates"
-            element={<DocumentTemplates />}
-          />
+          <Route path="/:tableSlug/templates" element={<DocumentTemplates />} />
 
           <Route
-            path=":appId/object/:tableSlug/templates/create"
+            path="/:tableSlug/templates/create"
             element={<DocumentTemplateDetail />}
           />
 
           <Route
-            path=":appId/object/:tableSlug/templates/:templateId"
+            path="/:tableSlug/templates/:templateId"
             element={<DocumentTemplateDetail />}
           />
 
           <Route
-            path=":appId/object/:tableSlug/create/:formId"
+            path="/:tableSlug/create/:formId"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -406,7 +403,7 @@ const Router = () => {
             }
           />
           <Route
-            path=":appId/object/:tableSlug/:id"
+            path="/:tableSlug/:id"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />

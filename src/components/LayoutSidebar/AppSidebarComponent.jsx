@@ -92,19 +92,17 @@ const AppSidebar = ({
         coontrolAccordionAction(element);
         setElement(element);
         setSubMenuIsOpen(true);
-        navigate(`/main/${element.id}`);
+        navigate(`/${element.id}`);
       }
 
       return;
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
-      navigate(
-        `/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`
-      );
+      navigate(`/${element?.id}/${element?.data?.table?.slug}`);
     } else if (element.type === "LINK") {
       const website_link = element?.attributes?.website_link;
       if (element?.attributes?.website_link) {
-        navigate(`/main/${element?.id}/website`, {
+        navigate(`/${element?.id}/website`, {
           state: {
             url: website_link,
           },
@@ -129,12 +127,12 @@ const AppSidebar = ({
       });
       const searchParams = new URLSearchParams(obj || {});
       return navigate({
-        pathname: `/main/${element.id}/page/${element?.data?.microfrontend?.id}`,
+        pathname: `/${element.id}/page/${element?.data?.microfrontend?.id}`,
         search: `?menuId=${element?.id}&${searchParams.toString()}`,
       });
     } else if (element.type === "WEBPAGE") {
       navigate(
-        `/main/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`
+        `/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`
       );
       setSubMenuIsOpen(false);
     }

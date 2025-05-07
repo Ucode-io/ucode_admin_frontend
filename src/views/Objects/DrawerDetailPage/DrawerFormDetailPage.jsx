@@ -359,7 +359,10 @@ const HeadingOptions = ({
           justifyContent={"flex-start"}>
           <CHTextField
             placeholder={
-              Boolean(watch("attributes.layout_heading")) ? "" : "Select field"
+              Boolean(watch("attributes.layout_heading")) &&
+              Boolean(watch(selectedField?.slug))
+                ? ""
+                : "Select field"
             }
             control={control}
             name={selectedField?.slug || ""}

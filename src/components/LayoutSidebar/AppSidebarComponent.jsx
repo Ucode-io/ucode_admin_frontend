@@ -84,7 +84,6 @@ const AppSidebar = ({
 
     setSelectedApp(element);
     if (element.type === "FOLDER") {
-      setLoading(false);
       const isOpen = menuChilds[element.id]?.open;
       if (isOpen) {
         closeMenu(element.id);
@@ -160,13 +159,13 @@ const AppSidebar = ({
 
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: menuItem?.id,
+      parent_id: appId,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(menuItem?.id),
+      enabled: Boolean(appId),
       onSuccess: (res) => {
-        computeMenuChilds(menuItem?.id, res?.menus ?? []);
+        computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -448,7 +447,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   clickHandler(element);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));
-                  // element?.id !== menuItem?.id && setLoading(true);
+                  element?.id !== menuItem?.id && setLoading(true);
                 }}>
                 <Flex
                   width={sidebarIsOpen ? "100%" : "36px"}

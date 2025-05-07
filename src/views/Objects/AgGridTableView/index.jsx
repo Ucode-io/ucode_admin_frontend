@@ -323,6 +323,8 @@ function AgGridTableView(props) {
           selectedTabIndex,
           menuItem,
           removeRow,
+          createChildTree,
+          addRowTree,
           addRow,
           deleteFunction: deleteHandler,
           updateTreeData: updateTreeData,
@@ -343,6 +345,21 @@ function AgGridTableView(props) {
       .then((res) => {
         delete data?.new_field;
         view?.attributes?.treeData ? updateTreeData() : refetch();
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }
+
+  function addRowTree(data) {
+    setLoading(true);
+
+    constructorObjectService
+      .create(tableSlug, {
+        data: data,
+      })
+      .then((res) => {
+        delete data?.new_field;
+        updateTreeData();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -437,13 +454,10 @@ function AgGridTableView(props) {
       guid: generateGUID(),
       [`${tableSlug}_id`]: parentObj.guid,
       path: [...parentObj.path, generateGUID()],
+      new_field: true,
     };
     gridApi.current.api.applyTransaction({
       add: [newChild],
-    });
-
-    constructorObjectService.create(tableSlug, {
-      data: newChild,
     });
   }
 

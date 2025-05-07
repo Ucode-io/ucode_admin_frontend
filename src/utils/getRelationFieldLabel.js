@@ -81,9 +81,13 @@ export const getRelationFieldTabsLabelLang = (
     let result = "";
 
     if (el?.type === "DATE") {
-      result = format(new Date(option[el?.slug]), "dd.MM.yyyy");
+      result = isValid(new Date(option?.[el?.slug]))
+        ? format(new Date(option[el?.slug]), "dd.MM.yyyy")
+        : "";
     } else if (el?.type === "DATE_TIME") {
-      result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
+      result = isValid(format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm"))
+        ? format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
+        : "";
     } else if (el?.type === "NUMBER") {
       result = numberWithSpaces(option[el?.slug]);
     } else {

@@ -1,0 +1,8 @@
+.checkbox {
+  display: flex;
+  -moz-column-gap: 20px;
+       column-gap: 20px;
+}
+.checkbox span {
+  padding: 2px;
+}/*# sourceMappingURL=main.module.css.map */

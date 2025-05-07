@@ -1,0 +1,104 @@
+.repeatedBlock {
+  padding: 0 8px;
+}
+.repeatedBlock .items {
+  position: relative;
+  height: 100%;
+  margin-bottom: 8px;
+}
+.repeatedBlock .items .addButton {
+  padding: 8px;
+  background-color: #fff;
+  margin-top: 8px;
+  border: 1px solid #e3e3e3;
+  border-radius: 2px;
+}
+.repeatedBlock .items .item {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e3e3e3;
+  padding: 8px;
+  border-radius: 2px;
+  position: relative;
+  margin: 12px 0 0;
+}
+.repeatedBlock .items .item .expand {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.repeatedBlock .items .item .objects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.repeatedBlock .items .item .footerBtns {
+  display: flex;
+  gap: 8px;
+}
+.repeatedBlock .items .item .footerBtns button {
+  width: 50%;
+  margin-top: 8px;
+}
+.repeatedBlock .items .item .form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: calc(33% - 4px);
+}
+.repeatedBlock .items .item .form.values {
+  border: 1px solid #e3e3e3;
+  padding: 8px;
+  gap: 0;
+  border-radius: 2px;
+  flex-direction: column;
+}
+.repeatedBlock .items .item .select {
+  width: 30%;
+  display: flex;
+  gap: 8px;
+}
+.repeatedBlock .items .item .fields {
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.repeatedBlock .items .item .fields.border {
+  border-radius: 2px;
+  border: 1px solid #e3e3e3;
+  padding: 8px;
+}
+.repeatedBlock .items .item .fields .loader {
+  margin-inline: auto;
+}
+.repeatedBlock .items .item .fields .emptyBlock {
+  display: block;
+  padding: 20px 0;
+  width: 100%;
+  text-align: center;
+}
+.repeatedBlock .items .item .fields .emptyBlock svg {
+  margin-inline: auto;
+  width: 50px;
+  height: 50px;
+}
+.repeatedBlock .items .item .fields .emptyBlock svg path {
+  fill: #6e8bb7;
+}
+.repeatedBlock .items .item .fields .emptyBlock p {
+  font-size: 16px;
+  color: #6e8bb7;
+}
+.repeatedBlock .items .item .fields .field {
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #e3e3e3;
+  border-radius: 2px;
+  padding: 4px 8px 4px 0;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}/*# sourceMappingURL=relation.module.css.map */

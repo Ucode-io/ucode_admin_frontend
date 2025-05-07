@@ -1,0 +1,154 @@
+.headcell {
+  position: fixed;
+  right: 0;
+  width: 100%;
+  background: #fff;
+  max-width: 90px;
+  height: 100%;
+  min-height: 35px !important;
+  max-height: 35px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field {
+  width: 100%;
+  min-width: 240px;
+  max-height: 500px;
+  overflow: hidden;
+  position: relative;
+}
+.field .advanced {
+  color: #4f5762 !important;
+  display: flex;
+  -moz-column-gap: 5px;
+       column-gap: 5px;
+}
+.field .advanced:hover {
+  background: #f5f6fa;
+}
+.field .input fieldset {
+  border-radius: 6px;
+}
+.field .custom_label {
+  color: #656f7d;
+}
+.field .title {
+  font-weight: 600;
+  color: #818193;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  padding: 11px 15px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0px;
+  left: 0;
+  z-index: 9999 !important;
+  background: #fff;
+}
+.field .button {
+  border-radius: 0;
+  display: flex;
+  justify-content: flex-start;
+  padding: 11px 15px;
+  height: 32px;
+  -moz-column-gap: 7px;
+       column-gap: 7px;
+}
+.field .button svg {
+  font-size: 14.5px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #111;
+}
+.field .button p {
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #111;
+}
+.field .relation {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+.field .button_group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 10px;
+  -moz-column-gap: 10px;
+       column-gap: 10px;
+}
+.field .dropdown {
+  height: 150px;
+  overflow: auto;
+}
+.field .dropdown .option {
+  display: flex;
+  flex-direction: column;
+  row-gap: 7px;
+  margin-bottom: 7px;
+  color: #656f7d;
+}
+.field .dropdown .startAdornment {
+  width: 5px;
+  height: 35px;
+  display: block;
+  position: absolute;
+  left: -6px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.field .dropdown .adornment {
+  display: flex;
+  align-items: center;
+  -moz-column-gap: 5px;
+       column-gap: 5px;
+}
+.field .dropdown .adornment p {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 0.8;
+  text-wrap: nowrap;
+  color: #007aff;
+  cursor: pointer;
+}
+.field .dropdown .adornment svg {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.field .formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -moz-column-gap: 10px;
+       column-gap: 10px;
+  margin-bottom: 10px;
+}
+.field .formula .plus {
+  display: block;
+}
+.field .form {
+  padding: 10px 5px;
+}
+.field .form .field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 500px;
+  width: 300px;
+  -moz-column-gap: 10px;
+       column-gap: 10px;
+}
+
+.field {
+  width: 100%;
+  padding: 5px;
+}/*# sourceMappingURL=field.module.css.map */

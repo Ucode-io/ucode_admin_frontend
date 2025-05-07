@@ -354,7 +354,11 @@ const HeadingOptions = ({
           gap: "10px",
         }}>
         <CHTextField
-          placeholder={selectedFieldSlug?.slug ? "" : "Select field"}
+          placeholder={
+            selectedFieldSlug?.slug && Boolean(watch(selectedField?.slug))
+              ? ""
+              : "Select field"
+          }
           control={control}
           name={selectedField?.slug || ""}
           defaultValue={fieldValue}

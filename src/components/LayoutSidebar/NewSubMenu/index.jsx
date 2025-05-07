@@ -104,7 +104,7 @@ function NewSubMenu({
     height: "32px",
     marginTop: "5px",
   };
-  console.log("menuChildsmenuChilds", menuChilds);
+
   return (
     <div
       className={``}

@@ -9,7 +9,7 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
@@ -74,18 +74,28 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
 
-  const clickHandler = () => {
+  const clickHandler = (el) => {
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }
-    setMenuItem(element);
+    // setMenuItem(element);
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
+
     setSelectedApp(element);
     if (element.type === "FOLDER") {
-      setElement(element);
-      setSubMenuIsOpen(true);
-      navigate(`/main/${element.id}`);
+      const isOpen = menuChilds[element.id]?.open;
+      if (isOpen) {
+        closeMenu(element.id);
+        return;
+      } else {
+        coontrolAccordionAction(element);
+        setElement(element);
+        setSubMenuIsOpen(true);
+        navigate(`/main/${element.id}`);
+      }
+
+      return;
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
       navigate(
@@ -149,13 +159,13 @@ const AppSidebar = ({
 
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: menuItem?.id,
+      parent_id: appId,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(menuItem?.id),
+      enabled: Boolean(appId),
       onSuccess: (res) => {
-        computeMenuChilds(menuItem?.id, res?.menus ?? []);
+        computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -195,8 +205,7 @@ const AppSidebar = ({
   const getMenuColor = (element) => {
     if (element?.label === "Settings") {
       return "#fff";
-    } else
-      return activeMenu ? menuStyle?.active_text : menuStyle?.text || "#475467";
+    } else return activeMenu ? "#5F5E5A" : menuStyle?.text || "#475467";
   };
 
   function computeMenuChilds(id, children = []) {
@@ -253,17 +262,13 @@ const AppSidebar = ({
             _hover={{bg: "#EAECF0"}}
             cursor="pointer"
             className="parent-folder column-drag-handle"
-            bg={
-              activeMenu
-                ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
-                : menuStyle?.background
-            }
+            bg={activeMenu ? `${"#F0F0EF"} !important` : menuStyle?.background}
             color={
               Boolean(
                 appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
                   appId === element?.id
               ) || menuId === element?.id
-                ? "#fff"
+                ? "#5F5E5A"
                 : "#A8A8A8"
             }
             {...conditionalProps}>
@@ -286,11 +291,7 @@ const AppSidebar = ({
             </Flex>
 
             <Box
-              color={
-                activeMenu
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "#475467"
-              }
+              color={activeMenu ? "#32302B" : menuStyle?.text || "#475467"}
               pl={35}
               fontSize={14}
               mr="auto"
@@ -316,7 +317,7 @@ const AppSidebar = ({
                         }}
                         style={{
                           color: activeMenu
-                            ? menuStyle?.active_text
+                            ? "#32302B"
                             : (menuStyle?.text ?? "#fff"),
                         }}
                       />
@@ -335,9 +336,7 @@ const AppSidebar = ({
                       <AddIcon
                         size={13}
                         style={{
-                          color: activeMenu
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
+                          color: activeMenu ? "#32302B" : menuStyle?.text || "",
                         }}
                       />
                     </div>
@@ -357,9 +356,7 @@ const AppSidebar = ({
                   setElement(element);
                 }}
                 style={{
-                  color: activeMenu
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
+                  color: activeMenu ? "#32302B" : menuStyle?.text || "",
                 }}
                 element={element}
               />
@@ -436,7 +433,7 @@ const AppSidebar = ({
       {element?.type === "FOLDER" && (
         <Accordion
           allowMultiple
-          index={activeAccordionId === element.id && sidebarIsOpen ? [0] : []}
+          index={menuChilds[element.id]?.open && sidebarIsOpen ? [0] : []}
           border="none">
           <SidebarAppTooltip title={title}>
             <AccordionItem>
@@ -448,9 +445,7 @@ const AppSidebar = ({
                 height={"32px"}
                 onClick={(e) => {
                   e.stopPropagation();
-                  clickHandler();
-                  coontrolAccordionAction(element);
-
+                  clickHandler(element);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));
                   element?.id !== menuItem?.id && setLoading(true);
                 }}>
@@ -477,7 +472,7 @@ const AppSidebar = ({
                   className="parent-folder column-drag-handle"
                   bg={
                     activeMenu
-                      ? `${menuStyle?.active_background ?? "#EAECF0"} !important`
+                      ? `${"#F0F0EF"} !important`
                       : menuStyle?.background
                   }
                   color={
@@ -485,7 +480,7 @@ const AppSidebar = ({
                       appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
                         appId === element?.id
                     ) || menuId === element?.id
-                      ? "#fff"
+                      ? "#5F5E5A"
                       : "#A8A8A8"
                   }
                   {...conditionalProps}>
@@ -501,9 +496,7 @@ const AppSidebar = ({
                           w={"20px"}
                           h={"20px"}
                           style={{
-                            color: activeMenu
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
+                            color: activeMenu ? "#8E8D8C" : "#A7A7A5",
                           }}
                         />
                       )}
@@ -529,11 +522,7 @@ const AppSidebar = ({
                     title={title?.length > 14 ? title : ""}
                     placement="top">
                     <Box
-                      color={
-                        activeMenu
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "#475467"
-                      }
+                      color={activeMenu ? "#32302B" : "#5F5E5A"}
                       pl={35}
                       fontSize={14}
                       mr="auto"
@@ -561,7 +550,7 @@ const AppSidebar = ({
                               }}
                               style={{
                                 color: activeMenu
-                                  ? menuStyle?.active_text
+                                  ? "#32302B"
                                   : (menuStyle?.text ?? "#fff"),
                               }}
                             />
@@ -580,7 +569,7 @@ const AppSidebar = ({
                             size={13}
                             style={{
                               color: activeMenu
-                                ? menuStyle?.active_text
+                                ? "#32302B"
                                 : menuStyle?.text || "",
                             }}
                           />

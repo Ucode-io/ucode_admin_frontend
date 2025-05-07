@@ -104,7 +104,7 @@ function NewSubMenu({
     height: "32px",
     marginTop: "5px",
   };
-  console.log("menuChildsmenuChilds", menuChilds);
+
   return (
     <div
       className={``}
@@ -203,7 +203,13 @@ function NewSubMenu({
                       )
                     )}
                   </Container>
-                ) : null}
+                ) : (
+                  <>
+                    <Box sx={{color: "#9f9898", paddingLeft: "25px"}}>
+                      No pages inside
+                    </Box>
+                  </>
+                )}
               </div>
             </Box>
           </div>

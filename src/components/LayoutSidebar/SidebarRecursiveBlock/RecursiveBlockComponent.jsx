@@ -192,10 +192,8 @@ const RecursiveBlock = ({
                 borderRadius: "8px",
                 color: "#475767",
                 height: "30px",
-                background: activeMenu
-                  ? menuStyles?.active_background
-                  : menuStyles?.background,
-                color: activeMenu ? menuStyles?.active_text : "#465766",
+                background: activeMenu ? "#F0F0EF" : menuStyles?.background,
+                color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
               className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
               onClick={(e) => {
@@ -219,20 +217,43 @@ const RecursiveBlock = ({
                   </div>
                 )}
 
-                <div
-                  style={{
-                    marginRight: element?.icon ? "8px" : "0px",
-                  }}
-                  className="childMenuIcon">
-                  <IconGenerator
-                    icon={
-                      element?.icon ||
-                      element?.data?.microfrontend?.icon ||
-                      element?.data?.webpage?.icon
-                    }
-                    size={18}
-                  />
-                </div>
+                {element?.icon ||
+                element?.data?.microfrontend?.icon ||
+                element?.data?.webpage?.icon ? (
+                  <div
+                    style={{
+                      marginRight: "8px",
+                    }}
+                    className="childMenuIcon">
+                    <IconGenerator
+                      icon={
+                        element?.icon ||
+                        element?.data?.microfrontend?.icon ||
+                        element?.data?.webpage?.icon
+                      }
+                      size={18}
+                    />
+                  </div>
+                ) : element?.type !== "FOLDER" ? (
+                  <Box
+                    sx={{
+                      width: "12px",
+                      height: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    <Box
+                      sx={{
+                        width: "5px",
+                        height: "5px",
+                        background: "#787774",
+                        borderRadius: "50%",
+                      }}></Box>
+                  </Box>
+                ) : (
+                  ""
+                )}
 
                 <Box
                   sx={{

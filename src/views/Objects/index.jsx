@@ -1,51 +1,32 @@
-import {useEffect, useMemo, useState} from "react";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import {TabPanel, Tabs} from "react-tabs";
-import ViewsWithGroups from "./ViewsWithGroups";
-import BoardView from "./BoardView";
-import CalendarView from "./CalendarView";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import PageFallback from "../../components/PageFallback";
-import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
+import {useSelector} from "react-redux";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
+import {TabPanel, Tabs} from "react-tabs";
 import FiltersBlock from "../../components/FiltersBlock";
+import constructorTableService from "../../services/constructorTableService";
+import {useMenuGetByIdQuery} from "../../services/menuService";
+import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
+import {store} from "../../store";
+import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import CalendarHourView from "./CalendarHourView";
-import ViewTabSelector from "./components/ViewTypeSelector";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import {store} from "../../store";
-import {useTranslation} from "react-i18next";
-import constructorTableService from "../../services/constructorTableService";
-import TimeLineView from "./TimeLineView";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
-import {useSelector} from "react-redux";
-import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
+import ViewsWithGroups from "./ViewsWithGroups";
+import ViewTabSelector from "./components/ViewTypeSelector";
 
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
-import {
-  Box,
-  Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import {TableDataSkeleton} from "../../components/TableDataSkeleton";
+import {Box, Skeleton} from "@mui/material";
 import {DynamicTable} from "../table-redesign";
 
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
-  const navigate = useNavigate();
-  const {appId} = useParams();
+  const {menuId} = useParams();
   const [searchParams] = useSearchParams();
+
   const queryTab = searchParams.get("view");
-  const menuId = searchParams.get("menuId");
 
   const {i18n} = useTranslation();
   const viewSelectedIndex = useSelector(
@@ -73,7 +54,7 @@ const ObjectsPage = () => {
   const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
     projectId: projectId,
     roleId: roleId,
-    parentId: appId,
+    parentId: menuId,
     queryParams: {
       enabled: Boolean(menuId),
       onSuccess: (res) => {
@@ -82,8 +63,7 @@ const ObjectsPage = () => {
             ?.filter((item) => item?.permission?.read)
             ?.some((el) => el?.id === menuId)
         ) {
-          console.log("object");
-          navigate(resultDefaultLink);
+          // navigate(resultDefaultLink);
         }
       },
       cacheTime: false,
@@ -154,9 +134,9 @@ const ObjectsPage = () => {
   }, [queryTab]);
 
   const {loader: menuLoader} = useMenuGetByIdQuery({
-    menuId: searchParams.get("menuId"),
+    menuId: menuId,
     queryParams: {
-      enabled: Boolean(searchParams.get("menuId")),
+      enabled: Boolean(menuId),
       onSuccess: (res) => {
         setMenuItem(res);
       },
@@ -277,7 +257,7 @@ const ObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({ view })}
+                {getViewComponent([view?.type])({view})}
               </TabPanel>
             );
           })}

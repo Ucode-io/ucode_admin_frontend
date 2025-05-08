@@ -378,24 +378,27 @@ const Router = () => {
           </Route>
 
           <Route
-            path="/:tableSlug"
+            path=":menuId/:tableSlug"
             element={<ReloadWrapper component={ObjectsPage} />}
           />
 
-          <Route path="/:tableSlug/templates" element={<DocumentTemplates />} />
+          <Route
+            path=":menuId/:tableSlug/templates"
+            element={<DocumentTemplates />}
+          />
 
           <Route
-            path="/:tableSlug/templates/create"
+            path=":menuId/:tableSlug/templates/create"
             element={<DocumentTemplateDetail />}
           />
 
           <Route
-            path="/:tableSlug/templates/:templateId"
+            path=":menuId/:tableSlug/templates/:templateId"
             element={<DocumentTemplateDetail />}
           />
 
           <Route
-            path="/:tableSlug/create/:formId"
+            path=":menuId/:tableSlug/create/:formId"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -403,7 +406,7 @@ const Router = () => {
             }
           />
           <Route
-            path="/:tableSlug/:id"
+            path=":menuId/:tableSlug/:id"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />

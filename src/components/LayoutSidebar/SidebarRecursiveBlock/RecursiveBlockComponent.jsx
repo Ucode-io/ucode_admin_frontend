@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {BsThreeDots} from "react-icons/bs";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import {useMenuListQuery} from "../../../services/menuService";
 import {store} from "../../../store";
@@ -38,7 +38,7 @@ const RecursiveBlock = ({
   setSubMenuIsOpen,
   menuStyle,
   index,
-  menuItemId,
+
   selectedApp,
   userType = false,
   buttonProps,
@@ -48,7 +48,7 @@ const RecursiveBlock = ({
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const {appId} = useParams();
+  const {menuId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {i18n} = useTranslation();
@@ -56,6 +56,8 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [id, setId] = useState();
+  const [searchParams] = useSearchParams();
+
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const activeRequest =
     element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
@@ -97,7 +99,7 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({element, appId, navigate});
+    NavigateByType({element, menuId: element?.id, navigate});
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
@@ -128,7 +130,7 @@ const RecursiveBlock = ({
     dispatch(menuActions.setMenuItem(element));
     if (element?.type === "MINIO_FOLDER") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
-    } else if (appId === folderIds.wiki_id) {
+    } else if (menuId === folderIds.wiki_id) {
       handleOpenNotify(e, "WIKI_FOLDER");
     } else {
       handleOpenNotify(e, "CREATE_TO_FOLDER");

@@ -60,10 +60,11 @@ const AppSidebar = ({
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const auth = store.getState().auth;
-  const {appId} = useParams();
+  const {appId: menuId} = useParams();
+  const test = useParams();
   const [loading, setLoading] = useState(false);
   const [activeAccordionId, setActiveAccordionId] = useState(null);
-
+  console.log("menuIdmenuIdmenuId", test);
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
@@ -145,10 +146,6 @@ const AppSidebar = ({
         : menuTemplate?.menu_template?.text,
   };
 
-  const [searchParams] = useSearchParams();
-
-  const menuId = searchParams.get("menuId");
-
   function replaceValues(inputString, loginTableSlug, userId) {
     return inputString
       .replace("{login_table_slug}", loginTableSlug)
@@ -157,14 +154,15 @@ const AppSidebar = ({
 
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: appId,
+      parent_id: menuId,
       search: subSearchText,
     },
     queryParams: {
       enabled:
-        Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
+        Boolean(menuId) &&
+        !Boolean(menuChilds?.[element?.id]?.children?.length),
       onSuccess: (res) => {
-        computeMenuChilds(appId, res?.menus ?? []);
+        computeMenuChilds(menuId, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -264,8 +262,8 @@ const AppSidebar = ({
             bg={activeMenu ? `${"#F0F0EF"} !important` : menuStyle?.background}
             color={
               Boolean(
-                appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                  appId === element?.id
+                menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                  menuId === element?.id
               ) || menuId === element?.id
                 ? "#5F5E5A"
                 : "#A8A8A8"
@@ -476,8 +474,8 @@ const AppSidebar = ({
                   }
                   color={
                     Boolean(
-                      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                        appId === element?.id
+                      menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                        menuId === element?.id
                     ) || menuId === element?.id
                       ? "#5F5E5A"
                       : "#A8A8A8"

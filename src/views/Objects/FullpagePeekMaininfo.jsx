@@ -355,8 +355,9 @@ const HeadingOptions = ({
         }}>
         <CHTextField
           placeholder={
-            selectedFieldSlug?.slug && Boolean(watch(selectedField?.slug))
-              ? ""
+            Boolean(watch("attributes.layout_heading")) ||
+            !Boolean(watch(selectedField?.slug))
+              ? "Enter value"
               : "Select field"
           }
           control={control}

@@ -60,11 +60,11 @@ const AppSidebar = ({
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const auth = store.getState().auth;
-  const {appId: menuId} = useParams();
-  const test = useParams();
+  const {menuId} = useParams();
+
   const [loading, setLoading] = useState(false);
   const [activeAccordionId, setActiveAccordionId] = useState(null);
-  console.log("menuIdmenuIdmenuId", test);
+
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
@@ -158,9 +158,7 @@ const AppSidebar = ({
       search: subSearchText,
     },
     queryParams: {
-      enabled:
-        Boolean(menuId) &&
-        !Boolean(menuChilds?.[element?.id]?.children?.length),
+      enabled: Boolean(menuId),
       onSuccess: (res) => {
         computeMenuChilds(menuId, res?.menus ?? []);
         setLoading(false);
@@ -258,7 +256,7 @@ const AppSidebar = ({
             borderRadius={6}
             _hover={{bg: "#EAECF0"}}
             cursor="pointer"
-            className="parent-folder column-drag-handle"
+            className="parent-folder column-drag-handle menu-button active-with-child"
             bg={activeMenu ? `${"#F0F0EF"} !important` : menuStyle?.background}
             color={
               Boolean(

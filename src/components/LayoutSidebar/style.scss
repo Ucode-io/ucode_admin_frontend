@@ -525,3 +525,16 @@ $main-color: #0365f2;
     border-radius: 6px;
   }
 }
+
+.parent-folder {
+  padding-right: 10px;
+  .icon_group {
+    display: none;
+  }
+
+  &:hover {
+    .icon_group {
+      display: block;
+    }
+  }
+}

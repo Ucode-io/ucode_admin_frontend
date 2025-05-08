@@ -195,7 +195,7 @@ const Router = () => {
 
         <Route path="/">
           <Route
-            path=":appId/users-list"
+            path=":menuId/users-list"
             element={
               <Suspense fallback={<PageFallback />}>
                 <UsersList />
@@ -205,42 +205,42 @@ const Router = () => {
 
           <Route index element={<Navigate to={redirectLink} />} />
 
-          <Route path=":appId" element={<div></div>} />
+          <Route path=":menuId" element={<div></div>} />
 
-          <Route path=":appId/chat" element={<Chat />}>
+          <Route path=":menuId/chat" element={<Chat />}>
             <Route path=":chat_id" element={<Chat />} />
           </Route>
-          <Route path=":appId/backet/:minioId">
+          <Route path=":menuId/backet/:minioId">
             <Route index element={<MinioPage />} />
             <Route path=":fileId" element={<MinioSinglePage />} />
           </Route>
-          <Route path=":appId/activity" element={<ActivityFeedPage />} />
-          <Route path=":appId/projects">
+          <Route path=":menuId/activity" element={<ActivityFeedPage />} />
+          <Route path=":menuId/projects">
             <Route index element={<ProjectPage />} />
             <Route path="create" element={<ProjectForm />} />
             <Route path=":projectId" element={<ProjectForm />} />
           </Route>
-          <Route path=":appId/redirects">
+          <Route path=":menuId/redirects">
             <Route index element={<RedirectPage />} />
             <Route path="create" element={<RedirectFormPage />} />
             <Route path=":redirectId" element={<RedirectFormPage />} />
           </Route>
-          <Route path=":appId/sms-otp">
+          <Route path=":menuId/sms-otp">
             <Route index element={<SmsPage />} />
             <Route path="create" element={<SmsFormPage />} />
             <Route path=":redirectId" element={<SmsFormPage />} />
           </Route>
-          <Route path=":appId/api-key">
+          <Route path=":menuId/api-key">
             <Route index element={<ApiKeyPage />} />
             <Route path="create" element={<ApiKeysForm />} />
             <Route path=":apiKeyId" element={<ApiKeysForm />} />
           </Route>
-          <Route path=":appId/environments">
+          <Route path=":menuId/environments">
             <Route index element={<EnvironmentPage />} />
             <Route path="create" element={<EnvironmentForm />} />
             <Route path=":envId" element={<EnvironmentForm />} />
           </Route>
-          <Route path=":appId/company">
+          <Route path=":menuId/company">
             <Route index element={<CompanyPage />} />
             <Route path=":companyId" element={<CompanyForm />} />
           </Route>

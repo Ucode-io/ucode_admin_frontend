@@ -6,6 +6,7 @@ export const useCalendarMonthRangeProps = () => {
     calendarRef = {},
     currentDay = new Date(),
     setCurrentDay = () => {},
+    focusedDate,
   } = useCalendarViewContext();
 
   const nextMonth = () => {
@@ -29,29 +30,28 @@ export const useCalendarMonthRangeProps = () => {
   };
 
   const handleScrollToToday = () => {
-    const today = new Date();
-    setCurrentDay(today);
-
-    setTimeout(() => {
+    requestAnimationFrame(() => {
+      const today = new Date();
+      setCurrentDay(today);
       if (calendarRef?.current) {
         const elToday = calendarRef?.current.querySelector(
           "[data-is-today = true]"
         );
         if (elToday) {
-          elToday.scrollIntoView({ behavior: "smooth", inline: "center" });
+          elToday.scrollIntoView({
+            behavior: "smooth",
+            inline: "center",
+          });
         }
       }
-    }, 100);
+    });
   };
-
-  useEffect(() => {
-    handleScrollToToday();
-  }, []);
 
   return {
     nextMonth,
     prevMonth,
     handleScrollToToday,
     currentDay,
+    focusedDate,
   };
 };

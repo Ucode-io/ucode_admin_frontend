@@ -84,6 +84,8 @@ const CalendarView = ({
     views?.[selectedTabIndex]?.attributes?.period ?? "MONTH"
   );
 
+  const [focusedDate, setFocusedDate] = useState(new Date());
+
   const [tab, setTab] = useState();
   const [currentDay, setCurrentDay] = useState(new Date());
 
@@ -369,10 +371,22 @@ const CalendarView = ({
   const tabLoading = tabResponses?.some((response) => response?.isLoading);
 
   const calendarRef = useRef(null);
-  console.log({ dateRangeFilter });
+
   return (
     <CalendarViewProvider
-      value={{ calendarRef, setCurrentDay, currentDay, setDateRangeFilter }}
+      value={{
+        calendarRef,
+        setCurrentDay,
+        currentDay,
+        setDateRangeFilter,
+        data,
+        view,
+        fieldsMap,
+        menuItem,
+        setLayoutType,
+        focusedDate,
+        setFocusedDate,
+      }}
     >
       <div>
         {/* <FiltersBlock

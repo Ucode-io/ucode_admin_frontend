@@ -6,29 +6,27 @@ import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 
 export const CalendarMonthRange = () => {
 
-  const {
-    prevMonth,
-    handleScrollToToday,
-    nextMonth,
-    currentDay,
-  } = useCalendarMonthRangeProps()
+  const { prevMonth, handleScrollToToday, nextMonth, focusedDate } =
+    useCalendarMonthRangeProps();
 
-  return <Box className={cls.date}>
-    <Typography variant="h5">{format(currentDay, "MMMM yyyy")}</Typography>
-    <div className={cls.rangeContainer}>
-      <button className={cls.rangeBtn} onClick={prevMonth}>
-        <span>
-          <ArrowLeft fontSize="small" />
-        </span>
-      </button>
-      <button className={cls.time} onClick={handleScrollToToday}>
-        Today
-      </button>
-      <button className={cls.rangeBtn} onClick={nextMonth}>
-        <span>
-          <ArrowRight fontSize="small" />
-        </span>
-      </button>
-    </div>
-  </Box>
+  return (
+    <Box className={cls.date}>
+      <p className={cls.dateText}>{format(focusedDate, "MMMM yyyy")}</p>
+      <div className={cls.rangeContainer}>
+        {/* <button className={cls.rangeBtn} onClick={prevMonth}>
+          <span>
+            <ArrowLeft fontSize="small" />
+          </span>
+        </button> */}
+        <button className={cls.time} onClick={handleScrollToToday}>
+          Today
+        </button>
+        {/* <button className={cls.rangeBtn} onClick={nextMonth}>
+          <span>
+            <ArrowRight fontSize="small" />
+          </span>
+        </button> */}
+      </div>
+    </Box>
+  );
 }

@@ -1,7 +1,7 @@
 import styles from "../day.module.scss";
 import {useRef} from "react";
 import {useVirtualizer} from "@tanstack/react-virtual";
-import CalendarTemplate from "./CalendarTemplate";
+import { CalendarTemplate } from "../components/CalendarTemplate";
 
 const CalendarMonth = ({
   data,
@@ -27,8 +27,9 @@ const CalendarMonth = ({
   return (
     <div className={styles.calendarmonth} ref={parentRef}>
       {/* <TimesColumnMonth view={view} data={data} /> */}
+      <CalendarTemplate />
 
-      <CalendarTemplate
+      {/* <CalendarTemplate
         month={datesList}
         data={data}
         fieldsMap={fieldsMap}
@@ -37,7 +38,7 @@ const CalendarMonth = ({
         setLayoutType={setLayoutType}
         menuItem={menuItem}
         currentDay={currentDay}
-      />
+      /> */}
       <div
         style={{
           //   width: virtualizer.getTotalSize(),

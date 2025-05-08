@@ -169,6 +169,7 @@ const CalendarTemplate = ({
     const filtered = newDates.filter((d) => d.getTime() < first.getTime());
     const combined = [...filtered, ...dates];
     setDates(combined);
+    setDateRangeFilter([combined[0], combined[combined.length - 1]]);
 
     setTimeout(() => {
       if (calendarRef.current) {
@@ -183,12 +184,13 @@ const CalendarTemplate = ({
     const filtered = newDates.filter((d) => d.getTime() > last.getTime());
     const combined = [...dates, ...filtered];
     setDates(combined);
+    setDateRangeFilter([combined[0], combined[combined.length - 1]]);
   };
 
   const handleScroll = (e) => {
     const el = e.target;
 
-    if (el.scrollTop < 100) {
+    if (el.scrollTop <= 100) {
       addMorePast();
     }
     if (el.scrollHeight - el.scrollTop - el.clientHeight < 100) {
@@ -197,8 +199,6 @@ const CalendarTemplate = ({
   };
 
   const weeks = getCalendarMatrix(dates);
-
-  console.log({ weeks });
 
   return (
     <>

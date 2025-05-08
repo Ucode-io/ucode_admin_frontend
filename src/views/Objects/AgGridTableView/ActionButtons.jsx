@@ -1,15 +1,13 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import React from "react";
-import {useParams} from "react-router-dom";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
-import {Box} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import ClearIcon from "@mui/icons-material/Clear";
+import DoneIcon from "@mui/icons-material/Done";
+import {Box} from "@mui/material";
+import React from "react";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 
 function ActionButtons(props) {
   const {colDef, data} = props;
+  const {view} = colDef;
 
   return (
     <>
@@ -81,7 +79,9 @@ function ActionButtons(props) {
                 style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
                 onClick={(e) => {
                   e.stopPropagation();
-                  colDef.addRow(data);
+                  view?.attributes?.treeData
+                    ? colDef?.addRowTree(data)
+                    : colDef.addRow(data);
                 }}>
                 <DoneIcon color="success" />
               </RectangleIconButton>

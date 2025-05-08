@@ -1,0 +1,101 @@
+.calendarTemplateData {
+  width: 100%;
+  height: calc(100vh - 180px);
+  overflow: auto;
+}
+
+.calendarTemplate {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.days {
+  text-align: center;
+  border: 0.5px solid #D4DAE2;
+  padding: 10px;
+}
+
+.calendar {
+  height: 126px;
+  display: flex;
+  justify-content: unset;
+  flex-direction: column;
+  align-items: end;
+  padding: 5px;
+  border: 0.5px solid #D4DAE2;
+  text-align: center;
+  position: relative;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+      display: none;
+  }
+
+  &:hover {
+      .desc {
+          display: inline-flex;
+      }
+  }
+}
+
+.calendar.activeMonth .dateNumber {
+  opacity: 1;
+}
+
+.monthPlaceholder {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  opacity: 0;
+  font-size: 1.25rem;
+  transition: opacity 0.5s ease;
+}
+
+.monthPlaceholder.scrolling {
+  opacity: 1;
+}
+
+.dateNumber {
+  width: 24px;
+  height: 24px;
+  opacity: 0.5;
+}
+
+.calendar.today .dateNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  border-radius: 50%;
+  background: rgb(235, 87, 87);
+}
+
+.card {
+  width: 100%;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.desc {
+  display: none;
+}
+
+.addButton {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  display: flex;
+  top: 6px;
+  left: 6px;
+  padding: 2px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  color: rgba(55, 53, 47, 0.45);
+
+  &:hover {
+      cursor: pointer;
+  }
+}

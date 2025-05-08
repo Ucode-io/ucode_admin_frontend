@@ -86,6 +86,9 @@ const CalendarView = ({
 
   const [tab, setTab] = useState();
   const [currentDay, setCurrentDay] = useState(new Date());
+
+  const [dateRangeFilter, setDateRangeFilter] = useState([]);
+
   const [weekDates, setWeekDates] = useState(new Date());
   const [currentMonthDates, setCurrentMonthDates] = useState([]);
   const [firstDate, setFirstDate] = useState();
@@ -106,15 +109,50 @@ const CalendarView = ({
     start.setDate(date.getDate() - currentDayOfWeek + 1);
     return start;
   };
+  // const startOfMonth = (date) => {
+  //   const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  //   if (start.getDay() !== 0) {
+  //     start.setDate(2 - start.getDay());
+  //   }
+  //   return start;
+  // };
+
   const startOfMonth = (date) => {
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
-    if (start.getDay() !== 0) {
-      start.setDate(2 - start.getDay());
-    }
+    const day = start.getDay(); // Sunday = 0
+    const diff = day === 0 ? -6 : 1 - day; // смещение до понедельника
+    start.setDate(start.getDate() + diff);
     return start;
   };
 
+  const getDaysRange = (centerDate, monthsBefore = 2, monthsAfter = 2) => {
+    const start = startOfMonth(
+      new Date(
+        centerDate.getFullYear(),
+        centerDate.getMonth() - monthsBefore,
+        1
+      )
+    );
+    const end = new Date(
+      centerDate.getFullYear(),
+      centerDate.getMonth() + monthsAfter + 1,
+      0
+    ); // конец +2 месяца
+
+    const days = [];
+    let current = new Date(start);
+
+    while (current <= end) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    return days;
+  };
+
   useEffect(() => {
+    if (date !== "WEEK") return;
+
     const newWeekDates = [];
     for (let i = 0; i < 7; i++) {
       const day = new Date(startWeek(currentDay));
@@ -124,16 +162,23 @@ const CalendarView = ({
     setWeekDates(newWeekDates);
   }, [currentDay]);
 
-  useEffect(() => {
-    const newMonthDates = [];
-    for (let i = 0; i < 35; i++) {
-      const day = new Date(startOfMonth(currentDay));
-      day.setDate(startOfMonth(currentDay).getDate() + i);
-      newMonthDates.push(day);
-    }
+  const [daysCount, setDaysCount] = useState(105);
 
-    setCurrentMonthDates(newMonthDates);
-  }, [currentDay]);
+  // useEffect(() => {
+  //   if (date !== "MONTH") return;
+
+  //   const newDates = getDaysRange(currentDay, 2, 2); // 2 месяца до и 2 после
+  //   setCurrentMonthDates(newDates);
+
+  //   const newMonthDates = [];
+  //   for (let i = 0; i < daysCount; i++) {
+  //     const day = new Date(startOfMonth(currentDay));
+  //     day.setDate(startOfMonth(currentDay).getDate() + i);
+  //     newMonthDates.push(day);
+  //   }
+
+  //   setCurrentMonthDates(newMonthDates);
+  // }, [currentDay]);
 
   const datesList = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return;
@@ -156,16 +201,27 @@ const CalendarView = ({
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date },
+      {
+        tableSlug,
+        dataFilters,
+        currentUpdatedDate,
+        firstUpdatedDate,
+        date,
+        dateRangeFilter,
+      },
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
           with_relations: true,
           [view.calendar_from_slug]: {
-            $gte:
-              FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
+            $gte: dateRangeFilter[0]
+              ? dateRangeFilter[0]
+              : (FromDateType(date, currentUpdatedDate, firstUpdatedDate) ??
+                ""),
+            $lt: dateRangeFilter[1]
+              ? dateRangeFilter[1]
+              : (ToDateType(date, tomorrow, lastUpdatedDate) ?? ""),
           },
           view_type: "CALENDAR",
           ...dataFilters,
@@ -313,9 +369,11 @@ const CalendarView = ({
   const tabLoading = tabResponses?.some((response) => response?.isLoading);
 
   const calendarRef = useRef(null);
-
+  console.log({ dateRangeFilter });
   return (
-    <CalendarViewProvider value={{ calendarRef, setCurrentDay, currentDay }}>
+    <CalendarViewProvider
+      value={{ calendarRef, setCurrentDay, currentDay, setDateRangeFilter }}
+    >
       <div>
         {/* <FiltersBlock
         extra={
@@ -441,56 +499,56 @@ const CalendarView = ({
           </MaterialUIProvider> */}
           </Box>
         </Box>
-        {isLoading || tabLoading ? (
+        {/* {isLoading || tabLoading ? (
           <PageFallback />
-        ) : (
-          <Box>
-            {date === "DAY" && (
-              <CalendarDay
-                data={data}
-                fieldsMap={fieldsMap}
-                datesList={[currentDay]}
-                view={view}
-                tabs={tabs}
-                workingDays={workingDays}
-              />
-            )}
-            {date === "WEEK" && (
-              <CalendarWeek
-                data={data}
-                fieldsMap={fieldsMap}
-                datesList={weekDates?.length && weekDates}
-                view={view}
-                tabs={tabs}
-                workingDays={workingDays}
-              />
-            )}
-            {date === "MONTH" && (
-              <CalendarMonth
-                data={data}
-                fieldsMap={fieldsMap}
-                datesList={currentMonthDates?.length && currentMonthDates}
-                view={view}
-                tabs={tabs}
-                workingDays={workingDays}
-                layoutType={layoutType}
-                setLayoutType={setLayoutType}
-                menuItem={menuItem}
-                currentDay={currentDay}
-              />
-            )}
-            {date !== "WEEK" && date !== "DAY" && date !== "MONTH" ? (
-              <Calendar
-                data={data}
-                fieldsMap={fieldsMap}
-                datesList={datesList}
-                view={view}
-                tabs={tabs}
-                workingDays={workingDays}
-              />
-            ) : null}
-          </Box>
-        )}
+        ) : ( */}
+        <Box>
+          {date === "DAY" && (
+            <CalendarDay
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={[currentDay]}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          )}
+          {date === "WEEK" && (
+            <CalendarWeek
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={weekDates?.length && weekDates}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          )}
+          {date === "MONTH" && (
+            <CalendarMonth
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={currentMonthDates?.length && currentMonthDates}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              menuItem={menuItem}
+              currentDay={currentDay}
+            />
+          )}
+          {date !== "WEEK" && date !== "DAY" && date !== "MONTH" ? (
+            <Calendar
+              data={data}
+              fieldsMap={fieldsMap}
+              datesList={datesList}
+              view={view}
+              tabs={tabs}
+              workingDays={workingDays}
+            />
+          ) : null}
+        </Box>
+        {/* )} */}
       </div>
     </CalendarViewProvider>
   );

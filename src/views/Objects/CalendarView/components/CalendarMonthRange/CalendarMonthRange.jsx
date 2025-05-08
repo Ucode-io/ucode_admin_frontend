@@ -3,7 +3,6 @@ import cls from "./styles.module.scss";
 import { Box, Typography } from "@mui/material";
 import { useCalendarMonthRangeProps } from "./useCalendarMonthRangeProps"
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
-import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 
 export const CalendarMonthRange = () => {
 

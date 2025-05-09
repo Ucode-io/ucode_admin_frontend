@@ -52,16 +52,16 @@ function DrawerDetailPage({
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
   const handleClose = () => setOpen(false);
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
 
-  const { id: idFromParam, tableSlug, appId } = useParams();
+  const {id: idFromParam, tableSlug, appId} = useParams();
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -73,7 +73,7 @@ function DrawerDetailPage({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -98,10 +98,7 @@ function DrawerDetailPage({
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, layout] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
 
       const layout1 = {
         ...layout,
@@ -237,7 +234,7 @@ function DrawerDetailPage({
     watch,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
     setValue: setFormValue,
     getValues,
   } = useForm({
@@ -264,7 +261,7 @@ function DrawerDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
@@ -286,7 +283,7 @@ function DrawerDetailPage({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         updateLayout();
         setOpen(false);
@@ -402,7 +399,7 @@ function DrawerDetailPage({
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
-
+  console.log("datadatadatadata", data);
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>
@@ -418,101 +415,101 @@ function DrawerDetailPage({
               ref={drawerRef}
               bg={"white"}
               resize={"both"}
-              position={"relative"}
-            >
+              position={"relative"}>
               <DrawerHeader
                 px="12px"
                 bg="white"
                 display={"flex"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                pr={6}
-              >
-                <Flex h={"44px"} align="center" justify="space-between">
-                  <Box
-                    onClick={handleClose}
-                    cursor="pointer"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    width="24px"
-                    height="24px"
-                  >
-                    <KeyboardDoubleArrowRightIcon
-                      style={{ color: "rgba(55, 53, 47, 0.45)" }}
-                      w={6}
-                      h={6}
-                    />
-                  </Box>
-                  {!layout?.is_visible_section && (
-                    <>
-                      {" "}
-                      <Box
-                        sx={{
-                          width: "1px",
-                          height: "14px",
-                          margin: "0 6px",
-                          background: "rgba(55, 53, 47, 0.16)",
-                        }}
+                pr={6}>
+                <Flex h={"44px"} w={"88%"} align="center">
+                  <Flex alignItems={"center"}>
+                    <Box
+                      onClick={handleClose}
+                      cursor="pointer"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      width="24px"
+                      height="24px">
+                      <KeyboardDoubleArrowRightIcon
+                        style={{color: "rgba(55, 53, 47, 0.45)"}}
+                        w={6}
+                        h={6}
                       />
-                      <Box>
-                        <ScreenOptions
-                          selectedViewType={selectedViewType}
-                          setSelectedViewType={setSelectedViewType}
-                          setLayoutType={setLayoutType}
-                          selectedRow={selectedRow}
-                          navigateToEditPage={navigateToEditPage}
+                    </Box>
+                    {!layout?.is_visible_section && (
+                      <>
+                        {" "}
+                        <Box
+                          sx={{
+                            width: "1px",
+                            height: "14px",
+                            margin: "0 6px",
+                            background: "rgba(55, 53, 47, 0.16)",
+                          }}
                         />
-                      </Box>
-                      <Box
-                        sx={{
-                          width: "1px",
-                          height: "14px",
-                          margin: "0 6px",
-                          background: "rgba(55, 53, 47, 0.16)",
-                        }}
-                      />
-                      {Boolean(permissions?.settings) && (
-                        <>
-                          <Button
-                            onClick={() =>
-                              navigate(
-                                `/main/${appId}/layout-settings/${tableSlug}/${id}`,
-                                {
-                                  state: {
-                                    ...selectedRow,
-                                  },
-                                }
-                              )
-                            }
-                            w={18}
-                            h={18}
-                            display={"flex"}
-                            alignItems={"center"}
-                            variant="outlined"
-                          >
-                            <SpaceDashboardIcon style={{ color: "#808080" }} />
-                          </Button>
-                          <Box
-                            sx={{
-                              width: "1px",
-                              height: "14px",
-                              margin: "0 6px",
-                              background: "rgba(55, 53, 47, 0.16)",
-                            }}
+                        <Box>
+                          <ScreenOptions
+                            selectedViewType={selectedViewType}
+                            setSelectedViewType={setSelectedViewType}
+                            setLayoutType={setLayoutType}
+                            selectedRow={selectedRow}
+                            navigateToEditPage={navigateToEditPage}
                           />
-                        </>
-                      )}
-                    </>
-                  )}
+                        </Box>
+                        <Box
+                          sx={{
+                            width: "1px",
+                            height: "14px",
+                            margin: "0 6px",
+                            background: "rgba(55, 53, 47, 0.16)",
+                          }}
+                        />
+                        {Boolean(permissions?.settings) && (
+                          <>
+                            <Button
+                              onClick={() =>
+                                navigate(
+                                  `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                                  {
+                                    state: {
+                                      ...selectedRow,
+                                    },
+                                  }
+                                )
+                              }
+                              w={18}
+                              h={18}
+                              display={"flex"}
+                              alignItems={"center"}
+                              variant="outlined">
+                              <SpaceDashboardIcon style={{color: "#808080"}} />
+                            </Button>
+                            <Box
+                              sx={{
+                                width: "1px",
+                                height: "14px",
+                                margin: "0 6px",
+                                background: "rgba(55, 53, 47, 0.16)",
+                              }}
+                            />
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Flex>
 
                   {!layout?.is_visible_section && (
                     <TabList
+                      className={"scrollbarNone"}
                       style={{
                         borderBottom: "none",
                         overflowX: "auto",
-                      }}
-                    >
+                        display: "flex",
+                        width: "80%",
+                      }}>
                       {data?.tabs?.map((el, index) => (
                         <Tab
                           onClick={(e) => {
@@ -526,13 +523,10 @@ function DrawerDetailPage({
                             padding: "0 10px",
                             fontSize: "11px",
                             fontWeight: "500",
-                          }}
-                        >
+                          }}>
                           {el?.type === "relation"
-                            ? el?.relation?.attributes?.[
-                                `label_to_${i18n?.language}`
-                              ]
-                            : el?.attributes?.[`label_${i18n?.language}`] ||
+                            ? el?.relation?.table_from?.label
+                            : el?.attributes?.[`label_to_${i18n?.language}`] ||
                               el?.label}
                         </Tab>
                       ))}
@@ -549,8 +543,7 @@ function DrawerDetailPage({
                   bg={"#007aff"}
                   color={"#fff"}
                   w={100}
-                  h={10}
-                >
+                  h={10}>
                   Save
                 </Button>
                 {/* )} */}
@@ -560,8 +553,7 @@ function DrawerDetailPage({
                 <DrawerBody
                   position={"relative"}
                   p="0px 50px"
-                  overflow={"auto"}
-                >
+                  overflow={"auto"}>
                   <DrawerFormDetailPage
                     projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}

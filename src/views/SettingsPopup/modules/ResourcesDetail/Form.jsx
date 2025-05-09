@@ -28,6 +28,7 @@ const Form = ({
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("access_token");
+  const editTrue = searchParams.get("edit");
 
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
@@ -193,7 +194,7 @@ const Form = ({
               </Box>
             )}
 
-            {Number(resurceType) === 11 && (
+            {Number(resurceType) === 11 && Boolean(editTrue) && (
               <Box
                 sx={{
                   display: "flex",
@@ -224,48 +225,52 @@ const Form = ({
                     }}
                   />
                 </Box>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Username"
-                      ) || "Username"
-                    }
-                  />
-                  <HFResourceField
-                    control={control}
-                    required
-                    disabled
-                    name="settings.superset.username"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Username",
-                    }}
-                  />
-                </Box>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Password"
-                      ) || "Password"
-                    }
-                  />
-                  <HFResourceField
-                    control={control}
-                    required
-                    disabled
-                    name="settings.superset.password"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Password",
-                    }}
-                  />
-                </Box>
+                {Boolean(editTrue) && (
+                  <>
+                    <Box sx={{width: "48%"}}>
+                      <FieldLabel
+                        children={
+                          generateLangaugeText(
+                            settingLan,
+                            i18n?.language,
+                            "Username"
+                          ) || "Username"
+                        }
+                      />
+                      <HFResourceField
+                        control={control}
+                        required
+                        disabled
+                        name="settings.superset.username"
+                        fullWidth
+                        inputProps={{
+                          placeholder: "Username",
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{width: "48%"}}>
+                      <FieldLabel
+                        children={
+                          generateLangaugeText(
+                            settingLan,
+                            i18n?.language,
+                            "Password"
+                          ) || "Password"
+                        }
+                      />
+                      <HFResourceField
+                        control={control}
+                        required
+                        disabled
+                        name="settings.superset.password"
+                        fullWidth
+                        inputProps={{
+                          placeholder: "Password",
+                        }}
+                      />
+                    </Box>
+                  </>
+                )}
               </Box>
             )}
 

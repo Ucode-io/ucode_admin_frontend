@@ -40,16 +40,21 @@
 
 .calendar.activeMonth .dateNumber {
   opacity: 1;
+  color: #212B36;
 }
 
 .monthPlaceholder {
   position: absolute;
   top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
+  text-align: left;
+  left: 0;
+  padding-left: 10px;
   opacity: 0;
+  transform: translateY(-50%);
   font-size: 1.25rem;
   transition: opacity 0.5s ease;
+  background-color: rgb(255 255 255 / 90%);
+  width: 100%;
 }
 
 .monthPlaceholder.scrolling {
@@ -60,6 +65,7 @@
   width: 24px;
   height: 24px;
   opacity: 0.5;
+  color: rgba(132, 145, 154, 1);
 }
 
 .calendar.today .dateNumber {

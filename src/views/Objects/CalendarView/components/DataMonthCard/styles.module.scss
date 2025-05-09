@@ -1,0 +1,79 @@
+@use "/src/scss/colors";
+
+.infoBlockWrapper {
+  width: 100%;
+  padding: 6px;
+  height: 65px;
+  overflow: auto;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px -2px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  border-radius: 6px;
+
+  &:hover {
+      background-color: rgba(84, 72, 49, 0.08);
+  }
+}
+
+.infoText {
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.infoCard {
+  padding: 7px;
+  // padding-top: 20px;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 70px;
+  cursor: pointer;
+  transition-duration: 0.3s;
+  scrollbar-width: none;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  overflow: hidden;
+
+  &::-webkit-scrollbar {
+      display: none;
+  }
+}
+
+.infoBlock {
+  &.singleLine {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: 10px;
+  }
+}
+
+.paper {
+  padding: 6px 0;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px -2px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linkIcon {
+  transition-duration: 0.3s;
+  cursor: pointer;
+
+  &:hover {
+      color: colors.$primary;
+  }
+}
+
+.menu {
+  padding: 8px;
+  max-width: 200px;
+}
+
+.time {
+  color: #84919a;
+  font-size: 12px;
+}

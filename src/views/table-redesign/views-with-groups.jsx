@@ -116,6 +116,8 @@ const viewIcons = {
   BOARD: "rows.svg",
   GRID: "grid.svg",
   TIMELINE: "line-chart-up.svg",
+  WEBSITE: "global.svg",
+  TREE: "tree.svg",
 };
 
 export const NewUiViewsWithGroups = ({

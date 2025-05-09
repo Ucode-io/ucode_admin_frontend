@@ -443,58 +443,58 @@ export const NewUiViewsWithGroups = ({
 
   const tableLan = useGetLang("Table");
 
-  if (view?.type === "WEBSITE") {
-    return (
-      <>
-        <FiltersBlock
-          extra={
-            <>
-              <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-                <ShareModal />
-              </PermissionWrapperV2>
+  // if (view?.type === "WEBSITE") {
+  //   return (
+  //     <>
+  //       {/* <FiltersBlock
+  //         extra={
+  //           <>
+  //             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+  //               <ShareModal />
+  //             </PermissionWrapperV2>
 
-              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-                <MuiButton
-                  variant="outlined"
-                  onClick={navigateToSettingsPage}
-                  style={{
-                    borderColor: "#A8A8A8",
-                    width: "35px",
-                    height: "35px",
-                    padding: "0px",
-                    minWidth: "35px",
-                  }}
-                >
-                  <SettingsIcon
-                    style={{
-                      color: "#A8A8A8",
-                    }}
-                  />
-                </MuiButton>
-              </PermissionWrapperV2>
-            </>
-          }
-        >
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-            settingsModalVisible={settingsModalVisible}
-            setSettingsModalVisible={setSettingsModalVisible}
-            isChanged={isChanged}
-            setIsChanged={setIsChanged}
-            selectedView={selectedView}
-            setSelectedView={setSelectedView}
-            menuItem={menuItem}
-          />
-          {view?.type === "FINANCE CALENDAR" && (
-            <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-          )}
-        </FiltersBlock>
-        <WebsiteView view={view} />
-      </>
-    );
-  }
+  //             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+  //               <MuiButton
+  //                 variant="outlined"
+  //                 onClick={navigateToSettingsPage}
+  //                 style={{
+  //                   borderColor: "#A8A8A8",
+  //                   width: "35px",
+  //                   height: "35px",
+  //                   padding: "0px",
+  //                   minWidth: "35px",
+  //                 }}
+  //               >
+  //                 <SettingsIcon
+  //                   style={{
+  //                     color: "#A8A8A8",
+  //                   }}
+  //                 />
+  //               </MuiButton>
+  //             </PermissionWrapperV2>
+  //           </>
+  //         }
+  //       >
+  //         <ViewTabSelector
+  //           selectedTabIndex={selectedTabIndex}
+  //           setSelectedTabIndex={setSelectedTabIndex}
+  //           views={views}
+  //           settingsModalVisible={settingsModalVisible}
+  //           setSettingsModalVisible={setSettingsModalVisible}
+  //           isChanged={isChanged}
+  //           setIsChanged={setIsChanged}
+  //           selectedView={selectedView}
+  //           setSelectedView={setSelectedView}
+  //           menuItem={menuItem}
+  //         />
+  //         {view?.type === "FINANCE CALENDAR" && (
+  //           <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+  //         )}
+  //       </FiltersBlock> */}
+  //       <WebsiteView view={view} />
+  //     </>
+  //   );
+  // }
 
   // if (view?.type === "GRID") {
   //   return (
@@ -744,92 +744,101 @@ export const NewUiViewsWithGroups = ({
               />
             </MuiPopover>
 
-            <Popover placement="bottom-end">
-              <InputGroup ml="auto" w="320px">
-                <InputLeftElement>
-                  <Image src="/img/search-lg.svg" alt="search" />
-                </InputLeftElement>
-                <Input
-                  id="search_input"
-                  defaultValue={searchText}
-                  placeholder={
-                    generateLangaugeText(tableLan, i18n?.language, "Search") ||
-                    "Search"
-                  }
-                  onChange={(ev) => inputChangeHandler(ev.target.value)}
-                />
-
-                {(roleInfo === "DEFAULT ADMIN" ||
-                  permissions?.search_button) && (
-                  <PopoverTrigger>
-                    <InputRightElement>
-                      <IconButton
-                        w="24px"
-                        h="24px"
-                        aria-label="more"
-                        icon={<Image src="/img/dots-vertical.svg" alt="more" />}
-                        variant="ghost"
-                        colorScheme="gray"
-                        size="xs"
-                      />
-                    </InputRightElement>
-                  </PopoverTrigger>
-                )}
-              </InputGroup>
-
-              <PopoverContent
-                w="280px"
-                p="8px"
-                display="flex"
-                flexDirection="column"
-                maxH="300px"
-                overflow="auto"
-              >
-                {columnsForSearch.map((column) => (
-                  <Flex
-                    key={column.id}
-                    as="label"
-                    p="8px"
-                    columnGap="8px"
-                    alignItems="center"
-                    borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
-                    cursor="pointer"
-                  >
-                    {getColumnIcon({ column })}
-                    <ViewOptionTitle>
-                      {column?.attributes?.[`label_${i18n.language}`] ||
-                        column?.label}
-                    </ViewOptionTitle>
-                    <Switch
-                      ml="auto"
-                      isChecked={column.is_search}
-                      onChange={(e) =>
-                        updateField({
-                          data: {
-                            fields: columnsForSearch.map((c) =>
-                              c.id === column.id
-                                ? { ...c, is_search: e.target.checked }
-                                : c
-                            ),
-                          },
-                          tableSlug,
-                        })
+            {view?.type !== "WEBSITE" && (
+              <>
+                <Popover placement="bottom-end">
+                  <InputGroup ml="auto" w="320px">
+                    <InputLeftElement>
+                      <Image src="/img/search-lg.svg" alt="search" />
+                    </InputLeftElement>
+                    <Input
+                      id="search_input"
+                      defaultValue={searchText}
+                      placeholder={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Search"
+                        ) || "Search"
                       }
+                      onChange={(ev) => inputChangeHandler(ev.target.value)}
                     />
-                  </Flex>
-                ))}
-              </PopoverContent>
-            </Popover>
 
-            <FilterPopover
-              tableLan={tableLan}
-              view={view}
-              visibleColumns={visibleColumns}
-              refetchViews={refetchViews}
-            >
-              <FilterButton view={view} />
-            </FilterPopover>
+                    {(roleInfo === "DEFAULT ADMIN" ||
+                      permissions?.search_button) && (
+                      <PopoverTrigger>
+                        <InputRightElement>
+                          <IconButton
+                            w="24px"
+                            h="24px"
+                            aria-label="more"
+                            icon={
+                              <Image src="/img/dots-vertical.svg" alt="more" />
+                            }
+                            variant="ghost"
+                            colorScheme="gray"
+                            size="xs"
+                          />
+                        </InputRightElement>
+                      </PopoverTrigger>
+                    )}
+                  </InputGroup>
+
+                  <PopoverContent
+                    w="280px"
+                    p="8px"
+                    display="flex"
+                    flexDirection="column"
+                    maxH="300px"
+                    overflow="auto"
+                  >
+                    {columnsForSearch.map((column) => (
+                      <Flex
+                        key={column.id}
+                        as="label"
+                        p="8px"
+                        columnGap="8px"
+                        alignItems="center"
+                        borderRadius={6}
+                        _hover={{ bg: "#EAECF0" }}
+                        cursor="pointer"
+                      >
+                        {getColumnIcon({ column })}
+                        <ViewOptionTitle>
+                          {column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.label}
+                        </ViewOptionTitle>
+                        <Switch
+                          ml="auto"
+                          isChecked={column.is_search}
+                          onChange={(e) =>
+                            updateField({
+                              data: {
+                                fields: columnsForSearch.map((c) =>
+                                  c.id === column.id
+                                    ? { ...c, is_search: e.target.checked }
+                                    : c
+                                ),
+                              },
+                              tableSlug,
+                            })
+                          }
+                        />
+                      </Flex>
+                    ))}
+                  </PopoverContent>
+                </Popover>
+
+                <FilterPopover
+                  tableLan={tableLan}
+                  view={view}
+                  visibleColumns={visibleColumns}
+                  refetchViews={refetchViews}
+                >
+                  <FilterButton view={view} />
+                </FilterPopover>
+              </>
+            )}
 
             {view?.type === "TIMELINE" && noDates.length > 0 && (
               <Popover>
@@ -866,40 +875,44 @@ export const NewUiViewsWithGroups = ({
               </Popover>
             )}
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-              <Button
-                h={"30px"}
-                rightIcon={<ChevronDownIcon fontSize={18} />}
-                onClick={() => navigateCreatePage()}
-              >
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Create item"
-                ) || "Create item"}
-              </Button>
-            </PermissionWrapperV2>
+            {view?.type !== "WEBSITE" && (
+              <>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                  <Button
+                    h={"30px"}
+                    rightIcon={<ChevronDownIcon fontSize={18} />}
+                    onClick={() => navigateCreatePage()}
+                  >
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Create item"
+                    ) || "Create item"}
+                  </Button>
+                </PermissionWrapperV2>
 
-            <ViewOptions
-              selectedTabIndex={selectedTabIndex}
-              isChanged={isChanged}
-              setIsChanged={setIsChanged}
-              selectedView={selectedView}
-              tableLan={tableLan}
-              view={view}
-              viewName={viewName}
-              refetchViews={refetchViews}
-              fieldsMap={fieldsMap}
-              visibleRelationColumns={visibleRelationColumns}
-              checkedColumns={checkedColumns}
-              onDocsClick={() => setSelectedTabIndex(views.length)}
-              searchText={searchText}
-              computedVisibleFields={computedVisibleFields}
-              handleOpenPopup={handleOpenPopup}
-              queryClient={queryClient}
-              settingsForm={settingsForm}
-              views={views}
-            />
+                <ViewOptions
+                  selectedTabIndex={selectedTabIndex}
+                  isChanged={isChanged}
+                  setIsChanged={setIsChanged}
+                  selectedView={selectedView}
+                  tableLan={tableLan}
+                  view={view}
+                  viewName={viewName}
+                  refetchViews={refetchViews}
+                  fieldsMap={fieldsMap}
+                  visibleRelationColumns={visibleRelationColumns}
+                  checkedColumns={checkedColumns}
+                  onDocsClick={() => setSelectedTabIndex(views.length)}
+                  searchText={searchText}
+                  computedVisibleFields={computedVisibleFields}
+                  handleOpenPopup={handleOpenPopup}
+                  queryClient={queryClient}
+                  settingsForm={settingsForm}
+                  views={views}
+                />
+              </>
+            )}
           </Flex>
 
           {view?.attributes?.quick_filters?.length > 0 && (
@@ -941,6 +954,7 @@ export const NewUiViewsWithGroups = ({
               )}
             {
               <>
+                {view?.type === "WEBSITE" && <WebsiteView view={view} />}
                 {!tabs?.length && (
                   <>
                     {view?.type === "GRID" && groupTable?.length ? (
@@ -1127,6 +1141,7 @@ export const NewUiViewsWithGroups = ({
                 !groupTable?.length &&
                 view.type !== "TIMELINE" &&
                 view.type !== "BOARD" &&
+                view.type !== "WEBSITE" &&
                 view.type !== "CALENDAR" ? (
                   <>
                     {view?.type === "GRID" ? (

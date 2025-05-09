@@ -1,4 +1,6 @@
 .infoBlock {
+  padding-left: 3px;
+
   &.singleLine {
       white-space: nowrap;
       text-overflow: ellipsis;

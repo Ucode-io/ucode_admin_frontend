@@ -15,6 +15,7 @@ const BoardCardRowGenerator = ({
   fieldsMap,
   slug,
   columnIndex,
+  view,
 }) => {
   let statusTypeOptions = [];
   if (isStatus) {
@@ -37,10 +38,22 @@ const BoardCardRowGenerator = ({
 
     case "LOOKUP":
       return (
-        <Box sx={{ padding: "12px 12px 0" }}>
-          {field?.attributes?.[`label_${i18n?.language}`]}
+        <Box
+          sx={{
+            padding: "8px 8px 0",
+            display: "flex",
+            alignItems: "center",
+            columnGap: "8px",
+          }}
+        >
+          <span style={{ width: "16px", height: "16px" }}>
+            {getColumnIcon({ column: field })}
+          </span>
           <Box>
-            {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
+            {field?.attributes?.[`label_${i18n?.language}`]}
+            <Box>
+              {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
+            </Box>
           </Box>
         </Box>
       );
@@ -58,6 +71,7 @@ const BoardCardRowGenerator = ({
             style={{ padding: "0 6px", fontsize: "12px", lineHeight: "18px" }}
             fieldsMap={fieldsMap}
             columnIndex={columnIndex}
+            view={view}
           />
         </div>
       );
@@ -78,6 +92,7 @@ const BoardCardRowGenerator = ({
             fieldsMap={fieldsMap}
             slug={slug}
             columnIndex={columnIndex}
+            view={view}
           />
         </div>
       );

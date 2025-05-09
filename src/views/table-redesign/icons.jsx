@@ -35,6 +35,7 @@ const icons = {
   ICON: <img src="/table-icons/plus-square.svg" alt="Password" />,
   BARCODE: <img src="/table-icons/scan.svg" alt="Password" />,
   COLOR: <img src="/table-icons/palette.svg" alt="Password" />,
+  MULTI_FILE: <img src="/table-icons/file.svg" alt="Multi file" />,
 };
 
 const iconsPaths = {

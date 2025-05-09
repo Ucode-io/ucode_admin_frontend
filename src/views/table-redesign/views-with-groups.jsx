@@ -1,12 +1,38 @@
-import SettingsIcon from "@mui/icons-material/Settings";
+import useDownloader from "@/hooks/useDownloader";
+import useTabRouter from "@/hooks/useTabRouter";
+import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
+import constructorObjectService from "@/services/constructorObjectService";
+import constructorViewService from "@/services/constructorViewService";
+import layoutService from "@/services/layoutService";
+import {filterActions} from "@/store/filter/filter.slice";
+import {quickFiltersActions} from "@/store/filter/quick_filter";
+import {mainActions} from "@/store/main/main.slice";
+import {viewsActions} from "@/store/views/view.slice";
+import chakraUITheme from "@/theme/chakraUITheme";
+import {applyDrag} from "@/utils/applyDrag";
+import {computedViewTypes} from "@/utils/constants/viewTypes";
 import {
-  Backdrop,
-  Menu,
-  Box as MuiBox,
-  Button as MuiButton,
-  Popover as MuiPopover,
-  Typography,
-} from "@mui/material";
+  getSearchText,
+  openDB,
+  saveOrUpdateSearchText,
+} from "@/utils/indexedDb.jsx";
+import {queryGenerator} from "@/utils/queryGenerator";
+import AgGridTableView from "@/views/Objects/AgGridTableView";
+import ShareModal from "@/views/Objects/ShareModal/ShareModal";
+import GroupTableView from "@/views/Objects/TableView/GroupTableView";
+import TreeView from "@/views/Objects/TreeView";
+import WebsiteView from "@/views/Objects/WebsiteView";
+import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploadModal";
+import ViewTypeList from "@/views/Objects/components/ViewTypeList";
+import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
+import style from "@/views/Objects/style.module.scss";
+import {getColumnIcon} from "@/views/table-redesign/icons";
+import {
+  ArrowBackIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -18,97 +44,59 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Modal,
+  ModalContent,
+  ModalOverlay,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Spinner,
   Switch,
   useDisclosure,
-  Modal,
-  ModalContent,
-  ModalOverlay,
 } from "@chakra-ui/react";
-import chakraUITheme from "@/theme/chakraUITheme";
+import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
+import SettingsIcon from "@mui/icons-material/Settings";
+import {
+  Backdrop,
+  Button as MuiButton,
+  Popover as MuiPopover,
+} from "@mui/material";
 import {addDays, endOfMonth, startOfMonth} from "date-fns";
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {default as InlineSVG, default as SVG} from "react-inlinesvg";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import InlineSVG from "react-inlinesvg";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
-import {
-  getSearchText,
-  openDB,
-  saveOrUpdateSearchText,
-} from "@/utils/indexedDb.jsx";
-import {queryGenerator} from "@/utils/queryGenerator";
-import TableView from "./table-view";
-import style from "@/views/Objects/style.module.scss";
-import {
-  ArrowBackIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
-import {useTranslation} from "react-i18next";
-import SVG from "react-inlinesvg";
-import {viewsActions} from "@/store/views/view.slice";
-import ViewTypeList from "@/views/Objects/components/ViewTypeList";
-import {computedViewTypes} from "@/utils/constants/viewTypes";
-import {filterActions} from "@/store/filter/filter.slice";
-import {Filter} from "./FilterGenerator";
-import constructorViewService from "@/services/constructorViewService";
-import {quickFiltersActions} from "@/store/filter/quick_filter";
-import useTabRouter from "@/hooks/useTabRouter";
-import layoutService from "@/services/layoutService";
-import ExcelUploadModal from "@/views/Objects/components/ExcelButtons/ExcelUploadModal";
-import constructorObjectService from "@/services/constructorObjectService";
-import useDownloader from "@/hooks/useDownloader";
-import {getColumnIcon} from "@/views/table-redesign/icons";
-import {Container, Draggable} from "react-smooth-dnd";
-import {applyDrag} from "@/utils/applyDrag";
-import {mainActions} from "@/store/main/main.slice";
-import AgGridTableView from "@/views/Objects/AgGridTableView";
-import ShareModal from "@/views/Objects/ShareModal/ShareModal";
-import GroupTableView from "@/views/Objects/TableView/GroupTableView";
-import TreeView from "@/views/Objects/TreeView";
-import WebsiteView from "@/views/Objects/WebsiteView";
-import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
 import {useGetLang} from "../../hooks/useGetLang";
-import {getAllFromDB} from "../../utils/languageDB";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {LayoutPopup} from "./LayoutPopup";
+import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../services/constructorTableService";
-import {generateGUID} from "../../utils/generateID";
 import {useProjectGetByIdQuery} from "../../services/projectService";
-import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import ViewSettings from "../Objects/components/ViewSettings";
-import ViewSettingsModal from "./ViewSettings";
-import TimeLineView from "../Objects/TimeLineView";
-import FRow from "../../components/FormElements/FRow";
-import HFSelect from "../../components/FormElements/HFSelect";
-import listToLanOptions from "../../utils/listToLanOptions";
-import listToOptions from "../../utils/listToOptions";
+import {generateGUID} from "../../utils/generateID";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {listToMap} from "../../utils/listToMap";
-import {mergeStringAndState} from "../../utils/jsonPath";
-import {TimelineSettings} from "./components/TimelineSettings";
+import listToOptions from "../../utils/listToOptions";
 import BoardView from "../Objects/BoardView";
-import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
-import {SubGroup} from "./components/SubGroup";
 import CalendarView from "../Objects/CalendarView";
+import TimeLineView from "../Objects/TimeLineView";
+import {Filter} from "./FilterGenerator";
+import {LayoutPopup} from "./LayoutPopup";
+import ViewSettingsModal from "./ViewSettings";
 import {CalendarSettings} from "./components/CalendarSettings";
+import {SubGroup} from "./components/SubGroup";
+import {TimelineSettings} from "./components/TimelineSettings";
+import TableView from "./table-view";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -145,7 +133,7 @@ export const NewUiViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -159,24 +147,24 @@ export const NewUiViewsWithGroups = ({
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
 
-  const groupByFields = useMemo(() => {
-    return view?.group_fields?.map((field) => {
-      return fieldsMap?.[field];
-    });
-  }, [view?.group_fields, fieldsMap]);
+  // const groupByFields = useMemo(() => {
+  //   return view?.group_fields?.map((field) => {
+  //     return fieldsMap?.[field];
+  //   });
+  // }, [view?.group_fields, fieldsMap]);
 
-  const {mutate: updateObject} = useMutation(
-    (data) =>
-      constructorObjectService.update(tableSlug, {
-        data,
-      }),
-    {
-      onSuccess: () => {
-        refetchViews();
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-      },
-    }
-  );
+  // const {mutate: updateObject} = useMutation(
+  //   (data) =>
+  //     constructorObjectService.update(tableSlug, {
+  //       data,
+  //     }),
+  //   {
+  //     onSuccess: () => {
+  //       refetchViews();
+  //       queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+  //     },
+  //   }
+  // );
 
   const settingsForm = useForm({
     defaultValues: {
@@ -211,7 +199,6 @@ export const NewUiViewsWithGroups = ({
   }, [paginationCount, tableSlug]);
 
   const [currentPage, setCurrentPage] = useState(paginiationCount);
-
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [dateFilters, setDateFilters] = useState({
@@ -251,9 +238,6 @@ export const NewUiViewsWithGroups = ({
       icon: "",
     },
     mode: "all",
-  });
-  const values = useWatch({
-    control: mainForm?.control,
   });
 
   const {fields} = useFieldArray({
@@ -361,37 +345,37 @@ export const NewUiViewsWithGroups = ({
     },
   });
 
-  const navigateToDetailPage = (row) => {
-    if (
-      view?.attributes?.navigate?.params?.length ||
-      view?.attributes?.navigate?.url
-    ) {
-      const params = view?.attributes?.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&");
+  // const navigateToDetailPage = (row) => {
+  //   if (
+  //     view?.attributes?.navigate?.params?.length ||
+  //     view?.attributes?.navigate?.url
+  //   ) {
+  //     const params = view?.attributes?.navigate?.params
+  //       ?.map(
+  //         (param) =>
+  //           `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+  //             param.value,
+  //             row
+  //           )}`
+  //       )
+  //       .join("&");
 
-      const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
+  //     const urlTemplate = view?.attributes?.navigate?.url;
+  //     let query = urlTemplate;
 
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+  //     const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-      const matches = replaceUrlVariables(urlTemplate, row);
+  //     const matches = replaceUrlVariables(urlTemplate, row);
 
-      navigate(`${matches}${params ? "?" + params : ""}`, {
-        state: {
-          roleInfo: roleInfo,
-        },
-      });
-    } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuId);
-    }
-  };
+  //     navigate(`${matches}${params ? "?" + params : ""}`, {
+  //       state: {
+  //         roleInfo: roleInfo,
+  //       },
+  //     });
+  //   } else {
+  //     navigateToForm(tableSlug, "EDIT", row, {}, menuId);
+  //   }
+  // };
 
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
@@ -480,71 +464,6 @@ export const NewUiViewsWithGroups = ({
       </>
     );
   }
-
-  // if (view?.type === "GRID") {
-  //   return (
-  //     <MuiBox>
-  //       <FiltersBlock
-  //         extra={
-  //           <>
-  //             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-  //               <ShareModal />
-  //             </PermissionWrapperV2>
-
-  //             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-  //               <MuiButton
-  //                 variant="outlined"
-  //                 onClick={navigateToSettingsPage}
-  //                 style={{
-  //                   borderColor: "#A8A8A8",
-  //                   width: "35px",
-  //                   height: "35px",
-  //                   padding: "0px",
-  //                   minWidth: "35px",
-  //                 }}>
-  //                 <SettingsIcon
-  //                   style={{
-  //                     color: "#A8A8A8",
-  //                   }}
-  //                 />
-  //               </MuiButton>
-  //             </PermissionWrapperV2>
-  //           </>
-  //         }>
-  //         <ViewTabSelector
-  //           selectedTabIndex={selectedTabIndex}
-  //           setSelectedTabIndex={setSelectedTabIndex}
-  //           views={views}
-  //           settingsModalVisible={settingsModalVisible}
-  //           setSettingsModalVisible={setSettingsModalVisible}
-  //           isChanged={isChanged}
-  //           setIsChanged={setIsChanged}
-  //           selectedView={selectedView}
-  //           setSelectedView={setSelectedView}
-  //           menuItem={menuItem}
-  //         />
-  //         {view?.type === "FINANCE CALENDAR" && (
-  //           <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-  //         )}
-  //       </FiltersBlock>
-  //       <AgGridTableView
-  //         selectedTabIndex={selectedTabIndex}
-  //         view={view}
-  //         views={views}
-  //         fieldsMap={fieldsMap}
-  //         computedVisibleFields={computedVisibleFields}
-  //         checkedColumns={checkedColumns}
-  //         setCheckedColumns={setCheckedColumns}
-  //         columnsForSearch={columnsForSearch}
-  //         updateField={updateField}
-  //         visibleColumns={visibleColumns}
-  //         visibleRelationColumns={visibleRelationColumns}
-  //         visibleForm={visibleForm}
-  //         menuItem={menuItem}
-  //       />
-  //     </MuiBox>
-  //   );
-  // }
 
   const tableName =
     menuItem?.attributes?.[`label_${i18n.language}`] ??
@@ -671,12 +590,13 @@ export const NewUiViewsWithGroups = ({
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
+                  navigate(`${menuId}/${tableSlug}`);
+                  setSearchParams({v: view?.id});
                   setSelectedView(view);
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
                   setSelectedTabIndex(index);
-                  navigate(`${menuId}/${tableSlug}?v=${view?.id}`);
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||

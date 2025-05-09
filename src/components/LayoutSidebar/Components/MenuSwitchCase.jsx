@@ -4,7 +4,7 @@ export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const typeHandlers = {
   FOLDER: ({menuId, element, navigate}) => {
-    return navigate(`/${element?.id}`);
+    return navigate(`/${element?.id}`, {replace: false});
   },
   MINIO_FOLDER: ({menuId, element, navigate}) =>
     navigate(`/${menuId}/backet/${element?.id}`),

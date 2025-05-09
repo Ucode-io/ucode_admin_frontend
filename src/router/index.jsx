@@ -205,7 +205,7 @@ const Router = () => {
 
           <Route index element={<Navigate to={redirectLink} />} />
 
-          <Route path=":menuId" element={<div></div>} />
+          {/* <Route path=":menuId" element={<div></div>} /> */}
 
           <Route path=":menuId/chat" element={<Chat />}>
             <Route path=":chat_id" element={<Chat />} />
@@ -378,27 +378,24 @@ const Router = () => {
           </Route>
 
           <Route
-            path=":menuId/:tableSlug"
+            path=":menuId"
             element={<ReloadWrapper component={ObjectsPage} />}
           />
 
-          <Route
-            path=":menuId/:tableSlug/templates"
-            element={<DocumentTemplates />}
-          />
+          <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route
-            path=":menuId/:tableSlug/templates/create"
+            path=":menuId/templates/create"
             element={<DocumentTemplateDetail />}
           />
 
           <Route
-            path=":menuId/:tableSlug/templates/:templateId"
+            path=":menuId/templates/:templateId"
             element={<DocumentTemplateDetail />}
           />
 
           <Route
-            path=":menuId/:tableSlug/create/:formId"
+            path=":menuId/create/:formId"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -406,7 +403,7 @@ const Router = () => {
             }
           />
           <Route
-            path=":menuId/:tableSlug/:id"
+            path=":menuId/:id"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />

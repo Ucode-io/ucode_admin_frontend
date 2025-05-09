@@ -6,7 +6,7 @@ import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import FiltersBlock from "../../components/FiltersBlock";
 import constructorTableService from "../../services/constructorTableService";
-import {useMenuGetByIdQuery} from "../../services/menuService";
+import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
 import {store} from "../../store";
 import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
@@ -19,16 +19,23 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
 import {Box, Skeleton} from "@mui/material";
 import {DynamicTable} from "../table-redesign";
+import constructorViewService from "../../services/constructorViewService";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
   const {menuId} = useParams();
-  const [searchParams] = useSearchParams();
-
-  const queryTab = searchParams.get("view");
-
   const {i18n} = useTranslation();
+  const [searchParams] = useSearchParams();
+  const queryTab = searchParams.get("view");
+  const [selectedView, setSelectedView] = useState(null);
+  const [menuItem, setMenuItem] = useState(null);
+  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
+  const projectId = store.getState().company.projectId;
+  const auth = useSelector((state) => state.auth);
+  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
+
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -38,18 +45,10 @@ const ObjectsPage = () => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(
     viewSelectedIndex?.tabIndex || 1
   );
-  const [menuItem, setMenuItem] = useState(null);
-  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
-  const projectId = store.getState().company.projectId;
-  const auth = useSelector((state) => state.auth);
-  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
 
   const parts = auth?.clientType?.default_page
     ? auth?.clientType?.default_page?.split("/")
     : companyDefaultLink.split("/");
-
-  const resultDefaultLink =
-    parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
   const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
     projectId: projectId,
@@ -63,25 +62,32 @@ const ObjectsPage = () => {
             ?.filter((item) => item?.permission?.read)
             ?.some((el) => el?.id === menuId)
         ) {
-          // navigate(resultDefaultLink);
         }
       },
       cacheTime: false,
     },
   });
 
-  const params = {
-    language_setting: i18n?.language,
-  };
+  const {data: views} = useQuery(
+    ["GET_OBJECT_LIST", menuId],
+    () => {
+      return constructorViewService.getViewListMenuId(menuId);
+    },
+    {
+      enabled: Boolean(menuId),
+      select: (res) => {
+        return res?.views ?? [];
+      },
+      onSuccess: (data) => {
+        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+        setSelectedView(data?.[selectedTabIndex]);
+        updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
+      },
+    }
+  );
 
   const {
-    data: {
-      views,
-      fieldsMap,
-      fieldsMapRel,
-      visibleColumns,
-      visibleRelationColumns,
-    } = {
+    data: {fieldsMap, fieldsMapRel, visibleColumns, visibleRelationColumns} = {
       views: [],
       fieldsMap: {},
       fieldsMapRel: {},
@@ -91,26 +97,25 @@ const ObjectsPage = () => {
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
+    [
+      "GET_VIEWS_AND_FIELDS",
+      selectedView?.table_slug,
+      i18n?.language,
+      selectedTabIndex,
+    ],
     () => {
-      if (Boolean(!tableSlug)) return [];
-      return constructorTableService.getTableInfo(
-        tableSlug,
-        {
-          data: {},
-        },
-        params
+      if (Boolean(!selectedView?.table_slug)) return [];
+      return menuService.getFieldsListMenu(
+        menuId,
+        selectedView?.id,
+        selectedView?.table_slug
       );
     },
     {
-      enabled: Boolean(tableSlug),
+      enabled: Boolean(selectedView?.table_slug),
 
       select: ({data}) => {
         return {
-          views:
-            data?.views?.filter(
-              (view) => view?.attributes?.view_permission?.view === true
-            ) ?? [],
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
@@ -121,9 +126,6 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
-        if (state?.toDocsTab) setSelectedTabIndex(views?.length);
-      },
     }
   );
 
@@ -133,15 +135,15 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
-    menuId: menuId,
-    queryParams: {
-      enabled: Boolean(menuId),
-      onSuccess: (res) => {
-        setMenuItem(res);
-      },
-    },
-  });
+  // const {loader: menuLoader} = useMenuGetByIdQuery({
+  //   menuId: menuId,
+  //   queryParams: {
+  //     enabled: Boolean(menuId),
+  //     onSuccess: (res) => {
+  //       setMenuItem(res);
+  //     },
+  //   },
+  // });
 
   const setViews = () => {};
 
@@ -153,7 +155,6 @@ const ObjectsPage = () => {
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
-  // if (isLoading) return <PageFallback />;
   if (isLoading) {
     return (
       <Box bgcolor="#fff" height="100%">
@@ -164,40 +165,6 @@ const ObjectsPage = () => {
           <Skeleton height="40px" width="100%" />
         </Box>
         <DynamicTable loader={true} />
-        {/* <Table>
-          <TableHead>
-            <TableRow>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-            </TableRow>
-          </TableBody>
-        </Table> */}
       </Box>
     );
   }

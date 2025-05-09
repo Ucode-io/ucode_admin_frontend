@@ -1,37 +1,42 @@
 import {useMutation, useQuery} from "react-query";
-import requestV2 from "../utils/requestV2";
+import requestV3 from "../utils/requestV3";
 
 const menuService = {
   getList: (params) => {
-    return requestV2.get(`/menus`, {
+    return requestV3.get(`/menus`, {
       params,
     });
   },
   getByID: ({menuId, params}) =>
-    requestV2.get(`/menus/${menuId}`, {
+    requestV3.get(`/menus/${menuId}`, {
       params,
     }),
   update: (data) =>
-    requestV2.put(`/menus`, data, {
+    requestV3.put(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   updateOrder: (data) =>
-    requestV2.put(`/menus/menu-order`, data, {
+    requestV3.put(`/menus/menu-order`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   create: (data) =>
-    requestV2.post(`/menus`, data, {
+    requestV3.post(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
   delete: ({id, projectId}) =>
-    requestV2.delete(`/menus/${id}`, {
+    requestV3.delete(`/menus/${id}`, {
       params: {"project-id": projectId},
+    }),
+
+  getFieldsListMenu: (menuId, viewId, tableSlug) =>
+    requestV3.post(`/menus/${menuId}/views/${viewId}/tables/${tableSlug}`, {
+      data: {},
     }),
 };
 

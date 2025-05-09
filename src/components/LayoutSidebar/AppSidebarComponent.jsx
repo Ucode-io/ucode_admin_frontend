@@ -60,7 +60,7 @@ const AppSidebar = ({
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const auth = store.getState().auth;
-  const {menuId} = useParams();
+  const {menuId, tableSlug} = useParams();
 
   const [loading, setLoading] = useState(false);
   const [activeAccordionId, setActiveAccordionId] = useState(null);
@@ -93,13 +93,13 @@ const AppSidebar = ({
         coontrolAccordionAction(element);
         setElement(element);
         setSubMenuIsOpen(true);
-        navigate(`/${element.id}`);
+        navigate(`/${element.id}`, {replace: true});
       }
 
       return;
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
-      navigate(`/${element?.id}/${element?.data?.table?.slug}`);
+      navigate(`/${element?.id}`);
     } else if (element.type === "LINK") {
       const website_link = element?.attributes?.website_link;
       if (element?.attributes?.website_link) {

@@ -1,20 +1,20 @@
 import styles from "@/views/Objects/TableView/styles.module.scss";
-import { endOfMonth, format, startOfMonth } from "date-fns";
-import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQueries, useQuery } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import {endOfMonth, format, startOfMonth} from "date-fns";
+import React, {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useQueries, useQuery} from "react-query";
+import {useNavigate, useParams} from "react-router-dom";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
-import { listToMap } from "../../../utils/listToMap";
-import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import {listToMap} from "../../../utils/listToMap";
+import {selectElementFromEndOfString} from "../../../utils/selectElementFromEnd";
 import TimeLineBlock from "./TimeLineBlock";
 import constructorTableService from "../../../services/constructorTableService";
-import { useDateLineProps } from "./hooks/useDateLineProps";
+import {useDateLineProps} from "./hooks/useDateLineProps";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
-import { mergeStringAndState } from "../../../utils/jsonPath";
+import {mergeStringAndState} from "../../../utils/jsonPath";
 import useTabRouter from "../../../hooks/useTabRouter";
 
 export default function TimeLineView({
@@ -43,10 +43,10 @@ export default function TimeLineView({
     datesList,
     selectedType,
     setSelectedType,
-  } = useDateLineProps({ setCenterDate });
+  } = useDateLineProps({setCenterDate});
 
-  const { tableSlug, appId } = useParams();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {tableSlug, appId} = useParams();
+  const {filters} = useFilters(tableSlug, view.id);
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
@@ -62,7 +62,7 @@ export default function TimeLineView({
 
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
-    .map((id) => fieldsMap[id])
+    .map((id) => fieldsMap?.[id])
     .filter((el) => el);
 
   const recursionFunctionForAddIsOpen = (data) => {
@@ -82,7 +82,7 @@ export default function TimeLineView({
     });
   };
 
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
 
   const replaceUrlVariables = (urlTemplate, data) => {
@@ -118,13 +118,13 @@ export default function TimeLineView({
 
   // FOR DATA
   const {
-    data: { data } = { data: [] },
+    data: {data} = {data: []},
     isLoading,
     refetch: refetchData,
   } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, filters, dateFilters, view, months, selectedType },
+      {tableSlug, filters, dateFilters, view, months, selectedType},
     ],
     () => {
       let data = {
@@ -172,11 +172,11 @@ export default function TimeLineView({
 
   // FOR TABLE INFO
   const {
-    data: { visibleColumns, visibleRelationColumns } = { data: [] },
+    data: {visibleColumns, visibleRelationColumns} = {data: []},
     isLoading: tableInfoLoading,
     refetch: refetchTableInfo,
   } = useQuery(
-    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
+    ["GET_TABLE_INFO", {tableSlug, filters, dateFilters}],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -285,8 +285,7 @@ export default function TimeLineView({
             // height: "100vh",
           }}
           ref={calendarRef}
-          onScroll={handleScroll}
-        >
+          onScroll={handleScroll}>
           {tableInfoLoading || isViewLoading ? (
             <PageFallback />
           ) : (
@@ -331,7 +330,7 @@ const queryGenerator = (groupFields, filters = {}) => {
 
 const promiseGenerator = (groupField, filters = {}) => {
   const filterValue = filters[groupField.slug];
-  const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const defaultFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   const relationFilters = {};
 
@@ -355,7 +354,7 @@ const promiseGenerator = (groupField, filters = {}) => {
       relationFilters[slug] = value;
     }
   });
-  const computedFilters = { ...defaultFilters, ...relationFilters };
+  const computedFilters = {...defaultFilters, ...relationFilters};
 
   if (groupField?.type === "PICK_LIST") {
     return {

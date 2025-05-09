@@ -18,7 +18,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
-  const {tableSlug, appId} = useParams();
+  const {tableSlug, menuId} = useParams();
   const queryClient = useQueryClient();
   const {control, watch} = useForm();
   const [error, setError] = useState(false);
@@ -120,17 +120,17 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
       },
       filters: [],
       number_field: "",
-      app_id: appId,
+      menu_id: menuId,
       order: views.length + 1,
     };
-  }, [appId, selectedViewTab, tableSlug, views]);
+  }, [menuId, selectedViewTab, tableSlug, views]);
 
   const createView = () => {
     if (selectedViewTab === "WEBSITE") {
       if (watch("web_link")) {
         setBtnLoader(true);
         constructorViewService
-          .create(tableSlug, {
+          .createViewMenuId(menuId, {
             ...newViewJSON,
             attributes: {
               ...newViewJSON?.attributes,
@@ -154,7 +154,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
     } else {
       setBtnLoader(true);
       constructorViewService
-        .create(tableSlug, newViewJSON)
+        .createViewMenuId(menuId, newViewJSON)
         .then(() => {
           queryClient.refetchQueries([
             "GET_VIEWS_AND_FIELDS",

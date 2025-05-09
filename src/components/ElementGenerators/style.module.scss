@@ -483,7 +483,7 @@
 .cellColoredElementLabelPopup {
   display: none;
   position: absolute;
-  right: calc(100% + 10px);
+  right: calc(100% + 26px);
   top: 50%;
   transform: translateY(-50%);
   border-radius: 6px;
@@ -501,6 +501,14 @@
 
   &.fromLeft {
     right: auto;
-    left: calc(100% + 10px);
+    left: calc(100% + 26px);
+  }
+
+  &.fromBottom {
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    transform: translate(0, -100%);
   }
 }

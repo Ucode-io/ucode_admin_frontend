@@ -39,24 +39,43 @@ export const Models = () => {
     }
   );
 
-  const trackConnection = (id) => {
-    setLoadingId(id);
-    conectionDatabaseService
-      .trackTable(selectedConnection?.id, {
-        table_ids: [id],
-      })
-      .then((res) => refetch())
-      .finally(() => {
-        setLoadingId(null);
-      });
+  const trackConnection = (ids) => {
+    if (Array.isArray(ids)) {
+      conectionDatabaseService
+        .trackTable(selectedConnection?.id, {
+          table_ids: ids,
+        })
+        .then((res) => refetch())
+        .finally(() => {
+          setLoadingId(null);
+        });
+    } else {
+      setLoadingId(ids);
+      conectionDatabaseService
+        .trackTable(selectedConnection?.id, {
+          table_ids: [ids],
+        })
+        .then((res) => refetch())
+        .finally(() => {
+          setLoadingId(null);
+        });
+    }
   };
+
+  const renderTables = Boolean(selectedConnection?.id)
+    ? connectionTables
+    : tables?.tables;
+
+  const notTrackedTablesIds = renderTables
+    ?.filter((el) => !(el?.is_tracked || Boolean(el?.slug)))
+    ?.map((el) => el.id);
 
   return (
     <>
       <Tabs>
-        <TabList style={{borderBottom: "none", marginBottom: "10px"}}>
-          <Tab style={{padding: "10px"}}>Models</Tab>
-          <Tab style={{padding: "10px"}}>ChartDB</Tab>
+        <TabList style={{ borderBottom: "none", marginBottom: "10px" }}>
+          <Tab style={{ padding: "10px" }}>Models</Tab>
+          <Tab style={{ padding: "10px" }}>ChartDB</Tab>
           {/* <Tab style={{padding: "10px"}}>External Databases</Tab> */}
         </TabList>
         <TabPanel>
@@ -65,9 +84,10 @@ export const Models = () => {
               <Box
                 display={"flex"}
                 justifyContent="space-between"
-                alignItems={"center"}>
+                alignItems={"center"}
+              >
                 <span>Таблицы</span>
-                <Box display={"flex"} alignItems={"center"} gap="10px">
+                <Box display={"flex"} gap="10px">
                   <SearchInput
                     onChange={(val) => {
                       setSearchText(val);
@@ -77,6 +97,13 @@ export const Models = () => {
                     selectedConnection={selectedConnection}
                     setSelectedConnection={setSelectedConnection}
                   />
+                  <Button
+                    variant="outlined"
+                    onClick={() => trackConnection(notTrackedTablesIds)}
+                    disabled={!notTrackedTablesIds?.length}
+                  >
+                    Track all
+                  </Button>
                 </Box>
               </Box>
             </ContentTitle>
@@ -95,14 +122,12 @@ export const Models = () => {
                   <CTableCell className={cls.tableHeadCell} width={60} />
                 </CTableHead>
                 <CTableBody columnsCount={4} dataLength={1} loader={loader}>
-                  {(Boolean(selectedConnection?.id)
-                    ? connectionTables
-                    : tables?.tables
-                  )?.map((element, index) => (
+                  {renderTables?.map((element, index) => (
                     <CTableRow key={element.id}>
                       <CTableCell
-                        style={{textAlign: "center"}}
-                        className={cls.tBodyCell}>
+                        style={{ textAlign: "center" }}
+                        className={cls.tBodyCell}
+                      >
                         {index + 1}
                       </CTableCell>
                       <CTableCell className={cls.tBodyCell}>
@@ -127,7 +152,8 @@ export const Models = () => {
                             element?.is_tracked || Boolean(element?.slug)
                               ? "contained"
                               : "outlined"
-                          }>
+                          }
+                        >
                           {loadingId === element.id ? (
                             <CircularProgress size={20} />
                           ) : element?.is_tracked ? (
@@ -139,12 +165,14 @@ export const Models = () => {
                       </CTableCell>
 
                       <CTableCell
-                        className={clsx(cls.tBodyCell, cls.tBodyAction)}>
+                        className={clsx(cls.tBodyCell, cls.tBodyAction)}
+                      >
                         <RectangleIconButton
                           id="delete_btn"
                           color="error"
                           size="small"
-                          onClick={() => deleteTable(element.id)}>
+                          onClick={() => deleteTable(element.id)}
+                        >
                           <Delete color="error" />
                         </RectangleIconButton>
                       </CTableCell>
@@ -156,7 +184,7 @@ export const Models = () => {
           </div>
         </TabPanel>
         <TabPanel>
-          <Box sx={{height: "585px"}}>
+          <Box sx={{ height: "585px" }}>
             <ChartDb />
           </Box>
         </TabPanel>

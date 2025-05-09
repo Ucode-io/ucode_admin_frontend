@@ -2,22 +2,21 @@
 
 .infoBlockWrapper {
   width: 100%;
-  padding: 6px;
-  height: 65px;
-  overflow: auto;
+  height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   background-color: #fff;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px -2px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
-  border-radius: 6px;
+  border-radius: 3px;
 
   &:hover {
-      background-color: rgba(84, 72, 49, 0.08);
-  }
-}
+    background-color: rgba(84, 72, 49, 0.08);
 
-.infoText {
-  font-size: 14px;
-  font-weight: 400;
-  text-align: left;
+    .infoPopup {
+      display: block;
+    }
+  }
 }
 
 .infoCard {
@@ -56,7 +55,7 @@
 .popupHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: right;
 }
 
 .linkIcon {
@@ -75,5 +74,22 @@
 
 .time {
   color: #84919a;
+  font-size: 12px;
+}
+
+.infoPopup {
+  display: none;
+  padding: 6px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px -2px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-color: #fff;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.infoText {
   font-size: 12px;
 }

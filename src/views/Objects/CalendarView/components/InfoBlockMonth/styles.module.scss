@@ -1,0 +1,18 @@
+.infoBlock {
+  &.singleLine {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: 10px;
+  }
+}
+
+.infoText {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+}

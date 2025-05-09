@@ -1,9 +1,9 @@
-import {Box, Typography} from "@mui/material";
-import styles from "./month.module.scss";
+import {Box} from "@mui/material";
+import cls from "./styles.module.scss";
 import {format} from "date-fns";
-import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
-import {dateValidFormat} from "../../../../utils/dateValidFormat";
-import MultiselectCellColoredElement from "../../../../components/ElementGenerators/MultiselectCellColoredElement";
+import {getRelationFieldTableCellLabel} from "@/utils/getRelationFieldLabel";
+import {dateValidFormat} from "@/utils/dateValidFormat";
+import MultiselectCellColoredElement from "@/components/ElementGenerators/MultiselectCellColoredElement";
 
 const flex = {
   display: "flex",
@@ -12,10 +12,10 @@ const flex = {
   justifyContent: "center",
 };
 
-const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
+export const InfoBlockMonth = ({viewFields, data, isSingleLine, textClassName}) => {
   if (isSingleLine)
     return (
-      <div className={`${styles.infoBlock} ${styles.singleLine}`}>
+      <div className={`${cls.infoBlock} ${cls.singleLine}`}>
         {data.calendar?.elementFromTime
           ? format(data.calendar?.elementFromTime, "HH:mm")
           : ""}
@@ -27,7 +27,7 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
     );
 
   return (
-    <div className={`${styles.infoBlock}`}>
+    <div className={`${cls.infoBlock}`}>
       {/* <div>
         <Typography variant="h6" fontSize={"18px"}>
           {dateValidFormat(data.calendar?.elementFromTime, "HH:mm")}-{" "}
@@ -39,7 +39,7 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
       <>
         {viewFields[0]?.type === "LOOKUP" ? (
           <Box style={flex}>
-            <p className={styles.infoText}>{viewFields[0]?.label}</p>{" "}
+            <p className={textClassName || cls.infoText}>{viewFields[0]?.label}</p>{" "}
             {getRelationFieldTableCellLabel(
               viewFields[0],
               data,
@@ -48,12 +48,12 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
           </Box>
         ) : viewFields[0]?.type === "DATE_TIME" ? (
           <Box style={flex}>
-            <p className={styles.infoText}>{viewFields[0]?.label}:</p>{" "}
+            <p className={textClassName || cls.infoText}>{viewFields[0]?.label}:</p>{" "}
             {dateValidFormat(data[viewFields[0]?.slug], "dd.MM.yyyy HH:mm")}
           </Box>
         ) : viewFields[0]?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
           <Box style={flex}>
-            <p className={styles.infoText}>{viewFields[0]?.label}:</p>{" "}
+            <p className={textClassName || cls.infoText}>{viewFields[0]?.label}:</p>{" "}
             {dateValidFormat(data[viewFields[0]?.slug], "dd.MM.yyyy HH:mm")}
           </Box>
         ) : viewFields[0]?.type === "MULTISELECT" ? (
@@ -64,7 +64,7 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
           />
         ) : (
           <Box style={flex}>
-            <p className={styles.infoText}>
+            <p className={textClassName || cls.infoText}>
               {/* {viewFields[0]?.label}: */}
               {data[viewFields[0]?.slug]}
             </p>{" "}
@@ -75,5 +75,3 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
     </div>
   );
 };
-
-export default InfoBlockMonth;

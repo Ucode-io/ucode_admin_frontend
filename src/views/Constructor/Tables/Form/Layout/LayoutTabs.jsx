@@ -149,9 +149,11 @@ function LayoutTabs({
                       className={styles.tab}
                       style={{display: "flex", alignItems: "center"}}>
                       {tab?.type === "relation"
-                        ? tab?.relation?.attributes?.[
+                        ? tab?.relation?.table_from?.label ||
+                          tab?.relation?.attributes?.[
                             `label_to_${i18n?.language}`
-                          ] || tab?.relation?.attributes?.label
+                          ] ||
+                          tab?.relation?.attributes?.label
                         : mainForm.watch(
                             `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_to_${i18n.language}`
                           ) ||

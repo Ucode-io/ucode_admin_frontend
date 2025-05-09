@@ -15,7 +15,6 @@ import layoutService from "@/services/layoutService";
 import { useCalendarViewContext } from "../../Providers";
 
 export const useCalendarTemplateProps = () => {
-
   const {
     data,
     view,
@@ -29,7 +28,7 @@ export const useCalendarTemplateProps = () => {
   const projectId = useSelector((state) => state.company?.projectId);
 
   const [open, setOpen] = useState();
-  const [dateInfo, setDateInfo] = useState({});
+  const [defaultValue, setDefaultValue] = useState({});
 
   const [isScrolling, setIsScrolling] = useState(false);
 
@@ -37,7 +36,6 @@ export const useCalendarTemplateProps = () => {
   const [focusedMonth, setFocusedMonth] = useState(currentDay.getMonth());
 
   const { tableSlug, appId } = useParams();
-
 
   const daysOfWeek = [
     "Monday",
@@ -55,34 +53,38 @@ export const useCalendarTemplateProps = () => {
     start.setDate(start.getDate() - dayOfWeek);
     return start;
   };
-  
+
   const endOfMonthAligned = (date) => {
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0); // Последний день месяца
     const dayOfWeek = (end.getDay() + 6) % 7; // Понедельник = 0
     end.setDate(end.getDate() + (6 - dayOfWeek));
     return end;
   };
-  
+
   const getDaysRange = (centerDate, monthsBefore, monthsAfter) => {
     const start = startOfMonthAligned(
-      new Date(centerDate.getFullYear(), centerDate.getMonth() - monthsBefore, 1)
+      new Date(
+        centerDate.getFullYear(),
+        centerDate.getMonth() - monthsBefore,
+        1
+      )
     );
-  
+
     const end = endOfMonthAligned(
       new Date(centerDate.getFullYear(), centerDate.getMonth() + monthsAfter, 1)
     );
-  
+
     const days = [];
     let current = new Date(start);
-  
+
     while (current <= end) {
       days.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
-  
+
     return days;
   };
-  
+
   const getCalendarMatrix = (dates) => {
     const weeks = [];
     for (let i = 0; i < dates.length; i += 7) {
@@ -94,24 +96,24 @@ export const useCalendarTemplateProps = () => {
   const getCenterChild = (container) => {
     const containerRect = container.getBoundingClientRect();
     const containerCenterY = containerRect.top + containerRect.height / 2;
-  
+
     let closestEl = null;
     let minDistance = Infinity;
-  
+
     const children = Array.from(container.children);
-  
+
     for (const child of children) {
       const rect = child.getBoundingClientRect();
       const childCenterY = rect.top + rect.height / 2;
-  
+
       const distance = Math.abs(childCenterY - containerCenterY);
-  
+
       if (distance < minDistance) {
         minDistance = distance;
         closestEl = child;
       }
     }
-  
+
     return closestEl;
   };
 
@@ -121,8 +123,9 @@ export const useCalendarTemplateProps = () => {
     const computedDate = await setHours(setMinutes(time, minute), hour);
     const startTimeStampSlug = view?.calendar_from_slug;
 
-    setDateInfo({
-      [startTimeStampSlug]: computedDate,
+    setDefaultValue({
+      field: startTimeStampSlug,
+      value: computedDate,
     });
     setOpen(true);
   };
@@ -130,7 +133,7 @@ export const useCalendarTemplateProps = () => {
   const navigateToEditPage = (el) => {
     setOpen(true);
     setSelectedRow(el);
-    setDateInfo({});
+    setDefaultValue({});
   };
 
   const viewFields = useMemo(() => {
@@ -173,7 +176,7 @@ export const useCalendarTemplateProps = () => {
 
   const { calendarRef = {}, setDateRangeFilter = () => {} } =
     useCalendarViewContext();
-  
+
   const today = new Date();
   const initial = getDaysRange(today, 3, 3);
 
@@ -182,20 +185,20 @@ export const useCalendarTemplateProps = () => {
   const getFirstMondayFromWeeks = (weeks, monthDate) => {
     const targetMonth = monthDate.getMonth();
     const targetYear = monthDate.getFullYear();
-  
+
     for (const week of weeks) {
       for (const date of week) {
-        const isSameMonth = date.getMonth() === targetMonth && date.getFullYear() === targetYear;
+        const isSameMonth =
+          date.getMonth() === targetMonth && date.getFullYear() === targetYear;
         const isMonday = date.getDay() === 1;
         if (isSameMonth && isMonday) {
           return date;
         }
       }
     }
-  
+
     return null;
   };
-  
 
   const addMorePast = async () => {
     const first = dates[0];
@@ -221,7 +224,7 @@ export const useCalendarTemplateProps = () => {
     setDateRangeFilter([combined[0], combined[combined.length - 1]]);
   };
 
-  const scrollTimeout = useRef(null)
+  const scrollTimeout = useRef(null);
 
   const scrollByMonth = (direction) => {
     if (calendarRef.current) {
@@ -236,12 +239,12 @@ export const useCalendarTemplateProps = () => {
   const monthRefs = useRef([]);
 
   // const lastScrollTop = useRef(0);
-  // const lastScrollTime = useRef(Date.now());  
+  // const lastScrollTime = useRef(Date.now());
 
   // const onScroll = () => {
   //   const container = calendarRef.current;
   //   if (!container) return;
-  
+
   //   const currentScrollTop = container.scrollTop;
   //   const now = Date.now();
   //   const timeDiff = now - lastScrollTime.current;
@@ -251,7 +254,7 @@ export const useCalendarTemplateProps = () => {
   //     const direction = scrollDiff > 0 ? "down" : "up";
   //     scrollByMonth(direction);
   //   }
-  
+
   //   lastScrollTop.current = currentScrollTop;
   //   lastScrollTime.current = now;
   // };
@@ -259,23 +262,23 @@ export const useCalendarTemplateProps = () => {
   const handleScroll = (e) => {
     const el = e.target;
 
-    setIsScrolling(true)
+    setIsScrolling(true);
 
-    if(scrollTimeout.current) {
-      clearTimeout(scrollTimeout.current)
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
     }
 
     scrollTimeout.current = setTimeout(() => {
-      setIsScrolling(false)
-    }, 300)
+      setIsScrolling(false);
+    }, 300);
 
-    const centerChild = getCenterChild(e.target)
+    const centerChild = getCenterChild(e.target);
 
-    const currentDay = new Date(centerChild?.dataset?.date)
+    const currentDay = new Date(centerChild?.dataset?.date);
 
-    if(focusedMonth !== currentDay.getMonth()) {
-      setFocusedMonth(currentDay.getMonth())
-      setFocusedDate(currentDay)
+    if (focusedMonth !== currentDay.getMonth()) {
+      setFocusedMonth(currentDay.getMonth());
+      setFocusedDate(currentDay);
     }
 
     if (el.scrollTop <= 300) {
@@ -295,7 +298,7 @@ export const useCalendarTemplateProps = () => {
     // onScroll();
   };
 
-  const [td, setTd] = useState(null)
+  const [td, setTd] = useState(null);
 
   const handleScrollToToday = () => {
     if (calendarRef?.current) {
@@ -303,7 +306,7 @@ export const useCalendarTemplateProps = () => {
         "[data-is-today = true]"
       );
       if (elToday) {
-        setTd(elToday)
+        setTd(elToday);
         const top = elToday.offsetTop - calendarRef.current.offsetTop;
         calendarRef.current.scrollTo({
           top,
@@ -312,15 +315,14 @@ export const useCalendarTemplateProps = () => {
       }
     }
   };
-  
 
   useEffect(() => {
     requestAnimationFrame(() => {
       setTimeout(() => {
-        handleScrollToToday()
-      }, 100)
-    })
-  }, [td])
+        handleScrollToToday();
+      }, 100);
+    });
+  }, [td]);
 
   const weeks = getCalendarMatrix(dates);
 
@@ -336,7 +338,6 @@ export const useCalendarTemplateProps = () => {
     open,
     setOpen,
     selectedRow,
-    dateInfo,
     layout,
     projectInfo,
     selectedViewType,
@@ -349,6 +350,7 @@ export const useCalendarTemplateProps = () => {
     focusedMonth,
     getFirstMondayFromWeeks,
     isScrolling,
-    monthRefs
-  }
+    monthRefs,
+    defaultValue,
+  };
 }

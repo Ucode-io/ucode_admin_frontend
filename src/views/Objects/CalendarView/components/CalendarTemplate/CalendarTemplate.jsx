@@ -23,7 +23,6 @@ export const CalendarTemplate = () => {
     open,
     setOpen,
     selectedRow,
-    dateInfo,
     layout,
     projectInfo,
     selectedViewType,
@@ -36,17 +35,15 @@ export const CalendarTemplate = () => {
     focusedMonth,
     getFirstMondayFromWeeks,
     isScrolling,
-    monthRefs
+    monthRefs,
+    defaultValue,
   } = useCalendarTemplateProps();
 
   return (
     <>
       <Box className={cls.calendarTemplate}>
         {daysOfWeek?.map((date, index) => (
-          <Box
-            key={index}
-            className={cls.days}
-          >
+          <Box key={index} className={cls.days}>
             {date}
           </Box>
         ))}
@@ -59,83 +56,91 @@ export const CalendarTemplate = () => {
         {Array.isArray(weeks) &&
           weeks?.map((week, weekIndex) => {
             const monthKey = format(week[0], "yyyy-MM");
-            return <>
-              {week?.map((date, index) => (
-                <Box
-                  key={index}
-                  data-week-start={week[0].toISOString()}
-                  data-date={date}
-                  data-is-today={
-                    formattedToday === dateValidFormat(date, "dd.MM.yyyy")
-                  }
-                  ref={(el) => {
-                    if (el) monthRefs.current[monthKey] = el;
-                  }}            
-                  className={clsx(cls.calendar, {
-                    [cls.today]:
-                      formattedToday === dateValidFormat(date, "dd.MM.yyyy"),
-                    [cls.activeMonth]:
-                    focusedMonth === date?.getMonth(),
-                  })}
-                  style={{
-                    background:
-                      date?.getDay() === 0 || date?.getDay() === 6
-                        ? "#f5f4f4"
-                        : "",
-                  }}
-                >
-                  {
-                    (!index && getFirstMondayFromWeeks(weeks, date) 
-                      ? format(getFirstMondayFromWeeks(weeks, date), "dd.MM.yyyy") === format(date, "dd.MM.yyyy") 
-                      : "") && <div className={clsx(cls.monthPlaceholder, { [cls.scrolling]: isScrolling })}>
+            return (
+              <>
+                {week?.map((date, index) => (
+                  <Box
+                    key={index}
+                    data-week-start={week[0].toISOString()}
+                    data-date={date}
+                    data-is-today={
+                      formattedToday === dateValidFormat(date, "dd.MM.yyyy")
+                    }
+                    ref={(el) => {
+                      if (el) monthRefs.current[monthKey] = el;
+                    }}
+                    className={clsx(cls.calendar, {
+                      [cls.today]:
+                        formattedToday === dateValidFormat(date, "dd.MM.yyyy"),
+                      [cls.activeMonth]: focusedMonth === date?.getMonth(),
+                    })}
+                    style={{
+                      background:
+                        date?.getDay() === 0 || date?.getDay() === 6
+                          ? "#f5f4f4"
+                          : "",
+                    }}
+                  >
+                    {(!index && getFirstMondayFromWeeks(weeks, date)
+                      ? format(
+                          getFirstMondayFromWeeks(weeks, date),
+                          "dd.MM.yyyy"
+                        ) === format(date, "dd.MM.yyyy")
+                      : "") && (
+                      <div
+                        className={clsx(cls.monthPlaceholder, {
+                          [cls.scrolling]: isScrolling,
+                        })}
+                      >
                         {format(date, "MMMM yyyy")}
                       </div>
-                  }
-                  {!data?.includes(date) && (
-                    <Box
-                      className={cls.desc}
-                      onClick={() => navigateToCreatePage(date)}
-                    >
-                      <Box className={`${cls.addButton}`}>
-                        <AddIcon color="inherit" />
+                    )}
+                    {!data?.includes(date) && (
+                      <Box
+                        className={cls.desc}
+                        onClick={() => navigateToCreatePage(date)}
+                      >
+                        <Box className={`${cls.addButton}`}>
+                          <AddIcon color="inherit" />
+                        </Box>
                       </Box>
-                    </Box>
-                  )}
-                  <div className={cls.dateNumber}>
-                    {new Date(date).toLocaleDateString(
-                      "en-US",
-                      dateValidFormat(date, "dd") === "01"
-                        ? {
-                            day: "numeric",
-                            //   month: "short",
-                          }
-                        : {
-                            day: "numeric",
-                          }
                     )}
-                  </div>
+                    <div className={cls.dateNumber}>
+                      {new Date(date).toLocaleDateString(
+                        "en-US",
+                        dateValidFormat(date, "dd") === "01"
+                          ? {
+                              day: "numeric",
+                              //   month: "short",
+                            }
+                          : {
+                              day: "numeric",
+                            }
+                      )}
+                    </div>
 
-                  <Box className={cls.card}>
-                    {data?.map((el, idx) =>
-                      dateValidFormat(date, "dd.MM.yyyy") ===
-                        el?.calendar.date ||
-                      dateValidFormat(date, "dd.MM.yyyy") ===
-                        dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
-                        <DataMonthCard
-                          key={el.id}
-                          date={date}
-                          view={view}
-                          fieldsMap={fieldsMap}
-                          data={el}
-                          viewFields={viewFields}
-                          navigateToEditPage={navigateToEditPage}
-                        />
-                      ) : null
-                    )}
+                    <Box className={cls.card}>
+                      {data?.map((el, idx) =>
+                        dateValidFormat(date, "dd.MM.yyyy") ===
+                          el?.calendar.date ||
+                        dateValidFormat(date, "dd.MM.yyyy") ===
+                          dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
+                          <DataMonthCard
+                            key={el.id}
+                            date={date}
+                            view={view}
+                            fieldsMap={fieldsMap}
+                            data={el}
+                            viewFields={viewFields}
+                            navigateToEditPage={navigateToEditPage}
+                          />
+                        ) : null
+                      )}
+                    </Box>
                   </Box>
-                </Box>
-              ))}
-            </>
+                ))}
+              </>
+            );
           })}
       </Box>
 
@@ -153,7 +158,7 @@ export const CalendarTemplate = () => {
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToEditPage}
-          dateInfo={dateInfo}
+          defaultValue={defaultValue}
         />
       </MaterialUIProvider>
     </>

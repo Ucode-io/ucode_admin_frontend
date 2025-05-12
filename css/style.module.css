@@ -1,39 +1,36 @@
-.settingsBlockHeader {
+.verticalDrawer {
+  width: 60vw;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: visible !important;
+  overflow-y: visible !important;
+}
+.verticalDrawer .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 48px;
-  padding: 0 16px;
-  border-bottom: 1px solid #e5e9eb;
-  border-top: 1px solid #e5e9eb;
-  background-color: #f6f8f9;
+  padding: 10px 16px;
+  box-shadow: inset 0px -1px 0px #EEEEEE;
 }
-
-.summaryButton {
-  display: flex;
-  margin-top: 8px;
+.verticalDrawer .header .title {
+  font-size: 24px;
+  line-height: 32px;
 }
-.summaryButton button {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: 1px dashed rgba(110, 139, 183, 0.5019607843);
-  padding: 8px 16px;
-  flex-grow: 1;
+.verticalDrawer .header .closeIcon {
+  font-size: 28px;
 }
-
-.filtersBody {
-  display: flex;
-  align-items: center;
+.verticalDrawer .body {
+  padding: 16px;
+  flex: 1;
+  overflow: auto;
+}
+.verticalDrawer .footer {
+  padding: 16px;
+}
+.verticalDrawer .footer .button {
   width: 100%;
-}
-.filtersBody .filtersBodyItem {
-  width: 45%;
-  margin: 5px;
-}
-.filtersBody .filtersBodyItemMain {
+}/*# sourceMappingURL=style.module.css.map */ody .filtersBodyItemMain {
   width: 70%;
   margin: 5px;
 }/*# sourceMappingURL=style.module.css.map */height: 44px;

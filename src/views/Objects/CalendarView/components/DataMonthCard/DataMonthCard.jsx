@@ -80,7 +80,7 @@ export const DataMonthCard = ({
           />
         </div>
         {viewFields?.map((field) => (
-          <InfoBlock field={field} info={info} key={field.slug} />
+          <InfoBlock field={field} info={info} key={field.slug} i18n={i18n} />
         ))}
         {/* <CalendarStatusSelect
           view={view}
@@ -93,7 +93,7 @@ export const DataMonthCard = ({
   );
 };
 
-const InfoBlock = ({ field, info }) => {
+const InfoBlock = ({ field, info, i18n }) => {
   return (
     <div>
       <b>

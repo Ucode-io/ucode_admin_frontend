@@ -179,7 +179,7 @@ const BoardView = ({
       ...view,
       attributes: {
         ...view?.attributes,
-        tabs: tabs,
+        tabs,
       },
     };
     constructorViewService.update(tableSlug, computedData).then((res) => {
@@ -241,13 +241,14 @@ const BoardView = ({
   // });
 
   useEffect(() => {
-    const updatedTabs = views?.[selectedTabIndex]?.attributes?.tabs;
-    if (tabs?.length === updatedTabs?.length && view?.type !== "BOARD") {
-      setBoardTab(updatedTabs);
-    } else {
-      setBoardTab(tabs);
-    }
-  }, [tabs, views, selectedTabIndex]);
+    const updatedTabs = view?.attributes?.tabs;
+    setBoardTab(updatedTabs);
+    // if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
+    //   setBoardTab(updatedTabs);
+    // } else {
+    //   setBoardTab(tabs);
+    // }
+  }, [tabs, view, selectedTabIndex]);
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -331,14 +332,20 @@ const BoardView = ({
     }
 
     return result;
-  }, [subBoardData, groupField, data]);
+  }, [subBoardData, groupField, data, boardTab, view]);
 
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
 
+  const [groupCounts, setGroupCounts] = useState({});
+
+  useEffect(() => {
+    setGroupCounts(statusGroupCounts);
+  }, [data, subBoardData, statusGroupCounts]);
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={boardRef}>
       {loader ? (
         <PageFallback />
       ) : (
@@ -359,7 +366,7 @@ const BoardView = ({
           )}
 
           {/* {subGroupById && ( */}
-          <div className={styles.header}>
+          {/* <div className={styles.header}>
             {boardTab?.map((tab) => (
               <ColumnHeaderBlock
                 key={tab.value}
@@ -372,15 +379,47 @@ const BoardView = ({
                 )}
               />
             ))}
-          </div>
+          </div> */}
           {/* )} */}
+
+          <Container
+            lockAxis="x"
+            onDrop={onDrop}
+            orientation="horizontal"
+            dragHandleSelector=".column-header"
+            dragClass="drag-card-ghost"
+            dropClass="drag-card-ghost-drop"
+            dropPlaceholder={{
+              animationDuration: 150,
+              showOnTop: true,
+              className: "drag-cards-drop-preview",
+            }}
+            style={{
+              display: "flex",
+              gap: 8,
+              padding: "0 16px",
+            }}
+          >
+            {boardTab?.map((tab, tabIndex) => (
+              <Draggable key={tabIndex}>
+                <ColumnHeaderBlock
+                  field={tab}
+                  tab={tab}
+                  // computedData={computedData}
+                  boardRef={boardRef}
+                  navigateToCreatePage={navigateToCreatePage}
+                  counts={groupCounts}
+                />
+              </Draggable>
+            ))}
+          </Container>
 
           <div
             className={styles.board}
             style={{
               height: isFilterOpen
                 ? "calc(100vh - 171px)"
-                : "calc(100vh - 133px)",
+                : "calc(100vh - 140px)",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"
@@ -388,11 +427,10 @@ const BoardView = ({
               //   ? "calc(100vh - 133px)"
               //   : "calc(100vh - 83px)",
             }}
-            ref={boardRef}
           >
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>
-                {Object.keys(subBoardData)?.map((el) => (
+                {Object.keys(subBoardData)?.map((el, subGroupIndex) => (
                   <div key={el}>
                     <button
                       className={styles.boardSubGroupBtn}
@@ -420,71 +458,81 @@ const BoardView = ({
                       </span>
                     </button>
                     {openedGroups?.includes(el) && (
-                      <Container
-                        lockAxis="x"
-                        onDrop={onDrop}
-                        orientation="horizontal"
-                        dragHandleSelector=".column-header"
-                        dragClass="drag-card-ghost"
-                        dropClass="drag-card-ghost-drop"
-                        dropPlaceholder={{
-                          animationDuration: 150,
-                          showOnTop: true,
-                          className: "drag-cards-drop-preview",
+                      <div
+                        // lockAxis="x"
+                        // onDrop={onDrop}
+                        // orientation="horizontal"
+                        // dragHandleSelector=".column-header"
+                        // dragClass="drag-card-ghost"
+                        // dropClass="drag-card-ghost-drop"
+                        // dropPlaceholder={{
+                        //   animationDuration: 150,
+                        //   showOnTop: true,
+                        //   className: "drag-cards-drop-preview",
+                        // }}
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          alignItems: "flex-start",
+                          // paddingTop: "48px",
+                          // position: "static",
                         }}
-                        style={{ display: "flex", gap: 8 }}
                       >
                         {boardTab?.map((tab, index) => (
-                          <Draggable
+                          // <Draggable
+                          //   key={tab.value}
+                          //   className={styles.draggable}
+                          // >
+                          <BoardColumn
+                            computedColumnsFor={computedColumnsFor}
                             key={tab.value}
-                            className={styles.draggable}
-                          >
-                            <BoardColumn
-                              computedColumnsFor={computedColumnsFor}
-                              key={tab.value}
-                              tab={tab}
-                              data={data}
-                              fieldsMap={fieldsMap}
-                              view={view}
-                              menuItem={menuItem}
-                              layoutType={layoutType}
-                              setLayoutType={setLayoutType}
-                              refetch={refetch}
-                              boardRef={boardRef}
-                              index={index}
-                              subGroupById={subGroupById}
-                              subGroupData={subBoardData[el]}
-                              subItem={el}
-                              subGroupFieldSlug={subGroupFieldSlug}
-                              setDateInfo={setDateInfo}
-                              setDefaultValue={setDefaultValue}
-                              setOpenDrawerModal={setOpenDrawerModal}
-                              setSelectedRow={setSelectedRow}
-                            />
-                          </Draggable>
+                            tab={tab}
+                            data={data}
+                            fieldsMap={fieldsMap}
+                            view={view}
+                            menuItem={menuItem}
+                            layoutType={layoutType}
+                            setLayoutType={setLayoutType}
+                            refetch={refetch}
+                            boardRef={boardRef}
+                            index={index}
+                            subGroupIndex={subGroupIndex}
+                            subGroupById={subGroupById}
+                            subGroupData={subBoardData[el]}
+                            subItem={el}
+                            subGroupFieldSlug={subGroupFieldSlug}
+                            setDateInfo={setDateInfo}
+                            setDefaultValue={setDefaultValue}
+                            setOpenDrawerModal={setOpenDrawerModal}
+                            setSelectedRow={setSelectedRow}
+                            setGroupCounts={setGroupCounts}
+                          />
+                          // </Draggable>
                         ))}
-                      </Container>
+                      </div>
+                      // </Container>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <Container
-                lockAxis="x"
-                onDrop={onDrop}
-                orientation="horizontal"
-                dragHandleSelector=".column-header"
-                dragClass="drag-card-ghost"
-                dropClass="drag-card-ghost-drop"
-                dropPlaceholder={{
-                  animationDuration: 150,
-                  showOnTop: true,
-                  className: "drag-cards-drop-preview",
-                }}
+              <div
+                // lockAxis="x"
+                // onDrop={onDrop}
+                // orientation="horizontal"
+                // dragHandleSelector=".column-header"
+                // dragClass="drag-card-ghost"
+                // dropClass="drag-card-ghost-drop"
+                // dropPlaceholder={{
+                //   animationDuration: 150,
+                //   showOnTop: true,
+                //   className: "drag-cards-drop-preview",
+                // }}
                 style={{ display: "flex", gap: 8 }}
               >
                 {boardTab?.map((tab, index) => (
-                  <Draggable key={tab.value} className={styles.draggable}>
+                  // <Draggable key={tab.value} className={styles.draggable}>
+                  <div key={tab.value} className={styles.draggable}>
                     <BoardColumn
                       computedColumnsFor={computedColumnsFor}
                       key={tab.value}
@@ -506,10 +554,11 @@ const BoardView = ({
                       setDefaultValue={setDefaultValue}
                       setSelectedRow={setSelectedRow}
                       subGroupFieldSlug={subGroupFieldSlug}
+                      setGroupCounts={setGroupCounts}
                     />
-                  </Draggable>
+                  </div>
                 ))}
-              </Container>
+              </div>
             )}
           </div>
         </div>

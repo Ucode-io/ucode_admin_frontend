@@ -13,14 +13,29 @@ import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
+import SVG from "react-inlinesvg";
 
-export default function ViewTypeList({computedViewTypes, views, handleClose}) {
+const viewIcons = {
+  TABLE: "layout-alt-01.svg",
+  CALENDAR: "calendar.svg",
+  BOARD: "rows.svg",
+  GRID: "grid.svg",
+  TIMELINE: "line-chart-up.svg",
+  WEBSITE: "global.svg",
+  TREE: "tree.svg",
+};
+
+export default function ViewTypeList({
+  computedViewTypes,
+  views,
+  handleClose,
+}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
-  const {i18n} = useTranslation();
-  const {tableSlug, appId} = useParams();
+  const { i18n } = useTranslation();
+  const { tableSlug, appId } = useParams();
   const queryClient = useQueryClient();
-  const {control, watch} = useForm();
+  const { control, watch } = useForm();
   const [error, setError] = useState(false);
 
   const detectImageView = useMemo(() => {
@@ -79,7 +94,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
 
   const newViewJSON = useMemo(() => {
     return {
-      type: selectedViewTab,
+      type: selectedViewTab === "TREE" ? "GRID" : selectedViewTab,
       users: [],
       name: "",
       default_limit: "",
@@ -117,6 +132,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
         group_by_columns: [],
         summaries: [],
         name_ru: "",
+        treeData: selectedViewTab === "TREE",
       },
       filters: [],
       number_field: "",
@@ -179,8 +195,22 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
               className={type.value === selectedViewTab ? style.active : ""}
               onClick={() => {
                 setSelectedViewTab(type.value);
-              }}>
-              {type.value === "TABLE" && <TableChart className={style.icon} />}
+              }}
+              startIcon={
+                <SVG
+                  src={`/img/${viewIcons[type?.value]}`}
+                  width={18}
+                  height={18}
+                />
+              }
+              style={{
+                columnGap: "8px",
+                "MuiButton-startIcon": {
+                  marginLeft: 0,
+                },
+              }}
+            >
+              {/* {type.value === "TABLE" && <TableChart className={style.icon} />}
               {type.value === "CALENDAR" && (
                 <CalendarMonth className={style.icon} />
               )}
@@ -203,7 +233,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
               {type.value === "WEBSITE" && (
                 <LanguageIcon className={style.icon} />
               )}
-              {type.value === "GRID" && <FiberNewIcon className={style.icon} />}
+              {type.value === "GRID" && <FiberNewIcon className={style.icon} />} */}
               {type.label}
             </Button>
           ))}
@@ -221,7 +251,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
               <Controller
                 control={control}
                 name="web_link"
-                render={({field: {onChange, value}}) => {
+                render={({ field: { onChange, value } }) => {
                   return (
                     <TextField
                       id="website_link"
@@ -231,7 +261,7 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
                       value={value}
                       placeholder="website link..."
                       className="webLinkInput"
-                      sx={{padding: 0}}
+                      sx={{ padding: 0 }}
                       fullWidth
                       name="web_link"
                       InputProps={{
@@ -259,7 +289,8 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
                 // setSelectedView("NEW");
                 // setTypeNewView(selectedViewTab);
                 createView();
-              }}>
+              }}
+            >
               Create View {selectedViewTab}
             </LoadingButton>
           </div>

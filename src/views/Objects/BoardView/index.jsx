@@ -1,6 +1,4 @@
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { Badge, Box, Button, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -8,29 +6,19 @@ import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
-import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
-import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
 import { applyDrag } from "../../../utils/applyDrag";
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
-import ColumnVisible from "../ColumnVisible";
-import ShareModal from "../ShareModal/ShareModal";
 import FastFilter from "../components/FastFilter";
-import ViewTabSelector from "../components/ViewTypeSelector";
-import style from "../style.module.scss";
 import BoardColumn from "./BoardColumn";
-import BoardGroupButton from "./BoardGroupBy";
 import styles from "./style.module.scss";
-import { Add } from "@mui/icons-material";
 import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import clsx from "clsx";
-import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
 import { useProjectGetByIdQuery } from "../../../services/projectService";
@@ -51,24 +39,19 @@ const BoardView = ({
   layoutType,
   setLayoutType,
 }) => {
-  const visibleForm = useForm();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.company?.projectId);
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
   const { t, i18n } = useTranslation();
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
   const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
 
   const [selectedView, setSelectedView] = useState(null);
-  const [tab, setTab] = useState();
-  const { navigateToForm } = useTabRouter();
   const { filters } = useFilters(tableSlug, view.id);
 
   const boardRef = useRef(null);
@@ -344,6 +327,25 @@ const BoardView = ({
     setGroupCounts(statusGroupCounts);
   }, [data, subBoardData, statusGroupCounts]);
 
+  const fixedElement = useRef(null);
+
+  useEffect(() => {
+    const board = boardRef.current;
+    const el = fixedElement.current;
+    if (!board || !el) return;
+
+    const onScroll = () => {
+      // el.style.top = `${board.scrollTop}px`;
+      el.style.transform = `translateY(${board.scrollTop}px)`;
+    };
+
+    board.addEventListener("scroll", onScroll);
+
+    return () => {
+      board.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <div className={styles.container} ref={boardRef}>
       {loader ? (
@@ -382,44 +384,46 @@ const BoardView = ({
           </div> */}
           {/* )} */}
 
-          <Container
-            lockAxis="x"
-            onDrop={onDrop}
-            orientation="horizontal"
-            dragHandleSelector=".column-header"
-            dragClass="drag-card-ghost"
-            dropClass="drag-card-ghost-drop"
-            dropPlaceholder={{
-              animationDuration: 150,
-              showOnTop: true,
-              className: "drag-cards-drop-preview",
-            }}
-            style={{
-              display: "flex",
-              gap: 8,
-              padding: "0 16px",
-            }}
-          >
-            {boardTab?.map((tab, tabIndex) => (
-              <Draggable key={tabIndex}>
-                <ColumnHeaderBlock
-                  field={tab}
-                  tab={tab}
-                  // computedData={computedData}
-                  boardRef={boardRef}
-                  navigateToCreatePage={navigateToCreatePage}
-                  counts={groupCounts}
-                />
-              </Draggable>
-            ))}
-          </Container>
+          <div className={styles.boardHeader} ref={fixedElement}>
+            <Container
+              lockAxis="x"
+              onDrop={onDrop}
+              orientation="horizontal"
+              dragHandleSelector=".column-header"
+              dragClass="drag-card-ghost"
+              dropClass="drag-card-ghost-drop"
+              dropPlaceholder={{
+                animationDuration: 150,
+                showOnTop: true,
+                className: "drag-cards-drop-preview",
+              }}
+              style={{
+                display: "flex",
+                gap: 8,
+                padding: "0 16px",
+              }}
+            >
+              {boardTab?.map((tab, tabIndex) => (
+                <Draggable key={tabIndex}>
+                  <ColumnHeaderBlock
+                    field={tab}
+                    tab={tab}
+                    // computedData={computedData}
+                    // boardRef={boardRef}
+                    navigateToCreatePage={navigateToCreatePage}
+                    counts={groupCounts}
+                  />
+                </Draggable>
+              ))}
+            </Container>
+          </div>
 
           <div
             className={styles.board}
             style={{
               height: isFilterOpen
-                ? "calc(100vh - 171px)"
-                : "calc(100vh - 140px)",
+                ? "calc(100vh - 121px)"
+                : "calc(100vh - 91px)",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"

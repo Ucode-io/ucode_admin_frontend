@@ -20,24 +20,24 @@ export const ColumnHeaderBlock = ({
     field?.attributes?.options?.find((item) => item?.value === tab?.value)
       ?.color;
 
-  useEffect(() => {
-    if (fixed) {
-      const board = boardRef.current;
-      const el = fixedElement.current;
-      if (!board || !el) return;
+  // useEffect(() => {
+  //   if (fixed) {
+  //     const board = boardRef.current;
+  //     const el = fixedElement.current;
+  //     if (!board || !el) return;
 
-      const onScroll = () => {
-        // el.style.top = `${board.scrollTop}px`;
-        el.style.transform = `translateY(${board.scrollTop}px)`;
-      };
+  //     const onScroll = () => {
+  //       // el.style.top = `${board.scrollTop}px`;
+  //       el.style.transform = `translateY(${board.scrollTop}px)`;
+  //     };
 
-      board.addEventListener("scroll", onScroll);
+  //     board.addEventListener("scroll", onScroll);
 
-      return () => {
-        board.removeEventListener("scroll", onScroll);
-      };
-    }
-  }, []);
+  //     return () => {
+  //       board.removeEventListener("scroll", onScroll);
+  //     };
+  //   }
+  // }, []);
 
   return (
     <div

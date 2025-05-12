@@ -51,8 +51,6 @@ function DrawerFormDetailPage({
     data?.tabs?.[selectedTabIndex]?.sections || []
   );
 
-  console.log({sections});
-
   useEffect(() => {
     setSections(data?.tabs?.[0]?.sections || []);
   }, [data]);

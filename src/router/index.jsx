@@ -395,7 +395,7 @@ const Router = () => {
           />
 
           <Route
-            path=":menuId/create/:formId"
+            path=":menuId/dt/create"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -403,7 +403,7 @@ const Router = () => {
             }
           />
           <Route
-            path=":menuId/:id"
+            path=":menuId/dt"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />

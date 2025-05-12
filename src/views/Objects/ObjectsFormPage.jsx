@@ -1,7 +1,7 @@
 import {Save} from "@mui/icons-material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {
   useLocation,
@@ -31,6 +31,7 @@ import {generateID} from "../../utils/generateID";
 import DividentWayll from "./DividentWayll";
 import {useGetLang} from "../../hooks/useGetLang";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import constructorViewService from "../../services/constructorViewService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
@@ -54,30 +55,27 @@ const ObjectsFormPage = ({
   const [data, setData] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
+  const [selectedView, setSelectedView] = useState();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
-  const menuId = searchParams.get("menuId");
+  const viewId = searchParams.get("v");
+  const itemId = searchParams.get("p");
 
-  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
-  const test = useParams();
+  const {id: idFromParam, menuId} = useParams();
 
-  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
-  const microPathCloseMonth = `/main/${idFromParam}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${idFromParam}`;
+  const microPath = `/main/${itemId}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${itemId}&slug=${selectedView?.table_slug}`;
+  const microPathCloseMonth = `/main/${itemId}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${itemId}`;
 
   const id = useMemo(() => {
     return (
-      state?.[`${tableSlugFromParam}_id`] ||
-      idFromParam ||
-      appId ||
+      state?.[`${selectedView?.table_slug}_id`] ||
+      itemId ||
+      menuId ||
       selectedRow?.guid
     );
-  }, [idFromParam, selectedRow, appId, state]);
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || tableSlugFromParam;
-  }, [tableSlugFromParam, tableSlugFromProps]);
+  }, [itemId, selectedRow, menuId, state]);
 
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
@@ -85,6 +83,26 @@ const ObjectsFormPage = ({
 
   const {deleteTab} = useTabRouter();
   const {pathname} = useLocation();
+
+  const {data: views} = useQuery(
+    ["GET_OBJECT_LIST", menuId],
+    () => {
+      return constructorViewService.getViewListMenuId(menuId);
+    },
+    {
+      enabled: Boolean(menuId),
+      select: (res) => {
+        return res?.views ?? [];
+      },
+      onSuccess: (data) => {
+        setSelectedView(data?.find((el) => el?.id === viewId));
+      },
+    }
+  );
+
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || selectedView?.table_slug;
+  }, [selectedView?.table_slug, tableSlugFromProps]);
 
   const {
     handleSubmit,
@@ -278,7 +296,7 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
-    if (Boolean(id) && !window.location.pathname?.includes("create")) {
+    if (Boolean(itemId) && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);
@@ -296,9 +314,9 @@ const ObjectsFormPage = ({
   });
 
   useEffect(() => {
-    if (id) getAllData();
+    if (itemId) getAllData();
     else getFields();
-  }, [id]);
+  }, [itemId]);
 
   const clickHandler = () => {
     deleteTab(pathname);
@@ -338,7 +356,7 @@ const ObjectsFormPage = ({
           selectedTab={selectedTab}
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
-          id={id}
+          id={itemId}
           menuItem={menuItem}
           data={data}
         />
@@ -350,10 +368,10 @@ const ObjectsFormPage = ({
               (tableSlug === "investors" || tableSlug === "legal_entities") && (
                 <PrimaryButton
                   onClick={() => {
-                    localStorage.setItem("idFromParams", idFromParam);
+                    localStorage.setItem("idFromParams", itemId);
                     localStorage.setItem(
                       "tableSlugFromParam",
-                      tableSlugFromParam
+                      selectedView?.table_slug
                     );
                     navigate(microPath);
                   }}>
@@ -367,7 +385,7 @@ const ObjectsFormPage = ({
                   <DividentWayll />
                   <PrimaryButton
                     onClick={() => {
-                      localStorage.setItem("idFromParams", idFromParam);
+                      localStorage.setItem("idFromParams", itemId);
                       localStorage.setItem(
                         "tableSlugFromParam",
                         tableSlugFromParam

@@ -8,8 +8,7 @@ const typeHandlers = {
   },
   MINIO_FOLDER: ({menuId, element, navigate}) =>
     navigate(`/${menuId}/backet/${element?.id}`),
-  TABLE: ({menuId, element, navigate}) =>
-    navigate(`/${element?.id}/${element?.data?.table?.slug}`),
+  TABLE: ({menuId, element, navigate}) => navigate(`/${element?.id}`),
   WIKI: ({menuId, element, navigate}) =>
     navigate(
       `/${menuId}/docs/note/${element?.parent_id}/${

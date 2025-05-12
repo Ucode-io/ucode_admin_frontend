@@ -653,6 +653,7 @@ function AgGridTableView(props) {
       {Boolean(open && projectInfo?.new_layout) &&
       selectedViewType === "SidePeek" ? (
         <DrawerDetailPage
+          view={view}
           projectInfo={projectInfo}
           open={open}
           setOpen={setOpen}
@@ -668,6 +669,7 @@ function AgGridTableView(props) {
         />
       ) : selectedViewType === "CenterPeek" ? (
         <NewModalDetailPage
+          view={view}
           modal={true}
           projectInfo={projectInfo}
           open={open}

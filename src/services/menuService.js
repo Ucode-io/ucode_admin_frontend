@@ -38,6 +38,16 @@ const menuService = {
     requestV3.post(`/menus/${menuId}/views/${viewId}/tables/${tableSlug}`, {
       data: {},
     }),
+  getFieldsTableData: (menuId, viewId, tableSlug, data) =>
+    requestV3.post(
+      `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/list`,
+      data
+    ),
+
+  getFieldsTableDataById: (menuId, viewId, tableSlug, itemId) =>
+    requestV3.get(
+      `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/${itemId}`
+    ),
 };
 
 export const useMenuListQuery = ({params = {}, queryParams} = {}) => {

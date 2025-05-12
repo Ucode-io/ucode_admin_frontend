@@ -2,21 +2,21 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { isSameDay, isValid, isWithinInterval } from "date-fns";
-import { Sidebar } from "./components/Sidebar";
-import { Button, Menu } from "@mui/material";
+import {useDispatch, useSelector} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {isSameDay, isValid, isWithinInterval} from "date-fns";
+import {Sidebar} from "./components/Sidebar";
+import {Button, Menu} from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
-import { TimelineBlockProvider } from "./providers/TimelineBlockProvider";
-import { SidebarButton } from "./components/SidebarButton";
+import {TimelineBlockProvider} from "./providers/TimelineBlockProvider";
+import {SidebarButton} from "./components/SidebarButton";
 import DrawerDetailPage from "../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import {useParams} from "react-router-dom";
+import {useQuery} from "react-query";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -93,7 +93,7 @@ export default function TimeLineBlock({
       }
 
       for (let i = 0; i < record.data.length; i++) {
-        let { start_date, end_date } = record.data[i];
+        let {start_date, end_date} = record.data[i];
         let startDate = start_date ? new Date(start_date) : null;
         let endDate = end_date ? new Date(end_date) : null;
 
@@ -101,7 +101,7 @@ export default function TimeLineBlock({
           continue;
 
         for (let j = i + 1; j < record.data.length; j++) {
-          let { start_date: otherStartDate, end_date: otherEndDate } =
+          let {start_date: otherStartDate, end_date: otherEndDate} =
             record.data[j];
           let otherStart = otherStartDate ? new Date(otherStartDate) : null;
           let otherEnd = otherEndDate ? new Date(otherEndDate) : null;
@@ -119,15 +119,15 @@ export default function TimeLineBlock({
       }
 
       if (shouldDuplicate) {
-        result.push({ ...record, data: record.data.slice(1) });
+        result.push({...record, data: record.data.slice(1)});
 
-        result.push({ ...record, data: [record.data[0]] });
+        result.push({...record, data: [record.data[0]]});
       } else {
         result.push(record);
       }
     });
 
-    const { refData, refGroupByFields } = computedDataRef.current;
+    const {refData, refGroupByFields} = computedDataRef.current;
 
     if (
       refData.length > result.length &&
@@ -171,7 +171,7 @@ export default function TimeLineBlock({
   }, [computedData]);
 
   function safeIsWithinInterval(date, interval) {
-    const { start, end } = interval || {};
+    const {start, end} = interval || {};
     const isValidDate = (d) => d instanceof Date && !isNaN(d);
 
     if (!isValidDate(date) || !isValidDate(start) || !isValidDate(end)) {
@@ -183,7 +183,7 @@ export default function TimeLineBlock({
     }
 
     try {
-      return isWithinInterval(date, { start, end });
+      return isWithinInterval(date, {start, end});
     } catch (err) {
       console.error("safeIsWithinInterval error:", err);
       return false;
@@ -206,12 +206,12 @@ export default function TimeLineBlock({
           start: startDate1,
           end: endDate1,
         }) ||
-        safeIsWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
+        safeIsWithinInterval(endDate2, {start: startDate1, end: endDate1}) ||
         safeIsWithinInterval(startDate1, {
           start: startDate2,
           end: endDate2,
         }) ||
-        safeIsWithinInterval(endDate1, { start: startDate2, end: endDate2 })
+        safeIsWithinInterval(endDate1, {start: startDate2, end: endDate2})
       );
     }
 
@@ -257,7 +257,7 @@ export default function TimeLineBlock({
     }
   }, [selectedType]);
 
-  const { tableSlug, appId } = useParams();
+  const {tableSlug, appId} = useParams();
 
   const [hoveredRowId, setHoveredRowId] = useState(null);
 
@@ -271,10 +271,10 @@ export default function TimeLineBlock({
       : localStorage?.getItem("detailPage")
   );
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -309,8 +309,7 @@ export default function TimeLineBlock({
         setOpenDrawerModal,
         calendar_from_slug,
         calendar_to_slug,
-      }}
-    >
+      }}>
       <div className={styles.main_container}>
         {view?.attributes?.group_by_columns?.length !== 0 && (
           <Sidebar
@@ -382,8 +381,7 @@ export default function TimeLineBlock({
             style={{
               display: "flex",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Button
               onClick={handleClickType}
               style={{
@@ -394,8 +392,7 @@ export default function TimeLineBlock({
                 alignItems: "center",
                 gap: "3px",
                 padding: "0px",
-              }}
-            >
+              }}>
               <span>
                 {types.find((item) => item.value === selectedType).title}
               </span>
@@ -430,15 +427,13 @@ export default function TimeLineBlock({
                     zIndex: 0,
                   },
                 },
-              }}
-            >
+              }}>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   gap: "5px",
-                }}
-              >
+                }}>
                 {types.map((el) => (
                   <Button
                     onClick={() => setSelectedType(el.value)}
@@ -450,8 +445,7 @@ export default function TimeLineBlock({
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     {el.title}
                     {el.value === selectedType && <CheckIcon />}
                   </Button>
@@ -468,13 +462,13 @@ export default function TimeLineBlock({
               fontSize: "14px",
               fontWeight: "400",
             }}
-            onClick={() => scrollToToday()}
-          >
+            onClick={() => scrollToToday()}>
             Today
           </Button>
         </div>
       </div>
       <DrawerDetailPage
+        view={view}
         projectInfo={projectInfo}
         open={openDrawerModal}
         setOpen={setOpenDrawerModal}

@@ -63,7 +63,7 @@ const AppSidebar = ({
   const {menuId, tableSlug} = useParams();
 
   const [loading, setLoading] = useState(false);
-  const [activeAccordionId, setActiveAccordionId] = useState(null);
+  const [folderItem, setFolderItem] = useState(null);
 
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
@@ -79,12 +79,12 @@ const AppSidebar = ({
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }
-    // setMenuItem(element);
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
 
     setSelectedApp(element);
     if (element.type === "FOLDER") {
+      setFolderItem(el);
       const isOpen = menuChilds[element.id]?.open;
       if (isOpen) {
         closeMenu(element.id);
@@ -93,7 +93,6 @@ const AppSidebar = ({
         coontrolAccordionAction(element);
         setElement(element);
         setSubMenuIsOpen(true);
-        navigate(`/${element.id}`, {replace: true});
       }
 
       return;
@@ -154,13 +153,13 @@ const AppSidebar = ({
 
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: menuId,
+      parent_id: folderItem?.id,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(menuId),
+      enabled: Boolean(folderItem?.id),
       onSuccess: (res) => {
-        computeMenuChilds(menuId, res?.menus ?? []);
+        computeMenuChilds(folderItem?.id, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -229,9 +228,7 @@ const AppSidebar = ({
 
     if (isOpen) {
       closeMenu(el?.id);
-      setActiveAccordionId(null);
     } else {
-      setActiveAccordionId(el?.id);
       clickElement(el);
     }
   };
@@ -244,7 +241,7 @@ const AppSidebar = ({
             key={index}
             onClick={(e) => {
               e.stopPropagation();
-              clickHandler();
+              clickHandler(element);
               dispatch(mainActions.setSidebarHighlightedMenu(null));
             }}
             position="relative"

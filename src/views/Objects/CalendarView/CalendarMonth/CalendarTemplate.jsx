@@ -7,11 +7,11 @@ import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import {format, setHours, setMinutes} from "date-fns";
 import DrawerDetailPage from "../../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../../services/projectService";
-import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
+import {useProjectGetByIdQuery} from "../../../../services/projectService";
+import {useSelector} from "react-redux";
+import {useQuery} from "react-query";
 import layoutService from "../../../../services/layoutService";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 import AddIcon from "@mui/icons-material/Add";
 import clsx from "clsx";
@@ -39,7 +39,7 @@ const CalendarTemplate = ({
   const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
 
-  const { tableSlug, appId } = useParams();
+  const {tableSlug, appId} = useParams();
 
   const projectId = useSelector((state) => state.company?.projectId);
 
@@ -65,7 +65,7 @@ const CalendarTemplate = ({
     return view?.columns?.map((id) => fieldsMap[id])?.filter((el) => el);
   }, [fieldsMap, view]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -74,7 +74,7 @@ const CalendarTemplate = ({
   );
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -108,13 +108,13 @@ const CalendarTemplate = ({
               {
                 // borderColor: new Date().getDay() === index ? "#007AFF" : "",
               }
-            }
-          >
+            }>
             {date}
           </Box>
         ))}
       </Box>
-      <Box className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}>
+      <Box
+        className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}>
         {Array.isArray(month) &&
           month?.map((date, index) => (
             <>
@@ -133,13 +133,11 @@ const CalendarTemplate = ({
                   //     : "",
                   background:
                     date.getDay() === 0 || date.getDay() === 6 ? "#f5f4f4" : "",
-                }}
-              >
+                }}>
                 {!data?.includes(date) && (
                   <Box
                     className={styles.desc}
-                    onClick={() => navigateToCreatePage(date)}
-                  >
+                    onClick={() => navigateToCreatePage(date)}>
                     <Box className={`${styles.addButton}`}>
                       <AddIcon color="inherit" />
                     </Box>
@@ -183,6 +181,7 @@ const CalendarTemplate = ({
 
       <MaterialUIProvider>
         <DrawerDetailPage
+          view={view}
           projectInfo={projectInfo}
           open={open}
           setOpen={setOpen}

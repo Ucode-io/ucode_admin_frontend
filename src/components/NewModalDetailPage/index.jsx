@@ -22,8 +22,10 @@ import NewModalFormPage from "./NewModalFormPage";
 import NewModalRelationTable from "./NewModalRelationTable";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import {showAlert} from "../../store/alert/alert.thunk";
+import menuService from "../../services/menuService";
 
 function NewModalDetailPage({
+  view,
   open,
   layout,
   refetch,
@@ -51,11 +53,12 @@ function NewModalDetailPage({
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
+  const {menuId} = useParams();
+  const tableSlug = view?.table_slug;
 
-  const {id: idFromParam, tableSlug, appId} = useParams();
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
+  // const id = useMemo(() => {
+  //   return idFromParam ?? selectedRow?.guid;
+  // }, [idFromParam, selectedRow]);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
@@ -65,8 +68,10 @@ function NewModalDetailPage({
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
-  const [searchParams, setSearchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
+
+  const query = new URLSearchParams(window.location.search);
+  const viewId = query.get("v");
+  const itemId = query.get("p");
 
   const drawerRef = useRef(null);
   const startX = useRef(0);
@@ -88,7 +93,13 @@ function NewModalDetailPage({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    // const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getFormData = menuService.getFieldsTableDataById(
+      menuId,
+      viewId,
+      tableSlug,
+      itemId
+    );
 
     try {
       const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
@@ -213,7 +224,7 @@ function NewModalDetailPage({
               : relation.table_from?.slug,
         }))
       );
-      if (!id) {
+      if (!itemId) {
         setLoader(false);
       }
       setSelectTab(relations[selectedTabIndex]);
@@ -316,7 +327,7 @@ function NewModalDetailPage({
   }
 
   const onSubmit = (data) => {
-    if (id) {
+    if (itemId) {
       update(data);
     } else {
       create(data);
@@ -324,9 +335,9 @@ function NewModalDetailPage({
   };
 
   useEffect(() => {
-    if (id) getAllData();
+    if (itemId) getAllData();
     else getFields();
-  }, [id]);
+  }, [itemId]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -408,7 +419,7 @@ function NewModalDetailPage({
                   <Button
                     onClick={() =>
                       navigate(
-                        `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                        `/main/${menuId}/layout-settings/${tableSlug}/${itemId}`,
                         {
                           state: {
                             ...rowData,
@@ -518,7 +529,7 @@ function NewModalDetailPage({
                         relatedTable={
                           tableRelations[selectedTabIndex]?.relatedTable
                         }
-                        id={id}
+                        id={itemId}
                         fieldsMap={fieldsMap}
                         data={data}
                         setData={setData}

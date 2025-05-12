@@ -26,6 +26,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
 import FullpagePeekMaininfo from "../FullpagePeekMaininfo";
 import layoutService from "../../../services/layoutService";
+import constructorViewService from "../../../services/constructorViewService";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -49,8 +50,13 @@ const NewRelationSection = ({
   menuItem,
   data,
 }) => {
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
-  const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
+  const {
+    tableSlug: tableSlugFromParams,
+    id: idFromParams,
+    appId,
+    menuId,
+  } = useParams();
+
   const id = idFromProps ?? idFromParams;
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -67,7 +73,9 @@ const NewRelationSection = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [type, setType] = useState(null);
+  const [selectedView, setSelectedView] = useState();
   const queryTab = searchParams.get("tab");
+  const viewId = searchParams.get("v");
   const myRef = useRef();
   const dispatch = useDispatch();
   const tables = useSelector((state) => state?.auth?.tables);
@@ -84,6 +92,25 @@ const NewRelationSection = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const {data: views} = useQuery(
+    ["GET_OBJECT_LIST", menuId],
+    () => {
+      return constructorViewService.getViewListMenuId(menuId);
+    },
+    {
+      enabled: Boolean(menuId),
+      select: (res) => {
+        return res?.views ?? [];
+      },
+      onSuccess: (data) => {
+        setSelectedView(data?.find((el) => el?.id === viewId));
+      },
+    }
+  );
+
+  console.log("selectedViewselectedView", selectedView, viewId);
+  const tableSlug = selectedView?.table_slug || tableSlugFromProps;
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -245,7 +272,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap, views} = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -266,7 +293,6 @@ const NewRelationSection = ({
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
-          views: data?.views,
         };
       },
       enabled: !!relatedTableSlug,

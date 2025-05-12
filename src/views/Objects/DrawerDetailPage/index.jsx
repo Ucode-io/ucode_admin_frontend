@@ -12,17 +12,12 @@ import {useForm} from "react-hook-form";
 import {Check} from "@mui/icons-material";
 import {useQueryClient} from "react-query";
 import {Menu, MenuItem} from "@mui/material";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import useTabRouter from "../../../hooks/useTabRouter";
 import DrawerFormDetailPage from "./DrawerFormDetailPage";
 import {showAlert} from "../../../store/alert/alert.thunk";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import layoutService from "../../../services/layoutService";
@@ -31,8 +26,11 @@ import {useTranslation} from "react-i18next";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import menuService from "../../../services/menuService";
+import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 
 function DrawerDetailPage({
+  view,
   open,
   layout,
   refetch = () => {},
@@ -52,20 +50,19 @@ function DrawerDetailPage({
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
-  const handleClose = () => setOpen(false);
-  const { navigateToForm } = useTabRouter();
+  const handleClose = () => {
+    updateQueryWithoutRerender("p", null);
+    setOpen(false);
+  };
+  const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
-
-  const { id: idFromParam, tableSlug, appId } = useParams();
-
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
+  const {menuId} = useParams();
+  const tableSlug = view?.table_slug;
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
@@ -73,13 +70,15 @@ function DrawerDetailPage({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [data, setData] = useState({});
-  const [searchParams, setSearchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
+
   const permissions = useSelector(
     (state) => state?.permissions?.permissions?.[tableSlug]
   );
+  const query = new URLSearchParams(window.location.search);
+  const viewId = query.get("v");
+  const itemId = query.get("p");
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -95,13 +94,16 @@ function DrawerDetailPage({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+
+    const getFormData = menuService.getFieldsTableDataById(
+      menuId,
+      viewId,
+      tableSlug,
+      itemId
+    );
 
     try {
-      const [{ data = {} }, layout] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
 
       const layout1 = {
         ...layout,
@@ -223,7 +225,7 @@ function DrawerDetailPage({
               : relation.table_from?.slug,
         }))
       );
-      if (!id) {
+      if (!menuId) {
         setLoader(false);
       }
       setSelectTab(relations[selectedTabIndex]);
@@ -237,7 +239,7 @@ function DrawerDetailPage({
     watch,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
     setValue: setFormValue,
     getValues,
   } = useForm({
@@ -266,18 +268,14 @@ function DrawerDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
-        queryClient.refetchQueries(
-          "GET_OBJECTS_LIST_WITH_RELATIONS",
-          tableSlug,
-          {
-            table_slug: tableSlug,
-          }
-        );
+        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
+          table_slug: tableSlug,
+        });
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
@@ -288,7 +286,7 @@ function DrawerDetailPage({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         updateLayout();
         setOpen(false);
@@ -350,7 +348,7 @@ function DrawerDetailPage({
   }
 
   const onSubmit = (data) => {
-    if (id) {
+    if (itemId) {
       update(data);
     } else {
       create(data);
@@ -358,9 +356,9 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    if (id) getAllData();
+    if (itemId) getAllData();
     else getFields();
-  }, [id]);
+  }, [itemId]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -420,16 +418,14 @@ function DrawerDetailPage({
               ref={drawerRef}
               bg={"white"}
               resize={"both"}
-              position={"relative"}
-            >
+              position={"relative"}>
               <DrawerHeader
                 px="12px"
                 bg="white"
                 display={"flex"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                pr={6}
-              >
+                pr={6}>
                 <Flex h={"44px"} align="center" justify="space-between">
                   <Box
                     onClick={handleClose}
@@ -438,10 +434,9 @@ function DrawerDetailPage({
                     alignItems="center"
                     justifyContent="center"
                     width="24px"
-                    height="24px"
-                  >
+                    height="24px">
                     <KeyboardDoubleArrowRightIcon
-                      style={{ color: "rgba(55, 53, 47, 0.45)" }}
+                      style={{color: "rgba(55, 53, 47, 0.45)"}}
                       w={6}
                       h={6}
                     />
@@ -479,7 +474,7 @@ function DrawerDetailPage({
                           <Button
                             onClick={() =>
                               navigate(
-                                `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                                `/main/${appId}/layout-settings/${tableSlug}/${itemId}`,
                                 {
                                   state: {
                                     ...selectedRow,
@@ -491,9 +486,8 @@ function DrawerDetailPage({
                             h={18}
                             display={"flex"}
                             alignItems={"center"}
-                            variant="outlined"
-                          >
-                            <SpaceDashboardIcon style={{ color: "#808080" }} />
+                            variant="outlined">
+                            <SpaceDashboardIcon style={{color: "#808080"}} />
                           </Button>
                           <Box
                             sx={{
@@ -513,8 +507,7 @@ function DrawerDetailPage({
                       style={{
                         borderBottom: "none",
                         overflowX: "auto",
-                      }}
-                    >
+                      }}>
                       {data?.tabs?.map((el, index) => (
                         <Tab
                           onClick={(e) => {
@@ -528,8 +521,7 @@ function DrawerDetailPage({
                             padding: "0 10px",
                             fontSize: "11px",
                             fontWeight: "500",
-                          }}
-                        >
+                          }}>
                           {el?.type === "relation"
                             ? el?.relation?.attributes?.[
                                 `label_to_${i18n?.language}`
@@ -551,8 +543,7 @@ function DrawerDetailPage({
                   bg={"#007aff"}
                   color={"#fff"}
                   w={100}
-                  h={10}
-                >
+                  h={10}>
                   Save
                 </Button>
                 {/* )} */}
@@ -562,8 +553,7 @@ function DrawerDetailPage({
                 <DrawerBody
                   position={"relative"}
                   p="0px 50px"
-                  overflow={"auto"}
-                >
+                  overflow={"auto"}>
                   <DrawerFormDetailPage
                     projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}
@@ -613,7 +603,7 @@ function DrawerDetailPage({
                         relatedTable={
                           tableRelations[selectedTabIndex]?.relatedTable
                         }
-                        id={id}
+                        id={itemId}
                         fieldsMap={fieldsMap}
                         data={data}
                         setData={setData}

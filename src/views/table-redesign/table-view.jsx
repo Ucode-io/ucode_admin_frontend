@@ -26,6 +26,8 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
 import NewModalDetailPage from "../../components/NewModalDetailPage";
 import {useProjectGetByIdQuery} from "../../services/projectService";
+import menuService from "../../services/menuService";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 
 const TableView = ({
   selectedRow,
@@ -76,8 +78,9 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug: paramsTableSlug, appId} = useParams();
-  const tableSlug = tableSlugProp || paramsTableSlug;
+  const {id, slug, menuId} = useParams();
+  const tableSlug = view?.table_slug;
+
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
@@ -94,7 +97,8 @@ const TableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
+  const viewId = searchParams.get("v");
+
   const projectId = useSelector((state) => state.auth.projectId);
 
   const [selectedViewType, setSelectedViewType] = useState(
@@ -107,7 +111,7 @@ const TableView = ({
     defaultValues: {
       show_in_menu: true,
       fields: [],
-      app_id: appId,
+      app_id: menuId,
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -353,8 +357,9 @@ const TableView = ({
         // currentView,
       },
     ],
+
     queryFn: () => {
-      return constructorObjectService.getListV2(tableSlug, {
+      return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
         data: {
           row_view_id: view?.id,
           offset: pageToOffset(currentPage, paginiation),
@@ -372,7 +377,7 @@ const TableView = ({
         },
       });
     },
-    enabled: !!tableSlug,
+    enabled: Boolean(tableSlug),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -405,7 +410,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {
@@ -435,6 +440,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    updateQueryWithoutRerender("p", row?.guid);
     if (view?.attributes?.url_object) {
       navigateToDetailPage(row);
     } else if (projectInfo?.new_layout) {
@@ -445,6 +451,7 @@ const TableView = ({
         setSelectedRow(row);
         setOpen(true);
       } else {
+        // navigate(`/${menuId}/${row?.guid}`);
         navigateToDetailPage(row);
       }
     }
@@ -459,7 +466,7 @@ const TableView = ({
         setSelectedRow(row);
         setOpen(true);
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
+        navigateToForm(tableSlug, "CREATE", {}, {}, menuId);
       }
     }
   };
@@ -494,7 +501,8 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigate(`/${menuId}/dt?v=${view?.id}&p=${row?.guid}`);
+      // navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id);
     }
   };
 
@@ -602,6 +610,7 @@ const TableView = ({
         {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
           <DrawerDetailPage
+            view={view}
             projectInfo={projectInfo}
             open={open}
             setFormValue={setFormValue}
@@ -618,6 +627,7 @@ const TableView = ({
           />
         ) : selectedViewType === "CenterPeek" ? (
           <NewModalDetailPage
+            view={view}
             modal={true}
             projectInfo={projectInfo}
             open={open}

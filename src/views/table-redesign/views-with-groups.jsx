@@ -119,7 +119,8 @@ export const NewUiViewsWithGroups = ({
   fieldsMapRel,
   setViews,
 }) => {
-  const {tableSlug, id, menuId} = useParams();
+  const {id, menuId} = useParams();
+  const tableSlug = view?.table_slug;
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
@@ -1335,7 +1336,8 @@ const FiltersList = ({
 };
 
 const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
-  const {tableSlug} = useParams();
+  // const {tableSlug} = useParams();
+  const tableSlug = view?.table_slug;
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
@@ -1471,7 +1473,8 @@ const ViewOptions = ({
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
-  const {menuId, tableSlug} = useParams();
+  const {menuId} = useParams();
+  const tableSlug = view?.table_slug;
   const {i18n, t} = useTranslation();
   const [searchParams] = useSearchParams();
   const permissions = useSelector(

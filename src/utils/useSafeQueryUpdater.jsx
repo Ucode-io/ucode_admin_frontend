@@ -1,8 +1,6 @@
 export const updateQueryWithoutRerender = (key, value) => {
   const currentUrl = new URL(window.location.href);
-  console.log("keykeykeykey", key, value);
 
-  console.log("current", currentUrl);
   const searchParams = currentUrl.searchParams;
 
   if (value === undefined || value === null) {

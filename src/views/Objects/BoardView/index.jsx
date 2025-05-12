@@ -424,6 +424,7 @@ const BoardView = ({
               height: isFilterOpen
                 ? "calc(100vh - 121px)"
                 : "calc(100vh - 91px)",
+              paddingTop: "48px",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"

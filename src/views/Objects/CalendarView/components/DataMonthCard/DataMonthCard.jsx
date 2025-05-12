@@ -39,7 +39,7 @@ export const DataMonthCard = ({
         }}
         onClick={(e) => {
           e.stopPropagation();
-          openMenu(e);
+          navigateToEditPage(info);
         }}
         ref={ref}
       >

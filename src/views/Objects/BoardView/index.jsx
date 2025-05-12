@@ -55,6 +55,7 @@ const BoardView = ({
   const { filters } = useFilters(tableSlug, view.id);
 
   const boardRef = useRef(null);
+  const fixedElement = useRef(null);
   const subGroupById = view?.attributes?.sub_group_by_id;
 
   const [dateInfo, setDateInfo] = useState({});
@@ -327,8 +328,6 @@ const BoardView = ({
     setGroupCounts(statusGroupCounts);
   }, [data, subBoardData, statusGroupCounts]);
 
-  const fixedElement = useRef(null);
-
   useEffect(() => {
     const board = boardRef.current;
     const el = fixedElement.current;
@@ -344,7 +343,7 @@ const BoardView = ({
     return () => {
       board.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [boardRef.current, fixedElement.current]);
 
   return (
     <div className={styles.container} ref={boardRef}>

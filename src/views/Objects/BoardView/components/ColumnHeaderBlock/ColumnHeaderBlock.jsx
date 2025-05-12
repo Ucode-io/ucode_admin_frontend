@@ -12,8 +12,7 @@ export const ColumnHeaderBlock = ({
   field,
   counts,
 }) => {
-  // const fixedElement = useRef(null);
-
+  const fixedElement = useRef(null);
   const hasColor = tab?.color || field?.attributes?.has_color;
 
   const color =
@@ -21,30 +20,30 @@ export const ColumnHeaderBlock = ({
     field?.attributes?.options?.find((item) => item?.value === tab?.value)
       ?.color;
 
-  // useEffect(() => {
-  //   if (fixed) {
-  //     const board = boardRef.current;
-  //     const el = fixedElement.current;
-  //     if (!board || !el) return;
+  useEffect(() => {
+    if (fixed) {
+      const board = boardRef.current;
+      const el = fixedElement.current;
+      if (!board || !el) return;
 
-  //     const onScroll = () => {
-  //       // el.style.top = `${board.scrollTop}px`;
-  //       el.style.transform = `translateY(${board.scrollTop}px)`;
-  //     };
+      const onScroll = () => {
+        // el.style.top = `${board.scrollTop}px`;
+        el.style.transform = `translateY(${board.scrollTop}px)`;
+      };
 
-  //     board.addEventListener("scroll", onScroll);
+      board.addEventListener("scroll", onScroll);
 
-  //     return () => {
-  //       board.removeEventListener("scroll", onScroll);
-  //     };
-  //   }
-  // }, []);
+      return () => {
+        board.removeEventListener("scroll", onScroll);
+      };
+    }
+  }, []);
 
   return (
     <div
-      // ref={fixedElement}
+      ref={fixedElement}
       className={`${cls.columnHeaderBlock} column-header`}
-      // style={{ position: fixed ? "absolute" : "static" }}
+      style={{ position: fixed ? "absolute" : "static" }}
     >
       <div className={cls.leftSide}>
         <div className={cls.title}>
@@ -62,7 +61,12 @@ export const ColumnHeaderBlock = ({
             {tab.label}
           </span>
         </div>
-        <div className={cls.counter}>{counts[tab.value] ?? 0}</div>
+        <div className={cls.counter}>
+          {counts?.[tab.value] ||
+            computedData?.length ||
+            counts?.[tab.value] ||
+            0}
+        </div>
       </div>
       <div className={cls.rightSide}>
         <IconButton

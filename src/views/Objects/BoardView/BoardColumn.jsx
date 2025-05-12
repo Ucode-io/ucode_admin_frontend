@@ -1,25 +1,16 @@
 import {Add} from "@mui/icons-material";
-import {Button, IconButton} from "@mui/material";
+import { Button } from "@mui/material";
 import { useEffect, useMemo, useRef } from "react";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { applyDrag, applyDragIndex } from "../../../utils/applyDrag";
+import { applyDrag } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
-import BoardModalDetailPage from "./components/BoardModaleDetailPage";
-import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
-import DrawerDetailPage from "../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
-import { useSelector } from "react-redux";
-import layoutService from "../../../services/layoutService";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import useDebounce from "../../../hooks/useDebounce";
-import { getColumnIcon } from "../../table-redesign/icons";
-import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
 
 const BoardColumn = ({
   tab,
@@ -41,6 +32,7 @@ const BoardColumn = ({
   setSelectedRow,
   setDateInfo,
   setDefaultValue,
+  setGroupCounts,
 }) => {
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
@@ -159,7 +151,33 @@ const BoardColumn = ({
     payload["color"] = tab?.color || color;
 
     const result = applyDrag(computedData, dropResultTemp);
-    if (result) setComputedData(result);
+    if (result) {
+      setComputedData(result);
+      if (!subGroupById) {
+        setGroupCounts((prev) => {
+          return {
+            ...prev,
+            [tab?.slug]: result.length,
+          };
+        });
+      } else {
+        if (dropResult?.removedIndex !== null) {
+          setGroupCounts((prev) => {
+            return {
+              ...prev,
+              [tab?.slug]: prev[tab?.slug] - 1,
+            };
+          });
+        } else {
+          setGroupCounts((prev) => {
+            return {
+              ...prev,
+              [tab?.slug]: prev[tab?.slug] + 1,
+            };
+          });
+        }
+      }
+    }
     setIndex(dropResult?.addedIndex);
     if (result?.length >= computedData?.length) {
       mutateDrop({ data: dropResult.payload, index: dropResult.addedIndex });
@@ -245,39 +263,39 @@ const BoardColumn = ({
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  // const hasColor = tab?.color || field?.attributes?.has_color;
-  // const color =
-  //   tab?.color ||
-  //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
-  //     ?.color;
+  const hasColor = tab?.color || field?.attributes?.has_color;
+  const color =
+    tab?.color ||
+    field?.attributes?.options?.find((item) => item?.value === tab?.value)
+      ?.color;
 
   // const refetch = () => {
   //   queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
   //   queryClient.refetchQueries(["GET_TABLE_INFO"]);
   // };
 
-  // const fixedElement = useRef(null);
+  const fixedElement = useRef(null);
 
-  // useEffect(() => {
-  //   const board = boardRef.current;
-  //   const el = fixedElement.current;
-  //   if (!board || !el) return;
+  useEffect(() => {
+    const board = boardRef.current;
+    const el = fixedElement.current;
+    if (!board || !el) return;
 
-  //   const onScroll = () => {
-  //     el.style.top = `${board.scrollTop}px`;
-  //   };
+    const onScroll = () => {
+      el.style.top = `${board.scrollTop}px`;
+    };
 
-  //   board.addEventListener("scroll", onScroll);
+    board.addEventListener("scroll", onScroll);
 
-  //   return () => {
-  //     board.removeEventListener("scroll", onScroll);
-  //   };
-  // }, []);
+    return () => {
+      board.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
-  const color =
-    tab?.color ||
-    field?.attributes?.options?.find((item) => item?.value === tab?.value)
-      ?.color;
+  // const color =
+  //   tab?.color ||
+  //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
+  //     ?.color;
 
   return (
     <>
@@ -288,6 +306,9 @@ const BoardColumn = ({
         }}
       >
         {/* {!subGroupById && (
+          
+        )} */}
+        {/* {(!subGroupById || subGroupIndex === 0) && (
           <ColumnHeaderBlock
             field={field}
             tab={tab}
@@ -297,6 +318,41 @@ const BoardColumn = ({
             fixed
           />
         )} */}
+        {/* <div
+          ref={fixedElement}
+          className={`${cls.columnHeaderBlock} column-header`}
+        >
+          <div className={cls.leftSide}>
+            <div className={cls.title}>
+              <span
+                style={{
+                  background: hasColor ? color + 33 : "rgb(139, 150, 160)",
+                  color: hasColor ? color - 50 : "#fff",
+                }}
+                className={cls.tabBlockStatus}
+              >
+                <span
+                  className={cls.dot}
+                  style={{ background: color ? color : "rgb(78, 84, 90)" }}
+                />
+                {tab.label}
+              </span>
+            </div>
+            <div className={cls.counter}>{computedData?.length || 0}</div>
+          </div>
+          <div className={cls.rightSide}>
+            <IconButton
+              className={cls.addButton}
+              color="inherit"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToCreatePage({ tab });
+              }}
+            >
+              <Add />
+            </IconButton>
+          </div>
+        </div> */}
 
         <Container
           groupName="subtask"

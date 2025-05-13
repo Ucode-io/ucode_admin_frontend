@@ -15,14 +15,15 @@ import {Dialog} from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 function LayoutSettings() {
-  const location = useLocation();
+  const {state} = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {tableSlug, appId} = useParams();
+  const {menuId} = useParams();
   const [sectionIndex, setSectionIndex] = useState(null);
   const [selectedSection, setSelectedSection] = useState();
   const [sections, setSections] = useState();
-  const selectedRow = location?.state;
+  const selectedRow = state;
+  const tableSlug = state?.tableSlug;
   const [loader, setLoader] = useState(false);
 
   const {
@@ -37,7 +38,7 @@ function LayoutSettings() {
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {

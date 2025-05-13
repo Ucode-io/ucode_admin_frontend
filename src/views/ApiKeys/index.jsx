@@ -19,10 +19,6 @@ import {useEffect, useRef, useState} from "react";
 import fileService from "../../services/fileService";
 import apiKeyService from "../../services/apiKey.service";
 import {numberWithSpaces} from "../../utils/formatNumbers";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import ActivityFeedPage from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity";
-import ActivityFeedTable from "../../components/LayoutSidebar/Components/ActivityFeedButton/components/ActivityFeedTable";
-import EmptyDataComponent from "../../components/EmptyDataComponent";
 import {Box} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 
@@ -30,7 +26,6 @@ const ApiKeyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const {download} = useDownloader();
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -40,7 +35,11 @@ const ApiKeyPage = () => {
   const inputRef = useRef();
   const [apiKeys, setApiKeys] = useState();
   const navigateToEditForm = (id) => {
-    navigate(`${location.pathname}/${id}`);
+    navigate(`${location.pathname}/${id}?edit=true`);
+  };
+
+  const navigateToForm = (id) => {
+    navigate(`${location.pathname}/${id}?view=true`);
   };
 
   const navigateToCreateForm = () => {
@@ -48,7 +47,6 @@ const ApiKeyPage = () => {
   };
 
   const deleteTable = (id) => {
-    // dispatch(deleteApplicationAction(id));
     apiKeyService.delete(projectId, id).then(() => {
       getList();
     });
@@ -148,6 +146,8 @@ const ApiKeyPage = () => {
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
             <CTableCell>AppId</CTableCell>
+            <CTableCell>Client ID</CTableCell>
+            <CTableCell>Platform name</CTableCell>
             <CTableCell>Monthly limit</CTableCell>
             <CTableCell>RPS limit</CTableCell>
             <CTableCell>Used count</CTableCell>
@@ -156,10 +156,14 @@ const ApiKeyPage = () => {
 
           <CTableBody loader={false} columnsCount={4} dataLength={list.length}>
             {apiKeys?.map((element, index) => (
-              <CTableRow key={element.id}>
+              <CTableRow
+                onClick={() => navigateToForm(element?.id)}
+                key={element.id}>
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
                 <CTableCell>{element?.app_id}</CTableCell>
+                <CTableCell>{element?.client_id}</CTableCell>
+                <CTableCell>{element?.client_platform?.name}</CTableCell>
                 <CTableCell>
                   {numberWithSpaces(element?.monthly_request_limit)}
                 </CTableCell>
@@ -167,16 +171,34 @@ const ApiKeyPage = () => {
                 <CTableCell>{numberWithSpaces(element?.used_count)}</CTableCell>
                 <CTableCell>
                   <div className="flex">
-                    <RectangleIconButton
-                      color="success"
-                      className="mr-1"
-                      size="small"
-                      onClick={() => navigateToEditForm(element.id)}>
-                      <Edit color="success" />
-                    </RectangleIconButton>
-                    <RectangleIconButton color="error" onClick={deleteTable}>
-                      <Delete color="error" />
-                    </RectangleIconButton>
+                    {element?.disable ? (
+                      <RectangleIconButton
+                        style={{
+                          cursor: "not-allowed",
+                          border: "1px solid #eee",
+                          background: "#eeee",
+                        }}
+                        color="success"
+                        className="mr-1"
+                        size="small">
+                        <Edit style={{color: "#8888"}} color="success" />
+                      </RectangleIconButton>
+                    ) : (
+                      <RectangleIconButton
+                        color="success"
+                        className="mr-1"
+                        size="small"
+                        onClick={() => navigateToEditForm(element.id)}>
+                        <Edit color="success" />
+                      </RectangleIconButton>
+                    )}
+                    {element?.disable ? null : (
+                      <RectangleIconButton
+                        color="error"
+                        onClick={() => deleteTable(element?.id)}>
+                        <Delete color="error" />
+                      </RectangleIconButton>
+                    )}
                   </div>
                 </CTableCell>
               </CTableRow>

@@ -21,8 +21,18 @@ const HFFloatField = ({
   type = "text",
   isFloat = false,
   decimalScale = 50,
+  newUi,
   ...props
 }) => {
+  const style = isTransparent
+    ? {background: "transparent", border: "none"}
+    : disabled
+      ? {background: "#c0c0c039"}
+      : {
+        background: isBlackBg ? "#2A2D34" : "",
+        color: isBlackBg ? "#fff" : "",
+      };
+
   return (
     <Controller
       control={control}
@@ -33,10 +43,10 @@ const HFFloatField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        // const allowNegative = isFloat; // allow negatives only for float fields
-        const decimalSeparator = isFloat ? "." : undefined; // set the decimal separator only for float fields
+        const decimalSeparator = isFloat ? "." : undefined;
         return (
           <NumericFormat
+            id="float-field"
             thousandsGroupStyle="thousand"
             thousandSeparator=" "
             decimalSeparator={decimalSeparator}
@@ -46,11 +56,10 @@ const HFFloatField = ({
             autoComplete="off"
             allowNegative={true}
             fullWidth={fullWidth}
-            value={value}
+            value={value ?? ""}
             onChange={(e) => {
               const val = e.target.value;
               const valueWithoutSpaces = val.replaceAll(" ", "");
-              console.log("valvalvalvalval", val);
               if (!valueWithoutSpaces) onChange("");
               else {
                 if (valueWithoutSpaces.at(-1) === ".")
@@ -69,21 +78,11 @@ const HFFloatField = ({
             }`}
             name={name}
             readOnly={disabled}
-            style={
-              isTransparent
-                ? {background: "transparent", border: "none"}
-                : disabled
-                ? {background: "#c0c0c039"}
-                : {
-                    background: isBlackBg ? "#2A2D34" : "",
-                    color: isBlackBg ? "#fff" : "",
-                  }
-            }
+            style={{...style, padding: newUi ? "4px" : ""}}
             {...props}
           />
         );
-      }}
-    ></Controller>
+      }}></Controller>
   );
 };
 

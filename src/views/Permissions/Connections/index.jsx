@@ -19,12 +19,15 @@ import ConnectionCreateModal from "./ConnectionFormPage";
 import connectionServiceV2, {
   useConnectionDeleteMutation,
 } from "../../../services/auth/connectionService";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
-const ConnectionPage = () => {
+const ConnectionPage = ({settingLan}) => {
   const {clientId} = useParams();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
   const [connectionId, setConnectionId] = useState();
+  const {i18n} = useTranslation();
 
   const {data: connections, isLoading} = useQuery(
     ["GET_CONNECTION_LIST", clientId],
@@ -59,14 +62,24 @@ const ConnectionPage = () => {
           style={{
             marginBottom: "15px",
           }}>
-          Связь
+          {generateLangaugeText(settingLan, i18n?.language, "Connection") ||
+            "Connection"}
         </h2>
         <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Name</CTableCell>
-            <CTableCell>Table slug</CTableCell>
-            <CTableCell>View slug</CTableCell>
+            <CTableCell>
+              {generateLangaugeText(settingLan, i18n?.language, "Name") ||
+                "Name"}
+            </CTableCell>
+            <CTableCell>
+              {generateLangaugeText(settingLan, i18n?.language, "Table slug") ||
+                "Table slug"}
+            </CTableCell>
+            <CTableCell>
+              {generateLangaugeText(settingLan, i18n?.language, "View slug") ||
+                "View slug"}
+            </CTableCell>
             {connections?.data?.response.length ? (
               <CTableCell width={60}></CTableCell>
             ) : null}
@@ -106,6 +119,7 @@ const ConnectionPage = () => {
 
       {modalType && (
         <ConnectionCreateModal
+          settingLan={settingLan}
           closeModal={closeModal}
           modalType={modalType}
           connectionId={connectionId}

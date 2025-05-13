@@ -49,8 +49,7 @@ function DetailTabs({
               className={`${styles.tabs_item} ${
                 selectedTab === index ? "custom-selected-tab" : "custom_tab"
               }`}
-              onClick={() => handleTabSelection(index)}
-            >
+              onClick={() => handleTabSelection(index)}>
               <HFTextField
                 control={control}
                 // style={{width: '120px', border: '0px solid #fff', boxShadow: 'none'}}

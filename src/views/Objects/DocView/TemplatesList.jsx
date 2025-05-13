@@ -8,6 +8,9 @@ import styles from "./style.module.scss";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {useQueryClient} from "react-query";
+import { useGetLang } from "../../../hooks/useGetLang";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
 
 const TemplatesList = ({
   templates,
@@ -23,6 +26,10 @@ const TemplatesList = ({
   const {tableSlug} = useParams();
   const queryClient = useQueryClient();
   const location = useLocation();
+
+  const lang = useGetLang("Table");
+  const { i18n } = useTranslation();
+
   const onCreateButtonClick = () => {
     const data = {
       id: generateID(),
@@ -46,8 +53,10 @@ const TemplatesList = ({
   return (
     <div className={styles.docListBlock}>
       <div className={styles.doclistHeader}>
-        <div className={styles.doclistHeaderTitle}>Шаблоны</div>
-
+        <div className={styles.doclistHeaderTitle}>
+          {generateLangaugeText(lang, i18n?.language, "Templates") ||
+            "Templates"}
+        </div>
         <IconButton onClick={onCreateButtonClick}>
           <Add />
         </IconButton>
@@ -67,14 +76,16 @@ const TemplatesList = ({
                 className={`${styles.row} ${
                   selectedTemplate?.guid === template.guid ? styles.active : ""
                 }`}
-                onClick={() => setSelectedTemplate(template)}>
+                onClick={() => setSelectedTemplate(template)}
+              >
                 {template.title ?? ""}
 
                 <div className={styles.deleteBtn}>
                   {!location?.state?.isTableView && (
                     <RectangleIconButton
                       color="error"
-                      onClick={() => onDelete(template?.guid)}>
+                      onClick={() => onDelete(template?.guid)}
+                    >
                       <Delete color="error" />
                     </RectangleIconButton>
                   )}

@@ -12,6 +12,7 @@ import NewSectionsBlock from "./NewSectionsBlock";
 import styles from "./style.module.scss";
 
 function LayoutTabs({
+  tableLan,
   mainForm,
   layoutForm,
   openFieldsBlock,
@@ -150,12 +151,12 @@ function LayoutTabs({
                       {tab?.type === "relation"
                         ? tab?.relation?.attributes?.[
                             `label_to_${i18n?.language}`
-                          ]
+                          ] || tab?.relation?.attributes?.label
                         : mainForm.watch(
-                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_to_${i18n.language}`
                           ) ||
                           mainForm.watch(
-                            `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
+                            `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
                           ) ||
                           mainForm.watch(
                             `layouts.${selectedLayoutIndex}.tabs.${index}.label`
@@ -197,6 +198,7 @@ function LayoutTabs({
             return tab?.type === "section" ? (
               <div className={styles.sections_wrapper}>
                 <NewSectionsBlock
+                  tableLan={tableLan}
                   index={index}
                   mainForm={mainForm}
                   layoutForm={layoutForm}

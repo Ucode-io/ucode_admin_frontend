@@ -1,0 +1,1 @@
+export { ActivityLogsDetail } from "./ActivityLogsDetail";

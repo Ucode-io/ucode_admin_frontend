@@ -1,6 +1,6 @@
-import { Card, Modal, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import {Card, Modal, Typography} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import CreateButton from "../../../../../Buttons/CreateButton";
 import SaveButton from "../../../../../Buttons/SaveButton";
@@ -9,18 +9,18 @@ import {
   useFunctionFolderCreateMutation,
   useFunctionFolderUpdateMutation,
 } from "../../../../../../services/functionFolderService";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../../../store/alert/alert.thunk";
 
-const FunctionFolderCreateModal = ({ folder, closeModal }) => {
+const FunctionFolderCreateModal = ({folder, closeModal}) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: folder,
   });
 
-  const { mutate: createFolder, isLoading: createLoading } =
+  const {mutate: createFolder, isLoading: createLoading} =
     useFunctionFolderCreateMutation({
       onSuccess: () => {
         closeModal();
@@ -29,7 +29,7 @@ const FunctionFolderCreateModal = ({ folder, closeModal }) => {
       },
     });
 
-  const { mutate: updateFolder, isLoading: updateLoading } =
+  const {mutate: updateFolder, isLoading: updateLoading} =
     useFunctionFolderUpdateMutation({
       onSuccess: () => {
         closeModal();

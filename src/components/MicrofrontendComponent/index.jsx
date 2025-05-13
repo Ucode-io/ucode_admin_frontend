@@ -1,14 +1,15 @@
-import { Suspense } from "react";
-import { lazy } from "react";
+import {Suspense} from "react";
+import {lazy} from "react";
 // import empty from "remote_empty_app/empty";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import SafeComponent from "../SafeComponent";
+import {useTranslation} from "react-i18next";
 
 const empty = lazy(() => import("remote_empty_app/empty"));
 
 const EMPTY = empty;
 
-const MicrofrontendComponent = ({ link, loginAction }) => {
+const MicrofrontendComponent = ({link, loginAction}) => {
   const RemoteButton = lazy(async () => {
     window.remotesMap[`remote_app_${link}`] = {
       url: link,
@@ -22,13 +23,11 @@ const MicrofrontendComponent = ({ link, loginAction }) => {
     );
     return comp;
   });
-
+  const {i18n} = useTranslation();
   return (
     <SafeComponent>
-      <Suspense
-        fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}
-      >
-        <RemoteButton loginAction={loginAction} />
+      <Suspense fallback={<RingLoaderWithWrapper style={{height: "100vh"}} />}>
+        <RemoteButton i18n={i18n} loginAction={loginAction} />
       </Suspense>
     </SafeComponent>
   );

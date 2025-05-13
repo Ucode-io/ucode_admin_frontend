@@ -8,6 +8,8 @@ import RectangleIconButton from "../../../../../components/Buttons/RectangleIcon
 import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import layoutService from "../../../../../services/layoutService";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 export default function LayoutsItem({
   createLayout,
@@ -16,6 +18,7 @@ export default function LayoutsItem({
   getData,
   mainForm,
   allMenus,
+  tableLan,
   menus,
   remove,
   setModal,
@@ -25,7 +28,7 @@ export default function LayoutsItem({
   languages,
 }) {
   const {tableSlug} = useParams();
-
+  const {i18n} = useTranslation();
   const watchLayout = mainForm.watch(`layouts.${index}`);
 
   const updateCurrentLayout = (menuId) => {
@@ -77,8 +80,7 @@ export default function LayoutsItem({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-          }}
-        >
+          }}>
           {languages?.map((lang) => (
             <Controller
               control={mainForm.control}
@@ -98,8 +100,7 @@ export default function LayoutsItem({
                     background: "transparent",
                   }}
                 />
-              )}
-            ></Controller>
+              )}></Controller>
           ))}
 
           <Box
@@ -108,49 +109,62 @@ export default function LayoutsItem({
               alignItems: "center",
               gap: "10px",
               marginLeft: "auto",
-            }}
-          >
+            }}>
             <Box style={{display: "flex", alignItems: "center"}}>
               <FormControlLabel
                 control={
                   <Switch
+                    id="name_layout"
                     onChange={() => {
                       setDefault(index);
                     }}
                     checked={element.is_default ?? false}
                   />
                 }
-                label={"Default"}
+                label={
+                  generateLangaugeText(tableLan, i18n?.language, "Default") ||
+                  "Default"
+                }
               />
               <FormControlLabel
                 control={
                   <Switch
+                    id="modal_layout"
                     onChange={(e) => {
                       setModal(index, e);
                     }}
                     checked={element.type === "SimpleLayout" ? false : true}
                   />
                 }
-                label={"Modal"}
+                label={
+                  generateLangaugeText(tableLan, i18n?.language, "Modal") ||
+                  "Modal"
+                }
               />
               <FormControlLabel
                 control={
                   <Switch
+                    id="tabs_layout"
                     onChange={(e) => {
                       setSectionTab(index, e);
                     }}
                     checked={element?.is_visible_section ?? false}
                   />
                 }
-                label={"Remove Tabs"}
+                label={
+                  generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Remove Tabs"
+                  ) || "Remove Tabs"
+                }
               />
             </Box>
 
             <Box
               sx={{
                 minWidth: "200px",
-              }}
-            >
+              }}>
               <HFSelect
                 control={mainForm.control}
                 onChange={(e) => updateCurrentLayout(e)}
@@ -166,8 +180,7 @@ export default function LayoutsItem({
         <Box style={{display: "flex", gap: "5px"}}>
           <RectangleIconButton
             color="success"
-            onClick={() => navigateToEditForm(element)}
-          >
+            onClick={() => navigateToEditForm(element)}>
             <Edit color="success" />
           </RectangleIconButton>
 
@@ -177,8 +190,7 @@ export default function LayoutsItem({
 
           <RectangleIconButton
             color="error"
-            onClick={() => removeHandle(index)}
-          >
+            onClick={() => removeHandle(index)}>
             <Delete color="error" />
           </RectangleIconButton>
         </Box>

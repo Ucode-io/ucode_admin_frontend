@@ -1,21 +1,12 @@
 import React from "react";
 import HFTextEditor from "../FormElements/HFTextEditor";
-import { Box, Button, Modal, Popover } from "@mui/material";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import { useWatch } from "react-hook-form";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "none",
-  borderRadius: "8px",
-  boxShadow: 24,
-  p: 4,
-};
+import {Box, Popover} from "@mui/material";
+import {useWatch} from "react-hook-form";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../store/alert/alert.thunk";
+import cls from "./style.module.scss";
+import {parseHTMLToText} from "../../utils/parseHTMLToText";
 
 export default function MultiLineCellFormElement({
   control,
@@ -53,15 +44,32 @@ export default function MultiLineCellFormElement({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+  const dispatch = useDispatch();
+
+  const handleCopy = (value) => {
+    const cleanedText = parseHTMLToText(value);
+
+    navigator.clipboard.writeText(cleanedText);
+    dispatch(showAlert("Copied to clipboard", "success"));
+  };
+
   return (
     <>
       <Box
+        className={cls.multiLineCellFormElement}
         style={{
           display: "flex",
-        }}
-      >
+        }}>
+        <button
+          className={cls.multiLineCellFormElementBtn}
+          onClick={() => handleCopy(value)}>
+          <span>
+            <ContentCopyIcon style={{width: "17px", height: "17px"}} />
+          </span>
+        </button>
         <p
-          onClick={handleClick}
+          id="textAreaInput"
+          onClick={(e) => handleClick(e)}
           style={
             isWrapField
               ? {
@@ -81,11 +89,10 @@ export default function MultiLineCellFormElement({
                   cursor: "text",
                   minHeight: "16px",
                 }
-          }
-        >
+          }>
           {stripHtmlTags(
             value
-              ? `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`
+              ? `${value?.slice(0, 36)}${value?.length > 200 ? "..." : ""}`
               : ""
           )}
         </p>
@@ -102,9 +109,9 @@ export default function MultiLineCellFormElement({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}
-        >
+          }}>
           <HFTextEditor
+            id="multi_line"
             control={control}
             updateObject={updateObject}
             isNewTableView={isNewTableView}

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import {useState} from "react";
+import {useFieldArray} from "react-hook-form";
 import {
   CTable,
   CTableBody,
@@ -11,12 +11,12 @@ import TableCard from "../../../../components/TableCard";
 import TableRowButton from "../../../../components/TableRowButton";
 import Header from "../../../../components/Header";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import { EditIcon } from "../../../../assets/icons/icon";
-import { Delete } from "@mui/icons-material";
-import { Box, Button } from "@mui/material";
+import {EditIcon} from "../../../../assets/icons/icon";
+import {Delete} from "@mui/icons-material";
+import {Box, Button} from "@mui/material";
 import FieldDrawer from "./DetailPage";
 
-const FieldsConfiguration = ({ control }) => {
+const FieldsConfiguration = ({control}) => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [selectedField, setSelectedField] = useState();
 
@@ -32,7 +32,7 @@ const FieldsConfiguration = ({ control }) => {
     setDrawerIsOpen(true);
   };
 
-  const { fields, remove, append, update } = useFieldArray({
+  const {fields, remove, append, update} = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
@@ -77,15 +77,13 @@ const FieldsConfiguration = ({ control }) => {
           <CTableBody
             // loader={isLoading}
             columnsCount={5}
-            dataLength={fields?.length}
-          >
+            dataLength={fields?.length}>
             {fields?.map((field, index) => (
               <CTableRow
                 key={field.id}
                 onClick={() => {
                   openEditDrawer(field);
-                }}
-              >
+                }}>
                 <CTableCell textAlign="center">{index + 1}</CTableCell>
                 <CTableCell>{field.slug}</CTableCell>
                 <CTableCell>{field.type}</CTableCell>
@@ -99,8 +97,7 @@ const FieldsConfiguration = ({ control }) => {
                   <RectangleIconButton
                     variant="outline"
                     color="error"
-                    onClick={() => deleteClickHandler(index)}
-                  >
+                    onClick={() => deleteClickHandler(index)}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>

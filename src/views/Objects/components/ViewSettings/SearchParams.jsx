@@ -1,7 +1,7 @@
-import { Backdrop, CircularProgress, Switch } from "@mui/material";
-import React, { useState } from "react";
-import { columnIcons } from "../../../../utils/constants/columnIcons";
-import { useParams } from "react-router-dom";
+import {Backdrop, Box, CircularProgress, Switch} from "@mui/material";
+import React, {useState} from "react";
+import {columnIcons} from "../../../../utils/constants/columnIcons";
+import {useParams} from "react-router-dom";
 
 export default function SearchParams({
   checkedColumns,
@@ -10,7 +10,7 @@ export default function SearchParams({
   updateField,
 }) {
   const [fields, setFields] = useState(columns);
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
 
   const changeHandler = (slug, e, index, isSearch) => {
     const updatedColumns = [...fields];
@@ -56,8 +56,7 @@ export default function SearchParams({
           style={{
             padding: "10px 14px",
             minWidth: "200px",
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
@@ -65,16 +64,14 @@ export default function SearchParams({
               borderBottom: "1px solid #e0e0e0",
               padding: "6px 0",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "10px",
-              }}
-            >
-              <div style={{ textAlign: "end" }}>All</div>
+              }}>
+              <div style={{textAlign: "end"}}>All</div>
             </div>
 
             <div>
@@ -86,37 +83,37 @@ export default function SearchParams({
             </div>
           </div>
 
-          {fields.map((column, index) => (
-            <div
-              key={column.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "6px 0",
-                justifyContent: "space-between",
-              }}
-            >
+          <Box sx={{height: "400px", overflow: "auto"}}>
+            {fields?.map((column, index) => (
               <div
+                key={column.id}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "10px",
-                }}
-              >
-                <div>{columnIcons(column.type)}</div>
+                  padding: "6px 0",
+                  justifyContent: "space-between",
+                }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}>
+                  <div>{columnIcons(column.type)}</div>
 
-                <div style={{ textAlign: "end" }}>{column.label}</div>
-              </div>
+                  <div style={{textAlign: "end"}}>{column.label}</div>
+                </div>
 
-              <div>
-                <Switch
-                  size="small"
-                  onChange={(e) => changeHandler(column.slug, e, index)}
-                  checked={column.is_search}
-                />
+                <div>
+                  <Switch
+                    size="small"
+                    onChange={(e) => changeHandler(column.slug, e, index)}
+                    checked={column.is_search}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </Box>
         </div>
       </div>
     </>

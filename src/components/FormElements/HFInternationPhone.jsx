@@ -29,6 +29,7 @@ const HFInternationPhone = ({
   isTableView,
   updateObject,
   isNewTableView,
+  newUi,
   ...props
 }) => {
   const classes = useStyles();
@@ -43,6 +44,7 @@ const HFInternationPhone = ({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <PhoneInput
+          disabled={disabled}
           placeholder="Enter phone number"
           value={
             isString(value) ? (value?.includes("+") ? value : `+${value}`) : ""
@@ -68,6 +70,7 @@ const HFInternationPhone = ({
           limitMaxLength={true}
           {...props}
           isValidPhoneNumber
+          style={{ height: newUi ? "25px" : undefined }}
           renderInput={(inputProps) => (
             <input
               {...inputProps}

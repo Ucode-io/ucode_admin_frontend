@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneIcon from "@mui/icons-material/Done";
-import React from "react";
+import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useParams} from "react-router-dom";
@@ -10,12 +10,11 @@ import RectangleIconButton from "../Buttons/RectangleIconButton";
 import {CTableCell, CTableRow} from "../CTable";
 import NewTableDataForm from "../ElementGenerators/NewTableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import {CircularProgress} from "@mui/material";
 
 const AddDataColumn = React.memo(
   ({
     columns,
-    isTableView,
-    relOptions,
     getValues,
     mainForm,
     relationfields,
@@ -30,6 +29,7 @@ const AddDataColumn = React.memo(
   }) => {
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
+    const [isLoading, setIsLoading] = useState();
 
     const computedSlug = isRelationTable
       ? view?.type === "Many2One"
@@ -43,11 +43,11 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      watch,
       formState: {errors},
     } = useForm({});
 
     const onSubmit = (values) => {
+      setIsLoading(true);
       constructorObjectService
         .create(computedTableSlug, {
           data: {
@@ -56,11 +56,13 @@ const AddDataColumn = React.memo(
           },
         })
         .then((res) => {
+          setIsLoading(false);
           refetch();
           setAddNewRow(false);
           dispatch(showAlert("Successfully created!", "success"));
         })
         .catch((e) => {
+          setIsLoading(false);
           console.log("ERROR: ", e);
         })
         .finally(() => {});
@@ -94,7 +96,6 @@ const AddDataColumn = React.memo(
               zIndex: "1",
             }}>
             <NewTableDataForm
-              relOptions={relOptions}
               tableSlug={tableSlug}
               fields={columns}
               field={column}
@@ -107,6 +108,7 @@ const AddDataColumn = React.memo(
               onRowClick={onRowClick}
               width={width}
               index={index}
+              watch={mainForm.watch}
             />
           </CTableCell>
         ))}
@@ -146,11 +148,17 @@ const AddDataColumn = React.memo(
                   <ClearIcon color="error" />
                 </RectangleIconButton>
               </PermissionWrapperV2>
-              <RectangleIconButton
-                color="success"
-                onClick={handleSubmit(onSubmit)}>
-                <DoneIcon color="success" />
-              </RectangleIconButton>
+              {isLoading ? (
+                <CircularProgress
+                  style={{width: "20px", height: "20px", marginLeft: "4px"}}
+                />
+              ) : (
+                <RectangleIconButton
+                  color="success"
+                  onClick={handleSubmit(onSubmit)}>
+                  <DoneIcon color="success" />
+                </RectangleIconButton>
+              )}
             </div>
           </td>
         </CTableCell>

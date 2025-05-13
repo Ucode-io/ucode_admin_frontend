@@ -1,6 +1,33 @@
+.highlight-on-hover {
+  cursor: pointer !important;
+  &:hover {
+    background-color: #eaecf0 !important;
+  }
+}
+
+.parent-folder {
+  cursor: default;
+
+  &:hover {
+    .extra_icon {
+      display: flex;
+      margin-right: 5px;
+      cursor: pointer;
+      z-index: 99999;
+    }
+  }
+
+  .folder-icon {
+    margin-right: 8px;
+  }
+
+  .extra_icon {
+    display: none;
+  }
+}
+
 .SubMenu {
-  // min-width: 280px;
-  width: 280px;
+  width: 240px;
   height: 100vh;
   background-color: #fff;
   border-right: 1px solid rgba(192, 192, 192, 0.562);
@@ -29,7 +56,7 @@
     margin: 10px;
     border-radius: 8px;
 
-    &>div>div {
+    & > div > div {
       background-color: #f7f7f7;
       border-radius: 6px;
       width: 100%;
@@ -64,19 +91,19 @@
     height: 56px;
     align-items: center;
     padding: 0 12px;
-    // box-shadow: inset 0px -1px 0px #E5E9EB;
+    border-bottom: 1px solid #eaecf0;
 
     .buttons {
       display: flex;
-      column-gap: 8px;
       align-items: center;
+      column-gap: 16px;
 
       .close-btn,
       .dots {
         cursor: pointer;
         display: flex;
         align-items: center;
-        column-gap: 8px;
+        column-gap: 16px;
       }
     }
 
@@ -146,10 +173,9 @@
 
     &.active-with-child {
       color: #0365f2;
-      background-color: #fff !important;
 
       &:hover {
-        background-color: #a8a8a81a !important;
+        background-color: #eaecf0 !important;
       }
 
       .extra_icon {
@@ -232,27 +258,6 @@
       border-top: 1px solid rgba(192, 192, 192, 0.294);
     }
 
-    .parent-folder {
-      cursor: default;
-
-      &:hover {
-        .extra_icon {
-          display: flex;
-          margin-right: 5px;
-          cursor: pointer;
-          z-index: 99999;
-        }
-      }
-
-      .folder-icon {
-        margin-right: 8px;
-      }
-
-      .extra_icon {
-        display: none;
-      }
-    }
-
     .parent-block {
       // margin-bottom: 4px;
 
@@ -282,7 +287,6 @@
           background-color: #0365f2;
           color: #fff;
 
-
           .extra_icon {
             display: none;
           }
@@ -295,11 +299,9 @@
 
         &.active-with-child {
           color: #0365f2;
-          background-color: #fff !important;
-
 
           &:hover {
-            background-color: #a8a8a81a !important;
+            background-color: #eaecf0 !important;
           }
 
           .extra_icon {
@@ -482,7 +484,6 @@
             background-color: #0365f2;
             color: #fff;
 
-
             .extra_icon {
               display: none;
             }
@@ -495,11 +496,9 @@
 
           &.active-with-child {
             color: #0365f2;
-            background-color: #fff !important;
-
 
             &:hover {
-              background-color: #a8a8a81a !important;
+              background-color: #eaecf0 !important;
             }
 
             .extra_icon {

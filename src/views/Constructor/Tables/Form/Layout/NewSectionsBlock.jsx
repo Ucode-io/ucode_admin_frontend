@@ -7,8 +7,11 @@ import {applyDrag} from "../../../../../utils/applyDrag";
 import {generateGUID} from "../../../../../utils/generateID";
 import NewSection from "./NewSection";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const NewSectionsBlock = ({
+  tableLan,
   mainForm,
   layoutForm,
   openFieldSettingsBlock,
@@ -19,6 +22,7 @@ const NewSectionsBlock = ({
   index,
   allTabs,
 }) => {
+  const {i18n} = useTranslation();
   const selectedLayoutIndex = useWatch({
     control: mainForm.control,
     name: "layouts",
@@ -99,7 +103,10 @@ const NewSectionsBlock = ({
       <Card className={styles.newsectionCreateCard}>
         <div className={styles.newsectionCreateButton} onClick={addNewSection}>
           <Add color="primary" />
-          <p>Add section</p>
+          <p>
+            {generateLangaugeText(tableLan, i18n?.language, "Add section") ||
+              "Add section"}
+          </p>
         </div>
       </Card>
     </div>

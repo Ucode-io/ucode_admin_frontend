@@ -1,13 +1,14 @@
-import {Box, Button, CircularProgress, Menu, Skeleton} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useQuery, useQueryClient} from "react-query";
+import {Box, Menu} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FiltersTab from "../components/ViewSettings/FiltersTab";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {quickFiltersActions} from "../../../store/filter/quick_filter";
 import styles from "./styles.module.scss";
 import {useParams} from "react-router-dom";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const customStyles = {
   gap: "5px",
@@ -27,9 +28,7 @@ export default function FilterVisible({
   columns,
   views,
   relationColumns,
-  isLoading,
   form,
-  text = "",
   setFilterVisible,
 }) {
   const queryClient = useQueryClient();
@@ -37,7 +36,7 @@ export default function FilterVisible({
   const {tableSlug} = useParams();
   const [filterAnchor, setFilterAnchor] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
-
+  const permissions = useSelector((state) => state.permissions?.[tableSlug]);
   const handleClickFilter = (event) => {
     setFilterAnchor(event.currentTarget);
   };
@@ -79,14 +78,17 @@ export default function FilterVisible({
 
   return (
     <div>
-      <Box
-        variant={"text"}
-        className={styles.add_filter}
-        sx={customStyles}
-        onClick={handleClickFilter}>
-        <FilterAltOutlinedIcon color={"#A8A8A8"} />
-        Add Filters
-      </Box>
+      <PermissionWrapperV2 tableSlug={tableSlug} type="add_filter">
+        <Box
+          id="add_filter_btn"
+          variant={"text"}
+          className={styles.add_filter}
+          sx={customStyles}
+          onClick={handleClickFilter}>
+          <FilterAltOutlinedIcon color={"#A8A8A8"} />
+          Add Filters
+        </Box>
+      </PermissionWrapperV2>
       <Menu open={open} onClose={handleCloseFilter} anchorEl={filterAnchor}>
         <FiltersTab
           form={form}

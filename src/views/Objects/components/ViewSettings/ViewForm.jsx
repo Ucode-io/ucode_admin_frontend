@@ -25,10 +25,10 @@ const ViewForm = ({
   fields,
   refetchViews,
   setIsChanged,
-  closeModal,
   columns,
   relationColumns,
   views,
+  viewData,
   setTab,
 }) => {
   const {tableSlug, appId} = useParams();
@@ -42,7 +42,7 @@ const ViewForm = ({
   const financialTypee = initialValues?.attributes?.percent?.type;
   const group_by_columns = initialValues?.attributes?.group_by_columns;
   const nameMulti = initialValues?.attributes?.[`name_${i18n?.language}`];
-  const navigate = initialValues?.navigate;
+  const navigate = initialValues?.attributes?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
     "#" +
@@ -255,6 +255,20 @@ const ViewForm = ({
             <TabPanel>
               <div className={styles.section}>
                 <div className={styles.sectionBody}>
+                  {viewData?.type === "WEBSITE" && (
+                    <div className={styles.formRow}>
+                      <FRow label="Website Link">
+                        <Box style={{display: "flex", gap: "6px"}}>
+                          <HFTextField
+                            control={form.control}
+                            name={`attributes.web_link`}
+                            placeholder={`Website link`}
+                            fullWidth
+                          />
+                        </Box>
+                      </FRow>
+                    </div>
+                  )}
                   <div className={styles.formRow}>
                     <FRow label="Name">
                       <Box style={{display: "flex", gap: "6px"}}>
@@ -268,13 +282,36 @@ const ViewForm = ({
                     </FRow>
                   </div>
                   <div className={styles.formRow}>
-                    <FRow label="Disable Table edit">
+                    <FRow label="Disable Table Edit">
                       <HFSwitch
                         control={form.control}
                         name={`attributes.table_editable`}
                         fullWidth
                       />
                     </FRow>
+                    <FRow label="Table draggable">
+                      <HFSwitch
+                        control={form.control}
+                        name={`attributes.table_draggable`}
+                        fullWidth
+                      />
+                    </FRow>
+                    <FRow label="1C UI">
+                      <HFSwitch
+                        control={form.control}
+                        name={`attributes.table_1c_ui`}
+                        fullWidth
+                      />
+                    </FRow>
+                    {viewData?.type === "GRID" && (
+                      <FRow label="Tree Data">
+                        <HFSwitch
+                          control={form.control}
+                          name={`attributes.treeData`}
+                          fullWidth
+                        />
+                      </FRow>
+                    )}
                   </div>
                 </div>
               </div>
@@ -367,6 +404,12 @@ const getInitialValues = (
         group_by_columns:
           columns?.map((el) => ({...el, is_checked: false})) ?? [],
         summaries: [],
+        navigate: {
+          params: [],
+          url: "",
+          headers: [],
+          cookies: [],
+        },
       },
     };
   return {
@@ -388,6 +431,12 @@ const getInitialValues = (
       ...initialValues?.attributes,
       group_by_columns: computeGroups(group_by_columns, columns),
       summaries: initialValues?.attributes?.summaries ?? [],
+      navigate: {
+        params: initialValues?.attributes?.navigate?.params,
+        url: initialValues?.attributes?.navigate?.url,
+        headers: [],
+        cookies: [],
+      },
     },
     group_fields: computeGroupFields(
       initialValues?.group_fields,

@@ -7,7 +7,7 @@ const listToLanOptions = (
   return (
     list?.map((el) => ({
       value: valueFieldName !== "all" ? el[valueFieldName] : el,
-      label: el?.attributes[`label_${labelPrefix}`],
+      label: el?.attributes?.[`label_${labelPrefix}`] ?? el?.label,
     })) ?? []
   );
 };

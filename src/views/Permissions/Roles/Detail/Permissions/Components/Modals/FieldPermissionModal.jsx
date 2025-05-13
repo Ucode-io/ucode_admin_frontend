@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Checkbox, Modal, Typography } from "@mui/material";
-import { useFieldArray } from "react-hook-form";
+import {Box, Card, Checkbox, Modal, Typography} from "@mui/material";
+import {useFieldArray} from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,6 +10,8 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 
 const FieldPermissions = ({
   closeModal,
@@ -17,10 +19,11 @@ const FieldPermissions = ({
   tableIndex,
   setValue,
   watch,
+  projectSettingLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.field_permissions`;
-
-  const { fields } = useFieldArray({
+  const {i18n} = useTranslation();
+  const {fields} = useFieldArray({
     control,
     name: basePath,
   });
@@ -52,7 +55,13 @@ const FieldPermissions = ({
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Field permissions</Typography>
+            <Typography variant="h4">
+              {generateLangaugeText(
+                projectSettingLan,
+                i18n?.language,
+                "Field permissions"
+              ) ?? "Field permissions"}
+            </Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -67,14 +76,23 @@ const FieldPermissions = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}
-              >
+                }}>
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
-                    <CTableCell>Field name</CTableCell>
                     <CTableCell>
-                      View permission
+                      {generateLangaugeText(
+                        projectSettingLan,
+                        i18n?.language,
+                        "Field name"
+                      ) ?? "Field name"}
+                    </CTableCell>
+                    <CTableCell>
+                      {generateLangaugeText(
+                        projectSettingLan,
+                        i18n?.language,
+                        "View permission"
+                      ) ?? "View permission"}
                       <Checkbox
                         checked={allViewTrue ? true : false}
                         onChange={(e) => {
@@ -83,7 +101,11 @@ const FieldPermissions = ({
                       />
                     </CTableCell>
                     <CTableCell>
-                      Edit permission
+                      {generateLangaugeText(
+                        projectSettingLan,
+                        i18n?.language,
+                        "Edit permission"
+                      ) ?? "Edit permission"}
                       <Checkbox
                         checked={allEditTrue ? true : false}
                         onChange={(e) => {
@@ -99,7 +121,7 @@ const FieldPermissions = ({
                       <CTableCell>{fieldIndex + 1}</CTableCell>
                       <CTableCell>{field.label}</CTableCell>
                       <CTableCell>
-                        <Box sx={{ justifyContent: "center", display: "flex" }}>
+                        <Box sx={{justifyContent: "center", display: "flex"}}>
                           <FormCheckbox
                             name={`${basePath}.${fieldIndex}.view_permission`}
                             control={control}
@@ -107,7 +129,7 @@ const FieldPermissions = ({
                         </Box>
                       </CTableCell>
                       <CTableCell>
-                        <Box sx={{ justifyContent: "center", display: "flex" }}>
+                        <Box sx={{justifyContent: "center", display: "flex"}}>
                           <FormCheckbox
                             name={`${basePath}.${fieldIndex}.edit_permission`}
                             control={control}

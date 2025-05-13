@@ -41,6 +41,7 @@ const authService = {
     }),
   resetPasswordProfile: (data) => requestAuthV2.put("/reset-password", data),
   sendCodeApp: (data) => requestAuthV2.post(`/send-code-app`, data),
+  sendAccessToken: (data) => requestAuthV2.post(`/auth/logout`, data),
 };
 
 export default authService;

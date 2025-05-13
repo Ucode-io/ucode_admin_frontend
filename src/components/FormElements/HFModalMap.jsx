@@ -15,6 +15,10 @@ function HFModalMap({
   isFormEdit,
   name,
   required,
+  drawerDetail = false,
+  placeholder = "",
+  disabled = false,
+  ...props
 }) {
   const [open, setOpen] = useState(false);
   const value = useWatch({
@@ -31,8 +35,15 @@ function HFModalMap({
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        padding: drawerDetail ? "0 4.6px" : "0",
+      }}
+    >
       <TextField
+        disabled={disabled}
+        className="mapField"
+        placeholder={placeholder}
         id={`map_field`}
         value={
           value
@@ -42,9 +53,10 @@ function HFModalMap({
         defaultValue={defaultValue}
         variant="standard"
         width="small"
-        onClick={() => handleOpen()}
+        onClick={() => (disabled ? null : handleOpen())}
         sx={{
-          width: "100%",
+          width: "330px",
+          paddingLeft: "5px",
         }}
         InputProps={{
           style: {
@@ -56,8 +68,9 @@ function HFModalMap({
           classes: {
             notchedoutline: {},
           },
-          disableUnderline: true, // this removes the default underline
+          disableUnderline: true,
         }}
+        {...props}
       />
 
       <Dialog open={open} onClose={handleClose}>
@@ -79,8 +92,9 @@ function HFModalMap({
             </Button>
             <Button
               onClick={handleClose}
-              sx={{marginLeft: "10px"}}
-              variant="outlined">
+              sx={{ marginLeft: "10px" }}
+              variant="outlined"
+            >
               Confirm
             </Button>
           </Box>

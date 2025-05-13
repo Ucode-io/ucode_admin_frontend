@@ -1,0 +1,107 @@
+@mixin flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-handle {
+  left: 50px !important;
+  overflow: visible !important;
+}
+
+.rowColumn {
+  height: 32px;
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+
+  &:hover {
+    .icon {
+      display: none;
+    }
+
+    .drag {
+      display: block;
+    }
+  }
+}
+
+.rowColumnDrag {
+  height: 32px;
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+}
+
+.headingText {
+  div {
+    fieldset {
+      display: none;
+    }
+  }
+
+  input {
+    font-weight: 700;
+    height: 25px;
+    font-size: 32px;
+    padding-left: 0;
+
+    &::placeholder {
+      font-weight: bold;
+      color: #000;
+    }
+  }
+}
+
+.drag-item {
+  .icon {
+    display: none;
+  }
+
+  .drag {
+    display: block;
+  }
+}
+
+.layoutHeading {
+  .fieldChoose {
+    display: none;
+  }
+  &:hover {
+    .fieldChoose {
+      display: block;
+    }
+  }
+}
+
+.language {
+  padding: 10px 10px 10px 0px;
+  height: 50px;
+  button {
+    &.active {
+      background-color: #1890ff !important;
+      color: #fff;
+      background-color: #0e73f6;
+    }
+  }
+}

@@ -38,8 +38,7 @@ const HFImageUpload = ({
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

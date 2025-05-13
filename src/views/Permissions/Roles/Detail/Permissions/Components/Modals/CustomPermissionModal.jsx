@@ -9,6 +9,8 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import PermissionCheckbox from "../PermissionCheckbox";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
 const CustomPermissionModal = ({
   closeModal,
@@ -16,9 +18,10 @@ const CustomPermissionModal = ({
   tableIndex,
   setValue,
   watch,
+  permissionLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.custom_permission`;
-
+  const {i18n} = useTranslation();
   const fields = [
     {
       guid: "1",
@@ -60,6 +63,46 @@ const CustomPermissionModal = ({
       name: "Delete All",
       controlName: "delete_all",
     },
+    {
+      guid: "9",
+      name: "Add filter",
+      controlName: "add_filter",
+    },
+    {
+      guid: "10",
+      name: "Field filter",
+      controlName: "field_filter",
+    },
+    {
+      guid: "11",
+      name: "Fix column",
+      controlName: "fix_column",
+    },
+    {
+      guid: "12",
+      name: "columns",
+      controlName: "columns",
+    },
+    {
+      guid: "13",
+      name: "Group",
+      controlName: "group",
+    },
+    {
+      guid: "14",
+      name: "Excel menu",
+      controlName: "excel_menu",
+    },
+    {
+      guid: "15",
+      name: "Tab group",
+      controlName: "tab_group",
+    },
+    {
+      guid: "16",
+      name: "Search button",
+      controlName: "search_button",
+    },
   ];
 
   const updateView = (val) => {
@@ -70,7 +113,15 @@ const CustomPermissionModal = ({
       language_btn: val ? "Yes" : "No",
       settings: val ? "Yes" : "No",
       pdf_action: val ? "Yes" : "No",
-      add_field: val ? "Yes" : "No",
+      delete_all: val ? "Yes" : "No",
+      add_filter: val ? "Yes" : "No",
+      field_filter: val ? "Yes" : "No",
+      fix_column: val ? "Yes" : "No",
+      columns: val ? "Yes" : "No",
+      group: val ? "Yes" : "No",
+      excel_menu: val ? "Yes" : "No",
+      tab_group: val ? "Yes" : "No",
+      search_button: val ? "Yes" : "No",
     };
     setValue(basePath, computedValue);
   };
@@ -99,14 +150,23 @@ const CustomPermissionModal = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}
-              >
+                }}>
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
-                    <CTableCell w={250}>Label</CTableCell>
+                    <CTableCell w={250}>
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Label"
+                      ) || "Label"}
+                    </CTableCell>
                     <CTableCell w={150}>
-                      Permission
+                      {generateLangaugeText(
+                        permissionLan,
+                        i18n?.language,
+                        "Permission"
+                      ) || "Permission"}
                       <Checkbox
                         checked={allYes ? true : false}
                         onChange={(e) => updateView(e.target.checked)}

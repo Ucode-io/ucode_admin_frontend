@@ -1,11 +1,7 @@
-import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Button} from "@mui/material";
-import {BsThreeDots} from "react-icons/bs";
+import {Box, Button, Skeleton} from "@mui/material";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
-import PushPinIcon from "@mui/icons-material/PushPin";
 import {useDispatch, useSelector} from "react-redux";
 import {mainActions} from "../../../store/main/main.slice";
 import {useTranslation} from "react-i18next";
@@ -16,7 +12,7 @@ import Resources from "../Components/Resources";
 import {Container} from "react-smooth-dnd";
 import {applyDrag} from "../../../utils/applyDrag";
 import menuService from "../../../services/menuService";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useQueryClient} from "react-query";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -24,12 +20,12 @@ import DoneIcon from "@mui/icons-material/Done";
 import {store} from "../../../store";
 import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import {useSearchParams} from "react-router-dom";
-import QuerySidebar from "../Components/Query/QuerySidebar";
-import SmsOtpButton from "../Components/SmsOtp/SmsOtpButton";
 import ActivityFeedButton from "../Components/ActivityFeedButton";
-import EnvironmentMenu from "../Components/EnvironmentMenu";
 import ProjectSettings from "../Components/ProjectSettings";
 import ApiMenu from "../Components/ApiMenu/Index";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {GreyLoader} from "../../Loaders/GreyLoader";
+
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -43,10 +39,12 @@ const SubMenu = ({
   setElement,
   selectedApp,
   isLoading,
-  menuStyle,
+  menuStyle: menuStyles,
   setSelectedApp,
   setLinkedTableModal,
   menuItem,
+  menuLanguages,
+  languageData = [],
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -57,9 +55,9 @@ const SubMenu = ({
 
   const [isCopied, setIsCopied] = useState(false);
   const company = store.getState().company;
-  const addPermission =
-    selectedApp?.id === "c57eedc3-a954-4262-a0af-376c65b5a280" ||
-    selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b";
+
+  const projectSettingLan = languageData?.find((el) => el?.key === "Setting");
+
   const handleClick = () => {
     navigator.clipboard.writeText(
       `https://wiki.u-code.io/main/744d63e6-0ab7-4f16-a588-d9129cf959d1?project_id=${company.projectId}&env_id=${company.environmentId}`
@@ -107,18 +105,33 @@ const SubMenu = ({
     }
   };
 
+  const menuStyleNew = {
+    background: "#fff",
+    borderRadius: "8px",
+    color: "#475467",
+    height: "32px",
+    marginTop: "5px",
+  };
+
   return (
     <div
       className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
       style={{
-        background: menuStyle?.background || "#fff",
+        background: "#fff",
+        position: "relative",
       }}>
       <div className="body">
-        <div className="header" onClick={() => {}}>
+        <div className="header" onClick={() => {}} style={{height: 45}}>
           {subMenuIsOpen && (
             <h2
               style={{
-                color: menuStyle?.text || "#000",
+                color: "#000",
+                fontSize: 14,
+                marginLeft: 8,
+                width: 120,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}>
               {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
                 selectedApp?.label}
@@ -130,7 +143,7 @@ const SubMenu = ({
                 (isCopied ? (
                   <DoneIcon
                     style={{
-                      color: menuStyle?.text,
+                      color: menuStyles?.text,
                     }}
                     size={13}
                   />
@@ -139,55 +152,44 @@ const SubMenu = ({
                     size={13}
                     onClick={handleClick}
                     style={{
-                      color: menuStyle?.text,
+                      color: menuStyles?.text,
                     }}
                   />
                 ))}
               {!selectedApp?.is_static && (
-                <BsThreeDots
+                <img
+                  src="/img/dots-vertical.svg"
+                  alt="settings"
                   id={"three_dots"}
-                  size={13}
                   onClick={(e) => {
                     handleOpenNotify(e, "FOLDER");
                     setElement(selectedApp);
                   }}
                   style={{
-                    color: menuStyle?.text,
+                    color: menuStyles?.text,
                   }}
                 />
               )}
-              {selectedApp?.data?.permission?.write && !addPermission ? (
-                <AddIcon
-                  id="add_icon"
-                  size={13}
-                  onClick={(e) => {
-                    clickHandler(e);
-                  }}
-                  style={{
-                    color: menuStyle?.text,
-                  }}
-                />
-              ) : null}
-              <PushPinIcon
-                size={13}
+              <img
+                src="/img/pin.svg"
+                alt="pin"
                 onClick={() => {
                   if (!pinIsEnabled) setPinIsEnabledFunc(true);
                   else setPinIsEnabledFunc(false);
                 }}
                 style={{
-                  rotate: pinIsEnabled ? "" : "45deg",
-                  color: menuStyle?.text,
+                  rotate: pinIsEnabled ? "" : "-45deg",
+                  color: menuStyles?.text,
                 }}
               />
             </div>
-            {/* )} */}
             <div
               className="close-btn"
               onClick={() => {
                 setSelectedApp({});
                 setSubMenuIsOpen(false);
               }}>
-              <ClearIcon />
+              <img src="/img/close-icon.svg" alt="close" />
             </div>
           </Box>
         </div>
@@ -198,144 +200,149 @@ const SubMenu = ({
             flexDirection: "column",
             justifyContent: "space-between",
             height: "calc(100% - 56px)",
+            // paddingTop: "20px"
           }}>
           <div>
-            {isLoading ? (
-              <RingLoaderWithWrapper />
-            ) : (
-              <Box className="nav-block">
+            <Box className="nav-block">
+              {selectedApp?.id === adminId && (
+                <ProjectSettings
+                  handleOpenNotify={handleOpenNotify}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  pinIsEnabled={pinIsEnabled}
+                  projectSettingLan={projectSettingLan}
+                />
+              )}
+              {selectedApp?.id === adminId && (
+                <Permissions
+                  projectSettingLan={projectSettingLan}
+                  menuStyle={{
+                    ...menuStyles,
+                    background: "#fff",
+                  }}
+                  setElement={setElement}
+                />
+              )}
+              {selectedApp?.id === adminId && (
+                <Resources
+                  projectSettingLan={projectSettingLan}
+                  handleOpenNotify={handleOpenNotify}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  pinIsEnabled={pinIsEnabled}
+                />
+              )}
+              {selectedApp?.id === adminId && (
+                <ApiMenu
+                  projectSettingLan={projectSettingLan}
+                  handleOpenNotify={handleOpenNotify}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  pinIsEnabled={pinIsEnabled}
+                />
+              )}
+              {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
+                <Users
+                  projectSettingLan={projectSettingLan}
+                  menuStyle={menuStyleNew}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  child={child}
+                  selectedApp={selectedApp}
+                />
+              )}
+              <div className="menu-element">
+                {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
+                isLoading ? (
+                  <Box px="5px">
+                    <Skeleton height={42} animation="wave" />
+                    <Skeleton height={42} animation="wave" />
+                    <Skeleton height={42} animation="wave" />
+                  </Box>
+                ) : child?.length ? (
+                  <Container
+                    dragHandleSelector=".column-drag-handle"
+                    onDrop={onDrop}>
+                    {child?.map((element, index) => (
+                      <RecursiveBlock
+                        projectSettingLan={projectSettingLan}
+                        key={element.id}
+                        element={element}
+                        openFolderCreateModal={openFolderCreateModal}
+                        setFolderModalType={setFolderModalType}
+                        sidebarIsOpen={subMenuIsOpen}
+                        setTableModal={setTableModal}
+                        setLinkedTableModal={setLinkedTableModal}
+                        handleOpenNotify={handleOpenNotify}
+                        setElement={setElement}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuStyle={menuStyleNew}
+                        menuItemId={searchParams.get("menuId")}
+                        index={index}
+                        selectedApp={selectedApp}
+                        buttonProps={{className: "highlight-on-hover"}}
+                      />
+                    ))}
+                  </Container>
+                ) : null}
+                {selectedApp?.id === "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
+                  <DocumentsSidebar
+                    menuStyle={menuStyleNew}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    menuItem={menuItem}
+                    level={2}
+                  />
+                )}
                 {selectedApp?.id === adminId && (
-                  <ProjectSettings
-                    handleOpenNotify={handleOpenNotify}
-                    menuStyle={menuStyle}
+                  <ActivityFeedButton
+                    projectSettingLan={projectSettingLan}
+                    menuStyle={menuStyleNew}
+                    menuItem={menuItem}
+                    level={2}
                     setSubMenuIsOpen={setSubMenuIsOpen}
                     pinIsEnabled={pinIsEnabled}
                   />
                 )}
-                {selectedApp?.id === adminId && (
-                  <Permissions menuStyle={menuStyle} setElement={setElement} />
-                )}
-                {selectedApp?.id === adminId && (
-                  <Resources
-                    handleOpenNotify={handleOpenNotify}
-                    menuStyle={menuStyle}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    pinIsEnabled={pinIsEnabled}
-                  />
-                )}
-                {selectedApp?.id === adminId && (
-                  <ApiMenu
-                    handleOpenNotify={handleOpenNotify}
-                    menuStyle={menuStyle}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    pinIsEnabled={pinIsEnabled}
-                  />
-                )}
-                {selectedApp?.id === "9e988322-cffd-484c-9ed6-460d8701551b" && (
-                  <Users
-                    menuStyle={menuStyle}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    child={child}
-                    selectedApp={selectedApp}
-                  />
-                )}
-                <div className="menu-element">
-                  {selectedApp?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
-                  child?.length ? (
-                    <Container
-                      dragHandleSelector=".column-drag-handle"
-                      onDrop={onDrop}>
-                      {child?.map((element, index) => (
-                        <RecursiveBlock
-                          key={element.id}
-                          element={element}
-                          openFolderCreateModal={openFolderCreateModal}
-                          setFolderModalType={setFolderModalType}
-                          sidebarIsOpen={subMenuIsOpen}
-                          setTableModal={setTableModal}
-                          setLinkedTableModal={setLinkedTableModal}
-                          handleOpenNotify={handleOpenNotify}
-                          setElement={setElement}
-                          setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={menuStyle}
-                          menuItemId={searchParams.get("menuId")}
-                          index={index}
-                          selectedApp={selectedApp}
-                        />
-                      ))}
-                    </Container>
-                  ) : null}
-                  {selectedApp?.id ===
-                    "31a91a86-7ad3-47a6-a172-d33ceaebb35f" && (
-                    <DocumentsSidebar
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      menuItem={menuItem}
-                      level={2}
-                    />
-                  )}
-                  {selectedApp?.id === adminId && (
-                    <QuerySidebar
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                    />
-                  )}
-                  {selectedApp?.id === adminId && (
-                    <ActivityFeedButton
-                      menuStyle={menuStyle}
-                      menuItem={menuItem}
-                      level={2}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      pinIsEnabled={pinIsEnabled}
-                    />
-                  )}
-                  {/* {selectedApp?.id === adminId && (
-                    <EnvironmentMenu
-                      menuStyle={menuStyle}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      level={2}
-                      menuItem={menuItem}
-                    />
-                  )} */}
-                </div>
-              </Box>
-            )}
-
-            {selectedApp?.data?.permission?.write && exception ? (
-              <Button
-                id="create_btn"
-                className="menu-button active-with-child"
-                onClick={clickHandler}
-                openFolderCreateModal={openFolderCreateModal}
-                style={{
-                  background: menuStyle?.background || "#fff",
-                  color: menuStyle?.text || "",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}>
-                <div
+              </div>
+            </Box>
+            {selectedApp?.data?.permission?.write && exception && (
+              <div>
+                <Button
+                  id="create_btn"
+                  className="menu-button active-with-child"
+                  onClick={clickHandler}
+                  openFolderCreateModal={openFolderCreateModal}
                   style={{
+                    backgroundColor: "transparent",
+                    color: "#475467",
                     display: "flex",
                     alignItems: "center",
-                    color: "#A8A8A8",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                    flex: 1,
-                    whiteSpace: "nowrap",
-                    columnGap: "8px",
+                    justifyContent: "flex-start",
+                    borderRadius: 6,
+                    height: "32px",
                   }}>
-                  <AddIcon
+                  <div
                     style={{
-                      width: 15,
-                      color: menuStyle?.text,
-                    }}
-                  />
-                  Create
-                </div>
-              </Button>
-            ) : null}
+                      display: "flex",
+                      alignItems: "center",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                      flex: 1,
+                      whiteSpace: "nowrap",
+                      columnGap: "8px",
+                      color: "#475467",
+                      cursor: "pointer",
+                    }}>
+                    <img src="/img/plus-icon.svg" alt="Add" />
+                    {generateLangaugeText(
+                      menuLanguages,
+                      i18n?.language,
+                      "Create"
+                    )}
+                  </div>
+                </Button>
+              </div>
+            )}
           </div>
         </Box>
       </div>

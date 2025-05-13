@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import {useState, useMemo, useEffect, useCallback} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useParams} from "react-router-dom";
 // ICONS
-import { Delete } from "@mui/icons-material";
-import { useMutation } from "react-query";
+import {Delete} from "@mui/icons-material";
+import {useMutation} from "react-query";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useDispatch } from "react-redux";
+import {useDispatch} from "react-redux";
 import {
   ChevronDownIcon,
   CrossPerson,
@@ -37,7 +37,7 @@ import clientRelationService from "../../services/auth/clientRelationService";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {showAlert} from "../../store/alert/alert.thunk";
 import FieldPermissionModal from "./FieldPermissionModal";
 import ActionPermissionModal from "./ActionPermissionModal";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
@@ -51,12 +51,12 @@ const staticTables = [
 ];
 
 const MatrixRolePage = () => {
-  const { roleId, typeId } = useParams();
+  const {roleId, typeId} = useParams();
   const TYPES = [
-    { key: "read", name: "Чтение" },
-    { key: "write", name: "Добавление" },
-    { key: "update", name: "Изменение" },
-    { key: "delete", name: "Удаление" },
+    {key: "read", name: "Чтение"},
+    {key: "write", name: "Добавление"},
+    {key: "update", name: "Изменение"},
+    {key: "delete", name: "Удаление"},
   ];
   const dispatch = useDispatch();
   const [appId, setAppId] = useState(null);
@@ -64,8 +64,8 @@ const MatrixRolePage = () => {
   const [expandedAppId, setExpandedAppId] = useState("");
   const [tableSlugWithType, setTableSlugWithType] = useState(null);
   const [tableSlug, setTableSlug] = useState(null);
-  const [apps, setApps] = useState([{ name: "Settings", id: "settings" }]);
-  const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }]);
+  const [apps, setApps] = useState([{name: "Settings", id: "settings"}]);
+  const [roles, setRoles] = useState([{name: "Settings", id: "settings"}]);
   const [activeTable, setActiveTable] = useState({});
   const [recordPermissions, setRecordPermissions] = useState([]);
   const [connections, setConnections] = useState([]);
@@ -102,7 +102,7 @@ const MatrixRolePage = () => {
     name: "autoFilter",
   });
 
-  const { mutate: createAutoField } = useMutation(
+  const {mutate: createAutoField} = useMutation(
     (data) => {
       constructorObjectService.updateMultiple("automatic_filter", {
         data: {
@@ -169,7 +169,7 @@ const MatrixRolePage = () => {
 
   const getRelationsByTableSlug = (table_slug) => {
     clientRelationService
-      .getList({ table_slug })
+      .getList({table_slug})
       .then((res) => {
         setRelations(
           res?.relations
@@ -213,7 +213,7 @@ const MatrixRolePage = () => {
           setTableSlugWithType((prev) => (value === "Yes" ? prev : null));
           if (value === "Yes") {
             constructorRelationService
-              .getList({ table_slug: tabSlug }, tabSlug)
+              .getList({table_slug: tabSlug}, tabSlug)
               .then((res) => {
                 setRelations(
                   res?.relations
@@ -291,7 +291,7 @@ const MatrixRolePage = () => {
             } else {
               result.push(element);
               result.push(
-                ...res?.tables.map((table) => ({ ...table, children: "true" }))
+                ...res?.tables.map((table) => ({...table, children: "true"}))
               );
             }
           });
@@ -305,7 +305,7 @@ const MatrixRolePage = () => {
 
   const getConnections = () => {
     constructorObjectService
-      .getList("connections", { data: { client_type_id: typeId } })
+      .getList("connections", {data: {client_type_id: typeId}})
       .then((res) => {
         setConnections(res?.data?.response || []);
       })
@@ -314,8 +314,8 @@ const MatrixRolePage = () => {
       });
   };
 
-  const { mutate: updateAppPermission } = useMutation(
-    ({ data, appId }) => roleService.updateAppPermission({ data }, appId),
+  const {mutate: updateAppPermission} = useMutation(
+    ({data, appId}) => roleService.updateAppPermission({data}, appId),
     {
       onSuccess: () => {
         getRecordPermissions();
@@ -400,25 +400,24 @@ const MatrixRolePage = () => {
         title="Роли"
         backButtonLink={`/settings/auth/matrix_v2`}
       />
-      <div style={{ margin: "8px" }}>
+      <div style={{margin: "8px"}}>
         <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
           <FRow label="Name">
             <HFTextField name="name" control={roleForm.control} fullWidth />
           </FRow>
         </FormCard>
 
-        <div style={{ marginTop: "10px" }}>
+        <div style={{marginTop: "10px"}}>
           <CTable removableHeight={null} disablePagination>
             <CTableHead>
               <CTableRow>
                 <CTableHeadCell>Объекты</CTableHeadCell>
-                <CTableHeadCell style={{ padding: 0 }} colSpan={4}>
+                <CTableHeadCell style={{padding: 0}} colSpan={4}>
                   <div
                     style={{
                       borderBottom: "1px solid #eee",
                       padding: "8px 16px",
-                    }}
-                  >
+                    }}>
                     <div>Record permissions</div>
                   </div>
                   <div>
@@ -426,8 +425,7 @@ const MatrixRolePage = () => {
                       style={{
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr 1fr 1fr",
-                      }}
-                    >
+                      }}>
                       {TYPES?.map((type) => (
                         <div
                           key={type?.key}
@@ -437,8 +435,7 @@ const MatrixRolePage = () => {
                             display: "flex",
                             flexGrow: "1",
                             justifyContent: "center",
-                          }}
-                        >
+                          }}>
                           {type?.name}
                         </div>
                       ))}
@@ -448,15 +445,13 @@ const MatrixRolePage = () => {
                 <CTableHeadCell
                   style={{
                     borderBottom: "1px solid #e5e9eb",
-                  }}
-                >
+                  }}>
                   Field permissions
                 </CTableHeadCell>
                 <CTableHeadCell
                   style={{
                     borderBottom: "1px solid #e5e9eb",
-                  }}
-                >
+                  }}>
                   Action Permission
                 </CTableHeadCell>
               </CTableRow>
@@ -473,16 +468,14 @@ const MatrixRolePage = () => {
                         setAppId((prev) => (prev === app.id ? "" : app.id));
                         setExpandedAppId(app.id);
                       }
-                    }}
-                  >
+                    }}>
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
                         minWidth: "200px",
-                      }}
-                    >
+                      }}>
                       {app?.children ? (
                         <span className={styles.app_child_title}>
                           {app?.name || app?.label}
@@ -515,8 +508,7 @@ const MatrixRolePage = () => {
                           setTableSlugWithType("");
                         }
                       }}
-                      style={{ position: "relative" }}
-                    >
+                      style={{position: "relative"}}>
                       {!app?.children ? (
                         expandedAppId === app.id && (
                           <span>
@@ -552,8 +544,7 @@ const MatrixRolePage = () => {
                                   appId: app.id,
                                 });
                                 setParentPopupKey("");
-                              }}
-                            >
+                              }}>
                               <TwoUserIcon />
                             </span>
                             <span
@@ -570,8 +561,7 @@ const MatrixRolePage = () => {
                                   app.id
                                 );
                                 setParentPopupKey("");
-                              }}
-                            >
+                              }}>
                               <CrossPerson />
                             </span>
                           </div>
@@ -592,8 +582,7 @@ const MatrixRolePage = () => {
                               left: "30px",
                               zIndex: "2",
                               boxShadow: "rgba(0, 0, 0, 0.1) 0px 1px 2px 0px",
-                            }}
-                          >
+                            }}>
                             <span
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -606,8 +595,7 @@ const MatrixRolePage = () => {
                                   app?.slug,
                                   false
                                 );
-                              }}
-                            >
+                              }}>
                               <TwoUserIcon />
                             </span>
                             <span
@@ -622,8 +610,7 @@ const MatrixRolePage = () => {
                                   app?.slug,
                                   false
                                 );
-                              }}
-                            >
+                              }}>
                               <CrossPerson />
                             </span>
                             {type?.key === "read" && (
@@ -639,8 +626,7 @@ const MatrixRolePage = () => {
                                   border: "1px solid #e3e3e3",
                                   padding: 6,
                                   borderRadius: "50%",
-                                }}
-                              >
+                                }}>
                                 <LockOutlinedIcon />
                               </span>
                             )}
@@ -648,8 +634,7 @@ const MatrixRolePage = () => {
                           <form
                             onSubmit={autoFilterForm.handleSubmit(
                               createAutoField
-                            )}
-                          >
+                            )}>
                             {isCustomVisible && (
                               <div
                                 onClick={(e) => e.stopPropagation()}
@@ -663,8 +648,7 @@ const MatrixRolePage = () => {
                                   left: "60px",
                                   zIndex: "2",
                                   minWidth: "450px",
-                                }}
-                              >
+                                }}>
                                 <div
                                   style={{
                                     display: "flex",
@@ -673,23 +657,21 @@ const MatrixRolePage = () => {
                                     borderBottom: "1px solid #ccc",
                                     paddingBottom: "10px",
                                     marginBottom: "10px",
-                                  }}
-                                >
-                                  <div style={{ display: "flex" }}>
+                                  }}>
+                                  <div style={{display: "flex"}}>
                                     <FRow
-                                      style={{ marginBottom: 0 }}
+                                      style={{marginBottom: 0}}
                                       label="Поля объекта"
                                     />
                                     <FRow
-                                      style={{ marginBottom: 0 }}
+                                      style={{marginBottom: 0}}
                                       label="Пользовательские поля"
                                     />
                                   </div>
                                   {autoFilterFields.map((field, index) => (
                                     <div
                                       key={field.id}
-                                      style={{ display: "flex", gap: 8 }}
-                                    >
+                                      style={{display: "flex", gap: 8}}>
                                       <HFSelect
                                         required
                                         width="50%"
@@ -712,8 +694,7 @@ const MatrixRolePage = () => {
                                             field.identifier
                                           );
                                           remove(index);
-                                        }}
-                                      >
+                                        }}>
                                         <Delete color="error" />
                                       </RectangleIconButton>
                                     </div>
@@ -724,11 +705,10 @@ const MatrixRolePage = () => {
                                     display: "flex",
                                     gap: "8px",
                                     justifyContent: "space-between",
-                                  }}
-                                >
+                                  }}>
                                   <SecondaryButton
                                     type="button"
-                                    style={{ width: "50%" }}
+                                    style={{width: "50%"}}
                                     disabled={isAddBtnDisabled}
                                     onClick={() =>
                                       isAddBtnDisabled
@@ -737,15 +717,13 @@ const MatrixRolePage = () => {
                                             object_field: "",
                                             custom_field: "",
                                           })
-                                    }
-                                  >
+                                    }>
                                     Add new condition
                                   </SecondaryButton>
                                   <PrimaryButton
                                     disabled={!autoFilterFields.length}
-                                    style={{ width: "50%" }}
-                                    type="submit"
-                                  >
+                                    style={{width: "50%"}}
+                                    type="submit">
                                     Save
                                   </PrimaryButton>
                                 </div>
@@ -766,8 +744,7 @@ const MatrixRolePage = () => {
                     style={{
                       borderBottom: "1px solid #e5e9eb",
                       borderRight: "1px solid #e5e9eb",
-                    }}
-                  >
+                    }}>
                     <div>
                       <FieldPermissionIcon />
                     </div>
@@ -782,8 +759,7 @@ const MatrixRolePage = () => {
                     style={{
                       borderBottom: "1px solid #e5e9eb",
                       borderRight: "1px solid #e5e9eb",
-                    }}
-                  >
+                    }}>
                     <div>
                       <PermIdentityIcon />
                     </div>

@@ -11,19 +11,15 @@ export default function SectionBlockForModal({
   control,
   setFormValue,
   fieldsList,
-  formTableSlug,
   relatedTable,
   activeLang,
   errors,
   isMultiLanguage,
-  toggleFields,
-  computedSections,
-  index,
   data,
   setData,
-  selectedTabIndex,
+  modalClass,
 }) {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
 
   const updateLayout = (newData) => {
     layoutService.update(newData, tableSlug);
@@ -56,15 +52,19 @@ export default function SectionBlockForModal({
         gap: "10px",
         gridTemplateColumns: "1fr 1fr 1fr",
         alignItems: "baseline",
-      }}>
+      }}
+    >
       {section.fields?.map((field, fieldIndex) => (
         <Box
           style={{
             display: "flex",
             alignItems: "flex-end",
             minWidth: "200px",
-          }}>
+          }}
+        >
           <FormElementGenerator
+            modalClass={modalClass}
+            isModal={true}
             key={field.id}
             isMultiLanguage={isMultiLanguage}
             field={field}
@@ -86,7 +86,8 @@ export default function SectionBlockForModal({
                 minWidth: "38px",
                 width: "38px",
                 borderRadius: "50%",
-              }}>
+              }}
+            >
               <DeleteIcon
                 style={{
                   color: "red",

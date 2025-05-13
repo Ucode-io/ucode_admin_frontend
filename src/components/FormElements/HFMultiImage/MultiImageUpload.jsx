@@ -7,6 +7,8 @@ import UploadIcon from "@mui/icons-material/Upload";
 import fileService from "../../../services/fileService";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import {useTranslation} from "react-i18next";
 
 const style = {
   position: "absolute",
@@ -26,23 +28,29 @@ function MultiImageUpload({
   value = [],
   field,
   tabIndex,
-  onChange,
+  onChange = () => {},
   isTableView,
   updateObject,
+  newUi,
+  disabled,
+  drawerDetail = false,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
+  const [fullScreen, setFullScreen] = useState("");
+  const {i18n, t} = useTranslation();
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
 
-  const handleClick = () => {
-    setUploadImg(true);
+  const handleClick = () => setUploadImg(true);
+  const handleClose = () => setUploadImg(false);
+
+  const handleFullScreen = (imgSrc) => {
+    handleClick();
+    setFullScreen(imgSrc);
   };
 
-  const handleClose = () => {
-    setUploadImg(false);
-  };
-
+  const handleCloseFullScreen = () => setFullScreen(null);
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -54,7 +62,10 @@ function MultiImageUpload({
         folder_name: "media",
       })
       .then((res) => {
-        onChange([...value, import.meta.env.VITE_CDN_BASE_URL + res?.link]);
+        onChange([
+          ...(value ?? []),
+          import.meta.env.VITE_CDN_BASE_URL + res?.link,
+        ]);
         setImageList([
           ...imageList,
           import.meta.env.VITE_CDN_BASE_URL + res?.link,
@@ -81,13 +92,17 @@ function MultiImageUpload({
         <>
           {isTableView ? (
             <Box
-              onClick={handleClick}
+              onClick={() => {
+                !disabled && handleClick();
+              }}
+              id="multi_image"
               sx={{
                 width: "100%",
-                height: "36px",
+                height: newUi ? "25px" : "36px",
                 display: "flex",
                 alignItems: "center",
                 gap: "10px",
+                padding: drawerDetail ? "0 9.6px" : "0",
               }}>
               <Box
                 sx={{
@@ -98,7 +113,11 @@ function MultiImageUpload({
                   padding: "0 0 0 0",
                 }}>
                 <img
-                  style={{width: "100%", height: "100%", objectFit: "cover"}}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                   src={value?.[0]}
                 />
               </Box>
@@ -127,7 +146,10 @@ function MultiImageUpload({
               />
 
               <Box
-                onClick={handleClick}
+                id="multi_image_2"
+                onClick={() => {
+                  !disabled && handleClick();
+                }}
                 sx={{
                   position: "absolute",
                   width: "100%",
@@ -151,15 +173,17 @@ function MultiImageUpload({
         <>
           {isTableView ? (
             <Box
-              onClick={handleClick}
+              id="multi_images"
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                // alignItems: "center",
-                // flexDirection: "column",
-                // justifyContent: "center",
                 cursor: "pointer",
+                justifyContent: "flex-start",
+                alignItems: "center",
               }}>
               <Box
                 sx={{
@@ -169,19 +193,28 @@ function MultiImageUpload({
                   color: "#777",
                   fontSize: "10px",
                   gap: "5px",
+                  padding: "0 8px",
                 }}>
-                <UploadFileIcon
+                <img
+                  src="/img/newUpload.svg"
+                  alt="Upload"
+                  style={{width: 22, height: 22}}
+                />
+                {/* <UploadFileIcon
                   style={{
-                    width: "25px",
-                    height: "25px",
+                    width: "24px",
+                    height: "24px",
                     color: "rgb(116, 116, 116)",
                   }}
-                />
+                /> */}
               </Box>
             </Box>
           ) : (
             <Box
-              onClick={handleClick}
+              id="multi_images_2"
+              onClick={() => {
+                !disabled && handleClick();
+              }}
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",
@@ -204,7 +237,7 @@ function MultiImageUpload({
                 }}>
                 <AddIcon style={{width: "24px", height: "24px"}} />
 
-                <span>Add Photo</span>
+                <span>{t("add_photo")}</span>
               </Box>
             </Box>
           )}
@@ -225,7 +258,6 @@ function MultiImageUpload({
               zIndex: "999",
               background: "white",
             }}>
-            <Box></Box>
             <Button onClick={handleClose}>
               <CloseIcon style={{width: "24", height: "24px"}} />
             </Button>
@@ -234,19 +266,31 @@ function MultiImageUpload({
           <div className={styles.imageContainer}>
             {value &&
               value?.map((item) => (
-                <div key={item} className={styles.ImageItem}>
+                <div
+                  key={item}
+                  className={styles.ImageItem}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFullScreen(item);
+                  }}>
                   <img src={item} alt="photo" />
 
                   <button
-                    onClick={() => {
+                    variant="outlined"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       removeImage(item);
                     }}
                     className={styles.clearBtn}>
                     <DeleteIcon style={{color: "red"}} />
                   </button>
+                  <Button className={styles.fullBtn} onClick={handleClose}>
+                    <FullscreenIcon style={{width: "35px", height: "35px"}} />
+                  </Button>
                 </div>
               ))}
             <Box
+              id="uploadImageField"
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",
@@ -274,7 +318,6 @@ function MultiImageUpload({
                 tabIndex={tabIndex}
                 autoFocus={tabIndex === 1}
                 onChange={inputChangeHandler}
-                // disabled={disabled}
               />
               <UploadIcon style={{width: "32px", height: "32px"}} />
             </Box>
@@ -300,9 +343,38 @@ function MultiImageUpload({
                 isTableView && updateObject();
                 handleClose();
               }}>
-              Save
+              {t("save_btn")}
             </Button>
           </Box>
+        </Box>
+      </Modal>
+
+      <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            bgcolor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCloseFullScreen();
+            }}
+            sx={{position: "absolute", top: 10, right: 10, color: "white"}}>
+            <CloseIcon />
+          </Button>
+          <img
+            src={fullScreen}
+            alt="Fullscreen"
+            style={{maxWidth: "100%", maxHeight: "100%"}}
+          />
         </Box>
       </Modal>
     </>

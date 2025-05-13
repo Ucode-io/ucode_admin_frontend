@@ -1,66 +1,74 @@
-import {Lock} from "@mui/icons-material";
-import {InputAdornment, Tooltip} from "@mui/material";
-import {Parser} from "hot-formula-parser";
 import {useMemo} from "react";
+import {Lock} from "@mui/icons-material";
 import {useSelector} from "react-redux";
 import FRow from "../FormElements/FRow";
-import HFAutocomplete from "../FormElements/HFAutocomplete";
-import HFCheckbox from "../FormElements/HFCheckbox";
-import HFDatePicker from "../FormElements/HFDatePicker";
-import HFDateTimePicker from "../FormElements/HFDateTimePicker";
+import {Parser} from "hot-formula-parser";
+import {useTranslation} from "react-i18next";
+import CodabarBarcode from "./CodabarBarcode";
+import HFSwitch from "../FormElements/HFSwitch";
 import HFDentist from "../FormElements/HFDentist";
+import BarcodeGenerator from "./BarcodeGenerator";
+import HFCheckbox from "../FormElements/HFCheckbox";
+import HFMapField from "../FormElements/HFMapField";
+import {InputAdornment, Tooltip} from "@mui/material";
+import HFTextField from "../FormElements/HFTextField";
+import HFLinkField from "../FormElements/HFLinkField";
+import HFTextEditor from "../FormElements/HFTextEditor";
+import HFDatePicker from "../FormElements/HFDatePicker";
+import HFMultiImage from "../FormElements/HFMultiImage";
+import RelationFormElement from "./RelationFormElement";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFFloatField from "../FormElements/HFFloatField";
-import HFFormulaField from "../FormElements/HFFormulaField";
 import HFIconPicker from "../FormElements/HFIconPicker";
-import HFImageUpload from "../FormElements/HFImageUpload";
-import HFInternationPhone from "../FormElements/HFInternationPhone";
-import HFMapField from "../FormElements/HFMapField";
-import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
-import HFSwitch from "../FormElements/HFSwitch";
-import HFTextEditor from "../FormElements/HFTextEditor";
-import HFTextField from "../FormElements/HFTextField";
-import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
-import HFTimePicker from "../FormElements/HFTimePicker";
+import HFImageUpload from "../FormElements/HFImageUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
+import HFQrFieldComponent from "../FormElements/HFQrField";
+import HFPolygonField from "../FormElements/HFPolygonField";
+import HFAutocomplete from "../FormElements/HFAutocomplete";
+import HFFormulaField from "../FormElements/HFFormulaField";
+import HFDateTimePicker from "../FormElements/HFDateTimePicker";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
-import BarcodeGenerator from "./BarcodeGenerator";
-import CodabarBarcode from "./CodabarBarcode";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
+import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
+import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
-import RelationFormElement from "./RelationFormElement";
-import {useTranslation} from "react-i18next";
 import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 import ManyToManyRelationMultipleInput from "./ManyToManyRelationMultipleInput";
-import HFPolygonField from "../FormElements/HFPolygonField";
-import HFQrFieldComponent from "../FormElements/HFQrField";
-import HFMultiImage from "../FormElements/HFMultiImage";
+import HFButtonField from "../FormElements/HFButtonField";
+import HFTextComponent from "../FormElements/HFTextComponent";
+import HFTimePicker from "../FormElements/HFTimePicker";
+import HFMultiFile from "../FormElements/HFMultiFile";
 
 const parser = new Parser();
 
 const FormElementGenerator = ({
-  field = {},
+  watch,
+  errors,
   control,
-  setFormValue,
-  formTableSlug,
-  checkRequired = true,
+  field = {},
   activeLang,
   fieldsList,
-  checkPermission = true,
-  isMultiLanguage,
   relatedTable,
-  valueGenerator,
-  errors,
   sectionModal,
+  formTableSlug,
+  valueGenerator,
+  isMultiLanguage,
+  isModal = false,
+  checkRequired = true,
+  getValues = () => {},
+  checkPermission = true,
+  setFormValue = () => {},
+  modalClass,
   ...props
 }) => {
-  const isUserId = useSelector((state) => state?.auth?.userId);
-  const tables = useSelector((state) => state?.auth?.tables);
-  const {i18n} = useTranslation();
-  const checkRequiredField = !checkRequired ? checkRequired : field?.required;
-  let relationTableSlug = "";
   let objectIdFromJWT = "";
+  let relationTableSlug = "";
+  const {i18n} = useTranslation();
+  const tables = useSelector((state) => state?.auth?.tables);
+  const isUserId = useSelector((state) => state?.auth?.userId);
+  const checkRequiredField = !checkRequired ? checkRequired : field?.required;
   if (field?.id?.includes("#")) {
     relationTableSlug = field?.id?.split("#")[0];
   }
@@ -106,7 +114,11 @@ const FormElementGenerator = ({
     } else if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     } else if (field?.id?.includes("#")) {
-      return `${field.id?.split("#")?.[0]}_id`;
+      if (field?.type === "Many2Many") {
+        return `${field.id?.split("#")?.[0]}_ids`;
+      } else if (field?.type === "Many2One") {
+        return `${field.id?.split("#")?.[0]}_id`;
+      }
     }
 
     return field?.slug;
@@ -160,35 +172,35 @@ const FormElementGenerator = ({
     if (field?.relation_type === "Many2Many") {
       return field?.attributes?.multiple_input ? (
         <ManyToManyRelationMultipleInput
-          control={control}
           field={field}
+          control={control}
+          name={computedSlug}
+          disabled={isDisabled}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
-          disabled={isDisabled}
           checkRequiredField={checkRequiredField}
-          name={computedSlug}
           {...props}
         />
       ) : (
         <ManyToManyRelationFormElement
-          control={control}
           field={field}
+          control={control}
+          name={computedSlug}
+          disabled={isDisabled}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
-          disabled={isDisabled}
           checkRequiredField={checkRequiredField}
-          name={computedSlug}
           {...props}
         />
       );
     } else if (field?.relation_type === "Many2Dynamic") {
       return (
         <DynamicRelationFormElement
-          control={control}
           field={field}
+          control={control}
+          disabled={isDisabled}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
-          disabled={isDisabled}
           checkRequiredField={checkRequiredField}
           {...props}
         />
@@ -196,6 +208,8 @@ const FormElementGenerator = ({
     } else {
       return (
         <RelationFormElement
+          isModal={isModal}
+          modalClass={modalClass}
           control={control}
           field={field}
           name={computedSlug}
@@ -305,15 +319,55 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            field={field}
             setFormValue={setFormValue}
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
+            watch={watch}
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
+            }
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            checkRequiredField={checkRequiredField}
+            key={computedSlug}
+            rules={{
+              pattern: {
+                value: new RegExp(field?.attributes?.validation),
+                message: field?.attributes?.validation_message,
+              },
+            }}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "BUTTON":
+      return <HFButtonField field={field} getValues={getValues} />;
+
+    case "TEXT":
+      return <HFTextComponent field={field} />;
+
+    case "LINK":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFLinkField
+            field={field}
+            setFormValue={setFormValue}
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            watch={watch}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
@@ -342,7 +396,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             mask={"(99) 999-99-99"}
@@ -422,7 +476,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={field.defaultValue}
@@ -442,7 +496,7 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             required={checkRequiredField}
             fullWidth
-            sectionModa={sectionModal}
+            sectionModal={sectionModal}
             width={"100%"}
             mask={"99.99.9999"}
             placeholder={field.attributes?.placeholder}
@@ -520,7 +574,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             field={field}
@@ -645,7 +699,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
@@ -678,6 +732,23 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFMultiImage
+            control={control}
+            name={computedSlug}
+            key={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "MULTI_FILE":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFMultiFile
             control={control}
             name={computedSlug}
             key={computedSlug}
@@ -813,6 +884,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            id="increment_id"
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -821,12 +893,12 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
-            InputProps={{
-              readOnly: true,
-              style: {
-                background: "#c0c0c039",
-              },
-            }}
+            // InputProps={{
+            //   style: {
+            //     height: "35px",
+            //     // background: "#c0c0c039",
+            //   },
+            // }}
             {...props}
           />
         </FRow>
@@ -835,6 +907,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFTextField
+            id="increment_number"
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -902,7 +975,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}
@@ -925,7 +998,7 @@ const FormElementGenerator = ({
             placeholder={
               field?.attributes?.show_label
                 ? ""
-                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+                : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)
             }
             required={checkRequiredField}
             defaultValue={defaultValue}

@@ -5,6 +5,7 @@ import {numberWithSpaces} from "@/utils/formatNumbers";
 import {Lock} from "@mui/icons-material";
 import {useEffect} from "react";
 import {useLocation} from "react-router-dom";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -35,9 +36,13 @@ const HFTextField = ({
   endAdornment,
   field,
   inputHeight,
+  watch,
   disabled_text = "This field is disabled for this role!",
-  setFormValue,
+  setFormValue = () => {},
   customOnChange = () => {},
+  exist = false,
+  newUi,
+  className,
   ...props
 }) => {
   const location = useLocation();
@@ -50,6 +55,7 @@ const HFTextField = ({
       setFormValue(name, "");
     }
   }, []);
+
   return (
     <Controller
       control={control}
@@ -60,12 +66,10 @@ const HFTextField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        const finalValue =
-          value?.length > 50 ? `${value.slice(0, 40)}...` : value;
         return (
           <TextField
             size="small"
-            value={finalValue}
+            value={value}
             onChange={(e) => {
               onChange(
                 withTrim
@@ -81,7 +85,10 @@ const HFTextField = ({
               width: "100%",
               padding: "0px",
               margin: "0px",
+              border: exist ? "1px solid red" : "0px solid #000",
+              borderRadius: "8px",
             }}
+            inputProps={{style: {height: "25px", padding: "0px 2px 0 7px"}}}
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
             error={error}
@@ -96,7 +103,7 @@ const HFTextField = ({
               },
               style: disabled
                 ? {
-                    background: "#c0c0c039",
+                    background: isNewTableView ? "inherit" : "#c0c0c039",
                     padding: "0px",
                   }
                 : isNewTableView
@@ -120,7 +127,7 @@ const HFTextField = ({
               ),
             }}
             helperText={!disabledHelperText && error?.message}
-            className={isFormEdit ? "custom_textfield" : ""}
+            className={clsx(className, {custom_textfield: isFormEdit})}
             {...props}
           />
         );

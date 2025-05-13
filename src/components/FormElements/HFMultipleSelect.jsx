@@ -3,15 +3,17 @@ import {
   Chip,
   FormControl,
   FormHelperText,
+  IconButton,
   InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
 } from "@mui/material";
-import {useId, useMemo} from "react";
+import {useMemo} from "react";
 import {Controller} from "react-hook-form";
 import {listToMap} from "../../utils/listToMap";
 import styles from "./style.module.scss";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -34,13 +36,10 @@ const HFMultipleSelect = ({
   placeholder,
   required = false,
   rules = {},
+  id = "",
   ...props
 }) => {
-  const optionsMap = useMemo(() => {
-    return listToMap(options, "value");
-  }, [options]);
-
-  const id = useId();
+  const optionsMap = useMemo(() => listToMap(options, "value"), [options]);
 
   return (
     <Controller
@@ -52,57 +51,83 @@ const HFMultipleSelect = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
-        console.log("errorerror", error),
-        (
-          <FormControl style={{width}}>
-            <InputLabel size="small">{label}</InputLabel>
-            <Select
-              labelId={`multiselect-${id}-label`}
-              id={`multiselect-${id}`}
-              multiple
-              displayEmpty
-              value={Array.isArray(value) ? value : []}
-              onChange={(e) => {
-                onChange(e.target.value);
-              }}
-              input={
-                <OutlinedInput
-                  error={error}
-                  size="small"
-                  id={`multiselect-${id}`}
-                />
-              }
-              renderValue={(selected) => {
-                if (!selected?.length) {
-                  return (
-                    <span className={styles.placeholder}>{placeholder}</span>
-                  );
-                }
-
+        <FormControl style={{width}}>
+          <InputLabel size="small">{label}</InputLabel>
+          <Select
+            labelId={`multiselect${id}`}
+            id={`multiselect${id}`}
+            multiple
+            displayEmpty
+            value={Array.isArray(value) ? value : []}
+            onChange={(e) => onChange(e.target.value)}
+            input={
+              <OutlinedInput
+                error={!!error}
+                size="small"
+                id={`multiselect-${id}`}
+              />
+            }
+            renderValue={(selected) => {
+              if (!selected?.length) {
                 return (
-                  <Box sx={{display: "flex", flexWrap: "wrap", gap: 0.5}}>
+                  <span className={styles.placeholder}>{placeholder}</span>
+                );
+              }
+
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    position: "relative",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                      flex: 1,
+                    }}
+                  >
                     {selected?.map((value) => (
                       <div key={value} className={styles.tag}>
                         {optionsMap[value]?.label ?? value}
                       </div>
                     ))}
                   </Box>
-                );
-              }}
-              MenuProps={MenuProps}>
-              {options.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                    size="small"
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                      onChange([]);
+                    }}
+                  >
+                    <ClearIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              );
+            }}
+            MenuProps={MenuProps}>
+            {options.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
 
-            {error?.message && (
-              <FormHelperText error>{error?.message}</FormHelperText>
-            )}
-          </FormControl>
-        )
-      )}></Controller>
+          {error?.message && (
+            <FormHelperText error>{error?.message}</FormHelperText>
+          )}
+        </FormControl>
+      )}
+    />
   );
 };
 

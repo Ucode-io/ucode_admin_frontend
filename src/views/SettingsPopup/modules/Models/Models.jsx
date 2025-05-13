@@ -1,0 +1,172 @@
+import cls from "./styles.module.scss";
+import {useModelsProps} from "./useModelsProps";
+import {Delete} from "@mui/icons-material";
+import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableRow,
+} from "@/components/CTable";
+import TableCard from "@/components/TableCard";
+import SearchInput from "@/components/SearchInput";
+import {ContentTitle} from "../../components/ContentTitle";
+import {Box, Button, CircularProgress} from "@mui/material";
+import clsx from "clsx";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import ChartDb from "../../../ChartDb";
+import ExternalDatabases from "./ExternalDatabases";
+import {useState} from "react";
+import {useQuery} from "react-query";
+import conectionDatabaseService from "../../../../services/connectionDatabaseService";
+// import ExternalDatabases from "../../../ExternalDatabases";
+
+export const Models = () => {
+  const {tables, loader, setSearchText, navigateToEditForm, deleteTable} =
+    useModelsProps();
+  const [selectedConnection, setSelectedConnection] = useState(null);
+  const [loadingId, setLoadingId] = useState();
+
+  const {data: connectionTables, refetch} = useQuery(
+    ["GET_CONNECTION_TABLES"],
+    () => {
+      return conectionDatabaseService.getTables(selectedConnection?.id);
+    },
+    {
+      enabled: Boolean(selectedConnection?.id),
+      select: (res) => res?.tables ?? [],
+    }
+  );
+
+  const trackConnection = (id) => {
+    setLoadingId(id);
+    conectionDatabaseService
+      .trackTable(selectedConnection?.id, {
+        table_ids: [id],
+      })
+      .then((res) => refetch())
+      .finally(() => {
+        setLoadingId(null);
+      });
+  };
+
+  return (
+    <>
+      <Tabs>
+        <TabList style={{borderBottom: "none", marginBottom: "10px"}}>
+          <Tab style={{padding: "10px"}}>Models</Tab>
+          <Tab style={{padding: "10px"}}>ChartDB</Tab>
+          {/* <Tab style={{padding: "10px"}}>External Databases</Tab> */}
+        </TabList>
+        <TabPanel>
+          <div>
+            <ContentTitle>
+              <Box
+                display={"flex"}
+                justifyContent="space-between"
+                alignItems={"center"}>
+                <span>Таблицы</span>
+                <Box display={"flex"} alignItems={"center"} gap="10px">
+                  <SearchInput
+                    onChange={(val) => {
+                      setSearchText(val);
+                    }}
+                  />
+                  <ExternalDatabases
+                    selectedConnection={selectedConnection}
+                    setSelectedConnection={setSelectedConnection}
+                  />
+                </Box>
+              </Box>
+            </ContentTitle>
+
+            <TableCard type={"withoutPadding"}>
+              <CTable disablePagination removableHeight={120}>
+                <CTableHead>
+                  <CTableCell className={cls.tableHeadCell} width={10}>
+                    №
+                  </CTableCell>
+                  <CTableCell className={cls.tableHeadCell}>Name</CTableCell>
+                  <CTableCell className={cls.tableHeadCell}>
+                    Description
+                  </CTableCell>
+                  <CTableCell className={cls.tableHeadCell}>Tracked</CTableCell>
+                  <CTableCell className={cls.tableHeadCell} width={60} />
+                </CTableHead>
+                <CTableBody columnsCount={4} dataLength={1} loader={loader}>
+                  {(Boolean(selectedConnection?.id)
+                    ? connectionTables
+                    : tables?.tables
+                  )?.map((element, index) => (
+                    <CTableRow key={element.id}>
+                      <CTableCell
+                        style={{textAlign: "center"}}
+                        className={cls.tBodyCell}>
+                        {index + 1}
+                      </CTableCell>
+                      <CTableCell className={cls.tBodyCell}>
+                        {element.label || element?.table_name}
+                      </CTableCell>
+                      <CTableCell className={cls.tBodyCell}>
+                        {element.description}
+                      </CTableCell>
+
+                      <CTableCell className={cls.tBodyCell}>
+                        <Button
+                          disabled={
+                            element?.is_tracked || Boolean(element?.slug)
+                          }
+                          onClick={() => trackConnection(element?.id)}
+                          color={
+                            element?.is_tracked || Boolean(element?.slug)
+                              ? "success"
+                              : "primary"
+                          }
+                          variant={
+                            element?.is_tracked || Boolean(element?.slug)
+                              ? "contained"
+                              : "outlined"
+                          }>
+                          {loadingId === element.id ? (
+                            <CircularProgress size={20} />
+                          ) : element?.is_tracked ? (
+                            "Tracked"
+                          ) : (
+                            "Track"
+                          )}
+                        </Button>
+                      </CTableCell>
+
+                      <CTableCell
+                        className={clsx(cls.tBodyCell, cls.tBodyAction)}>
+                        <RectangleIconButton
+                          id="delete_btn"
+                          color="error"
+                          size="small"
+                          onClick={() => deleteTable(element.id)}>
+                          <Delete color="error" />
+                        </RectangleIconButton>
+                      </CTableCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            </TableCard>
+          </div>
+        </TabPanel>
+        <TabPanel>
+          <Box sx={{height: "585px"}}>
+            <ChartDb />
+          </Box>
+        </TabPanel>
+
+        {/* <TabPanel>
+          <Box sx={{height: "585px"}}>
+            <ExternalDatabases />
+          </Box>
+        </TabPanel> */}
+      </Tabs>
+    </>
+  );
+};

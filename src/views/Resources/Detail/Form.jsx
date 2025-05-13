@@ -1,6 +1,5 @@
-import stringifyQueryParams from "@/utils/stringifyQueryParams";
-import {Box, Button, Grid, Stack, Typography} from "@mui/material";
-import React, {useMemo} from "react";
+import {Box, Stack, Typography} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
 import {useWatch} from "react-hook-form";
 import Footer from "../../../components/Footer";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -8,33 +7,40 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import VariableResources from "../../../components/LayoutSidebar/Components/Resources/VariableResource";
 import {resourceTypes, resources} from "../../../utils/resourceConstants";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
-
-const headerStyle = {
-  width: "100",
-  height: "50px",
-  borderBottom: "1px solid #e5e9eb",
-  display: "flex",
-  padding: "15px",
-};
+import {useLocation, useSearchParams} from "react-router-dom";
+import githubService from "../../../services/githubService";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import HFSwitch from "../../../components/FormElements/HFSwitch";
 
 const Form = ({
   control,
-  btnLoading,
-  selectedEnvironment,
   setSelectedEnvironment,
   projectEnvironments,
   isEditPage,
+  settingLan,
+  watch = () => {},
+  setValue = () => {},
 }) => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+  const {i18n} = useTranslation();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("access_token");
+
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
-      value: item.id,
+      value: item.environment_id ?? item.id,
       label: item.name,
       name: item.name,
       project_id: item.project_id,
       description: item.description,
       display_color: item.display_color,
       is_configured: item.is_configured,
-      id: item.id,
+      id: item?.id,
     }));
   }, [projectEnvironments]);
 
@@ -49,28 +55,74 @@ const Form = ({
   });
 
   const onResourceTypeChange = (value) => {
-    if (value !== 5) return;
+    if (value !== 5 && value !== 8) return;
+    if (value === 5) {
+      const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN;
 
-    const queryParams = {
-      client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
-      redirect_uri: window.location.href,
-      scope: "read:user,repo",
+      const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo&redirect_uri=${redirectUri}`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else if (value === 8) {
+      const clientId = import.meta.env.VITE_CLIENT_ID_GITLAB;
+      const redirectUri = import.meta.env.VITE_BASE_DOMAIN_GITLAB;
+
+      const url = `https://gitlab.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=api read_api read_user read_repository write_repository read_registry write_registry admin_mode read_service_ping openid profile email`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  useEffect(() => {
+    const params = {
+      token: token,
     };
 
-    window.location.assign(
-      "https://github.com/login/oauth/authorize?" +
-        stringifyQueryParams(queryParams)
-    );
-  };
+    if (token?.includes("gho")) {
+      githubService
+        .githubUsername(params)
+        .then((res) => {
+          if (!res?.login) {
+            dispatch(showAlert("No username found", "error"));
+            setValue("integration_resource.username", res?.login);
+          } else setValue("integration_resource.username", res?.login);
+        })
+        .catch((err) => {
+          setValue("integration_resource.username", "");
+          console.log("errrrrr", err);
+        });
+    } else if (token) {
+      githubService
+        .gitlabUsername(params)
+        .then((res) => {
+          if (!res?.username) {
+            dispatch(showAlert("No username found", "error"));
+            setValue("integration_resource.username", res?.username);
+          } else setValue("integration_resource.username", res?.username);
+        })
+        .catch((err) => {
+          setValue("integration_resource.username", "");
+          console.log("errrrrr", err);
+        });
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      setValue("token", token);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (location?.state?.onFill) {
+      setValue("resource_type", location?.state?.id);
+    }
+  }, []);
 
   return (
     <Box
       flex={1}
       sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
-      <Box sx={headerStyle}>
-        <h2 variant="h6">Resource info</h2>
-      </Box>
-
       <Box
         style={{
           overflow: "auto",
@@ -78,11 +130,13 @@ const Form = ({
         <Stack spacing={4}>
           <Box
             sx={{
-              // borderBottom: "1px solid #e5e9eb",
               padding: "15px",
               fontWeight: "bold",
             }}>
-            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>Name</Box>
+            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>
+              {generateLangaugeText(settingLan, i18n?.language, "Name") ||
+                "Name"}
+            </Box>
             <HFTextField
               control={control}
               required
@@ -95,7 +149,8 @@ const Form = ({
 
             <Box
               sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
-              Type
+              {generateLangaugeText(settingLan, i18n?.language, "Type") ||
+                "Type"}
             </Box>
             <HFSelect
               options={resourceTypes}
@@ -107,6 +162,88 @@ const Form = ({
               disabled={isEditPage}
             />
 
+            {resurceType === 2 && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Do you need superset
+                </Box>
+                <HFSwitch
+                  control={control}
+                  onChange={() => {
+                    onResourceTypeChange(11);
+                  }}
+                  required
+                  name="is_superset"
+                  resurceType={resurceType}
+                  disabled={isEditPage}
+                />
+              </>
+            )}
+
+            {resurceType === 11 && isEditPage && (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Link
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.url"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "URL",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Username
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.username"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "20px",
+                    marginBottom: "10px",
+                  }}>
+                  Password
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="settings.superset.password"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Password",
+                  }}
+                />
+              </>
+            )}
+
             {Boolean(resurceType === 7 || type === "SMTP") && (
               <>
                 <Box
@@ -115,7 +252,8 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "10px",
                   }}>
-                  Email
+                  {generateLangaugeText(settingLan, i18n?.language, "Email") ||
+                    "Email"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -132,7 +270,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Password
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Password"
+                  ) || "Password"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -149,7 +291,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "10px",
                   }}>
-                  Default otp
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Default otp"
+                  ) || "Default otp"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -166,7 +312,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Number of otp
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Number of otp"
+                  ) || "Number of otp"}
                 </Box>
                 <HFNumberField
                   control={control}
@@ -189,7 +339,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "10px",
                   }}>
-                  Default otp
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Default otp"
+                  ) || "Default otp"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -206,7 +360,8 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Login
+                  {generateLangaugeText(settingLan, i18n?.language, "Login") ||
+                    "Login"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -223,7 +378,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Number of otp
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Number of otp"
+                  ) || "Number of otp"}
                 </Box>
                 <HFNumberField
                   control={control}
@@ -241,7 +400,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Originator
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Originator"
+                  ) || "Originator"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -258,7 +421,11 @@ const Form = ({
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Password
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Password"
+                  ) || "Password"}
                 </Box>
                 <HFTextField
                   control={control}
@@ -274,36 +441,113 @@ const Form = ({
 
             {resurceType === 5 || type === "GITHUB" ? (
               <>
-                {/* <Box
-                  sx={{
-                    fontSize: "14px",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}>
-                  Type
-                </Box>
-                <HFSelect
-                  options={resources}
-                  control={control}
-                  required
-                  name="type"
-                /> */}
                 <Box
                   sx={{
                     fontSize: "14px",
                     marginTop: "10px",
                     marginBottom: "15px",
                   }}>
-                  Gihub username
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Github username"
+                  ) || "Github username"}
+                </Box>
+                <HFTextField
+                  control={control}
+                  // required
+                  name="integration_resource.username"
+                  fullWidth
+                  // disabled
+                  inputProps={{
+                    placeholder: "Github username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  {generateLangaugeText(settingLan, i18n?.language, "Token") ||
+                    "Token"}
                 </Box>
                 <HFTextField
                   control={control}
                   required
+                  disabled={Boolean(token)}
+                  name="token"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Token",
+                  }}
+                />
+              </>
+            ) : null}
+
+            {resurceType === 8 ? (
+              <>
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Github username"
+                  ) || "Github username"}
+                </Box>
+                <HFTextField
+                  control={control}
+                  // required
                   name="integration_resource.username"
                   fullWidth
                   disabled
                   inputProps={{
                     placeholder: "Github username",
+                  }}
+                />
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  {generateLangaugeText(settingLan, i18n?.language, "Token") ||
+                    "Token"}
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  disabled
+                  name="token"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Token",
+                  }}
+                />
+
+                <Box
+                  sx={{
+                    fontSize: "14px",
+                    marginTop: "10px",
+                    marginBottom: "15px",
+                  }}>
+                  {generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Base URL"
+                  ) || "Base URL"}
+                </Box>
+                <HFTextField
+                  control={control}
+                  required
+                  name="base_url"
+                  fullWidth
+                  inputProps={{
+                    placeholder: "Base URL",
                   }}
                 />
               </>
@@ -313,14 +557,18 @@ const Form = ({
           {!isEditPage && (
             <Box sx={{marginTop: "0px", padding: "15px"}} px={2}>
               <Box sx={{fontSize: "14px", marginBottom: "10px"}}>
-                Environment
+                {generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Environment"
+                ) || "Environment"}
               </Box>
               <HFSelect
                 options={environments}
                 control={control}
                 required
                 name="environment_id"
-                customOnChange={(value) => {
+                onChange={(value) => {
                   setSelectedEnvironment(value);
                 }}
               />
@@ -328,79 +576,13 @@ const Form = ({
             // </h2>
           )}
         </Stack>
-
-        {/* <Divider /> */}
-
-        {selectedEnvironment?.length > 0 && (
-          <>
-            <Box sx={{padding: "15px", fontSize: "24px"}}>
-              <Typography variant="h6">Credentials</Typography>
-            </Box>
-
-            <Grid px={2} container spacing={2}>
-              <Grid item xs={6} sx={{paddingLeft: "0px"}}>
-                <Box width={50} sx={{fontSize: "14px"}}>
-                  Host
-                </Box>
-                <HFTextField
-                  fullWidth
-                  control={control}
-                  required
-                  name="credentials.host"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{fontSize: "14px"}}>Port</Box>
-                <HFTextField
-                  fullWidth
-                  control={control}
-                  required
-                  name="credentials.port"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{fontSize: "14px"}}>Username</Box>
-                <HFTextField
-                  control={control}
-                  required
-                  fullWidth
-                  name="credentials.username"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Box sx={{fontSize: "14px"}}>Database</Box>
-                <HFTextField
-                  control={control}
-                  required
-                  fullWidth
-                  name="credentials.database"
-                />
-              </Grid>
-              {true && (
-                <Grid item xs={6}>
-                  <Box mb={4}>
-                    <Box sx={{fontSize: "14px"}}>Password</Box>
-                    <HFTextField
-                      fullWidth
-                      control={control}
-                      name="credentials.password"
-                    />
-                  </Box>
-                </Grid>
-              )}
-            </Grid>
-          </>
-        )}
       </Box>
-      {resurceType === 4 && <VariableResources control={control} />}
 
-      <Footer>
-        {selectedEnvironment?.length && (
-          <Button type="submit" variant="contained" disabled={btnLoading}>
-            Save
-          </Button>
-        )}
-      </Footer>
+      {resurceType === 4 && (
+        <VariableResources settingLan={settingLan} control={control} />
+      )}
+
+      <Footer></Footer>
     </Box>
   );
 };

@@ -103,6 +103,7 @@ const TablesPage = ({}) => {
 
                   <CTableCell>
                     <RectangleIconButton
+                      id="delete_btn"
                       color="error"
                       onClick={() => deleteTable(element.id)}>
                       <Delete color="error" />

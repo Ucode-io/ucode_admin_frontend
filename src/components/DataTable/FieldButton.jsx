@@ -19,7 +19,6 @@ import {
   useRelationsCreateMutation,
 } from "../../services/relationService";
 import {transliterate} from "../../utils/textTranslater";
-import menuService from "../../services/menuService";
 
 export default function FieldButton({
   openFieldSettings,
@@ -191,6 +190,7 @@ export default function FieldButton({
   return (
     <>
       <CTableHeadCell
+        data-cy="add_button"
         style={{
           padding: "0 4px",
           position: "sticky",

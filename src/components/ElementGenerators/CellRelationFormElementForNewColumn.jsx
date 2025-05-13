@@ -14,7 +14,10 @@ import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
@@ -156,7 +159,9 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const {i18n} = useTranslation();
-  const languages = useSelector((state) => state.languages.list);
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -317,7 +322,9 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
     return (
       uniqueObjects?.map((option) => ({
-        label: getRelationFieldTabsLabel(field, option),
+        label: option?.attributes?.enable_multi_language
+          ? getRelationFieldTabsLabelLang(field, option)
+          : getRelationFieldTabsLabel(field, option, i18n?.language, languages),
         value: option?.guid,
       })) ?? []
     );
@@ -415,25 +422,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-  const computedViewFields = useMemo(() => {
-    if (field?.attributes?.enable_multi_language) {
-      const viewFields = field?.view_fields?.map((el) => el?.slug);
-      const computedLanguages = languages?.map((item) => item?.slug);
-
-      const activeLangView = viewFields?.filter((el) =>
-        el?.includes(i18n?.language)
-      );
-
-      const filteredData = viewFields.filter((key) => {
-        return !computedLanguages.some((lang) => key.includes(lang));
-      });
-
-      return [...activeLangView, ...filteredData] ?? [];
-    } else {
-      return field?.view_fields?.map((el) => el?.slug);
-    }
-  }, [field, i18n?.language]);
-
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
@@ -511,6 +499,8 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        menuPortalTarget={document.body}
+        id="relation-lookup"
         inputValue={inputValue}
         onInputChange={(newInputValue, {action}) => {
           if (action !== "reset") {
@@ -520,7 +510,7 @@ const AutoCompleteElement = ({
         }}
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
-        options={allOptions ?? []}
+        options={computedOptions ?? []}
         value={localValue}
         isClearable
         components={{
@@ -544,15 +534,6 @@ const AutoCompleteElement = ({
         onChange={(newValue, {action}) => {
           changeHandler(newValue);
         }}
-        getOptionLabel={(option) =>
-          computedViewFields?.map((el) => {
-            if (field?.attributes?.enable_multi_language) {
-              return `${option[`${i18n?.language}`] ?? option[`${el}`]} `;
-            } else {
-              return `${option[el]} `;
-            }
-          })
-        }
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}

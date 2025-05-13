@@ -1,27 +1,27 @@
-import { Add } from "@mui/icons-material";
-import { useMemo, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { CTableCell, CTableRow } from "../../../../../components/CTable";
+import {Add} from "@mui/icons-material";
+import {useMemo, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import constructorRelationService from "../../../../../services/constructorRelationService";
-import { generateGUID } from "../../../../../utils/generateID";
+import {generateGUID} from "../../../../../utils/generateID";
 import styles from "../Fields/style.module.scss";
-import { Drawer } from "@mui/material";
+import {Drawer} from "@mui/material";
 import RelationSettings from "./RelationSettings";
 import TableRowButton from "../../../../../components/TableRowButton";
 
-const Relations = ({ mainForm, getRelationFields }) => {
+const Relations = ({mainForm, getRelationFields, tableLan}) => {
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
-  const { tableSlug } = useParams();
-  const { fields: relations } = useFieldArray({
+  const {tableSlug} = useParams();
+  const {fields: relations} = useFieldArray({
     control: mainForm.control,
     name: "relations",
     keyName: "key",
   });
-  const { id } = useParams();
+  const {id} = useParams();
 
   const openEditForm = (field, index) => {
     setDrawerState(field);
@@ -89,9 +89,9 @@ const Relations = ({ mainForm, getRelationFields }) => {
         open={!!drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <RelationSettings
+          tableLan={tableLan}
           relation={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}
           getRelationFields={getRelationFields}

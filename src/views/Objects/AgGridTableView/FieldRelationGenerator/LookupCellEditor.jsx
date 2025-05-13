@@ -1,0 +1,176 @@
+import React, {useMemo, useState} from "react";
+import {useQuery} from "react-query";
+import Select from "react-select";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
+import {Box} from "@mui/material";
+import {components} from "react-select";
+import LaunchIcon from "@mui/icons-material/Launch";
+import useTabRouter from "../../../../hooks/useTabRouter";
+import {useParams, useSearchParams} from "react-router-dom";
+import RowClickButton from "../RowClickButton";
+
+const customStyles = {
+  control: (provided) => ({
+    ...provided,
+    height: "32px",
+    minHeight: "25px",
+    background: "transparent",
+    boxSizing: "border-box",
+    width: "100%",
+    border: "none",
+    outline: "none",
+  }),
+  container: (provided) => ({
+    ...provided,
+    height: "32px",
+    width: "100%",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+  input: (provided) => ({
+    ...provided,
+    margin: 0,
+    padding: 0,
+    height: "100%",
+    outline: "none",
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: "13px",
+    color: "#888",
+    fontWeight: "300",
+  }),
+};
+
+const LookupCellEditor = (props) => {
+  const [options, setOptions] = useState([]);
+  const {field, setValue, data, value} = props;
+  const [localValue, setLocalValue] = useState(
+    data?.[`${field?.slug}_data`] ?? null
+  );
+  const {tableSlug} = useParams();
+  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
+  const [inputValue, setInputValue] = useState(null);
+
+  const {refetch} = useQuery(
+    ["GET_OBJECT_LIST", field?.table_slug],
+    () => {
+      if (!field?.table_slug) return null;
+      return constructorObjectService.getListV2(field?.table_slug, {
+        data: {
+          view_fields: field?.view_fields?.map((f) => f.slug),
+          limit: 10,
+          offset: 0,
+          with_relations: false,
+        },
+      });
+    },
+    {
+      enabled: false,
+      select: (res) => res?.data?.response ?? [],
+      onSuccess: (fetchedOptions) => {
+        setOptions((prevOptions) => [
+          ...(prevOptions ?? []),
+          ...(fetchedOptions ?? []),
+        ]);
+      },
+    }
+  );
+
+  const onNavigateToDetail = () => {
+    props?.colDef?.onRowClick(data);
+  };
+
+  const computedOptions = useMemo(() => {
+    const uniqueObjects = Array.from(new Set(options.map(JSON.stringify))).map(
+      JSON.parse
+    );
+    return uniqueObjects ?? [];
+  }, [options]);
+
+  const handleChange = (selectedOption) => {
+    setInputValue(selectedOption);
+    setValue(selectedOption?.guid);
+    setLocalValue(selectedOption);
+    setValue(selectedOption?.guid || null);
+  };
+
+  const CustomSingleValue = (props) => (
+    <components.SingleValue {...props}>
+      <div
+        className="select_icon"
+        style={{display: "flex", alignItems: "center"}}
+        onClick={() => {
+          refetch();
+        }}>
+        {props.children}
+        {!field?.attributes?.disabled && (
+          <Box
+            sx={{position: "relative", zIndex: 99999}}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+            }}>
+            <LaunchIcon
+              style={{
+                fontSize: "18px",
+                marginLeft: "5px",
+                fontWeight: "700",
+                cursor: "pointer",
+                marginTop: "6px",
+              }}
+            />
+          </Box>
+        )}
+      </div>
+    </components.SingleValue>
+  );
+
+  return (
+    <>
+      {" "}
+      <Box
+        sx={{
+          position: "relative",
+          // height: "100%",
+          width: "100%",
+          overflow: "hidden",
+        }}>
+        <Select
+          disabled={field?.attributes?.disabled}
+          isClearable={true}
+          placeholder="Select..."
+          menuPortalTarget={document.body}
+          styles={customStyles}
+          value={inputValue ?? localValue}
+          options={computedOptions}
+          getOptionValue={(option) => option?.guid === value}
+          getOptionLabel={(option) =>
+            `${getRelationFieldTabsLabel(field, option)}`
+          }
+          components={{
+            SingleValue: CustomSingleValue,
+          }}
+          onChange={handleChange}
+          onMenuOpen={() => {
+            refetch();
+          }}
+        />
+      </Box>
+      {props?.colDef?.colIndex === 0 && (
+        <RowClickButton onRowClick={onNavigateToDetail} />
+      )}
+    </>
+  );
+};
+
+export default LookupCellEditor;

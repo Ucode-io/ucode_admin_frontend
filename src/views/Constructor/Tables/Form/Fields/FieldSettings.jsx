@@ -12,12 +12,15 @@ import {
 import {TreeView} from "@mui/x-tree-view";
 import {useEffect, useMemo, useState} from "react";
 import {useForm, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
+import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
+import HFRelationFieldSetting from "../../../../../components/FormElements/HFRelationFieldSetting";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../../../../components/FormElements/HFTextFieldWithMultiLanguage";
@@ -27,10 +30,7 @@ import constructorFieldService, {
 } from "../../../../../services/constructorFieldService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import menuService, {
-  useMenuListQuery,
-} from "../../../../../services/menuService";
-import {store} from "../../../../../store";
+import {useMenuListQuery} from "../../../../../services/menuService";
 import {
   fieldButtons,
   fieldTypesOptions,
@@ -41,12 +41,15 @@ import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import FieldTreeView from "./FieldTreeView";
 import styles from "./style.module.scss";
+import HFNumberField from "../../../../../components/FormElements/HFNumberField";
+import ButtonFieldComponents from "./ButtonFieldComponents";
+import StatusFieldSettings from "./StatusFieldSettings";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const FieldSettings = ({
   closeSettingsBlock,
   mainForm,
   selectedTabIndex,
-  selectedField,
   field,
   formType,
   height,
@@ -55,31 +58,19 @@ const FieldSettings = ({
   getRelationFields,
   slug,
   menuItem,
+  tableLan,
 }) => {
   const {id, appId, tableSlug} = useParams();
   const {handleSubmit, control, reset, watch, setValue} = useForm();
   const [formLoader, setFormLoader] = useState(false);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  // const [menuItem, setMenuItem] = useState(null);
-
-  // useEffect(() => {
-  //   if (searchParams.get("menuId")) {
-  //     menuService
-  //       .getByID({
-  //         menuId: searchParams.get("menuId"),
-  //       })
-  //       .then((res) => {
-  //         setMenuItem(res);
-  //       });
-  //   }
-  // }, []);
-
+  const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
+  const [selectedField, setSelectedField] = useState(null);
+
   const detectorID = useMemo(() => {
     if (id) {
       return id;
@@ -114,15 +105,15 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", {slug}],
+    ["GET_VIEWS_AND_FIELDS", {tableSlug}],
     () => {
-      if (!slug) return false;
-      return constructorTableService.getTableInfo(slug, {
+      if (!tableSlug) return false;
+      return constructorTableService.getTableInfo(tableSlug, {
         data: {limit: 10, offset: 0, app_id: appId},
       });
     },
     {
-      enabled: Boolean(!!slug),
+      enabled: Boolean(!!tableSlug),
       select: ({data}) => {
         return {
           views: data?.views ?? [],
@@ -136,6 +127,17 @@ const FieldSettings = ({
       },
     }
   );
+
+  const computedFilteredFields = useMemo(() => {
+    return columns?.map((item) => ({
+      label: item?.label || item?.attributes?.[`label_${i18n?.language}`],
+      value: item?.slug,
+      type: item?.type,
+      options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
+      table_slug: item?.table_slug,
+      attributes: {...item?.attributes},
+    }));
+  }, [columns]);
 
   const {mutate: createNewField, isLoading: createLoading} =
     useFieldCreateMutation({
@@ -159,7 +161,7 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
-      label: Object.values(field?.attributes).find((item) => item),
+      label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
       show_label: true,
     };
     if (id || menuItem?.table_id) {
@@ -211,7 +213,6 @@ const FieldSettings = ({
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
-
     if (formType === "CREATE") createField(data);
     else updateField(data);
   };
@@ -240,14 +241,20 @@ const FieldSettings = ({
     }));
   }, [layoutRelations]);
 
+  const computedMultiSelectOptions =
+    selectedField?.options ?? selectedField?.attributes?.options;
+
   const {data: computedRelationFields} = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
-      return constructorFieldService.getList({
-        table_slug: selectedAutofillSlug,
-        with_one_relation: true,
-      });
+      return constructorFieldService.getList(
+        {
+          table_slug: selectedAutofillSlug,
+          with_one_relation: true,
+        },
+        selectedAutofillSlug
+      );
     },
     {
       select: (res) => {
@@ -265,6 +272,7 @@ const FieldSettings = ({
       },
     }
   );
+
   useEffect(() => {
     const values = {
       attributes: {},
@@ -288,6 +296,27 @@ const FieldSettings = ({
     }
   }, [field, formType, id, menuItem?.table_id, reset]);
 
+  const getOnchangeField = (element) => {
+    setSelectedField(element);
+  };
+
+  useEffect(() => {
+    setSelectedField(() =>
+      columns?.find((item) => item?.slug === field?.attributes?.hide_path_field)
+    );
+  }, [columns]);
+
+  const numberTypeOptions = [
+    {
+      label: "Max",
+      value: "max",
+    },
+    {
+      label: "Min",
+      value: "min",
+    },
+  ];
+
   return (
     <div className={styles.settingsBlock}>
       <Box className={styles.additional}>
@@ -310,7 +339,8 @@ const FieldSettings = ({
                 drawerType === "ATTRIBUTES" ? styles.active : styles.inactive
               }
               onClick={() => setDrawerType("ATTRIBUTES")}>
-              Field
+              {generateLangaugeText(tableLan, i18n?.language, "Field") ||
+                "Field"}
             </Button>
           }
         />
@@ -319,7 +349,13 @@ const FieldSettings = ({
       <Box className={styles.form}>
         <div className={styles.settingsBlockHeader}>
           <Typography variant="h4">
-            {formType === "CREATE" ? "Create field" : "Edit field"}
+            {formType === "CREATE"
+              ? generateLangaugeText(tableLan, i18n?.language, "Field") ||
+                "Create field" ||
+                "Create field"
+              : generateLangaugeText(tableLan, i18n?.language, "Field") ||
+                "Edit field" ||
+                "Edit field"}
           </Typography>
           <IconButton onClick={closeSettingsBlock}>
             <Close />
@@ -333,7 +369,13 @@ const FieldSettings = ({
             <Card>
               {drawerType === "SCHEMA" && (
                 <Box className="p-2">
-                  <FRow label="Type" required classname={styles.custom_label}>
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Type") ||
+                      "Type"
+                    }
+                    required
+                    classname={styles.custom_label}>
                     <HFSelect
                       disabledHelperText
                       name="type"
@@ -346,20 +388,62 @@ const FieldSettings = ({
                       className={styles.input}
                     />
                   </FRow>
-                  <FRow label="Name" classname={styles.custom_label} required>
-                    <Box style={{display: "flex", gap: "6px"}}>
-                      <HFTextFieldWithMultiLanguage
-                        control={control}
-                        name="attributes.label"
-                        fullWidth
-                        placeholder="Name"
-                        defaultValue={tableName}
-                        languages={languages}
-                        id={"field_label"}
-                      />
-                    </Box>
-                  </FRow>
-                  <FRow label="Key" required classname={styles.custom_label}>
+                  {fieldType !== "TEXT" && (
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Name"
+                        ) || "Name"
+                      }
+                      classname={styles.custom_label}
+                      required>
+                      <Box style={{display: "flex", gap: "6px"}}>
+                        <HFTextFieldWithMultiLanguage
+                          control={control}
+                          name="attributes.label"
+                          fullWidth
+                          placeholder="Name"
+                          defaultValue={tableName}
+                          languages={languages}
+                          id={"field_label"}
+                        />
+                      </Box>
+                    </FRow>
+                  )}
+
+                  {fieldType === "TEXT" && (
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Value"
+                        ) || "Value"
+                      }
+                      classname={styles.custom_label}
+                      required>
+                      <Box style={{display: "flex", gap: "6px"}}>
+                        <HFTextField
+                          control={control}
+                          name="label"
+                          fullWidth
+                          placeholder="Value"
+                          defaultValue={tableName}
+                          languages={languages}
+                          id={"field_label"}
+                        />
+                      </Box>
+                    </FRow>
+                  )}
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Key") ||
+                      "Key"
+                    }
+                    required
+                    classname={styles.custom_label}>
                     <HFTextField
                       className={styles.input}
                       disabledHelperText
@@ -373,7 +457,16 @@ const FieldSettings = ({
                     />
                   </FRow>
 
-                  <DefaultValueBlock control={control} />
+                  {fieldType !== "LINK" && fieldType !== "BUTTON" && (
+                    <DefaultValueBlock control={control} />
+                  )}
+                  {fieldType === "BUTTON" && (
+                    <ButtonFieldComponents control={control} />
+                  )}
+
+                  {fieldType === "STATUS" && (
+                    <StatusFieldSettings control={control} />
+                  )}
 
                   {(fieldType === "FILE" ||
                     fieldType === "VIDEO" ||
@@ -386,7 +479,12 @@ const FieldSettings = ({
                       extra={
                         <>
                           <Typography variant="h6">
-                            Selected folder: {folder}
+                            {generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Selected folder"
+                            ) || "Selected folder"}
+                            : {folder}
                           </Typography>
                         </>
                       }>
@@ -442,7 +540,13 @@ const FieldSettings = ({
                         />
                       </FRow>
                       <FRow
-                        label="Error message"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Error message"
+                          ) || "Error message"
+                        }
                         classname={styles.custom_label}>
                         <HFTextField
                           className={styles.input}
@@ -456,19 +560,37 @@ const FieldSettings = ({
                       <HFCheckbox
                         control={control}
                         name="attributes.disabled"
-                        label="Disabled"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Disabled"
+                          ) || "Disabled"
+                        }
                         labelClassName={styles.custom_label}
                       />
                       <HFCheckbox
                         control={control}
                         name="required"
-                        label="Required"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Required"
+                          ) || "Required"
+                        }
                         labelClassName={styles.custom_label}
                       />
                       <HFCheckbox
                         control={control}
                         name="unique"
-                        label="Duplicate"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Duplicate"
+                          ) || "Duplicate"
+                        }
                         labelClassName={styles.custom_label}
                       />
                     </Box>
@@ -479,7 +601,13 @@ const FieldSettings = ({
                 <div className="p-2">
                   <Box mt={1}>
                     <FRow
-                      label="Autofill table"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Autofill table"
+                        ) || "Autofill table"
+                      }
                       classname={styles.custom_label}>
                       <HFSelect
                         disabledHelperText
@@ -492,7 +620,13 @@ const FieldSettings = ({
                     </FRow>
 
                     <FRow
-                      label="Autofill field"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Autofill field"
+                        ) || "Autofill field"
+                      }
                       classname={styles.custom_label}>
                       <HFSelect
                         disabledHelperText
@@ -506,9 +640,112 @@ const FieldSettings = ({
                     <HFCheckbox
                       control={control}
                       name="automatic"
-                      label="Automatic"
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Automatic"
+                        ) || "Automatic"
+                      }
                       labelClassName={styles.custom_label}
                     />
+                  </Box>
+                </div>
+              )}
+
+              {drawerType === "FIELD_HIDE" && (
+                <div className="p-2">
+                  <Box mt={1}>
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Hide Field from"
+                        ) || "Hide Field From"
+                      }
+                      classname={styles.custom_label}>
+                      <HFSelect
+                        id="hide_fields"
+                        disabledHelperText
+                        name="attributes.hide_path_field"
+                        control={control}
+                        options={computedFilteredFields}
+                        placeholder="Type"
+                        className={styles.input}
+                        getOnchangeField={getOnchangeField}
+                      />
+                    </FRow>
+
+                    {selectedField?.type === "MULTISELECT" ? (
+                      <HFMultipleSelect
+                        id="hide_multi_field"
+                        options={computedMultiSelectOptions}
+                        disabledHelperText
+                        name="attributes.hide_path"
+                        control={control}
+                        placeholder="Type"
+                        className={styles.input}
+                      />
+                    ) : selectedField?.type === "LOOKUP" ? (
+                      <HFRelationFieldSetting
+                        disabledHelperText
+                        id="hide_relation_field"
+                        name="attributes.hide_path"
+                        control={control}
+                        placeholder="Type"
+                        className={styles.input}
+                        selectedField={selectedField}
+                      />
+                    ) : selectedField?.type === "NUMBER" ? (
+                      <>
+                        <FRow
+                          label={
+                            generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Hide Value"
+                            ) || "Hide Value"
+                          }>
+                          <HFNumberField
+                            id="hide_path_field"
+                            type={"number"}
+                            disabledHelperText
+                            name="attributes.hide_path"
+                            control={control}
+                            placeholder="Hide "
+                            className={styles.input}
+                          />
+                        </FRow>
+                        <FRow
+                          label={
+                            generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Number Range"
+                            ) || "Number Range"
+                          }>
+                          <HFSelect
+                            id="hide_type_field"
+                            options={numberTypeOptions}
+                            disabledHelperText
+                            name="attributes.type"
+                            control={control}
+                            placeholder="Type"
+                            className={styles.input}
+                          />
+                        </FRow>
+                      </>
+                    ) : (
+                      <HFTextField
+                        id="hide_field_path"
+                        disabledHelperText
+                        name="attributes.hide_path"
+                        control={control}
+                        placeholder="Type"
+                        className={styles.input}
+                      />
+                    )}
                   </Box>
                 </div>
               )}
@@ -517,12 +754,13 @@ const FieldSettings = ({
 
           <div className={styles.settingsFooter}>
             <PrimaryButton
+              id="field_save"
               size="large"
               className={styles.button}
               style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || createLoading || updateLoading}>
-              Save
+              {generateLangaugeText(tableLan, i18n?.language, "Save") || "Save"}
             </PrimaryButton>
           </div>
         </div>

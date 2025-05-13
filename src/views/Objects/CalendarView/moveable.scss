@@ -73,18 +73,19 @@
 }
 
 .moveable3 .moveable-control {
-  width: 6px !important;
-  min-width: 3px !important;
-  height: 22px !important;
+  width: 7px !important;
+  min-width: 7px !important;
+  height: 18px !important;
   // margin-top: -20px !important;
   border: none !important;
-  background-color: #999999 !important;
+  background-color: transparent !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
   left: 4px !important;
-  top: -5px !important;
+  top: -2px !important;
   border-radius: 4px !important;
+  cursor: col-resize !important;
 
   &.moveable-n {
     border-radius: 10px 10px 0 0 !important;
@@ -96,6 +97,10 @@
     border-radius: 0 0 10px 10px !important;
     margin-left: -80px !important;
     z-index: 1;
+  }
+
+  &:hover {
+    background-color: rgb(55, 53, 47) !important;
   }
 }
 

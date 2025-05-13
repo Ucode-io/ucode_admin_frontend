@@ -1,17 +1,19 @@
-import { Paper } from "@mui/material";
-import { forwardRef } from "react";
+import {Paper} from "@mui/material";
+import {forwardRef} from "react";
 import CPagination from "../CPagination";
-import EmptyDataComponent from "../EmptyDataComponent";
 import TableLoader from "../TableLoader/index";
 import "./style.scss";
 import PageFallback from "../PageFallback";
 
 export const CTable = ({
+  custom_events,
+  dataCount,
   children,
   count,
   selectedObjectsForDelete,
   page,
   setCurrentPage,
+  currentPage,
   removableHeight = 186,
   disablePagination,
   isTableView = false,
@@ -29,7 +31,10 @@ export const CTable = ({
   isRelationTable,
   filterVisible,
   navigateToEditPage,
+  navigateCreatePage = () => {},
   parentRef,
+  getAllData = () => {},
+  control,
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -43,13 +48,14 @@ export const CTable = ({
           overflow: loader ? "hidden" : "auto",
           width: "100%",
         }}
-        ref={parentRef}
-      >
+        ref={parentRef}>
         {loader ? <PageFallback /> : <table id="resizeMe">{children}</table>}
       </div>
 
       {!disablePagination && (
         <CPagination
+          custom_events={custom_events}
+          dataCount={dataCount}
           filterVisible={filterVisible}
           count={count}
           isGroupByTable={isGroupByTable}
@@ -57,6 +63,7 @@ export const CTable = ({
           page={page}
           isTableView={isTableView}
           setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
           paginationExtraButton={paginationExtraButton}
           limit={limit}
           multipleDelete={multipleDelete}
@@ -66,17 +73,20 @@ export const CTable = ({
           selectedTab={selectedTab}
           isRelationTable={isRelationTable}
           navigateToEditPage={navigateToEditPage}
+          navigateCreatePage={navigateCreatePage}
+          getAllData={getAllData}
+          control={control}
         />
       )}
     </Paper>
   );
 };
 
-export const CTableHead = ({ children }) => {
+export const CTableHead = ({children}) => {
   return <thead className="CTableHead">{children}</thead>;
 };
 
-export const CTableHeadRow = ({ children, className }) => {
+export const CTableHeadRow = ({children, className}) => {
   return <tr className={`CTableHeadRow ${className}`}>{children}</tr>;
 };
 
@@ -122,7 +132,7 @@ export const CTableBody = forwardRef(
   }
 );
 
-export const CTableRow = ({ children, className, parentRef, ...props }) => {
+export const CTableRow = ({children, className, parentRef, ...props}) => {
   return (
     <tr className={`CTableRow ${className}`} {...props} ref={parentRef}>
       {children}
@@ -139,8 +149,7 @@ export const CTableCell = ({
   return (
     <td
       className={`CTableCell ${className} ${buttonsCell ? "buttonsCell" : ""}`}
-      {...props}
-    >
+      {...props}>
       {children}
     </td>
   );

@@ -1,12 +1,15 @@
 .row {
-  padding: 0 12px;
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8px;
+  padding: 0 8px;
 
   &:first-child {
-    padding-top: 12px;
+    padding-top: 8px;
   }
 
   &:last-child {
-    padding-bottom: 12px;
+    padding-bottom: 8px;
   }
 
   .label {
@@ -16,6 +19,15 @@
   .image {
     border-radius: 6px;
   }
+}
+
+.value {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .photorow {

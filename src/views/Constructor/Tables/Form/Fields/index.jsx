@@ -1,25 +1,26 @@
 // import { Delete, Edit } from "@mui/icons-material"
-import { Add } from "@mui/icons-material";
-import { Drawer } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { CTableCell, CTableRow } from "../../../../../components/CTable";
+import {Add} from "@mui/icons-material";
+import {Drawer} from "@mui/material";
+import {useMemo, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import constructorFieldService from "../../../../../services/constructorFieldService";
-import { generateGUID } from "../../../../../utils/generateID";
+import {generateGUID} from "../../../../../utils/generateID";
 import FieldSettings from "./FieldSettings";
 import styles from "./style.module.scss";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
-const Fields = ({ mainForm, getRelationFields }) => {
-  const { id, tableSlug } = useParams();
+const Fields = ({mainForm, getRelationFields, tableLan}) => {
+  const {id, tableSlug} = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [selectedField, setSelectedField] = useState({});
-  const { fields, prepend, update, remove } = useFieldArray({
+  const {fields, prepend, update, remove} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -117,8 +118,8 @@ const Fields = ({ mainForm, getRelationFields }) => {
         checkPermission={false}
         disablePagination
         dataLength={1}
-        tableSlug={"app"}
         setSelectedField={setSelectedField}
+        tableSlug={"app"}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         additionalRow={
@@ -126,10 +127,12 @@ const Fields = ({ mainForm, getRelationFields }) => {
             <CTableCell colSpan={columns.length + 1}>
               <div
                 className={styles.createButton}
-                onClick={() => setDrawerState("CREATE")}
-              >
+                onClick={() => setDrawerState("CREATE")}>
                 <Add color="primary" />
-                <p>Add</p>
+                <p>
+                  {generateLangaugeText(tableLan, i18n?.language, "Add") ||
+                    "Add"}
+                </p>
               </div>
             </CTableCell>
           </CTableRow>
@@ -140,9 +143,9 @@ const Fields = ({ mainForm, getRelationFields }) => {
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <FieldSettings
+          tableLan={tableLan}
           closeSettingsBlock={() => setDrawerState(null)}
           onSubmit={(index, field) => update(index, field)}
           field={drawerState}

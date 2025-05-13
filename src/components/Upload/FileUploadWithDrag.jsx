@@ -1,8 +1,9 @@
-import { useCallback, useRef } from "react";
+import {useCallback, useRef} from "react";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
-import { useDropzone } from "react-dropzone";
+import {useDropzone} from "react-dropzone";
 import "./style.scss";
 import RingLoader from "../Loaders/RingLoader";
+import { GreyLoader } from "../Loaders/GreyLoader";
 
 const FileUploadWithDrag = ({ onUpload, loader }) => {
   const inputRef = useRef(null);
@@ -32,7 +33,8 @@ const FileUploadWithDrag = ({ onUpload, loader }) => {
             <p className="dropzone-title">Upload file</p>
           </>
         ) : (
-          <RingLoader />
+          // <RingLoader />
+          <GreyLoader size="40px" />
         )}
       </div>
     </div>

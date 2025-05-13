@@ -35,7 +35,7 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
   };
 
-  const navigateToCreatePage = () => {
+  const navigateToCreatePage = (folder_id) => {
     navigateToForm(
       tableSlug,
       "CREATE",
@@ -43,6 +43,7 @@ const RecursiveBlock = ({
       {
         [`${tableSlug}_id`]: row.guid,
         isTreeView: true,
+        // folder_id,
       },
       menuId
     );
@@ -82,7 +83,11 @@ const RecursiveBlock = ({
         </div>
 
         <div className={style.extra}>
-          <RectangleIconButton color="primary" onClick={navigateToCreatePage}>
+          <RectangleIconButton
+            color="primary"
+            onClick={() => {
+              navigateToCreatePage(row?.guid);
+            }}>
             <Add color="primary" />
           </RectangleIconButton>
           <RectangleIconButton

@@ -3,10 +3,12 @@ import {useQuery} from "react-query";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 import FilterAutoComplete from "./FilterAutocomplete";
+import {useTranslation} from "react-i18next";
 
 const RelationFilter = ({field = {}, filters, name, onChange}) => {
   const [debouncedValue, setDebouncedValue] = useState("");
-
+  const [chosenField, setChosenField] = useState(null);
+  const {i18n} = useTranslation();
   const {
     data: {data: options = []} = {
       data: [],
@@ -17,10 +19,11 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
       {
         field,
         debouncedValue,
+        chosenField,
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getListV2(field.table_slug, {
+      return constructorObjectService.getListV2(chosenField.table_slug, {
         data: {
           view_fields: field?.view_fields?.map((field) => field.slug),
           search: debouncedValue,
@@ -33,6 +36,7 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
         },
       });
     },
+    enabled: Boolean(chosenField),
     select: (res) => {
       return {
         data:
@@ -46,6 +50,7 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
 
   return (
     <FilterAutoComplete
+      field={field}
       searchText={debouncedValue}
       setSearchText={setDebouncedValue}
       value={filters[name] ?? []}
@@ -53,7 +58,8 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
         onChange(val?.length ? val : undefined, name);
       }}
       options={options}
-      label={field.label}
+      setChosenField={setChosenField}
+      label={field.label || field?.attributes?.[`label_${i18n?.language}`]}
     />
   );
 };

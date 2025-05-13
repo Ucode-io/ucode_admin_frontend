@@ -54,9 +54,10 @@ const HFMultipleAutocomplete = ({
   onChange = () => {},
   field,
   rules = {},
-  defaultValue = "",
+  defaultValue = [],
   disabled,
   setFormValue,
+  newUi,
 }) => {
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
@@ -102,6 +103,8 @@ const HFMultipleAutocomplete = ({
             disabled={disabled}
             field={field}
             className="hf-select"
+            isNewTableView={isNewTableView}
+            newUi={newUi}
           />
         );
       }}></Controller>
@@ -127,6 +130,8 @@ const AutoCompleteElement = ({
   disabled,
   field,
   isBlackBg,
+  isNewTableView,
+  newUi = false,
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
@@ -178,17 +183,12 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-  // useEffect(() => {
-  //   if (value) {
-  //     onFormChange(value);
-  //   }
-  // }, []);
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
-        id={`multiselect_${name}`}
+        id={`multiselectField`}
         value={computedValue}
         options={localOptions}
         popupIcon={
@@ -225,17 +225,24 @@ const AutoCompleteElement = ({
                 right: 0,
               },
             }}
+            disabled={disabled}
             InputProps={{
-              // inputProps: { tabIndex },
               ...params.InputProps,
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
+              inputProps: isNewTableView
+                ? {
+                    ...params.inputProps,
+                    style: computedValue?.length > 0 ? {height: 0} : undefined,
+                  }
+                : params.inputProps,
               style: disabled
                 ? {
                     background: "inherit",
                   }
                 : {
+                    padding: newUi ? "0" : undefined,
                     background: "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
                     border: error?.message ? "1px solid red" : "",
@@ -263,9 +270,7 @@ const AutoCompleteElement = ({
           />
         )}
         noOptionsText={"No options"}
-        disabled={
-          appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" ? true : disabled
-        }
+        disabled={disabled}
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
@@ -278,7 +283,20 @@ const AutoCompleteElement = ({
                     : {}
                 }>
                 {hasIcon && <IconGenerator icon={el?.icon} />}
-                <p className={styles.value}>{el?.label ?? el?.value}</p>
+                <p
+                  className={styles.value}
+                  style={
+                    isNewTableView
+                      ? {
+                          maxWidth: "150px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }
+                      : undefined
+                  }>
+                  {el?.label ?? el?.value}
+                </p>
                 {field?.attributes?.disabled === false && editPermission && (
                   <Close
                     fontSize="10"

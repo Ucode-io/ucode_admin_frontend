@@ -9,7 +9,7 @@ function JsonCellElement({
   control,
   updateObject = () => {},
   computedSlug,
-  isDisabled,
+  isDisabled = false,
   isNewTableView,
   row,
   newColumn,
@@ -35,7 +35,10 @@ function JsonCellElement({
     <>
       <Box>
         <p
-          onClick={handleClick}
+          onClick={() => {
+            !isDisabled && handleClick();
+          }}
+          id="json_field"
           style={
             isWrapField
               ? {

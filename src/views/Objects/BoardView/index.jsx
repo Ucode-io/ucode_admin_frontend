@@ -1,34 +1,40 @@
-import {useEffect, useId} from "react";
-import {useState} from "react";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import SettingsIcon from "@mui/icons-material/Settings";
+import {Badge, Box, Button, IconButton} from "@mui/material";
+import {useEffect, useId, useMemo, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorViewService from "../../../services/constructorViewService";
 import {applyDrag} from "../../../utils/applyDrag";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import ColumnVisible from "../ColumnVisible";
+import ShareModal from "../ShareModal/ShareModal";
 import FastFilter from "../components/FastFilter";
 import ViewTabSelector from "../components/ViewTypeSelector";
-import BoardColumn from "./BoardColumn";
-import styles from "./style.module.scss";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import {useTranslation} from "react-i18next";
-import constructorViewService from "../../../services/constructorViewService";
-import ColumnVisible from "../ColumnVisible";
-import {useForm} from "react-hook-form";
-import BoardGroupButton from "./BoardGroupBy";
-import ShareModal from "../ShareModal/ShareModal";
-import {Badge, Box, Button} from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {store} from "../../../store";
 import style from "../style.module.scss";
-import constructorTableService from "../../../services/constructorTableService";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import menuService from "../../../services/menuService";
+import BoardColumn from "./BoardColumn";
+import BoardGroupButton from "./BoardGroupBy";
+import styles from "./style.module.scss";
+import {Add} from "@mui/icons-material";
+import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import clsx from "clsx";
+import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import DrawerDetailPage from "../DrawerDetailPage";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
+import layoutService from "../../../services/layoutService";
 
 const BoardView = ({
   view,
@@ -37,27 +43,107 @@ const BoardView = ({
   setSelectedTabIndex,
   views,
   fieldsMap,
+  fieldsMapRel,
   selectedTable,
   menuItem,
+  visibleColumns,
+  visibleRelationColumns,
+  layoutType,
+  setLayoutType,
 }) => {
   const visibleForm = useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const projectId = useSelector((state) => state.company?.projectId);
+  const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const {tableSlug, appId} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const id = useId();
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
-  const [filterCount, setFilterCount] = useState();
+  const [filterTab, setFilterTab] = useState(null);
+  const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
 
   const [selectedView, setSelectedView] = useState(null);
   const [tab, setTab] = useState();
   const {navigateToForm} = useTabRouter();
   const {filters} = useFilters(tableSlug, view.id);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const boardRef = useRef(null);
+  const subGroupById = view?.attributes?.sub_group_by_id;
+
+  const [dateInfo, setDateInfo] = useState({});
+  const [selectedRow, setSelectedRow] = useState({});
+  const [defaultValue, setDefaultValue] = useState(null);
+
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
+  const {
+    data: {layout} = {
+      layout: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_LAYOUT",
+      {
+        tableSlug,
+      },
+    ],
+    queryFn: () => {
+      return layoutService.getLayout(tableSlug, appId);
+    },
+    select: (data) => {
+      return {
+        layout: data ?? {},
+      };
+    },
+    onError: (error) => {
+      console.error("Error", error);
+    },
+  });
+
+  const navigateToEditPage = (el) => {
+    setOpenDrawerModal(true);
+    setSelectedRow(el);
+    setDateInfo({});
+    setDefaultValue({});
+  };
+
+  // const navigateToCreatePage = ({ tab }) => {
+  //   setOpenDrawerModal(true);
+  //   setSelectedRow({});
+  //   if (isStatusType) {
+  //     setDefaultValue({
+  //       field: selectedGroupField?.slug,
+  //       value: [tab?.label],
+  //     });
+  //   } else {
+  //     setDefaultValue({
+  //       field: tab.slug,
+  //       value: [tab.value],
+  //     });
+  //   }
+  // };
+
+  const navigateToCreatePage = ({tab}) => {
+    setOpenDrawerModal(true);
+    setSelectedRow(null);
+    if (isStatusType) {
+      setDefaultValue({
+        field: selectedGroupField?.slug,
+        value: [tab?.label],
+      });
+    } else {
+      setDefaultValue({
+        field: tab.slug,
+        value: [tab.value],
+      });
+    }
+  };
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
@@ -68,171 +154,191 @@ const BoardView = ({
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
 
-  const {data = [], isLoading: dataLoader} = useQuery(
-    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters}],
+  const {
+    data = [],
+    isLoading: dataLoader,
+    refetch,
+  } = useQuery(
+    ["GET_OBJECT_LIST_ALL", {tableSlug, id, filters, filterTab}],
     () => {
       return constructorObjectService.getListV2(tableSlug, {
-        data: filters ?? {},
+        data: {
+          ...filters,
+          limit: 100,
+          offset: 0,
+        },
       });
     },
     {
-      select: ({data}) => data.response ?? [],
+      select: ({data}) => data?.response ?? [],
     }
   );
+
   const updateView = (tabs) => {
     const computedData = {
-      ...selectedView,
+      ...view,
       attributes: {
-        ...selectedView?.attributes,
-        tabs,
+        ...view?.attributes,
+        tabs: tabs,
       },
     };
     constructorViewService.update(tableSlug, computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
 
   const groupFieldId = view?.group_fields?.[0];
-  const groupField = fieldsMap[groupFieldId];
+  const groupField = fieldsMapRel[groupFieldId];
 
   const {data: tabs, isLoading: tabsLoader} = useQuery(
-    queryGenerator(groupField, filters)
+    queryGenerator(groupField, filters, i18n?.language)
   );
 
   const loader = dataLoader || tabsLoader;
 
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug);
-  };
+  // const navigateToCreatePage = () => {
+  //   navigateToForm(tableSlug);
+  // };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(view?.attributes?.tabs, dropResult);
+    const result = applyDrag(boardTab, dropResult);
+    setBoardTab(result);
     if (result) {
       updateView(result);
     }
   };
 
-  const {
-    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
-      visibleViews: [],
-      visibleColumns: [],
-      visibleRelationColumns: [],
-    },
-    isVisibleLoading,
-  } = useQuery({
-    queryKey: [
-      "GET_TABLE_INFO",
-      {
-        tableSlug,
-      },
-    ],
-    queryFn: () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {},
-      });
-    },
-    select: (res) => {
-      return {
-        visibleViews: res?.data?.views ?? [],
-        visibleColumns: res?.data?.fields ?? [],
-        visibleRelationColumns:
-          res?.data?.relation_fields?.map((el) => ({
-            ...el,
-            label: `${el.label} (${el.table_label})`,
-          })) ?? [],
-      };
-    },
-  });
+  // const {
+  //   data: {visibleViews, visibleColumns, visibleRelationColumns} = {
+  //     visibleViews: [],
+  //     visibleColumns: [],
+  //     visibleRelationColumns: [],
+  //   },
+  //   isVisibleLoading,
+  // } = useQuery({
+  //   queryKey: [
+  //     "GET_TABLE_INFO",
+  //     {
+  //       tableSlug,
+  //     },
+  //   ],
+  //   queryFn: () => {
+  //     return constructorTableService.getTableInfo(tableSlug, {
+  //       data: {},
+  //     });
+  //   },
+  //   select: (res) => {
+  //     return {
+  //       visibleViews: res?.data?.views ?? [],
+  //       visibleColumns: res?.data?.fields ?? [],
+  //       visibleRelationColumns:
+  //         res?.data?.relation_fields?.map((el) => ({
+  //           ...el,
+  //           label: `${el.label} (${el.table_label})`,
+  //         })) ?? [],
+  //     };
+  //   },
+  // });
 
-  // useEffect(() => {
-  //   if (tabs) {
-  //     updateView(tabs);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const updatedTabs = views?.[selectedTabIndex]?.attributes?.tabs;
+    if (tabs?.length === updatedTabs?.length && view?.type !== "BOARD") {
+      setBoardTab(updatedTabs);
+    } else {
+      setBoardTab(tabs);
+    }
+  }, [tabs, views, selectedTabIndex]);
+
+  const computedColumnsFor = useMemo(() => {
+    if (view.type !== "CALENDAR" && view.type !== "GANTT") {
+      return visibleColumns;
+    } else {
+      return [...visibleColumns, ...visibleRelationColumns];
+    }
+  }, [visibleColumns, visibleRelationColumns, view.type]);
+
+  const [subBoardData, setSubBoardData] = useState({});
+  const subGroupField = fieldsMap[subGroupById];
+  const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
+
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  useEffect(() => {
+    setSubBoardData({});
+    if (subGroupById) {
+      data?.forEach((item) => {
+        setSubBoardData((prev) => {
+          return {
+            ...prev,
+            [item?.[subGroupFieldSlug]]: [
+              ...data?.filter((el) => {
+                if (Array.isArray(el?.[subGroupFieldSlug])) {
+                  return (
+                    el?.[subGroupFieldSlug]?.[0] ===
+                    item?.[subGroupFieldSlug]?.[0]
+                  );
+                }
+                return el?.[subGroupFieldSlug] === item?.[subGroupFieldSlug];
+              }),
+            ],
+          };
+        });
+      });
+    }
+  }, [data, view]);
+
+  const [openedGroups, setOpenedGroups] = useState([]);
+
+  const handleToggle = (el) => {
+    if (openedGroups.includes(el)) {
+      setOpenedGroups(openedGroups.filter((item) => item !== el));
+    } else {
+      setOpenedGroups([...openedGroups, el]);
+    }
+  };
+
+  useEffect(() => {
+    setOpenedGroups(Object.keys(subBoardData));
+  }, [subBoardData]);
+
+  const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
+  const isStatusType = selectedGroupField?.type === "STATUS";
+
+  const statusGroupCounts = useMemo(() => {
+    const result = {};
+    if (subGroupById) {
+      Object.entries(subBoardData)?.forEach(([key, value]) => {
+        value?.forEach((item) => {
+          if (result[item?.[groupField?.slug]]) {
+            result[item?.[groupField?.slug]] += 1;
+          } else {
+            result[item?.[groupField?.slug]] = 1;
+          }
+        });
+      });
+    } else {
+      data?.forEach((item) => {
+        if (result[item?.[groupField?.slug]]) {
+          result[item?.[groupField?.slug]] += 1;
+        } else {
+          result[item?.[groupField?.slug]] = 1;
+        }
+      });
+    }
+
+    return result;
+  }, [subBoardData, groupField, data]);
+
+  const getColor = (el) =>
+    subGroupField?.attributes?.options?.find((item) => item?.value === el)
+      ?.color ?? "";
 
   return (
-    <div>
-      <FiltersBlock
-        extra={
-          <>
-            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-              <ShareModal />
-            </PermissionWrapperV2>
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button
-                variant="outlined"
-                onClick={navigateToSettingsPage}
-                style={{
-                  borderColor: "#A8A8A8",
-                  width: "35px",
-                  height: "35px",
-                  padding: "0px",
-                  minWidth: "35px",
-                }}>
-                <SettingsIcon
-                  style={{
-                    color: "#A8A8A8",
-                  }}
-                />
-              </Button>
-            </PermissionWrapperV2>
-          </>
-        }>
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          setViews={setViews}
-          selectedTable={selectedTable}
-          settingsModalVisible={settingsModalVisible}
-          setSettingsModalVisible={setSettingsModalVisible}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          selectedView={selectedView}
-          setSelectedView={setSelectedView}
-          setTab={setTab}
-        />
-      </FiltersBlock>
-
-      <div className={style.extraNavbar}>
-        <div className={style.extraWrapper}>
-          <div className={style.search}>
-            <Badge
-              sx={{
-                width: "35px",
-                paddingLeft: "10px",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                setFilterVisible((prev) => !prev);
-              }}
-              badgeContent={view?.quick_filters?.length}
-              color="primary">
-              <FilterAltOutlinedIcon color={"#A8A8A8"} />
-            </Badge>
-          </div>
-        </div>
-        <ColumnVisible
-          selectedTabIndex={selectedTabIndex}
-          views={visibleViews}
-          columns={visibleColumns}
-          relationColumns={visibleRelationColumns}
-          isLoading={isVisibleLoading}
-          form={visibleForm}
-          text={"Columns"}
-        />
-        <BoardGroupButton
-          selectedTabIndex={selectedTabIndex}
-          tabs={tabs}
-          text="Group"
-          queryGenerator={queryGenerator}
-          groupField={groupField}
-          filters={filters}
-        />
-      </div>
-
-      {/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
+    <div className={styles.container}>
       {loader ? (
         <PageFallback />
       ) : (
@@ -251,41 +357,179 @@ const BoardView = ({
             </div>
           )}
 
-          <div className={styles.board}>
-            <Container
-              lockAxis="x"
-              onDrop={onDrop}
-              orientation="horizontal"
-              dragHandleSelector=".column-header"
-              dragClass="drag-card-ghost"
-              dropClass="drag-card-ghost-drop"
-              dropPlaceholder={{
-                animationDuration: 150,
-                showOnTop: true,
-                className: "drag-cards-drop-preview",
-              }}
-              style={{display: "flex", gap: 24}}>
-              {view?.attributes?.tabs?.map((tab) => (
-                <Draggable key={tab.value}>
-                  <BoardColumn
-                    key={tab.value}
-                    tab={tab}
-                    data={data}
-                    fieldsMap={fieldsMap}
-                    view={view}
-                    navigateToCreatePage={navigateToCreatePage}
-                  />
-                </Draggable>
-              ))}
-            </Container>
+          {/* {subGroupById && ( */}
+          <div className={styles.header}>
+            {boardTab?.map((tab) => (
+              <ColumnHeaderBlock
+                key={tab.value}
+                tab={tab}
+                computedData={subBoardData[tab.value]}
+                counts={statusGroupCounts}
+                navigateToCreatePage={navigateToCreatePage}
+                field={computedColumnsFor?.find(
+                  (field) => field?.slug === tab?.slug
+                )}
+              />
+            ))}
+          </div>
+          {/* )} */}
+
+          <div
+            className={styles.board}
+            style={{
+              height: isFilterOpen
+                ? "calc(100vh - 171px)"
+                : "calc(100vh - 133px)",
+              // ? subGroupById
+              //   ? "calc(100vh - 171px)"
+              //   : "calc(100vh - 121px)"
+              // : subGroupById
+              //   ? "calc(100vh - 133px)"
+              //   : "calc(100vh - 83px)",
+            }}
+            ref={boardRef}>
+            {subGroupById ? (
+              <div className={styles.boardSubGroupWrapper}>
+                {Object.keys(subBoardData)?.map((el) => (
+                  <div key={el}>
+                    <button
+                      className={styles.boardSubGroupBtn}
+                      onClick={() => handleToggle(el)}>
+                      <span
+                        className={clsx(styles.boardSubGroupBtnInner, {
+                          [styles.selected]: openedGroups.includes(el),
+                        })}>
+                        <span className={styles.iconWrapper}>
+                          <span className={styles.icon}>
+                            <PlayArrowRoundedIcon fontSize="small" />
+                          </span>
+                        </span>
+                        <span
+                          className={styles.boardSubGroupBtnLabel}
+                          style={{
+                            color: getColor(el),
+                            background: getColor(el) + 33,
+                          }}>
+                          {el}
+                        </span>
+                      </span>
+                    </button>
+                    {openedGroups?.includes(el) && (
+                      <Container
+                        lockAxis="x"
+                        onDrop={onDrop}
+                        orientation="horizontal"
+                        dragHandleSelector=".column-header"
+                        dragClass="drag-card-ghost"
+                        dropClass="drag-card-ghost-drop"
+                        dropPlaceholder={{
+                          animationDuration: 150,
+                          showOnTop: true,
+                          className: "drag-cards-drop-preview",
+                        }}
+                        style={{display: "flex", gap: 8}}>
+                        {boardTab?.map((tab, index) => (
+                          <Draggable
+                            key={tab.value}
+                            className={styles.draggable}>
+                            <BoardColumn
+                              computedColumnsFor={computedColumnsFor}
+                              key={tab.value}
+                              tab={tab}
+                              data={data}
+                              fieldsMap={fieldsMap}
+                              view={view}
+                              menuItem={menuItem}
+                              layoutType={layoutType}
+                              setLayoutType={setLayoutType}
+                              refetch={refetch}
+                              boardRef={boardRef}
+                              index={index}
+                              subGroupById={subGroupById}
+                              subGroupData={subBoardData[el]}
+                              subItem={el}
+                              subGroupFieldSlug={subGroupFieldSlug}
+                              setDateInfo={setDateInfo}
+                              setDefaultValue={setDefaultValue}
+                              setOpenDrawerModal={setOpenDrawerModal}
+                              setSelectedRow={setSelectedRow}
+                            />
+                          </Draggable>
+                        ))}
+                      </Container>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Container
+                lockAxis="x"
+                onDrop={onDrop}
+                orientation="horizontal"
+                dragHandleSelector=".column-header"
+                dragClass="drag-card-ghost"
+                dropClass="drag-card-ghost-drop"
+                dropPlaceholder={{
+                  animationDuration: 150,
+                  showOnTop: true,
+                  className: "drag-cards-drop-preview",
+                }}
+                style={{display: "flex", gap: 8}}>
+                {boardTab?.map((tab, index) => (
+                  <Draggable key={tab.value} className={styles.draggable}>
+                    <BoardColumn
+                      computedColumnsFor={computedColumnsFor}
+                      key={tab.value}
+                      tab={tab}
+                      data={data}
+                      fieldsMap={fieldsMap}
+                      view={view}
+                      menuItem={menuItem}
+                      // navigateToCreatePage={navigateToCreatePage}
+                      layoutType={layoutType}
+                      setLayoutType={setLayoutType}
+                      refetch={refetch}
+                      boardRef={boardRef}
+                      index={index}
+                      subGroupById={subGroupById}
+                      subGroupData={subBoardData.current}
+                      setOpenDrawerModal={setOpenDrawerModal}
+                      setDateInfo={setDateInfo}
+                      setDefaultValue={setDefaultValue}
+                      setSelectedRow={setSelectedRow}
+                      subGroupFieldSlug={subGroupFieldSlug}
+                    />
+                  </Draggable>
+                ))}
+              </Container>
+            )}
           </div>
         </div>
       )}
+      <MaterialUIProvider>
+        <DrawerDetailPage
+          view={view}
+          projectInfo={projectInfo}
+          open={openDrawerModal}
+          setOpen={setOpenDrawerModal}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          // refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToEditPage}
+          dateInfo={dateInfo}
+          defaultValue={defaultValue}
+        />
+      </MaterialUIProvider>
     </div>
   );
 };
 
-const queryGenerator = (groupField, filters = {}, updateView) => {
+const queryGenerator = (groupField, filters = {}, lan) => {
   if (!groupField)
     return {
       queryFn: () => {},
@@ -303,6 +547,31 @@ const queryGenerator = (groupField, filters = {}, updateView) => {
           value: el.value,
           slug: groupField?.slug,
         })),
+    };
+  }
+  if (groupField?.type === "STATUS") {
+    return {
+      queryKey: ["GET_GROUP_OPTIONS", groupField.id],
+      queryFn: () => [
+        ...groupField?.attributes?.progress?.options?.map((el) => ({
+          label: el.label,
+          value: el.label,
+          slug: el.label,
+          color: el?.color,
+        })),
+        ...groupField?.attributes?.todo?.options?.map((el) => ({
+          label: el.label,
+          value: el.label,
+          slug: el.label,
+          color: el?.color,
+        })),
+        ...groupField?.attributes?.complete?.options?.map((el) => ({
+          label: el.label,
+          value: el.label,
+          slug: el.label,
+          color: el?.color,
+        })),
+      ],
     };
   }
 

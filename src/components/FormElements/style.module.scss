@@ -169,3 +169,133 @@
     background: #eee;
   }
 }
+
+.inputDesign {
+  display: none !important;
+}
+
+.inputTable {
+  outline: none;
+  input {
+    height: 35px;
+    border: 0px solid #eee;
+    padding: 3px;
+    outline: none;
+    background: transparent;
+
+    &:focus {
+      // border: 1px solid #1a9aef;
+    }
+
+    &:hover {
+      outline: none;
+    }
+  }
+}
+.phoneNumberLogin {
+  outline: none;
+  input {
+    height: 44px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    padding: 3px;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+
+    &:hover {
+      outline: none;
+    }
+  }
+}
+
+.mapField {
+  width: 520px;
+  height: 480px;
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.programmingLanguage {
+  padding: 5px 10px;
+  &:hover {
+    background: #eee;
+  }
+}
+
+.programmingLanguageActive {
+  background: #eee;
+  padding: 5px 10px;
+  &:hover {
+    background: #eee;
+  }
+}
+
+.phone_input {
+  input {
+    padding-left: 50px;
+  }
+  .PhoneInputCountry {
+    display: none;
+  }
+}
+
+.linkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.moneyBtn {
+  display: flex;
+  align-items: center;
+  background: inherit;
+  border: none;
+  cursor: pointer;
+  height: 40px;
+  border-left: 1px solid #eee;
+
+  div {
+    min-width: 45px;
+    width: 45px;
+  }
+}
+
+.selectGroup {
+  font-size: 12px;
+  font-weight: 400;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #eee;
+}
+
+.optionField {
+  font-size: 12.8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin: 0 0 6px 0;
+  text-align: center;
+  background: #eee;
+  width: fit-content;
+  margin-left: 15px;
+
+  &:hover {
+    background: #eee;
+  }
+}
+
+.statusSelect {
+  height: 26px;
+  fieldset {
+    display: none !important;
+  }
+}

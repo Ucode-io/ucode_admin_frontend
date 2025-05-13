@@ -1,18 +1,18 @@
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {
   useTableCreateMutation,
   useTableGetByIdQuery,
   useTableUpdateMutation,
 } from "../../../../../services/tableService";
-import { generateGUID } from "../../../../../utils/generateID";
-import { store } from "../../../../../store";
+import {generateGUID} from "../../../../../utils/generateID";
+import {store} from "../../../../../store";
 import DrawerCard from "../../../../DrawerCard";
 import FRow from "../../../../FormElements/FRow";
 import HFTextField from "../../../../FormElements/HFTextField";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../../../../store/alert/alert.thunk";
 import HFTextArea from "../../../../FormElements/HFTextArea";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 
 const DataBaseTableForm = ({
   open,
@@ -23,7 +23,7 @@ const DataBaseTableForm = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const company = store.getState().company;
-  const { control, handleSubmit, reset } = useForm({
+  const {control, handleSubmit, reset} = useForm({
     defaultValues: {
       sections: [],
       id: generateGUID(),
@@ -34,7 +34,7 @@ const DataBaseTableForm = ({
     },
   });
 
-  const { isLoading } = useTableGetByIdQuery({
+  const {isLoading} = useTableGetByIdQuery({
     resourceId: selectedResource,
     tableId: selectedTable,
     envId: company.environmentId,
@@ -51,7 +51,7 @@ const DataBaseTableForm = ({
     },
   });
 
-  const { mutate: createTable, isLoading: createLoading } =
+  const {mutate: createTable, isLoading: createLoading} =
     useTableCreateMutation({
       onSuccess: () => {
         dispatch(showAlert("Успешно!", "success"));
@@ -60,16 +60,14 @@ const DataBaseTableForm = ({
       },
     });
 
-  const { mutate: updateTable, isLoading: updateLoading } =
+  const {mutate: updateTable, isLoading: updateLoading} =
     useTableUpdateMutation({
       onSuccess: () => {
         dispatch(showAlert("Успешно!", "success"));
         closeDrawer();
         queryClient.refetchQueries("TABLES");
       },
-      onError: (err) => {
-        console.log("ERRRR");
-      },
+      onError: (err) => {},
     });
 
   const onSubmit = (values) => {
@@ -84,8 +82,7 @@ const DataBaseTableForm = ({
       onClose={closeDrawer}
       open={open}
       onSaveButtonClick={handleSubmit(onSubmit)}
-      loader={createLoading || updateLoading}
-    >
+      loader={createLoading || updateLoading}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FRow label="Title">
           <HFTextField control={control} name="label" autoFocus fullWidth />

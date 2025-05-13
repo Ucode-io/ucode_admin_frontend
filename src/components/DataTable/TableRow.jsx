@@ -9,7 +9,6 @@ import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
   relOptions,
@@ -24,9 +23,7 @@ const TableRow = ({
   calculateWidthFixedColumn,
   onDeleteClick,
   mainForm,
-  checkboxValue,
   getValues,
-  onCheckboxChange,
   currentPage,
   view,
   columns,
@@ -35,12 +32,9 @@ const TableRow = ({
   tableHeight,
   tableSettings,
   pageName,
-  calculateWidth,
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => {},
-  formVisible,
   remove,
   limit = 10,
   relationAction,
@@ -60,42 +54,13 @@ const TableRow = ({
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
     }
   };
-
   const parentRef = useRef(null);
-
-  if (formVisible)
-    return (
-      <TableRowForm
-        onDeleteClick={onDeleteClick}
-        isTableView={isTableView}
-        remove={remove}
-        watch={watch}
-        onCheckboxChange={onCheckboxChange}
-        checkboxValue={checkboxValue}
-        row={row}
-        key={key}
-        formVisible={formVisible}
-        currentPage={currentPage}
-        limit={limit}
-        control={control}
-        setFormValue={setFormValue}
-        rowIndex={rowIndex}
-        columns={columns}
-        tableHeight={tableHeight}
-        tableSettings={tableSettings}
-        pageName={pageName}
-        calculateWidth={calculateWidth}
-        tableSlug={tableSlug}
-        relationFields={relationFields}
-        data={data}
-      />
-    );
 
   return (
     <>
       {!relationAction ? (
         <>
-          <CTableRow style={style} ref={parentRef}>
+          <CTableRow key={key} style={style} ref={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -115,7 +80,6 @@ const TableRow = ({
                 }}>
                 <Button
                   onClick={() => {
-                    console.log("worked 1");
                     onRowClick(row, rowIndex);
                   }}
                   className="first_button"
@@ -218,6 +182,7 @@ const TableRow = ({
                         width={width}
                         isTableView={isTableView}
                         view={view}
+                        watch={watch}
                       />
                     ) : (
                       <CellElementGenerator field={virtualColumn} row={row} />
@@ -267,7 +232,7 @@ const TableRow = ({
                   </PermissionWrapperV2>
                 </CTableCell>
                 <PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>
-                  <GeneratePdfFromTable row={row} />
+                  <GeneratePdfFromTable view={view} row={row} />
                 </PermissionWrapperV2>
               </div>
             </td>
@@ -295,6 +260,7 @@ const TableRow = ({
               }}>
               <Button
                 onClick={() => {
+                  console.log("ssssssss", row);
                   onRowClick(row, rowIndex);
                 }}
                 className="first_button"
@@ -317,7 +283,7 @@ const TableRow = ({
             (virtualColumn) =>
               virtualColumn?.attributes?.field_permission?.view_permission && (
                 <CTableCell
-                  key={virtualColumn.guid}
+                  key={virtualColumn.id}
                   className={`overflow-ellipsis ${tableHeight}`}
                   style={{
                     minWidth: "220px",
@@ -374,6 +340,7 @@ const TableRow = ({
                       width={width}
                       isTableView={isTableView}
                       view={view}
+                      watch={watch}
                     />
                   ) : (
                     <CellElementGenerator field={virtualColumn} row={row} />
@@ -451,6 +418,7 @@ const TableRow = ({
               }}>
               <Button
                 onClick={() => {
+                  console.log("ssssssss", row);
                   onRowClick(row, rowIndex);
                 }}
                 className="first_button"
@@ -524,6 +492,7 @@ const TableRow = ({
                 onRowClick={onRowClick}
                 width={width}
                 view={view}
+                watch={watch}
               />
             </CTableCell>
           ))}

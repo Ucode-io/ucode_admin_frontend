@@ -48,7 +48,7 @@ const RelationSectionForModal = ({
   relatedTable,
   control,
   reset,
-  setFormValue,
+  setFormValue = () => {},
   watch,
   setSelectTab,
   selectedTab,
@@ -59,6 +59,7 @@ const RelationSectionForModal = ({
   setEditAccess,
   data,
   setData,
+  getValues,
 }) => {
   const {i18n} = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -109,43 +110,6 @@ const RelationSectionForModal = ({
     setSelectTab(el ?? relations[selectedTabIndex]);
   };
 
-  // useEffect(() => {
-  //   layoutService.getLayout(tableSlug, appId).then((res) => {
-  //     const layout = {
-  //       ...res,
-  //       tabs: res?.tabs?.filter(
-  //         (tab) =>
-  //           tab?.relation?.permission?.view_permission === true ||
-  //           tab?.type === "section"
-  //       ),
-  //     };
-  //     const layout2 = {
-  //       ...layout,
-  //       tabs: layout?.tabs?.map((tab) => {
-  //         return {
-  //           ...tab,
-  //           sections: tab?.sections?.map((section) => {
-  //             return {
-  //               ...section,
-  //               fields: section?.fields?.map((field) => {
-  //                 if (field?.is_visible_layout === undefined) {
-  //                   return {
-  //                     ...field,
-  //                     is_visible_layout: true,
-  //                   };
-  //                 } else {
-  //                   return field;
-  //                 }
-  //               }),
-  //             };
-  //           }),
-  //         };
-  //       }),
-  //     };
-  //     setData(layout2);
-  //   });
-  // }, [tableSlug, menuItem?.table_id, i18n?.language, menuItem?.id]);
-
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
     selectedTab?.sections?.map((section) => {
@@ -155,12 +119,6 @@ const RelationSectionForModal = ({
     });
     return !!allFields.find((field) => field?.enable_multilanguage === true);
   }, [selectedTab]);
-
-  // useEffect(() => {
-  //   if (data?.tabs?.length > 0) {
-  //     setSelectTab(data?.tabs?.[0]);
-  //   }
-  // }, [data?.tabs, data]);
 
   useEffect(() => {
     queryTab
@@ -204,6 +162,7 @@ const RelationSectionForModal = ({
       );
     },
     {
+      enabled: Boolean(relatedTableSlug),
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
@@ -215,27 +174,6 @@ const RelationSectionForModal = ({
 
   const updateLayout = (newData) => {
     layoutService.update(newData, tableSlug);
-  };
-
-  const toggleTabs = (tab) => {
-    const newTabs = {
-      ...data,
-      tabs: data?.tabs?.map((t) => {
-        if (t?.id === tab?.id) {
-          return {
-            ...t,
-            attributes: {
-              ...t?.attributes,
-              is_visible_layout: !t?.attributes?.is_visible_layout,
-            },
-          };
-        } else {
-          return t;
-        }
-      }),
-    };
-    // setData(newTabs);
-    updateLayout(newTabs);
   };
 
   const onDrop = (dropResult, colNumber) => {
@@ -286,31 +224,17 @@ const RelationSectionForModal = ({
     updateLayout(newTabs);
   };
 
-  // const getLayoutList = () => {
-  //   layoutService
-  //     .getLayout(tableSlug, menuId, {
-  //       "table-slug": tableSlug,
-  //       language_setting: i18n?.language,
-  //     })
-  //     .then((res) => {
-  //       const layout = {
-  //         ...res,
-  //         tabs: res?.tabs?.filter(
-  //           (tab) =>
-  //             tab?.relation?.permission?.view_permission === true ||
-  //             tab?.type === "section"
-  //         ),
-  //       };
-  //       setData(layout);
-  //     })
-  //     .finally(() => {
-  //       setSelectTab(relations[selectedTabIndex]);
-  //     })
-  // };
+  const getRelatonLabel = (tab) => {
+    const label =
+      tab?.type === "relation"
+        ? tab?.relation?.attributes?.[`label_to_${i18n?.language}`] ||
+          tab?.relation?.attributes?.label ||
+          tab?.relation?.attributes?.[`label_to_${i18n?.language}`] ||
+          tab?.attributes?.[`label_to_${i18n?.language}`]
+        : tab?.attributes?.[`label_${i18n?.language}`] || tab?.label;
 
-  // useEffect(() => {
-  //   getLayoutList();
-  // }, [tableSlug, menuItem?.table_id, i18n?.language]);
+    return label;
+  };
 
   return (
     <>
@@ -373,17 +297,7 @@ const RelationSectionForModal = ({
                               </>
                             )}
                             <div className="flex align-center gap-2 text-nowrap">
-                              {(el?.relation &&
-                                el?.relation?.table_from?.label) ||
-                                el?.relation?.attributes?.[
-                                  `label_to_${i18n?.language}`
-                                ] ||
-                                el?.attributes?.[`label_${i18n.language}`] ||
-                                el?.relation?.attributes?.[
-                                  `label_${i18n.language}`
-                                ] ||
-                                el?.label ||
-                                el?.title}
+                              {getRelatonLabel(el)}
                             </div>
                           </Tab>
 
@@ -395,7 +309,6 @@ const RelationSectionForModal = ({
                               width: "38px",
                               borderRadius: "50%",
                             }}>
-                            {/* {el?.attributes?.is_visible_layout || el?.attributes?.is_visible_layout === undefined ? <VisibilityOffIcon /> : <VisibilityIcon />} */}
                             <DeleteIcon
                               style={{
                                 color: "red",
@@ -426,17 +339,7 @@ const RelationSectionForModal = ({
                             </>
                           )}
                           <div className="flex align-center gap-2 text-nowrap">
-                            {(el?.relation &&
-                              el?.relation?.table_from?.label) ||
-                              el?.relation?.attributes?.[
-                                `label_to_${i18n?.language}`
-                              ] ||
-                              el?.attributes?.[`label_${i18n.language}`] ||
-                              el?.relation?.attributes?.[
-                                `label_${i18n.language}`
-                              ] ||
-                              el?.label ||
-                              el?.title}
+                            {getRelatonLabel(el)}
                           </div>
                         </Tab>
                       )
@@ -591,6 +494,7 @@ const RelationSectionForModal = ({
                     />
                   ) : (
                     <RelationTable
+                      getValues={getValues}
                       ref={myRef}
                       loader={loader}
                       remove={remove}

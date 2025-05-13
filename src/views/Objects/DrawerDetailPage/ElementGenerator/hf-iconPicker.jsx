@@ -1,0 +1,53 @@
+import {FormHelperText} from "@mui/material";
+import {Controller} from "react-hook-form";
+import IconPickerField from "./IconPickerField";
+
+const HFIconPicker = ({
+  control,
+  tabIndex,
+  name,
+  disabledHelperText = false,
+  required = false,
+  rules = {},
+  updateObject,
+  isNewTableView = false,
+  disabled = false,
+  customeClick = false,
+  clickItself = () => {},
+  drawerDetail = false,
+  ...props
+}) => {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      defaultValue=""
+      rules={{
+        required: required ? "This is required field" : false,
+        ...rules,
+      }}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
+        <>
+          <IconPickerField
+            drawerDetail={drawerDetail}
+            id="icon_field"
+            disabled={disabled}
+            error={error}
+            value={value}
+            tabIndex={tabIndex}
+            onChange={(val) => {
+              onChange(val);
+            }}
+            customeClick={customeClick}
+            clickItself={clickItself}
+            {...props}
+          />
+          {!disabledHelperText && (
+            <FormHelperText error>{error?.message}</FormHelperText>
+          )}
+        </>
+      )}></Controller>
+  );
+};
+
+export default HFIconPicker;

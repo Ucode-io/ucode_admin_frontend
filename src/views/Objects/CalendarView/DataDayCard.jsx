@@ -156,8 +156,7 @@ const DataDayCard = ({
           transform: `translateY(${info.calendar?.startPosition}px)`,
           height: info.calendar?.height,
         }}
-        onClick={openMenu}
-        w>
+        onClick={openMenu}>
         <div
           className={styles.resizing}
           style={{background: infoBlockBg, height: "100%"}}>
@@ -216,7 +215,7 @@ const DataDayCard = ({
             </b>
             {field?.type === "LOOKUP" ? (
               getRelationFieldTableCellLabel(field, info, field.slug + "_data")
-            ) : field?.type === "DATE_TIME" ? (
+            ) : field?.type === "DATE_TIME" || field?.type === "DATE" ? (
               dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement

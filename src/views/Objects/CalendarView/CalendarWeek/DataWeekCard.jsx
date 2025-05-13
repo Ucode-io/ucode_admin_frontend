@@ -2,7 +2,6 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import styles from "./week.module.scss";
 import "../moveable.scss";
 import {Menu} from "@mui/material";
-import InfoBlock from "../InfoBlock";
 import {dateValidFormat} from "../../../../utils/dateValidFormat";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import {getRelationFieldTableCellLabel} from "../../../../utils/getRelationFieldLabel";
@@ -12,7 +11,6 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 import {useParams} from "react-router-dom";
 import useTimeList from "../../../../hooks/useTimeList";
 import {format, setHours, setMinutes} from "date-fns";
-import Moveable from "react-moveable";
 import InfoBlockWeek from "./InfoBlockWeek";
 
 const DataWeekCard = ({
@@ -215,8 +213,8 @@ const DataWeekCard = ({
             </b>
             {field?.type === "LOOKUP" ? (
               getRelationFieldTableCellLabel(field, info, field.slug + "_data")
-            ) : field?.type === "DATE_TIME" ? (
-              dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
+            ) : field?.type === "DATE_TIME" || field?.type === "DATE" ? (
+              dateValidFormat(info[field.slug], "dd.MM.yyyy - HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
                 style={{padding: "2px 5px", marginBottom: 4}}
@@ -235,24 +233,6 @@ const DataWeekCard = ({
           setInfo={setInfo}
         />
       </Menu>
-      {/* <Moveable
-        target={target}
-        className="moveable2"
-        draggable
-        resizable
-        throttleDrag={40}
-        throttleResize={40}
-        keepRatio={false}
-        origin={false}
-        renderDirections={["s", "n"]}
-        padding={{left: 0, top: 0, right: 0, bottom: 0}}
-        onDragStart={onDragStart}
-        onDrag={onDrag}
-        onDragEnd={onDragEnd}
-        onResizeStart={onResizeStart}
-        onResize={onResize}
-        onResizeEnd={onResizeEnd}
-      /> */}
     </>
   );
 };

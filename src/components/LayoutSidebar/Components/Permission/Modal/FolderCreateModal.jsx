@@ -1,6 +1,6 @@
 import {Card, Modal, Typography} from "@mui/material";
 import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import {store} from "../../../../../store";
 import CreateButton from "../../../../Buttons/CreateButton";
@@ -15,13 +15,15 @@ import FRow from "../../../../FormElements/FRow";
 import HFCheckbox from "../../../../FormElements/HFCheckbox";
 import {useMemo} from "react";
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
+import HFNumberField from "../../../../FormElements/HFNumberField";
+import clientTypeServiceV2 from "../../../../../services/auth/clientTypeServiceV2";
 
 const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const company = store.getState().company;
   const queryClient = useQueryClient();
   const createType = modalType === "CREATE";
 
-  const {control, handleSubmit} = useForm({
+  const {control, handleSubmit, setValue} = useForm({
     defaultValues: {
       project_id: company.projectId,
       id: clientType.id,
@@ -63,9 +65,24 @@ const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
     },
   });
 
+  const {isLoading: isLoading2} = useQuery(
+    ["GET_CLIENT_TYPE_BY_ID", clientType?.id],
+    () => {
+      return clientTypeServiceV2.getById(clientType?.id);
+    },
+    {
+      enabled: !!clientType?.id,
+      onSuccess: (res) => {
+        setValue("session_limit", res?.data?.response?.session_limit);
+      },
+    }
+  );
+
   const onSubmit = (values) => {
     const data = {
       ...values,
+      session_limit: values?.session_limit ? values?.session_limit : 50,
+
       "project-id": company.projectId,
     };
     const params = {
@@ -139,15 +156,27 @@ const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
                 options={tableOptions}
               />
             </FRow>
+
+            <FRow label="Session limit">
+              <HFNumberField
+                name="session_limit"
+                control={control}
+                placeholder="session limit"
+                fullWidth
+                options={tableOptions}
+              />
+            </FRow>
             <div className="btns-row">
               {createType ? (
                 <CreateButton
+                  id="createClientType"
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
+                  id="saveFolder"
                   onClick={handleSubmit(onSubmit)}
                   type="submit"
                   loading={createLoading || updateLoading}

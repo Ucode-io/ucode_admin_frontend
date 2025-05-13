@@ -18,6 +18,10 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "../../utils/getRelationFieldLabel";
 
 const RelationFormElement = ({
   control,
@@ -37,7 +41,9 @@ const RelationFormElement = ({
   checkRequiredField,
   rules,
   activeLang,
+  isModal = false,
   errors,
+  modalClass,
   ...props
 }) => {
   const {i18n} = useTranslation();
@@ -72,6 +78,7 @@ const RelationFormElement = ({
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
+              isModal={isModal}
               value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
               field={field}
@@ -86,6 +93,7 @@ const RelationFormElement = ({
               errors={errors}
               required={required}
               activeLang={activeLang}
+              modalClass={modalClass}
             />
           )}
         />
@@ -96,7 +104,7 @@ const RelationFormElement = ({
     <Controller
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
-      defaultValue={field.label}
+      defaultValue={defaultValue}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
@@ -155,11 +163,14 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   errors,
   required = false,
+  isModal = false,
   activeLang,
+  modalClass,
+  mainForm,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
-  const {id} = useParams();
+
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
 
@@ -172,7 +183,10 @@ const AutoCompleteElement = ({
   const [allOptions, setAllOptions] = useState([]);
   const {i18n} = useTranslation();
   const {state} = useLocation();
-  const languages = useSelector((state) => state.languages.list);
+  const languages = useSelector((state) => state.languages.list)?.map(
+    (el) => el.slug
+  );
+
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -181,7 +195,6 @@ const AutoCompleteElement = ({
     control: (provided) => ({
       ...provided,
       border: `1px solid ${errors?.[field?.slug] ? "red" : "#d4d2d2"}`,
-      // maxWidth: "300px",
       minWidth: "200px",
     }),
     menu: (provided) => ({
@@ -263,7 +276,6 @@ const AutoCompleteElement = ({
       },
     }
   );
-
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
@@ -289,7 +301,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path && !isSettings,
+      enabled: Boolean(!field?.attributes?.function_path),
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -301,7 +313,13 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         if (page > 1) {
-          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+          setAllOptions((prevOptions) => {
+            const mergedData = [...prevOptions, ...data.options];
+            const uniqueData = Array.from(
+              new Map(mergedData.map((item) => [item.guid, item])).values()
+            );
+            return uniqueData;
+          });
         } else {
           setAllOptions(data?.options);
         }
@@ -378,9 +396,9 @@ const AutoCompleteElement = ({
   };
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [options, value]);
+    const findedOption = options?.find((el) => el?.guid === value || state?.id);
+    return findedOption ? findedOption : [];
+  }, [options, value, state?.id]);
 
   useEffect(() => {
     let val;
@@ -430,35 +448,23 @@ const AutoCompleteElement = ({
     }
   }
 
-  const computedViewFields = useMemo(() => {
-    if (field?.attributes?.enable_multi_language) {
-      const viewFields = field?.attributes?.view_fields?.map((el) => el?.slug);
-      const computedLanguages = languages?.map((item) => item?.slug);
-
-      const activeLangView = viewFields?.filter((el) =>
-        el?.includes(activeLang ?? i18n?.language)
-      );
-
-      const filteredData = viewFields.filter((key) => {
-        return !computedLanguages.some((lang) => key.includes(lang));
-      });
-
-      return [...activeLangView, ...filteredData] ?? [];
-    } else {
-      return field?.attributes?.view_fields?.map((el) => el?.slug);
-    }
-  }, [field, activeLang, i18n?.language]);
-
   useEffect(() => {
     if (field?.attributes?.object_id_from_jwt === true) {
       const foundOption = allOptions?.find((el) => el?.guid === isUserId);
 
       if (foundOption) {
+        setValue(foundOption?.guid);
         setLocalValue([foundOption]);
       }
     }
   }, [allOptions?.length, field]);
 
+  useEffect(() => {
+    if (localValue?.length === 0 && computedValue?.guid) {
+      setLocalValue([computedValue]);
+      setValue(computedValue?.guid);
+    }
+  }, [state?.id, computedValue]);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -503,6 +509,7 @@ const AutoCompleteElement = ({
       ) : (
         <>
           <Select
+            id={`select_${field?.slug}`}
             isDisabled={
               disabled ||
               (field?.attributes?.object_id_from_jwt &&
@@ -510,6 +517,7 @@ const AutoCompleteElement = ({
               (Boolean(field?.attributes?.is_user_id_default) &&
                 localValue?.length !== 0)
             }
+            menuPortalTarget={isModal ? null : document.body}
             options={allOptions ?? []}
             isClearable={true}
             styles={customStyles}
@@ -526,13 +534,14 @@ const AutoCompleteElement = ({
               inputChangeHandler(e);
             }}
             getOptionLabel={(option) =>
-              computedViewFields?.map((el) => {
-                if (field?.attributes?.enable_multi_language) {
-                  return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
-                } else {
-                  return `${option[el]} `;
-                }
-              })
+              field?.attributes?.enable_multi_language
+                ? getRelationFieldTabsLabelLang(
+                    field,
+                    option,
+                    i18n?.language,
+                    languages
+                  )
+                : `${getRelationFieldTabsLabel(field, option)}`
             }
             getOptionValue={(option) =>
               option?.guid ?? option?.id ?? option?.client_type_id

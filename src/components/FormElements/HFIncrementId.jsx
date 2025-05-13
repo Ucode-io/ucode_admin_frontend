@@ -1,29 +1,29 @@
-import { Lock } from '@mui/icons-material';
-import { InputAdornment, TextField, Tooltip } from '@mui/material';
-import React from 'react'
-import { Controller, useWatch } from 'react-hook-form';
+import {Lock} from "@mui/icons-material";
+import {InputAdornment, TextField, Tooltip} from "@mui/material";
+import React from "react";
+import {Controller, useWatch} from "react-hook-form";
 
 function HFIncrementId({
-    disabled,
-    isFormEdit,
-    updateObject,
-    isNewTableView,
-    isBlackBg,
+  disabled,
+  isFormEdit,
+  updateObject,
+  isNewTableView,
+  isBlackBg,
+  control,
+  name,
+  fullWidth,
+  field,
+  required,
+  placeholder,
+  defaultValue,
+  rules,
+}) {
+  const data = useWatch({
     control,
     name,
-    fullWidth,
-    field,
-    required,
-    placeholder,
-    defaultValue,
-    rules
-}) {
-    const data = useWatch({
-        control,
-        name
-    })
+  });
 
-    return (
+  return (
     <Controller
       control={control}
       name={name}
@@ -34,6 +34,7 @@ function HFIncrementId({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
+          id="increment_id"
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
@@ -41,8 +42,8 @@ function HFIncrementId({
               withTrim
                 ? e.target.value?.trim()
                 : typeof e.target.value === "number"
-                ? numberWithSpaces(e.target.value)
-                : e.target.value
+                  ? numberWithSpaces(e.target.value)
+                  : e.target.value
             );
             customOnChange(e);
             isNewTableView && updateObject();
@@ -56,7 +57,7 @@ function HFIncrementId({
           error={error}
           fullWidth={fullWidth}
           placeholder={placeholder}
-        //   autoFocus={tabIndex === 1}
+          //   autoFocus={tabIndex === 1}
           InputProps={{
             readOnly: disabled,
             // inputProps: {tabIndex},
@@ -69,14 +70,14 @@ function HFIncrementId({
                   padding: "0px",
                 }
               : isNewTableView
-              ? {
-                  background: "inherit",
-                  color: "inherit",
-                  padding: "0px !important",
-                  margin: "0px !important",
-                  height: "25px",
-                }
-              : {},
+                ? {
+                    background: "inherit",
+                    color: "inherit",
+                    padding: "0px !important",
+                    margin: "0px !important",
+                    height: "25px",
+                  }
+                : {},
 
             // endAdornment: disabled ? (
             //   <Tooltip title={disabled_text}>
@@ -88,13 +89,13 @@ function HFIncrementId({
             //   endAdornment
             // ),
           }}
-        //   helperText={!disabledHelperText && error?.message}
+          //   helperText={!disabledHelperText && error?.message}
           className={isFormEdit ? "custom_textfield" : ""}
-        //   {...props}
+          //   {...props}
         />
       )}
     />
   );
 }
 
-export default HFIncrementId
+export default HFIncrementId;

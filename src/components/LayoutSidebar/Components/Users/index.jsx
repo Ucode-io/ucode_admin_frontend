@@ -56,6 +56,7 @@ const Users = ({
           handleOpenNotify={handleOpenNotify}
           selectedApp={selectedApp}
           userType={true}
+          buttonProps={{ className: "highlight-on-hover" }}
         />
       ))}
     </Box>

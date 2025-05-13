@@ -1,5 +1,5 @@
 import {Save} from "@mui/icons-material";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useQueryClient} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
@@ -16,18 +16,21 @@ import FormCard from "../../../FormCard";
 import FRow from "../../../FormElements/FRow";
 import HFAvatarUpload from "../../../FormElements/HFAvatarUpload";
 import HFMultipleSelect from "../../../FormElements/HFMultipleSelect";
-import HFSelect from "../../../FormElements/HFSelect";
 import HFTextField from "../../../FormElements/HFTextField";
 import HeaderSettings from "../../../HeaderSettings";
 import HFAutocomplete from "../../../FormElements/HFAutocomplete";
-import {Autocomplete, TextField} from "@mui/material";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../../store/alert/alert.thunk";
+import {getAllFromDB} from "../../../../utils/languageDB";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 
 const ProjectSettingPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const company = store.getState().company;
+  const {i18n} = useTranslation();
+  const [settingLan, setSettingLan] = useState(null);
   const {control, reset, handleSubmit, watch} = useForm();
   const dispatch = useDispatch();
 
@@ -119,6 +122,7 @@ const ProjectSettingPage = () => {
   );
 
   const onSubmit = (values) => {
+    console.log("Dfdfdf");
     updateProject({
       ...values,
       timezone: filteredTimezone.map((item) => ({
@@ -138,6 +142,25 @@ const ProjectSettingPage = () => {
       })),
     });
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setSettingLan(formattedData?.find((item) => item?.key === "Setting"));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -145,7 +168,13 @@ const ProjectSettingPage = () => {
         height: "100%",
       }}>
       <HeaderSettings
-        title="Project settings"
+        title={
+          generateLangaugeText(
+            settingLan,
+            i18n?.language,
+            "Project settings"
+          ) || "Project settings"
+        }
         subtitle={watch("title")}
         disabledMenu={false}></HeaderSettings>
 
@@ -154,7 +183,9 @@ const ProjectSettingPage = () => {
         className="p-2"
         style={{height: "calc(100vh - 112px)", overflow: "auto"}}>
         <FRow
-          label={"Name"}
+          label={
+            generateLangaugeText(settingLan, i18n?.language, "Name") || "Name"
+          }
           componentClassName="flex gap-2 align-center"
           required>
           <HFTextField
@@ -162,13 +193,15 @@ const ProjectSettingPage = () => {
             name="title"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <HFAvatarUpload control={control} name="logo" />
 
         <FRow
-          label={"Language"}
+          label={
+            generateLangaugeText(settingLan, i18n?.language, "Language") ||
+            "Language"
+          }
           componentClassName="flex gap-2 align-center"
           required>
           <HFMultipleSelect
@@ -176,11 +209,13 @@ const ProjectSettingPage = () => {
             name="language"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <FRow
-          label={"Currency"}
+          label={
+            generateLangaugeText(settingLan, i18n?.language, "Currency") ||
+            "Currency"
+          }
           componentClassName="flex gap-2 align-center"
           required>
           <HFAutocomplete
@@ -189,11 +224,13 @@ const ProjectSettingPage = () => {
             name="currency"
             control={control}
             fullWidth
-            required
           />
         </FRow>
         <FRow
-          label={"Timezone"}
+          label={
+            generateLangaugeText(settingLan, i18n?.language, "Timezone") ||
+            "Timezone"
+          }
           componentClassName="flex gap-2 align-center"
           required>
           <HFAutocomplete
@@ -202,7 +239,6 @@ const ProjectSettingPage = () => {
             name="timezone"
             control={control}
             fullWidth
-            required
           />
         </FRow>
       </form>
@@ -211,10 +247,13 @@ const ProjectSettingPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Close
+              {generateLangaugeText(settingLan, i18n?.language, "Close") ||
+                "Close"}
             </SecondaryButton>
             <PrimaryButton loader={btnLoading} onClick={handleSubmit(onSubmit)}>
-              <Save /> Save
+              <Save />{" "}
+              {generateLangaugeText(settingLan, i18n?.language, "Save") ||
+                "Save"}
             </PrimaryButton>
           </>
         }

@@ -26,6 +26,7 @@ import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import RelationDefault from "./RelationDefault.jsx";
 import styles from "./style.module.scss";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const relationViewTypes = [
   {
@@ -44,6 +45,7 @@ const RelationSettings = ({
   getRelationFields,
   formType,
   height,
+  tableLan,
 }) => {
   const {tableSlug} = useParams();
   const [loader, setLoader] = useState(false);
@@ -177,8 +179,8 @@ const RelationSettings = ({
 
   const computedFieldsListOptions = useMemo(() => {
     return values?.columnsList?.map((field) => ({
-      label: field?.label || field.view_fields[0]?.label,
-      value: field.id,
+      label: field?.label || field?.view_fields?.[0]?.label,
+      value: field?.id,
     }));
   }, [values.columnsList, values]);
 
@@ -226,11 +228,7 @@ const RelationSettings = ({
     const data = {
       ...values,
       relation_table_slug: relatedTableSlug ?? tableSlug,
-      // compute columns
-      // columns: values.columnsList
-      //   ?.filter((el) => el.is_checked)
-      //   ?.map((el) => el.id),
-      // compute filters
+
       quick_filters: values.filtersList
         ?.filter((el) => el.is_checked)
         ?.map((el) => ({
@@ -238,7 +236,6 @@ const RelationSettings = ({
           default_value: "",
         })),
 
-      // compute default value
       default_values: values?.default_values
         ? Array.isArray(values.default_values)
           ? values.default_values
@@ -246,7 +243,6 @@ const RelationSettings = ({
         : [],
     };
 
-    // delete data?.field_name;
     delete data?.formula_name;
 
     setFormLoader(true);
@@ -284,7 +280,6 @@ const RelationSettings = ({
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
-        console.log("resssssssssssss", res);
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",
@@ -332,7 +327,19 @@ const RelationSettings = ({
             borderBottom: "1px solid #e0e0e0",
             paddingBottom: "16px",
           }}>
-          <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
+          <h2>
+            {formType === "CREATE"
+              ? generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Create relation"
+                ) || "Create relation"
+              : generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Edit relation"
+                ) || "Edit relation"}
+          </h2>
 
           <IconButton onClick={closeSettingsBlock}>
             <Close />
@@ -344,7 +351,7 @@ const RelationSettings = ({
             onSubmit={handleSubmit(submitHandler)}
             className={styles.fieldSettingsForm}>
             <div>
-              <Card className={styles.noShadow}>
+              <div className={styles.noShadow}>
                 {drawerType === "SCHEMA" && (
                   <div className="p-2">
                     <div
@@ -353,7 +360,15 @@ const RelationSettings = ({
                         gridTemplateColumns: "1fr 1fr",
                         gap: "10px",
                       }}>
-                      <FRow label="Label From" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Label From"
+                          ) || "Label From"
+                        }
+                        required>
                         <Box
                           style={{
                             display: "flex",
@@ -372,7 +387,15 @@ const RelationSettings = ({
                         </Box>
                       </FRow>
 
-                      <FRow label="Label To" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Label To"
+                          ) || "Label To"
+                        }
+                        required>
                         <Box
                           style={{
                             display: "flex",
@@ -392,7 +415,15 @@ const RelationSettings = ({
                       </FRow>
                     </div>
 
-                    <FRow label="Table from" required>
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Table From"
+                        ) || "Table From"
+                      }
+                      required>
                       <HFSelect
                         name="table_from"
                         control={control}
@@ -404,7 +435,15 @@ const RelationSettings = ({
                     </FRow>
 
                     {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
-                      <FRow label="Table to" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Table to"
+                          ) || "Table to"
+                        }
+                        required>
                         <HFSelect
                           name="table_to"
                           control={control}
@@ -415,7 +454,15 @@ const RelationSettings = ({
                       </FRow>
                     )}
 
-                    <FRow label="Relation type" required>
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Relation type"
+                        ) || "Relation type"
+                      }
+                      required>
                       <HFSelect
                         name="type"
                         control={control}
@@ -426,7 +473,15 @@ const RelationSettings = ({
                     </FRow>
 
                     {values.type === "Many2Many" && (
-                      <FRow label="Relate field type" required>
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Relate field type"
+                          ) || "Relate field type"
+                        }
+                        required>
                         <HFSelect
                           name="view_type"
                           control={control}
@@ -435,8 +490,14 @@ const RelationSettings = ({
                         />
                       </FRow>
                     )}
-                    {/* {isViewFieldsVisible && ( */}
-                    <FRow label="View fields">
+                    <FRow
+                      label={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "View fields"
+                        ) || "View fields"
+                      }>
                       <HFMultipleSelect
                         name="view_fields"
                         control={control}
@@ -444,7 +505,6 @@ const RelationSettings = ({
                         placeholder="View fields"
                       />
                     </FRow>
-                    {/* )} */}
 
                     {values.type === "Many2Dynamic" && (
                       <DynamicRelationsBlock
@@ -472,7 +532,14 @@ const RelationSettings = ({
                       {watch().multiple_insert && (
                         <div className={styles.sectionBody}>
                           <div className={styles.formRow}>
-                            <FRow label="Multiple insert field">
+                            <FRow
+                              label={
+                                generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Multiple insert field"
+                                ) || "Multiple insert field"
+                              }>
                               <HFSelect
                                 options={computedColumns}
                                 control={control}
@@ -480,7 +547,14 @@ const RelationSettings = ({
                               />
                             </FRow>
 
-                            <FRow label="Fixed fields">
+                            <FRow
+                              label={
+                                generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Fixed fields"
+                                ) || "Fixed fields"
+                              }>
                               <HFMultipleSelect
                                 options={computedColumns}
                                 control={control}
@@ -569,6 +643,7 @@ const RelationSettings = ({
 
                     <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue} /> */}
                     <RelationDefault
+                      isModal={true}
                       control={control}
                       watch={watch}
                       columnsList={values.columnsList}
@@ -611,7 +686,7 @@ const RelationSettings = ({
                     <AutoFiltersBlock control={control} watch={watch} />
                   </div>
                 )}
-              </Card>
+              </div>
             </div>
 
             <div className={styles.settingsFooter}>
@@ -620,7 +695,8 @@ const RelationSettings = ({
                 style={{width: "100%", fontSize: "14px"}}
                 onClick={handleSubmit(submitHandler)}
                 loader={formLoader || loader}>
-                Save
+                {generateLangaugeText(tableLan, i18n?.language, "Save") ||
+                  "Save"}
               </PrimaryButton>
             </div>
           </form>

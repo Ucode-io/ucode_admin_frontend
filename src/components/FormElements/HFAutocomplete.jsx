@@ -47,7 +47,6 @@ const HFAutocomplete = ({
         field: {onChange: onFormChange, value, name},
         fieldState: {error},
       }) => {
-        console.log("errorrrrrr", error);
         return (
           <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>

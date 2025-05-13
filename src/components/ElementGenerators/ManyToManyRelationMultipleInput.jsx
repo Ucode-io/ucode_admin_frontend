@@ -1,19 +1,19 @@
-import { memo, useEffect, useMemo, useState } from "react";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import {memo, useEffect, useMemo, useState} from "react";
+import {Controller, useFieldArray, useForm, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
 
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
-import { pageToOffset } from "../../utils/pageToOffset";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
+import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 
-import { Box, Button } from "@mui/material";
+import {Box, Button} from "@mui/material";
 import ManyToManySelect from "./ManyToManySelect";
 
 const ManyToManyRelationFormElement = memo(
@@ -36,7 +36,7 @@ const ManyToManyRelationFormElement = memo(
     const tableSlug = useMemo(() => {
       return field.id?.split("#")?.[0] ?? "";
     }, [field.id]);
-    const { i18n } = useTranslation();
+    const {i18n} = useTranslation();
 
     if (!isLayout)
       return (
@@ -49,14 +49,13 @@ const ManyToManyRelationFormElement = memo(
             field.title ??
             " "
           }
-          required={field.required}
-        >
+          required={field.required}>
           <Controller
             control={control}
-            name={name || `${tableSlug}_ids`}
+            name={`${name}_ids` || `${tableSlug}_ids`}
             defaultValue={null}
             {...props}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={({field: {onChange, value}, fieldState: {error}}) => (
               <AutoCompleteElement
                 value={value}
                 setValue={onChange}
@@ -66,7 +65,7 @@ const ManyToManyRelationFormElement = memo(
                 error={error}
                 disabledHelperText={disabledHelperText}
                 control={control}
-                name={name || `${tableSlug}_ids`}
+                name={`${name}_ids` || `${tableSlug}_ids`}
                 {...autocompleteProps}
               />
             )}
@@ -79,17 +78,16 @@ const ManyToManyRelationFormElement = memo(
         control={mainForm.control}
         name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
         defaultValue={field.label}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
+        render={({field: {onChange, value}, fieldState: {error}}) => (
           <FEditableRow
             label={value}
             onLabelChange={onChange}
-            required={checkRequiredField}
-          >
+            required={checkRequiredField}>
             <Controller
               control={control}
               name={`${tableSlug}_id`}
               defaultValue={null}
-              render={({ field: { onChange, value }, fieldState: { error } }) =>
+              render={({field: {onChange, value}, fieldState: {error}}) =>
                 field?.attributes?.cascadings?.length > 1 ? (
                   <CascadingSection
                     disabled={disabled}
@@ -116,8 +114,7 @@ const ManyToManyRelationFormElement = memo(
               }
             />
           </FEditableRow>
-        )}
-      ></Controller>
+        )}></Controller>
     );
   }
 );
@@ -137,13 +134,13 @@ const AutoCompleteElement = memo(
     disabledHelperText,
     name,
   }) => {
-    const { navigateToForm } = useTabRouter();
+    const {navigateToForm} = useTabRouter();
     const [debouncedValue, setDebouncedValue] = useState("");
     const newForm = useForm();
     const [page, setPage] = useState(1);
     const [check, setCheck] = useState(false);
     const [allOptions, setAllOptions] = useState([]);
-    const { i18n } = useTranslation();
+    const {i18n} = useTranslation();
 
     const multiple_selects = useWatch({
       control: newForm.control,
@@ -184,7 +181,7 @@ const AutoCompleteElement = memo(
       return result;
     }, [autoFilters, filtersHandler]);
 
-    const { data: fromInvokeList } = useQuery(
+    const {data: fromInvokeList} = useQuery(
       ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
       () => {
         return request.post(
@@ -223,7 +220,7 @@ const AutoCompleteElement = memo(
       }
     );
 
-    const { data: fromObjectList } = useQuery(
+    const {data: fromObjectList} = useQuery(
       [
         "GET_OBJECT_LIST",
         tableSlug,
@@ -364,13 +361,12 @@ const AutoCompleteElement = memo(
       <div className={styles.autocompleteWrapper}>
         <div
           className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}
-        >
+          onClick={() => navigateToForm(tableSlug)}>
           Create new
         </div>
 
         {relationFields?.map((element, index) => (
-          <Box sx={{ padding: "5px 0" }}>
+          <Box sx={{padding: "5px 0"}}>
             <ManyToManySelect
               newForm={newForm}
               setValue={setValue}
@@ -391,10 +387,9 @@ const AutoCompleteElement = memo(
         ))}
 
         <Button
-          sx={{ cursor: "pointer", textAlign: "center" }}
+          sx={{cursor: "pointer", textAlign: "center"}}
           variant="contained"
-          onClick={appendInput}
-        >
+          onClick={appendInput}>
           Add
         </Button>
       </div>

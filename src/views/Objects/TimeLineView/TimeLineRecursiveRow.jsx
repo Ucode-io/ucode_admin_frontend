@@ -5,7 +5,6 @@ import {get} from "@ngard/tiny-get";
 import React, {useEffect, useMemo, useState} from "react";
 import constructorObjectService from "../../../services/constructorObjectService";
 import styles from "./styles.module.scss";
-import {useQuery} from "react-query";
 
 export default function TimeLineRecursiveRow({
   groupItem: item,
@@ -73,7 +72,7 @@ export default function TimeLineRecursiveRow({
         .getById(item?.group_by_slug, item?.label)
         .then((res) => {
           if (res?.data?.response) {
-            setLabel(res?.data?.response);
+            // setLabel(res?.data?.response);
           }
         });
     }

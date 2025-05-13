@@ -83,6 +83,10 @@
       color: colors.$primary;
     }
   }
+
+  &.fullWidth {
+    width: 100%;
+  }
 }
 
 .tabButtonWrapper {

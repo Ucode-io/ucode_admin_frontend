@@ -17,6 +17,8 @@ const ExcelDownloadButton = ({
   view,
   computedVisibleFields,
   selectedTab,
+  searchText,
+  checkedColumns,
 }) => {
   const {t, i18n} = useTranslation();
 
@@ -36,8 +38,10 @@ const ExcelDownloadButton = ({
             ...sort,
             ...filters,
             field_ids: computedVisibleFields,
-            [`${selectedTab?.relation?.relation_table_slug}_id`]: idFromParams,
+            [`${tableSlug}_id`]: idFromParams,
             language: i18n?.language,
+            search: searchText,
+            view_fields: checkedColumns,
           },
         }
       );
@@ -51,7 +55,7 @@ const ExcelDownloadButton = ({
   };
 
   return (
-    <div className={style.excelUpload} onClick={onClick}>
+    <div id="excel_download" className={style.excelUpload} onClick={onClick}>
       <RectangleIconButton loader={loader} color="white" onClick={onClick}>
         {withText ? "Экспорт" : null}
         <Download />

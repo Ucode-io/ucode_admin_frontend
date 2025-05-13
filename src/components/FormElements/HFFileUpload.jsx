@@ -1,21 +1,21 @@
-import { FormHelperText } from "@mui/material";
-import { Controller } from "react-hook-form";
+import {FormHelperText} from "@mui/material";
+import {Controller} from "react-hook-form";
 import NewFileUpload from "../Upload/NewFileUpload.jsx";
 
 const HFFileUpload = ({
-  control,
   name,
+  rules,
+  field,
+  control,
   required,
   tabIndex,
-  updateObject,
-  isNewTableView = false,
-  rules,
-  disabledHelperText = false,
   disabled,
-  field,
+  drawerDetail = false,
+  isNewTableView = false,
+  updateObject = () => {},
+  disabledHelperText = false,
   ...props
 }) => {
-
   return (
     <Controller
       control={control}
@@ -30,6 +30,7 @@ const HFFileUpload = ({
           <NewFileUpload
             name={name}
             value={value}
+            drawerDetail={drawerDetail}
             tabIndex={tabIndex}
             field={field}
             onChange={(val) => {
@@ -43,8 +44,7 @@ const HFFileUpload = ({
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

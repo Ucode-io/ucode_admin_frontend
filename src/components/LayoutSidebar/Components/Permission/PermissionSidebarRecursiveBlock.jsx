@@ -9,13 +9,14 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import {store} from "../../../../store";
 import {RiPencilFill} from "react-icons/ri";
 import activeStyles from "../MenuUtils/activeStyles";
-export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
-export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 import {Delete} from "@mui/icons-material";
 import RectangleIconButton from "../../../Buttons/RectangleIconButton";
 import {useClientTypeDeleteMutation} from "../../../../services/clientTypeService";
 import {useQueryClient} from "react-query";
 import DeleteWrapperModal from "../../../DeleteWrapperModal";
+
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const PermissionSidebarRecursiveBlock = ({
   customFunc = () => {},
@@ -80,13 +81,13 @@ const PermissionSidebarRecursiveBlock = ({
   };
 
   return (
-    <Box sx={{padding: "0 5px"}}>
+    <Box sx={{paddingLeft: "10px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         {permission ? (
           <Button
             key={element.id}
-            style={activeStyle}
-            className="nav-element"
+            style={{height: "31px", borderRadius: "8px", paddingLeft: "25px"}}
+            className="nav-element highlight-on-hover"
             onClick={(e) => {
               customFunc(e);
               clickHandler(e);
@@ -94,11 +95,8 @@ const PermissionSidebarRecursiveBlock = ({
             <div
               className="label"
               style={{
-                color:
-                  menuItem?.id === element?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text,
-                opacity: element?.isChild && 0.6,
+                color: "#475467",
+                fontSize: "13px",
               }}>
               {element?.type === "USER" && (
                 <PersonIcon
@@ -150,19 +148,16 @@ const PermissionSidebarRecursiveBlock = ({
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          gap: "10px",
+                          gap: "5px",
                         }}>
-                        <Box className="extra_icon">
+                        <Box sx={{height: "20px"}}>
                           <RiPencilFill
                             size={13}
                             onClick={(e) => {
                               menuSettingsClick(e);
                             }}
                             style={{
-                              color:
-                                menuItem?.id === element?.id
-                                  ? menuStyle?.active_text
-                                  : menuStyle?.text || "",
+                              color: "#475467",
                             }}
                           />
                         </Box>
@@ -175,10 +170,7 @@ const PermissionSidebarRecursiveBlock = ({
                               <Delete
                                 size={13}
                                 style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
+                                  color: "#475467",
                                 }}
                               />
                             </RectangleIconButton>

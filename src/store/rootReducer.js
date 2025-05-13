@@ -19,6 +19,9 @@ import {languagesReducer} from "./globalLanguages/globalLanguages.slice";
 import {paginationReducer} from "./pagination/pagination.slice";
 import {relationTabReducer} from "./relationTab/relationTab.slice";
 import {viewsReducer} from "./views/view.slice";
+import {isOnlineReducer} from "./isOnline/isOnline.slice";
+import {permissionsReducer} from "./permissions/permissions.slice";
+import {menuAccordionReducer} from "./menus/menus.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -42,6 +45,11 @@ const applicationPersistConfig = {
 
 const menuPersistConfig = {
   key: "menu",
+  storage,
+};
+
+const menuAccordionPersistConfig = {
+  key: "menuAccordion",
   storage,
 };
 
@@ -104,6 +112,16 @@ const viewTab = {
   storage,
 };
 
+const isOnline = {
+  key: "isOnline",
+  storage,
+};
+
+const permissions = {
+  key: "permissions",
+  storage,
+};
+
 // const groupFieldPersistConfig = {
 //   key: "groupField",
 //   storage,
@@ -118,6 +136,10 @@ const rootReducer = combineReducers({
   ),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
+  menuAccordion: persistReducer(
+    menuAccordionPersistConfig,
+    menuAccordionReducer
+  ),
   quick_filter: persistReducer(quickFiltersCount, quickFiltersReducer),
   pagination: persistReducer(tablePagination, paginationReducer),
   languages: persistReducer(languagesPersistConfig, languagesReducer),
@@ -136,6 +158,8 @@ const rootReducer = combineReducers({
   viewSelectedTab: persistReducer(viewTab, viewsReducer),
   // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),
   alert: alertReducer,
+  isOnline: persistReducer(isOnline, isOnlineReducer),
+  permissions: persistReducer(permissions, permissionsReducer),
 });
 
 export default rootReducer;

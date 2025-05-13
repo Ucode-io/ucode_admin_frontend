@@ -4,7 +4,8 @@ import PrimaryButton from "../Buttons/PrimaryButton"
 import SecondaryButton from "../Buttons/SecondaryButton"
 import RippleLoader from "../Loaders/RippleLoader"
 import styles from "./style.module.scss"
-  
+import { GreyLoader } from "../Loaders/GreyLoader";
+
 const LargeModalCard = ({
   title,
   children,
@@ -27,12 +28,17 @@ const LargeModalCard = ({
           </div>
 
           {loader ? (
-            <div className={styles.loader} >
-               <RippleLoader />
+            <div className={styles.loader}>
+              {/* <RippleLoader /> */}
+              <GreyLoader />
             </div>
           ) : (
             <div className={styles.body}>
-              <div className={`${styles.formWrapper} ${oneColumn ? styles.oneColumn : ''}`}>{children}</div>
+              <div
+                className={`${styles.formWrapper} ${oneColumn ? styles.oneColumn : ""}`}
+              >
+                {children}
+              </div>
             </div>
           )}
 
@@ -56,7 +62,7 @@ const LargeModalCard = ({
         </Card>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
 export default LargeModalCard

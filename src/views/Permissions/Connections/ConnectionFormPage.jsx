@@ -1,33 +1,41 @@
-import { Box, Card, Modal, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import {Box, Card, Modal, Typography} from "@mui/material";
+import {useParams} from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import CreateButton from "../../../components/Buttons/CreateButton";
 import SaveButton from "../../../components/Buttons/SaveButton";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { useTablesListQuery } from "../../../services/constructorTableService";
-import { useMemo, useState } from "react";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {useTablesListQuery} from "../../../services/constructorTableService";
+import {useMemo, useState} from "react";
 import HFSelect from "../../../components/FormElements/HFSelect";
-import { useFieldsListQuery } from "../../../services/constructorFieldService";
+import {useFieldsListQuery} from "../../../services/constructorFieldService";
 import FRow from "../../../components/FormElements/FRow";
-import { useRelationsListQuery } from "../../../services/constructorRelationService";
+import {useRelationsListQuery} from "../../../services/constructorRelationService";
 import {
   useConnectionCreateMutation,
   useConnectionGetByIdQuery,
   useConnectionUpdateMutation,
 } from "../../../services/auth/connectionService";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 
-const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
+const ConnectionCreateModal = ({
+  closeModal,
+  modalType,
+  connectionId,
+  settingLan,
+}) => {
   const queryClient = useQueryClient();
-  const { clientId } = useParams();
+  const {clientId} = useParams();
+  const {i18n} = useTranslation();
   const envId = store.getState().company.environmentId;
   const projectId = store.getState().company.projectId;
   const [relations, setRelations] = useState([]);
 
-  const { control, handleSubmit, reset, watch, getValues } = useForm({
+  const {control, handleSubmit, reset, watch, getValues} = useForm({
     defaultValues: {
       name: "",
       table_slug: "",
@@ -41,7 +49,7 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
   const tableSlug = watch("table_slug");
   const mainTableSlug = watch("main_table_slug");
 
-  const { isLoading } = useConnectionGetByIdQuery({
+  const {isLoading} = useConnectionGetByIdQuery({
     id: connectionId,
     queryParams: {
       enabled: Boolean(modalType === "UPDATE"),
@@ -51,7 +59,7 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
     },
   });
 
-  const { mutateAsync: createConnection, isLoading: createLoading } =
+  const {mutateAsync: createConnection, isLoading: createLoading} =
     useConnectionCreateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
@@ -59,7 +67,7 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
         closeModal();
       },
     });
-  const { mutateAsync: updateConnection, isLoading: updateLoading } =
+  const {mutateAsync: updateConnection, isLoading: updateLoading} =
     useConnectionUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
@@ -71,13 +79,13 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
   const onSubmit = (data) => {
     const relation = relations?.find((i) => i.slug === getValues().table_slug);
     if (modalType === "NEW") {
-      createConnection({ ...data, field_slug: relation?.field_slug });
+      createConnection({...data, field_slug: relation?.field_slug});
     } else {
-      updateConnection({ ...data, guid: connectionId });
+      updateConnection({...data, guid: connectionId});
     }
   };
 
-  const { data: projectTables } = useTablesListQuery({
+  const {data: projectTables} = useTablesListQuery({
     params: {
       envId: envId,
     },
@@ -86,17 +94,20 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
     },
   });
 
-  const { data: fieldsData } = useFieldsListQuery({
-    queryParams: {
-      enabled: Boolean(tableSlug),
+  const {data: fieldsData} = useFieldsListQuery(
+    {
+      queryParams: {
+        enabled: Boolean(tableSlug),
+      },
+      params: {
+        table_slug: tableSlug,
+        "project-id": projectId,
+      },
     },
-    params: {
-      table_slug: tableSlug,
-      "project-id": projectId,
-    },
-  });
+    tableSlug
+  );
 
-  const { data: relationsData } = useRelationsListQuery({
+  const {data: relationsData} = useRelationsListQuery({
     queryParams: {
       enabled: Boolean(mainTableSlug),
     },
@@ -152,7 +163,17 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
             <Typography variant="h4">
-              {modalType === "NEW" ? "Create connection" : "Edit connection"}
+              {modalType === "NEW"
+                ? generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Create connection"
+                  ) || '"Create connection"'
+                : generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Edit connection"
+                  ) || "Edit connection"}
             </Typography>
             <ClearIcon
               color="primary"
@@ -165,7 +186,14 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
           </div>
 
           <form action="" className="form">
-            <FRow label="Table slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Table slug"
+                ) || "Table slug"
+              }>
               <HFTextField
                 fullWidth
                 label="Value"
@@ -174,7 +202,14 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
                 required
               />
             </FRow>
-            <FRow label="Main table slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Main table slug"
+                ) || "Main table slug"
+              }>
               <HFSelect
                 fullWidth
                 label="Table"
@@ -184,7 +219,14 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
                 required
               />
             </FRow>
-            <FRow label="Table slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Table slug"
+                ) || "Table slug"
+              }>
               <HFSelect
                 fullWidth
                 label="Table"
@@ -194,7 +236,14 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
                 required
               />
             </FRow>
-            <FRow label="Field slug">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Field slug"
+                ) || "Field slug"
+              }>
               <HFSelect
                 fullWidth
                 label="Table"
@@ -208,11 +257,19 @@ const ConnectionCreateModal = ({ closeModal, modalType, connectionId }) => {
             <div className="btns-row">
               {modalType === "NEW" ? (
                 <CreateButton
+                  title={
+                    generateLangaugeText(settingLan, i18n?.language, "Add") ||
+                    "Add"
+                  }
                   onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
+                  title={
+                    generateLangaugeText(settingLan, i18n?.language, "Save") ||
+                    "Save"
+                  }
                   onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />

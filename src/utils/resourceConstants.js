@@ -17,11 +17,11 @@ export const resourceTypes = [
   //   value: 2,
   //   icon: HiOutlineDatabase,
   // },
-  // {
-  //   label: "PosgreSQL",
-  //   value: 3,
-  //   icon: SiPostgresql,
-  // },
+  {
+    label: "PosgreSQL",
+    value: 3,
+    icon: SiPostgresql,
+  },
   {
     label: "Rest",
     value: 4,
@@ -40,6 +40,21 @@ export const resourceTypes = [
   {
     label: "Smtp",
     value: 7,
+    icon: SiPostgresql,
+  },
+  {
+    label: "Click House",
+    value: 2,
+    icon: SiPostgresql,
+  },
+  {
+    label: "Gitlab",
+    value: 8,
+    icon: SiPostgresql,
+  },
+  {
+    label: "Superset",
+    value: 11,
     icon: SiPostgresql,
   },
 ];
@@ -74,6 +89,12 @@ export const resources = [
     value: "GITHUB",
     icon: SiPostgresql,
   },
+
+  {
+    label: "Gitlab",
+    value: "GITLAB",
+    icon: SiPostgresql,
+  },
 ];
 
 export const serviceTypes = [
@@ -88,6 +109,72 @@ export const serviceTypes = [
   {
     label: "Analytics service",
     value: 2,
+  },
+];
+export const groupedResources = [
+  {
+    head: "Databases",
+    items: [
+      {
+        type: "mongo",
+        label: "MongoDB",
+        value: 1,
+        icon: "mongo",
+      },
+      {
+        type: "CLICK_HOUSE",
+        label: "Click House",
+        value: 2,
+        icon: "clickhouse",
+      },
+      {
+        type: "POSGRESQL",
+        label: "PostgreSQL",
+        value: 3,
+        icon: "postgres",
+      },
+    ],
+  },
+  {
+    head: "API",
+    items: [
+      {
+        type: "SMS",
+        label: "Playmobile",
+        value: 6,
+        icon: "restapi",
+      },
+      {
+        label: "SMTP",
+        value: 7,
+        icon: "restapi",
+      },
+    ],
+  },
+  {
+    head: "Source Code Version Control",
+    items: [
+      {
+        label: "Github",
+        value: 5,
+        icon: "github",
+      },
+      {
+        label: "Gitlab",
+        value: 8,
+        icon: "gitlab",
+      },
+    ],
+  },
+  {
+    head: "BI tool",
+    items: [
+      {
+        label: "Superset",
+        value: 11,
+        icon: "superset",
+      },
+    ],
   },
 ];
 

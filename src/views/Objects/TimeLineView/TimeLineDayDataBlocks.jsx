@@ -9,6 +9,7 @@ export default function TimeLineDayDataBlock({
   fieldsMap,
   setFocusedDays,
   view,
+  dateFilters,
   tabs,
   computedColumnsFor,
   datesList,
@@ -21,6 +22,15 @@ export default function TimeLineDayDataBlock({
   groupByList,
   openedRows,
   setOpenedRows,
+  menuItem,
+  fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
+  noDates,
+  calendarRef,
+  setOpenDrawerModal,
+  setSelectedRow,
 }) {
   return (
     <>
@@ -28,35 +38,35 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
-        }}>
-        <div className={styles.days}>
-          {datesList.map((date) => (
+        }}
+      >
+        <div className={styles.days} id="timelineDays">
+          {datesList.map((date, index) => (
             <TimeLineDays
               date={date}
               zoomPosition={zoomPosition}
               selectedType={selectedType}
+              index={index}
+              data={data}
+              noDates={noDates}
+              view={view}
+              calendarRef={calendarRef}
             />
           ))}
         </div>
 
         {view?.attributes?.group_by_columns?.length !== 0 && (
-          <div
-            className={styles.dataContainer}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              display: "flex",
-              flexDirection: "column",
-              top: 0,
-            }}>
+          <div className={styles.dataContainer}>
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
+                menuItem={menuItem}
+                fieldsMapPopup={fieldsMapPopup}
+                dateFilters={dateFilters}
                 openedRows={openedRows}
                 setOpenedRows={setOpenedRows}
-                key={item?.label}
                 item={item}
                 index={index}
+                firstIndex={index}
                 groupbyFields={groupbyFields}
                 selectedType={selectedType}
                 computedColumnsFor={computedColumnsFor}
@@ -68,8 +78,16 @@ export default function TimeLineDayDataBlock({
                 calendar_to_slug={calendar_to_slug}
                 visible_field={visible_field}
                 groupByList={groupByList}
+                setLayoutType={setLayoutType}
+                refetch={refetch}
+                navigateToDetailPage={navigateToDetailPage}
+                calendarRef={calendarRef}
+                setOpenDrawerModal={setOpenDrawerModal}
+                setSelectedRow={setSelectedRow}
+                deepLength={view?.attributes?.group_by_columns?.length}
               />
             ))}
+            {/* <div className={styles.addNewTask}></div> */}
           </div>
         )}
 
@@ -78,21 +96,37 @@ export default function TimeLineDayDataBlock({
           calendar_to_slug && (
             <div className={styles.datas}>
               {data.map((item, index) => (
-                <TimeLineDayDataBlockItem
-                  selectedType={selectedType}
-                  computedColumnsFor={computedColumnsFor}
-                  groupbyFields={groupbyFields}
-                  data={item}
-                  levelIndex={index}
-                  groupByList={groupByList}
-                  setFocusedDays={setFocusedDays}
-                  datesList={datesList}
-                  view={view}
-                  zoomPosition={zoomPosition}
-                  calendar_from_slug={calendar_from_slug}
-                  calendar_to_slug={calendar_to_slug}
-                  visible_field={visible_field}
-                />
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "32px",
+                  }}
+                  key={item?.label}
+                >
+                  <TimeLineDayDataBlockItem
+                    selectedType={selectedType}
+                    computedColumnsFor={computedColumnsFor}
+                    groupbyFields={groupbyFields}
+                    data={item?.data ? item?.data : item}
+                    levelIndex={index}
+                    groupByList={groupByList}
+                    setFocusedDays={setFocusedDays}
+                    datesList={datesList}
+                    view={view}
+                    zoomPosition={zoomPosition}
+                    calendar_from_slug={calendar_from_slug}
+                    calendar_to_slug={calendar_to_slug}
+                    visible_field={visible_field}
+                    menuItem={menuItem}
+                    fieldsMapPopup={fieldsMapPopup}
+                    refetch={refetch}
+                    setLayoutType={setLayoutType}
+                    navigateToDetailPage={navigateToDetailPage}
+                    setOpenDrawerModal={setOpenDrawerModal}
+                    setSelectedRow={setSelectedRow}
+                  />
+                </div>
               ))}
             </div>
           )}

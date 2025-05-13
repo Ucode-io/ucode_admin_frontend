@@ -3,10 +3,8 @@
 .RectangleIconButton {
   border: 1px solid #E5E9EB;
   border-radius: 4px;
-  min-width: 32px;
-  min-width: 32px;
+  width: 32px;
   height: 32px;
-  min-height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -47,6 +45,11 @@
     &:hover {
       border-color: #6E8BB7;
     }
+  }
+
+  &.small {
+    width: 24px;
+    height: 24px;
   }
 
 }

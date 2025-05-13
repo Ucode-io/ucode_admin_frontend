@@ -1,35 +1,39 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {
   CloseIcon,
   PointerIcon,
   UploadIcon,
 } from "../../../../assets/icons/icon";
-import HFSelect from "../../../../components/FormElements/HFSelect";
 import excelService from "../../../../services/excelService";
 import fileService from "../../../../services/fileService";
 import styles from "./style.module.scss";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import RingLoader from "../../../../components/Loaders/RingLoader";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
-import { useQueryClient } from "react-query";
-import listToOptions from "../../../../utils/listToOptions";
-import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
+import {useQueryClient} from "react-query";
+import HFSelectField from "../../../../components/FormElements/HFSelectField";
+import { useTranslation } from "react-i18next";
+import { useGetLang } from "../../../../hooks/useGetLang";
+import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
 
 const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const inputFIle = useRef();
   const { tableSlug } = useParams();
   const queryClient = useQueryClient();
-
   const [rows, setRows] = useState();
   const [fileName, setFileName] = useState("");
   const [tabIndex, setTabIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
+  const { t, i18n } = useTranslation();
   const excelFieldOptions = useMemo(() => {
     return rows?.map((el) => ({ label: el, value: el }));
   }, [rows]);
+
+  const lang = useGetLang("Table");
 
   const { reset, control, watch, handleSubmit } = useForm();
 
@@ -114,10 +118,10 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
         <Tabs className={styles.tabs_head} selectedIndex={tabIndex}>
           <TabList className={styles.tabs_list}>
             <Tab className={styles.tabs_item}>
-              <span>Загрузить файл</span>
+              <span>{t("upload_file")}</span>
             </Tab>
             <Tab className={styles.tabs_item}>
-              <span>Подтверждения</span>
+              <span>{t("confirm_tab")}</span>
             </Tab>
             <button onClick={handleClose} className={styles.tabs_close}>
               <CloseIcon style={{ color: "#6E8BB7" }} />
@@ -128,12 +132,21 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
             <div className={styles.dialog_upload}>
               {visible ? (
                 <div className={styles.tab_loader}>
-                  <RingLoader />
+                  {/* <RingLoader /> */}
+                  <GreyLoader />
                 </div>
               ) : (
                 <div className={styles.dialog_upload_section}>
-                  <UploadIcon />
-                  <p>Drag and drop files here</p>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <UploadIcon />
+                  </div>
+                  <p>
+                    {generateLangaugeText(
+                      lang,
+                      i18n.language,
+                      "Import pop-up content"
+                    )}
+                  </p>
                   <input
                     type="file"
                     id="file"
@@ -141,7 +154,9 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                     style={{ display: "none" }}
                     onChange={onUpload}
                   />
-                  <button onClick={fileUpload}>Browse</button>
+                  <button onClick={fileUpload} style={{ width: "fit-content" }}>
+                    {t("browse")}
+                  </button>
                 </div>
               )}
             </div>
@@ -150,9 +165,9 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
             <div className={styles.tabs_select}>
               <div className={styles.upload_select}>
                 <div className={styles.upload_select_item}>
-                  <h2>Экспорт загаловка столбца</h2>
+                  <h2>{t("export_column_header")}</h2>
                   <h2 className={styles.excel_title}>
-                    Excel заголовка столбца
+                    {t("excel_column_header")}
                   </h2>
                 </div>
                 <div className={styles.select_body_content}>
@@ -167,7 +182,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                           <div className={styles.select_body_item}>
                             {item?.type === "LOOKUP" ||
                             item?.type === "LOOKUPS" ? (
-                              <HFMultipleSelect
+                              <HFSelectField
                                 name={`fields[${index}].viewFieldSlug`}
                                 placeholder={item.label}
                                 control={control}
@@ -192,11 +207,19 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                               <PointerIcon />
                             </div>
                             <div className={styles.select_options}>
-                              <HFSelect
+                              {/* <HFSelect
                                 name={`fields[${index}].excelSlug`}
                                 control={control}
                                 options={excelFieldOptions}
                                 width={"264px"}
+                              /> */}
+
+                              <HFSelectField
+                                required={true}
+                                control={control}
+                                name={`fields[${index}].excelSlug`}
+                                options={excelFieldOptions}
+                                width="200px"
                               />
                             </div>
                           </div>
@@ -209,7 +232,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                     className={styles.control_clear}
                     onClick={() => clearBtn()}
                   >
-                    Сбросить
+                    {t("reset")}
                   </button>
                   <button
                     className={styles.control_upload}

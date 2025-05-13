@@ -19,7 +19,7 @@ export default function HFTextFieldWithMultiLanguage({
   disabled,
   tabIndex,
   checkRequiredField,
-  placeholder,
+  placeholder = "",
   languages,
   endAdornment,
   field,
@@ -35,6 +35,16 @@ export default function HFTextFieldWithMultiLanguage({
   const [fieldPlaceholder, setFieldPlaceholder] = useState(placeholder);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const watch = useWatch({
+    control,
+  });
+
+  const defaultValue = useMemo(
+    () => watch[fieldName] ?? "",
+    [watch, fieldName]
+  );
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -53,15 +63,6 @@ export default function HFTextFieldWithMultiLanguage({
       setSelectedLanguage(languages[0]?.slug);
     }
   }, [languages]);
-
-  const watch = useWatch({
-    control,
-  });
-
-  const defaultValue = useMemo(
-    () => watch[fieldName] ?? "",
-    [watch, fieldName]
-  );
 
   return (
     <>

@@ -12,12 +12,14 @@ import menuService, {
 } from "../../../../../services/menuService";
 import LayoutsItem from "./LayoutsItem";
 import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 function NewlayoutList({
   setSelectedLayout,
   mainForm,
   getData,
   setSelectedTabLayout,
+  tableLan,
 }) {
   const {id} = useParams();
   const {i18n} = useTranslation();
@@ -112,7 +114,6 @@ function NewlayoutList({
     queryParams: {
       enabled: Boolean(true),
       onSuccess: (res) => {
-        console.log("resssssssss", res);
         setMenus(
           res?.menus?.map((menu) => ({label: menu?.label, value: menu?.id}))
         );
@@ -131,20 +132,24 @@ function NewlayoutList({
     );
     return nonSelectedOptionsMenu;
   }, [watchLayouts?.map((item) => item?.menu_id), menus]);
-  console.log("isLoading", isLoading, layouts);
+
   return (
     <Box sx={{width: "100%", height: "100vh", background: "#fff"}}>
       <TableCard>
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Layouts</CTableCell>
+            <CTableCell>
+              {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
+                "Layouts"}
+            </CTableCell>
             <CTableCell width={60} />
           </CTableHead>
 
           {!isLoading &&
             layouts?.map((element, index) => (
               <LayoutsItem
+                tableLan={tableLan}
                 getData={getData}
                 element={element}
                 index={index}
@@ -164,6 +169,9 @@ function NewlayoutList({
             ))}
 
           <TableRowButton
+            title={
+              generateLangaugeText(tableLan, i18n?.language, "Add") || "Add"
+            }
             colSpan={4}
             onClick={() => {
               append({

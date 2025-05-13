@@ -1,0 +1,1924 @@
+{
+  "staticData": [
+    {
+      "key": "Settings",
+      "translations": {
+        "uz": "Sozlamalar",
+        "ru": "Настройки",
+        "en": "Settings"
+      }
+    },
+    {
+      "key": "Users",
+      "translations": {
+        "uz": "Foydanaluvchilar",
+        "ru": "Участники",
+        "en": "Users"
+      }
+    },
+    {
+      "key": "Create",
+      "translations": {
+        "uz": "Yaratish",
+        "ru": "Создать",
+        "en": "Create"
+      }
+    },
+    {
+      "key": "Files",
+      "translations": {
+        "uz": "Fayllar",
+        "ru": "Файлы",
+        "en": "Files"
+      }
+    },
+    {
+      "key": "Languages",
+      "translations": {
+        "uz": "Tillar",
+        "ru": "Languages",
+        "en": "Languages"
+      }
+    },
+    {
+      "key": "Logout",
+      "translations": {
+        "uz": "Logout",
+        "ru": "Logout",
+        "en": "Logout"
+      }
+    },
+
+    {
+      "key": "Project Settings",
+      "translations": {
+        "uz": "Project Settings",
+        "ru": "Project Settings",
+        "en": "Project Settings"
+      }
+    },
+    {
+      "key": "Permissions",
+      "translations": {
+        "uz": "Permissions",
+        "ru": "Permissions",
+        "en": "Permissions"
+      }
+    },
+    {
+      "key": "Resources",
+      "translations": {
+        "uz": "Resurslar",
+        "ru": "Resources",
+        "en": "Resources"
+      }
+    },
+    {
+      "key": "Code",
+      "translations": {
+        "uz": "Chqish",
+        "ru": "Code",
+        "en": "Code"
+      }
+    },
+    {
+      "key": "Activity Logs",
+      "translations": {
+        "uz": "Activity Logs",
+        "ru": "Activity Logs",
+        "en": "Activity Logs"
+      }
+    },
+
+    {
+      "key": "Environments",
+      "translations": {
+        "uz": "Chqish",
+        "ru": "Выйти",
+        "en": "Environments"
+      }
+    },
+    {
+      "key": "Versions",
+      "translations": {
+        "uz": "Versiyalar",
+        "ru": "Versions",
+        "en": "Versions"
+      }
+    },
+    {
+      "key": "Language Control",
+      "translations": {
+        "uz": "Tilni Boshqarish",
+        "ru": "Language Control",
+        "en": "Language Control"
+      }
+    },
+
+    {
+      "key": "Functions",
+      "translations": {
+        "uz": "Funksiyalar",
+        "ru": "Functions",
+        "en": "Functions"
+      }
+    },
+    {
+      "key": "Microfrontend",
+      "translations": {
+        "uz": "Microfrontend",
+        "ru": "Microfrontend",
+        "en": "Microfrontend"
+      }
+    },
+    {
+      "key": "Upload ERD",
+      "translations": {
+        "uz": "Upload ERD",
+        "ru": "Upload ERD",
+        "en": "Upload ERD"
+      }
+    },
+
+    {
+      "key": "Data",
+      "translations": {
+        "uz": "Data",
+        "ru": "Data",
+        "en": "Data"
+      }
+    },
+    {
+      "key": "Models",
+      "translations": {
+        "uz": "Models",
+        "ru": "Models",
+        "en": "Models"
+      }
+    },
+
+    {
+      "key": "Name",
+      "translations": {
+        "uz": "Ism",
+        "ru": "Name",
+        "en": "Name"
+      }
+    },
+    {
+      "key": "Language",
+      "translations": {
+        "uz": "Til",
+        "ru": "Language",
+        "en": "Language"
+      }
+    },
+    {
+      "key": "Currency",
+      "translations": {
+        "uz": "Currency",
+        "ru": "Currency",
+        "en": "Currency"
+      }
+    },
+    {
+      "key": "Timezone",
+      "translations": {
+        "uz": "Timezone",
+        "ru": "Timezone",
+        "en": "Timezone"
+      }
+    },
+    {
+      "key": "Description",
+      "translations": {
+        "uz": "Description",
+        "ru": "Description",
+        "en": "Description"
+      }
+    },
+    {
+      "key": "Add",
+      "translations": {
+        "uz": "Qoshish",
+        "ru": "Add",
+        "en": "Add"
+      }
+    },
+
+    {
+      "key": "Create folder",
+      "translations": {
+        "uz": "Papka qoshish",
+        "ru": "Create folder",
+        "en": "Create folder"
+      }
+    },
+    {
+      "key": "Title",
+      "translations": {
+        "uz": "Title",
+        "ru": "Title",
+        "en": "Title"
+      }
+    },
+
+    {
+      "key": "Default page link",
+      "translations": {
+        "uz": "Default page link",
+        "ru": "Default page link",
+        "en": "Default page link"
+      }
+    },
+    {
+      "key": "Self recover",
+      "translations": {
+        "uz": "Self recover",
+        "ru": "Self recover",
+        "en": "Self recover"
+      }
+    },
+    {
+      "key": "Self register",
+      "translations": {
+        "uz": "Self register",
+        "ru": "Self register",
+        "en": "Self register"
+      }
+    },
+    {
+      "key": "Table",
+      "translations": {
+        "uz": "Table",
+        "ru": "Table",
+        "en": "Table"
+      }
+    },
+    {
+      "key": "Session limit",
+      "translations": {
+        "uz": "Session limit",
+        "ru": "Session limit",
+        "en": "Session limit"
+      }
+    },
+    {
+      "key": "Matrix Details",
+      "translations": {
+        "uz": "Matrix Details",
+        "ru": "Matrix Details",
+        "en": "Matrix Details"
+      }
+    },
+    {
+      "key": "Role",
+      "translations": {
+        "uz": "Role",
+        "ru": "Роль",
+        "en": "Role"
+      }
+    },
+    {
+      "key": "Connection",
+      "translations": {
+        "uz": "Connection",
+        "ru": "Connection",
+        "en": "Connection"
+      }
+    },
+    {
+      "key": "View slug",
+      "translations": {
+        "uz": "View slug",
+        "ru": "View slug",
+        "en": "View slug"
+      }
+    },
+    {
+      "key": "Table slug",
+      "translations": {
+        "uz": "Table slug",
+        "ru": "Table slug",
+        "en": "Table slug"
+      }
+    },
+
+    {
+      "key": "Table",
+      "translations": {
+        "uz": "Table",
+        "ru": "Table",
+        "en": "Table"
+      }
+    },
+    {
+      "key": "Menu",
+      "translations": {
+        "uz": "Menu",
+        "ru": "Menu",
+        "en": "Menu"
+      }
+    },
+    {
+      "key": "Global Permission",
+      "translations": {
+        "uz": "Global Permission",
+        "ru": "Global Permission",
+        "en": "Global Permission"
+      }
+    },
+    {
+      "key": "Objects",
+      "translations": {
+        "uz": "Objects",
+        "ru": "Objects",
+        "en": "Objects"
+      }
+    },
+
+    {
+      "key": "Record Permission",
+      "translations": {
+        "uz": "Record Permission",
+        "ru": "Record Permission",
+        "en": "Record Permission"
+      }
+    },
+    {
+      "key": "Field Permission",
+      "translations": {
+        "uz": "Field Permission",
+        "ru": "Field Permission",
+        "en": "Field Permission"
+      }
+    },
+    {
+      "key": "Action Permission",
+      "translations": {
+        "uz": "Action Permission",
+        "ru": "Action Permission",
+        "en": "Action Permission"
+      }
+    },
+    {
+      "key": "Relation Permission",
+      "translations": {
+        "uz": "Relation Permission",
+        "ru": "Relation Permission",
+        "en": "Relation Permission"
+      }
+    },
+    {
+      "key": "View Permission",
+      "translations": {
+        "uz": "View Permission",
+        "ru": "View Permission",
+        "en": "View Permission"
+      }
+    },
+    {
+      "key": "Custom Permission",
+      "translations": {
+        "uz": "Custom Permission",
+        "ru": "Custom Permission",
+        "en": "Custom Permission"
+      }
+    },
+    {
+      "key": "Reading",
+      "translations": {
+        "uz": "Reading",
+        "ru": "Reading",
+        "en": "Reading"
+      }
+    },
+    {
+      "key": "Adding",
+      "translations": {
+        "uz": "Adding",
+        "ru": "Adding",
+        "en": "Adding"
+      }
+    },
+
+    {
+      "key": "Editing",
+      "translations": {
+        "uz": "Editing",
+        "ru": "Editing",
+        "en": "Editing"
+      }
+    },
+    {
+      "key": "Deleting",
+      "translations": {
+        "uz": "Deleting",
+        "ru": "Deleting",
+        "en": "Deleting"
+      }
+    },
+    {
+      "key": "Public",
+      "translations": {
+        "uz": "Public",
+        "ru": "Public",
+        "en": "Public"
+      }
+    },
+
+    {
+      "key": "Resource settings",
+      "translations": {
+        "uz": "Resource settings",
+        "ru": "Resource settings",
+        "en": "Resource settings"
+      }
+    },
+    {
+      "key": "Resource Info",
+      "translations": {
+        "uz": "Resource Info",
+        "ru": "Resource Info",
+        "en": "Resource Info"
+      }
+    },
+    {
+      "key": "Type",
+      "translations": {
+        "uz": "Type",
+        "ru": "Type",
+        "en": "Type"
+      }
+    },
+
+    {
+      "key": "API keys",
+      "translations": {
+        "uz": "API keys",
+        "ru": "API keys",
+        "en": "API keys"
+      }
+    },
+    {
+      "key": "Client ID",
+      "translations": {
+        "uz": "Client ID",
+        "ru": "Client ID",
+        "en": "Client ID"
+      }
+    },
+    {
+      "key": "Platform name",
+      "translations": {
+        "uz": "Platform name",
+        "ru": "Platform name",
+        "en": "Platform name"
+      }
+    },
+    {
+      "key": "Monthly limit",
+      "translations": {
+        "uz": "Monthly limit",
+        "ru": "Monthly limit",
+        "en": "Monthly limit"
+      }
+    },
+    {
+      "key": "RPS limit",
+      "translations": {
+        "uz": "RPS limit",
+        "ru": "RPS limit",
+        "en": "RPS limit"
+      }
+    },
+    {
+      "key": "Used count",
+      "translations": {
+        "uz": "Used count",
+        "ru": "Used count",
+        "en": "Used count"
+      }
+    },
+
+    {
+      "key": "Redirects",
+      "translations": {
+        "uz": "Redirects",
+        "ru": "Redirects",
+        "en": "Redirects"
+      }
+    },
+
+    {
+      "key": "From",
+      "translations": {
+        "uz": "From",
+        "ru": "From",
+        "en": "From"
+      }
+    },
+    {
+      "key": "Created at",
+      "translations": {
+        "uz": "Created at",
+        "ru": "Created at",
+        "en": "Created at"
+      }
+    },
+    {
+      "key": "Updated at",
+      "translations": {
+        "uz": "Updated at",
+        "ru": "Updated at",
+        "en": "Updated at"
+      }
+    },
+
+    {
+      "key": "Create new",
+      "translations": {
+        "uz": "Create new",
+        "ru": "Create new",
+        "en": "Create new"
+      }
+    },
+
+    {
+      "key": "Faas functions",
+      "translations": {
+        "uz": "Faas functions",
+        "ru": "Faas functions",
+        "en": "Faas functions"
+      }
+    },
+    {
+      "key": "Status",
+      "translations": {
+        "uz": "Status",
+        "ru": "Status",
+        "en": "Status"
+      }
+    },
+    {
+      "key": "Path",
+      "translations": {
+        "uz": "Path",
+        "ru": "Path",
+        "en": "Path"
+      }
+    },
+
+    {
+      "key": "Microfrontend",
+      "translations": {
+        "uz": "Microfrontend",
+        "ru": "Microfrontend",
+        "en": "Microfrontend"
+      }
+    },
+    {
+      "key": "Link",
+      "translations": {
+        "uz": "Link",
+        "ru": "Link",
+        "en": "Link"
+      }
+    },
+    {
+      "key": "Framework type",
+      "translations": {
+        "uz": "Framework type",
+        "ru": "Framework type",
+        "en": "Framework type"
+      }
+    },
+
+    {
+      "key": "Activity Logs",
+      "translations": {
+        "uz": "Activity Logs",
+        "ru": "Activity Logs",
+        "en": "Activity Logs"
+      }
+    },
+    {
+      "key": "Action",
+      "translations": {
+        "uz": "Action",
+        "ru": "Action",
+        "en": "Action"
+      }
+    },
+    {
+      "key": "Collection",
+      "translations": {
+        "uz": "Collection",
+        "ru": "Collection",
+        "en": "Collection"
+      }
+    },
+    {
+      "key": "Action On",
+      "translations": {
+        "uz": "Action On",
+        "ru": "Action On",
+        "en": "Action On"
+      }
+    },
+    {
+      "key": "Action By",
+      "translations": {
+        "uz": "Action By",
+        "ru": "Action By",
+        "en": "Action By"
+      }
+    },
+    {
+      "key": "Media",
+      "translations": {
+        "uz": "Media",
+        "ru": "Media",
+        "en": "Media"
+      }
+    },
+    {
+      "key": "Items",
+      "translations": {
+        "uz": "Items",
+        "ru": "Items",
+        "en": "Items"
+      }
+    },
+
+    {
+      "key": "Select All",
+      "translations": {
+        "uz": "Select All",
+        "ru": "Select All",
+        "en": "Select All"
+      }
+    },
+
+    {
+      "key": "Наименование",
+      "translations": {
+        "uz": "Наименование",
+        "ru": "Наименование",
+        "en": "Наименование"
+      }
+    },
+    {
+      "key": "Login",
+      "translations": {
+        "uz": "Login",
+        "ru": "Login",
+        "en": "Login"
+      }
+    },
+    {
+      "key": "Mail",
+      "translations": {
+        "uz": "Mail",
+        "ru": "Почта",
+        "en": "Mail"
+      }
+    },
+    {
+      "key": "Phone",
+      "translations": {
+        "uz": "Phone",
+        "ru": "Phone",
+        "en": "Phone"
+      }
+    },
+    {
+      "key": "Invite",
+      "translations": {
+        "uz": "Invite",
+        "ru": "Invite",
+        "en": "Invite"
+      }
+    },
+    {
+      "key": "Users",
+      "translations": {
+        "uz": "Users",
+        "ru": "Users",
+        "en": "Users"
+      }
+    },
+    {
+      "key": "Show",
+      "translations": {
+        "uz": "Show",
+        "ru": "Show",
+        "en": "Show"
+      }
+    },
+    {
+      "key": "Invite user",
+      "translations": {
+        "uz": "Invite user",
+        "ru": "Invite user",
+        "en": "Invite user"
+      }
+    },
+    {
+      "key": "Password",
+      "translations": {
+        "uz": "Parol",
+        "ru": "Password",
+        "en": "Password"
+      }
+    },
+    {
+      "key": "User type",
+      "translations": {
+        "uz": "User type",
+        "ru": "User type",
+        "en": "User type"
+      }
+    },
+    {
+      "key": "More",
+      "translations": {
+        "uz": "More",
+        "ru": "More",
+        "en": "More"
+      }
+    },
+
+    {
+      "key": "Email",
+      "translations": {
+        "uz": "Email",
+        "ru": "Email",
+        "en": "Email"
+      }
+    },
+    {
+      "key": "Active role",
+      "translations": {
+        "uz": "Active role",
+        "ru": "Active role",
+        "en": "Active role"
+      }
+    },
+
+    {
+      "key": "Create table",
+      "translations": {
+        "uz": "Create table",
+        "ru": "Create table",
+        "en": "Create table"
+      }
+    },
+
+    {
+      "key": "Add table",
+      "translations": {
+        "uz": "Add table",
+        "ru": "Add table",
+        "en": "Add table"
+      }
+    },
+
+    {
+      "key": "Add microfrontend",
+      "translations": {
+        "uz": "Add microfrontend",
+        "ru": "Add microfrontend",
+        "en": "Add microfrontend"
+      }
+    },
+
+    {
+      "key": "Add website",
+      "translations": {
+        "uz": "Add website",
+        "ru": "Add website",
+        "en": "Add website"
+      }
+    },
+    {
+      "key": "Add folder",
+      "translations": {
+        "uz": "Add folder",
+        "ru": "Add folder",
+        "en": "Add folder"
+      }
+    },
+
+    {
+      "key": "Create table",
+      "translations": {
+        "uz": "Create table",
+        "ru": "Create table",
+        "en": "Create table"
+      }
+    },
+    {
+      "key": "General",
+      "translations": {
+        "uz": "General",
+        "ru": "General",
+        "en": "General"
+      }
+    },
+
+    {
+      "key": "Key",
+      "translations": {
+        "uz": "Key",
+        "ru": "Key",
+        "en": "Key"
+      }
+    },
+    {
+      "key": "Login table",
+      "translations": {
+        "uz": "Login table",
+        "ru": "Login table",
+        "en": "Login table"
+      }
+    },
+    {
+      "key": "Cache",
+      "translations": {
+        "uz": "Cache",
+        "ru": "Cache",
+        "en": "Cache"
+      }
+    },
+    {
+      "key": "Soft delete",
+      "translations": {
+        "uz": "Soft delete",
+        "ru": "Soft delete",
+        "en": "Soft delete"
+      }
+    },
+    {
+      "key": "Sort",
+      "translations": {
+        "uz": "Sort",
+        "ru": "Sort",
+        "en": "Sort"
+      }
+    },
+
+    {
+      "key": "Attach to table",
+      "translations": {
+        "uz": "Attach to table",
+        "ru": "Attach to table",
+        "en": "Attach to table"
+      }
+    },
+    {
+      "key": "Attach to microfrontend",
+      "translations": {
+        "uz": "Attach to table",
+        "ru": "Attach to table",
+        "en": "Attach to table"
+      }
+    },
+    {
+      "key": "Add params",
+      "translations": {
+        "uz": "Add params",
+        "ru": "Add params",
+        "en": "Add params"
+      }
+    },
+
+    {
+      "key": "Website Link",
+      "translations": {
+        "uz": "Website Link",
+        "ru": "Website Link",
+        "en": "Website Link"
+      }
+    },
+    {
+      "key": "Save",
+      "translations": {
+        "uz": "Save",
+        "ru": "Save",
+        "en": "Save"
+      }
+    },
+
+    {
+      "key": "View",
+      "translations": {
+        "uz": "View",
+        "ru": "View",
+        "en": "View"
+      }
+    },
+    {
+      "key": "Create item",
+      "translations": {
+        "uz": "Create item",
+        "ru": "Create item",
+        "en": "Create item"
+      }
+    },
+    {
+      "key": "Search",
+      "translations": {
+        "uz": "Search",
+        "ru": "Search",
+        "en": "Search"
+      }
+    },
+
+    {
+      "key": "Details",
+      "translations": {
+        "uz": "Details",
+        "ru": "Details",
+        "en": "Details"
+      }
+    },
+    {
+      "key": "Details",
+      "translations": {
+        "uz": "Details",
+        "ru": "Details",
+        "en": "Details"
+      }
+    },
+    {
+      "key": "Fields",
+      "translations": {
+        "uz": "Fields",
+        "ru": "Fields",
+        "en": "Fields"
+      }
+    },
+    {
+      "key": "Relations",
+      "translations": {
+        "uz": "Relations",
+        "ru": "Relations",
+        "en": "Relations"
+      }
+    },
+    {
+      "key": "Actions",
+      "translations": {
+        "uz": "Actions",
+        "ru": "Actions",
+        "en": "Actions"
+      }
+    },
+    {
+      "key": "Custom errors",
+      "translations": {
+        "uz": "Custom errors",
+        "ru": "Custom errors",
+        "en": "Custom errors"
+      }
+    },
+
+    {
+      "key": "Default",
+      "translations": {
+        "uz": "Default",
+        "ru": "Default",
+        "en": "Default"
+      }
+    },
+    {
+      "key": "Modal",
+      "translations": {
+        "uz": "Modal",
+        "ru": "Modal",
+        "en": "Modal"
+      }
+    },
+    {
+      "key": "Remove tabs",
+      "translations": {
+        "uz": "Remove tabs",
+        "ru": "Remove tabs",
+        "en": "Remove tabs"
+      }
+    },
+
+    {
+      "key": "Field Label",
+      "translations": {
+        "uz": "Field Label",
+        "ru": "Field Label",
+        "en": "Field Label"
+      }
+    },
+    {
+      "key": "Field Type",
+      "translations": {
+        "uz": "Field Type",
+        "ru": "Field Type",
+        "en": "Field Type"
+      }
+    },
+    {
+      "key": "Field Slug",
+      "translations": {
+        "uz": "Field Slug",
+        "ru": "Field Slug",
+        "en": "Field Slug"
+      }
+    },
+
+    {
+      "key": "Table from",
+      "translations": {
+        "uz": "Table from",
+        "ru": "Table from",
+        "en": "Table from"
+      }
+    },
+    {
+      "key": "Table to",
+      "translations": {
+        "uz": "Table to",
+        "ru": "Table to",
+        "en": "Table to"
+      }
+    },
+    {
+      "key": "Relation type",
+      "translations": {
+        "uz": "Relation type",
+        "ru": "Relation type",
+        "en": "Relation type"
+      }
+    },
+
+    {
+      "key": "Action type",
+      "translations": {
+        "uz": "Action type",
+        "ru": "Action type",
+        "en": "Action type"
+      }
+    },
+    {
+      "key": "Message",
+      "translations": {
+        "uz": "Message",
+        "ru": "Message",
+        "en": "Message"
+      }
+    },
+
+    {
+      "key": "Field create",
+      "translations": {
+        "uz": "Field create",
+        "ru": "Field create",
+        "en": "Field create"
+      }
+    },
+    {
+      "key": "Default value",
+      "translations": {
+        "uz": "Default value",
+        "ru": "Default value",
+        "en": "Default value"
+      }
+    },
+    {
+      "key": "Schema",
+      "translations": {
+        "uz": "Schema",
+        "ru": "Schema",
+        "en": "Schema"
+      }
+    },
+    {
+      "key": "Validation",
+      "translations": {
+        "uz": "Validation",
+        "ru": "Validation",
+        "en": "Validation"
+      }
+    },
+    {
+      "key": "Autofill",
+      "translations": {
+        "uz": "Autofill",
+        "ru": "Autofill",
+        "en": "Autofill"
+      }
+    },
+    {
+      "key": "Auto filter",
+      "translations": {
+        "uz": "Auto filter",
+        "ru": "Auto filter",
+        "en": "Auto filter"
+      }
+    },
+    {
+      "key": "Field hide",
+      "translations": {
+        "uz": "Field hide",
+        "ru": "Field hide",
+        "en": "Field hide"
+      }
+    },
+    {
+      "key": "Error message",
+      "translations": {
+        "uz": "Error message",
+        "ru": "Error message",
+        "en": "Error message"
+      }
+    },
+
+    {
+      "key": "Disabled",
+      "translations": {
+        "uz": "Disabled",
+        "ru": "Disabled",
+        "en": "Disabled"
+      }
+    },
+    {
+      "key": "Required",
+      "translations": {
+        "uz": "Required",
+        "ru": "Required",
+        "en": "Required"
+      }
+    },
+    {
+      "key": "Duplicate",
+      "translations": {
+        "uz": "Duplicate",
+        "ru": "Duplicate",
+        "en": "Duplicate"
+      }
+    },
+
+    {
+      "key": "Autofill table",
+      "translations": {
+        "uz": "Autofill table",
+        "ru": "Autofill table",
+        "en": "Autofill table"
+      }
+    },
+    {
+      "key": "Autofill field",
+      "translations": {
+        "uz": "Autfill field",
+        "ru": "Autofill field",
+        "en": "Autofill field"
+      }
+    },
+    {
+      "key": "Automatic",
+      "translations": {
+        "uz": "Automatic",
+        "ru": "Automatic",
+        "en": "Automatic"
+      }
+    },
+    {
+      "key": "Hide field from",
+      "translations": {
+        "uz": "Hide field from",
+        "ru": "Hide field from",
+        "en": "Hide field from"
+      }
+    },
+
+    // FIELD TYPESSSS ////
+    {
+      "key": "Single Line",
+      "translations": {
+        "uz": "Single Line",
+        "ru": "Single Line",
+        "en": "Single Line"
+      }
+    },
+    {
+      "key": "Multi Line",
+      "translations": {
+        "uz": "Multi Line",
+        "ru": "Multi Line",
+        "en": "Multi Line"
+      }
+    },
+    {
+      "key": "Date",
+      "translations": {
+        "uz": "Date",
+        "ru": "Date",
+        "en": "Date"
+      }
+    },
+    {
+      "key": "Date time",
+      "translations": {
+        "uz": "Date time",
+        "ru": "Date time",
+        "en": "Date time"
+      }
+    },
+    {
+      "key": "Date time - timezone",
+      "translations": {
+        "uz": "Date time - timezone",
+        "ru": "Date time - timezone",
+        "en": "Date time - timezone"
+      }
+    },
+    {
+      "key": "Time",
+      "translations": {
+        "uz": "Time",
+        "ru": "Time",
+        "en": "Time"
+      }
+    },
+    {
+      "key": "Number",
+      "translations": {
+        "uz": "Number",
+        "ru": "Number",
+        "en": "Number"
+      }
+    },
+    {
+      "key": "Float",
+      "translations": {
+        "uz": "Float",
+        "ru": "Float",
+        "en": "Float"
+      }
+    },
+    {
+      "key": "Money",
+      "translations": {
+        "uz": "Money",
+        "ru": "Money",
+        "en": "Money"
+      }
+    },
+    {
+      "key": "Checkbox",
+      "translations": {
+        "uz": "Checkbox",
+        "ru": "Checkbox",
+        "en": "Checkbox"
+      }
+    },
+    {
+      "key": "Switch",
+      "translations": {
+        "uz": "Switch",
+        "ru": "Switch",
+        "en": "Switch"
+      }
+    },
+    {
+      "key": "Select",
+      "translations": {
+        "uz": "Select",
+        "ru": "Select",
+        "en": "Select"
+      }
+    },
+    {
+      "key": "Status",
+      "translations": {
+        "uz": "Status",
+        "ru": "Status",
+        "en": "Status"
+      }
+    },
+    {
+      "key": "Point",
+      "translations": {
+        "uz": "Point",
+        "ru": "Point",
+        "en": "Point"
+      }
+    },
+    {
+      "key": "Geozone",
+      "translations": {
+        "uz": "Geozone",
+        "ru": "Geozone",
+        "en": "Geozone"
+      }
+    },
+    {
+      "key": "Photo",
+      "translations": {
+        "uz": "Photo",
+        "ru": "Photo",
+        "en": "Photo"
+      }
+    },
+    {
+      "key": "Multi Image",
+      "translations": {
+        "uz": "Multi Image",
+        "ru": "Multi Image",
+        "en": "Multi Image"
+      }
+    },
+    {
+      "key": "Video",
+      "translations": {
+        "uz": "Video",
+        "ru": "Video",
+        "en": "Video"
+      }
+    },
+
+    {
+      "key": "File",
+      "translations": {
+        "uz": "File",
+        "ru": "File",
+        "en": "File"
+      }
+    },
+    {
+      "key": "Formula",
+      "translations": {
+        "uz": "Formula",
+        "ru": "Formula",
+        "en": "Formula"
+      }
+    },
+    {
+      "key": "Formula in frontend",
+      "translations": {
+        "uz": "Formula in frontend",
+        "ru": "Formula in frontend",
+        "en": "Formula in frontend"
+      }
+    },
+    {
+      "key": "Formula in backend",
+      "translations": {
+        "uz": "Formula in backend",
+        "ru": "Formula in backend",
+        "en": "Formula in backend"
+      }
+    },
+    {
+      "key": "Text",
+      "translations": {
+        "uz": "Text",
+        "ru": "Text",
+        "en": "Text"
+      }
+    },
+    {
+      "key": "Link",
+      "translations": {
+        "uz": "Link",
+        "ru": "Link",
+        "en": "Link"
+      }
+    },
+
+    {
+      "key": "Person",
+      "translations": {
+        "uz": "Person",
+        "ru": "Person",
+        "en": "Person"
+      }
+    },
+    {
+      "key": "Button",
+      "translations": {
+        "uz": "Button",
+        "ru": "Button",
+        "en": "Button"
+      }
+    },
+    {
+      "key": "Incremenet ID",
+      "translations": {
+        "uz": "Incremenet ID",
+        "ru": "Incremenet ID",
+        "en": "Incremenet ID"
+      }
+    },
+    {
+      "key": "Internation phone",
+      "translations": {
+        "uz": "Internation phone",
+        "ru": "Internation phone",
+        "en": "Internation phone"
+      }
+    },
+    {
+      "key": "Email",
+      "translations": {
+        "uz": "Email",
+        "ru": "Email",
+        "en": "Email"
+      }
+    },
+    {
+      "key": "Icon",
+      "translations": {
+        "uz": "Icon",
+        "ru": "Icon",
+        "en": "Icon"
+      }
+    },
+
+    {
+      "key": "Password",
+      "translations": {
+        "uz": "Password",
+        "ru": "Password",
+        "en": "Password"
+      }
+    },
+    {
+      "key": "Color",
+      "translations": {
+        "uz": "Color",
+        "ru": "Color",
+        "en": "Color"
+      }
+    },
+    {
+      "key": "View fields",
+      "translations": {
+        "uz": "View fields",
+        "ru": "View fields",
+        "en": "View fields"
+      }
+    },
+
+    {
+      "key": "Disable Edit table",
+      "translations": {
+        "uz": "Disable Edit tabl",
+        "ru": "Disable Edit tabl",
+        "en": "Disable Edit tabl"
+      }
+    },
+    {
+      "key": "Enable Multi language",
+      "translations": {
+        "uz": "Enable Multi language",
+        "ru": "Enable Multi language",
+        "en": "Enable Multi language"
+      }
+    },
+    {
+      "key": "Additional",
+      "translations": {
+        "uz": "Additional",
+        "ru": "Additional",
+        "en": "Additional"
+      }
+    },
+    {
+      "key": "Default editable",
+      "translations": {
+        "uz": "Default editable",
+        "ru": "Default editable",
+        "en": "Default editable"
+      }
+    },
+    {
+      "key": "Creatable",
+      "translations": {
+        "uz": "Creatable",
+        "ru": "Creatable",
+        "en": "Creatable"
+      }
+    },
+
+    {
+      "key": "Relation Buttons",
+      "translations": {
+        "uz": "Relation Buttons",
+        "ru": "Relation Buttons",
+        "en": "Relation Buttons"
+      }
+    },
+    {
+      "key": "Create relation",
+      "translations": {
+        "uz": "Create relation",
+        "ru": "Create relation",
+        "en": "Create relation"
+      }
+    },
+    {
+      "key": "Redirect URL",
+      "translations": {
+        "uz": "Redirect URL",
+        "ru": "Redirect URL",
+        "en": "Redirect URL"
+      }
+    },
+
+    {
+      "key": "Action type",
+      "translations": {
+        "uz": "Action type",
+        "ru": "Action type",
+        "en": "Action type"
+      }
+    },
+    {
+      "key": "Method",
+      "translations": {
+        "uz": "Method",
+        "ru": "Method",
+        "en": "Method"
+      }
+    },
+    {
+      "key": "No limit",
+      "translations": {
+        "uz": "No limit",
+        "ru": "No limit",
+        "en": "No limit"
+      }
+    },
+    {
+      "key": "Fields list",
+      "translations": {
+        "uz": "Fields list",
+        "ru": "Fields list",
+        "en": "Fields list"
+      }
+    },
+
+    {
+      "key": "Error id",
+      "translations": {
+        "uz": "Error id",
+        "ru": "Error id",
+        "en": "Error id"
+      }
+    },
+
+    {
+      "key": "Add fields",
+      "translations": {
+        "uz": "Add fields",
+        "ru": "Add fields",
+        "en": "Add fields"
+      }
+    },
+    {
+      "key": "Form fields",
+      "translations": {
+        "uz": "Form fields",
+        "ru": "Form fields",
+        "en": "Form fields"
+      }
+    },
+    {
+      "key": "Relation tabs",
+      "translations": {
+        "uz": "Relation tabs",
+        "ru": "Relation tabs",
+        "en": "Relation tabs"
+      }
+    },
+    {
+      "key": "Section tabs",
+      "translations": {
+        "uz": "Section tabs",
+        "ru": "Section tabs",
+        "en": "Section tabs"
+      }
+    },
+
+    {
+      "key": "Relation table",
+      "translations": {
+        "uz": "Relation table",
+        "ru": "Relation table",
+        "en": "Relation table"
+      }
+    },
+    {
+      "key": "Add section tab",
+      "translations": {
+        "uz": "Add section tab",
+        "ru": "Add section tab",
+        "en": "Add section tab"
+      }
+    },
+    {
+      "key": "Add section",
+      "translations": {
+        "uz": "Add section",
+        "ru": "Add section",
+        "en": "Add section"
+      }
+    },
+
+    {
+      "key": "View options",
+      "translations": {
+        "uz": "View options",
+        "ru": "View options",
+        "en": "View options"
+      }
+    },
+    {
+      "key": "Layout",
+      "translations": {
+        "uz": "Layout",
+        "ru": "Layout",
+        "en": "Layout"
+      }
+    },
+    {
+      "key": "Columns",
+      "translations": {
+        "uz": "Columns",
+        "ru": "Columns",
+        "en": "Columns"
+      }
+    },
+    {
+      "key": "Group",
+      "translations": {
+        "uz": "Group",
+        "ru": "Group",
+        "en": "Group"
+      }
+    },
+
+    {
+      "key": "Tab group",
+      "translations": {
+        "uz": "Tab group",
+        "ru": "Tab group",
+        "en": "Tab group"
+      }
+    },
+    {
+      "key": "Fix column",
+      "translations": {
+        "uz": "Fix column",
+        "ru": "Fix column",
+        "en": "Fix column"
+      }
+    },
+    {
+      "key": "Export",
+      "translations": {
+        "uz": "Export",
+        "ru": "Export",
+        "en": "Export"
+      }
+    },
+    {
+      "key": "Import",
+      "translations": {
+        "uz": "Import",
+        "ru": "Import",
+        "en": "Import"
+      }
+    },
+    {
+      "key": "Delete",
+      "translations": {
+        "uz": "Delete",
+        "ru": "Delete",
+        "en": "Delete"
+      }
+    },
+
+    {
+      "key": "Docs",
+      "translations": {
+        "uz": "Docs",
+        "ru": "Docs",
+        "en": "Docs"
+      }
+    },
+    {
+      "key": "Visible columns",
+      "translations": {
+        "uz": "Visible columns",
+        "ru": "Visible columns",
+        "en": "Visible columns"
+      }
+    },
+    {
+      "key": "Seaarch by filled name",
+      "translations": {
+        "uz": "Seaarch by filled name",
+        "ru": "Seaarch by filled name",
+        "en": "Seaarch by filled name"
+      }
+    },
+    {
+      "key": "Show all",
+      "translations": {
+        "uz": "Show all",
+        "ru": "Show all",
+        "en": "Show all"
+      }
+    },
+    {
+      "key": "Group columns",
+      "translations": {
+        "uz": "Group columns",
+        "ru": "Group columns",
+        "en": "Group columns"
+      }
+    },
+    {
+      "key": "Tab group columns",
+      "translations": {
+        "uz": "Tab group columns",
+        "ru": "Tab group columns",
+        "en": "Tab group columns"
+      }
+    },
+    {
+      "key": "Fix columns",
+      "translations": {
+        "uz": "Fix columns",
+        "ru": "Fix columns",
+        "en": "Fix columns"
+      }
+    },
+    {
+      "key": "Upload file",
+      "translations": {
+        "uz": "Upload file",
+        "ru": "Upload file",
+        "en": "Upload file"
+      }
+    },
+    {
+      "key": "Confirmation",
+      "translations": {
+        "uz": "Confirmation",
+        "ru": "Confirmation",
+        "en": "Confirmation"
+      }
+    },
+    {
+      "key": "Drag and drop files here",
+      "translations": {
+        "uz": "Drag and drop files here",
+        "ru": "Drag and drop files here",
+        "en": "Drag and drop files here"
+      }
+    },
+    {
+      "key": "Browse",
+      "translations": {
+        "uz": "Browse",
+        "ru": "Browse",
+        "en": "Browse"
+      }
+    },
+
+    {
+      "key": "Today",
+      "translations": {
+        "uz": "Today",
+        "ru": "Today",
+        "en": "Today"
+      }
+    },
+    {
+      "key": "Day",
+      "translations": {
+        "uz": "Day",
+        "ru": "Day",
+        "en": "Day"
+      }
+    },
+    {
+      "key": "Calendar settings",
+      "translations": {
+        "uz": "Calendar settings",
+        "ru": "Calendar settings",
+        "en": "Calendar settings"
+      }
+    },
+    {
+      "key": "Time from",
+      "translations": {
+        "uz": "Time from",
+        "ru": "Time from",
+        "en": "Time from"
+      }
+    },
+    {
+      "key": "Time from",
+      "translations": {
+        "uz": "Time to",
+        "ru": "Time to",
+        "en": "Time to"
+      }
+    },
+
+    {
+      "key": "Edit field",
+      "translations": {
+        "uz": "Edit field",
+        "ru": "Edit field",
+        "en": "Edit field"
+      }
+    },
+
+    {
+      "key": "Sort A -> Z",
+      "translations": {
+        "uz": "Sort A -> Z",
+        "ru": "Sort A -> Z",
+        "en": "Sort A -> Z"
+      }
+    },
+    {
+      "key": "Add Summary",
+      "translations": {
+        "uz": "Add Summary",
+        "ru": "Add Summary",
+        "en": "Add Summary"
+      }
+    },
+    {
+      "key": "Fix column",
+      "translations": {
+        "uz": "Fix column",
+        "ru": "Fix column",
+        "en": "Fix column"
+      }
+    },
+    {
+      "key": "Hide field",
+      "translations": {
+        "uz": "Hide field",
+        "ru": "Hide field",
+        "en": "Hide field"
+      }
+    },
+    {
+      "key": "Delete field",
+      "translations": {
+        "uz": "Delete field",
+        "ru": "Delete field",
+        "en": "Delete field"
+      }
+    },
+    {
+      "key": "Log out of your account",
+      "translations": {
+        "uz": "Log out of your account",
+        "ru": "Log out of your account",
+        "en": "Log out of your account"
+      }
+    },
+
+    {
+      "key": "You will need to log back in to access your workspace.",
+      "translations": {
+        "uz": "You will need to log back in to access your workspace.",
+        "ru": "You will need to log back in to access your workspace.",
+        "en": "You will need to log back in to access your workspace."
+      }
+    },
+    {
+      "key": "Log out",
+      "translations": {
+        "uz": "Log out",
+        "ru": "Log out",
+        "en": "Log out"
+      }
+    },
+    {
+      "key": "Cancel",
+      "translations": {
+        "uz": "Cancel",
+        "ru": "Cancel",
+        "en": "Cancel"
+      }
+    }
+  ]
+}

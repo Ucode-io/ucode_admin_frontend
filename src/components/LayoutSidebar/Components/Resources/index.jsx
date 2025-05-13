@@ -6,9 +6,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {store} from "../../../../store";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import {
+import resourceService, {
   useResourceCreateFromClusterMutation,
-  useResourceDeleteMutation,
   useResourceDeleteMutationV2,
   useResourceListQuery,
   useResourceListQueryV2,
@@ -17,10 +16,12 @@ import RecursiveBlock from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import StorageIcon from "@mui/icons-material/Storage";
 import {resourceTypes} from "../../../../utils/resourceConstants";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import {useDispatch, useSelector} from "react-redux";
 import activeStyles from "../MenuUtils/activeStyles";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBases = {
@@ -45,10 +46,11 @@ const Resources = ({
   setSubMenuIsOpen,
   handleOpenNotify,
   pinIsEnabled,
+  projectSettingLan,
 }) => {
   const navigate = useNavigate();
   const {appId} = useParams();
-
+  const {i18n} = useTranslation();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const company = store.getState().company;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -70,6 +72,32 @@ const Resources = ({
     },
   });
 
+  const {data: clickHouseList} = useQuery(
+    ["GET_OBJECT_LIST"],
+    () => {
+      return resourceService.getListClickHouse({
+        data: {
+          environment_id: authStore.environmentId,
+          limit: 0,
+          offset: 0,
+          project_id: company?.projectId,
+        },
+      });
+    },
+    {
+      enabled: true,
+      select: (res) => {
+        return (
+          res?.airbytes?.map((item) => ({
+            ...item,
+            type: "CLICK_HOUSE",
+            name: "Click house",
+          })) ?? []
+        );
+      },
+    }
+  );
+
   const {data = {}, refetch} = useResourceListQueryV2({
     params: {
       project_id: company?.projectId,
@@ -77,15 +105,12 @@ const Resources = ({
   });
 
   const computedResources = useMemo(() => {
-    return [...(data?.resources || []), ...(resources || [])];
-  }, [data, resources]);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    return [
+      ...(data?.resources || []),
+      // ...(resources || []),
+      ...(clickHouseList || []),
+    ];
+  }, [data, resources, clickHouseList]);
 
   const {mutate: deleteResource, isLoading: deleteLoading} =
     useResourceDeleteMutationV2({
@@ -129,23 +154,40 @@ const Resources = ({
     setChildBlockVisible((prev) => !prev);
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div className="parent-block column-drag-handle">
+      <div
+        className="parent-block column-drag-handle"
+        style={{marginBottom: 5}}>
         <Button
-          className={`nav-element`}
-          style={activeStyle}
+          className="nav-element childMenuFolderBtn highlight-on-hover"
+          style={{borderRadius: "8px", color: "#475767", height: "32px"}}
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label">
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
-            <IconGenerator icon={"database.svg"} size={18} />
-            {dataBases?.label}
+            <div className="childMenuFolderArrow">
+              {childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+            </div>
+            <div className="childMenuIcon">
+              <IconGenerator icon={"database.svg"} size={18} />
+            </div>
+            {generateLangaugeText(
+              projectSettingLan,
+              i18n?.language,
+              "Resources"
+            ) || "Resources"}
           </div>
 
           {dataBases?.id === "15" && (

@@ -1,10 +1,10 @@
-import { Box, Menu } from "@mui/material";
-import { RiPencilFill } from "react-icons/ri";
+import {Box, Menu} from "@mui/material";
+import {RiPencilFill} from "react-icons/ri";
 import "./style.scss";
-import { Delete } from "@mui/icons-material";
+import {Delete} from "@mui/icons-material";
 import MenuItemComponent from "../../../MenuItem";
-import { FaPlus } from "react-icons/fa";
-import { useLocation, useNavigate } from "react-router-dom";
+import {FaPlus} from "react-icons/fa";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const QueryButtonMenu = ({
   menu,
@@ -40,8 +40,7 @@ const QueryButtonMenu = ({
               padding: 0,
             },
           },
-        }}
-      >
+        }}>
         {menuType === "FOLDER" ? (
           <>
             <Box className="menu">

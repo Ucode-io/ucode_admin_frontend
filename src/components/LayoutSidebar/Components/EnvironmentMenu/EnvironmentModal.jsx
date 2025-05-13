@@ -114,6 +114,8 @@ export default function EnvironmentModal({open, handleClose}) {
     }
   }, [environments]);
 
+  console.log({ selectedMigrate });
+
   return (
     <Modal
       open={open}

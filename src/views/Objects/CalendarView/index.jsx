@@ -39,6 +39,7 @@ import CalendarSceduleVisible from "./CalendarSceduleVisible";
 import CalendarGroupByButton from "./CalendarGroupColumns";
 import ShareModal from "../ShareModal/ShareModal";
 import constructorViewService from "../../../services/constructorViewService";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 const formatDate = [
   {
@@ -62,22 +63,24 @@ const CalendarView = ({
   views,
   selectedTable,
   menuItem,
+  layoutType,
+  setLayoutType,
 }) => {
   const queryClient = useQueryClient();
   const visibleForm = useForm();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const {tableSlug, appId} = useParams();
+  const { tableSlug, appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [dateFilters, setDateFilters] = useState([
-    startOfWeek(new Date(), {weekStartsOn: 1}),
-    endOfWeek(new Date(), {weekStartsOn: 1}),
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
   const [date, setDate] = useState(
-    views?.[selectedTabIndex]?.attributes?.period
+    views?.[selectedTabIndex]?.attributes?.period ?? "MONTH"
   );
 
   const [tab, setTab] = useState();
@@ -138,21 +141,21 @@ const CalendarView = ({
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], {days: i}));
+      result.push(add(dateFilters[0], { days: i }));
     }
     return result;
   }, [dateFilters]);
 
-  const {filters, dataFilters} = useFilters(tableSlug, view.id);
+  const { filters, dataFilters } = useFilters(tableSlug, view.id);
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
     .map((id) => fieldsMap[id])
     .filter((el) => el);
 
-  const {data: {data} = {data: []}, isLoading} = useQuery(
+  const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date},
+      { tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date },
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
@@ -163,12 +166,14 @@ const CalendarView = ({
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
             $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
+          view_type: "CALENDAR",
           ...dataFilters,
         },
       });
     },
     {
       cacheTime: 10,
+      enabled: Boolean(tableSlug),
       select: (res) => {
         const fields = res.data?.fields ?? [];
         const relationFields =
@@ -203,7 +208,7 @@ const CalendarView = ({
     }
   );
 
-  const {data: workingDays} = useQuery(
+  const { data: workingDays } = useQuery(
     [
       "GET_OBJECTS_LIST",
       view?.disable_dates?.table_slug,
@@ -224,9 +229,9 @@ const CalendarView = ({
       });
     },
     {
+      enabled: Boolean(view?.disable_dates?.table_slug),
       select: (res) => {
         const result = {};
-
         res?.data?.response?.forEach((el) => {
           const date = el[view?.disable_dates?.day_slug];
           const calendarFromTime = el[view?.disable_dates?.time_from_slug];
@@ -259,7 +264,7 @@ const CalendarView = ({
   );
 
   const {
-    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
+    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
       visibleViews: [],
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -267,14 +272,14 @@ const CalendarView = ({
     isVisibleLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: {limit: 10, offset: 0},
+        data: { limit: 10, offset: 0 },
       });
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           visibleViews: data?.views ?? [],
           visibleColumns: data?.fields ?? [],
@@ -298,7 +303,7 @@ const CalendarView = ({
         },
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", { tableSlug }]);
       });
   };
 
@@ -308,22 +313,12 @@ const CalendarView = ({
 
   return (
     <div>
-      <FiltersBlock
+      {/* <FiltersBlock
         extra={
           <>
             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
               <ShareModal />
             </PermissionWrapperV2>
-
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
-              <LanguagesNavbar />
-            </PermissionWrapperV2>
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
-              <Button variant="outlined">
-                <HexagonIcon />
-              </Button>
-            </PermissionWrapperV2> */}
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button
@@ -358,7 +353,7 @@ const CalendarView = ({
           setSelectedView={setSelectedView}
           setTab={setTab}
         />
-      </FiltersBlock>
+      </FiltersBlock> */}
       <Box className={style.navbar}>
         {date === "DAY" && (
           <CalendarDayRange
@@ -392,7 +387,7 @@ const CalendarView = ({
           />
         )}
         <Box className={style.extra}>
-          <CSelect
+          {/* <CSelect
             value={date}
             options={formatDate}
             disabledHelperText
@@ -400,8 +395,9 @@ const CalendarView = ({
               setDate(e.target.value);
               updateView(e.target?.value);
             }}
-          />
-          <CalendarGroupByButton
+          /> */}
+
+          {/* <CalendarGroupByButton
             selectedTabIndex={selectedTabIndex}
             text="Group"
             width="105px"
@@ -409,38 +405,42 @@ const CalendarView = ({
             columns={visibleColumns}
             relationColumns={visibleRelationColumns}
             isLoading={isVisibleLoading}
-          />
-          <CalendarSceduleVisible
+          /> */}
+          {/* <CalendarSceduleVisible
             selectedTabIndex={selectedTabIndex}
             views={visibleViews}
             columns={visibleColumns}
             isLoading={isVisibleLoading}
             text={"Schedule"}
             initialValues={view}
-          />
-          <ColumnVisible
+          /> */}
+          {/* <ColumnVisible
+            fieldsMap={fieldsMap}
             selectedTabIndex={selectedTabIndex}
+            currentView={view}
             views={visibleViews}
             columns={visibleColumns}
             relationColumns={visibleRelationColumns}
             isLoading={isVisibleLoading}
             form={visibleForm}
             text={"Columns"}
-          />
-          <CalendarSettingsVisible
-            selectedTabIndex={selectedTabIndex}
-            views={visibleViews}
-            columns={visibleColumns}
-            isLoading={isVisibleLoading}
-            text={"Settings"}
-            initialValues={view}
-          />
+          /> */}
+          {/* <MaterialUIProvider>
+            <CalendarSettingsVisible
+              selectedTabIndex={selectedTabIndex}
+              views={visibleViews}
+              columns={visibleColumns}
+              isLoading={isVisibleLoading}
+              text={"Settings"}
+              initialValues={view}
+            />
+          </MaterialUIProvider> */}
         </Box>
       </Box>
       {isLoading || tabLoading ? (
         <PageFallback />
       ) : (
-        <>
+        <Box>
           {date === "DAY" && (
             <CalendarDay
               data={data}
@@ -469,6 +469,9 @@ const CalendarView = ({
               view={view}
               tabs={tabs}
               workingDays={workingDays}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              menuItem={menuItem}
             />
           )}
           {date !== "WEEK" && date !== "DAY" && date !== "MONTH" ? (
@@ -481,7 +484,7 @@ const CalendarView = ({
               workingDays={workingDays}
             />
           ) : null}
-        </>
+        </Box>
       )}
     </div>
   );

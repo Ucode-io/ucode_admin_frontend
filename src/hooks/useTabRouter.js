@@ -16,7 +16,7 @@ export default function useTabRouter() {
     type = "CREATE",
     row = {},
     state,
-    menuId = ''
+    menuId = ""
   ) => {
     if (type === "CREATE") {
       const id = generateID();
@@ -33,7 +33,6 @@ export default function useTabRouter() {
       navigate(link, {state});
       return;
     }
-
     const link = `/main/${appId}/object/${tableSlug}/${row.guid}?menuId=${menuId}`;
 
     const tab = tabs.find((tab) => tab.link === link);

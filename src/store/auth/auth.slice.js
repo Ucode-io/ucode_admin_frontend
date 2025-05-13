@@ -16,6 +16,7 @@ const initialState = {
   resourceId: "",
   after_login: false,
   environment_ids: [],
+  currencies: [],
   access_type: "",
   user_data: null,
 };
@@ -39,6 +40,7 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
       state.resourceId = payload.resource_id;
       state.globalPermissions = payload.global_permission;
       state.environment_ids = payload.environment_ids;
+      state.currencies = payload.currencies;
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
 
       state.permissions = payload?.permissions
@@ -51,12 +53,19 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
               delete: curr.delete !== "No",
               pdf_action: curr.pdf_action !== "No",
               add_field: curr.add_field !== "No",
-
               automation: curr.automation !== "No",
               language_btn: curr.language_btn !== "No",
               settings: curr.settings !== "No",
               share_modal: curr.share_modal !== "No",
               view_create: curr.view_create !== "No",
+              add_filter: curr.add_filter !== "No",
+              field_filter: curr.field_filter !== "No",
+              fix_column: curr.fix_column !== "No",
+              columns: curr.columns !== "No",
+              group: curr.group !== "No",
+              excel_menu: curr.excel_menu !== "No",
+              tab_group: curr.tab_group !== "No",
+              search_button: curr.search_button !== "No",
             };
             return acc;
           }, {})
@@ -86,9 +95,20 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
             settings: curr.settings !== "No",
             share_modal: curr.share_modal !== "No",
             view_create: curr.view_create !== "No",
+            fix_column: curr.fix_column !== "No",
+            columns: curr.columns !== "No",
+            group: curr.group !== "No",
+            excel_menu: curr.excel_menu !== "No",
+            tab_group: curr.tab_group !== "No",
+            add_filter: curr.add_filter !== "No",
+            field_filter: curr.field_filter !== "No",
+            search_button: curr.search_button !== "No",
           };
           return acc;
         }, {}) || [];
+    },
+    updateUser(state, {payload}) {
+      state.userInfo[payload.key] = payload.value;
     },
     logout: (state) => initialState,
     setStatus(state, payload) {

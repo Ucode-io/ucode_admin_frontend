@@ -1,6 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
-import {Collapse} from "@mui/material";
+import { Collapse } from "@mui/material";
+import cls from "./styles.module.scss";
+import { addDays } from "date-fns";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import DrawerDetailPage from "../DrawerDetailPage";
+import { TimelineRowNewDateLine } from "./components/TimelineRowNewDateLine";
 
 export default function TimeLineDataRecursiveRow({
   item,
@@ -11,6 +16,7 @@ export default function TimeLineDataRecursiveRow({
   setFocusedDays,
   datesList,
   view,
+  dateFilters,
   zoomPosition,
   calendar_from_slug,
   calendar_to_slug,
@@ -19,8 +25,38 @@ export default function TimeLineDataRecursiveRow({
   openedRows,
   setOpenedRows,
   lastLabels = "",
+  menuItem,
+  fieldsMapPopup,
+  refetch,
+  setLayoutType,
+  navigateToDetailPage,
+  calendarRef,
+  setOpenDrawerModal,
+  setSelectedRow,
+  deepLength,
 }) {
   const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [cursorPosX, setCursorPosX] = useState(0);
+  const [hoveredDate, setHoveredDate] = useState(null);
+  const [isHintTaskShow, setIsHintTaskShow] = useState(false);
+
+  const timelineRecursiveRowRef = useRef(null);
+
+  const hintWidth = (selectedType === "month" ? 20 : 60) * 5;
+
+  const handleOpenModal = () => {
+    setOpenDrawerModal(true);
+    const data = {
+      ...item,
+      [calendar_from_slug]: hoveredDate,
+      [calendar_to_slug]: addDays(hoveredDate, 5),
+      IS_NO_DATE: true,
+      FROM_DATE_SLUG: calendar_from_slug,
+      TO_DATE_SLUG: calendar_to_slug,
+    };
+    setSelectedRow(data);
+  };
 
   useEffect(() => {
     if (
@@ -34,69 +70,167 @@ export default function TimeLineDataRecursiveRow({
     }
   }, [item, openedRows, lastLabels]);
 
+  const isTaskWithoutDate =
+    (deepLength === 1 ? !item?.data?.[0]?.data : !item?.data) &&
+    (deepLength === 1
+      ? !item?.data?.[0]?.[calendar_from_slug]
+      : !item?.[calendar_from_slug]) &&
+    (deepLength === 1
+      ? !item?.data?.[0]?.[calendar_to_slug]
+      : !item?.[calendar_to_slug]);
+
+  const handleMouseMove = (e) => {
+    const scrollContainer = calendarRef.current;
+    if (!scrollContainer) return;
+
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const scrollLeft = scrollContainer.scrollLeft;
+
+    const mouseXInContainer = e.clientX - containerRect.left + scrollLeft;
+
+    const columnWidth = selectedType === "month" ? 20 : 60;
+    const offsetLeft = 3 * columnWidth;
+    const columnIndex = Math.floor(
+      (mouseXInContainer - offsetLeft) / columnWidth
+    );
+
+    const hoveredColumnData = datesList[columnIndex];
+
+    setHoveredDate(hoveredColumnData);
+
+    // for hint task
+
+    const container = timelineRecursiveRowRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const scrollLeftRow = container.scrollLeft;
+
+    const mouseX = Math.floor(e.clientX) - rect.left + scrollLeftRow;
+
+    const snappedX = Math.floor(mouseX / columnWidth) * columnWidth;
+
+    setCursorPosX(snappedX);
+
+    setFocusedDays([hoveredColumnData, addDays(hoveredColumnData, 4)]);
+  };
+
+  const isSingleGroup = deepLength === 1;
+
   return (
     <>
       <div
-        style={{
-          width: "100%",
-          height: "32px",
-          minHeight: "32px",
-          position: "relative",
-          zIndex: 1,
-        }}>
-        {item?.data?.map(
-          (data, dataIndex) =>
-            !data?.data && (
-              <TimeLineDayDataBlockItem
-                key={data?.guid}
-                selectedType={selectedType}
-                computedColumnsFor={computedColumnsFor}
-                groupbyFields={groupbyFields}
-                data={data}
-                levelIndex={index}
-                groupByList={groupByList}
-                setFocusedDays={setFocusedDays}
-                datesList={datesList}
-                view={view}
-                zoomPosition={zoomPosition}
-                calendar_from_slug={calendar_from_slug}
-                calendar_to_slug={calendar_to_slug}
-                visible_field={visible_field}
-              />
-            )
+        className={cls.timelineRecursiveRow}
+        onMouseMove={(e) => {
+          if (isTaskWithoutDate) {
+            handleMouseMove(e);
+          }
+        }}
+        onMouseEnter={() => {
+          if (isTaskWithoutDate) {
+            setIsHintTaskShow(true);
+          }
+        }}
+        onMouseLeave={() => {
+          if (isTaskWithoutDate) {
+            setIsHintTaskShow(false);
+          }
+        }}
+        ref={timelineRecursiveRowRef}
+      >
+        {isHintTaskShow && (
+          <TimelineRowNewDateLine
+            left={cursorPosX}
+            width={hintWidth}
+            onClick={handleOpenModal}
+            hoveredDate={hoveredDate}
+            label={item?.[visible_field?.split("/")?.[0]]}
+          />
+        )}
+        {(!item?.data || isSingleGroup) && (
+          <TimeLineDayDataBlockItem
+            menuItem={menuItem}
+            key={isSingleGroup ? (item?.data?.[0] || item)?.guid : item?.guid}
+            dateFilters={dateFilters}
+            selectedType={selectedType}
+            computedColumnsFor={computedColumnsFor}
+            groupbyFields={groupbyFields}
+            data={isSingleGroup ? item?.data?.[0] || item : item}
+            levelIndex={index}
+            groupByList={groupByList}
+            setFocusedDays={setFocusedDays}
+            datesList={datesList}
+            view={view}
+            zoomPosition={zoomPosition}
+            calendar_from_slug={calendar_from_slug}
+            calendar_to_slug={calendar_to_slug}
+            visible_field={visible_field}
+            fieldsMapPopup={fieldsMapPopup}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            navigateToDetailPage={navigateToDetailPage}
+            setOpenDrawerModal={setOpenDrawerModal}
+            setSelectedRow={setSelectedRow}
+          />
         )}
       </div>
 
       {item?.data?.map(
         (option, subIndex) =>
-          option?.data && (
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <TimeLineDataRecursiveRow
-                lastLabels={
-                  lastLabels?.length
-                    ? lastLabels + "." + item?.label
-                    : item?.label
-                }
-                openedRows={openedRows}
-                setOpenedRows={setOpenedRows}
-                key={option?.label}
-                item={option}
-                index={subIndex + index}
-                groupbyFields={groupbyFields}
-                selectedType={selectedType}
-                computedColumnsFor={computedColumnsFor}
-                setFocusedDays={setFocusedDays}
-                datesList={datesList}
-                view={view}
-                zoomPosition={zoomPosition}
-                calendar_from_slug={calendar_from_slug}
-                calendar_to_slug={calendar_to_slug}
-                visible_field={visible_field}
-                groupByList={groupByList}
-              />
-            </Collapse>
-          )
+          option?.data &&
+          option?.data?.map((optionItem, optionIdex) => {
+            return (
+              <Collapse
+                in={open}
+                timeout="auto"
+                unmountOnExit
+                key={optionItem?.title}
+              >
+                <TimeLineDataRecursiveRow
+                  lastLabels={
+                    lastLabels?.length
+                      ? lastLabels + "." + item?.label
+                      : item?.label
+                  }
+                  openedRows={openedRows}
+                  setOpenedRows={setOpenedRows}
+                  key={optionItem?.title}
+                  item={optionItem}
+                  index={subIndex + index}
+                  groupbyFields={groupbyFields}
+                  selectedType={selectedType}
+                  computedColumnsFor={computedColumnsFor}
+                  setFocusedDays={setFocusedDays}
+                  datesList={datesList}
+                  view={view}
+                  zoomPosition={zoomPosition}
+                  calendar_from_slug={calendar_from_slug}
+                  calendar_to_slug={calendar_to_slug}
+                  visible_field={visible_field}
+                  groupByList={groupByList}
+                  fieldsMapPopup={fieldsMapPopup}
+                  refetch={refetch}
+                  setLayoutType={setLayoutType}
+                  navigateToDetailPage={navigateToDetailPage}
+                  calendarRef={calendarRef}
+                  setOpenDrawerModal={setOpenDrawerModal}
+                  setSelectedRow={setSelectedRow}
+                />
+              </Collapse>
+            );
+          })
       )}
+      {/* {openModal && (
+        <ModalDetailPage
+          open={openModal}
+          setOpen={setOpenModal}
+          selectedRow={{
+            ...item,
+            [calendar_from_slug]: hoveredDate,
+            [calendar_to_slug]: addDays(new Date(hoveredDate), 5),
+          }}
+        />
+      )} */}
     </>
   );
 }

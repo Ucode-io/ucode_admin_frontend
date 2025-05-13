@@ -1,31 +1,29 @@
-import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
-import CellElementGenerator from "./CellElementGenerator";
+import {Parser} from "hot-formula-parser";
+import {useTranslation} from "react-i18next";
+import {useEffect, useMemo, useState} from "react";
+import CellRelationFormElementNew from "./CellRelationFormElementNew";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
-import CellRelationFormElementForTableView from "./CellRelationFormElementForTable";
 
 const parser = new Parser();
 
 const CellElementGeneratorForRelation = ({
-  relOptions,
-  tableView,
-  field,
-  fields,
-  isBlackBg = false,
   row,
-  relationfields,
-  updateObject,
-  control,
-  setFormValue,
-  index,
   data,
-  isTableView = false,
+  index,
+  field,
+  control,
+  mainForm,
+  tableView,
+  relationfields,
   isNewRow = false,
   newColumn = false,
-  mainForm,
+  isBlackBg = false,
+  isTableView = false,
+  updateObject = () => {},
+  setFormValue = () => {},
+  newUi,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -97,79 +95,73 @@ const CellElementGeneratorForRelation = ({
     }
   }, [row, computedSlug, defaultValue]);
 
-  const renderComponents = {
-    LOOKUP: () =>
-      newColumn ? (
+  const renderInputValues = {
+    LOOKUP: () => {
+      return newColumn ? (
         <CellRelationFormElementForNewColumn
+          isFormEdit
+          row={row}
+          data={data}
+          field={field}
+          index={index}
+          control={control}
+          name={computedSlug}
           mainForm={mainForm}
-          relOptions={relOptions}
           isNewRow={isNewRow}
           tableView={tableView}
           disabled={isDisabled}
-          isFormEdit
           isBlackBg={isBlackBg}
-          updateObject={updateObject}
           isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
+          updateObject={updateObject}
           setFormValue={setFormValue}
-          index={index}
           defaultValue={defaultValue}
           relationfields={relationfields}
-          data={data}
+          placeholder={field.attributes?.placeholder}
         />
       ) : (
-        <CellRelationFormElementForTableView
-          relOptions={relOptions}
+        <CellRelationFormElementNew
+          row={row}
+          isFormEdit
+          data={data}
+          index={index}
+          field={field}
+          control={control}
+          isTableView={isTableView}
+          name={computedSlug}
           tableView={tableView}
           disabled={isDisabled}
-          isTableView={true}
-          isFormEdit
           isBlackBg={isBlackBg}
-          updateObject={updateObject}
           isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          field={field}
-          row={row}
-          placeholder={field.attributes?.placeholder}
           setFormValue={setFormValue}
-          index={index}
+          updateObject={updateObject}
           defaultValue={defaultValue}
           relationfields={relationfields}
-          data={data}
+          placeholder={field.attributes?.placeholder}
+          newUi={newUi}
         />
-      ),
+      );
+    },
     LOOKUPS: () => (
       <CellManyToManyRelationElement
-        relOptions={relOptions}
-        disabled={isDisabled}
+        newUi={newUi}
+        row={row}
         isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
+        field={field}
+        index={index}
         control={control}
         name={computedSlug}
-        field={field}
-        row={row}
-        placeholder={field.attributes?.placeholder}
+        disabled={isDisabled}
+        isNewTableView={true}
+        isBlackBg={isBlackBg}
         setFormValue={setFormValue}
-        index={index}
         defaultValue={defaultValue}
+        updateObject={updateObject}
+        placeholder={field.attributes?.placeholder}
       />
     ),
   };
 
-  return renderComponents[field.type] ? (
-    renderComponents[field.type]()
-  ) : (
-    <div style={{padding: "0 4px"}}>
-      <CellElementGenerator field={field} row={row} />
-    </div>
-  );
+  return renderInputValues[field?.type] ? renderInputValues[field?.type]() : "";
 };
 
 export default CellElementGeneratorForRelation;

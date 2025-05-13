@@ -129,6 +129,7 @@ export default function GroupByButton({
   return (
     <div>
       <Button
+        id="tab_group"
         variant={`${
           selectedColumns?.length > 0 || view?.group_fields?.length > 0
             ? "outlined"
@@ -278,6 +279,10 @@ export default function GroupByButton({
 
                 {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
                   <Switch
+                    id={`${
+                      column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.label
+                    }`}
                     size="small"
                     checked={selectedColumns?.includes(column?.relation_id)}
                     onChange={(e, val) =>
@@ -286,6 +291,10 @@ export default function GroupByButton({
                   />
                 ) : (
                   <Switch
+                    id={`${
+                      column?.attributes?.[`label_${i18n.language}`] ||
+                      column?.label
+                    }`}
                     size="small"
                     checked={selectedColumns?.includes(column?.id)}
                     onChange={(e, val) => changeHandler(val, column.id, column)}

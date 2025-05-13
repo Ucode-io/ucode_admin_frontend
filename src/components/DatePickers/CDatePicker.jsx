@@ -30,7 +30,7 @@ const CDatePicker = ({
   placeholder,
   required,
   error,
-  sectionModal,
+  sectionModal = false,
   newColumn = false,
 }) => {
   const datePickerRef = useRef();
@@ -66,12 +66,12 @@ const CDatePicker = ({
         disabled={disabled}
         required={required}
         ref={datePickerRef}
-        portal={sectionModal ? false : document.body}
+        portal={Boolean(sectionModal) ? false : document.body}
         render={(value, openCalendar, handleChange) => {
           document.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              datePickerRef.current.closeCalendar();
+              datePickerRef?.current?.closeCalendar();
             }
           });
           return (

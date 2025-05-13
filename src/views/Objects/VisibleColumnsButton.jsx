@@ -1,6 +1,13 @@
 import LinkIcon from "@mui/icons-material/Link";
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import {Box, Button, CircularProgress, Menu, Switch} from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Menu,
+  Switch,
+  Typography,
+} from "@mui/material";
 import React, {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
@@ -95,6 +102,7 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
   return (
     <div>
       <Button
+        id="columns"
         variant={"text"}
         style={{
           gap: "5px",
@@ -165,66 +173,157 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
             overflowY: "auto",
             padding: "10px 14px",
           }}>
-          <div>
-            <div
-              style={{
-                borderBottom: "1px solid #eee",
-                display: "flex",
-                backgroundColor: "#fff",
-              }}>
+          {Boolean(visibleFields?.length || unVisibleFields?.length) ? (
+            <div>
               <div
                 style={{
-                  flex: 1,
-                  border: 0,
+                  borderBottom: "1px solid #eee",
                   display: "flex",
-                  alignItems: "center",
-                  padding: "8px 0px",
-                  margin: "-1px -1px 0 0",
+                  backgroundColor: "#fff",
                 }}>
-                <b>All</b>
+                <div
+                  style={{
+                    flex: 1,
+                    border: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "8px 0px",
+                    margin: "-1px -1px 0 0",
+                  }}>
+                  <b>All</b>
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    padding: "8px 16px",
+                    margin: "-1px -1px 0 0",
+                    width: 70,
+                    border: 0,
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}>
+                  <Switch
+                    size="small"
+                    checked={visibleFields.length === allFields.length}
+                    onChange={(e) => {
+                      updateView(
+                        e.target.checked
+                          ? allFields.map((el) => {
+                              if (
+                                el?.type === "LOOKUP" ||
+                                el?.type === "LOOKUPS"
+                              ) {
+                                return el.relation_id;
+                              } else {
+                                return el.id;
+                              }
+                            })
+                          : []
+                      );
+                    }}
+                  />
+                </div>
               </div>
-              <div
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  padding: "8px 16px",
-                  margin: "-1px -1px 0 0",
-                  width: 70,
-                  border: 0,
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}>
-                <Switch
-                  size="small"
-                  checked={visibleFields.length === allFields.length}
-                  onChange={(e) => {
-                    updateView(
-                      e.target.checked
-                        ? allFields.map((el) => {
-                            if (
-                              el?.type === "LOOKUP" ||
-                              el?.type === "LOOKUPS"
-                            ) {
-                              return el.relation_id;
-                            } else {
-                              return el.id;
-                            }
-                          })
-                        : []
-                    );
-                  }}
-                />
-              </div>
-            </div>
-            <Container
-              onDrop={onDrop}
-              dropPlaceholder={{className: "drag-row-drop-preview"}}>
-              {visibleFields.map((column, index) => (
-                <Draggable key={column?.id}>
+              <Container
+                onDrop={onDrop}
+                dropPlaceholder={{className: "drag-row-drop-preview"}}>
+                {visibleFields.map((column, index) => (
+                  <Draggable key={column?.id}>
+                    <div
+                      key={column?.id}
+                      style={{
+                        display: "flex",
+                        backgroundColor: "#fff",
+                      }}>
+                      <div
+                        style={{
+                          flex: 1,
+                          border: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          padding: "8px 0px",
+                          margin: "-1px -1px 0 0",
+                          minWidth: "200px",
+                        }}>
+                        <div
+                          style={{
+                            width: 20,
+                            height: 20,
+                            marginRight: 5,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                          {column?.type ? (
+                            columnIcons(column?.type)
+                          ) : (
+                            <LinkIcon />
+                          )}
+                        </div>
+                        {column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.label}
+                      </div>
+                      <div
+                        style={{
+                          flex: 1,
+                          alignItems: "center",
+                          padding: "8px 0px",
+                          margin: "-1px -1px 0 0",
+                          width: 70,
+                          border: 0,
+                          paddingLeft: 0,
+                          paddingRight: 0,
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          width: "70px",
+                        }}>
+                        {column?.type === "LOOKUP" ||
+                        column?.type === "LOOKUPS" ? (
+                          <Switch
+                            size="small"
+                            checked={currentView?.columns?.includes(
+                              column?.relation_id
+                            )}
+                            onChange={(e) => {
+                              updateView(
+                                e.target.checked
+                                  ? [
+                                      ...currentView?.columns,
+                                      column?.relation_id,
+                                    ]
+                                  : currentView?.columns?.filter(
+                                      (el) => el !== column?.relation_id
+                                    )
+                              );
+                            }}
+                          />
+                        ) : (
+                          <Switch
+                            size="small"
+                            checked={currentView?.columns?.includes(column?.id)}
+                            onChange={(e) => {
+                              updateView(
+                                e.target.checked
+                                  ? [...currentView?.columns, column?.id]
+                                  : currentView?.columns?.filter(
+                                      (el) => el !== column?.id
+                                    )
+                              );
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </Draggable>
+                ))}
+
+                {unVisibleFields?.map((column, index) => (
                   <div
-                    key={column?.id}
+                    key={column.id}
                     style={{
                       display: "flex",
                       backgroundColor: "#fff",
@@ -237,7 +336,6 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         alignItems: "center",
                         padding: "8px 0px",
                         margin: "-1px -1px 0 0",
-                        minWidth: "200px",
                       }}>
                       <div
                         style={{
@@ -248,21 +346,17 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                           alignItems: "center",
                           justifyContent: "center",
                         }}>
-                        {column?.type ? (
-                          columnIcons(column?.type)
-                        ) : (
-                          <LinkIcon />
-                        )}
+                        {column.type ? columnIcons(column.type) : <LinkIcon />}
                       </div>
                       {column?.attributes?.[`label_${i18n.language}`] ||
                         column?.attributes?.[`label_${i18n.language}`] ||
-                        column?.label}
+                        column.label}
                     </div>
                     <div
                       style={{
                         flex: 1,
                         alignItems: "center",
-                        padding: "8px 0px",
+                        padding: "8px 16px",
                         margin: "-1px -1px 0 0",
                         width: 70,
                         border: 0,
@@ -270,11 +364,14 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         paddingRight: 0,
                         display: "flex",
                         justifyContent: "flex-end",
-                        width: "70px",
                       }}>
                       {column?.type === "LOOKUP" ||
                       column?.type === "LOOKUPS" ? (
                         <Switch
+                          id={`${
+                            column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.label
+                          }`}
                           size="small"
                           checked={currentView?.columns?.includes(
                             column?.relation_id
@@ -291,6 +388,10 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                         />
                       ) : (
                         <Switch
+                          id={`${
+                            column?.attributes?.[`label_${i18n.language}`] ||
+                            column?.label
+                          }`}
                           size="small"
                           checked={currentView?.columns?.includes(column?.id)}
                           onChange={(e) => {
@@ -306,89 +407,14 @@ export default function VisibleColumnsButton({currentView, fieldsMap}) {
                       )}
                     </div>
                   </div>
-                </Draggable>
-              ))}
-
-              {unVisibleFields?.map((column, index) => (
-                <div
-                  key={column.id}
-                  style={{
-                    display: "flex",
-                    backgroundColor: "#fff",
-                  }}>
-                  <div
-                    style={{
-                      flex: 1,
-                      border: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 0px",
-                      margin: "-1px -1px 0 0",
-                    }}>
-                    <div
-                      style={{
-                        width: 20,
-                        height: 20,
-                        marginRight: 5,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}>
-                      {column.type ? columnIcons(column.type) : <LinkIcon />}
-                    </div>
-                    {column?.attributes?.[`label_${i18n.language}`] ||
-                      column?.attributes?.[`label_${i18n.language}`] ||
-                      column.label}
-                  </div>
-                  <div
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      padding: "8px 16px",
-                      margin: "-1px -1px 0 0",
-                      width: 70,
-                      border: 0,
-                      paddingLeft: 0,
-                      paddingRight: 0,
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}>
-                    {column?.type === "LOOKUP" || column?.type === "LOOKUPS" ? (
-                      <Switch
-                        size="small"
-                        checked={currentView?.columns?.includes(
-                          column?.relation_id
-                        )}
-                        onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? [...currentView?.columns, column?.relation_id]
-                              : currentView?.columns?.filter(
-                                  (el) => el !== column?.relation_id
-                                )
-                          );
-                        }}
-                      />
-                    ) : (
-                      <Switch
-                        size="small"
-                        checked={currentView?.columns?.includes(column?.id)}
-                        onChange={(e) => {
-                          updateView(
-                            e.target.checked
-                              ? [...currentView?.columns, column?.id]
-                              : currentView?.columns?.filter(
-                                  (el) => el !== column?.id
-                                )
-                          );
-                        }}
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </Container>
-          </div>
+                ))}
+              </Container>
+            </div>
+          ) : (
+            <Box sx={{padding: "10px", textAlign: "center"}}>
+              <Typography>No columns found!</Typography>
+            </Box>
+          )}
         </div>
       </Menu>
     </div>

@@ -1,12 +1,15 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import {createAsyncThunk} from "@reduxjs/toolkit";
 import authService from "../../services/auth/authService";
-import { authActions } from "./auth.slice";
-import { store } from "..";
-import { companyActions } from "../company/company.slice";
+import {authActions} from "./auth.slice";
+import {store} from "..";
+import {companyActions} from "../company/company.slice";
+import {permissionsActions} from "../permissions/permissions.slice";
+import languageService from "../../services/languageService";
+import {saveGroupedToDB} from "../../utils/languageDB";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
-  async (data, { dispatch }) => {
+  async (data, {dispatch}) => {
     try {
       const res = await authService.login(data);
       dispatch(
@@ -14,12 +17,49 @@ export const loginAction = createAsyncThunk(
           ...res,
           project_id: data.project_id,
           environment_ids: data?.environment_ids,
+          currencies: data?.currencies,
         })
       );
       dispatch(companyActions.setCompanyId(res?.user?.company_id));
       dispatch(companyActions.setProjectId(data.project_id));
       dispatch(companyActions.setEnvironmentId(res?.environment_id));
       dispatch(companyActions.setDefaultPage(data?.default_page));
+      dispatch(permissionsActions.setPermissions(res?.permissions));
+      dispatch(permissionsActions.setGlobalPermissions(res?.global_permission));
+
+      await languageService
+        .getLanguageList()
+        .then((res) => {
+          const grouped = {};
+
+          if (Array.isArray(res?.languages) && res.languages.length > 0) {
+            for (const field of res.languages) {
+              if (!grouped[field.category]) {
+                grouped[field.category] = [];
+              }
+              grouped[field.category].push(field);
+            }
+          }
+
+          saveGroupedToDB(grouped);
+        })
+        .catch((err) => {
+          saveGroupedToDB({});
+        });
+
+      await authService
+        .updateToken({
+          refresh_token: res.token.access_token,
+          env_id: res.environment_id,
+          project_id: data.project_id,
+        })
+        .then((res) => {
+          store.dispatch(authActions.setTokens(res));
+        })
+        .catch((err) => {
+          console.log("Error updating token:", err);
+        });
+
       await authService
         .updateToken({
           refresh_token: res.token.access_token,
@@ -32,13 +72,14 @@ export const loginAction = createAsyncThunk(
         .catch((err) => {
           console.log(err);
         });
+
       const fcmToken = localStorage.getItem("fcmToken");
-      if (res.user.id)
-        await authService.sendFcmToken({
-          token: fcmToken,
-          user_id: res.user.id,
-          platform_id: "ANDROID",
-        });
+      // if (res.user.id)
+      //   await authService.sendFcmToken({
+      //     token: fcmToken,
+      //     user_id: res.user.id,
+      //     platform_id: "ANDROID",
+      //   });
 
       // dispatch(cashboxActions.setData(cashboxData))
     } catch (error) {

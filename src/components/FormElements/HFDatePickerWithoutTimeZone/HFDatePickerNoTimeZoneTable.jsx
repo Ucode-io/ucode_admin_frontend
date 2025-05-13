@@ -1,16 +1,15 @@
+import {DateRange, Lock} from "@mui/icons-material";
+import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
+import {format, parse} from "date-fns";
+import {useMemo} from "react";
+import InputMask from "react-input-mask";
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
-import {DateRange, Lock} from "@mui/icons-material";
-import {Box, InputAdornment, TextField, Tooltip} from "@mui/material";
-import InputMask from "react-input-mask";
 import "react-multi-date-picker/styles/layouts/mobile.css";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import {format, parse} from "date-fns";
-import {useMemo} from "react";
-import "./style.scss";
-import {locale} from "../../DatePickers/Plugins/locale";
 import CopyToClipboard from "../../CopyToClipboard";
+import {locale} from "../../DatePickers/Plugins/locale";
+import "./style.scss";
 
 const CDateDatePickerNoTimeZoneTable = ({
   value,
@@ -51,14 +50,14 @@ const CDateDatePickerNoTimeZoneTable = ({
               mask={mask}
               value={value ?? undefined}
               onChange={handleChange}
-              disabled={disabled}
-            >
+              disabled={disabled}>
               {(InputProps) => (
                 <TextField
                   value={value}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
                   size="medium"
+                  id="date_without_zone"
                   placeholder={placeholder.split("#")[0]}
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
@@ -86,13 +85,13 @@ const CDateDatePickerNoTimeZoneTable = ({
                           border: "none",
                         }
                       : disabled
-                      ? {
-                          background: "#c0c0c039",
-                        }
-                      : {
-                          background: isBlackBg ? "#2A2D34" : "",
-                          color: isBlackBg ? "#fff" : "",
-                        },
+                        ? {
+                            background: "#c0c0c039",
+                          }
+                        : {
+                            background: isBlackBg ? "#2A2D34" : "",
+                            color: isBlackBg ? "#fff" : "",
+                          },
                   }}
                 />
               )}
@@ -115,13 +114,13 @@ const CDateDatePickerNoTimeZoneTable = ({
               mask={"99:99"}
               value={value ?? undefined}
               onChange={handleChange}
-              disabled={disabled}
-            >
+              disabled={disabled}>
               {(InputProps) => (
                 <TextField
                   value={value}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
+                  id="without_zone_time"
                   // size="small"
                   autoComplete="off"
                   placeholder={placeholder.split("#")[1]}
@@ -151,13 +150,13 @@ const CDateDatePickerNoTimeZoneTable = ({
                           background: "transparent",
                         }
                       : disabled
-                      ? {
-                          background: "#c0c0c039",
-                        }
-                      : {
-                          background: isBlackBg ? "#2A2D34" : "",
-                          color: isBlackBg ? "#fff" : "",
-                        },
+                        ? {
+                            background: "#c0c0c039",
+                          }
+                        : {
+                            background: isBlackBg ? "#2A2D34" : "",
+                            color: isBlackBg ? "#fff" : "",
+                          },
                     endAdornment: (
                       <InputAdornment position="end">
                         <Box sx={{display: "flex", alignItems: "center"}}>

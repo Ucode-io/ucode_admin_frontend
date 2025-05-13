@@ -2,7 +2,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {Button} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useSearchParams} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import useOnClickOutside from "use-onclickoutside";
 import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
@@ -14,12 +14,13 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import SummaryRow from "./SummaryRow";
 import TableHeadForTableView from "./TableHeadForTableView";
 import TableRow from "./TableRow";
-import "./style.scss";
 import AddDataColumn from "./AddDataColumn";
+import "./style.scss";
 
 const ObjectDataTable = ({
+  custom_events,
+  dataCount,
   selectedTab,
-  relOptions,
   filterVisible,
   tableView,
   data = [],
@@ -37,8 +38,9 @@ const ObjectDataTable = ({
   openFieldSettings,
   sortedDatas,
   fields = [],
-  isRelationTable,
+  isRelationTable = false,
   disablePagination,
+  count,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
@@ -48,8 +50,9 @@ const ObjectDataTable = ({
   watch,
   getValues,
   control,
-  setFormValue,
+  setFormValue = () => {},
   navigateToEditPage,
+  navigateCreatePage,
   dataLength,
   onDeleteClick,
   onRowClick = () => {},
@@ -89,17 +92,6 @@ const ObjectDataTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: !Boolean(objectMenuItem),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   }
-  // });
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -236,9 +228,11 @@ const ObjectDataTable = ({
     return totalWidth;
   };
   const parentRef = useRef(null);
-
+  console.log("getValuesgetValues", getValues());
   return (
     <CTable
+      custom_events={custom_events}
+      dataCount={count ?? dataCount}
       disablePagination={disablePagination}
       removableHeight={removableHeight}
       count={pagesCount}
@@ -259,7 +253,10 @@ const ObjectDataTable = ({
       view={view}
       filterVisible={filterVisible}
       navigateToEditPage={navigateToEditPage}
-      parentRef={parentRef}>
+      navigateCreatePage={navigateCreatePage}
+      parentRef={parentRef}
+      getAllData={getAllData}
+      control={control}>
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -341,8 +338,7 @@ const ObjectDataTable = ({
           return (
             columns && (
               <TableRow
-                key={virtualRowObject?.id}
-                relOptions={relOptions}
+                key={isRelationTable ? virtualRowObject?.id : index}
                 tableView={tableView}
                 width={"80px"}
                 remove={remove}
@@ -374,7 +370,7 @@ const ObjectDataTable = ({
                 onDeleteClick={onDeleteClick}
                 relationAction={relationAction}
                 onChecked={onChecked}
-                relationFields={fields}
+                relationFields={fields?.length}
                 data={data}
                 view={view}
               />
@@ -389,7 +385,6 @@ const ObjectDataTable = ({
             isRelationTable={isRelationTable}
             setAddNewRow={setAddNewRow}
             isTableView={isTableView}
-            relOptions={relOptions}
             tableView={tableView}
             tableSlug={relatedTableSlug ?? tableSlug}
             fields={columns}
@@ -419,6 +414,7 @@ const ObjectDataTable = ({
             }}>
             <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
               <Button
+                id="add-row"
                 variant="text"
                 style={{
                   borderColor: "#F0F0F0",
@@ -434,9 +430,9 @@ const ObjectDataTable = ({
           </CTableCell>
         </CTableRow>
 
-        {!!summaries?.length && (
+        {/* {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
-        )}
+        )} */}
         {additionalRow}
       </CTableBody>
     </CTable>

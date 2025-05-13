@@ -5,7 +5,6 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorFieldService from "../../../services/constructorFieldService";
@@ -23,6 +22,10 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
+import {store} from "../../../store";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const TableView = ({
   filterVisible,
@@ -59,6 +62,7 @@ const TableView = ({
   menuItem,
   setFormValue,
   currentView,
+  watch,
   ...props
 }) => {
   const {t} = useTranslation();
@@ -71,6 +75,7 @@ const TableView = ({
     (state) => state?.pagination?.paginationInfo
   );
   const [limit, setLimit] = useState(20);
+
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
@@ -80,10 +85,12 @@ const TableView = ({
   const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
-  const [relOptions, setRelOptions] = useState([]);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const projectId = store.getState().company.projectId;
+
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
     defaultValues: {
@@ -170,7 +177,7 @@ const TableView = ({
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));
@@ -181,7 +188,6 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      // queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -225,13 +231,17 @@ const TableView = ({
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
 
-    let a = sortedDatas?.map((el) => {
-      if (el.field) {
-        return {
-          [fieldsMap[el?.field].slug]: el.order === "ASC" ? 1 : -1,
-        };
-      }
-    });
+    let a = sortedDatas
+      ?.map((el) => {
+        if (el?.field && el?.order === "ASC") {
+          return {
+            [fieldsMap[el?.field]?.slug]: 1,
+          };
+        } else if (el?.order === "DESC") {
+          return undefined;
+        }
+      })
+      .filter(Boolean);
 
     a.forEach((obj) => {
       for (const key in obj) {
@@ -282,11 +292,12 @@ const TableView = ({
   }, [paginiation, limit, currentPage]);
 
   const {
-    data: {fiedlsarray, fieldView} = {
+    data: {fiedlsarray, fieldView, custom_events} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
       fiedlsarray: [],
+      custom_events: [],
     },
   } = useQuery({
     queryKey: [
@@ -306,16 +317,23 @@ const TableView = ({
       return {
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
+        custom_events: res?.data?.custom_events ?? [],
       };
     },
   });
 
+  const tableSearch =
+    detectStringType(searchText) === "number"
+      ? parseInt(searchText)
+      : searchText;
+
   const {
-    data: {tableData, pageCount} = {
+    data: {tableData, pageCount, dataCount} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
       fiedlsarray: [],
+      dataCount: 0,
     },
     refetch,
     isLoading: tableLoader,
@@ -331,19 +349,18 @@ const TableView = ({
         filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
+        // currentView,
       },
     ],
-    cacheTime: 10,
     queryFn: () => {
       return constructorObjectService.getListV2(tableSlug, {
         data: {
-          offset: searchText ? 1 : pageToOffset(currentPage, paginiation),
+          row_view_id: view?.id,
+          offset: pageToOffset(currentPage, paginiation),
           order: computedSortColumns,
           view_fields: checkedColumns,
-          search:
-            detectStringType(searchText) === "number"
-              ? parseInt(searchText)
-              : searchText,
+          search: tableSearch,
+
           limit: limitPage !== 0 ? limitPage : limit,
           ...filters,
           [tab?.slug]: tab
@@ -362,6 +379,7 @@ const TableView = ({
         pageCount: isNaN(res.data?.count)
           ? 1
           : Math.ceil(res.data?.count / (paginiation ?? limit)),
+        dataCount: res?.data?.count,
       };
     },
     onSuccess: (data) => {
@@ -394,83 +412,6 @@ const TableView = ({
 
     return filteredFields;
   }, [fieldView, fiedlsarray]);
-
-  const computedRelationFields = useMemo(() => {
-    const computedFields = Object.values(fieldsMap)?.filter((element) => {
-      return element?.type === "LOOKUP" || element?.type === "LOOKUPS";
-    });
-
-    return computedFields?.filter((item) => {
-      if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
-        return view?.columns?.includes(item?.relation_id);
-      } else {
-        return view?.columns?.includes(item?.id);
-      }
-    });
-  }, [fieldsMap, view]);
-
-  const getOptionsList = async () => {
-    const computedIds = computedRelationFields?.map((item) => ({
-      table_slug: item?.slug,
-      ids:
-        item?.type === "LOOKUP" || item?.type === "LOOKUPS"
-          ? Array.from(new Set(tableData?.map((obj) => obj?.[item?.slug])))
-          : Array.from(
-              new Set([].concat(...tableData?.map((obj) => obj?.[item?.slug])))
-            ),
-    }));
-
-    try {
-      tableData?.length &&
-        (await computedRelationFields?.forEach((item, index) => {
-          constructorObjectService
-            .getListV2(item?.table_slug, {
-              data: {
-                limit: 10,
-                offset: 0,
-                additional_request: {
-                  additional_field: "guid",
-                  additional_values: computedIds
-                    ?.find(
-                      (computedItem) => computedItem?.table_slug === item?.slug
-                    )
-                    ?.ids?.filter((el) => el),
-                },
-              },
-            })
-            .then((res) => {
-              if (relOptions?.length > 0) {
-                setRelOptions((prev) => {
-                  const updatedOptions = prev.map((option) => {
-                    if (option.table_slug === item?.table_slug) {
-                      return {
-                        table_slug: item?.table_slug,
-                        response: res?.data?.response,
-                        relationId: item?.relation_id,
-                      };
-                    }
-                    return option;
-                  });
-                  return updatedOptions;
-                });
-              } else {
-                setRelOptions((prev) => [
-                  ...prev,
-                  {
-                    table_slug: item?.table_slug,
-                    response: res?.data?.response,
-                    relationId: item?.relation_id,
-                  },
-                ]);
-              }
-            });
-        }));
-    } catch {}
-  };
-
-  useEffect(() => {
-    getOptionsList();
-  }, [tableData?.length, computedRelationFields?.length]);
 
   const {
     data: {layout} = {
@@ -514,6 +455,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    console.log("layoutTypelayoutType", layoutType);
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
@@ -531,9 +473,18 @@ const TableView = ({
     }
   };
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
   const navigateToDetailPage = (row) => {
-    if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
         ?.map(
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
@@ -541,27 +492,18 @@ const TableView = ({
               row
             )}`
         )
-        .join("&&");
+        .join("&");
 
-      const urlTemplate = view?.navigate?.url;
+      const urlTemplate = view?.attributes?.navigate?.url;
       let query = urlTemplate;
 
       const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-      const matches = urlTemplate.match(variablePattern);
+      const matches = replaceUrlVariables(urlTemplate, row);
 
-      if (matches) {
-        matches.forEach((match) => {
-          const variableName = match.slice(4, -2);
-          const variableValue = row[variableName];
-          if (variableValue !== undefined) {
-            query = query.replace(match, variableValue);
-          }
-        });
-      }
-      navigate(`${query}${params ? "?" + params : ""}`);
+      navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id || appId);
     }
   };
 
@@ -609,8 +551,27 @@ const TableView = ({
     );
   }, []);
 
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
+
+  const calculatedHeight = useMemo(() => {
+    let warningHeight = 0;
+
+    if (isWarningActive || projectInfo?.status === "inactive") {
+      warningHeight = 32;
+    }
+
+    return 32;
+  }, [projectInfo, isWarningActive]);
+
   return (
-    <div className={styles.wrapper}>
+    <div id="wrapper_drag" className={styles.wrapper}>
       {
         <div
           className={filterVisible ? styles.filters : styles.filtersVisiblitiy}>
@@ -639,10 +600,11 @@ const TableView = ({
         }}
         id="data-table">
         <ObjectDataTable
+          custom_events={custom_events}
+          dataCount={dataCount}
           refetch={refetch}
           filterVisible={filterVisible}
           currentView={currentView}
-          relOptions={relOptions}
           tableView={true}
           defaultLimit={view?.default_limit}
           formVisible={formVisible}
@@ -657,7 +619,7 @@ const TableView = ({
           setFormValue={setFormValue}
           mainForm={mainForm}
           isRelationTable={false}
-          removableHeight={isDocView ? 150 : 170}
+          removableHeight={isDocView ? 150 : calculatedHeight + 150}
           currentPage={currentPage}
           pagesCount={pageCount}
           selectedObjectsForDelete={selectedObjectsForDelete}
@@ -670,6 +632,7 @@ const TableView = ({
           onPaginationChange={setCurrentPage}
           loader={tableLoader || deleteLoader}
           data={tableData}
+          navigateCreatePage={navigateCreatePage}
           navigateToEditPage={navigateCreatePage}
           summaries={view?.attributes?.summaries}
           disableFilters
@@ -679,6 +642,7 @@ const TableView = ({
           onRowClick={navigateToEditPage}
           onDeleteClick={deleteHandler}
           tableSlug={tableSlug}
+          watch={watch}
           view={view}
           tableStyle={{
             borderRadius: 0,

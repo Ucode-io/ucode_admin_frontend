@@ -13,13 +13,13 @@ import Select, {components} from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
+import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -48,6 +48,7 @@ const CellRelationFormElementForTableView = ({
   relationfields,
   data,
   isTableView,
+  row,
 }) => {
   const classes = useStyles();
 
@@ -94,6 +95,7 @@ const CellRelationFormElementForTableView = ({
             />
           ) : (
             <AutoCompleteElement
+              row={row}
               relOptions={relOptions}
               tableView={tableView}
               disabled={disabled}
@@ -139,7 +141,9 @@ const AutoCompleteElement = ({
   index,
   control,
   isTableView,
+  relationfields,
   setFormValue = () => {},
+  row,
 }) => {
   const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
@@ -156,7 +160,6 @@ const AutoCompleteElement = ({
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const {i18n} = useTranslation();
-  const languages = useSelector((state) => state.languages.list);
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -207,41 +210,41 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
-  const {data: optionsFromFunctions} = useQuery(
-    ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
-    () => {
-      return request.post(
-        `/invoke_function/${field?.attributes?.function_path}`,
-        {
-          params: {
-            from_input: true,
-          },
-          data: {
-            table_slug: tableSlug,
-            ...autoFiltersValue,
-            search: debouncedValue,
-            limit: 10,
-            offset: pageToOffset(page, 10),
-            view_fields:
-              field?.view_fields?.map((field) => field.slug) ??
-              field?.attributes?.view_fields?.map((field) => field.slug),
-          },
-        }
-      );
-    },
-    {
-      enabled:
-        (!!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!!field?.attributes?.function_path && Boolean(debouncedValue)),
-      select: (res) => {
-        const options = res?.data?.response ?? [];
+  // const {data: optionsFromFunctions} = useQuery(
+  //   ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
+  //   () => {
+  //     return request.post(
+  //       `/invoke_function/${field?.attributes?.function_path}`,
+  //       {
+  //         params: {
+  //           from_input: true,
+  //         },
+  //         data: {
+  //           table_slug: tableSlug,
+  //           ...autoFiltersValue,
+  //           search: debouncedValue,
+  //           limit: 10,
+  //           offset: pageToOffset(page, 10),
+  //           view_fields:
+  //             field?.view_fields?.map((field) => field.slug) ??
+  //             field?.attributes?.view_fields?.map((field) => field.slug),
+  //         },
+  //       }
+  //     );
+  //   },
+  //   {
+  //     enabled:
+  //       (!!field?.attributes?.function_path && Boolean(page > 1)) ||
+  //       (!!field?.attributes?.function_path && Boolean(debouncedValue)),
+  //     select: (res) => {
+  //       const options = res?.data?.response ?? [];
 
-        return {
-          options,
-        };
-      },
-    }
-  );
+  //       return {
+  //         options,
+  //       };
+  //     },
+  //   }
+  // );
 
   const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
@@ -426,25 +429,6 @@ const AutoCompleteElement = ({
     </components.SingleValue>
   );
 
-  const computedViewFields = useMemo(() => {
-    if (field?.attributes?.enable_multi_language) {
-      const viewFields = field?.view_fields?.map((el) => el?.slug);
-      const computedLanguages = languages?.map((item) => item?.slug);
-
-      const activeLangView = viewFields?.filter((el) =>
-        el?.includes(i18n?.language)
-      );
-
-      const filteredData = viewFields.filter((key) => {
-        return !computedLanguages.some((lang) => key.includes(lang));
-      });
-
-      return [...activeLangView, ...filteredData] ?? [];
-    } else {
-      return field?.view_fields?.map((el) => el?.slug);
-    }
-  }, [field, i18n?.language]);
-
   const autofilterDisable = useMemo(() => {
     if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
       return true;
@@ -538,13 +522,7 @@ const AutoCompleteElement = ({
         menuShouldScrollIntoView
         styles={customStyles}
         getOptionLabel={(option) =>
-          computedViewFields?.map((el) => {
-            if (field?.attributes?.enable_multi_language) {
-              return `${option[`${i18n?.language}`] ?? option[`${el}`]} `;
-            } else {
-              return `${option[el]} `;
-            }
-          })
+          `${getRelationFieldTabsLabel(field, option)}`
         }
         getOptionValue={(option) => option.value}
         isOptionSelected={(option, value) =>

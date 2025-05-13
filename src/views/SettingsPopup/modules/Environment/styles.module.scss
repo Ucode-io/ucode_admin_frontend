@@ -1,0 +1,36 @@
+.tableHeadCell {
+  color: #475467;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.tBodyCell {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #475467;
+}
+
+.btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid rgba(145, 158, 171, 0.32);
+  border-radius: 6px;
+  color: #475467;
+  background-color: transparent;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease;
+
+  &:hover {
+    color: rgb(235, 87, 87);
+    border-color: rgb(235, 87, 87);
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

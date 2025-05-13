@@ -3,6 +3,7 @@ import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoade
 import MicrofrontendComponent from "../../components/MicrofrontendComponent";
 import {loginAction} from "../../store/auth/auth.thunk";
 import {useDispatch} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 const LoginMicrofrontend = ({microfrontendUrl, isLoading}) => {
   const microfrontendLink = microfrontendUrl
@@ -11,12 +12,14 @@ const LoginMicrofrontend = ({microfrontendUrl, isLoading}) => {
 
   if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
   const dispatch = useDispatch();
+  const {t, i18n} = useTranslation();
   return (
     <>
       <MicrofrontendComponent
         loginAction={(authData) => dispatch(loginAction(authData))}
         key={microfrontendLink}
         link={microfrontendLink}
+        i18n={i18n}
       />
       <Outlet />
     </>

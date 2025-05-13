@@ -1,5 +1,5 @@
 export const applyDrag = (arr, dragResult) => {
-  const { removedIndex, addedIndex, payload } = dragResult;
+  const {removedIndex, addedIndex, payload} = dragResult;
 
   if (removedIndex === null && addedIndex === null) return null;
   const result = [...arr];
@@ -10,13 +10,13 @@ export const applyDrag = (arr, dragResult) => {
   }
 
   if (addedIndex !== null) {
-    result.splice(addedIndex, 0, { ...itemToAdd, index: addedIndex + 1 });
+    result.splice(addedIndex, 0, {...itemToAdd, index: addedIndex + 1});
   }
   return result;
 };
 
 export const applyDragIndex = (arr, dragResult) => {
-  const { removedIndex, addedIndex, payload } = dragResult;
+  const {removedIndex, addedIndex, payload} = dragResult;
 
   if (removedIndex === null && addedIndex === null) return null;
 

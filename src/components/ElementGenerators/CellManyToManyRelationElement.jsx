@@ -42,6 +42,7 @@ const CellManyToManyRelationElement = ({
   index,
   defaultValue,
   row,
+  newUi = false,
 }) => {
   const classes = useStyles();
   if (!isLayout)
@@ -60,7 +61,7 @@ const CellManyToManyRelationElement = ({
               control={control}
               setValue={(value) => {
                 onChange(value);
-                updateObject();
+                !isNewTableView && updateObject();
               }}
               value={value}
               setFormValue={setFormValue}
@@ -89,6 +90,7 @@ const CellManyToManyRelationElement = ({
               setFormValue={setFormValue}
               control={control}
               index={index}
+              newUi={newUi}
             />
           );
         }}
@@ -109,20 +111,21 @@ const AutoCompleteElement = ({
   defaultValue,
   classes,
   isBlackBg,
-  setValue,
+  setValue = () => {},
   index,
   control,
+  newUi,
   setFormValue = () => {},
 }) => {
   const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
-  const {i18n} = useTranslation();
+  const {i18n, t} = useTranslation();
   const [allOptions, setAllOptions] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
 
   const getOptionLabel = (option) => {
-    return getRelationFieldTabsLabel(field, option);
+    return getRelationFieldTabsLabel(field, option, i18n.language);
   };
   function findMatchingProperty(obj, desiredLanguage) {
     const matchingProperty = Object.keys(obj).reduce((result, key) => {
@@ -195,7 +198,7 @@ const AutoCompleteElement = ({
   );
 
   const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(
@@ -218,7 +221,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !field?.attributes?.function_path && Boolean(debouncedValue),
+      enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -237,7 +240,9 @@ const AutoCompleteElement = ({
     if (Array.isArray(value)) {
       return value
         ?.map((id) => {
-          const option = allOptions?.find((el) => el?.guid === id);
+          const option = optionsFromLocale?.options?.find(
+            (el) => el?.guid === id
+          );
 
           if (!option) return null;
           return {
@@ -246,7 +251,9 @@ const AutoCompleteElement = ({
         })
         .filter((el) => el !== null);
     } else {
-      const option = allOptions?.find((el) => el?.guid === value);
+      const option = optionsFromLocale?.options?.find(
+        (el) => el?.guid === value
+      );
 
       if (!option) return [];
 
@@ -256,7 +263,7 @@ const AutoCompleteElement = ({
         },
       ];
     }
-  }, [allOptions, value]);
+  }, [optionsFromLocale?.options, value]);
 
   const changeHandler = (value) => {
     if (!value) setValue(null);
@@ -265,21 +272,21 @@ const AutoCompleteElement = ({
     setValue(val ?? null);
   };
 
-  useEffect(() => {
-    const matchingOption = relOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
-    );
+  // useEffect(() => {
+  //   const matchingOption = relOptions?.find(
+  //     (item) => item?.table_slug === field?.table_slug
+  //   );
 
-    if (matchingOption) {
-      setAllOptions(matchingOption.response);
-    }
-  }, [relOptions, field]);
+  //   if (matchingOption) {
+  //     setAllOptions(matchingOption.response);
+  //   }
+  // }, [relOptions, field]);
 
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
         disabled={disabled}
-        options={allOptions ?? []}
+        options={optionsFromLocale?.options ?? []}
         value={computedValue}
         popupIcon={
           isBlackBg ? (
@@ -293,16 +300,15 @@ const AutoCompleteElement = ({
         }}
         noOptionsText={
           <span
-            onClick={() => navigateToForm(tableSlug, 'CREATE', {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
-          >
+            onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
             Create new
           </span>
         }
         blurOnSelect
         openOnFocus
-        getOptionLabel={
-          (option) => getRelationFieldTabsLabel(field, option, true)
+        getOptionLabel={(option) =>
+          getRelationFieldTabsLabel(field, option, i18n.language)
         }
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
@@ -319,6 +325,7 @@ const AutoCompleteElement = ({
               style: {
                 background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
                 color: isBlackBg ? "#fff" : "",
+                height: "32px",
               },
             }}
             size="small"
@@ -331,8 +338,7 @@ const AutoCompleteElement = ({
                 {values?.map((el, index) => (
                   <div
                     key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
+                    className={styles.multipleAutocompleteTags}>
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
@@ -342,8 +348,7 @@ const AutoCompleteElement = ({
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}
-                    >
+                      }}>
                       <LaunchIcon
                         style={{
                           fontSize: "15px",

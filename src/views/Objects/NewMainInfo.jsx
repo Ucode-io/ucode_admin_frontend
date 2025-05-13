@@ -17,11 +17,10 @@ const MainInfo = ({
   setFormValue,
   relatedTable,
   relation,
-  selectedTabIndex,
-  selectedTab,
-  selectedIndex,
   isMultiLanguage,
   errors,
+  watch,
+  getValues,
 }) => {
   const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
@@ -41,6 +40,41 @@ const MainInfo = ({
   }, [relation]);
 
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
+  const filterFields = (element, control, watch) => {
+    if (element?.attributes?.hide_path_field) {
+      if (Array.isArray(element?.attributes?.hide_path)) {
+        const hidePathArray = element?.attributes?.hide_path;
+        const watchArray = watch(element?.attributes?.hide_path_field, control);
+
+        if (hidePathArray?.length !== watchArray?.length) {
+          return false;
+        }
+        return hidePathArray?.every((el, index) => el === watchArray?.[index]);
+      }
+      if (element?.attributes?.type) {
+        const hidePathArray = element?.attributes?.hide_path;
+        const watchArray = watch(element?.attributes?.hide_path_field, control);
+        if (element?.attributes?.type === "min") {
+          if (watchArray > Number(hidePathArray)) {
+            return true;
+          } else return false;
+        } else if (element?.attributes?.type === "max") {
+          if (watchArray < Number(hidePathArray)) {
+            return true;
+          } else return false;
+        }
+      }
+
+      const isHidden =
+        element?.attributes?.hide_path ===
+        watch(element?.attributes?.hide_path_field, control);
+
+      return isHidden;
+    }
+
+    return true;
+  };
 
   useEffect(() => {
     if (isMultiLanguage) {
@@ -68,45 +102,86 @@ const MainInfo = ({
           )}
 
           <div className={styles.newMainInfoSections}>
-            {computedSections.map((section) => (
-              <NewFormCard
-                key={section.id}
-                title={
-                  section?.attributes?.[`label_${i18n.language}`] ??
-                  section.label
-                }
-                className={styles.formCard}
-                icon={section.icon}>
+            {computedSections.map((section) =>
+              section?.label ? (
+                <NewFormCard
+                  key={section.id}
+                  title={
+                    section?.attributes?.[`label_${i18n.language}`] ||
+                    section.label
+                  }
+                  className={styles.formCard}
+                  icon={section.icon}>
+                  <div
+                    className={styles.newformColumn}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr 1fr",
+                    }}>
+                    {section?.fields
+                      ?.filter((element) =>
+                        filterFields(element, control, watch)
+                      )
+                      .map((field) => (
+                        <Box
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            minWidth: "250px",
+                          }}>
+                          <FormElementGenerator
+                            key={field.id}
+                            isMultiLanguage={isMultiLanguage}
+                            field={field}
+                            control={control}
+                            setFormValue={setFormValue}
+                            fieldsList={fieldsList}
+                            formTableSlug={tableSlug}
+                            relatedTable={relatedTable}
+                            activeLang={activeLang}
+                            errors={errors}
+                            watch={watch}
+                            getValues={getValues}
+                          />
+                        </Box>
+                      ))}
+                  </div>
+                </NewFormCard>
+              ) : (
                 <div
                   className={styles.newformColumn}
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr 1fr",
                   }}>
-                  {section.fields?.map((field) => (
-                    <Box
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        minWidth: "250px",
-                      }}>
-                      <FormElementGenerator
-                        key={field.id}
-                        isMultiLanguage={isMultiLanguage}
-                        field={field}
-                        control={control}
-                        setFormValue={setFormValue}
-                        fieldsList={fieldsList}
-                        formTableSlug={tableSlug}
-                        relatedTable={relatedTable}
-                        activeLang={activeLang}
-                        errors={errors}
-                      />
-                    </Box>
-                  ))}
+                  {section?.fields
+                    ?.filter((element) => filterFields(element, control, watch))
+                    .map((field) => (
+                      <Box
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          minWidth: "250px",
+                        }}>
+                        <FormElementGenerator
+                          key={field.id}
+                          isMultiLanguage={isMultiLanguage}
+                          field={field}
+                          control={control}
+                          setFormValue={setFormValue}
+                          fieldsList={fieldsList}
+                          formTableSlug={tableSlug}
+                          relatedTable={relatedTable}
+                          activeLang={activeLang}
+                          errors={errors}
+                          watch={watch}
+                          getValues={getValues}
+                        />
+                      </Box>
+                    ))}
                 </div>
-              </NewFormCard>
-            ))}
+              )
+            )}
           </div>
         </div>
       ) : (

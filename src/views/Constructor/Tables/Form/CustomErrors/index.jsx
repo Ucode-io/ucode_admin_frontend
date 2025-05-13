@@ -1,8 +1,8 @@
-import { Drawer } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import {Drawer} from "@mui/material";
+import {useMemo, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
@@ -10,27 +10,27 @@ import {
   useCustomErrorDeleteMutation,
   useCustomErrorListQuery,
 } from "../../../../../services/customErrorMessageService";
-import { store } from "../../../../../store";
+import {store} from "../../../../../store";
 import CustomErrorsSettings from "./CustomErrorsSettings";
 
-const CustomErrors = ({ mainForm, getRelationFields }) => {
+const CustomErrors = ({mainForm, getRelationFields}) => {
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
-  const { id, tableSlug } = useParams();
+  const {id, tableSlug} = useParams();
   const queryClient = useQueryClient();
   const authStore = store.getState().auth;
 
-  const { fields: relations } = useFieldArray({
+  const {fields: relations} = useFieldArray({
     control: mainForm.control,
     name: "relations",
     keyName: "key",
   });
 
-  const { data: customErrors } = useCustomErrorListQuery({
+  const {data: customErrors} = useCustomErrorListQuery({
     params: {
       table_id: id,
     },
-    tableSlug: tableSlug
+    tableSlug: tableSlug,
   });
 
   const openEditForm = (field, index) => {
@@ -46,7 +46,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
     setLoader(false);
   };
 
-  const { mutate: deleteCustomError, isLoading: deleteLoading } =
+  const {mutate: deleteCustomError, isLoading: deleteLoading} =
     useCustomErrorDeleteMutation({
       projectId: authStore.projectId,
       tableSlug: tableSlug,
@@ -111,8 +111,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
         open={!!drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <CustomErrorsSettings
           customError={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}

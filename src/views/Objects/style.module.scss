@@ -37,12 +37,32 @@
   overflow: scroll;
   padding: 20px 20px 0 20px;
   width: 100%;
+
+  input {
+    // border: none !important;
+    fieldset {
+      display: none !important;
+    }
+  }
 }
 
 .newMainInfoSectionsModal {
   overflow: scroll;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 250px);
   padding: 0 0 0px 0;
+}
+
+.newMainInfoSectionsFullpage {
+  overflow: scroll;
+  height: calc(100vh - 280px);
+  padding: 0 0 0px 0;
+
+  input {
+    border: none !important;
+    fieldset {
+      display: none !important;
+    }
+  }
 }
 
 .secondaryCardSide {
@@ -70,10 +90,11 @@
   align-items: center;
   justify-content: space-between;
   // margin-bottom: 10px;
-  min-height: 54px;
+  min-height: 40px !important;
   width: 100%;
   overflow-x: scroll;
   padding: 0 16px;
+  background: #fff;
 }
 
 .loader {
@@ -271,6 +292,7 @@
 }
 
 .menuBar {
+  padding: 12px 0 5px 0;
   width: 180px;
 }
 
@@ -426,6 +448,7 @@
   font-weight: 500 !important;
   line-height: normal;
   white-space: nowrap;
+  height: 25px !important;
 }
 
 .activeTab {
@@ -446,5 +469,128 @@
     border-radius: 2px 2px 0px 0px;
     background: #2d6ce5;
     transform: translateX(-50%);
+  }
+}
+
+.filterBtn {
+  width: 38px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background: none;
+  cursor: pointer;
+  position: relative;
+
+  .filterBadge {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #449424;
+    border-radius: 50%;
+    top: -10px;
+    right: -10px;
+    z-index: 2;
+    background: #fff;
+    color: #449424;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@mixin flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rowCol {
+  input {
+    height: 30px !important;
+
+    &:hover {
+      background: #f7f7f7;
+      border-radius: 4px;
+    }
+  }
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+
+  &:hover {
+    .icon {
+      display: none;
+    }
+
+    .drag {
+      display: block;
+    }
+  }
+}
+
+.rowDragCol {
+  margin-top: 4px;
+  cursor: pointer;
+  .icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .drag {
+    width: 16px;
+    height: 16px;
+    display: none;
+    cursor: grab;
+  }
+}
+
+.headingText {
+  div {
+    fieldset {
+      display: none;
+    }
+  }
+
+  input {
+    font-weight: 700;
+    height: 25px;
+    font-size: 32px;
+    padding-left: 0;
+  }
+}
+
+.drag-item {
+  .icon {
+    display: none;
+  }
+
+  .drag {
+    display: block;
+  }
+}
+
+.layoutHeading {
+  .fieldChoose {
+    display: none;
+  }
+  &:hover {
+    .fieldChoose {
+      display: block;
+    }
   }
 }

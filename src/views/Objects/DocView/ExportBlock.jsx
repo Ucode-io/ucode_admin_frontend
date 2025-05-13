@@ -1,6 +1,9 @@
 import { CircularProgress } from "@mui/material";
 import styles from "./style.module.scss";
 import LinkedListTables from "./DynamicObjectsTemplate/LinkedListTables";
+import { useGetLang } from "../../../hooks/useGetLang";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
 
 const ExportBlock = ({
   pdfLoader,
@@ -19,19 +22,29 @@ const ExportBlock = ({
   selectedObject,
   setlLinkedObjectView,
 }) => {
+  const lang = useGetLang("Table");
+  const { i18n } = useTranslation();
+
   return (
     <div className={styles.docListBlock}>
       <div className={styles.doclistHeader}>
-        <div className={styles.doclistHeaderTitle}>Экспорт</div>
+        <div className={styles.doclistHeaderTitle}>
+          {generateLangaugeText(lang, i18n?.language, "Export") || "Export"}
+        </div>
       </div>
 
       <div className={styles.docList}>
         <div className={styles.pageSizeRow} onClick={exportToPDF}>
-          <div className={styles.documentIcon}>PDF</div> Export to PDF
+          <div className={styles.documentIcon}>PDF</div>{" "}
+          {generateLangaugeText(lang, i18n?.language, "Export to PDF") ||
+            "Export to PDF"}
           {pdfLoader && <CircularProgress size={14} />}
         </div>
         <div className={styles.pageSizeRow} onClick={exportToHTML}>
-          <div className={styles.documentIcon}>Variable</div> Set variables
+          <div className={styles.documentIcon}>
+            {generateLangaugeText(lang, i18n?.language, "Variable")}
+          </div>
+          {generateLangaugeText(lang, i18n?.language, "Set variables")}
           {htmlLoader && <CircularProgress size={14} />}
         </div>
 

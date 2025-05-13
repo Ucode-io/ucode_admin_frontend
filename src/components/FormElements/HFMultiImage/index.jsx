@@ -9,10 +9,12 @@ const HFMultiImage = ({
   required,
   rules,
   disabledHelperText = false,
-  disabled,
+  disabled = false,
   field,
-  isTableView,
+  isTableView = false,
+  drawerDetail = false,
   updateObject = () => {},
+  newUi,
   ...props
 }) => {
   return (
@@ -28,6 +30,7 @@ const HFMultiImage = ({
         <>
           <MultiImageUpload
             name={name}
+            drawerDetail={drawerDetail}
             value={value}
             tabIndex={tabIndex}
             onChange={onChange}
@@ -35,6 +38,7 @@ const HFMultiImage = ({
             disabled={disabled}
             field={field}
             isTableView={isTableView}
+            newUi={newUi}
             {...props}
           />
           {!disabledHelperText && error?.message && (

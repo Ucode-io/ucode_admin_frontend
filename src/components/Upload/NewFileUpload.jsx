@@ -3,14 +3,10 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {
-  Box,
-  Button,
-  Popover,
-  Typography
-} from "@mui/material";
-import React, { useRef, useState } from "react";
+import {Box, Button, Popover, Typography} from "@mui/material";
+import React, {useRef, useState} from "react";
 import fileService from "../../services/fileService";
+import {useTranslation} from "react-i18next";
 
 export default function NewFileUpload({
   value,
@@ -19,8 +15,10 @@ export default function NewFileUpload({
   disabled,
   tabIndex,
   field,
+  drawerDetail = false,
 }) {
   const inputRef = useRef("");
+  const {i18n, t} = useTranslation();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -65,6 +63,11 @@ export default function NewFileUpload({
     setAnchorEl(null);
   };
 
+  const valueGenerate = (value, separator = "_") => {
+    const splitted = value?.split(separator).slice(1, -1);
+    return splitted?.join(separator);
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -72,17 +75,19 @@ export default function NewFileUpload({
     <div className={`Gallery ${className}`}>
       {value && (
         <>
-          <Box className="uploadedFile">
+          <Box
+            sx={{width: drawerDetail ? "330px" : "100%"}}
+            className="uploadedFile">
             <Button
+              id="file_upload"
               aria-describedby={id}
               onClick={handleClick}
               sx={{
                 padding: 0,
-                minWidth: "25px",
-                width: "25px",
-                height: "25px",
-              }}
-            >
+                minWidth: 40,
+                width: 40,
+                height: 27,
+              }}>
               <AttachFileIcon
                 style={{
                   color: "#747474",
@@ -95,9 +100,8 @@ export default function NewFileUpload({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}
-            >
-              {value?.split?.("_")?.[1] ?? ""}
+              }}>
+              {valueGenerate(value)}
             </Typography>
           </Box>
 
@@ -109,16 +113,14 @@ export default function NewFileUpload({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}
-            >
+              }}>
               <Button
                 href={value}
                 className=""
@@ -130,10 +132,9 @@ export default function NewFileUpload({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
-                }}
-              >
+                }}>
                 <OpenInFullIcon />
-                Show file
+                {t("show_file")}
               </Button>
               <Button
                 sx={{
@@ -143,10 +144,9 @@ export default function NewFileUpload({
                   justifyContent: "flex-start",
                 }}
                 disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}
-              >
+                onClick={(e) => closeButtonHandler(e)}>
                 <DeleteIcon />
-                Remove file
+                {t("remove_file")}
               </Button>
               <Button
                 sx={{
@@ -159,13 +159,13 @@ export default function NewFileUpload({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}
-              >
+                }}>
                 <ChangeCircleIcon />
-                Change file
+                {t("change_file")}
               </Button>
             </Box>
             <input
+              id="fileUpload_field"
               type="file"
               style={{
                 display: "none",
@@ -181,71 +181,41 @@ export default function NewFileUpload({
         </>
       )}
 
-      {!value && (
-        // <div
-        //   className="add-block block"
-        //   onClick={() => inputRef.current.click()}
-        //   style={
-        //     disabled
-        //       ? {
-        //           background: "#c0c0c039",
-        //         }
-        //       : {
-        //           background: "inherit",
-        //           color: "inherit",
-        //         }
-        //   }
-        // >
-        //   <div className="add-icon">
-        //     {!loading ? (
-        //       <>
-        //         {disabled ? (
-        //           <Tooltip title="This field is disabled for this role!">
-        //             <InputAdornment position="start">
-        //               <Lock style={{ fontSize: "20px" }} />
-        //             </InputAdornment>
-        //           </Tooltip>
-        //         ) : (
-        //           <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-        //         )}
-        //         {/* <p>Max size: 4 MB</p> */}
-        //       </>
-        //     ) : (
-        //       <CircularProgress />
-        //     )}
-        //   </div>
-
-        //   <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
-        // </div>
-
-        <Button
-          onClick={() => inputRef.current.click()}
-          sx={{
-            padding: 0,
-            minWidth: "25px",
-            width: "25px",
-            height: "25px",
-            paddingLeft: '15px'
-          }}
-        >
-          <input
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-          />
-          <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          />
-        </Button>
-      )}
-
+      <Box
+        sx={{
+          padding: drawerDetail ? "0 0px" : 0,
+          width: "40px",
+          display: "flex",
+          alignItems: "center",
+        }}>
+        {!value && (
+          <Button
+            id="file_upload_btn"
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: 40,
+              width: 40,
+              height: 27,
+            }}>
+            <input
+              id="file_upload"
+              type="file"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+            />
+            <img
+              src="/img/newUpload.svg"
+              alt="Upload"
+              style={{width: 22, height: 22}}
+            />
+          </Button>
+        )}
+      </Box>
     </div>
   );
 }

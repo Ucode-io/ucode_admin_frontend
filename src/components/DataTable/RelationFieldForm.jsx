@@ -11,6 +11,10 @@ import {useQuery} from "react-query";
 import HFMultipleSelect from "../FormElements/HFMultipleSelect";
 import {useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { useGetLang } from "../../hooks/useGetLang";
+import { useTranslation } from "react-i18next";
+import { relationTyes } from "../../utils/constants/relationTypes";
 
 export default function RelationFieldForm({
   control,
@@ -19,7 +23,7 @@ export default function RelationFieldForm({
   fieldWatch,
   relatedTableSlug,
 }) {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const envId = store.getState().company.environmentId;
   const menuItem = useSelector((state) => state.menu.menuItem);
 
@@ -27,26 +31,30 @@ export default function RelationFieldForm({
     setValue("table_from", menuItem?.data.table?.slug);
   }, []);
 
-  const {data: tables} = useTablesListQuery({
-    params: {envId: envId},
+  const { data: tables } = useTablesListQuery({
+    params: { envId: envId },
     queryParams: {
       select: (res) => {
-        return listToOptions(res.tables, "label", "slug");
+        return res?.tables?.map((el) => ({
+          label: el?.label,
+          value: `${el?.label}/${el?.slug}`,
+          slug: el?.slug,
+        }));
       },
     },
   });
 
-  const {data: relatedTableFields} = useQuery(
+  const { data: relatedTableFields } = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return [];
       return constructorFieldService.getList(
-        {table_slug: relatedTableSlug},
+        { table_slug: relatedTableSlug },
         relatedTableSlug
       );
     },
     {
-      select: ({fields}) => {
+      select: ({ fields }) => {
         return listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",
@@ -56,18 +64,20 @@ export default function RelationFieldForm({
     }
   );
 
+  const lang = useGetLang("Table");
+  const { i18n } = useTranslation();
+
   return (
     <Box className={style.relation}>
-      <HFSelect
+      {/* <HFSelect
         className={style.input}
         disabledHelperText
-        options={[
-          {label: "Single", value: "Many2One"},
-          {label: "Multi", value: "Many2Many"},
-          {label: "Recursive", value: "Recursive"},
-        ]}
+        defaultValue="Many2One"
+        disabled={true}
+        options={[{label: "Single", value: "Many2One"}]}
         name="relation_type"
         control={control}
+        isClearable={false}
         fullWidth
         required
         placeholder="Relation type"
@@ -80,31 +90,56 @@ export default function RelationFieldForm({
             setValue("view_type", undefined);
           }
         }}
-      />
-      {fieldWatch.relation_type !== "Recursive" && (
-        <>
-          <HFSelect
-            disabledHelperText
-            options={tables}
-            name="table_to"
-            control={control}
-            fullWidth
-            required
-            placeholder="Table to"
-            className={style.input}
-          />
-          <HFMultipleSelect
-            disabledHelperText
-            options={relatedTableFields}
-            name="view_fields"
-            control={control}
-            fullWidth
-            required
-            placeholder="View fields"
-            className={style.input}
-          />
-        </>
-      )}
+      /> */}
+      {/* {fieldWatch.relation_type !== "Recursive" && ( */}
+      <>
+        <HFSelect
+          disabledHelperText
+          options={tables}
+          name="table_to"
+          control={control}
+          fullWidth
+          required
+          placeholder="Table to"
+          className={style.input}
+          disabled={fieldWatch.relation_type === "Recursive"}
+        />
+        <HFMultipleSelect
+          disabledHelperText
+          options={relatedTableFields}
+          name="view_fields"
+          control={control}
+          fullWidth
+          isClearable
+          required
+          placeholder="View fields"
+          className={style.input}
+        />
+        <HFSelect
+          disabledHelperText
+          options={relationTyes
+            .slice(0, 3)
+            .map((option) => ({ label: option, value: option }))}
+          name="relation_type"
+          control={control}
+          required
+          fullWidth
+          onChange={(value) =>
+            value === "Recursive"
+              ? setValue(
+                  "table_to",
+                  tables?.find((table) => table.slug === tableSlug)?.value
+                )
+              : null
+          }
+          placeholder={
+            generateLangaugeText(lang, i18n?.language, "Relation type") ||
+            "Relation type"
+          }
+          className={style.input}
+        />
+      </>
+      {/* )} */}
     </Box>
   );
 }

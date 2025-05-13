@@ -41,18 +41,24 @@ const RecursiveBlock = ({
   };
 
   return (
-    <Box>
+    <Box sx={{paddingLeft: "10px"}}>
       <div className="parent-block column-drag-handle" key={element.id}>
         {element?.type === "REST" ? (
           <Button
             key={element.id}
-            style={activeStyle}
-            className={`nav-element ${
+            style={{
+              color: "#475467",
+              borderRadius: "8px",
+              height: "32px",
+              fontSize: "13px",
+              paddingLeft: "25px",
+            }}
+            className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
             onClick={clickHandler}>
-            <div className="label">
+            <div className="label" style={{fontSize: "13px"}}>
               <IconGenerator icon={element?.icon} size={18} />
               <Tooltip title={element?.title ?? element?.name} placement="top">
                 <p>{element?.title ?? element?.name}</p>
@@ -69,11 +75,57 @@ const RecursiveBlock = ({
               <DeleteIcon />
             </Box>
           </Button>
+        ) : element?.type === "CLICK_HOUSE" ? (
+          <Button
+            key={element.id}
+            style={{
+              color: "#475467",
+              borderRadius: "8px",
+              height: "32px",
+              fontSize: "13px",
+              paddingLeft: "25px",
+            }}
+            className={`nav-element highlight-on-hover ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
+            onClick={clickHandler}>
+            <div
+              className="label"
+              style={{fontSize: "13px"}}
+              onClick={() =>
+                navigate(
+                  `/main/${appId}/resources/${element?.id}/${element.type}`
+                )
+              }>
+              <IconGenerator icon={element?.icon} size={18} />
+
+              <Tooltip title={element?.title ?? element?.name} placement="top">
+                <p>{element?.title ?? element?.name}</p>
+              </Tooltip>
+            </div>
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteResource({
+                  id: element?.id,
+                });
+              }}
+              sx={{cursor: "pointer", height: "20px"}}>
+              <DeleteIcon />
+            </Box>
+          </Button>
         ) : (
           <Button
             key={element.id}
-            style={activeStyle}
-            className={`nav-element ${
+            style={{
+              color: "#475467",
+              borderRadius: "8px",
+              height: "32px",
+              fontSize: "13px",
+              paddingLeft: "25px",
+            }}
+            className={`nav-element highlight-on-hover ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
@@ -98,7 +150,7 @@ const RecursiveBlock = ({
                   id: element?.id,
                 });
               }}
-              sx={{cursor: "pointer"}}>
+              sx={{cursor: "pointer", height: "20px"}}>
               <DeleteIcon />
             </Box>
             {element.type === "FOLDER" && (

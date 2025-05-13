@@ -3,6 +3,7 @@ import {InputAdornment, TextField} from "@mui/material";
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
 import {locale} from "./Plugins/locale";
+import { useEffect, useState } from "react";
 
 const CRangePickerNew = ({
   onChange,
@@ -10,7 +11,7 @@ const CRangePickerNew = ({
   placeholder,
   isClearable = true,
 }) => {
-  const changeHander = (val) => {
+  const changeHandler = (val) => {
     const from = new Date(val[0]);
     const to = new Date(val[1]);
     from.setHours(5);
@@ -21,6 +22,8 @@ const CRangePickerNew = ({
     to.setSeconds(59);
     if (!val?.length) onChange([]);
     else if (val?.[0] && val?.[1]) {
+      from.setHours(from.getHours() - 5);
+      to.setHours(to.getHours() - 5);
       onChange({
         $gte: from,
         $lt: to,
@@ -31,6 +34,23 @@ const CRangePickerNew = ({
   const clearHandler = () => {
     onChange(undefined);
   };
+
+  const [portalTarget, setPortalTarget] = useState();
+
+  useEffect(() => {
+    const portalDiv = document.createElement("div");
+
+    portalDiv.id = "datePickerPortal";
+    portalDiv.style.position = "absolute";
+    portalDiv.style.zIndex = "1400";
+
+    if (!document.body.contains(portalDiv)) {
+      document.body.appendChild(portalDiv);
+      setPortalTarget(portalDiv);
+    }
+
+    return () => document.body.removeChild(portalDiv);
+  }, []);
 
   return (
     <DatePicker
@@ -53,7 +73,8 @@ const CRangePickerNew = ({
                   {value?.length > 0 && isClearable ? (
                     <span
                       onClick={clearHandler}
-                      style={{margin: "5px 0 0 5px", cursor: "pointer"}}>
+                      style={{ margin: "5px 0 0 5px", cursor: "pointer" }}
+                    >
                       <Clear />
                     </span>
                   ) : null}
@@ -73,8 +94,9 @@ const CRangePickerNew = ({
       className="datePicker"
       format="DD.MM.YYYY"
       numberOfMonths={2}
-      onChange={changeHander}
+      onChange={changeHandler}
       value={Object.values(value ?? {})}
+      portalTarget={portalTarget}
       // onChange={(val) => onChange(val ? new Date(val) : "")}
     />
   );

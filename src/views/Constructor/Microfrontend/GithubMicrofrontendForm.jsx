@@ -27,6 +27,7 @@ import {
   useResourceListQuery,
   useResourceListQueryV2,
 } from "@/services/resourceService";
+import {useGitlabLoginMutation} from "../../../services/githubService";
 
 const frameworkOptions = [
   {
@@ -67,6 +68,7 @@ const GithubMicrofrontendForm = () => {
   });
 
   const {mutate: login, isLoading} = useGithubLoginMutation({
+    enabled: false,
     onSuccess: (res) => {
       setSearchParams({access_token: res.access_token});
     },
@@ -74,6 +76,16 @@ const GithubMicrofrontendForm = () => {
       navigate(microfrontendListPageLink);
     },
   });
+
+  const {mutate: loginGitlab, isLoading: gitlabLoading} =
+    useGitlabLoginMutation({
+      onSuccess: (res) => {
+        setSearchParams({access_token: res.access_token});
+      },
+      onError: () => {
+        navigate(microfrontendListPageLink);
+      },
+    });
 
   const {data: ownerUsername} = useGithubUserQuery({
     token: searchParams.get("access_token"),

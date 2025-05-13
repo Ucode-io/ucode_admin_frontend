@@ -28,60 +28,57 @@ const projectSettings = {
   },
 };
 
-function ApiMenu({level = 1, menuStyle}) {
+function ApiMenu({level = 1, menuStyle, projectSettingLan}) {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const menuItem = useSelector((state) => state.menu.menuItem);
   const dispatch = useDispatch();
-  const activeStyle = activeStyles({
-    menuItem,
-    element: projectSettings,
-    menuStyle,
-    level,
-  });
-
-  const iconStyle = {
-    color:
-      projectSettings?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text || "",
-  };
-
-  const labelStyle = {
-    color:
-      projectSettings?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text,
-  };
 
   const clickHandler = (e) => {
     e.stopPropagation();
     setChildBlockVisible((prev) => !prev);
     dispatch(menuActions.setMenuItem(projectSettings));
   };
+
   return (
     <Box sx={{padding: "0 5px"}}>
-      <div className="parent-block column-drag-handle">
+      <div
+        className="parent-block column-drag-handle"
+        style={{marginBottom: 5}}>
         <Button
-          style={activeStyle}
-          className="nav-element"
+          style={menuStyle}
+          className="nav-element childMenuFolderBtn highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
-          <div className="label" style={labelStyle}>
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
-            <IconGenerator icon={"lock.svg"} size={18} />
+          <div className="label">
+            <div className="childMenuFolderArrow">
+              {childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+            </div>
+            <div className="childMenuIcon">
+              <IconGenerator icon={"lock.svg"} size={18} />
+            </div>
             API
           </div>
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        <ApiKeyButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
-        <RedirectButton menuStyle={menuStyle} menuItem={menuItem} level={2} />
+        <ApiKeyButton
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          level={2}
+          projectSettingLan={projectSettingLan}
+        />
+        <RedirectButton
+          menuStyle={menuStyle}
+          menuItem={menuItem}
+          level={2}
+          projectSettingLan={projectSettingLan}
+        />
       </Collapse>
     </Box>
   );

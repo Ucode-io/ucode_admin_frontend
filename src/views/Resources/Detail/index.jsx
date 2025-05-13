@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 import {useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {
   useLocation,
   useNavigate,
@@ -9,12 +9,13 @@ import {
 } from "react-router-dom";
 import {Box, Button} from "@mui/material";
 import {useEnvironmentsListQuery} from "../../../services/environmentService";
-import {
+import resourceService, {
+  useCreateResourceMutationV1,
   useResourceConfigureMutation,
   useResourceCreateMutation,
   useResourceCreateMutationV2,
   useResourceEnvironmentGetByIdQuery,
-  useResourceGetByIdQueryV1,
+  useResourceGetByIdClickHouse,
   useResourceGetByIdQueryV2,
   useResourceReconnectMutation,
   useResourceUpdateMutation,
@@ -29,11 +30,15 @@ import {resourceTypes} from "../../../utils/resourceConstants";
 import resourceVariableService from "../../../services/resourceVariableService";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
-import {
-  useGithubLoginMutation,
-  useGithubUserQuery,
-} from "@/services/githubService";
+import {useGithubLoginMutation} from "@/services/githubService";
 import GitForm from "./GitForm";
+import ClickHouseForm from "./ClickHouseForm";
+import {useQuery} from "react-query";
+import {useGitlabLoginMutation} from "../../../services/githubService";
+import GitLabForm from "./GitlabForm";
+import {useTranslation} from "react-i18next";
+import {getAllFromDB} from "../../../utils/languageDB";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 
 const headerStyle = {
   width: "100%",
@@ -41,7 +46,6 @@ const headerStyle = {
   borderBottom: "1px solid #e5e9eb",
   display: "flex",
   alignItems: "center",
-  // gap: '20px',
   padding: "15px",
   justifyContent: "space-between",
 };
@@ -51,11 +55,15 @@ const ResourceDetail = () => {
   const {projectId, resourceId, resourceType} = useParams();
   const location = useLocation();
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+  const [selectedGitlab, setSelectedGitlab] = useState();
+
   const [variables, setVariables] = useState();
   const navigate = useNavigate();
   const company = store.getState().company;
   const authStore = store.getState().auth;
   const dispatch = useDispatch();
+  const {i18n} = useTranslation();
+  const [settingLan, setSettingLan] = useState(null);
 
   const isEditPage = !!resourceId;
 
@@ -63,29 +71,15 @@ const ResourceDetail = () => {
     defaultValues: {
       name: "",
       variables: variables?.variables,
-      resource_type:
-        searchParams.get("code") || searchParams.get("access_token") ? 5 : 0,
+      resource_type: Boolean(searchParams.get("code"))
+        ? searchParams.get("code")?.length === 20
+          ? 5
+          : searchParams.get("code")
+            ? 8
+            : 0
+        : 0,
     },
   });
-
-  // const resourceType = watch("resource_type");
-
-  // const {isLoading} = useResourceGetByIdQueryV1({
-  //   id: resourceId,
-  //   params: {
-  //     type: resourceType,
-  //   },
-  //   queryParams: {
-  //     cacheTime: false,
-  //     enabled: isEditPage && location?.state?.type !== "REST",
-  //     onSuccess: (res) => {
-  //       reset(res);
-  //       setSelectedEnvironment(
-  //         res.environments?.filter((env) => env.is_configured)
-  //       );
-  //     },
-  //   },
-  // });
 
   const {isLoading} = useResourceGetByIdQueryV2({
     id: resourceId,
@@ -94,12 +88,55 @@ const ResourceDetail = () => {
     },
     queryParams: {
       cacheTime: false,
-      enabled: isEditPage && location?.state?.type !== "REST",
+      enabled:
+        isEditPage &&
+        location?.state?.type !== "REST" &&
+        location?.state?.type !== "CLICK_HOUSE",
       onSuccess: (res) => {
         reset(res);
         setSelectedEnvironment(
           res.environments?.filter((env) => env.is_configured)
         );
+      },
+    },
+  });
+
+  const {data: clickHouseList} = useQuery(
+    ["GET_OBJECT_LIST"],
+    () => {
+      return resourceService.getListClickHouse({
+        data: {
+          environment_id: authStore.environmentId,
+          limit: 0,
+          offset: 0,
+          project_id: company?.projectId,
+        },
+      });
+    },
+    {
+      enabled: true,
+      select: (res) => {
+        return (
+          res?.airbytes?.map((item) => ({
+            ...item,
+            type: "CLICK_HOUSE",
+            name: "Click house",
+          })) ?? []
+        );
+      },
+    }
+  );
+
+  const {isLoadingClickH} = useResourceGetByIdClickHouse({
+    id: resourceId,
+    params: {
+      type: resourceType,
+    },
+    queryParams: {
+      cacheTime: false,
+      enabled: isEditPage && location?.state?.type === "CLICK_HOUSE",
+      onSuccess: (res) => {
+        reset(res);
       },
     },
   });
@@ -121,7 +158,7 @@ const ResourceDetail = () => {
     id: selectedEnvironment?.[0]?.resource_environment_id,
     queryParams: {
       cacheTime: false,
-      enabled: Boolean(selectedEnvironment?.[0].resource_environment_id),
+      enabled: Boolean(selectedEnvironment?.[0]?.resource_environment_id),
       onSuccess: (res) => {
         const isDefault = Boolean(
           res.environments?.find(
@@ -145,6 +182,14 @@ const ResourceDetail = () => {
 
   const {mutate: createResourceV2, isLoading: createLoadingV2} =
     useResourceCreateMutationV2({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully created", "success"));
+        navigate("/main");
+      },
+    });
+
+  const {mutate: createResourceV1, isLoading: createLoadingV1} =
+    useCreateResourceMutationV1({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
         navigate("/main");
@@ -181,16 +226,6 @@ const ResourceDetail = () => {
       }
     );
 
-  useGithubUserQuery({
-    token: searchParams.get("access_token"),
-    enabled: !!searchParams.get("access_token"),
-    queryParams: {
-      select: (res) => res?.data?.login,
-      onSuccess: (username) =>
-        setValue("integration_resource.username", username),
-    },
-  });
-
   const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
     useGithubLoginMutation({
       onSuccess: (res) => {
@@ -201,12 +236,26 @@ const ResourceDetail = () => {
       },
     });
 
+  const {mutate: gitlabLogin, isLoading: gitlabLoginIsLoading} =
+    useGitlabLoginMutation({
+      onSuccess: (res) => {
+        setSearchParams({access_token: res.access_token});
+        setSelectedGitlab(res);
+      },
+      onError: () => {
+        // navigate(microfrontendListPageLink);
+      },
+    });
+
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
-      githubLogin({code});
+    if (Boolean(code)) {
+      if (code?.length <= 20) githubLogin({code});
+      else if (code?.length > 20) gitlabLogin({code});
     }
-  }, []);
+  }, [searchParams.get("code")]);
+
+  const resource_type = watch("resource_type");
 
   const onSubmit = (values) => {
     const computedValues2 = {
@@ -216,7 +265,6 @@ const ResourceDetail = () => {
       project_id: projectId,
       resource_id: resourceId,
       user_id: authStore.userId,
-      // environment_id: selectedEnvironment?.[0].id,
       is_configured: true,
       id:
         selectedEnvironment?.[0].resource_environment_id ??
@@ -228,6 +276,80 @@ const ResourceDetail = () => {
           searchParams.get("access_token") ??
           values.integration_resource?.token,
       },
+    };
+
+    const computedValues2Github = {
+      ...values,
+      type: values?.resource_type,
+      company_id: company?.companyId,
+      project_id: projectId,
+      resource_id: resourceId,
+      user_id: authStore.userId,
+      is_configured: true,
+      settings: {
+        github: {
+          username: values?.integration_resource?.username,
+          token: values?.token,
+        },
+      },
+      id:
+        selectedEnvironment?.[0].resource_environment_id ??
+        variables?.environment_id,
+
+      integration_resource: {
+        username: values.integration_resource?.username,
+        token:
+          searchParams.get("access_token") ??
+          values.integration_resource?.token,
+      },
+    };
+
+    const computedValues2Gitlab = {
+      ...values,
+      project_id: authStore?.projectId,
+      type: values?.resource_type,
+      company_id: company?.companyId,
+      project_id: projectId,
+      resource_id: resourceId,
+      user_id: authStore.userId,
+      is_configured: true,
+      settings: {
+        gitlab: {
+          username: values?.integration_resource?.username,
+          token: values?.token,
+          refresh_token: selectedGitlab?.refresh_token,
+          expires_in: selectedGitlab?.expires_in,
+          created_at: selectedGitlab?.created_at,
+        },
+      },
+
+      id:
+        selectedEnvironment?.[0].resource_environment_id ??
+        variables?.environment_id,
+
+      integration_resource: {
+        username: values.integration_resource?.username,
+        token:
+          searchParams.get("access_token") ??
+          values.integration_resource?.token,
+      },
+    };
+
+    const computedValuesClickHouse = {
+      ...values,
+      client_type_id: authStore?.clientType?.id,
+      company_id: company?.companyId,
+      node_type: "LOW",
+      project_id: authStore?.projectId,
+      resource: {
+        is_configured: true,
+        node_type: "LOW",
+        project_id: authStore?.projectId,
+        resource_type: 2,
+        title: "Light",
+      },
+      role_id: authStore?.roleInfo?.id,
+      user_id: authStore?.userId,
     };
 
     if (isEditPage) {
@@ -249,10 +371,14 @@ const ResourceDetail = () => {
           dispatch(showAlert(err, "error"));
         });
     } else {
-      if (values?.resource_type === 4 || values?.resource_type === 5) {
-        // delete computedValues2.resource_type;
-
+      if (values?.resource_type === 4) {
         createResourceV2(computedValues2);
+      } else if (values?.resource_type === 5) {
+        createResourceV2(computedValues2Github);
+      } else if (values?.resource_type === 2) {
+        createResourceV1(computedValuesClickHouse);
+      } else if (values?.resource_type === 8) {
+        createResourceV2(computedValues2Gitlab);
       } else if (!isEditPage) createResourceV2(computedValues2);
       else {
         if (!selectedEnvironment?.[0].is_configured) {
@@ -276,10 +402,6 @@ const ResourceDetail = () => {
       database: "",
     });
     setValue("default", false);
-    // setValue(
-    //   "resource_type",
-    //   resourceTypes.find((item) => item?.label === variables?.type).value
-    // );
   }, [selectedEnvironment]);
 
   useEffect(() => {
@@ -296,6 +418,24 @@ const ResourceDetail = () => {
     }
   }, [variables]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setSettingLan(formattedData?.find((item) => item?.key === "Setting"));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <Box sx={{background: "#fff"}}>
       <form flex={1} onSubmit={handleSubmit(onSubmit)}>
@@ -308,66 +448,84 @@ const ResourceDetail = () => {
               sx={{cursor: "pointer", width: "16px", height: "30px"}}>
               <KeyboardBackspaceIcon style={{fontSize: "26px"}} />
             </Button>
-            <h2>Resource settings</h2>
+            <h2>
+              {generateLangaugeText(
+                settingLan,
+                i18n?.language,
+                "Resource settings"
+              ) || "Resource settings"}
+            </h2>
           </Box>
           <Box>
-            <Button
-              bg="primary"
-              type="submit"
-              sx={{fontSize: "14px", margin: "0 10px"}}
-              hidden={isEditPage}
-              isLoading={createLoading}>
-              Save changes
-            </Button>
-            {isEditPage && variables?.type !== "REST" && (
+            {(resourceType === "CLICK_HOUSE"
+              ? !isEditPage
+              : resource_type !== 2 ||
+                (resource_type === 2 &&
+                  !isEditPage &&
+                  clickHouseList?.length === 0)) && (
               <Button
-                sx={{
-                  color: "#fff",
-                  background: "#38A169",
-                  marginRight: "10px",
-                }}
-                hidden={!isEditPage}
-                color={"success"}
-                variant="contained"
-                onClick={() => reconnectResource({id: resourceId})}
-                isLoading={reconnectLoading}>
-                Reconnect
+                bg="primary"
+                type="submit"
+                sx={{fontSize: "14px", margin: "0 10px"}}
+                isLoading={createLoading}>
+                {generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Save changes"
+                ) || "Save changes"}
               </Button>
             )}
           </Box>
         </Box>
 
         <Box sx={{display: "flex"}}>
-          {isEditPage && (
-            <ResourceeEnvironments
-              control={control}
-              selectedEnvironment={selectedEnvironment}
-              setSelectedEnvironment={setSelectedEnvironment}
-            />
-          )}
           {formLoading || isLoading ? (
-            // <SimpleLoader flex={1} />
             <h2>Loader</h2>
           ) : resourceType === "GITHUB" ? (
             <GitForm
+              settingLan={settingLan}
               control={control}
               selectedEnvironment={selectedEnvironment}
               btnLoading={configureLoading || updateLoading}
               setSelectedEnvironment={setSelectedEnvironment}
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
+              watch={watch}
+            />
+          ) : resourceType === "CLICK_HOUSE" ? (
+            <ClickHouseForm
+              settingLan={settingLan}
+              control={control}
+              selectedEnvironment={selectedEnvironment}
+              btnLoading={configureLoading || updateLoading}
+              setSelectedEnvironment={setSelectedEnvironment}
+              projectEnvironments={projectEnvironments}
+              isEditPage={isEditPage}
+            />
+          ) : resourceType === "GITLAB" ? (
+            <GitLabForm
+              settingLan={settingLan}
+              control={control}
+              selectedEnvironment={selectedEnvironment}
+              btnLoading={configureLoading || updateLoading}
+              setSelectedEnvironment={setSelectedEnvironment}
+              projectEnvironments={projectEnvironments}
+              isEditPage={isEditPage}
+              watch={watch}
             />
           ) : (
             <Form
+              settingLan={settingLan}
               control={control}
               selectedEnvironment={selectedEnvironment}
               btnLoading={configureLoading || updateLoading}
               setSelectedEnvironment={setSelectedEnvironment}
               projectEnvironments={projectEnvironments}
               isEditPage={isEditPage}
+              watch={watch}
+              setValue={setValue}
             />
           )}
-          <AllowList />
         </Box>
       </form>
     </Box>

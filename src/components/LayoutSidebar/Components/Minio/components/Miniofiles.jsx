@@ -1,31 +1,28 @@
-import { Box, Tooltip, Typography } from "@mui/material";
+import {Box, Tooltip, Typography} from "@mui/material";
 import style from "../style.module.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import DescriptionIcon from "@mui/icons-material/Description";
 import FileTypes from "./FileType";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
-const Card = ({ item, selected, onSelect, handleNavigate }) => {
+const Card = ({item, selected, onSelect, handleNavigate}) => {
   const url = `${cdnURL}${item?.link}`;
   const parts = item?.file_name_download?.split(".") || ".";
   const extension = parts[parts?.length - 1]?.toUpperCase();
   const size = item?.file_size / 1048576;
 
-  console.log("extension", extension);
   return (
     <Box
       className={style.card}
       key={item?.id}
-      onClick={() => handleNavigate(item)}
-    >
+      onClick={() => handleNavigate(item)}>
       <span
         className={`${selected ? style.checked : style.unchecked}`}
         onClick={(e) => {
           e.stopPropagation();
           onSelect(item);
-        }}
-      >
+        }}>
         {selected && <CheckIcon />}
       </span>
       <Box className={`${style.file} ${selected && style.dop}`}>
@@ -49,9 +46,10 @@ const Card = ({ item, selected, onSelect, handleNavigate }) => {
   );
 };
 
-const MinioFiles = ({ minios, setSelectedCards, selectedCards, size }) => {
+const MinioFiles = ({minios, setSelectedCards, selectedCards, size, modal}) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const toggleSelectCard = (item) => {
     if (selectedCards?.includes(item)) {
@@ -62,7 +60,11 @@ const MinioFiles = ({ minios, setSelectedCards, selectedCards, size }) => {
   };
 
   const handleNavigate = (item) => {
-    navigate(`${location.pathname}/${item?.id}`);
+    if (modal) {
+      setSearchParams({fileId: item?.id, tab: "filesDetail"});
+    } else {
+      navigate(`${location.pathname}/${item?.id}`);
+    }
   };
 
   return (

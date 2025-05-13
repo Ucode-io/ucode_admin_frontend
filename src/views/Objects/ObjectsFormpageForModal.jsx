@@ -23,17 +23,16 @@ import {sortSections} from "../../utils/sectionsOrderNumber";
 import RelationSectionForModal from "./RelationSection/RelationSectionForModal";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import styles from "./style.module.scss";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import SummarySectionValuesForModal from "./ModalDetailPage/SummarySectionValuesForModal";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {useGetLang} from "../../hooks/useGetLang";
 
 const ObjectsFormPageForModal = ({
   tableSlugFromProps,
   handleClose,
   fieldsMap,
   modal = false,
-  refetch,
+  refetch = () => {},
   selectedRow,
   dateInfo,
   fullScreen,
@@ -69,20 +68,10 @@ const ObjectsFormPageForModal = ({
   const {i18n} = useTranslation();
   const [layout, setLayout] = useState({});
   const [data, setData] = useState({});
-
   const [searchParams, setSearchParams] = useSearchParams();
-  // const [menuItem, setMenuItem] = useState(null);
   const menuId = searchParams.get("menuId");
 
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: Boolean(searchParams.get("menuId")),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   }
-  // });
+  const lang = useGetLang("Table");
 
   const {
     handleSubmit,
@@ -90,6 +79,7 @@ const ObjectsFormPageForModal = ({
     reset,
     setValue: setFormValue,
     watch,
+    getValues,
     formState: {errors},
   } = useForm({
     defaultValues: {
@@ -341,6 +331,7 @@ const ObjectsFormPageForModal = ({
 
       <div className={styles.formArea}>
         <RelationSectionForModal
+          getValues={getValues}
           getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -390,7 +381,7 @@ const ObjectsFormPageForModal = ({
             <SecondaryButton
               onClick={() => (modal ? handleClose() : navigate(-1))}
               color="error">
-              Close
+              {generateLangaugeText(lang, i18n?.language, "Close")}
             </SecondaryButton>
             <FormCustomActionButton
               control={control?._formValues}
@@ -405,7 +396,7 @@ const ObjectsFormPageForModal = ({
                 id="submit"
                 onClick={handleSubmit(onSubmit)}>
                 <Save />
-                Save
+                {generateLangaugeText(lang, i18n?.language, "Save")}
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

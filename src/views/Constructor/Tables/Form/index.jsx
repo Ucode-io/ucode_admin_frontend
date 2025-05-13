@@ -1,37 +1,42 @@
+import Fields from "./Fields";
+import Layout from "./Layout";
+import Actions from "./Actions";
+import MainInfo from "./MainInfo";
+import Relations from "./Relations";
 import {Save} from "@mui/icons-material";
 import {useEffect, useState} from "react";
+import CustomErrors from "./CustomErrors";
+import {useQueryClient} from "react-query";
+import {useTranslation} from "react-i18next";
 import {useForm, useWatch} from "react-hook-form";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
-import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
-import HeaderSettings from "../../../../components/HeaderSettings";
+import {useDispatch, useSelector} from "react-redux";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {listToMap} from "../../../../utils/listToMap";
+import {generateGUID} from "../../../../utils/generateID";
+import menuService from "../../../../services/menuService";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 import PageFallback from "../../../../components/PageFallback";
+import layoutService from "../../../../services/layoutService";
+import HeaderSettings from "../../../../components/HeaderSettings";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import menuSettingsService from "../../../../services/menuSettingsService";
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import constructorFieldService from "../../../../services/constructorFieldService";
+import {permissionsActions} from "../../../../store/permissions/permissions.slice";
 import constructorRelationService from "../../../../services/constructorRelationService";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import constructorViewRelationService from "../../../../services/constructorViewRelationService";
+import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../../../services/constructorTableService";
-import constructorViewRelationService from "../../../../services/constructorViewRelationService";
-import layoutService from "../../../../services/layoutService";
-import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
-import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
-import {generateGUID} from "../../../../utils/generateID";
-import {listToMap} from "../../../../utils/listToMap";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import menuSettingsService from "../../../../services/menuSettingsService";
-import Actions from "./Actions";
-import CustomErrors from "./CustomErrors";
-import Fields from "./Fields";
-import Layout from "./Layout";
-import MainInfo from "./MainInfo";
-import Relations from "./Relations";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
-import menuService from "../../../../services/menuService";
-import {disableCache} from "@iconify/react";
+import {getAllFromDB} from "../../../../utils/languageDB";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {useProjectGetByIdQuery} from "../../../../services/projectService";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -42,6 +47,19 @@ const ConstructorTablesFormPage = () => {
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [exist, setExist] = useState(false);
+  const [authInfo, setAuthInfo] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [tableLan, setTableLan] = useState(null);
+  const [menuItem, setMenuItem] = useState(null);
+  const permissions = useSelector((state) =>
+    Object.entries(state.permissions?.permissions).map(([key, value]) => ({
+      table_slug: key,
+      ...value,
+    }))
+  );
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
     defaultValues: {
@@ -68,11 +86,6 @@ const ConstructorTablesFormPage = () => {
     control: mainForm?.control,
   });
 
-  // const list = useSelector((state) => state.constructorTable.list);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
-
   useEffect(() => {
     if (searchParams.get("menuId")) {
       menuService
@@ -85,16 +98,20 @@ const ConstructorTablesFormPage = () => {
     }
   }, []);
 
-  const {isLoading} = useTableByIdQuery({
+  const {isLoading, data: tableByIdQueryData} = useTableByIdQuery({
     id: id,
     queryParams: {
       enabled: !!id,
       onSuccess: (res) => {
+        setAuthInfo(res?.attributes?.auth_info);
         mainForm.reset(res);
         setLoader(false);
       },
     },
   });
+
+  const tableSubtitle =
+    tableByIdQueryData?.attributes?.[`label_${i18n?.language}`];
 
   const getData = async () => {
     setLoader(true);
@@ -117,13 +134,18 @@ const ConstructorTablesFormPage = () => {
       ]);
 
       const data = {
-        ...mainForm.getValues(),
         ...tableData,
+        ...mainForm.getValues(),
         fields: [],
         actions,
       };
 
-      mainForm.reset({...values, ...data});
+      mainForm.reset({
+        ...data,
+        ...values,
+        slug: data?.slug || values?.slug,
+        label: data?.label || values?.label,
+      });
 
       await getRelationFields();
     } catch (error) {
@@ -187,7 +209,7 @@ const ConstructorTablesFormPage = () => {
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));
@@ -232,7 +254,8 @@ const ConstructorTablesFormPage = () => {
       .unwrap()
       .then((res) => {
         createType(res);
-        // navigate(-1);
+        setPermission(res?.record_permission, res?.slug);
+        navigate("main/c57eedc3-a954-4262-a0af-376c65b5a28");
       })
       .catch(() => setBtnLoader(false));
   };
@@ -241,68 +264,7 @@ const ConstructorTablesFormPage = () => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
 
-    // const computedLayouts = data.layouts.map((layout) => ({
-    //   ...layout,
-    //   summary_fields: layout?.summary_fields?.map((item) => {
-    //     return {
-    //       ...item,
-    //       field_name: item?.field_name ?? item?.title ?? item?.label,
-    //     };
-    //   }),
-    //   tabs: layout?.tabs?.map((tab) => {
-    //     if (
-    //       tab.type === "Many2Many" ||
-    //       tab.type === "Many2Dynamic" ||
-    //       tab.type === "Recursive" ||
-    //       tab.type === "Many2One" ||
-    //       tab.relation_type === "Many2Many" ||
-    //       tab.relation_type === "Many2Dynamic" ||
-    //       tab.relation_type === "Recursive" ||
-    //       tab.relation_type === "Many2One"
-    //     ) {
-    //       return {
-    //         order: tab?.order ?? 0,
-    //         label: tab.title ?? tab.label,
-    //         field_name: tab?.title ?? tab.label ?? tab?.field_name,
-    //         type: "relation",
-    //         layout_id: layout.id,
-    //         relation_id: tab.id,
-    //         relation: {
-    //           ...tab,
-    //         },
-    //       };
-    //     } else {
-    //       return {
-    //         ...tab,
-    //         sections: tab?.sections?.map((section, index) => ({
-    //           ...section,
-    //           order: index,
-    //           fields: section?.fields?.map((field, index) => ({
-    //             ...field,
-    //             order: index,
-    //             field_name: field?.title ?? field.label,
-    //           })),
-    //         })),
-    //       };
-    //     }
-    //   }),
-    // }));
-
-    // const updateLayoutData = layoutService.update(
-    //   {
-    //     layouts: computedLayouts,
-    //     table_id: id,
-    //     project_id: projectId,
-    //   },
-    //   slug
-    // );
-
-    Promise.all([
-      updateTableData,
-      // updateSectionData,
-      // updateViewRelationsData,
-      // updateLayoutData,
-    ])
+    Promise.all([updateTableData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -310,55 +272,152 @@ const ConstructorTablesFormPage = () => {
       .catch(() => setBtnLoader(false));
   };
 
-  const onSubmit = (data) => {
+  const getKeyCheck = async (id) => {
+    const response = await constructorTableService.getListKey(id);
+
+    if (response?.exists) {
+      setExist(true);
+      return false;
+    } else return true;
+  };
+
+  const onSubmit = async (data) => {
     const computedData = {
       ...data,
       id: data?.id,
       show_in_menu: true,
     };
-    // return;
-    if (id) updateConstructorTable(computedData);
-    else createConstructorTable(computedData);
+
+    if (data?.id) {
+      updateConstructorTable(computedData);
+    } else {
+      const keyExists = await getKeyCheck(data?.slug);
+      if (keyExists) {
+        createConstructorTable(computedData);
+      } else {
+        dispatch(showAlert(`Table with key ${data?.slug} already exist`));
+      }
+    }
   };
+
+  const setPermission = (permission, table_slug) => {
+    const newPermission = {table_slug, ...permission};
+    const res = [...permissions, newPermission];
+
+    dispatch(permissionsActions.setPermissions(res));
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getAllFromDB().then((storedData) => {
+      if (isMounted && storedData && Array.isArray(storedData)) {
+        const formattedData = storedData.map((item) => ({
+          ...item,
+          translations: item.translations || {},
+        }));
+        setTableLan(formattedData?.find((item) => item?.key === "Table"));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
 
-  const [selectedTab, setSelectedTab] = useState(0);
+  const isWarning =
+    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
+    1;
+
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : isWarning <= 7;
 
   if (loader) return <PageFallback />;
 
   return (
     <>
-      <div className="pageWithStickyFooter">
+      <div
+        className={`${isWarningActive || projectInfo?.status === "inactive" ? "pageWithStickyFooterWarning" : "pageWithStickyFooter"}`}>
         {id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
               <HeaderSettings
-                title="Objects"
-                subtitle={id ? mainForm.getValues("label") : "Add"}
+                title={
+                  generateLangaugeText(tableLan, i18n?.language, "Objects") ||
+                  "Objects"
+                }
+                subtitle={id ? tableSubtitle : "Add"}
                 icon={mainForm.getValues("icon")}
                 backButtonLink={-1}
                 sticky>
                 <TabList>
-                  <Tab onClick={() => setSelectedTab(0)}>Details</Tab>
-                  <Tab onClick={() => setSelectedTab(1)}>Layouts</Tab>
-                  <Tab onClick={() => setSelectedTab(2)}>Fields</Tab>
-                  {id && <Tab onClick={() => setSelectedTab(3)}>Relations</Tab>}
-                  {id && <Tab onClick={() => setSelectedTab(4)}>Actions</Tab>}
+                  <Tab onClick={() => setSelectedTab(0)}>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Details"
+                    ) || "Details"}
+                  </Tab>
+                  <Tab onClick={() => setSelectedTab(1)}>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Layouts"
+                    ) || "Layouts"}
+                  </Tab>
+                  <Tab onClick={() => setSelectedTab(2)}>
+                    {generateLangaugeText(tableLan, i18n?.language, "Fields") ||
+                      "Fields"}
+                  </Tab>
                   {id && (
-                    <Tab onClick={() => setSelectedTab(5)}>Custom errors</Tab>
+                    <Tab onClick={() => setSelectedTab(3)}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Relations"
+                      ) || "Relations"}
+                    </Tab>
+                  )}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(4)}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Actions"
+                      ) || "Actions"}
+                    </Tab>
+                  )}
+                  {id && (
+                    <Tab onClick={() => setSelectedTab(5)}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Custom errors"
+                      ) || "Custom errors"}
+                    </Tab>
                   )}
                 </TabList>
               </HeaderSettings>
 
               <TabPanel>
-                <MainInfo control={mainForm.control} watch={mainForm.watch} />
+                <MainInfo
+                  tableLan={tableLan}
+                  authData={authInfo}
+                  control={mainForm.control}
+                  watch={mainForm.watch}
+                />
               </TabPanel>
 
               <TabPanel>
                 <Layout
+                  tableLan={tableLan}
                   mainForm={mainForm}
                   getRelationFields={getRelationFields}
                   getData={getData}
@@ -368,6 +427,7 @@ const ConstructorTablesFormPage = () => {
 
               <TabPanel>
                 <Fields
+                  tableLan={tableLan}
                   getRelationFields={getRelationFields}
                   mainForm={mainForm}
                   slug={tableSlug}
@@ -377,6 +437,7 @@ const ConstructorTablesFormPage = () => {
               {id && (
                 <TabPanel>
                   <Relations
+                    tableLan={tableLan}
                     mainForm={mainForm}
                     getRelationFields={getRelationFields}
                   />
@@ -403,7 +464,13 @@ const ConstructorTablesFormPage = () => {
               backButtonLink={-1}
               sticky></HeaderSettings>
 
-            <MainInfo control={mainForm.control} watch={mainForm.watch} />
+            <MainInfo
+              control={mainForm.control}
+              watch={mainForm.watch}
+              exist={exist}
+              setExist={setExist}
+              getData={getData}
+            />
           </>
         )}
       </div>
@@ -415,13 +482,16 @@ const ConstructorTablesFormPage = () => {
           extra={
             <>
               <SecondaryButton onClick={() => navigate(-1)} color="error">
-                Close
+                {generateLangaugeText(tableLan, i18n?.language, "Close") ||
+                  "Close"}
               </SecondaryButton>
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
                 loading={btnLoader}>
-                <Save /> Save
+                <Save />{" "}
+                {generateLangaugeText(tableLan, i18n?.language, "Save") ||
+                  "Save"}
               </PrimaryButton>
             </>
           }

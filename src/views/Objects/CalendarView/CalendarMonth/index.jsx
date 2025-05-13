@@ -10,6 +10,9 @@ const CalendarMonth = ({
   view,
   tabs,
   workingDays,
+  layoutType,
+  setLayoutType,
+  menuItem,
 }) => {
   const parentRef = useRef(null);
 
@@ -19,6 +22,7 @@ const CalendarMonth = ({
     getScrollElement: () => parentRef.current,
     estimateSize: () => 500,
   });
+
   return (
     <div className={styles.calendarmonth} ref={parentRef}>
       {/* <TimesColumnMonth view={view} data={data} /> */}
@@ -28,13 +32,17 @@ const CalendarMonth = ({
         data={data}
         fieldsMap={fieldsMap}
         view={view}
+        layoutType={layoutType}
+        setLayoutType={setLayoutType}
+        menuItem={menuItem}
       />
       <div
         style={{
           //   width: virtualizer.getTotalSize(),
           height: "100%",
           position: "relative",
-        }}>
+        }}
+      >
         {/* {datesList?.map((item, index) => (
           <div
             key={index}

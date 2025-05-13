@@ -1,18 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link
       rel="icon"
       type="image/svg+xml"
-      href="/builder_config/assets/Udevs.svg"
-    />
+      href="/builder_config/assets/Udevs.svg" />
     <link
       rel="rel='mask-icon'"
       type="image/svg+xml"
-      href="/builder_config/assets/Udevs.svg"
-    />
+      href="/builder_config/assets/Udevs.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
     <title>UCODE</title>
   </head>
   <body>
@@ -21,5 +20,41 @@
       const global = globalThis;
     </script>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      window.chatwootSettings = {
+        position: "left",
+        type: "standard",
+        launcherTitle: "Chat with us",
+      };
+
+      (function (d, t) {
+        var BASE_URL = "https://app.chatwoot.com";
+        var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+
+        g.src = BASE_URL + "/packs/js/sdk.js";
+        g.defer = true;
+        g.async = true;
+
+        g.onerror = function () {
+          console.error("Chatwoot SDK failed to load. Check network settings.");
+        };
+
+        if (s.parentNode) {
+          s.parentNode.insertBefore(g, s);
+        }
+
+        g.onload = function () {
+          if (window.chatwootSDK) {
+            window.chatwootSDK.run({
+              websiteToken: "CvxBn1SLNhnmWa5mgV4nm9dB",
+              baseUrl: BASE_URL,
+            });
+          } else {
+            console.error("Chatwoot SDK did not initialize.");
+          }
+        };
+      })(document, "script");
+    </script>
   </body>
 </html>

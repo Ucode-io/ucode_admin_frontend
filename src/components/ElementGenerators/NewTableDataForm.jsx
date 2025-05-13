@@ -5,7 +5,6 @@ import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView
 import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
 
 export default function NewTableDataForm({
-  relOptions,
   tableView,
   tableSlug,
   fields,
@@ -18,7 +17,8 @@ export default function NewTableDataForm({
   data,
   isWrap,
   watch,
-  mainForm,
+  newUi = false,
+  isTableView = false,
 }) {
   const {mutate: updateObject} = useMutation(() => console.log(""));
 
@@ -46,8 +46,8 @@ export default function NewTableDataForm({
       {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
         <CellElementGeneratorForRelation
           key={field?.id}
-          relOptions={relOptions}
-          isTableView={false}
+          isTableView={isTableView}
+          isNewRow={true}
           tableView={tableView}
           tableSlug={tableSlug}
           name={`multi.${index}.${field.slug}`}
@@ -56,17 +56,16 @@ export default function NewTableDataForm({
           fields={fields}
           field={field}
           row={row}
-          isNewRow={true}
           newColumn={true}
           index={index}
           control={control}
           setFormValue={setFormValue}
           relationfields={relationfields}
           data={data}
+          newUi={newUi}
         />
       ) : (
         <CellElementGeneratorForTableView
-          relOptions={relOptions}
           tableView={tableView}
           newColumn={true}
           tableSlug={tableSlug}
@@ -78,11 +77,11 @@ export default function NewTableDataForm({
           field={field}
           row={row}
           index={index}
-          mainForm={mainForm}
           control={control}
           setFormValue={setFormValue}
           relationfields={relationfields}
           data={data}
+          newUi={newUi}
         />
       )}
     </Box>

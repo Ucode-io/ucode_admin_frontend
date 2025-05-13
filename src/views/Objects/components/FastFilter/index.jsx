@@ -18,6 +18,7 @@ const FastFilter = ({
   visibleForm,
   isVisibleLoading,
   setFilterVisible,
+  container
 }) => {
   const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
@@ -72,7 +73,7 @@ const FastFilter = ({
       filterActions.setFilter({
         tableSlug: tableSlug,
         viewId: view.id,
-        name,
+        name: name,
         value,
       })
     );
@@ -82,7 +83,7 @@ const FastFilter = ({
     <div
       className={styles.filtersBlock}
       style={{flexDirection: isVertical ? "column" : "row"}}>
-      {view?.attributes?.quick_filters?.map((filter) => (
+      {computedFields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter
             field={filter}
@@ -95,6 +96,7 @@ const FastFilter = ({
       ))}
 
       <FilterVisible
+        container={container}
         onChange={onChange}
         selectedTabIndex={selectedTabIndex}
         views={view}

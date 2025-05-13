@@ -67,9 +67,7 @@ const HFPolygonField = ({
 
   const draw = (ref) => {
     ref?.editor?.startDrawing();
-    ref?.editor?.events?.add("vertexadd", (event) => {
-      console.log(event);
-    });
+    ref?.editor?.events?.add("vertexadd", (event) => {});
   };
 
   const mapState = {
@@ -87,9 +85,10 @@ const HFPolygonField = ({
         ...rules,
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => {
-        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : {};
+        const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : [];
         return (
           <Box
+            id="polygon_field"
             sx={{
               width: "100%",
               height: "100%",
@@ -99,14 +98,16 @@ const HFPolygonField = ({
             <YMaps
               query={{
                 load: "package.full",
-                apikey: "5e5a73bd-6e0a-40f1-ba8e-f0b98d95e75f",
+                apikey: "a152ff76-8337-42f9-a5c1-be25f9008dd0",
               }}>
               <Map
+                id="map_polygon_field"
                 width={width !== 0 ? width : "265px"}
                 height={height !== 0 ? height : "200px"}
                 defaultState={mapState}
                 modules={["geoObject.addon.editor"]}>
                 <Polygon
+                  id="polygon"
                   editingPolygon={true}
                   onGeometryChange={(event) => {
                     const coordinates =
@@ -115,7 +116,6 @@ const HFPolygonField = ({
 
                     if (coordinates) {
                       const coordinatesJson = JSON.stringify(coordinates);
-
                       onChange(coordinatesJson);
                     }
                   }}
@@ -127,7 +127,7 @@ const HFPolygonField = ({
                   geometry={parsedPolygon}
                   options={{
                     editorDrawingCursor: "crosshair",
-                    editorMaxPoints: 25,
+                    editorMaxPoints: 8,
                     fillColor: "rgba(222,109,110, 0.5)",
                     strokeColor: "rgb(69,130,250)",
                     strokeWidth: 3,

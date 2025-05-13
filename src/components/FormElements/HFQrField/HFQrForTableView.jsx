@@ -14,6 +14,7 @@ function HFQrForTableView({
   qrRef,
   handModalClose,
   openModal,
+  disabled = false,
 }) {
   const style = {
     position: "absolute",
@@ -30,7 +31,7 @@ function HFQrForTableView({
   };
 
   return (
-    <Box>
+    <Box id={"qr_box"}>
       <Controller
         control={control}
         name={name}
@@ -41,8 +42,9 @@ function HFQrForTableView({
         render={({field: {onChange, value}, fieldState: {error}}) => (
           <Box>
             <QRCode
+              id="qr_code"
               ref={qrRef}
-              onClick={handClick}
+              onClick={() => !disabled && handClick}
               style={{
                 height: "auto",
                 maxWidth: "100%",

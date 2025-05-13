@@ -3,7 +3,6 @@ import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
 import {useParams} from "react-router-dom";
 import {useForm, useWatch} from "react-hook-form";
-import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import {useQueryClient} from "react-query";
 import {useEffect} from "react";
@@ -11,6 +10,7 @@ import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
 import {useSelector} from "react-redux";
 import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
+import {useTranslation} from "react-i18next";
 
 const FolderCreateModal = ({
   closeModal,
@@ -22,6 +22,7 @@ const FolderCreateModal = ({
 }) => {
   const {projectId} = useParams();
   const queryClient = useQueryClient();
+  const {i18n} = useTranslation();
 
   const onSubmit = (data) => {
     if (modalType === "create") {
@@ -38,18 +39,12 @@ const FolderCreateModal = ({
       app_id: appId,
     },
   });
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
 
-  useEffect(() => {
-    if (modalType === "update")
-      menuSettingsService
-        .getById(selectedFolder.id, projectId)
-        .then((res) => {
-          reset(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-  }, [modalType]);
+  const languages = useSelector((state) => state.languages.list);
 
   const createType = (data, selectedFolder) => {
     menuSettingsService
@@ -91,12 +86,17 @@ const FolderCreateModal = ({
       });
   };
 
-  const tableName = useWatch({
-    control,
-    name: "label",
-  });
-
-  const languages = useSelector((state) => state.languages.list);
+  useEffect(() => {
+    if (modalType === "update")
+      menuSettingsService
+        .getById(selectedFolder.id, projectId)
+        .then((res) => {
+          reset(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [modalType]);
 
   return (
     <div>

@@ -30,23 +30,23 @@ const ManyToManyRelationFormElement = ({
   checkRequiredField,
   ...props
 }) => {
+  const {i18n} = useTranslation();
+
   const tableSlug = useMemo(() => {
     return field.id?.split("#")?.[0] ?? "";
   }, [field.id]);
-  const {i18n} = useTranslation();
+
+  const label =
+    field?.attributes[`label_${i18n?.language}`] ||
+    field?.attributes[`title_${i18n?.language}`] ||
+    field?.attributes[`name_${i18n?.language}`] ||
+    field?.attributes[`label_to_${i18n?.language}`] ||
+    field?.label ||
+    field.title;
 
   if (!isLayout)
     return (
-      <FRow
-        label={
-          field?.attributes[`title_${i18n?.language}`] ||
-          field?.attributes[`name_${i18n?.language}`] ||
-          field?.attributes[`label_to_${i18n?.language}`] ||
-          field?.attributes[`label_${i18n?.language}`] ||
-          field?.label ||
-          field.title
-        }
-        required={field.required}>
+      <FRow label={label} required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}
@@ -170,7 +170,7 @@ const AutoCompleteElement = ({
               additional_field: "guid",
               additional_values: value,
             },
-            // additional_ids: value,
+
             search: debouncedValue,
             limit: 10,
             offset: pageToOffset(page, 10),
@@ -193,6 +193,12 @@ const AutoCompleteElement = ({
     }
   );
 
+  function splitAndReturnRest(string) {
+    const splitStr = string?.split("_");
+    splitStr.pop();
+    return splitStr.join("_");
+  }
+
   const {data: fromObjectList} = useQuery(
     [
       "GET_OBJECT_LIST",
@@ -204,19 +210,19 @@ const AutoCompleteElement = ({
     ],
     () => {
       return constructorObjectService.getListV2(
-        tableSlug,
+        splitAndReturnRest(field?.slug),
         {
           data: {
             ...autoFiltersValue,
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
-            // [`name_langs_${i18n?.language}`],
+
             additional_request: {
               additional_field: "guid",
-              additional_values: value,
+              additional_values: [value],
             },
-            // additional_ids: value,
+
             search: debouncedValue,
             limit: 10,
             offset: pageToOffset(page, 10),
@@ -288,10 +294,6 @@ const AutoCompleteElement = ({
     );
   }, [allOptions, options, i18n?.language]);
 
-  const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option);
-  };
-
   const changeHandler = (value) => {
     if (!value) setValue(null);
     const val = value?.map((el) => el.value);
@@ -302,6 +304,14 @@ const AutoCompleteElement = ({
   const inputChangeHandler = useDebounce((val) => {
     setDebouncedValue(val);
   }, 300);
+
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
 
   const customStyles = {
     control: (provided, state) => ({
@@ -327,16 +337,8 @@ const AutoCompleteElement = ({
     }),
   };
 
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
   return (
-    <div className={styles.autocompleteWrapper}>
+    <div className={styles.manyToManyField}>
       <div
         className={styles.createButton}
         onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}>
@@ -350,7 +352,11 @@ const AutoCompleteElement = ({
           changeHandler(value, options);
         }}
         onInputChange={(_, val) => {
-          inputChangeHandler(val);
+          if (typeof val === "string") {
+            inputChangeHandler(val?.prevInputValue);
+          } else if (Boolean(val?.prevInputValue)) {
+            inputChangeHandler(val?.prevInputValue);
+          }
         }}
         components={{
           DropdownIndicator: null,

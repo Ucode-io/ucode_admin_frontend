@@ -2,7 +2,6 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {Box, Button, Modal, Popover, Typography} from "@mui/material";
 import {useRef, useState} from "react";
 import fileService from "../../services/fileService";
@@ -33,6 +32,7 @@ const ImageUpload = ({
   isNewTableView = false,
   tabIndex,
   field,
+  drawerDetail = false,
 }) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
@@ -40,7 +40,7 @@ const ImageUpload = ({
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const splitVal = value?.split("#")?.[1];
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
   const handleCloseImg = () => setOpenFullImg(false);
@@ -116,6 +116,8 @@ const ImageUpload = ({
       {value && (
         <>
           <div
+            style={{padding: drawerDetail ? "0 10px" : 0}}
+            id="photo"
             className="uploadedImage"
             aria-describedby={id}
             onClick={handleClick}>
@@ -128,7 +130,7 @@ const ImageUpload = ({
                   objectFit: "cover",
                 }}
                 className="img"
-                alt=""
+                alt={splitVal}
               />
             </div>
             <Typography
@@ -136,7 +138,7 @@ const ImageUpload = ({
                 fontSize: "10px",
                 color: "#747474",
               }}>
-              {value?.split?.("_")?.[1] ?? ""}
+              {value.split("#")[0].split("_")[1] ?? ""}
             </Typography>
           </div>
 
@@ -205,6 +207,7 @@ const ImageUpload = ({
               </Button>
             </Box>
             <input
+              id="image_photo"
               type="file"
               style={{
                 display: "none",
@@ -294,33 +297,36 @@ const ImageUpload = ({
         </>
       )}
 
-      {!value && (
-        <Button
-          onClick={() => inputRef.current.click()}
-          sx={{
-            padding: 0,
-            minWidth: 0,
-            width: "25px",
-            height: "25px",
-          }}>
-          <input
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-            accept=".jpg, .jpeg, .png, .gif"
-          />
-          <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          />
-        </Button>
-      )}
+      <Box>
+        {!value && (
+          <Button
+            id="imageUploadBtn"
+            onClick={() => inputRef.current.click()}
+            sx={{
+              padding: 0,
+              minWidth: 40,
+              width: 40,
+              height: 27,
+            }}>
+            <input
+              id="img_upload"
+              type="file"
+              className="hidden"
+              ref={inputRef}
+              tabIndex={tabIndex}
+              autoFocus={tabIndex === 1}
+              onChange={inputChangeHandler}
+              disabled={disabled}
+              accept=".jpg, .jpeg, .png, .gif"
+            />
+            <img
+              src="/img/newUpload.svg"
+              alt="Upload"
+              style={{width: 22, height: 22}}
+            />
+          </Button>
+        )}
+      </Box>
     </div>
   );
 };

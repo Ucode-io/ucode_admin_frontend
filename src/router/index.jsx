@@ -1,63 +1,63 @@
 import ReloadRelations from "@/components/ReloadRelations";
+import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
 import {lazy, Suspense, useMemo, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
+import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
+import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
+import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
 import Note from "../components/LayoutSidebar/Components/Documents/Note";
 import EmailPage from "../components/LayoutSidebar/Components/Email";
 import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
+import MinioPage from "../components/LayoutSidebar/Components/Minio";
+import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
 import NotificationPage from "../components/LayoutSidebar/Components/Notification";
 import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
 import Queries from "../components/LayoutSidebar/Components/Query";
+import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
+import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
 import ReloadPage from "../components/ReloadComponent/index";
 import ReloadWrapper from "../components/ReloadWrapper";
-import AnalyticsLayout from "../layouts/AnalyticsLayout";
-import CashboxLayout from "../layouts/CashboxLayout";
+import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import MainLayout from "../layouts/MainLayout";
-import SettingsLayout from "../layouts/SettingsLayout";
-import DashboardList from "../views/Analytics/Dashboard";
-import DashboardCreatePage from "../views/Analytics/Dashboard/DashboardCreatePage";
-import DashboardSettings from "../views/Analytics/Dashboard/DashboardSettings";
-import DashboardMainInfo from "../views/Analytics/Dashboard/DashboardSettings/DashboardMainInfo";
-import VariableCreateForm from "../views/Analytics/Dashboard/DashboardSettings/VariableCreateForm";
-import Variables from "../views/Analytics/Dashboard/DashboardSettings/Variables";
-import DashboardDetailPage from "../views/Analytics/Dashboard/Detail";
-import PanelCreateForm from "../views/Analytics/Dashboard/Detail/PanelForm";
+import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
 import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
-import Login from "../views/Auth/Login";
+import Invite from "../views/Auth/Invite";
+import LoginDesign from "../views/Auth/LoginDesign";
 import Registration from "../views/Auth/Registration";
-import CashboxAppointments from "../views/Cashbox/Appointments";
-import AppointmentsForm from "../views/Cashbox/Appointments/Form";
-import CashboxClosing from "../views/Cashbox/Closing";
-import CashboxOpening from "../views/Cashbox/Opening";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
+import TablesPage from "../views/Constructor/AllTables";
 import AppsPage from "../views/Constructor/Apps";
 import AppsForm from "../views/Constructor/Apps/AppsForm";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
+import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
+import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form";
+import WebsitePage from "../views/Constructor/WebsitePage";
 import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
+import DocumentTemplateDetail from "../views/DocumentTemplates/Detail/index.jsx";
+import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
 import EnvironmentPage from "../views/Environments";
 import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import Connections from "../views/Matrix/Connections";
-import SmsPage from "../views/SmsOtp";
-import SmsFormPage from "../views/SmsOtp/SmsFormPageComponent";
-import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PivotTableView from "../views/Objects/PivotTableView";
 import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+import PivotTableView from "../views/Objects/PivotTableView";
 import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
 import ProjectPage from "../views/Projects";
@@ -65,26 +65,22 @@ import ProjectForm from "../views/Projects/ProjectFormPage";
 import RedirectPage from "../views/Redirect";
 import RedirectFormPage from "../views/Redirect/RedirectFormPage";
 import ResourceDetail from "../views/Resources/Detail";
+import SmsPage from "../views/SmsOtp";
+import SmsFormPage from "../views/SmsOtp/SmsFormPageComponent";
 import ClientUserForm from "../views/Users/UserFormPage";
 import ClientUserPage from "../views/Users/UserPage";
-import WebPage from "../views/WebPage";
-import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
-import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
-import Invite from "../views/Auth/Invite";
 import UsersList from "../views/Users/UsersList";
-import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
-import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
-import TablesPage from "../views/Constructor/AllTables";
-import MinioPage from "../components/LayoutSidebar/Components/Minio";
-import MinioSinglePage from "../components/LayoutSidebar/Components/Minio/components/MinioSinglePage";
-import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
-import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
-import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
-import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
-import OpenFaasFunctionForm from "../views/Constructor/OpenFaasFunction/OpenFaasFunctionForm.jsx";
-import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
+import WebPage from "../views/WebPage";
+import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDesign";
+import {ClientTypes} from "@/views/client-types";
+import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
+import LayoutSettings from "../views/Objects/LayoutSettings";
+import ChartDb from "../views/ChartDb";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
+const AuthLayoutDesign = lazy(
+  () => import("../layouts/AuthLayout/AuthLayoutDesign")
+);
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
 const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"));
 const ClientType = lazy(() => import("../views/AuthMatrix/ClientType"));
@@ -122,19 +118,13 @@ const Router = () => {
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
   const redirectLink = useMemo(() => {
-    // if (location.pathname.includes("settings"))
-    //   return "/settings/constructor/apps";
-    // if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
-    // if (!applications.length || !applications[0].permission?.read)
-    //   return "/settings/constructor/apps";
-    // return "/settings/constructor/apps";
     return (
       auth?.clientType?.default_page?.length
         ? auth?.clientType?.default_page?.length
         : companyDefaultLink
     )
       ? result
-      : `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
+      : `/`;
   }, [
     location.pathname,
     applications,
@@ -145,7 +135,7 @@ const Router = () => {
 
   const subdomain =
     window.location.hostname === "localhost"
-      ? "ett.u-code.io"
+      ? "fbs-integrations.mybazar.uz"
       : window.location.hostname;
 
   const {data, isLoading} = useLoginMicrofrontendQuery({
@@ -184,11 +174,11 @@ const Router = () => {
       return (
         <Suspense fallback={<p> Loading...</p>}>
           <Routes>
-            <Route path="/" element={<AuthLayout />}>
+            <Route path="/" element={<AuthLayoutDesign />}>
               <Route index element={<Navigate to="/login " />} />
-              <Route path="login" element={<Login />} />
+              <Route path="login" element={<LoginDesign />} />
               <Route path="invite-user" element={<Invite />} />
-              <Route path="registration" element={<Registration />} />
+              <Route path="registration" element={<RegisterFormPageDesign />} />
               <Route path="*" element={<Navigate to="/login" />} />
             </Route>
             <Route path="*" element={<Navigate to="/login" />} />
@@ -198,14 +188,14 @@ const Router = () => {
 
   return (
     <Routes>
-      {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
-
       <Route
         path="/"
         element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
-        <Route path="main">
+        <Route path="client-types" element={<ClientTypes />} />
+
+        <Route path="/">
           <Route
-            path=":appId/users-list"
+            path=":menuId/users-list"
             element={
               <Suspense fallback={<PageFallback />}>
                 <UsersList />
@@ -215,42 +205,42 @@ const Router = () => {
 
           <Route index element={<Navigate to={redirectLink} />} />
 
-          <Route path=":appId" element={<div></div>} />
+          {/* <Route path=":menuId" element={<div></div>} /> */}
 
-          <Route path=":appId/chat" element={<Chat />}>
+          <Route path=":menuId/chat" element={<Chat />}>
             <Route path=":chat_id" element={<Chat />} />
           </Route>
-          <Route path=":appId/backet/:minioId">
+          <Route path=":menuId/backet/:minioId">
             <Route index element={<MinioPage />} />
             <Route path=":fileId" element={<MinioSinglePage />} />
           </Route>
-          <Route path=":appId/activity" element={<ActivityFeedPage />} />
-          <Route path=":appId/projects">
+          <Route path=":menuId/activity" element={<ActivityFeedPage />} />
+          <Route path=":menuId/projects">
             <Route index element={<ProjectPage />} />
             <Route path="create" element={<ProjectForm />} />
             <Route path=":projectId" element={<ProjectForm />} />
           </Route>
-          <Route path=":appId/redirects">
+          <Route path=":menuId/redirects">
             <Route index element={<RedirectPage />} />
             <Route path="create" element={<RedirectFormPage />} />
             <Route path=":redirectId" element={<RedirectFormPage />} />
           </Route>
-          <Route path=":appId/sms-otp">
+          <Route path=":menuId/sms-otp">
             <Route index element={<SmsPage />} />
             <Route path="create" element={<SmsFormPage />} />
             <Route path=":redirectId" element={<SmsFormPage />} />
           </Route>
-          <Route path=":appId/api-key">
+          <Route path=":menuId/api-key">
             <Route index element={<ApiKeyPage />} />
             <Route path="create" element={<ApiKeysForm />} />
             <Route path=":apiKeyId" element={<ApiKeysForm />} />
           </Route>
-          <Route path=":appId/environments">
+          <Route path=":menuId/environments">
             <Route index element={<EnvironmentPage />} />
             <Route path="create" element={<EnvironmentForm />} />
             <Route path=":envId" element={<EnvironmentForm />} />
           </Route>
-          <Route path=":appId/company">
+          <Route path=":menuId/company">
             <Route index element={<CompanyPage />} />
             <Route path=":companyId" element={<CompanyForm />} />
           </Route>
@@ -286,17 +276,19 @@ const Router = () => {
             <Route path="role/:roleId" element={<RoleDetail />} />
           </Route>
 
-          {/* <Route path="constructor/microfrontend">
-          <Route index element={<MicrofrontendPage />} />
-          <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
-        </Route> */}
-
           <Route path=":appId/microfrontend">
             <Route index element={<MicrofrontendPage />} />
             <Route path="create" element={<MicrofrontendForm />} />
             <Route path=":microfrontendId" element={<MicrofrontendForm />} />
             <Route path="github/create" element={<GithubMicrofrontendForm />} />
+          </Route>
+
+          <Route path=":appId/website">
+            <Route index element={<WebsitePage />} />
+          </Route>
+
+          <Route path=":appId/chartDb">
+            <Route index element={<ChartDb />} />
           </Route>
 
           <Route path=":appId/openfaas-functions">
@@ -309,7 +301,6 @@ const Router = () => {
           <Route path=":appId/tables">
             <Route index element={<TablesPage />} />
             <Route path="create" element={<MicrofrontendForm />} />
-            {/* <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
           </Route>
 
           <Route path=":appId/resources">
@@ -322,19 +313,7 @@ const Router = () => {
             <Route path="elt">
               <Route path="connections">
                 <Route index element={<Connections />} />
-                {/* <Route path="create" element={<ConnectionCreate />} /> */}
-                {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
               </Route>
-              {/* <Route path="sources">
-                <Route index element={<Sources />} />
-                <Route path="create" element={<SourceDetail />} />
-                <Route path=":sourceId" element={<SourceDetail />} />
-              </Route>
-              <Route path="destinations">
-                <Route index element={<Destinations />} />
-                <Route path="create" element={<DestinationDetail />} />
-                <Route path=":destinationId" element={<DestinationDetail />} />
-              </Route> */}
             </Route>
           </Route>
 
@@ -356,6 +335,9 @@ const Router = () => {
           </Route>
           <Route path=":appId/project-setting">
             <Route index element={<ProjectSettingPage />} />
+          </Route>
+          <Route path=":appId/language-control">
+            <Route index element={<LanguageControl />} />
           </Route>
           <Route path=":appId/function">
             <Route path=":functionId" element={<FunctionsDetail />} />
@@ -396,12 +378,24 @@ const Router = () => {
           </Route>
 
           <Route
-            path=":appId/object/:tableSlug"
+            path=":menuId"
             element={<ReloadWrapper component={ObjectsPage} />}
           />
 
+          <Route path=":menuId/templates" element={<DocumentTemplates />} />
+
           <Route
-            path=":appId/object/:tableSlug/create/:formId"
+            path=":menuId/templates/create"
+            element={<DocumentTemplateDetail />}
+          />
+
+          <Route
+            path=":menuId/templates/:templateId"
+            element={<DocumentTemplateDetail />}
+          />
+
+          <Route
+            path=":menuId/detail/create"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -409,10 +403,19 @@ const Router = () => {
             }
           />
           <Route
-            path=":appId/object/:tableSlug/:id"
+            path=":menuId/detail"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+
+          <Route
+            path=":menuId/customize/:id"
+            element={
+              <KeepAliveWrapper>
+                <LayoutSettings />
               </KeepAliveWrapper>
             }
           />
@@ -428,20 +431,11 @@ const Router = () => {
           <Route path="constructor/apps" element={<AppsPage />} />
           <Route path="constructor/apps/create" element={<AppsForm />} />
           <Route path="constructor/apps/:appId" element={<AppsForm />} />
-          {/* 
-        <Route path="constructor/microfrontend">
-          <Route index element={<MicrofrontendPage />} />
-          <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
-        </Route> */}
 
           <Route path="constructor/tables">
             <Route index element={<TablesPage />} />
-            {/* <Route path="create" element={<MicrofrontendForm />} />
-          <Route path=":microfrontendId" element={<MicrofrontendForm />} /> */}
           </Route>
 
-          {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
           <Route
             path="constructor/apps/:appId/objects/create"
             element={<ConstructorTablesFormPage />}
@@ -611,77 +605,6 @@ const Router = () => {
           />
         </Route>
       </Route>
-
-      {/* <Route path="analytics" element={<AnalyticsLayout />}>
-        <Route index element={<Navigate to={"/analytics/dashboard"} />} />
-
-        <Route path="dashboard" element={<DashboardList />} />
-
-        <Route
-          path="dashboard/create/:formId"
-          element={
-            <KeepAliveWrapper>
-              <DashboardCreatePage />
-            </KeepAliveWrapper>
-          }
-        />
-        <Route path="dashboard/:id" element={<DashboardDetailPage />} />
-
-        <Route path="dashboard/:id/panel">
-          <Route path=":panelId" element={<PanelCreateForm />} />
-          <Route path="create" element={<PanelCreateForm />} />
-        </Route>
-
-        <Route path="dashboard/:id/settings" element={<DashboardSettings />}>
-          <Route path="main" element={<DashboardMainInfo />} />
-          <Route path="variables" element={<Variables />} />
-          <Route path="variables/create" element={<VariableCreateForm />} />
-          <Route
-            path="variables/:variableId"
-            element={<VariableCreateForm />}
-          />
-        </Route>
-
-        <Route path="*" element={<Navigate to={"/analytics/dashboard"} />} />
-      </Route>
-
-      <Route path="/cashbox" element={<CashboxLayout />}>
-        <Route
-          index
-          element={
-            <Navigate
-              to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"}
-            />
-          }
-        />
-
-        {cashboxIsOpen ? (
-          <>
-            <Route path="closing" element={<CashboxClosing />} />
-
-            <Route path="appointments" element={<CashboxAppointments />} />
-            <Route
-              path="appointments/:type/:id"
-              element={
-                <KeepAliveWrapper>
-                  <AppointmentsForm />
-                </KeepAliveWrapper>
-              }
-            />
-          </>
-        ) : (
-          <Route path="opening" element={<CashboxOpening />} />
-        )}
-
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"}
-            />
-          }
-        />
-      </Route> */}
 
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />

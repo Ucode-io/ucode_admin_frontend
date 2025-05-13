@@ -14,12 +14,20 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../../../components/FormElements/HFTextFieldWithMultiLanguage";
 import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import listToOptions from "../../../../utils/listToOptions";
 import style from "./main.module.scss";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 
-const MainInfo = ({control, watch}) => {
+const MainInfo = ({
+  control,
+  watch,
+  exist,
+  authData,
+  getData = () => {},
+  tableLan,
+}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
+  const languages = useSelector((state) => state.languages.list);
 
   const params = {
     language_setting: i18n?.language,
@@ -52,11 +60,6 @@ const MainInfo = ({control, watch}) => {
     name: "attributes.auth_info.login",
   });
 
-  const authInfo = useWatch({
-    control,
-    name: "attributes.auth_info",
-  });
-
   const {data: computedTableFields} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
@@ -85,25 +88,6 @@ const MainInfo = ({control, watch}) => {
     }
   }, [login]);
 
-  const computedFields = useMemo(() => {
-    const computedRelations = relations.map((relation) => {
-      const tableSlug = relation.id.split("#")[0];
-      const viewFields =
-        relation.attributes?.fields?.map(
-          (viewField) => `${tableSlug}.${viewField.slug}`
-        ) ?? [];
-
-      const slug = viewFields.join("#");
-
-      return {
-        ...relation,
-        slug: slug,
-      };
-    });
-
-    return listToOptions([...fields, ...computedRelations], "label", "slug");
-  }, [fields]);
-
   const computedLoginFields = useMemo(() => {
     return computedTableFields?.map((item) => ({
       label:
@@ -116,13 +100,19 @@ const MainInfo = ({control, watch}) => {
     }));
   }, [computedTableFields]);
 
-  const languages = useSelector((state) => state.languages.list);
-
   return (
     <div className="p-2">
-      <FormCard title="General">
-        <FRow label="Name">
-          <Box style={{display: "flex", gap: "6px"}}>
+      <FormCard
+        title={
+          generateLangaugeText(tableLan, i18n?.language, "General") || "General"
+        }
+      >
+        <FRow
+          label={
+            generateLangaugeText(tableLan, i18n?.language, "Name") || "Name"
+          }
+        >
+          <Box style={{ display: "flex", gap: "6px" }}>
             <HFTextFieldWithMultiLanguage
               control={control}
               name="attributes.label"
@@ -134,10 +124,13 @@ const MainInfo = ({control, watch}) => {
             />
           </Box>
         </FRow>
-        <FRow label="Key">
+        <FRow
+          label={generateLangaugeText(tableLan, i18n?.language, "Key") || "Key"}
+        >
           <HFTextField
             control={control}
             name="slug"
+            exist={exist}
             fullWidth
             placeholder="KEY"
             required
@@ -147,139 +140,206 @@ const MainInfo = ({control, watch}) => {
         </FRow>
 
         <Box
-          sx={{display: "flex", alignItems: "center", margin: "30px 0"}}
-          className={style.checkbox}>
+          sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}
+          className={style.checkbox}
+        >
           <HFCheckbox
+            id="login_table_check"
             control={control}
             name="is_login_table"
             required
-            label="Login Table"
+            label={
+              generateLangaugeText(tableLan, i18n?.language, "Login Table") ||
+              "Login Table"
+            }
           />
           <HFCheckbox
             control={control}
             name="is_cached"
             required
-            label="Cache"
+            label={
+              generateLangaugeText(tableLan, i18n?.language, "Cache") || "Cache"
+            }
           />
           <HFCheckbox
             control={control}
             name="soft_delete"
             required
-            label="Soft delete"
+            label={
+              generateLangaugeText(tableLan, i18n?.language, "Soft delete") ||
+              "Soft delete"
+            }
           />
           <HFCheckbox control={control} name="order_by" required label="Sort" />
         </Box>
 
         {loginTable && (
           <Box>
+            {authData?.login_strategy?.length >= 1 && (
+              <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}
+                >
+                  <FRow
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "User type"
+                      ) || "User type"
+                    }
+                  />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.client_type_id"
+                    fullWidth
+                    placeholder="client"
+                    options={computedLoginFields}
+                    required
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}
+                >
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Roles") ||
+                      "Roles"
+                    }
+                  />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.role_id"
+                    fullWidth
+                    placeholder="role"
+                    options={computedLoginFields}
+                    required
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}
+                >
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Login") ||
+                      "Login"
+                    }
+                  />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.login"
+                    fullWidth
+                    placeholder="login"
+                    options={computedLoginFields}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}
+                >
+                  <FRow
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Password"
+                      ) || "Password"
+                    }
+                  />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.password"
+                    fullWidth
+                    placeholder="password"
+                    options={computedLoginFields}
+                    required={loginRequired}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}
+                >
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Email") ||
+                      "Email"
+                    }
+                  />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.email"
+                    fullWidth
+                    placeholder="email"
+                    options={computedLoginFields}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "500px",
+                    alignItems: "center",
+                    margin: "10px 0",
+                  }}
+                >
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Phone") ||
+                      "Phone"
+                    }
+                  />
+                  <HFSelect
+                    control={control}
+                    name="attributes.auth_info.phone"
+                    fullWidth
+                    placeholder="phone"
+                    options={computedLoginFields}
+                  />
+                </Box>
+              </>
+            )}
+
             <Box
               sx={{
                 display: "flex",
                 width: "500px",
                 alignItems: "center",
                 margin: "10px 0",
-              }}>
-              <FRow label="User type" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.client_type_id"
-                fullWidth
-                placeholder="client"
-                options={computedLoginFields}
-                required
+              }}
+            >
+              <FRow
+                label={
+                  generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Login strategy"
+                  ) || "Login strategy"
+                }
               />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Roles" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.role_id"
-                fullWidth
-                placeholder="role"
-                options={computedLoginFields}
-                required
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Login" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.login"
-                fullWidth
-                placeholder="login"
-                options={computedLoginFields}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Password" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.password"
-                fullWidth
-                placeholder="password"
-                options={computedLoginFields}
-                required={loginRequired}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Почта" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.email"
-                fullWidth
-                placeholder="email"
-                options={computedLoginFields}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Телефон" />
-              <HFSelect
-                control={control}
-                name="attributes.auth_info.phone"
-                fullWidth
-                placeholder="phone"
-                options={computedLoginFields}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "500px",
-                alignItems: "center",
-                margin: "10px 0",
-              }}>
-              <FRow label="Login strategy" />
               <HFMultipleSelect
+                id="login_strategy"
                 control={control}
                 name="attributes.auth_info.login_strategy"
                 fullWidth

@@ -26,7 +26,7 @@ import {useMenuGetByIdQuery} from "../../../services/menuService";
 const RelationTable = forwardRef(
   (
     {
-      getValues,
+      getValues = () => {},
       relation,
       shouldGet,
       createFormVisible,
@@ -41,7 +41,7 @@ const RelationTable = forwardRef(
       reset,
       selectedTabIndex,
       control,
-      setFormValue,
+      setFormValue = () => {},
       fields,
       setFormVisible,
       formVisible,
@@ -50,6 +50,7 @@ const RelationTable = forwardRef(
       relatedTable = {},
       getAllData = () => {},
       layoutData,
+      removableHeight,
     },
     ref
   ) => {
@@ -176,7 +177,7 @@ const RelationTable = forwardRef(
             fields: relation.view_fields ?? [],
           },
           label:
-            relation?.label ?? relation[relation.relatedTableSlug]?.label
+            (relation?.label ?? relation[relation.relatedTableSlug]?.label)
               ? relation[relation.relatedTableSlug]?.label
               : relation?.title,
         }));
@@ -222,8 +223,14 @@ const RelationTable = forwardRef(
         relationFilter[
           `${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`
         ] = id;
+      else if (
+        getRelatedTabeSlug?.relation_index &&
+        getRelatedTabeSlug?.relation_index > 1
+      )
+        relationFilter[
+          `${tableSlug}_id_${getRelatedTabeSlug?.relation_index}`
+        ] = id;
       else relationFilter[`${tableSlug}_id`] = id;
-
       return {
         ...filters,
         ...relationFilter,
@@ -259,6 +266,7 @@ const RelationTable = forwardRef(
         columns = [],
         quickFilters = [],
         fieldsMap = {},
+        count = 0,
       } = {},
       refetch,
       isLoading: dataFetchingLoading,
@@ -299,11 +307,7 @@ const RelationTable = forwardRef(
               : Math.ceil(data.count / paginiation);
 
           const fieldsMap = listToMap(data.fields);
-
-          // setFieldSlug(
-          //   Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
-          //     ?.slug
-          // );
+          const count = data?.count;
 
           const array = [];
           for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
@@ -339,6 +343,7 @@ const RelationTable = forwardRef(
             columns,
             quickFilters,
             fieldsMap,
+            count,
           };
         },
         onSuccess: () => {
@@ -524,10 +529,11 @@ const RelationTable = forwardRef(
               control={control}
               relatedTableSlug={relatedTableSlug}
               tableSlug={relatedTableSlug ?? tableSlug}
-              removableHeight={230}
+              removableHeight={removableHeight ? removableHeight : 230}
               disableFilters
               pagesCount={pageCount}
               currentPage={currentPage}
+              count={count}
               onRowClick={navigateToEditPage}
               onDeleteClick={deleteHandler}
               onPaginationChange={setCurrentPage}

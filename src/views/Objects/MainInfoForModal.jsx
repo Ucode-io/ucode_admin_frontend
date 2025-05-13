@@ -36,6 +36,13 @@ const MainInfoForModal = ({
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedTable, setSelectedTable] = useState(null);
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const {i18n} = useTranslation();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -48,30 +55,6 @@ const MainInfoForModal = ({
     });
     return fields;
   }, [relation]);
-
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
-
-  useEffect(() => {
-    if (isMultiLanguage) {
-      setActiveLang(projectInfo?.language?.[0]?.short_name);
-    }
-  }, [isMultiLanguage, projectInfo]);
-  const {i18n} = useTranslation();
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedTable, setSelectedTable] = useState(null);
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setSelectedTable(res);
-        });
-    }
-  }, []);
 
   const updateLayout = (newData) => {
     const computedData = {
@@ -143,9 +126,6 @@ const MainInfoForModal = ({
     updateLayout(newData);
   };
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -153,6 +133,24 @@ const MainInfoForModal = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    if (isMultiLanguage) {
+      setActiveLang(projectInfo?.language?.[0]?.short_name);
+    }
+  }, [isMultiLanguage, projectInfo]);
+
+  useEffect(() => {
+    if (searchParams.get("menuId")) {
+      menuService
+        .getByID({
+          menuId: searchParams.get("menuId"),
+        })
+        .then((res) => {
+          setSelectedTable(res);
+        });
+    }
+  }, []);
 
   const allFields = useMemo(() => {
     return Object.values?.(fieldsMapFromProps ?? {}).map((field) => {
@@ -206,7 +204,8 @@ const MainInfoForModal = ({
               {projectInfo?.language?.map((lang) => (
                 <Button
                   className={activeLang === lang?.short_name && styles.active}
-                  onClick={() => setActiveLang(lang?.short_name)}>
+                  onClick={() => setActiveLang(lang?.short_name)}
+                >
                   {lang?.name}
                 </Button>
               ))}
@@ -233,7 +232,8 @@ const MainInfoForModal = ({
                             aria-controls={open ? "basic-menu" : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? "true" : undefined}
-                            onClick={handleClick}>
+                            onClick={handleClick}
+                          >
                             <AddRoundedIcon />
                           </Button>
 
@@ -244,13 +244,15 @@ const MainInfoForModal = ({
                             onClose={handleClose}
                             MenuListProps={{
                               "aria-labelledby": "basic-button",
-                            }}>
+                            }}
+                          >
                             {allFields?.map((field) => (
                               <MenuItem
                                 onClick={() => {
                                   addFieldsToSection(field?.value, index);
                                   handleClose();
-                                }}>
+                                }}
+                              >
                                 {field?.label}
                               </MenuItem>
                             ))}
@@ -259,9 +261,11 @@ const MainInfoForModal = ({
                       )
                     }
                     className={styles.formCard}
-                    icon={section.icon}>
+                    icon={section.icon}
+                  >
                     <div className={styles.newformColumn}>
                       <SectionBlockForModal
+                        modalClass={styles.newMainInfoSectionsModal}
                         index={index}
                         data={data}
                         setData={setData}
@@ -289,7 +293,7 @@ const MainInfoForModal = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{color: "#000"}} />
+              <KeyboardTabIcon style={{ color: "#000" }} />
             </button>
           </Tooltip>
         </div>

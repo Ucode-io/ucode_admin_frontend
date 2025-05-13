@@ -47,12 +47,14 @@ function ViewSettingsModal({
         columnGap="8px"
         alignItems="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        _hover={{ bg: "#EAECF0" }}
         cursor="pointer"
-        onClick={onOpen}>
+        onClick={onOpen}
+      >
         <Image src="/img/file-download.svg" alt="Docs" />
         <ViewOptionTitle>
-          {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
+          {generateLangaugeText(tableLan, i18n?.language, "View settings") ||
+            "View settings"}
         </ViewOptionTitle>
         <ChevronRightIcon ml="auto" fontSize={22} />
       </Flex>

@@ -1913,8 +1913,11 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
-                    "Layout"}
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Table settings"
+                  ) || "Table settings"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>

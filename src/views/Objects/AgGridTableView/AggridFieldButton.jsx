@@ -178,7 +178,8 @@ export default function AggridFieldButton({
             setFieldOptionAnchor(e.currentTarget);
             setTarget(e.currentTarget);
             setFieldData(null);
-          }}>
+          }}
+        >
           <AddIcon />
         </button>
       </Tooltip>

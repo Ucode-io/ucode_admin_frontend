@@ -33,14 +33,18 @@ function StatusFieldSettings({control}) {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        }}>
-        <Box sx={{fontSize: "12px"}}>{blockName}</Box>
+        }}
+      >
+        <Box sx={{ fontSize: "12px" }}>{blockName}</Box>
         <button
           type="button"
-          onClick={() => fieldArray.append({})}
+          onClick={() =>
+            fieldArray.append({ label: "", color: "#fff", value: "" })
+          }
           className={styles.addOptionBtn}
-          variant="outlined">
-          <AddIcon style={{color: "#999", fontSize: "24px"}} />
+          variant="outlined"
+        >
+          <AddIcon style={{ color: "#999", fontSize: "24px" }} />
         </button>
       </Box>
 
@@ -53,7 +57,8 @@ function StatusFieldSettings({control}) {
             gap: "0.5rem",
             marginBottom: "0.5rem",
             padding: "8px",
-          }}>
+          }}
+        >
           <HFColorPicker
             name={`attributes.${name}.options[${index}].color`}
             control={control}
@@ -69,7 +74,8 @@ function StatusFieldSettings({control}) {
             variant="outlined"
             color="error"
             type="button"
-            onClick={() => fieldArray.remove(index)}>
+            onClick={() => fieldArray.remove(index)}
+          >
             <DeleteIcon />
           </Button>
         </div>

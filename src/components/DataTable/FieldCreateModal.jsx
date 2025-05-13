@@ -1,7 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
-import React, {useMemo, useState} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {useFieldArray, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -240,6 +240,12 @@ export default function FieldCreateModal({
     control,
     name: "label",
   });
+
+  useEffect(() => {
+    if (watch("type") !== "MULTISELECT") {
+      setValue("attributes.options", []);
+    }
+  }, [watch("type")]);
 
   return (
     <Popover

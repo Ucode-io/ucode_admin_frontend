@@ -109,7 +109,6 @@ const NewRelationSection = ({
     }
   );
 
-  console.log("selectedViewselectedView", selectedView, viewId);
   const tableSlug = selectedView?.table_slug || tableSlugFromProps;
 
   const filteredRelations = useMemo(() => {

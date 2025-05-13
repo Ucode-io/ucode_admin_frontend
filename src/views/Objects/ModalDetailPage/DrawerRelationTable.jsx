@@ -49,7 +49,6 @@ const DrawerRelationTable = ({
 }) => {
   const myRef = useRef();
   const {i18n} = useTranslation();
-  const [type, setType] = useState(null);
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const [formVisible, setFormVisible] = useState(false);
@@ -61,7 +60,7 @@ const DrawerRelationTable = ({
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
+  const tableSlug = tableSlugFromProps || tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
   const getRelatedTabeSlug = useMemo(() => {

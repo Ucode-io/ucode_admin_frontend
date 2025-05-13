@@ -15,7 +15,7 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
 import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Flex, Text} from "@chakra-ui/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -33,7 +33,7 @@ const FullpagePeekMaininfo = ({
   computedSections = [],
   updateCurrentLayout = () => {},
 }) => {
-  const {tableSlug, appId, id} = useParams();
+  const {tableSlug, menuId} = useParams();
   const {i18n} = useTranslation();
   const navigate = useNavigate();
   const [isShow, setIsShow] = useState(true);
@@ -42,11 +42,11 @@ const FullpagePeekMaininfo = ({
   const projectId = store.getState().company.projectId;
   const [sections, setSections] = useState(computedSections ?? []);
   const rowData = watch();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("p");
 
   const auth = store.getState().auth;
-
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
-
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
@@ -133,14 +133,11 @@ const FullpagePeekMaininfo = ({
               }}>
               <Button
                 onClick={() =>
-                  navigate(
-                    `/main/${appId}/layout-settings/${tableSlug}/${id}`,
-                    {
-                      state: {
-                        ...rowData,
-                      },
-                    }
-                  )
+                  navigate(`/${menuId}/layout-settings/${tableSlug}/${id}`, {
+                    state: {
+                      ...rowData,
+                    },
+                  })
                 }
                 sx={{
                   display: "none",

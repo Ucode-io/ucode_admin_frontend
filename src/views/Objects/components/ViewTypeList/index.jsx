@@ -14,11 +14,18 @@ import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 
-export default function ViewTypeList({computedViewTypes, views, handleClose}) {
+export default function ViewTypeList({
+  computedViewTypes,
+  views,
+  handleClose,
+  refetchViews,
+  tableSlug,
+}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
-  const {tableSlug, menuId} = useParams();
+  const {menuId} = useParams();
+
   const queryClient = useQueryClient();
   const {control, watch} = useForm();
   const [error, setError] = useState(false);
@@ -138,11 +145,12 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
             },
           })
           .then(() => {
-            queryClient.refetchQueries([
-              "GET_VIEWS_AND_FIELDS",
-              tableSlug,
-              i18n?.language,
-            ]);
+            // queryClient.refetchQueries([
+            //   "GET_VIEWS_LIST",
+            //   tableSlug,
+            //   i18n?.language,
+            // ]);
+            refetchViews();
           })
           .finally(() => {
             setBtnLoader(false);
@@ -156,11 +164,12 @@ export default function ViewTypeList({computedViewTypes, views, handleClose}) {
       constructorViewService
         .createViewMenuId(menuId, newViewJSON)
         .then(() => {
-          queryClient.refetchQueries([
-            "GET_VIEWS_AND_FIELDS",
-            tableSlug,
-            i18n?.language,
-          ]);
+          refetchViews();
+          // queryClient.refetchQueries([
+          //   "GET_VIEWS_LIST",
+          //   tableSlug,
+          //   i18n?.language,
+          // ]);
         })
         .finally(() => {
           setBtnLoader(false);

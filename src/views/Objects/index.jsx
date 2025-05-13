@@ -23,7 +23,6 @@ import constructorViewService from "../../services/constructorViewService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 
 const ObjectsPage = () => {
-  const {tableSlug} = useParams();
   const {state} = useLocation();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
@@ -35,6 +34,7 @@ const ObjectsPage = () => {
   const projectId = store.getState().company.projectId;
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
+  const tableSlug = selectedView?.table_slug;
 
   const viewSelectedIndex = useSelector(
     (state) =>
@@ -42,9 +42,7 @@ const ObjectsPage = () => {
         ?.tabIndex
   );
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState(
-    viewSelectedIndex?.tabIndex || 1
-  );
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const parts = auth?.clientType?.default_page
     ? auth?.clientType?.default_page?.split("/")
@@ -68,8 +66,8 @@ const ObjectsPage = () => {
     },
   });
 
-  const {data: views} = useQuery(
-    ["GET_OBJECT_LIST", menuId],
+  const {data: views, refetch} = useQuery(
+    ["GET_VIEWS_LIST", menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
     },
@@ -79,23 +77,21 @@ const ObjectsPage = () => {
         return res?.views ?? [];
       },
       onSuccess: (data) => {
-        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
         setSelectedView(data?.[selectedTabIndex]);
         updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
+        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
       },
     }
   );
 
   const {
     data: {fieldsMap, fieldsMapRel, visibleColumns, visibleRelationColumns} = {
-      views: [],
       fieldsMap: {},
       fieldsMapRel: {},
       visibleColumns: [],
       visibleRelationColumns: [],
     },
     isLoading,
-    refetch,
   } = useQuery(
     [
       "GET_VIEWS_AND_FIELDS",
@@ -129,11 +125,11 @@ const ObjectsPage = () => {
     }
   );
 
-  useEffect(() => {
-    queryTab
-      ? setSelectedTabIndex(parseInt(queryTab - 1))
-      : setSelectedTabIndex(viewSelectedIndex || 0);
-  }, [queryTab]);
+  // useEffect(() => {
+  //   queryTab
+  //     ? setSelectedTabIndex(parseInt(queryTab - 1))
+  //     : setSelectedTabIndex(viewSelectedIndex || 0);
+  // }, [queryTab]);
 
   // const {loader: menuLoader} = useMenuGetByIdQuery({
   //   menuId: menuId,
@@ -173,6 +169,8 @@ const ObjectsPage = () => {
     setViews: setViews,
     selectedTabIndex: selectedTabIndex,
     setSelectedTabIndex: setSelectedTabIndex,
+    setSelectedView: setSelectedView,
+    selectedView: selectedView,
     views: views,
     fieldsMap: fieldsMap,
     menuItem,

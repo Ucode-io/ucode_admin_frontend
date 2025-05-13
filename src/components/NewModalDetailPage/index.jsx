@@ -56,10 +56,6 @@ function NewModalDetailPage({
   const {menuId} = useParams();
   const tableSlug = view?.table_slug;
 
-  // const id = useMemo(() => {
-  //   return idFromParam ?? selectedRow?.guid;
-  // }, [idFromParam, selectedRow]);
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);

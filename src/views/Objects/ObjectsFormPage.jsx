@@ -60,20 +60,20 @@ const ObjectsFormPage = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
-  const viewId = searchParams.get("v");
   const itemId = searchParams.get("p");
 
-  const {id: idFromParam, menuId} = useParams();
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || state?.tableSlug;
+  }, [selectedView?.table_slug, tableSlugFromProps]);
 
-  const microPath = `/main/${itemId}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${itemId}&slug=${selectedView?.table_slug}`;
+  const {menuId} = useParams();
+
+  const microPath = `/main/${itemId}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${itemId}&slug=${state?.tableSlug}`;
   const microPathCloseMonth = `/main/${itemId}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${itemId}`;
 
   const id = useMemo(() => {
     return (
-      state?.[`${selectedView?.table_slug}_id`] ||
-      itemId ||
-      menuId ||
-      selectedRow?.guid
+      state?.[`${state?.tableSlug}_id`] || itemId || menuId || selectedRow?.guid
     );
   }, [itemId, selectedRow, menuId, state]);
 
@@ -83,26 +83,6 @@ const ObjectsFormPage = ({
 
   const {deleteTab} = useTabRouter();
   const {pathname} = useLocation();
-
-  const {data: views} = useQuery(
-    ["GET_OBJECT_LIST", menuId],
-    () => {
-      return constructorViewService.getViewListMenuId(menuId);
-    },
-    {
-      enabled: Boolean(menuId),
-      select: (res) => {
-        return res?.views ?? [];
-      },
-      onSuccess: (data) => {
-        setSelectedView(data?.find((el) => el?.id === viewId));
-      },
-    }
-  );
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || selectedView?.table_slug;
-  }, [selectedView?.table_slug, tableSlugFromProps]);
 
   const {
     handleSubmit,

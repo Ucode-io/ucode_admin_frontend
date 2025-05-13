@@ -78,9 +78,9 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, menuId} = useParams();
+  const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
-
+  console.log("tableSlugtableSlug", tableSlug);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
@@ -501,7 +501,12 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigate(`/${menuId}/dt?v=${view?.id}&p=${row?.guid}`);
+      navigate(`/${menuId}/detail?p=${row?.guid}`, {
+        state: {
+          viewId,
+          tableSlug,
+        },
+      });
       // navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id);
     }
   };

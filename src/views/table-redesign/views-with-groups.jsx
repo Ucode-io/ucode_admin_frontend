@@ -97,6 +97,7 @@ import {CalendarSettings} from "./components/CalendarSettings";
 import {SubGroup} from "./components/SubGroup";
 import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -118,6 +119,8 @@ export const NewUiViewsWithGroups = ({
   refetchViews,
   fieldsMapRel,
   setViews,
+  setSelectedView,
+  selectedView,
 }) => {
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
@@ -130,11 +133,9 @@ export const NewUiViewsWithGroups = ({
   const navigate = useNavigate();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [selectedView, setSelectedView] = useState(view);
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -147,25 +148,9 @@ export const NewUiViewsWithGroups = ({
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
-
-  // const groupByFields = useMemo(() => {
-  //   return view?.group_fields?.map((field) => {
-  //     return fieldsMap?.[field];
-  //   });
-  // }, [view?.group_fields, fieldsMap]);
-
-  // const {mutate: updateObject} = useMutation(
-  //   (data) =>
-  //     constructorObjectService.update(tableSlug, {
-  //       data,
-  //     }),
-  //   {
-  //     onSuccess: () => {
-  //       refetchViews();
-  //       queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-  //     },
-  //   }
-  // );
+  const {navigateToForm} = useTabRouter();
+  const tableLan = useGetLang("Table");
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const settingsForm = useForm({
     defaultValues: {
@@ -185,7 +170,6 @@ export const NewUiViewsWithGroups = ({
     });
   };
 
-  const {navigateToForm} = useTabRouter();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -200,7 +184,6 @@ export const NewUiViewsWithGroups = ({
   }, [paginationCount, tableSlug]);
 
   const [currentPage, setCurrentPage] = useState(paginiationCount);
-  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -318,11 +301,11 @@ export const NewUiViewsWithGroups = ({
     }
   };
 
-  const replaceUrlVariables = (urlTemplate, data) => {
-    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-      return data[variable] || "";
-    });
-  };
+  // const replaceUrlVariables = (urlTemplate, data) => {
+  //   return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+  //     return data[variable] || "";
+  //   });
+  // };
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
     const db = await openDB();
@@ -405,6 +388,10 @@ export const NewUiViewsWithGroups = ({
     }
   };
 
+  const viewHandler = (viewEl) => {
+    updateQueryWithoutRerender("v", viewEl?.id);
+  };
+
   useEffect(() => {
     initDB();
   }, [tableSlug]);
@@ -413,7 +400,9 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
-  const tableLan = useGetLang("Table");
+  useEffect(() => {
+    setSelectedView(view);
+  }, []);
 
   if (view?.type === "WEBSITE") {
     return (
@@ -591,8 +580,7 @@ export const NewUiViewsWithGroups = ({
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
-                  navigate(`${menuId}/${tableSlug}`);
-                  setSearchParams({v: view?.id});
+                  viewHandler(view);
                   setSelectedView(view);
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
@@ -630,7 +618,9 @@ export const NewUiViewsWithGroups = ({
                 horizontal: "left",
               }}>
               <ViewTypeList
+                tableSlug={tableSlug}
                 views={views}
+                refetchViews={refetchViews}
                 computedViewTypes={computedViewTypes}
                 handleClose={() => setViewAnchorEl(null)}
                 openModal={(data) => {
@@ -772,6 +762,7 @@ export const NewUiViewsWithGroups = ({
             </PermissionWrapperV2>
 
             <ViewOptions
+              refetchViews={refetchViews}
               selectedTabIndex={selectedTabIndex}
               isChanged={isChanged}
               setIsChanged={setIsChanged}
@@ -779,9 +770,9 @@ export const NewUiViewsWithGroups = ({
               tableLan={tableLan}
               view={view}
               viewName={viewName}
-              refetchViews={refetchViews}
               fieldsMap={fieldsMap}
               visibleRelationColumns={visibleRelationColumns}
+              setSelectedTabIndex={setSelectedTabIndex}
               checkedColumns={checkedColumns}
               onDocsClick={() => setSelectedTabIndex(views.length)}
               searchText={searchText}
@@ -1468,6 +1459,7 @@ const ViewOptions = ({
   isChanged,
   selectedTabIndex,
   setIsChanged = () => {},
+  setSelectedTabIndex,
   settingsForm,
   views,
   // queryClient,
@@ -1594,6 +1586,7 @@ const ViewOptions = ({
       });
     },
     {
+      enabled: false,
       cacheTime: 10,
       select: (res) => {
         const fields = res.data?.fields ?? [];
@@ -2026,6 +2019,7 @@ const ViewOptions = ({
                 view={view}
                 refetchViews={refetchViews}
                 tableLan={tableLan}
+                setSelectedTabIndex={setSelectedTabIndex}
               />
             </Box>
           </>
@@ -2888,12 +2882,20 @@ const ExcelImportButton = ({
   );
 };
 
-const DeleteViewButton = ({view, refetchViews, tableLan}) => {
+const DeleteViewButton = ({
+  view,
+  refetchViews,
+  tableLan,
+  setSelectedTabIndex,
+}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
-    onSuccess: () => refetchViews(),
+    onSuccess: () => {
+      setSelectedTabIndex(0);
+      refetchViews();
+    },
   });
 
   return (

@@ -395,7 +395,7 @@ const Router = () => {
           />
 
           <Route
-            path=":menuId/dt/create"
+            path=":menuId/detail/create"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -403,7 +403,7 @@ const Router = () => {
             }
           />
           <Route
-            path=":menuId/dt"
+            path=":menuId/detail"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
@@ -412,7 +412,7 @@ const Router = () => {
           />
 
           <Route
-            path=":appId/layout-settings/:tableSlug/:id"
+            path=":menuId/customize/:id"
             element={
               <KeepAliveWrapper>
                 <LayoutSettings />

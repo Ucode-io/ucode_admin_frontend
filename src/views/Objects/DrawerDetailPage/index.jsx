@@ -473,9 +473,9 @@ function DrawerDetailPage({
                         <>
                           <Button
                             onClick={() =>
-                              navigate(`/${menuId}/customize/${id}`, {
+                              navigate(`/${menuId}/customize/${itemId}`, {
                                 state: {
-                                  ...rowData,
+                                  ...data,
                                   tableSlug,
                                 },
                               })

@@ -153,7 +153,7 @@ function NewModalFormPage({
           setFormValue={setFormValue}
         />
 
-        {sections?.length &&
+        {Boolean(sections?.length) &&
           sections?.map((section, secIndex) => (
             <Container
               key={section?.id}

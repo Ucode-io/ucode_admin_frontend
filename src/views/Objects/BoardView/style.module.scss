@@ -2,6 +2,7 @@
 
 .container {
   overflow: auto;
+  position: relative;
 }
 
 .header {
@@ -13,6 +14,14 @@
   padding-left: 16px;
   padding-right: 16px;
   background-color: #fff;
+}
+
+.boardHeader {
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  background-color: #fff;
+  will-change: transform;
 }
 
 .wrapper {

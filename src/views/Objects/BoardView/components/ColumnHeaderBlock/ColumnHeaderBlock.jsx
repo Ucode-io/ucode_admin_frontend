@@ -12,8 +12,7 @@ export const ColumnHeaderBlock = ({
   field,
   counts,
 }) => {
-  // const fixedElement = useRef(null);
-
+  const fixedElement = useRef(null);
   const hasColor = tab?.color || field?.attributes?.has_color;
 
   const color =
@@ -42,9 +41,9 @@ export const ColumnHeaderBlock = ({
 
   return (
     <div
-      // ref={fixedElement}
+      ref={fixedElement}
       className={`${cls.columnHeaderBlock} column-header`}
-      // style={{ position: fixed ? "absolute" : "static" }}
+      style={{ position: fixed ? "absolute" : "static" }}
     >
       <div className={cls.leftSide}>
         <div className={cls.title}>
@@ -62,7 +61,12 @@ export const ColumnHeaderBlock = ({
             {tab.label}
           </span>
         </div>
-        <div className={cls.counter}>{counts[tab.value] ?? 0}</div>
+        <div className={cls.counter}>
+          {counts?.[tab.value] ||
+            computedData?.length ||
+            counts?.[tab.value] ||
+            0}
+        </div>
       </div>
       <div className={cls.rightSide}>
         <IconButton

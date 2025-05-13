@@ -19,9 +19,15 @@ export const ContentList = ({
   handleEdit = () => {},
   ...props
 }) => {
+  const navigate = useNavigate();
+  const { appId } = useParams();
+  const [openResource, setOpenResource] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [resourceVal, setResourceVal] = useState();
+
   if (isLoading) {
     return (
-      <Box sx={{marginTop: "36px"}}>
+      <Box sx={{ marginTop: "36px" }}>
         <Skeleton height="49px" width="100%" />
         <Skeleton height="49px" width="100%" />
         <Skeleton height="49px" width="100%" />
@@ -29,11 +35,6 @@ export const ContentList = ({
       </Box>
     );
   }
-  const navigate = useNavigate();
-  const {appId} = useParams();
-  const [openResource, setOpenResource] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [resourceVal, setResourceVal] = useState();
 
   const clickHandler = (element) => {
     if (element?.id) {
@@ -41,7 +42,7 @@ export const ContentList = ({
       setOpenResource(true);
     } else if (element?.value !== 5 && element?.value !== 8 && !element?.id) {
       setOpenResource(element?.value);
-      setSearchParams({tab: "resources", resource_type: element?.value});
+      setSearchParams({ tab: "resources", resource_type: element?.value });
     }
 
     if (element?.value === 5) {
@@ -65,16 +66,17 @@ export const ContentList = ({
     <>
       {Boolean(!openResource) ? (
         groupedResources?.map((element) => (
-          <Box sx={{padding: "20px 16px 16px"}}>
+          <Box sx={{ padding: "20px 16px 16px" }}>
             <FRLabel children={<>{element?.head}</>} />
-            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
               {element?.items?.map((val) => (
                 <ResourceButton
                   setResourceVal={setResourceVal}
                   clickHandler={clickHandler}
                   arr={arr}
                   val={val}
-                  onItemClick={onItemClick}>
+                  onItemClick={onItemClick}
+                >
                   {getElementIcon(val?.icon)}
                   <p>{val?.label}</p>
                 </ResourceButton>
@@ -93,15 +95,20 @@ export const ContentList = ({
   );
 };
 
-const FRLabel = ({children}) => {
+const FRLabel = ({ children }) => {
   return (
-    <Box sx={{color: "#344054", fontWeight: 600, fontSize: "12px"}}>
+    <Box sx={{ color: "#344054", fontWeight: 600, fontSize: "12px" }}>
       {children}
     </Box>
   );
 };
 
-const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
+const ResourceButton = ({
+  children,
+  val,
+  arr = [],
+  clickHandler = () => {},
+}) => {
   const computedElements = arr?.filter(
     (el) =>
       el?.type?.toLowerCase() ===
@@ -117,15 +124,18 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleClose = () => setAnchorEl(null);
-  console.log("computedElementscomputedElements", computedElements);
+
   return (
     <>
       {computedElements?.length === 0 ? (
         <Box
-          onClick={() => {
-            clickHandler(val);
+          onClick={(e) => {
+            handleClick(e);
+            setChosenResource(val);
+            setSearchParams({ tab: "resources" });
           }}
-          className={"resourceBtn"}>
+          className={"resourceBtn"}
+        >
           {getElementIcon(val?.icon)}
           <p>{val?.label}</p>
         </Box>
@@ -134,17 +144,31 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
           onClick={(e) => {
             handleClick(e);
             setChosenResource(val);
-            setSearchParams({tab: "resources"});
+            setSearchParams({ tab: "resources" });
           }}
-          sx={{marginTop: "20px"}}
+          sx={{ marginTop: "20px" }}
           badgeContent={computedElements?.length}
-          color="primary">
+          color="primary"
+        >
           <Box className={"resourceDisabled"}>{children}</Box>
         </Badge>
       )}
 
+      {/* <Badge
+        onClick={(e) => {
+          handleClick(e);
+          setChosenResource(val);
+          setSearchParams({ tab: "resources" });
+        }}
+        sx={{ marginTop: "20px", backgroundColor: "#fff !important" }}
+        badgeContent={computedElements?.length}
+        color="primary"
+      >
+        <Box className={"resourceDisabled"}>{children}</Box>
+      </Badge> */}
+
       <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
-        <Box sx={{minWidth: "140px"}}>
+        <Box sx={{ minWidth: "140px" }}>
           {computedElements?.map((el) => (
             <Box
               key={el?.id}
@@ -166,7 +190,8 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
                   background: "#efefef",
                 },
                 cursor: "pointer",
-              }}>
+              }}
+            >
               {getElementIcon(chosenResource?.icon)}
               <p>{el?.name ?? el?.settings?.postgres?.connection_name}</p>
             </Box>
@@ -183,9 +208,10 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
               display: "flex",
               alignItems: "center",
               gap: "5px",
-            }}>
+            }}
+          >
             <AddIcon />
-            <p>Add resource</p>
+            <p>Add {val?.label}</p>
           </Box>
         </Box>
       </Menu>

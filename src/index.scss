@@ -290,6 +290,9 @@ div {
 
 .ql-editor {
   min-height: 100px;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 .PlatformModal,
@@ -610,9 +613,12 @@ div {
 
 #react_quill {
   .ql-editor {
-    min-width: 300px;
+    width: 300px;
     height: 200px;
     overflow: auto;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
   }
 }
 
@@ -1260,4 +1266,52 @@ div:has(.chakra-tooltip) {
   color: #344054;
   font-weight: 500;
   cursor: pointer;
+}
+
+.accordionIcon {
+  &:hover {
+    background: #37352f0f;
+    border-radius: 6px;
+  }
+}
+
+.childMenuIcon {
+  display: block;
+  height: 20px;
+  max-width: 20px;
+  min-width: 0px;
+}
+.childMenuFolderArrow {
+  display: none;
+  height: 20px;
+  width: 20px;
+
+  &:hover {
+    background: #37352f0f;
+    border-radius: 6px;
+  }
+}
+
+.childMenuFolderArrowChild {
+  display: block;
+  height: 20px;
+  width: 20px;
+  margin-right: 3px;
+
+  &:hover {
+    background: #37352f0f;
+    border-radius: 6px;
+  }
+}
+
+.childMenuFolderBtn {
+  &:hover {
+    .childMenuFolderArrow {
+      display: block;
+    }
+
+    .childMenuIcon {
+      display: none;
+    }
+  }
 }

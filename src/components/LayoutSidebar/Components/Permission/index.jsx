@@ -85,21 +85,25 @@ const Permissions = ({level = 1, menuStyle, setElement, projectSettingLan}) => {
 
   return (
     <Box sx={{margin: "0 5px"}}>
-      <div className="parent-block column-drag-handle" style={menuStyle}>
+      <div className="parent-block column-drag-handle">
         <Button
           id="permissin_btn"
           style={{borderRadius: "8px", color: "#475467", height: "32px"}}
-          className="nav-element highlight-on-hover"
+          className="nav-element childMenuFolderBtn highlight-on-hover"
           onClick={(e) => {
             clickHandler(e);
           }}>
           <div className="label">
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
-            <IconGenerator icon={"lock.svg"} size={18} />
+            <div className="childMenuFolderArrow">
+              {childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              )}
+            </div>
+            <div className="childMenuIcon">
+              <IconGenerator icon={"lock.svg"} size={18} />
+            </div>
             {generateLangaugeText(
               projectSettingLan,
               i18n?.language,

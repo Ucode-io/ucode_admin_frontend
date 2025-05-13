@@ -14,7 +14,7 @@ import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import {MenuFolderArrows, NavigateByType} from "../Components/MenuSwitchCase";
-import activeStyles from "../Components/MenuUtils/activeStyles";
+
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
@@ -43,6 +43,7 @@ const RecursiveBlock = ({
   userType = false,
   buttonProps,
   projectSettingLan,
+  menuStyles,
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -87,6 +88,11 @@ const RecursiveBlock = ({
       },
     },
   });
+
+  const activeMenu =
+    element?.type === "FOLDER"
+      ? Boolean(selectedApp?.id === element?.id)
+      : element?.id === menuItem?.id;
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -169,7 +175,7 @@ const RecursiveBlock = ({
   };
 
   return (
-    <Draggable key={index}>
+    <Draggable style={{height: "32px"}} key={index}>
       <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
         <div
           className="parent-block column-drag-handle"
@@ -181,12 +187,15 @@ const RecursiveBlock = ({
               data-cy="three-dots-button"
               key={element.id}
               style={{
-                marginTop: "5px",
+                marginTop: "2px",
+                marginBottom: "2px",
                 borderRadius: "8px",
                 color: "#475767",
-                height: "32px",
+                height: "30px",
+                background: activeMenu ? "#F0F0EF" : menuStyles?.background,
+                color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
-              className={`nav-element highlight-on-hover ${buttonProps?.className ?? ""}`}
+              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -202,15 +211,49 @@ const RecursiveBlock = ({
                     }}
                   />
                 )}
-                {MenuFolderArrows({element, childBlockVisible})}
-                <IconGenerator
-                  icon={
-                    element?.icon ||
-                    element?.data?.microfrontend?.icon ||
-                    element?.data?.webpage?.icon
-                  }
-                  size={18}
-                />
+                {element?.type === "FOLDER" && (
+                  <div className="childMenuFolderArrowChild">
+                    {MenuFolderArrows({element, childBlockVisible})}
+                  </div>
+                )}
+
+                {element?.icon ||
+                element?.data?.microfrontend?.icon ||
+                element?.data?.webpage?.icon ? (
+                  <div
+                    style={{
+                      marginRight: "8px",
+                    }}
+                    className="childMenuIcon">
+                    <IconGenerator
+                      icon={
+                        element?.icon ||
+                        element?.data?.microfrontend?.icon ||
+                        element?.data?.webpage?.icon
+                      }
+                      size={18}
+                    />
+                  </div>
+                ) : element?.type !== "FOLDER" ? (
+                  <Box
+                    sx={{
+                      width: "12px",
+                      height: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    <Box
+                      sx={{
+                        width: "5px",
+                        height: "5px",
+                        background: "#787774",
+                        borderRadius: "50%",
+                      }}></Box>
+                  </Box>
+                ) : (
+                  ""
+                )}
 
                 <Box
                   sx={{
@@ -219,6 +262,7 @@ const RecursiveBlock = ({
                     alignItems: "center",
                     width: "100%",
                     position: "relative",
+                    color: "#465766",
                   }}>
                   <Box>
                     <p>{getMenuLabel(element)}</p>
@@ -254,26 +298,6 @@ const RecursiveBlock = ({
                           </Box>
                         </Tooltip>
                       )}
-
-                      {/* {addButtonPermission &&
-                        element?.data?.permission?.write && (
-                          <Tooltip title="Create folder" placement="top">
-                            <Box className="extra_icon">
-                              <AddIcon
-                                size={13}
-                                onClick={(e) => {
-                                  menuAddClick(e);
-                                }}
-                                style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
-                                }}
-                              />
-                            </Box>
-                          </Tooltip>
-                        )} */}
                     </Box>
                   )}
                 </Box>

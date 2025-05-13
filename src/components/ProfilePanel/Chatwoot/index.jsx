@@ -7,15 +7,15 @@ function Chatwoot({sidebarIsOpen}) {
   return (
     <Box
       sx={{
-        width: "100%",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "flex-start",
         gap: "10px",
-        padding: "0 5px",
+        width: "24px",
+        height: "24px",
       }}
       onClick={originalButtonFunction}>
-      <img width={22} height={22} src="/img/chatwoot.svg" alt="AI" />
+      <img width={22} height={22} src="/img/supportChat.svg" alt="AI" />
       <Box sx={{fontSize: "13px", fontWeight: 600}}>
         {sidebarIsOpen ? "Support" : ""}
       </Box>

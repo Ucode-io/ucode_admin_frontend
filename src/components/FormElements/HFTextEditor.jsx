@@ -1,12 +1,13 @@
-import React, { lazy, Suspense, useEffect, useRef } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import React, {lazy, Suspense, useEffect, useRef} from "react";
+import {Controller, useWatch} from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
 import "./reactQuill.scss";
-import { Quill } from "react-quill";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../store/alert/alert.thunk";
+import {Quill} from "react-quill";
+import {useDispatch} from "react-redux";
+import {showAlert} from "../../store/alert/alert.thunk";
+import DOMPurify from "dompurify";
 
 const ReactQuill = lazy(() => import("react-quill"));
 
@@ -81,11 +82,11 @@ const HFTextEditor = ({
   const modules = {
     toolbar: {
       container: [
-        [{ header: "1" }, { header: "2" }],
-        [{ list: "ordered" }, { list: "bullet" }],
+        [{header: "1"}, {header: "2"}],
+        [{list: "ordered"}, {list: "bullet"}],
         ["bold", "italic", "underline"],
-        [{ color: [] }],
-        ["link", "image", "video"],
+        [{color: []}],
+        ["link"],
         [
           {
             font: [
@@ -98,6 +99,7 @@ const HFTextEditor = ({
             ],
           },
         ],
+        ["clean"],
       ],
     },
   };
@@ -106,8 +108,7 @@ const HFTextEditor = ({
     <FRowMultiLine
       label={label}
       required={field?.required}
-      extraClassName={isNewTableView ? "tableView" : ""}
-    >
+      extraClassName={isNewTableView ? "tableView" : ""}>
       <Controller
         control={control}
         name={name}
@@ -115,35 +116,52 @@ const HFTextEditor = ({
           required: required ? "This is a required field" : false,
           ...rules,
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Suspense fallback={<RingLoaderWithWrapper />}>
-            <ReactQuill
-              ref={quillRef}
-              readOnly={disabled}
-              id={drawerDetail ? "drawerMultiLine" : "multilineField"}
-              theme="snow"
-              defaultValue={value}
-              // value={value || ""}
-              modules={modules}
-              onChange={(val) => {
-                if (val !== "<p><br></p>") {
-                  onChange(val);
-                  isNewTableView && updateObject();
-                }
-              }}
-              tabIndex={tabIndex}
-              autoFocus={false}
-              style={{
-                backgroundColor: isTransparent ? "transparent" : "",
-                minWidth: "200px",
-                width: "100%",
-                overflow: "hidden",
-                fontFamily: "sans-serif",
-                borderRadius: "12px",
-              }}
-            />
-          </Suspense>
-        )}
+        render={({field: {onChange, value}, fieldState: {error}}) => {
+          const computedVal = DOMPurify.sanitize(value, {
+            ALLOWED_TAGS: [
+              "p",
+              "strong",
+              "em",
+              "u",
+              "a",
+              "ul",
+              "ol",
+              "li",
+              "span",
+              "br",
+            ],
+            ALLOWED_ATTR: ["href", "style"],
+          });
+          return (
+            <Suspense fallback={<RingLoaderWithWrapper />}>
+              <ReactQuill
+                value={computedVal}
+                ref={quillRef}
+                readOnly={disabled}
+                id={drawerDetail ? "drawerMultiLine" : "multilineField"}
+                theme="snow"
+                defaultValue={computedVal}
+                modules={modules}
+                onChange={(val) => {
+                  if (val !== "<p><br></p>") {
+                    onChange(val);
+                    isNewTableView && updateObject();
+                  }
+                }}
+                tabIndex={tabIndex}
+                autoFocus={false}
+                style={{
+                  backgroundColor: isTransparent ? "transparent" : "",
+                  minWidth: "200px",
+                  maxWidth: "500px",
+                  overflow: "hidden",
+                  fontFamily: "sans-serif",
+                  borderRadius: "12px",
+                }}
+              />
+            </Suspense>
+          );
+        }}
       />
     </FRowMultiLine>
   );

@@ -177,7 +177,7 @@ $main-color: #0365f2;
       white-space: nowrap;
       display: flex;
       align-items: center;
-      column-gap: 8px;
+      // column-gap: 8px;
       color: #a8a8a8;
     }
 
@@ -189,7 +189,7 @@ $main-color: #0365f2;
       white-space: nowrap;
       display: flex;
       align-items: center;
-      column-gap: 8px;
+      // column-gap: 8px;
       color: #a8a8a8;
       justify-content: center;
     }
@@ -357,7 +357,7 @@ $main-color: #0365f2;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            column-gap: 8px;
+            // column-gap: 8px;
           }
 
           .icon_group {
@@ -508,4 +508,20 @@ $main-color: #0365f2;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.docsBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #f3f3f3;
+    border-radius: 6px;
+  }
 }

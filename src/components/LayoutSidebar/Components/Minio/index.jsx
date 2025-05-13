@@ -11,7 +11,7 @@ import {store} from "../../../../store";
 import {useSearchParams} from "react-router-dom";
 import menuService from "../../../../services/menuService";
 
-const MinioPage = () => {
+const MinioPage = ({modal = false}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -87,6 +87,7 @@ const MinioPage = () => {
           size={size}
         />
         <MinioFiles
+          modal={modal}
           minios={minios}
           setSelectedCards={setSelectedCards}
           selectedCards={selectedCards}

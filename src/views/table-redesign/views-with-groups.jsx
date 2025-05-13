@@ -684,6 +684,11 @@ export const NewUiViewsWithGroups = ({
                     color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                     width={18}
                     height={18}
+                    fill={
+                      view.type === "WEBSITE" || view.type === "TREE"
+                        ? "#475467"
+                        : "none"
+                    }
                   />
                 }
                 fontSize={13}

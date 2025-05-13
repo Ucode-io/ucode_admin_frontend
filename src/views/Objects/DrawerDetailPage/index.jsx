@@ -473,14 +473,12 @@ function DrawerDetailPage({
                         <>
                           <Button
                             onClick={() =>
-                              navigate(
-                                `/main/${appId}/layout-settings/${tableSlug}/${itemId}`,
-                                {
-                                  state: {
-                                    ...selectedRow,
-                                  },
-                                }
-                              )
+                              navigate(`/${menuId}/customize/${id}`, {
+                                state: {
+                                  ...rowData,
+                                  tableSlug,
+                                },
+                              })
                             }
                             w={18}
                             h={18}

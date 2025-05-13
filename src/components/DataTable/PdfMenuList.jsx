@@ -2,14 +2,13 @@ import {MenuItem} from "@mui/material";
 import React from "react";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 
-export default function PdfMenuList({row, handleClose}) {
-  const {appId, tableSlug} = useParams();
+export default function PdfMenuList({row, handleClose, projectId}) {
+  const {tableSlug, menuId} = useParams();
   const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
   const userId = useSelector((state) => state.auth.userId);
-  const navigate = useNavigate();
 
   const navigateToDocumentEditPage = (template, e) => {
     const state = {
@@ -20,7 +19,7 @@ export default function PdfMenuList({row, handleClose}) {
     };
 
     handleClose(e);
-    navigate(`/main/${appId}/object/${tableSlug}`, {state});
+    navigate(`/main/${menuId}/object/${tableSlug}`, {state});
   };
 
   const {

@@ -23,9 +23,9 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getListV2(chosenField.table_slug, {
+      return constructorObjectService.getListV2(chosenField?.table_slug, {
         data: {
-          view_fields: field?.view_fields?.map((field) => field.slug),
+          view_fields: field?.view_fields?.map((field) => field?.slug),
           search: debouncedValue,
           limit: 10,
           additional_ids: filters[name],

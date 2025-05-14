@@ -49,6 +49,7 @@ export default function FieldCreateModal({
   reset,
   fieldData,
   handleOpenFieldDrawer,
+  visibleColumns,
 }) {
   const format = useWatch({
     control,
@@ -58,7 +59,7 @@ export default function FieldCreateModal({
     control,
   });
 
-  const [fields, setFields] = useState([]);
+  const [fields, setFields] = useState(visibleColumns ?? []);
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);

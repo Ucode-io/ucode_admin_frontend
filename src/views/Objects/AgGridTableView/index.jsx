@@ -604,7 +604,6 @@ function AgGridTableView(props) {
         action: (action) => {
           setColumnId(action?.column?.colDef?.columnID);
           handleOpenModal();
-          // deleteField(action?.column?.colDef?.columnID);
         },
         icon: <DeleteIcon />,
       },

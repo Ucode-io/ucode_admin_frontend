@@ -9,6 +9,11 @@ const HFNumberFieldCell = (props) => {
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
+
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
+
   return (
     <Box
       sx={{
@@ -21,7 +26,7 @@ const HFNumberFieldCell = (props) => {
         },
       }}>
       <NumericFormat
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
         size="small"
         thousandsGroupStyle="thousand"
         thousandSeparator=" "
@@ -34,7 +39,7 @@ const HFNumberFieldCell = (props) => {
         }}
         className="custom_number_field"
       />
-      {field?.attributes?.disabled && (
+      {disabled && (
         <Box sx={{position: "absolute", right: "14px", top: "6px"}}>
           <img src="/table-icons/lock.svg" alt="lock" />
         </Box>

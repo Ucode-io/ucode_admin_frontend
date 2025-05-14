@@ -719,10 +719,11 @@ const FieldButton = ({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  mainForm,
 }) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const { control, watch, setValue, reset, handleSubmit } = useForm({
     defaultValues: {
@@ -953,6 +954,7 @@ const FieldButton = ({
           setFieldOptionAnchor={setFieldOptionAnchor}
           reset={reset}
           menuItem={menuItem}
+          mainForm={mainForm}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
         />

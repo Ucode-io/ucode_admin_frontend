@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const useBoardSubGroupProps = ({
   viewUpdateMutation,
@@ -6,6 +7,8 @@ export const useBoardSubGroupProps = ({
   fieldsMap,
 }) => {
   const [search, setSearch] = useState("");
+
+  const { i18n } = useTranslation();
 
   const handleUpdateSubGroup = (type, checked) => {
     viewUpdateMutation.mutate({
@@ -31,5 +34,6 @@ export const useBoardSubGroupProps = ({
     search,
     setSearch,
     renderFields,
+    i18n,
   };
 };

@@ -19,7 +19,7 @@ export const SubGroup = ({
   fieldsMap,
   viewUpdateMutation,
 }) => {
-  const { handleUpdateSubGroup, search, setSearch, renderFields } =
+  const { handleUpdateSubGroup, search, setSearch, renderFields, i18n } =
     useBoardSubGroupProps({
       viewUpdateMutation,
       view,
@@ -60,7 +60,9 @@ export const SubGroup = ({
                       getColumnIcon({
                         column: { type: fieldsMap[item]?.type },
                       })}
-                    {fieldsMap[item]?.attributes?.field_permission?.label}
+                    {fieldsMap[item]?.attributes?.[
+                      "label_" + (i18n.language || "en")
+                    ] || fieldsMap[item]?.label}
                   </span>
                   <Switch
                     ml="auto"

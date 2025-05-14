@@ -383,7 +383,25 @@ const BoardColumn = ({
                   onClick={() => navigateToEditPage(el)}
                 >
                   {viewFields.map((field) => (
-                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                    <BoardPhotoGenerator
+                      key={field.id}
+                      field={field}
+                      el={el}
+                      imgProps={{
+                        style: {
+                          height: "200px",
+                          width: "100%",
+                          objectFit: "cover",
+                        },
+                        width: "260",
+                        height: "200",
+                      }}
+                      style={{
+                        overflow: "hidden",
+                        borderTopLeftRadius: "10px",
+                        borderTopRightRadius: "10px",
+                      }}
+                    />
                   ))}
                   {viewFields.map((field) => (
                     <BoardCardRowGenerator
@@ -394,6 +412,8 @@ const BoardColumn = ({
                       fieldsMap={fieldsMap}
                       slug={selectedGroupField?.slug}
                       columnIndex={columnIndex}
+                      showFieldLabel
+                      hintPosition={columnIndex === 0 ? "top" : "left"}
                     />
                   ))}
                 </div>

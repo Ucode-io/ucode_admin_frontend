@@ -7,6 +7,7 @@ import styles from "./style.module.scss";
 import {Box} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import { getColumnIcon } from "../../../views/table-redesign/icons";
+import clsx from "clsx";
 
 const BoardCardRowGenerator = ({
   field,
@@ -16,6 +17,8 @@ const BoardCardRowGenerator = ({
   slug,
   columnIndex,
   view,
+  showFieldLabel,
+  hintPosition = "",
 }) => {
   let statusTypeOptions = [];
   if (isStatus) {
@@ -38,14 +41,7 @@ const BoardCardRowGenerator = ({
 
     case "LOOKUP":
       return (
-        <Box
-          sx={{
-            padding: "8px 8px 0",
-            display: "flex",
-            alignItems: "center",
-            columnGap: "8px",
-          }}
-        >
+        <Box className={styles.rowWrapper}>
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
           </span>
@@ -55,12 +51,17 @@ const BoardCardRowGenerator = ({
               {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
             </Box>
           </Box>
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
+          )}
         </Box>
       );
 
     case "MULTISELECT":
       return (
-        <div key={field.id} className={styles.row}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
           </span>
@@ -73,12 +74,17 @@ const BoardCardRowGenerator = ({
             columnIndex={columnIndex}
             view={view}
           />
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
+          )}
         </div>
       );
 
     case "STATUS":
       return (
-        <div key={field.id} className={styles.row}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           {/* <div className={styles.label}>{field.label}:</div> */}
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
@@ -94,12 +100,17 @@ const BoardCardRowGenerator = ({
             columnIndex={columnIndex}
             view={view}
           />
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
+          )}
         </div>
       );
 
     case "DATE":
       return (
-        <div key={field.id} className={styles.row}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           {/* <div className={styles.label}>{field.label}:</div> */}
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
@@ -107,12 +118,17 @@ const BoardCardRowGenerator = ({
           <div className={styles.value}>
             {value ? format(new Date(value), "dd.MM.yyyy") : "---"}
           </div>
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.label}
+            </span>
+          )}
         </div>
       );
 
     case "DATE_TIME":
       return (
-        <div key={field.id} className={styles.row}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
           </span>
@@ -120,17 +136,27 @@ const BoardCardRowGenerator = ({
           <div className={styles.value}>
             {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"}
           </div>
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.label}
+            </span>
+          )}
         </div>
       );
 
     default:
       return (
-        <div key={field.id} className={styles.row}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           {/* <div className={styles.label}>{field.label}:</div> */}
           <span style={{ width: "16px", height: "16px", flexShrink: "0" }}>
             {getColumnIcon({ column: field })}
           </span>
           <div className={styles.value}>{value}</div>
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.label}
+            </span>
+          )}
         </div>
       );
   }

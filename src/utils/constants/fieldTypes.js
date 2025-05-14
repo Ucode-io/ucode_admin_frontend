@@ -572,11 +572,19 @@ export const newFieldTypes = [
     icon: "square-caret-down.svg",
   },
   {
-    label: "Formula",
-    label_ru: "Формула",
-    label_en: "Formula",
-    label_uz: "Formula",
+    label: "Formula frontend",
+    label_ru: "Формула frontend",
+    label_en: "Formula frontend",
+    label_uz: "Formula frontend",
     value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    label_ru: "Формула backend",
+    label_en: "Formula backend",
+    label_uz: "Formula backend",
+    value: "FORMULA",
     icon: "plus-minus.svg",
   },
   {
@@ -757,9 +765,14 @@ export const fieldFormats = [
     icon: "square-caret-down.svg",
   },
   {
-    label: "Formula",
+    label: "Formula frontend",
     value: "FORMULA_FRONTEND",
     icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    value: "FORMULA",
+    icon: "square-root-variable.svg",
   },
   {
     label: "Relation",

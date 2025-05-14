@@ -84,14 +84,14 @@ const MultiselectCellColoredElement = ({
           )}
 
           {tag.label ?? tag.value}
-          <span
-            className={clsx(cls.cellColoredElementLabelPopup, {
+          {/* <span
+            className={clsx(cls.cellColoredElementLabelPopup, hintPosition, {
               [cls.fromLeft]: columnIndex === 0,
               [cls.fromBottom]: view?.type === "TIMELINE",
             })}
           >
             {field?.label}
-          </span>
+          </span> */}
         </div>
       ))}
     </div>

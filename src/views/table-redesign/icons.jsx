@@ -17,6 +17,7 @@ const icons = {
   SWITCH: <img src="/table-icons/switch.svg" alt="Switch" />,
   CHECKBOX: <img src="/table-icons/checkbox.svg" alt="Checkbox" />,
   FORMULA_FRONTEND: <img src="/table-icons/formula.svg" alt="Formula" />,
+  FORMULA: <img src="/table-icons/formula.svg" alt="Formula" />,
   LOOKUP: <img src="/table-icons/lookup.svg" alt="Lookup" />,
   RELATION: <img src="/table-icons/lookup.svg" alt="Lookup" />,
   FILE: <img src="/table-icons/file.svg" alt="File" />,

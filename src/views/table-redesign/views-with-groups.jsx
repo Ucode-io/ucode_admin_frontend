@@ -723,6 +723,11 @@ export const NewUiViewsWithGroups = ({
                     color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                     width={18}
                     height={18}
+                    fill={
+                      view.type === "WEBSITE" || view.type === "TREE"
+                        ? "#475467"
+                        : "none"
+                    }
                   />
                 }
                 fontSize={13}
@@ -942,6 +947,7 @@ export const NewUiViewsWithGroups = ({
                   queryClient={queryClient}
                   settingsForm={settingsForm}
                   views={views}
+                  fieldsMapRel={fieldsMapRel}
                 />
               </>
             )}
@@ -1631,6 +1637,7 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
+  fieldsMapRel,
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
@@ -1934,8 +1941,11 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
-                    "Layout"}
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Table settings"
+                  ) || "Table settings"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>
@@ -2086,7 +2096,9 @@ const ViewOptions = ({
                       {Boolean(tabGroupColumnsCount) && (
                         <ViewOptionSubtitle>
                           {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                            ?.label || "None"}
+                            ?.attributes?.[
+                            "label_" + (i18n.language || "en")
+                          ] || "None"}
                         </ViewOptionSubtitle>
                       )}
                       <ChevronRightIcon fontSize={22} />
@@ -2224,6 +2236,7 @@ const ViewOptions = ({
             onBackClick={() => setOpenedMenu(null)}
             title={"Sub Group"}
             viewUpdateMutation={viewUpdateMutation}
+            fieldsMapRel={fieldsMapRel}
           />
         )}
 

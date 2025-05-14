@@ -401,7 +401,7 @@ function DrawerDetailPage({
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
-  console.log("datadatadatadata", data);
+
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
       <Tabs selectedIndex={selectedTabIndex}>

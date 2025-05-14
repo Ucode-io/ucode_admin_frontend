@@ -256,10 +256,14 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
+        const key =
+          subGroupField?.type === "LOOKUP"
+            ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
+            : item?.[subGroupFieldSlug];
         setSubBoardData((prev) => {
           return {
             ...prev,
-            [item?.[subGroupFieldSlug]]: [
+            [key]: [
               ...data?.filter((el) => {
                 if (Array.isArray(el?.[subGroupFieldSlug])) {
                   return (
@@ -324,6 +328,8 @@ const BoardView = ({
 
   const [groupCounts, setGroupCounts] = useState({});
 
+  const [isOnTop, setIsOnTop] = useState(false);
+
   useEffect(() => {
     setGroupCounts(statusGroupCounts);
   }, [data, subBoardData, statusGroupCounts]);
@@ -335,6 +341,11 @@ const BoardView = ({
 
     const onScroll = () => {
       // el.style.top = `${board.scrollTop}px`;
+      if (board.scrollTop > 0) {
+        setIsOnTop(true);
+      } else {
+        setIsOnTop(false);
+      }
       el.style.transform = `translateY(${board.scrollTop}px)`;
     };
 
@@ -344,6 +355,8 @@ const BoardView = ({
       board.removeEventListener("scroll", onScroll);
     };
   }, [boardRef.current, fixedElement.current]);
+
+  console.log({ subBoardData });
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -383,7 +396,13 @@ const BoardView = ({
           </div> */}
           {/* )} */}
 
-          <div className={styles.boardHeader} ref={fixedElement}>
+          <div
+            className={styles.boardHeader}
+            ref={fixedElement}
+            style={{
+              boxShadow: isOnTop ? "rgba(0, 0, 0, 0.1) 0px 0px 2px 0px" : "",
+            }}
+          >
             <Container
               lockAxis="x"
               onDrop={onDrop}

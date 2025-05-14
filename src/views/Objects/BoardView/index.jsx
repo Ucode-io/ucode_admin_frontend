@@ -256,10 +256,14 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
+        const key =
+          subGroupField?.type === "LOOKUP"
+            ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
+            : item?.[subGroupFieldSlug];
         setSubBoardData((prev) => {
           return {
             ...prev,
-            [item?.[subGroupFieldSlug]]: [
+            [key]: [
               ...data?.filter((el) => {
                 if (Array.isArray(el?.[subGroupFieldSlug])) {
                   return (
@@ -351,6 +355,8 @@ const BoardView = ({
       board.removeEventListener("scroll", onScroll);
     };
   }, [boardRef.current, fixedElement.current]);
+
+  console.log({ subBoardData });
 
   return (
     <div className={styles.container} ref={boardRef}>

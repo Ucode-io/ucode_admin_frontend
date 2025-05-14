@@ -41,15 +41,7 @@ const BoardCardRowGenerator = ({
 
     case "LOOKUP":
       return (
-        <Box
-          className={styles.rowWrapper}
-          sx={{
-            padding: "8px 8px 0",
-            display: "flex",
-            alignItems: "center",
-            columnGap: "8px",
-          }}
-        >
+        <Box className={styles.rowWrapper}>
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
           </span>
@@ -60,14 +52,16 @@ const BoardCardRowGenerator = ({
             </Box>
           </Box>
           {showFieldLabel && (
-            <span className={styles.rowHint}>{field?.label}</span>
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
           )}
         </Box>
       );
 
     case "MULTISELECT":
       return (
-        <div key={field.id} className={clsx(styles.row)}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
           </span>
@@ -80,12 +74,17 @@ const BoardCardRowGenerator = ({
             columnIndex={columnIndex}
             view={view}
           />
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
+          )}
         </div>
       );
 
     case "STATUS":
       return (
-        <div key={field.id} className={clsx(styles.row)}>
+        <div key={field.id} className={clsx(styles.row, styles.rowWrapper)}>
           {/* <div className={styles.label}>{field.label}:</div> */}
           <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
@@ -101,6 +100,11 @@ const BoardCardRowGenerator = ({
             columnIndex={columnIndex}
             view={view}
           />
+          {showFieldLabel && (
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
+          )}
         </div>
       );
 
@@ -115,7 +119,9 @@ const BoardCardRowGenerator = ({
             {value ? format(new Date(value), "dd.MM.yyyy") : "---"}
           </div>
           {showFieldLabel && (
-            <span className={styles.rowHint}>{field?.label}</span>
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.label}
+            </span>
           )}
         </div>
       );
@@ -131,7 +137,9 @@ const BoardCardRowGenerator = ({
             {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"}
           </div>
           {showFieldLabel && (
-            <span className={styles.rowHint}>{field?.label}</span>
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
+              {field?.label}
+            </span>
           )}
         </div>
       );

@@ -413,7 +413,7 @@ const BoardColumn = ({
                       slug={selectedGroupField?.slug}
                       columnIndex={columnIndex}
                       showFieldLabel
-                      hintPosition="left"
+                      hintPosition={columnIndex === 0 ? "top" : "left"}
                     />
                   ))}
                 </div>

@@ -1,6 +1,6 @@
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import style from "./style.module.scss";
-import {Box, Button} from "@mui/material";
+import {Box, Button, Drawer} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import AggridFooter from "./AggridFooter";
 import {useParams} from "react-router-dom";
@@ -55,9 +55,26 @@ import NewModalDetailPage from "../../../components/NewModalDetailPage";
 import DrawerDetailPage from "../DrawerDetailPage";
 import layoutService from "../../../services/layoutService";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import useTabRouter from "../../../hooks/useTabRouter";
 import useDebounce from "../../../hooks/useDebounce";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteColumnModal from "./DeleteColumnModal";
+import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
+import {useFieldArray, useForm} from "react-hook-form";
+import constructorFieldService, {
+  useFieldCreateMutation,
+  useFieldUpdateMutation,
+} from "../../../services/constructorFieldService";
+import {
+  useRelationFieldUpdateMutation,
+  useRelationsCreateMutation,
+} from "../../../services/relationService";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import constructorRelationService from "../../../services/constructorRelationService";
+import {transliterate} from "../../../utils/textTranslater";
+import {showAlert} from "../../../store/alert/alert.thunk";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -88,6 +105,7 @@ function AgGridTableView(props) {
   const {
     open,
     view,
+    mainForm,
     menuItem,
     fieldsMap,
     searchText,
@@ -96,16 +114,20 @@ function AgGridTableView(props) {
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
-
     computedVisibleFields,
     setOpen = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
+    getRelationFields = () => {},
   } = props;
   const gridApi = useRef(null);
+  const dispatch = useDispatch();
   const pinFieldsRef = useRef({});
+  const queryClient = useQueryClient();
+  const {navigateToForm} = useTabRouter();
   const {tableSlug, appId} = useParams();
   const {i18n, t} = useTranslation();
+  const [columnId, setColumnId] = useState();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -113,12 +135,20 @@ function AgGridTableView(props) {
   const [loading, setLoading] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
+  const [drawerStateField, setDrawerStateField] = useState(null);
+  const [drawerState, setDrawerState] = useState(null);
+  const [fieldData, setFieldData] = useState(null);
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
       ? "SidePeek"
       : localStorage?.getItem("detailPage")
   );
-  const {navigateToForm} = useTabRouter();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const languages = useSelector((state) => state.languages.list);
+  const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
+  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -137,6 +167,14 @@ function AgGridTableView(props) {
     detectStringType(searchText) === "number"
       ? parseInt(searchText)
       : searchText;
+
+  const handleOpenFieldDrawer = (column) => {
+    if (column?.attributes?.relation_data) {
+      setDrawerStateField(column);
+    } else {
+      setDrawerState(column);
+    }
+  };
 
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
@@ -335,6 +373,9 @@ function AgGridTableView(props) {
       ];
     }
   }, [fiedlsarray, view?.columns]);
+
+  const handleOpenModal = () => setOpenDeleteModal(true);
+  const handleCloseModal = () => setOpenDeleteModal(false);
 
   function addRow(data) {
     setLoading(true);
@@ -559,6 +600,160 @@ function AgGridTableView(props) {
     isWarningActive,
   ]);
 
+  const getMainMenuItems = (params) => {
+    const defaultItems = params.defaultItems;
+
+    return [
+      {
+        name: "<span>Edit</span>",
+        action: (action) => {
+          setFieldCreateAnchor(true);
+          setFieldData(action.column?.colDef?.fieldObj);
+        },
+        icon: <DeleteIcon />,
+      },
+      ...defaultItems,
+      {
+        name: '<span style="color: #FE4842;">Delete field</span>',
+        action: (action) => {
+          setColumnId(action?.column?.colDef?.columnID);
+          handleOpenModal();
+        },
+        icon: <DeleteIcon />,
+      },
+    ];
+  };
+
+  useEffect(() => {
+    if (fieldData) {
+      reset({
+        ...fieldData,
+        attributes: {
+          ...fieldData.attributes,
+          format: fieldData?.type,
+        },
+      });
+    } else {
+      reset({
+        attributes: {
+          math: {label: "plus", value: "+"},
+        },
+      });
+    }
+  }, [fieldData]);
+
+  const {mutate: createField} = useFieldCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful created", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: updateField} = useFieldUpdateMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: createRelation} = useRelationsCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const onSubmit = (values) => {
+    const data = {
+      ...values,
+      slug: slug,
+      table_id: menuItem?.table_id,
+      label: slug,
+      index: "string",
+      required: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+      attributes: {
+        ...values.attributes,
+        formula: values?.attributes?.advanced_type
+          ? values?.attributes?.formula
+          : values?.attributes?.from_formula +
+            " " +
+            values?.attributes?.math?.value +
+            " " +
+            values?.attributes?.to_formula,
+      },
+    };
+
+    const relationData = {
+      ...values,
+      attributes: {
+        ...values.attributes,
+        label: values?.table_to?.split("/")?.[0],
+        ...Object.fromEntries(
+          languages.map((lang) => [
+            `label_${lang.slug}`,
+            values?.table_to?.split("/")?.[0],
+          ])
+        ),
+        ...Object.fromEntries(
+          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
+        ),
+      },
+      table_to: values?.table_to?.split("/")?.[1],
+      relation_table_slug: tableSlug,
+      label: values?.table_from,
+      type: values?.relation_type,
+      required: false,
+      multiple_insert: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+    };
+
+    if (!fieldData) {
+      if (values?.type !== "RELATION") {
+        createField({data, tableSlug});
+      }
+      if (values?.type === "RELATION") {
+        createRelation({data: relationData, tableSlug});
+      }
+    }
+    if (fieldData) {
+      if (values?.view_fields) {
+        updateRelation({data: values, tableSlug});
+      } else {
+        updateField({data, tableSlug});
+      }
+    }
+  };
+
+  const {update} = useFieldArray({
+    control: mainForm.control,
+    name: "fields",
+    keyName: "key",
+  });
+
   return (
     <Box
       sx={{
@@ -627,6 +822,7 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
+                  getMainMenuItems={getMainMenuItems}
                   suppressColumnVirtualisation={true}
                   treeData={view?.attributes?.treeData}
                   suppressColumnMoveAnimation={true}
@@ -662,6 +858,32 @@ function AgGridTableView(props) {
         createChild={createChild}
         selectedRows={selectedRows}
         updateTreeData={updateTreeData}
+      />
+
+      <DeleteColumnModal
+        view={view}
+        columnId={columnId}
+        tableSlug={tableSlug}
+        handleCloseModal={handleCloseModal}
+        openDeleteModal={openDeleteModal}
+      />
+
+      <FieldCreateModal
+        // tableLan={tableLan}
+        anchorEl={fieldCreateAnchor}
+        setAnchorEl={setFieldCreateAnchor}
+        watch={watch}
+        control={control}
+        setValue={setValue}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        // target={target}
+        fields={visibleColumns}
+        setFieldOptionAnchor={setFieldOptionAnchor}
+        reset={reset}
+        menuItem={menuItem}
+        fieldData={fieldData}
+        handleOpenFieldDrawer={handleOpenFieldDrawer}
       />
 
       {Boolean(open && projectInfo?.new_layout) &&
@@ -713,6 +935,39 @@ function AgGridTableView(props) {
           navigateToEditPage={navigateToDetailPage}
         />
       )}
+
+      <Drawer
+        open={drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal">
+        <FieldSettings
+          closeSettingsBlock={() => setDrawerState(null)}
+          isTableView={true}
+          onSubmit={(index, field) => update(index, field)}
+          field={drawerState}
+          formType={drawerState}
+          mainForm={mainForm}
+          selectedTabIndex={selectedTabIndex}
+          height={`calc(100vh - 48px)`}
+          getRelationFields={getRelationFields}
+          menuItem={menuItem}
+        />
+      </Drawer>
+
+      <Drawer
+        open={drawerStateField}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal">
+        <RelationSettings
+          relation={drawerStateField}
+          closeSettingsBlock={() => setDrawerStateField(null)}
+          getRelationFields={getRelationFields}
+          formType={drawerStateField}
+          height={`calc(100vh - 48px)`}
+        />
+      </Drawer>
     </Box>
   );
 }

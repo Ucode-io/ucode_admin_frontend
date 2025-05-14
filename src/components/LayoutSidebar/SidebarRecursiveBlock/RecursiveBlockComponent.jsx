@@ -176,7 +176,7 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: `0 0 0 ${8 * level}px`}} style={{marginBottom: 5}}>
+      <Box sx={{padding: `0 0 0 ${level * 12}px`}} style={{marginBottom: 5}}>
         <div
           className="parent-block column-drag-handle"
           key={element.id}

@@ -20,9 +20,10 @@ import ExternalDatabases from "./ExternalDatabases";
 import {useState} from "react";
 import {useQuery} from "react-query";
 import conectionDatabaseService from "../../../../services/connectionDatabaseService";
-// import ExternalDatabases from "../../../ExternalDatabases";
+import {useNavigate} from "react-router-dom";
 
-export const Models = () => {
+export const Models = ({onClose}) => {
+  const navigate = useNavigate();
   const {tables, loader, setSearchText, navigateToEditForm, deleteTable} =
     useModelsProps();
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -70,12 +71,23 @@ export const Models = () => {
     ?.filter((el) => !(el?.is_tracked || Boolean(el?.slug)))
     ?.map((el) => el.id);
 
+  const deleteMenuTable = (element) => {
+    deleteTable(element.id);
+
+    navigate("/reloadRelations", {
+      state: {
+        redirectUrl: "/main/c57eedc3-a954-4262-a0af-376c65b5a284",
+      },
+    });
+    onClose();
+  };
+
   return (
     <>
       <Tabs>
-        <TabList style={{ borderBottom: "none", marginBottom: "10px" }}>
-          <Tab style={{ padding: "10px" }}>Models</Tab>
-          <Tab style={{ padding: "10px" }}>ChartDB</Tab>
+        <TabList style={{borderBottom: "none", marginBottom: "10px"}}>
+          <Tab style={{padding: "10px"}}>Models</Tab>
+          <Tab style={{padding: "10px"}}>ChartDB</Tab>
           {/* <Tab style={{padding: "10px"}}>External Databases</Tab> */}
         </TabList>
         <TabPanel>
@@ -84,8 +96,7 @@ export const Models = () => {
               <Box
                 display={"flex"}
                 justifyContent="space-between"
-                alignItems={"center"}
-              >
+                alignItems={"center"}>
                 <span>Таблицы</span>
                 <Box display={"flex"} gap="10px">
                   <SearchInput
@@ -100,8 +111,7 @@ export const Models = () => {
                   <Button
                     variant="outlined"
                     onClick={() => trackConnection(notTrackedTablesIds)}
-                    disabled={!notTrackedTablesIds?.length}
-                  >
+                    disabled={!notTrackedTablesIds?.length}>
                     Track all
                   </Button>
                 </Box>
@@ -125,9 +135,8 @@ export const Models = () => {
                   {renderTables?.map((element, index) => (
                     <CTableRow key={element.id}>
                       <CTableCell
-                        style={{ textAlign: "center" }}
-                        className={cls.tBodyCell}
-                      >
+                        style={{textAlign: "center"}}
+                        className={cls.tBodyCell}>
                         {index + 1}
                       </CTableCell>
                       <CTableCell className={cls.tBodyCell}>
@@ -152,8 +161,7 @@ export const Models = () => {
                             element?.is_tracked || Boolean(element?.slug)
                               ? "contained"
                               : "outlined"
-                          }
-                        >
+                          }>
                           {loadingId === element.id ? (
                             <CircularProgress size={20} />
                           ) : element?.is_tracked ? (
@@ -165,14 +173,12 @@ export const Models = () => {
                       </CTableCell>
 
                       <CTableCell
-                        className={clsx(cls.tBodyCell, cls.tBodyAction)}
-                      >
+                        className={clsx(cls.tBodyCell, cls.tBodyAction)}>
                         <RectangleIconButton
                           id="delete_btn"
                           color="error"
                           size="small"
-                          onClick={() => deleteTable(element.id)}
-                        >
+                          onClick={() => deleteMenuTable(element)}>
                           <Delete color="error" />
                         </RectangleIconButton>
                       </CTableCell>
@@ -184,7 +190,7 @@ export const Models = () => {
           </div>
         </TabPanel>
         <TabPanel>
-          <Box sx={{ height: "585px" }}>
+          <Box sx={{height: "585px"}}>
             <ChartDb />
           </Box>
         </TabPanel>

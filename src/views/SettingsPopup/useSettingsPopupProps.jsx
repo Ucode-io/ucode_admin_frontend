@@ -350,7 +350,7 @@ export const useSettingsPopupProps = ({onClose}) => {
       activityLogsDetail: <ActivityLogsDetail />,
     },
     models: {
-      models: <Models />,
+      models: <Models onClose={onClose} />,
       connectionDetail: <AddConnectionDetail />,
     },
     functions: {

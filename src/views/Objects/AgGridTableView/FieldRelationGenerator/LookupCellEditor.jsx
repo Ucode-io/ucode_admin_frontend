@@ -51,6 +51,10 @@ const LookupCellEditor = (props) => {
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
   );
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
+
   const {tableSlug} = useParams();
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
@@ -109,7 +113,7 @@ const LookupCellEditor = (props) => {
           refetch();
         }}>
         {props.children}
-        {!field?.attributes?.disabled && (
+        {!disabled && (
           <Box
             sx={{position: "relative", zIndex: 99999}}
             onMouseDown={(e) => {
@@ -137,7 +141,6 @@ const LookupCellEditor = (props) => {
 
   return (
     <>
-      {" "}
       <Box
         sx={{
           position: "relative",
@@ -146,7 +149,7 @@ const LookupCellEditor = (props) => {
           overflow: "hidden",
         }}>
         <Select
-          disabled={field?.attributes?.disabled}
+          disabled={disabled}
           isClearable={true}
           placeholder="Select..."
           menuPortalTarget={document.body}

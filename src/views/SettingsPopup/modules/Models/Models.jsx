@@ -20,9 +20,10 @@ import ExternalDatabases from "./ExternalDatabases";
 import {useState} from "react";
 import {useQuery} from "react-query";
 import conectionDatabaseService from "../../../../services/connectionDatabaseService";
-// import ExternalDatabases from "../../../ExternalDatabases";
+import {useNavigate} from "react-router-dom";
 
-export const Models = () => {
+export const Models = ({onClose}) => {
+  const navigate = useNavigate();
   const {tables, loader, setSearchText, navigateToEditForm, deleteTable} =
     useModelsProps();
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -69,6 +70,17 @@ export const Models = () => {
   const notTrackedTablesIds = renderTables
     ?.filter((el) => !(el?.is_tracked || Boolean(el?.slug)))
     ?.map((el) => el.id);
+
+  const deleteMenuTable = (element) => {
+    deleteTable(element.id);
+
+    navigate("/reloadRelations", {
+      state: {
+        redirectUrl: "/main/c57eedc3-a954-4262-a0af-376c65b5a284",
+      },
+    });
+    onClose();
+  };
 
   return (
     <>
@@ -171,8 +183,12 @@ export const Models = () => {
                           id="delete_btn"
                           color="error"
                           size="small"
+<<<<<<< HEAD
                           onClick={() => deleteTable(element.id)}
                         >
+=======
+                          onClick={() => deleteMenuTable(element)}>
+>>>>>>> production_bugs
                           <Delete color="error" />
                         </RectangleIconButton>
                       </CTableCell>

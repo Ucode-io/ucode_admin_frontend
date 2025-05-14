@@ -81,8 +81,8 @@ const FieldSettings = ({
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
-    const index = fields.findIndex((el) => el.id === field.id);
 
+    const index = fields?.findIndex((el) => el.id === field.id);
     mainForm.setValue(`fields[${index}]`, field);
     onSubmit(index, field);
   };

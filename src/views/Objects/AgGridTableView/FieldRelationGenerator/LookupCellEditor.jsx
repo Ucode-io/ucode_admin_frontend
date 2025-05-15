@@ -72,7 +72,7 @@ const LookupCellEditor = (props) => {
     });
     return result;
   }, [data, autoFilters, field]);
-
+  console.log("autoFiltersValue", data, field);
   const {refetch} = useQuery(
     ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue],
     () => {
@@ -120,10 +120,6 @@ const LookupCellEditor = (props) => {
     setValue(selectedOption?.guid || null);
   };
 
-  useEffect(() => {
-    if (Object.keys(autoFiltersValue).length > 0) refetch();
-  }, [Object.keys(autoFiltersValue).length, value, field]);
-
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
@@ -158,7 +154,7 @@ const LookupCellEditor = (props) => {
       </div>
     </components.SingleValue>
   );
-
+  console.log("computedOptionscomputedOptions", autoFiltersValue, value);
   return (
     <>
       <Box

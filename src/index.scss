@@ -1314,3 +1314,23 @@ div:has(.chakra-tooltip) {
     }
   }
 }
+
+.childeMenu {
+  width: 20px;
+  height: 20px;
+  display: none !important;
+  background: #000;
+  &:hover {
+    .childeMenuArrow {
+      display: block;
+    }
+  }
+
+  .childeMenuArrow {
+    display: none;
+  }
+
+  .childeMenuGenIcon {
+    display: block;
+  }
+}

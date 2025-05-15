@@ -260,33 +260,37 @@ function AgGridTableView(props) {
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields?.map((item, index) => {
-          const columnDef = {
-            view,
-            flex: 1,
-            minWidth: 250,
-            editable: true,
-            enableRowGroup: true,
-            fieldObj: item,
-            field: item?.slug,
-            rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
-              ? true
-              : false,
-            cellClass:
-              item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
-            gridApi: gridApi,
-            columnID:
-              item?.type === "LOOKUP"
-                ? item?.relation_id
-                : item?.id || generateGUID(),
-            headerName:
-              item?.attributes?.[`label_${i18n?.language}`] || item?.label,
-            headerComponent: HeaderComponent,
-            pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
-          };
-          getColumnEditorParams(item, columnDef);
-          return columnDef;
-        }),
+        fiedlsarray: res?.data?.fields
+          ?.filter((el) => el?.attributes?.field_permission?.view_permission)
+          ?.map((item, index) => {
+            const columnDef = {
+              view,
+              flex: 1,
+              minWidth: 250,
+              editable: true,
+              enableRowGroup: true,
+              fieldObj: item,
+              field: item?.slug,
+              rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
+                ? true
+                : false,
+              cellClass:
+                item?.type === "LOOKUP"
+                  ? "customFieldsRelation"
+                  : "customFields",
+              gridApi: gridApi,
+              columnID:
+                item?.type === "LOOKUP"
+                  ? item?.relation_id
+                  : item?.id || generateGUID(),
+              headerName:
+                item?.attributes?.[`label_${i18n?.language}`] || item?.label,
+              headerComponent: HeaderComponent,
+              pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
+            };
+            getColumnEditorParams(item, columnDef);
+            return columnDef;
+          }),
       };
     },
   });

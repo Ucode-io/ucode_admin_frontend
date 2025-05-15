@@ -90,7 +90,7 @@ const LookupCellEditor = (props) => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
         data: {
-          view_fields: field?.view_fields?.map((f) => f.slug),
+          view_fields: field?.view_fields?.map((f) => f?.slug),
           limit: 10,
           offset: pageToOffset(page, 10),
           with_relations: false,

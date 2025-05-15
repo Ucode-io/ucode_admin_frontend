@@ -5,7 +5,7 @@ import styles from "./GeneratePdfFromTable.module.scss";
 import PdfMenuList from "./PdfMenuList";
 import MicroFrontPdf from "./MIcroFrontPdf";
 
-export default function GeneratePdfFromTable({row, view}) {
+export default function GeneratePdfFromTable({row, view, projectId}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -54,7 +54,12 @@ export default function GeneratePdfFromTable({row, view}) {
         }}>
         <Box sx={{width: "110px"}}>
           <PdfMenuList handleClose={handleClose} row={row} />
-          <MicroFrontPdf view={view} handleClose={handleClose} row={row} />
+          <MicroFrontPdf
+            projectId={projectId}
+            view={view}
+            handleClose={handleClose}
+            row={row}
+          />
         </Box>
       </Menu>
     </div>

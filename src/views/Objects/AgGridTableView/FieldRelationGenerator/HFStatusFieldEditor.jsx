@@ -10,6 +10,10 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
 
   const field = colDef?.fieldObj;
 
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
+
   return (
     <Box
       sx={{
@@ -24,7 +28,7 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
       {" "}
       <Box>
         <Select
-          disabled={field?.attributes?.disabled}
+          disabled={disabled}
           className={styles.statusSelect}
           sx={{
             width: "100%",
@@ -115,7 +119,7 @@ function HFStatusFieldEditor({value, setValue, colDef, data} = props) {
           ))}
         </Select>
       </Box>
-      {field?.attributes?.disabled && (
+      {disabled && (
         <Box
           sx={{
             position: "absolute",

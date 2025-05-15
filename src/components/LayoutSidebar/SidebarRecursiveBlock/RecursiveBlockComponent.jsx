@@ -195,65 +195,111 @@ const RecursiveBlock = ({
                 background: activeMenu ? "#F0F0EF" : menuStyles?.background,
                 color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
-              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
+              className={`nav-element `}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
               }}>
               <div className="label">
-                {element?.type === "USER" && (
-                  <PersonIcon
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? "#fff"
-                          : "rgb(45, 108, 229)",
-                    }}
-                  />
-                )}
-                {element?.type === "FOLDER" && (
-                  <div className="childMenuFolderArrowChild">
-                    {MenuFolderArrows({element, childBlockVisible})}
-                  </div>
-                )}
-
-                {element?.icon ||
-                element?.data?.microfrontend?.icon ||
-                element?.data?.webpage?.icon ? (
-                  <div
-                    style={{
-                      marginRight: "8px",
-                    }}
-                    className="childMenuIcon">
-                    <IconGenerator
-                      icon={
-                        element?.icon ||
-                        element?.data?.microfrontend?.icon ||
-                        element?.data?.webpage?.icon
-                      }
-                      size={18}
+                <Box className={`${element?.type === "FOLDER" ? "" : ""}`}>
+                  {element?.type === "USER" && (
+                    <PersonIcon
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? "#fff"
+                            : "rgb(45, 108, 229)",
+                      }}
                     />
-                  </div>
-                ) : element?.type !== "FOLDER" ? (
-                  <Box
-                    sx={{
-                      width: "12px",
-                      height: "12px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}>
+                  )}
+                  {element?.type === "FOLDER" && (
+                    <Box
+                      className="childeMenu"
+                      sx={{display: "flex", alignItems: "center"}}>
+                      <Box className="childeMenuArrow">
+                        {element?.type === "FOLDER" && (
+                          <div className="childMenuFolderArrowChild">
+                            {MenuFolderArrows({element, childBlockVisible})}
+                          </div>
+                        )}
+                      </Box>
+                      <Box className="childeMenuGenIcon">
+                        {element?.icon ? (
+                          <div
+                            style={{
+                              marginRight: "8px",
+                            }}
+                            className="childMenuIcon">
+                            <IconGenerator
+                              icon={
+                                element?.icon ||
+                                element?.data?.microfrontend?.icon ||
+                                element?.data?.webpage?.icon
+                              }
+                              size={18}
+                            />
+                          </div>
+                        ) : (
+                          <Box
+                            sx={{
+                              width: "12px",
+                              height: "12px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <Box
+                              sx={{
+                                width: "5px",
+                                height: "5px",
+                                background: "#787774",
+                                borderRadius: "50%",
+                              }}></Box>
+                          </Box>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+
+                  {element?.icon ||
+                  element?.data?.microfrontend?.icon ||
+                  element?.data?.webpage?.icon ||
+                  element?.type !== "FOLDER" ? (
+                    <div
+                      style={{
+                        marginRight: "8px",
+                      }}
+                      className="childMenuIcon">
+                      <IconGenerator
+                        icon={
+                          element?.icon ||
+                          element?.data?.microfrontend?.icon ||
+                          element?.data?.webpage?.icon
+                        }
+                        size={18}
+                      />
+                    </div>
+                  ) : element?.type !== "FOLDER" ? (
                     <Box
                       sx={{
-                        width: "5px",
-                        height: "5px",
-                        background: "#787774",
-                        borderRadius: "50%",
-                      }}></Box>
-                  </Box>
-                ) : (
-                  ""
-                )}
+                        width: "12px",
+                        height: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}>
+                      <Box
+                        sx={{
+                          width: "5px",
+                          height: "5px",
+                          background: "#787774",
+                          borderRadius: "50%",
+                        }}></Box>
+                    </Box>
+                  ) : (
+                    ""
+                  )}
+                </Box>
 
                 <Box
                   sx={{
@@ -345,7 +391,7 @@ const RecursiveBlock = ({
               buttonProps={buttonProps}
             />
           ))}
-          dsadsdsa
+
           {element.id === folderIds.data_base_folder_id && (
             <>
               <TableSettingSidebar

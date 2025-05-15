@@ -195,7 +195,7 @@ const RecursiveBlock = ({
                 background: activeMenu ? "#F0F0EF" : menuStyles?.background,
                 color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
-              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
+              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -337,7 +337,27 @@ const RecursiveBlock = ({
         </div>
 
         <Collapse in={childBlockVisible} unmountOnExit>
-          {child?.map((childElement) => "ddasdas")}
+          {child?.map((childElement) => (
+            <RecursiveBlock
+              customFunc={customFunc}
+              key={childElement.id}
+              level={level + 1}
+              element={childElement}
+              openFolderCreateModal={openFolderCreateModal}
+              environment={environment}
+              setFolderModalType={setFolderModalType}
+              sidebarIsOpen={sidebarIsOpen}
+              setTableModal={setTableModal}
+              handleOpenNotify={handleOpenNotify}
+              setElement={setElement}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              index={index}
+              selectedApp={selectedApp}
+              buttonProps={buttonProps}
+            />
+          ))}
 
           {element.id === folderIds.data_base_folder_id && (
             <>

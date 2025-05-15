@@ -8,6 +8,11 @@ function PasswordCellEditor(props) {
   const {setValue, value, colDef, data} = props;
   const [showPassword, setShowPassword] = useState(false);
   const field = colDef?.fieldObj;
+
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -24,12 +29,13 @@ function PasswordCellEditor(props) {
   return (
     <>
       <TextField
+        disabled={disabled}
         value={value}
         type={getType()}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              {field?.attributes?.disabled ? (
+              {disabled ? (
                 <IconButton aria-label="toggle password visibility">
                   <img
                     src="/table-icons/lock.svg"

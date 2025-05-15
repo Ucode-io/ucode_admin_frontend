@@ -49,6 +49,10 @@ const HFAggridMultiselect = (props) => {
   const isMultiSelect =
     colDef?.cellEditorParams?.field.attributes?.is_multiselect;
 
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
+
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
@@ -73,7 +77,7 @@ const HFAggridMultiselect = (props) => {
         className="hf-select"
         onFormChange={setValue}
         required={field?.required}
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
         isMultiSelect={isMultiSelect}
         props={props}
         onNavigateToDetail={onNavigateToDetail}

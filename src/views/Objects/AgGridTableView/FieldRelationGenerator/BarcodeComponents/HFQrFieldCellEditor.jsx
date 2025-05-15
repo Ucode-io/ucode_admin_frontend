@@ -11,6 +11,7 @@ function HFQrFieldCellEditor({
   required,
   isTableView,
   handClick = () => {},
+  disabled = false,
 }) {
   return (
     <Controller
@@ -22,6 +23,7 @@ function HFQrFieldCellEditor({
       }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
+          disabled={disabled}
           size="small"
           value={value}
           onChange={(e) => {

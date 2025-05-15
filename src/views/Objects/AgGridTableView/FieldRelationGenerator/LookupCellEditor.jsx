@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useQuery} from "react-query";
 import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
@@ -54,6 +54,7 @@ const LookupCellEditor = (props) => {
   const disabled =
     field?.attributes?.disabled ||
     !field?.attributes?.field_permission?.edit_permission;
+  const autoFilters = field?.attributes?.auto_filters;
 
   const {tableSlug} = useParams();
   const {navigateToForm} = useTabRouter();
@@ -61,8 +62,19 @@ const LookupCellEditor = (props) => {
   const menuId = searchParams.get("menuId");
   const [inputValue, setInputValue] = useState(null);
 
+  const autoFiltersValue = useMemo(() => {
+    const result = {};
+    autoFilters?.forEach((filter) => {
+      const fromValue = data?.[filter.field_from];
+      if (filter.field_to && fromValue !== undefined) {
+        result[filter.field_to] = fromValue;
+      }
+    });
+    return result;
+  }, [data, autoFilters, field]);
+
   const {refetch} = useQuery(
-    ["GET_OBJECT_LIST", field?.table_slug],
+    ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
@@ -71,6 +83,7 @@ const LookupCellEditor = (props) => {
           limit: 10,
           offset: 0,
           with_relations: false,
+          ...autoFiltersValue,
         },
       });
     },
@@ -78,10 +91,13 @@ const LookupCellEditor = (props) => {
       enabled: false,
       select: (res) => res?.data?.response ?? [],
       onSuccess: (fetchedOptions) => {
-        setOptions((prevOptions) => [
-          ...(prevOptions ?? []),
-          ...(fetchedOptions ?? []),
-        ]);
+        if (Object.keys(autoFiltersValue).length > 0) {
+          setOptions(fetchedOptions);
+        } else
+          setOptions((prevOptions) => [
+            ...(prevOptions ?? []),
+            ...(fetchedOptions ?? []),
+          ]);
       },
     }
   );
@@ -103,6 +119,10 @@ const LookupCellEditor = (props) => {
     setLocalValue(selectedOption);
     setValue(selectedOption?.guid || null);
   };
+
+  useEffect(() => {
+    if (Object.keys(autoFiltersValue).length > 0) refetch();
+  }, [Object.keys(autoFiltersValue).length, value, field]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>

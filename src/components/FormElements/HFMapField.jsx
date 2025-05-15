@@ -19,6 +19,7 @@ const HFMapField = ({
   field,
   width = "265px",
   height = "200px",
+  setValue = () => {},
   ...props
 }) => {
   const mapRef = useRef();
@@ -28,13 +29,17 @@ const HFMapField = ({
   });
 
   useEffect(() => {
+    setValue(name, `${selectedCoordinates.lat},${selectedCoordinates.long}`);
+  }, [selectedCoordinates]);
+
+  useEffect(() => {
     const handleGeolocationError = (error) => {
       console.error("Error getting current location:", error);
     };
 
     const handleGeolocationSuccess = (position) => {
-      const {latitude, longitude} = position.coords;
-      setSelectedCoordinates({lat: latitude, long: longitude});
+      const { latitude, longitude } = position.coords;
+      setSelectedCoordinates({ lat: latitude, long: longitude });
     };
 
     const getCurrentLocation = () => {
@@ -60,7 +65,7 @@ const HFMapField = ({
         required: required ? "This is a required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         let lat = value ? value.split(",")[0] : selectedCoordinates.lat;
         let long = value ? value.split(",")[1] : selectedCoordinates.long;
         if (!lat && !long) {
@@ -73,18 +78,19 @@ const HFMapField = ({
         }
 
         const handleClick = (clickedLat, clickedLng) => {
-          setSelectedCoordinates({lat: clickedLat, long: clickedLng});
+          setSelectedCoordinates({ lat: clickedLat, long: clickedLng });
           onChange(`${clickedLat},${clickedLng}`);
           isNewTableView && updateObject();
         };
 
         return (
-          <Box sx={{width: width, overflow: "hidden", position: "relative"}}>
+          <Box sx={{ width: width, overflow: "hidden", position: "relative" }}>
             <YMaps
               query={{
                 load: "package.full",
                 apikey: "5e5a73bd-6e0a-40f1-ba8e-f0b98d95e75f",
-              }}>
+              }}
+            >
               <Map
                 id={`map_${name}`}
                 style={{
@@ -100,18 +106,20 @@ const HFMapField = ({
                 onClick={(e) => {
                   const [clickedLat, clickedLng] = e.get("coords");
                   handleClick(clickedLat, clickedLng);
-                  setSelectedCoordinates({lat: clickedLat, long: clickedLng});
+                  setSelectedCoordinates({ lat: clickedLat, long: clickedLng });
                 }}
                 options={{
                   suppressMapOpenBlock: true,
-                }}>
+                }}
+              >
                 <Placemark geometry={[lat, long]} />
               </Map>
             </YMaps>
             <a
               href={generateLink(lat, long)}
               target="_blank"
-              rel="noopener noreferrer">
+              rel="noopener noreferrer"
+            >
               Open in Yandex Maps
             </a>
           </Box>

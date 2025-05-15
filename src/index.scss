@@ -1316,6 +1316,12 @@ div:has(.chakra-tooltip) {
   }
 }
 
+.childRegularBtn {
+  &:hover {
+    background: #eaecf0 !important;
+  }
+}
+
 .childeMenu {
   width: 20px;
   height: 20px;

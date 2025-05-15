@@ -11,6 +11,7 @@ import {
   ColumnApiModule,
   DateEditorModule,
   NumberEditorModule,
+  RenderApiModule,
   TextEditorModule,
   UndoRedoEditModule,
   ValidationModule,
@@ -94,6 +95,7 @@ ModuleRegistry.registerModules([
   CellStyleModule,
   DateEditorModule,
   UndoRedoEditModule,
+  RenderApiModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -229,7 +231,7 @@ function AgGridTableView(props) {
   );
 
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}],
+    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],

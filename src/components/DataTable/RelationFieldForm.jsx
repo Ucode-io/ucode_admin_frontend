@@ -95,28 +95,6 @@ export default function RelationFieldForm({
       <>
         <HFSelect
           disabledHelperText
-          options={tables}
-          name="table_to"
-          control={control}
-          fullWidth
-          required
-          placeholder="Table to"
-          className={style.input}
-          disabled={fieldWatch.relation_type === "Recursive"}
-        />
-        <HFMultipleSelect
-          disabledHelperText
-          options={relatedTableFields}
-          name="view_fields"
-          control={control}
-          fullWidth
-          isClearable
-          required
-          placeholder="View fields"
-          className={style.input}
-        />
-        <HFSelect
-          disabledHelperText
           options={relationTyes
             .slice(0, 3)
             .map((option) => ({ label: option, value: option }))}
@@ -136,6 +114,29 @@ export default function RelationFieldForm({
             generateLangaugeText(lang, i18n?.language, "Relation type") ||
             "Relation type"
           }
+          className={style.input}
+        />
+        {fieldWatch.relation_type !== "Recursive" && (
+          <HFSelect
+            disabledHelperText
+            options={tables}
+            name="table_to"
+            control={control}
+            fullWidth
+            required
+            placeholder="Table to"
+            className={style.input}
+          />
+        )}
+        <HFMultipleSelect
+          disabledHelperText
+          options={relatedTableFields}
+          name="view_fields"
+          control={control}
+          fullWidth
+          isClearable
+          required
+          placeholder="View fields"
           className={style.input}
         />
       </>

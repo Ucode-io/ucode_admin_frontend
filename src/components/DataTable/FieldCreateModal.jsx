@@ -46,6 +46,25 @@ const formulaTypes = [
   { label: "Среднее", value: "AVG" },
 ];
 
+const formulaFormatOptions = [
+  {
+    label: "Formula frontend",
+    label_ru: "Формула frontend",
+    label_en: "Formula frontend",
+    label_uz: "Formula frontend",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    label_ru: "Формула backend",
+    label_en: "Formula backend",
+    label_uz: "Formula backend",
+    value: "FORMULA",
+    icon: "plus-minus.svg",
+  },
+];
+
 export default function FieldCreateModal({
   tableLan,
   anchorEl,
@@ -307,6 +326,7 @@ export default function FieldCreateModal({
     setValue("relation_type", "");
     setValue("view_fields", "");
     setValue("table_to", "");
+    setValue("attributes.type", "");
 
     setAnchorEl(null);
     !fieldData && setValue("type", "");
@@ -540,11 +560,11 @@ export default function FieldCreateModal({
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
                         <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-around",
-                          }}
+                        // sx={{
+                        //   display: "flex",
+                        //   alignItems: "center",
+                        //   justifyContent: "space-around",
+                        // }}
                         >
                           <FRow
                             label={`Option ${index + 1}`}
@@ -567,6 +587,12 @@ export default function FieldCreateModal({
                               required
                               placeholder="Type..."
                               className={style.input}
+                              customOnChange={(e) => {
+                                setValue(
+                                  `attributes.options.${index}.value`,
+                                  e.target.value
+                                );
+                              }}
                               endAdornment={
                                 <Box className={style.adornment}>
                                   <p onClick={(e) => handleOpenColor(e, index)}>
@@ -583,7 +609,7 @@ export default function FieldCreateModal({
                               }
                             />
                           </FRow>
-                          <FRow
+                          {/* <FRow
                             label={`Value ${index + 1}`}
                             className={style.option}
                           >
@@ -603,7 +629,7 @@ export default function FieldCreateModal({
                                 </Box>
                               }
                             />
-                          </FRow>
+                          </FRow> */}
                         </Box>
                       </Box>
                       <Popover
@@ -667,13 +693,20 @@ export default function FieldCreateModal({
           {format === "FORMULA" && (
             <>
               <FRow label="Formula type">
+                <FRow label="Formula format">
+                  <HFSelect
+                    name="attributes.format"
+                    control={control}
+                    options={formulaFormatOptions}
+                    isClearable={false}
+                  />
+                </FRow>
                 <HFSelect
                   name="attributes.type"
                   control={control}
                   options={formulaTypes}
                 />
               </FRow>
-
               {(type === "SUMM" || type === "MAX" || type === "AVG") && (
                 <>
                   <FRow label="Table from">
@@ -728,6 +761,14 @@ export default function FieldCreateModal({
           )}
           {format === "FORMULA_FRONTEND" && (
             <>
+              <FRow label="Formula format">
+                <HFSelect
+                  name="attributes.format"
+                  control={control}
+                  options={formulaFormatOptions}
+                  isClearable={false}
+                />
+              </FRow>
               {watch("attributes.advanced_type") ? (
                 <>
                   <Box className={style.formula}>

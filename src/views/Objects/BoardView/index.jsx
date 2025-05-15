@@ -226,12 +226,11 @@ const BoardView = ({
 
   useEffect(() => {
     const updatedTabs = view?.attributes?.tabs;
-    setBoardTab(updatedTabs);
-    // if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
-    //   setBoardTab(updatedTabs);
-    // } else {
-    //   setBoardTab(tabs);
-    // }
+    if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
+      setBoardTab(updatedTabs);
+    } else {
+      setBoardTab(tabs);
+    }
   }, [tabs, view, selectedTabIndex]);
 
   const computedColumnsFor = useMemo(() => {
@@ -356,7 +355,7 @@ const BoardView = ({
     };
   }, [boardRef.current, fixedElement.current]);
 
-  console.log({ subBoardData });
+  console.log({ boardTab });
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -442,7 +441,7 @@ const BoardView = ({
               height: isFilterOpen
                 ? "calc(100vh - 121px)"
                 : "calc(100vh - 91px)",
-              paddingTop: "48px",
+              paddingTop: "50px",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"

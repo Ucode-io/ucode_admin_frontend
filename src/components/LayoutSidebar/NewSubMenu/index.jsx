@@ -8,6 +8,7 @@ import menuService, {useMenuListQuery} from "../../../services/menuService";
 import {Box, Skeleton} from "@mui/material";
 import {Container} from "react-smooth-dnd";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
+import Permissions from "../Components/Permission";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -191,6 +192,16 @@ function NewSubMenu({
                           buttonProps={{className: "highlight-on-hover"}}
                         />
                       )
+                    )}
+                    {element?.id === adminId && (
+                      <Permissions
+                        projectSettingLan={projectSettingLan}
+                        menuStyle={{
+                          ...menuStyles,
+                          background: "#fff",
+                        }}
+                        setElement={setElement}
+                      />
                     )}
                   </Container>
                 ) : (

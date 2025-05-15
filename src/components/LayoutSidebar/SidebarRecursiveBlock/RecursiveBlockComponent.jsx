@@ -345,6 +345,7 @@ const RecursiveBlock = ({
               buttonProps={buttonProps}
             />
           ))}
+          dsadsdsa
           {element.id === folderIds.data_base_folder_id && (
             <>
               <TableSettingSidebar
@@ -355,7 +356,6 @@ const RecursiveBlock = ({
               />
             </>
           )}
-
           {element.id === folderIds.code_folder_id && (
             <>
               <FunctionSidebar

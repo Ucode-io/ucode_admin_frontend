@@ -2,16 +2,16 @@ import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
 
-import {useRelationGetByIdQuery} from "../../services/relationService";
-import {applyDrag} from "../../utils/applyDrag";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
   FormatOptionType,
   FormatTypes,
@@ -21,7 +21,7 @@ import {
   math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import {colorList} from "../ColorPicker/colorList";
+import { colorList } from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -180,8 +180,6 @@ export default function FieldCreateModal({
     name: "attributes.table_from",
   });
 
-  console.log({ fieldData });
-
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);
@@ -231,6 +229,17 @@ export default function FieldCreateModal({
   const open = Boolean(anchorEl);
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
+
+  const { control: formulaControl, watch: formulaWatch } = useForm({
+    defaultValues: {
+      formulaFormat: "FORMULA_FRONTEND",
+    },
+  });
+
+  const formulaFormat = useWatch({
+    control: formulaControl,
+    name: "formulaFormat",
+  });
 
   const onDrop = (dropResult) => {
     const result = applyDrag(watch("attributes.options"), dropResult);
@@ -401,6 +410,32 @@ export default function FieldCreateModal({
     }
   }, [watch("type")]);
 
+  useEffect(() => {
+    if (formulaFormat !== "FORMULA") {
+      setValue("attributes.type", null);
+      setValue("attributes.table_from", null);
+      setValue("attributes.sum_field", null);
+      setValue("attributes.number_of_rounds", null);
+    } else {
+      setValue("attributes.advanced_type", null);
+      setValue("attributes.from_formula", null);
+      setValue("attributes.to_formula", null);
+    }
+  }, [formulaFormat]);
+
+  const innerOnsubmit = (data) => {
+    const innerData = {
+      ...data,
+      attributes: {
+        ...data?.attributes,
+        format: formulaFormat,
+      },
+      type: formulaFormat,
+    };
+
+    onSubmit(innerData);
+  };
+
   return (
     <Popover
       anchorReference="anchorPosition"
@@ -429,7 +464,12 @@ export default function FieldCreateModal({
             "ADD COLUMN"}
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
+        <form
+          onSubmit={handleSubmit(
+            format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+          )}
+          className={style.form}
+        >
           <Box
             className={style.field}
             style={{
@@ -690,17 +730,17 @@ export default function FieldCreateModal({
               </Box>
             )}
           </div>
-          {format === "FORMULA" && (
+          {formulaFormat === "FORMULA" && (
             <>
+              <FRow label="Formula format">
+                <HFSelect
+                  name="formulaFormat"
+                  control={formulaControl}
+                  options={formulaFormatOptions}
+                  isClearable={false}
+                />
+              </FRow>
               <FRow label="Formula type">
-                <FRow label="Formula format">
-                  <HFSelect
-                    name="attributes.format"
-                    control={control}
-                    options={formulaFormatOptions}
-                    isClearable={false}
-                  />
-                </FRow>
                 <HFSelect
                   name="attributes.type"
                   control={control}
@@ -759,12 +799,12 @@ export default function FieldCreateModal({
             </>
             // <FormulaAttributes control={control} mainForm={{ control }} />
           )}
-          {format === "FORMULA_FRONTEND" && (
+          {formulaFormat === "FORMULA_FRONTEND" && (
             <>
               <FRow label="Formula format">
                 <HFSelect
-                  name="attributes.format"
-                  control={control}
+                  name="formulaFormat"
+                  control={formulaControl}
                   options={formulaFormatOptions}
                   isClearable={false}
                 />

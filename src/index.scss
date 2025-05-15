@@ -1305,6 +1305,7 @@ div:has(.chakra-tooltip) {
 
 .childMenuFolderBtn {
   &:hover {
+    background: #eaecf0 !important;
     .childMenuFolderArrow {
       display: block;
     }

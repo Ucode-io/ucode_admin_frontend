@@ -32,7 +32,7 @@ const errorHandler = (error, hooks) => {
     error?.response?.data?.data ===
       "rpc error: code = Unavailable desc = User not access environment"
   ) {
-    store.dispatch(authActions.logout());
+    // store.dispatch(authActions.logout());
   } else if (error?.response?.status === 401) {
     const refreshToken = store.getState().auth.refreshToken;
 

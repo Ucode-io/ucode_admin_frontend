@@ -95,13 +95,14 @@ const ViewTabSelector = ({
 
   return (
     <>
-      <div className={style.selector} style={{minWidth: "fit-content"}}>
+      <div className={style.selector} style={{ minWidth: "fit-content" }}>
         <div className={style.leftSide}>
           <div className={style.button}>
             <Button
-              style={{height: "100%"}}
-              onClick={() => navigate(`/main/${menuItem?.parent_id}`)}>
-              <ArrowBackIcon style={{color: "#000"}} />
+              style={{ height: "100%" }}
+              onClick={() => navigate(`/main/${menuItem?.parent_id}`)}
+            >
+              <ArrowBackIcon style={{ color: "#000" }} />
             </Button>
           </div>
 
@@ -117,10 +118,11 @@ const ViewTabSelector = ({
           <Container
             lockAxis="x"
             onDrop={onDrop}
-            dropPlaceholder={{className: "drag-row-drop-preview"}}
-            style={{display: "flex", alignItems: "center"}}
+            dropPlaceholder={{ className: "drag-row-drop-preview" }}
+            style={{ display: "flex", alignItems: "center" }}
             getChildPayload={(i) => views[i]}
-            orientation="horizontal">
+            orientation="horizontal"
+          >
             {views.map((view, index) => (
               <Draggable key={view.id}>
                 <div
@@ -134,7 +136,8 @@ const ViewTabSelector = ({
 
                     setSelectedTabIndex(index);
                   }}
-                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
+                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}
+                >
                   {view.type === "TABLE" && (
                     <TableChart className={style.icon} />
                   )}
@@ -201,9 +204,10 @@ const ViewTabSelector = ({
             className={style.element}
             aria-describedby={id}
             variant="contained"
-            onClick={handleClick}>
-            <AddIcon className={style.icon} style={{color: "#000"}} />
-            <strong style={{color: "#000"}}>{t("add")}</strong>
+            onClick={handleClick}
+          >
+            <AddIcon className={style.icon} style={{ color: "#000" }} />
+            <strong style={{ color: "#000" }}>{t("add")}</strong>
           </div>
         </PermissionWrapperV2>
 
@@ -215,7 +219,8 @@ const ViewTabSelector = ({
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
-          }}>
+          }}
+        >
           <ViewTypeList
             views={views}
             computedViewTypes={computedViewTypes}
@@ -230,7 +235,8 @@ const ViewTabSelector = ({
       <Modal
         className={style.modal}
         open={settingsModalVisible}
-        onClose={closeModal}>
+        onClose={closeModal}
+      >
         <ViewSettings
           closeModal={closeModal}
           defaultViewTab={defaultViewTab}

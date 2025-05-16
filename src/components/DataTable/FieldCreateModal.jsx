@@ -730,8 +730,8 @@ export default function FieldCreateModal({
               </Box>
             )}
           </div>
-          {formulaFormat === "FORMULA" && (
-            <>
+          {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
+            <Box padding="5px">
               <FRow label="Formula format">
                 <HFSelect
                   name="formulaFormat"
@@ -796,152 +796,153 @@ export default function FieldCreateModal({
                   </div>
                 </>
               )}
-            </>
+            </Box>
             // <FormulaAttributes control={control} mainForm={{ control }} />
           )}
-          {formulaFormat === "FORMULA_FRONTEND" && (
-            <>
-              <FRow label="Formula format">
-                <HFSelect
-                  name="formulaFormat"
-                  control={formulaControl}
-                  options={formulaFormatOptions}
-                  isClearable={false}
-                />
-              </FRow>
-              {watch("attributes.advanced_type") ? (
-                <>
+          {formulaFormat === "FORMULA_FRONTEND" &&
+            format.startsWith("FORMULA") && (
+              <Box padding="5px">
+                <FRow label="Formula format">
+                  <HFSelect
+                    name="formulaFormat"
+                    control={formulaControl}
+                    options={formulaFormatOptions}
+                    isClearable={false}
+                  />
+                </FRow>
+                {watch("attributes.advanced_type") ? (
+                  <>
+                    <Box className={style.formula}>
+                      <HFTextArea
+                        className={style.input}
+                        disabledHelperText
+                        name="attributes.formula"
+                        control={control}
+                        fullWidth
+                        id="formula_textarea"
+                        required
+                        placeholder={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Formula"
+                          ) || "Formula"
+                        }
+                      />
+                    </Box>
+                    <h2>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Fields list"
+                      ) || "Fields list"}
+                      :
+                    </h2>
+                    {fields.map((field) => (
+                      <div>
+                        {field.label} - <strong>{field.value}</strong>{" "}
+                      </div>
+                    ))}
+                  </>
+                ) : (
                   <Box className={style.formula}>
-                    <HFTextArea
+                    <HFSelect
                       className={style.input}
                       disabledHelperText
-                      name="attributes.formula"
+                      options={fields}
+                      name="attributes.from_formula"
                       control={control}
                       fullWidth
-                      id="formula_textarea"
+                      id="variable"
                       required
                       placeholder={
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Formula"
-                        ) || "Formula"
+                          "Select variable"
+                        ) || "Select variable"
                       }
                     />
+
+                    <span
+                      id={`math_plus`}
+                      className={`math_${mathType?.label}`}
+                      onClick={(e) => setMathEl(e.currentTarget)}
+                    >
+                      {mathType?.value}
+                    </span>
+                    <HFSelect
+                      className={style.input}
+                      disabledHelperText
+                      options={fields}
+                      id="variable_second"
+                      name="attributes.to_formula"
+                      control={control}
+                      fullWidth
+                      required
+                      placeholder={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Select variable"
+                        ) || "Select variable"
+                      }
+                    />
+
+                    <Menu
+                      open={openMath}
+                      onClose={handleCloseMath}
+                      anchorEl={mathEl}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                    >
+                      <Box className="math">
+                        {math.map((item) => {
+                          return (
+                            <span
+                              id={`math_${item?.label}`}
+                              className={`math_${item?.label}`}
+                              onClick={() => {
+                                setValue("attributes.math", item);
+                                setMathEl(null);
+                              }}
+                            >
+                              {item?.value}
+                            </span>
+                          );
+                        })}
+                      </Box>
+                    </Menu>
                   </Box>
-                  <h2>
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Fields list"
-                    ) || "Fields list"}
-                    :
-                  </h2>
-                  {fields.map((field) => (
-                    <div>
-                      {field.label} - <strong>{field.value}</strong>{" "}
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <Box className={style.formula}>
-                  <HFSelect
-                    className={style.input}
-                    disabledHelperText
-                    options={fields}
-                    name="attributes.from_formula"
-                    control={control}
-                    fullWidth
-                    id="variable"
-                    required
-                    placeholder={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Select variable"
-                      ) || "Select variable"
-                    }
-                  />
+                )}
 
-                  <span
-                    id={`math_plus`}
-                    className={`math_${mathType?.label}`}
-                    onClick={(e) => setMathEl(e.currentTarget)}
-                  >
-                    {mathType?.value}
-                  </span>
-                  <HFSelect
-                    className={style.input}
-                    disabledHelperText
-                    options={fields}
-                    id="variable_second"
-                    name="attributes.to_formula"
+                <Box
+                  mt={1}
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    columnGap: "5px",
+                  }}
+                >
+                  <HFSwitch
+                    id="advanced_switch"
                     control={control}
-                    fullWidth
-                    required
-                    placeholder={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Select variable"
-                      ) || "Select variable"
-                    }
+                    name="attributes.advanced_type"
                   />
-
-                  <Menu
-                    open={openMath}
-                    onClose={handleCloseMath}
-                    anchorEl={mathEl}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                  >
-                    <Box className="math">
-                      {math.map((item) => {
-                        return (
-                          <span
-                            id={`math_${item?.label}`}
-                            className={`math_${item?.label}`}
-                            onClick={() => {
-                              setValue("attributes.math", item);
-                              setMathEl(null);
-                            }}
-                          >
-                            {item?.value}
-                          </span>
-                        );
-                      })}
-                    </Box>
-                  </Menu>
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced Editor"
+                  ) || "Advanced Editor"}
                 </Box>
-              )}
-
-              <Box
-                mt={1}
-                style={{
-                  display: "flex",
-                  alignItems: "baseline",
-                  columnGap: "5px",
-                }}
-              >
-                <HFSwitch
-                  id="advanced_switch"
-                  control={control}
-                  name="attributes.advanced_type"
-                />
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Advanced Editor"
-                ) || "Advanced Editor"}
               </Box>
-            </>
-          )}
+            )}
           {format === "RELATION" && !fieldData ? (
             <RelationFieldForm
               control={control}

@@ -263,7 +263,7 @@ const BoardColumn = ({
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  const hasColor = tab?.color || field?.attributes?.has_color;
+  // const hasColor = tab?.color || field?.attributes?.has_color;
   const color =
     tab?.color ||
     field?.attributes?.options?.find((item) => item?.value === tab?.value)

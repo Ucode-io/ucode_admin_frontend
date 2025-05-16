@@ -279,6 +279,7 @@ function DrawerDetailPage({
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
         setBtnLoader(false);
+        refetch();
       });
   };
   const create = (data) => {

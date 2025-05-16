@@ -27,7 +27,6 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
 import HFModalMap from "../../../../components/FormElements/HFModalMap";
 import PolygonFieldTable from "../../../../components/ElementGenerators/PolygonFieldTable";
 import HFIconPicker from "./hf-iconPicker";
@@ -75,6 +74,16 @@ function DrawerFieldGenerator({
     return field?.slug;
   }, [field?.slug, activeLang, field]);
 
+  const defaultValue = useMemo(() => {
+    if (
+      field?.type === "DATE" ||
+      field?.type === "DATE_TIME" ||
+      field?.type === "DATE_TIME_WITHOUT_TIME_ZONE"
+    ) {
+      return field?.attributes?.defaultValue === "now()" ? new Date() : null;
+    }
+  }, [field.type, field.id, field.relation_type]);
+
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
       return (
@@ -99,6 +108,7 @@ function DrawerFieldGenerator({
     case "DATE":
       return (
         <HFDatePickerField
+          defaultValue={defaultValue}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -110,6 +120,7 @@ function DrawerFieldGenerator({
     case "DATE_TIME":
       return (
         <HFDateTimePickerField
+          defaultValue={defaultValue}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -120,6 +131,7 @@ function DrawerFieldGenerator({
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return (
         <HFDateDatePickerWithoutTimeZoneTableField
+          defaultValue={defaultValue}
           disabled={isDisabled}
           field={field}
           control={control}

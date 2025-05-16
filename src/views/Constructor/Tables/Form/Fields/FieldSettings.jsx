@@ -210,6 +210,7 @@ const FieldSettings = ({
       ...values,
       attributes: {
         ...values?.attributes,
+        enable_multilanguage: values?.enable_multilanguage,
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };

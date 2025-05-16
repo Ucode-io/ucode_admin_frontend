@@ -29,6 +29,7 @@ import {
 import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
 import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
 import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
+import HFButtonFieldEditor from "./FieldRelationGenerator/HFButtonFieldEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -278,6 +279,13 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "QR":
       columnDef.cellRenderer = HFQrFieldComponentCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "BUTTON":
+      columnDef.cellRenderer = HFButtonFieldEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

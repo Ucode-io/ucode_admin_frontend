@@ -35,7 +35,7 @@ const customStyles = {
     ...provided,
     margin: 0,
     padding: 0,
-    height: "100%",
+    height: "30px",
     outline: "none",
   }),
   placeholder: (provided) => ({
@@ -145,7 +145,7 @@ const LookupCellEditor = (props) => {
         {props.children}
         {!disabled && (
           <Box
-            sx={{position: "relative", zIndex: 99999}}
+            sx={{position: "relative", zIndex: 99999, height: "22px"}}
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -160,7 +160,6 @@ const LookupCellEditor = (props) => {
                 marginLeft: "5px",
                 fontWeight: "700",
                 cursor: "pointer",
-                marginTop: "6px",
               }}
             />
           </Box>

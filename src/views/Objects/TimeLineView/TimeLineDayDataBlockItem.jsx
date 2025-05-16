@@ -84,7 +84,7 @@ export default function TimeLineDayDataBlockItem({
           }
 
           return false;
-        })
+        }) + 1
       : null;
   }, [datesList, calendar_from_slug, data]);
 
@@ -271,6 +271,7 @@ export default function TimeLineDayDataBlockItem({
         width / (zoomPosition * (selectedType === "month" ? 20 : 30))
       ),
     ];
+    console.log({ data, newDatePosition });
     const computedData = {
       ...data,
       [calendar_from_slug]: newDatePosition[0],
@@ -306,7 +307,6 @@ export default function TimeLineDayDataBlockItem({
   };
 
   const onDragEnd = ({ lastEvent }) => {
-    console.log({ lastEvent });
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onDragEndToUpdate1(lastEvent, lastEvent.width);
@@ -379,7 +379,6 @@ export default function TimeLineDayDataBlockItem({
   const { setHoveredRowId } = useTimelineBlockContext();
 
   const handleMouseEnter1 = () => {
-    console.log(data?.guid);
     setHoveredRowId(data?.guid);
     if (selectedType === "month") {
       setFocusedDays([

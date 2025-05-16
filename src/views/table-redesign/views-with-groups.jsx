@@ -2244,7 +2244,7 @@ const ViewOptions = ({
             onBackClick={() => setOpenedMenu(null)}
           />
         )}
-        {openedMenu === "timeline-settings" && (
+        {/* {openedMenu === "timeline-settings" && (
           <TimelineSettings
             control={settingsForm.control}
             computedColumns={computedColumns}
@@ -2255,8 +2255,8 @@ const ViewOptions = ({
               "Settings"
             }
           />
-        )}
-        {openedMenu === "calendar-settings" && (
+        )} */}
+        {/* {openedMenu === "calendar-settings" && (
           <CalendarSettings
             columns={visibleColumns}
             onBackClick={() => setOpenedMenu(null)}
@@ -2269,7 +2269,7 @@ const ViewOptions = ({
               "Settings"
             }
           />
-        )}
+        )} */}
       </PopoverContent>
     </Popover>
   );

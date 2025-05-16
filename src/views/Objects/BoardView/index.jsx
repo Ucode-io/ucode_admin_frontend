@@ -342,10 +342,11 @@ const BoardView = ({
       // el.style.top = `${board.scrollTop}px`;
       if (board.scrollTop > 0) {
         setIsOnTop(true);
+        el.style.transform = `translateY(${board.scrollTop}px)`;
       } else {
         setIsOnTop(false);
+        el.style.transform = "none";
       }
-      el.style.transform = `translateY(${board.scrollTop}px)`;
     };
 
     board.addEventListener("scroll", onScroll);
@@ -354,8 +355,6 @@ const BoardView = ({
       board.removeEventListener("scroll", onScroll);
     };
   }, [boardRef.current, fixedElement.current]);
-
-  console.log({ boardTab });
 
   return (
     <div className={styles.container} ref={boardRef}>

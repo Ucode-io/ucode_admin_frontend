@@ -4,7 +4,6 @@ import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
 import {getColumnIcon} from "../../table-redesign/icons";
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
-
 import {Flex, Text} from "@chakra-ui/react";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";

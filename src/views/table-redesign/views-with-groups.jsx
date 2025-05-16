@@ -443,17 +443,21 @@ export const NewUiViewsWithGroups = ({
   };
 
   const navigateCreatePage = () => {
+    console.log("enteredddddddddd function");
     if (projectInfo?.new_layout) {
+      console.log("enteredddddddddd new UI");
       if (view?.attributes?.url_object) {
         navigate(view?.attributes?.url_object);
       }
       setOpen(true);
       setSelectedRow(null);
     } else {
+      console.log("enteredddddddddd new Layout else");
       if (layoutType === "PopupLayout") {
         setOpen(true);
         setSelectedRow(null);
       } else {
+        console.log("enteredddddddddd create");
         navigateToForm(
           tableSlug,
           "CREATE",
@@ -997,6 +1001,7 @@ export const NewUiViewsWithGroups = ({
                       <MaterialUIProvider>
                         {" "}
                         <AgGridTableView
+                          navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
                           searchText={searchText}
@@ -1100,6 +1105,7 @@ export const NewUiViewsWithGroups = ({
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
                           <AgGridTableView
+                            navigateCreatePage={navigateCreatePage}
                             getRelationFields={getRelationFields}
                             mainForm={mainForm}
                             searchText={searchText}
@@ -1187,6 +1193,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
                           searchText={searchText}

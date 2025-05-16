@@ -63,7 +63,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteColumnModal from "./DeleteColumnModal";
 import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
 import {useFieldArray, useForm} from "react-hook-form";
-import constructorFieldService, {
+import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../services/constructorFieldService";
@@ -73,7 +73,6 @@ import {
 } from "../../../services/relationService";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import constructorRelationService from "../../../services/constructorRelationService";
 import {transliterate} from "../../../utils/textTranslater";
 import {showAlert} from "../../../store/alert/alert.thunk";
 
@@ -121,6 +120,7 @@ function AgGridTableView(props) {
     setLayoutType = () => {},
     navigateToEditPage = () => {},
     getRelationFields = () => {},
+    navigateCreatePage = () => {},
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
@@ -907,6 +907,7 @@ function AgGridTableView(props) {
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToDetailPage}
+          navigateCreatePage={navigateCreatePage}
         />
       ) : selectedViewType === "CenterPeek" ? (
         <NewModalDetailPage
@@ -923,6 +924,7 @@ function AgGridTableView(props) {
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToDetailPage}
+          navigateCreatePage={navigateCreatePage}
         />
       ) : null}
 

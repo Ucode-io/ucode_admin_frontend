@@ -423,7 +423,9 @@ const BoardView = ({
               {boardTab?.map((tab, tabIndex) => (
                 <Draggable key={tabIndex}>
                   <ColumnHeaderBlock
-                    field={tab}
+                    field={computedColumnsFor?.find(
+                      (field) => field?.slug === tab?.slug
+                    )}
                     tab={tab}
                     // computedData={computedData}
                     // boardRef={boardRef}
@@ -594,7 +596,7 @@ const BoardView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          // refetch={refetch}
+          refetch={refetch}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}

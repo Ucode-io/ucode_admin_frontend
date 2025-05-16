@@ -1,16 +1,18 @@
 .row {
-  display: inline-flex;
-  align-items: flex-start;
-  column-gap: 8px;
-  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background 0.2s ease-in-out;
 
-  &:first-child {
-    padding-top: 8px;
-  }
+  // &:first-child {
+  //   padding-top: 8px;
+  // }
 
-  &:last-child {
-    padding-bottom: 8px;
-  }
+  // &:last-child {
+  //   padding-bottom: 8px;
+  // }
 
   .label {
     font-weight: bold;
@@ -19,11 +21,19 @@
   .image {
     border-radius: 6px;
   }
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.coloredElement {
+  display: block !important;
+  min-width: auto !important;
 }
 
 .rowWrapper {
-  position: relative;
-  padding: 8px 8px 0;
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
   column-gap: 8px;
@@ -32,6 +42,7 @@
 .rowHint {
   display: none;
   position: absolute;
+  z-index: 10;
   bottom: 100%;
   left: 0;
   pointer-events: none;
@@ -49,7 +60,7 @@
   white-space: nowrap;
 }
 
-.rowWrapper:hover .rowHint {
+.rowWrapper:hover ~ .rowHint {
   display: block;
 }
 
@@ -78,4 +89,12 @@
   .label {
     font-weight: bold;
   }
+}
+
+.miniImage {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+  object-position: center;
 }

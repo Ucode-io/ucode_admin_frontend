@@ -38,6 +38,10 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
+          height:
+            view?.attributes?.group_by_columns?.length !== 0
+              ? "calc(100% - 63px)"
+              : "100%",
         }}
       >
         <div className={styles.days} id="timelineDays">

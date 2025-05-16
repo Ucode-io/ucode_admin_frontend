@@ -5,10 +5,10 @@ import {format, isValid, parse} from "date-fns";
 export const HFDatePickerField = ({
   control,
   name,
-  defaultValue = "",
   required,
   disabled,
   drawerDetail = false,
+  defaultValue = "",
 }) => {
   return (
     <Controller
@@ -18,13 +18,13 @@ export const HFDatePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={new Date()}
+      defaultValue={defaultValue}
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
             placeholder="Empty"
             id="dateField"
-            value={getValue(value) ?? new Date()}
+            value={getValue(value) ?? defaultValue}
             valueFormat="DD.MM.YYYY"
             rightSection={
               drawerDetail ? "" : <img src="/table-icons/date.svg" alt="" />
@@ -55,10 +55,10 @@ export const HFDatePickerField = ({
 export const HFDateTimePickerField = ({
   control,
   name,
-  defaultValue = "",
   required,
   disabled,
   drawerDetail = false,
+  defaultValue = "",
 }) => {
   return (
     <Controller
@@ -68,13 +68,13 @@ export const HFDateTimePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={new Date()}
+      defaultValue={defaultValue}
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
             placeholder="Empty"
             id="dateTimeField"
-            value={getValue(value) ?? new Date()}
+            value={getValue(value) ?? defaultValue}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={
               drawerDetail ? (
@@ -107,10 +107,10 @@ export const HFDateTimePickerField = ({
 export const HFDateDatePickerWithoutTimeZoneTableField = ({
   control,
   name,
-  defaultValue = "",
   required,
   disabled,
   drawerDetail = false,
+  defaultValue = "",
 }) => {
   return (
     <Controller
@@ -120,12 +120,12 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={new Date()}
+      defaultValue={defaultValue}
       render={({field: {onChange, value}}) => {
         return (
           <DateTimePicker
             id="dateTimeZoneField"
-            value={value ? getNoTimezoneValue(value) : new Date()}
+            value={value ? getNoTimezoneValue(value) : defaultValue}
             valueFormat="DD.MM.YYYY HH:mm"
             rightSection={
               drawerDetail ? (

@@ -139,7 +139,11 @@ function DrawerFormDetailPage({
         return allFields.push(field);
       });
     });
-    return !!allFields.find((field) => field?.enable_multilanguage === true);
+    return !!allFields.find((field) =>
+      field?.enable_multilanguage
+        ? field?.enable_multilanguage
+        : field?.attributes?.enable_multilanguage === true
+    );
   }, [selectedTab]);
 
   useEffect(() => {

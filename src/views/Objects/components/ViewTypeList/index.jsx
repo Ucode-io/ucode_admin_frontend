@@ -27,15 +27,11 @@ const viewIcons = {
   BOARD: "rows.svg",
   GRID: "grid.svg",
   TIMELINE: "line-chart-up.svg",
-  WEBSITE: "global.svg",
+  WEBSITE: "globe.svg",
   TREE: "tree.svg",
 };
 
-export default function ViewTypeList({
-  computedViewTypes,
-  views,
-  handleClose,
-}) {
+export default function ViewTypeList({ computedViewTypes, views, handleClose, fieldsMap }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const { i18n } = useTranslation();
@@ -44,9 +40,7 @@ export default function ViewTypeList({
   const { control, watch, setError, clearErrors } = useForm({});
   const [error] = useState(false);
 
-  const isWithTimeView = ["TIMELINE", "CALENDAR", "BOARD"].includes(
-    selectedViewTab
-  );
+  const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
 
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
@@ -152,6 +146,10 @@ export default function ViewTypeList({
   }, [appId, selectedViewTab, tableSlug, views]);
 
   const createView = () => {
+    if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
+      setError("group_fields", { message: "Please select group" });
+      return;
+    }
     if (
       isWithTimeView &&
       (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
@@ -172,8 +170,6 @@ export default function ViewTypeList({
             attributes: {
               ...newViewJSON?.attributes,
               web_link: watch("web_link"),
-              calendar_from_slug: watch("calendar_from_slug") || null,
-              calendar_to_slug: watch("calendar_to_slug") || null,
             },
           })
           .then(() => {
@@ -192,6 +188,12 @@ export default function ViewTypeList({
       }
     } else {
       setBtnLoader(true);
+      newViewJSON.attributes = {
+        ...newViewJSON?.attributes,
+        calendar_from_slug: watch("calendar_from_slug") || null,
+        calendar_to_slug: watch("calendar_to_slug") || null,
+      };
+      newViewJSON.group_fields = [watch("group_fields")] || [];
       constructorViewService
         .create(tableSlug, newViewJSON)
         .then(() => {
@@ -233,6 +235,23 @@ export default function ViewTypeList({
     );
     return listToOptions(filteredFields, "label", "slug");
   }, [fields]);
+
+  const computedColumnsForTabGroup = (Object.values(fieldsMap) ?? []).filter(
+    (column) =>
+      ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+        column.type
+      )
+  );
+
+  const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
+    (el) => ({
+      label: el.label,
+      value:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.relation_id
+          : el?.id,
+    })
+  );
 
   return (
     <div className={style.viewTypeList}>
@@ -327,7 +346,12 @@ export default function ViewTypeList({
             )}
             {isWithTimeView && (
               <MaterialUIProvider>
-                <FRow label="Time from" required>
+                <FRow
+                  label={
+                    selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
+                  }
+                  required
+                >
                   <HFSelect
                     options={computedColumns}
                     control={control}
@@ -336,11 +360,30 @@ export default function ViewTypeList({
                     required={true}
                   />
                 </FRow>
-                <FRow label="Time to" required>
+                <FRow
+                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
+                  required
+                >
                   <HFSelect
                     options={computedColumns}
                     control={control}
                     name="calendar_to_slug"
+                    MenuProps={{ disablePortal: true }}
+                    required={true}
+                  />
+                </FRow>
+              </MaterialUIProvider>
+            )}
+            {selectedViewTab === "BOARD" && (
+              <MaterialUIProvider>
+                <FRow
+                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
+                  required
+                >
+                  <HFSelect
+                    options={computedColumnsForTabGroupOptions}
+                    control={control}
+                    name="group_fields"
                     MenuProps={{ disablePortal: true }}
                     required={true}
                   />

@@ -332,7 +332,7 @@ const ImageUpload = ({
               autoFocus={tabIndex === 1}
               onChange={inputChangeHandler}
               disabled={disabled}
-              accept=".jpg, .jpeg, .png, .gif"
+              accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .HEIC, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras"
             />
             <img
               src="/img/newUpload.svg"

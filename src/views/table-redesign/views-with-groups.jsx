@@ -116,7 +116,7 @@ const viewIcons = {
   BOARD: "rows.svg",
   GRID: "grid.svg",
   TIMELINE: "line-chart-up.svg",
-  WEBSITE: "global.svg",
+  WEBSITE: "globe.svg",
   TREE: "tree.svg",
 };
 
@@ -684,11 +684,7 @@ export const NewUiViewsWithGroups = ({
                     color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                     width={18}
                     height={18}
-                    fill={
-                      view.type === "WEBSITE" || view.type === "TREE"
-                        ? "#475467"
-                        : "none"
-                    }
+                    fill={"none"}
                   />
                 }
                 fontSize={13}
@@ -748,6 +744,7 @@ export const NewUiViewsWithGroups = ({
                   setSettingsModalVisible(true);
                   setSelectedView(data);
                 }}
+                fieldsMap={fieldsMap}
               />
             </MuiPopover>
 

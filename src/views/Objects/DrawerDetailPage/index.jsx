@@ -611,6 +611,9 @@ const ScreenOptions = ({
   navigateToEditPage = () => {},
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const {tableSlug, id} = useParams();
+  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
 
   const options = [
     {label: "Side peek", icon: "SidePeek"},
@@ -626,7 +629,10 @@ const ScreenOptions = ({
     localStorage.setItem("detailPage", option?.icon);
     if (option?.icon === "FullPage") {
       setLayoutType("SimpleLayout");
-      navigateToEditPage(selectedRow);
+      if (selectedRow?.guid) {
+        navigateToEditPage(selectedRow);
+      } else
+        navigateToForm(tableSlug, "CREATE", {}, {}, searchParams.get("menuId"));
     }
 
     if (option) setSelectedViewType(option?.icon);

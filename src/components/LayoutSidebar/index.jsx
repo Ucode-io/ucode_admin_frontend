@@ -428,15 +428,6 @@ const LayoutSidebar = ({
                 <Skeleton width="100%" height="50px" />
               </Box>
             </Box>
-            // <Box
-            //   position="absolute"
-            //   top="50%"
-            //   left="50%"
-            //   transform={"translate(-50%, -50%)"}
-            // >
-            //   <GreyLoader />
-            // </Box>
-            // <RingLoaderWithWrapper style={{height: "100%"}} />
           )}
 
           {Array.isArray(menuList) && (
@@ -502,20 +493,22 @@ const LayoutSidebar = ({
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
-                    <Box
-                      whiteSpace="nowrap"
-                      color={
-                        (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
-                        "#475467"
-                      }
-                      pl={35}
-                      fontSize={14}>
-                      {generateLangaugeText(
-                        menuLanguages,
-                        i18n?.language,
-                        "Create"
-                      ) || "Create"}
-                    </Box>
+                    {!!sidebarIsOpen && (
+                      <Box
+                        whiteSpace="nowrap"
+                        color={
+                          (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
+                          "#475467"
+                        }
+                        pl={35}
+                        fontSize={14}>
+                        {generateLangaugeText(
+                          menuLanguages,
+                          i18n?.language,
+                          "Create"
+                        ) || "Create"}
+                      </Box>
+                    )}
                   </Flex>
                 </SidebarAppTooltip>
               )}

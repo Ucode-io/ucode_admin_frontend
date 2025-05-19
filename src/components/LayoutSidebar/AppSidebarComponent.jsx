@@ -9,7 +9,7 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useEffect, useMemo, useState} from "react";
+import {useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
@@ -44,7 +44,6 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
-  setMenuItem,
   menuItem,
   menuLanguages,
   openFolderCreateModal,
@@ -62,7 +61,6 @@ const AppSidebar = ({
   const auth = store.getState().auth;
   const {appId} = useParams();
   const [loading, setLoading] = useState(false);
-  const [activeAccordionId, setActiveAccordionId] = useState(null);
 
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
@@ -78,7 +76,7 @@ const AppSidebar = ({
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }
-    // setMenuItem(element);
+
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
 
@@ -235,9 +233,7 @@ const AppSidebar = ({
 
     if (isOpen) {
       closeMenu(el?.id);
-      setActiveAccordionId(null);
     } else {
-      setActiveAccordionId(el?.id);
       clickElement(el);
     }
   };

@@ -88,6 +88,7 @@ const LayoutSidebar = ({
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
+  const [menuDraggable, setMenuDraggable] = useState(false);
   const [isMenuListLoading, setIsMenuListLoading] = useState(false);
   const [tableModal, setTableModalOpen] = useState(false);
   const [linkTableModal, setLinkTableModal] = useState(false);
@@ -249,6 +250,7 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
+    setMenuDraggable(true);
     const result = applyDrag(menuList, dropResult);
     setMenuList(result);
     if (result) {
@@ -430,6 +432,8 @@ const LayoutSidebar = ({
                     menuStyle={menuStyle}
                     languageData={languageData}
                     subSearchText={subSearchText}
+                    menuDraggable={menuDraggable}
+                    setMenuDraggable={setMenuDraggable}
                   />
                 ))}
               </Container>

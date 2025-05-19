@@ -54,6 +54,8 @@ const AppSidebar = ({
   languageData,
   subMenuIsOpen,
   subSearchText,
+  menuDraggable,
+  setMenuDraggable,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -82,6 +84,7 @@ const AppSidebar = ({
 
     setSelectedApp(element);
     if (element.type === "FOLDER") {
+      setMenuDraggable(false);
       const isOpen = menuChilds[element.id]?.open;
       if (isOpen) {
         closeMenu(element.id);
@@ -164,7 +167,7 @@ const AppSidebar = ({
       enabled:
         Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
       onSuccess: (res) => {
-        // computeMenuChilds(appId, res?.menus ?? []);
+        if (!menuDraggable) computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
       },
     },

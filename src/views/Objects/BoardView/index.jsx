@@ -226,12 +226,11 @@ const BoardView = ({
 
   useEffect(() => {
     const updatedTabs = view?.attributes?.tabs;
-    setBoardTab(updatedTabs);
-    // if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
-    //   setBoardTab(updatedTabs);
-    // } else {
-    //   setBoardTab(tabs);
-    // }
+    if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
+      setBoardTab(updatedTabs);
+    } else {
+      setBoardTab(tabs);
+    }
   }, [tabs, view, selectedTabIndex]);
 
   const computedColumnsFor = useMemo(() => {
@@ -256,10 +255,14 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
+        const key =
+          subGroupField?.type === "LOOKUP"
+            ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
+            : item?.[subGroupFieldSlug];
         setSubBoardData((prev) => {
           return {
             ...prev,
-            [item?.[subGroupFieldSlug]]: [
+            [key]: [
               ...data?.filter((el) => {
                 if (Array.isArray(el?.[subGroupFieldSlug])) {
                   return (
@@ -339,10 +342,11 @@ const BoardView = ({
       // el.style.top = `${board.scrollTop}px`;
       if (board.scrollTop > 0) {
         setIsOnTop(true);
+        el.style.transform = `translateY(${board.scrollTop}px)`;
       } else {
         setIsOnTop(false);
+        el.style.transform = "none";
       }
-      el.style.transform = `translateY(${board.scrollTop}px)`;
     };
 
     board.addEventListener("scroll", onScroll);
@@ -418,7 +422,9 @@ const BoardView = ({
               {boardTab?.map((tab, tabIndex) => (
                 <Draggable key={tabIndex}>
                   <ColumnHeaderBlock
-                    field={tab}
+                    field={computedColumnsFor?.find(
+                      (field) => field?.slug === tab?.slug
+                    )}
                     tab={tab}
                     // computedData={computedData}
                     // boardRef={boardRef}
@@ -436,7 +442,7 @@ const BoardView = ({
               height: isFilterOpen
                 ? "calc(100vh - 121px)"
                 : "calc(100vh - 91px)",
-              paddingTop: "48px",
+              paddingTop: "50px",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"
@@ -589,7 +595,7 @@ const BoardView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          // refetch={refetch}
+          refetch={refetch}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}

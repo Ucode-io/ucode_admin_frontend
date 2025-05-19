@@ -263,7 +263,7 @@ const BoardColumn = ({
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  const hasColor = tab?.color || field?.attributes?.has_color;
+  // const hasColor = tab?.color || field?.attributes?.has_color;
   const color =
     tab?.color ||
     field?.attributes?.options?.find((item) => item?.value === tab?.value)
@@ -383,7 +383,25 @@ const BoardColumn = ({
                   onClick={() => navigateToEditPage(el)}
                 >
                   {viewFields.map((field) => (
-                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
+                    <BoardPhotoGenerator
+                      key={field.id}
+                      field={field}
+                      el={el}
+                      imgProps={{
+                        style: {
+                          height: "200px",
+                          width: "100%",
+                          objectFit: "cover",
+                        },
+                        width: "260",
+                        height: "200",
+                      }}
+                      style={{
+                        overflow: "hidden",
+                        borderTopLeftRadius: "10px",
+                        borderTopRightRadius: "10px",
+                      }}
+                    />
                   ))}
                   {viewFields.map((field) => (
                     <BoardCardRowGenerator
@@ -395,7 +413,7 @@ const BoardColumn = ({
                       slug={selectedGroupField?.slug}
                       columnIndex={columnIndex}
                       showFieldLabel
-                      hintPosition="left"
+                      hintPosition={columnIndex === 0 ? "top" : "left"}
                     />
                   ))}
                 </div>

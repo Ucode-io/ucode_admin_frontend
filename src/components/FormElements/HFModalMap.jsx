@@ -18,6 +18,7 @@ function HFModalMap({
   drawerDetail = false,
   placeholder = "",
   disabled = false,
+  setValue = () => {},
   ...props
 }) {
   const [open, setOpen] = useState(false);
@@ -84,6 +85,7 @@ function HFModalMap({
             control={control}
             name={name}
             defaultValue={defaultValue}
+            setValue={setValue}
           />
 
           <Box>

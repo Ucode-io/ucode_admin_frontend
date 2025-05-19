@@ -1,17 +1,17 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import React, { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
 
-import {useRelationGetByIdQuery} from "../../services/relationService";
-import {applyDrag} from "../../utils/applyDrag";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
   FormatOptionType,
   FormatTypes,
@@ -21,7 +21,7 @@ import {
   math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import {colorList} from "../ColorPicker/colorList";
+import { colorList } from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -31,9 +31,39 @@ import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLa
 import RelationFieldForm from "./RelationFieldForm";
 import style from "./field.module.scss";
 import "./style.scss";
-import {useFieldsListQuery} from "../../services/constructorFieldService";
+import constructorFieldService, {
+  useFieldsListQuery,
+} from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attributes/FormulaFilters";
+import constructorRelationService from "../../services/constructorRelationService";
+import { listToMap } from "../../utils/listToMap";
+
+const formulaTypes = [
+  { label: "Сумма", value: "SUMM" },
+  { label: "Максимум", value: "MAX" },
+  { label: "Среднее", value: "AVG" },
+];
+
+const formulaFormatOptions = [
+  {
+    label: "Formula frontend",
+    label_ru: "Формула frontend",
+    label_en: "Formula frontend",
+    label_uz: "Formula frontend",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    label_ru: "Формула backend",
+    label_en: "Formula backend",
+    label_uz: "Formula backend",
+    value: "FORMULA",
+    icon: "plus-minus.svg",
+  },
+];
 
 export default function FieldCreateModal({
   tableLan,
@@ -50,26 +80,115 @@ export default function FieldCreateModal({
   fieldData,
   handleOpenFieldDrawer,
   visibleColumns,
+  menuItem,
+  mainForm,
 }) {
+  const { tableSlug, id } = useParams();
+  const tableRelations = useWatch({
+    control: mainForm.control,
+    name: "tableRelations",
+  });
+
+  const getRelationFields = async () => {
+    return new Promise(async (resolve) => {
+      const getFieldsData = constructorFieldService.getList(
+        {
+          table_id: id,
+        },
+        tableSlug
+      );
+
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        tableSlug
+      );
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
+      mainForm.setValue("fields", fields);
+      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
+        ...relation,
+        relatedTableSlug:
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
+      }));
+
+      const layoutRelations = [];
+      const tableRelations = [];
+
+      relationsWithRelatedTableSlug?.forEach((relation) => {
+        if (
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
+          relation.type === "Recursive" ||
+          (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === tableSlug)
+        ) {
+          layoutRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
+      });
+
+      const layoutRelationsFields = layoutRelations.map((relation) => ({
+        ...relation,
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        attributes: {
+          fields: relation.view_fields ?? [],
+        },
+        label:
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
+      }));
+
+      mainForm.setValue("relations", relations);
+      mainForm.setValue("relationsMap", listToMap(relations));
+      mainForm.setValue("layoutRelations", layoutRelationsFields);
+      mainForm.setValue("tableRelations", tableRelations);
+      resolve();
+    });
+  };
+
+  useEffect(() => {
+    getRelationFields();
+  }, [id, tableSlug]);
+
   const format = useWatch({
     control,
     name: "attributes.format",
   });
+
   const fieldWatch = useWatch({
     control,
   });
 
   const [fields, setFields] = useState(visibleColumns ?? []);
+  const type = useWatch({
+    control,
+    name: "attributes.type",
+  });
+
+  const selectedTableSlug = useWatch({
+    control,
+    name: "attributes.table_from",
+  });
+
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);
   const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
-  const {isLoading: relationLoading} = useRelationGetByIdQuery({
+  const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
@@ -111,6 +230,17 @@ export default function FieldCreateModal({
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
 
+  const { control: formulaControl, watch: formulaWatch } = useForm({
+    defaultValues: {
+      formulaFormat: "FORMULA_FRONTEND",
+    },
+  });
+
+  const formulaFormat = useWatch({
+    control: formulaControl,
+    name: "formulaFormat",
+  });
+
   const onDrop = (dropResult) => {
     const result = applyDrag(watch("attributes.options"), dropResult);
     if (result) {
@@ -118,35 +248,35 @@ export default function FieldCreateModal({
     }
   };
 
-  // const {isLoading: fieldLoading} = useFieldsListQuery({
-  //   params: {
-  //     table_id: menuItem?.table_id,
-  //     tableSlug: tableSlug,
-  //   },
-  //   queryParams: {
-  //     enabled: Boolean(menuItem?.table_id),
-  //     onSuccess: (res) => {
-  //       setFields(
-  //         res?.fields?.map((item) => {
-  //           return {value: item.slug, label: item.label};
-  //         })
-  //       );
-  //     },
-  //   },
-  // });
+  const { isLoading: fieldLoading } = useFieldsListQuery({
+    params: {
+      table_id: menuItem?.table_id,
+      tableSlug: tableSlug,
+    },
+    queryParams: {
+      enabled: Boolean(menuItem?.table_id),
+      onSuccess: (res) => {
+        setFields(
+          res?.fields?.map((item) => {
+            return { value: item.slug, label: item.label };
+          })
+        );
+      },
+    },
+  });
 
   const params = {
     language_setting: i18n?.language,
   };
 
-  const {isLoading: fieldsLoading} = useQuery(
+  const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: {limit: 0, offset: 0},
+          data: { limit: 0, offset: 0 },
         },
         params
       );
@@ -205,6 +335,7 @@ export default function FieldCreateModal({
     setValue("relation_type", "");
     setValue("view_fields", "");
     setValue("table_to", "");
+    setValue("attributes.type", "");
 
     setAnchorEl(null);
     !fieldData && setValue("type", "");
@@ -242,10 +373,73 @@ export default function FieldCreateModal({
     name: "label",
   });
 
+  const {
+    fields: relation,
+    append,
+    remove,
+  } = useFieldArray({
+    control,
+    name: "attributes.formula_filters",
+  });
+
+  const deleteSummary = (index) => {
+    remove(index);
+  };
+
+  const addNewSummary = () => {
+    append({
+      key: "",
+      value: "",
+    });
+  };
+
+  const computedTables = useMemo(() => {
+    return tableRelations?.map((relation) => {
+      const relatedTable = relation[relation.relatedTableSlug];
+
+      return {
+        label: relatedTable?.label,
+        value: `${relatedTable?.slug}#${relation?.id}`,
+      };
+    });
+  }, [tableRelations]);
+
+  useEffect(() => {
+    if (watch("type") !== "MULTISELECT") {
+      setValue("attributes.options", []);
+    }
+  }, [watch("type")]);
+
+  useEffect(() => {
+    if (formulaFormat !== "FORMULA") {
+      setValue("attributes.type", null);
+      setValue("attributes.table_from", null);
+      setValue("attributes.sum_field", null);
+      setValue("attributes.number_of_rounds", null);
+    } else {
+      setValue("attributes.advanced_type", null);
+      setValue("attributes.from_formula", null);
+      setValue("attributes.to_formula", null);
+    }
+  }, [formulaFormat]);
+
+  const innerOnsubmit = (data) => {
+    const innerData = {
+      ...data,
+      attributes: {
+        ...data?.attributes,
+        format: formulaFormat,
+      },
+      type: formulaFormat,
+    };
+
+    onSubmit(innerData);
+  };
+
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{top: 450, left: 900}}
+      anchorPosition={{ top: 450, left: 900 }}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -258,27 +452,36 @@ export default function FieldCreateModal({
       transformOrigin={{
         vertical: "bottom",
         horizontal: "left",
-      }}>
+      }}
+    >
       <div className={style.field}>
         <Typography
           variant="h6"
           textTransform="uppercase"
-          className={style.title}>
+          className={style.title}
+        >
           {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
             "ADD COLUMN"}
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
+        <form
+          onSubmit={handleSubmit(
+            format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+          )}
+          className={style.form}
+        >
           <Box
             className={style.field}
             style={{
               display: "flex",
               flexDirection: "column",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 width: "100%",
-              }}>
+              }}
+            >
               {!ValueTypes(values?.type) && !FormatTypes(format) ? (
                 <FRow
                   label={
@@ -286,8 +489,9 @@ export default function FieldCreateModal({
                     "Label"
                   }
                   classname={style.custom_label}
-                  required>
-                  <Box style={{display: "flex", gap: "6px"}}>
+                  required
+                >
+                  <Box style={{ display: "flex", gap: "6px" }}>
                     <HFTextFieldWithMultiLanguage
                       control={control}
                       name="attributes.label"
@@ -307,7 +511,8 @@ export default function FieldCreateModal({
               }
               componentClassName="flex gap-2 align-center"
               required
-              classname={style.custom_label}>
+              classname={style.custom_label}
+            >
               <HFSelect
                 className={style.input}
                 disabledHelperText
@@ -334,7 +539,7 @@ export default function FieldCreateModal({
               />
             </FRow>
           </Box>
-          <Box sx={{padding: "0 5px"}}>
+          <Box sx={{ padding: "0 5px" }}>
             {formatIncludes?.includes(format) ? (
               <FRow
                 label={
@@ -343,7 +548,8 @@ export default function FieldCreateModal({
                 }
                 componentClassName="flex gap-2 align-center"
                 required
-                classname={style.custom_label}>
+                classname={style.custom_label}
+              >
                 <HFSelect
                   className={style.input}
                   disabledHelperText
@@ -370,7 +576,8 @@ export default function FieldCreateModal({
                 onClick={() => {
                   handleOpenFieldDrawer(fieldData);
                   closeAllDrawer();
-                }}>
+                }}
+              >
                 <SettingsIcon />
                 {generateLangaugeText(
                   tableLan,
@@ -387,26 +594,30 @@ export default function FieldCreateModal({
                   lockAxis="y"
                   orientation="vertical"
                   onDrop={onDrop}
-                  dragHandleSelector=".column-drag-handle">
+                  dragHandleSelector=".column-drag-handle"
+                >
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
                         <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-around",
-                          }}>
+                        // sx={{
+                        //   display: "flex",
+                        //   alignItems: "center",
+                        //   justifyContent: "space-around",
+                        // }}
+                        >
                           <FRow
                             label={`Option ${index + 1}`}
-                            className={style.option}>
+                            className={style.option}
+                          >
                             <span
                               className={style.startAdornment}
                               style={{
                                 background: watch(
                                   `attributes.options.${index}.color`
                                 ),
-                              }}></span>
+                              }}
+                            ></span>
 
                             <HFTextField
                               disabledHelperText
@@ -416,6 +627,12 @@ export default function FieldCreateModal({
                               required
                               placeholder="Type..."
                               className={style.input}
+                              customOnChange={(e) => {
+                                setValue(
+                                  `attributes.options.${index}.value`,
+                                  e.target.value
+                                );
+                              }}
                               endAdornment={
                                 <Box className={style.adornment}>
                                   <p onClick={(e) => handleOpenColor(e, index)}>
@@ -432,9 +649,10 @@ export default function FieldCreateModal({
                               }
                             />
                           </FRow>
-                          <FRow
+                          {/* <FRow
                             label={`Value ${index + 1}`}
-                            className={style.option}>
+                            className={style.option}
+                          >
                             <HFTextField
                               disabledHelperText
                               name={`attributes.options.${index}.value`}
@@ -451,7 +669,7 @@ export default function FieldCreateModal({
                                 </Box>
                               }
                             />
-                          </FRow>
+                          </FRow> */}
                         </Box>
                       </Box>
                       <Popover
@@ -465,13 +683,14 @@ export default function FieldCreateModal({
                         transformOrigin={{
                           vertical: "top",
                           horizontal: "left",
-                        }}>
+                        }}
+                      >
                         <Card elevation={12} className="ColorPickerPopup">
                           {colorList.map((color, colorIndex) => (
                             <div
                               className="round"
                               key={colorIndex}
-                              style={{backgroundColor: color}}
+                              style={{ backgroundColor: color }}
                               onClick={() => {
                                 setValue(
                                   `attributes.options.${idx}.color`,
@@ -494,7 +713,8 @@ export default function FieldCreateModal({
                         label: "",
                         value: "",
                       });
-                    }}>
+                    }}
+                  >
                     +
                     {generateLangaugeText(
                       tableLan,
@@ -510,137 +730,219 @@ export default function FieldCreateModal({
               </Box>
             )}
           </div>
-          {format === "FORMULA_FRONTEND" && (
-            <>
-              {watch("attributes.advanced_type") ? (
+          {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
+            <Box padding="5px">
+              <FRow label="Formula format">
+                <HFSelect
+                  name="formulaFormat"
+                  control={formulaControl}
+                  options={formulaFormatOptions}
+                  isClearable={false}
+                />
+              </FRow>
+              <FRow label="Formula type">
+                <HFSelect
+                  name="attributes.type"
+                  control={control}
+                  options={formulaTypes}
+                />
+              </FRow>
+              {(type === "SUMM" || type === "MAX" || type === "AVG") && (
                 <>
+                  <FRow label="Table from">
+                    <HFSelect
+                      name="attributes.table_from"
+                      control={control}
+                      options={computedTables}
+                    />
+                  </FRow>
+
+                  <FRow label="Field from">
+                    <HFSelect
+                      name="attributes.sum_field"
+                      control={control}
+                      options={fields}
+                    />
+                  </FRow>
+
+                  <FRow label="Rounds">
+                    <HFTextField
+                      name="attributes.number_of_rounds"
+                      type="number"
+                      fullWidth
+                      control={control}
+                      options={fields}
+                    />
+                  </FRow>
+
+                  <FRow label="Filters"></FRow>
+
+                  <div className="">
+                    {relation?.map((summary, index) => (
+                      <FormulaFilters
+                        summary={summary}
+                        selectedTableSlug={selectedTableSlug}
+                        index={index}
+                        control={control}
+                        deleteSummary={deleteSummary}
+                      />
+                    ))}
+                    <div
+                      className={style.summaryButton}
+                      onClick={addNewSummary}
+                    >
+                      <button type="button">+ Create new</button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </Box>
+            // <FormulaAttributes control={control} mainForm={{ control }} />
+          )}
+          {formulaFormat === "FORMULA_FRONTEND" &&
+            format.startsWith("FORMULA") && (
+              <Box padding="5px">
+                <FRow label="Formula format">
+                  <HFSelect
+                    name="formulaFormat"
+                    control={formulaControl}
+                    options={formulaFormatOptions}
+                    isClearable={false}
+                  />
+                </FRow>
+                {watch("attributes.advanced_type") ? (
+                  <>
+                    <Box className={style.formula}>
+                      <HFTextArea
+                        className={style.input}
+                        disabledHelperText
+                        name="attributes.formula"
+                        control={control}
+                        fullWidth
+                        id="formula_textarea"
+                        required
+                        placeholder={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Formula"
+                          ) || "Formula"
+                        }
+                      />
+                    </Box>
+                    <h2>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Fields list"
+                      ) || "Fields list"}
+                      :
+                    </h2>
+                    {fields.map((field) => (
+                      <div>
+                        {field.label} - <strong>{field.value}</strong>{" "}
+                      </div>
+                    ))}
+                  </>
+                ) : (
                   <Box className={style.formula}>
-                    <HFTextArea
+                    <HFSelect
                       className={style.input}
                       disabledHelperText
-                      name="attributes.formula"
+                      options={fields}
+                      name="attributes.from_formula"
                       control={control}
                       fullWidth
-                      id="formula_textarea"
+                      id="variable"
                       required
                       placeholder={
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Formula"
-                        ) || "Formula"
+                          "Select variable"
+                        ) || "Select variable"
                       }
                     />
+
+                    <span
+                      id={`math_plus`}
+                      className={`math_${mathType?.label}`}
+                      onClick={(e) => setMathEl(e.currentTarget)}
+                    >
+                      {mathType?.value}
+                    </span>
+                    <HFSelect
+                      className={style.input}
+                      disabledHelperText
+                      options={fields}
+                      id="variable_second"
+                      name="attributes.to_formula"
+                      control={control}
+                      fullWidth
+                      required
+                      placeholder={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Select variable"
+                        ) || "Select variable"
+                      }
+                    />
+
+                    <Menu
+                      open={openMath}
+                      onClose={handleCloseMath}
+                      anchorEl={mathEl}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                    >
+                      <Box className="math">
+                        {math.map((item) => {
+                          return (
+                            <span
+                              id={`math_${item?.label}`}
+                              className={`math_${item?.label}`}
+                              onClick={() => {
+                                setValue("attributes.math", item);
+                                setMathEl(null);
+                              }}
+                            >
+                              {item?.value}
+                            </span>
+                          );
+                        })}
+                      </Box>
+                    </Menu>
                   </Box>
-                  <h2>
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Fields list"
-                    ) || "Fields list"}
-                    :
-                  </h2>
-                  {fields.map((field) => (
-                    <div>
-                      {field.label} - <strong>{field.value}</strong>{" "}
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <Box className={style.formula}>
-                  <HFSelect
-                    className={style.input}
-                    disabledHelperText
-                    options={fields}
-                    name="attributes.from_formula"
-                    control={control}
-                    fullWidth
-                    id="variable"
-                    required
-                    placeholder={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Select variable"
-                      ) || "Select variable"
-                    }
-                  />
+                )}
 
-                  <span
-                    id={`math_plus`}
-                    className={`math_${mathType?.label}`}
-                    onClick={(e) => setMathEl(e.currentTarget)}>
-                    {mathType?.value}
-                  </span>
-                  <HFSelect
-                    className={style.input}
-                    disabledHelperText
-                    options={fields}
-                    id="variable_second"
-                    name="attributes.to_formula"
+                <Box
+                  mt={1}
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    columnGap: "5px",
+                  }}
+                >
+                  <HFSwitch
+                    id="advanced_switch"
                     control={control}
-                    fullWidth
-                    required
-                    placeholder={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Select variable"
-                      ) || "Select variable"
-                    }
+                    name="attributes.advanced_type"
                   />
-
-                  <Menu
-                    open={openMath}
-                    onClose={handleCloseMath}
-                    anchorEl={mathEl}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}>
-                    <Box className="math">
-                      {math.map((item) => {
-                        return (
-                          <span
-                            id={`math_${item?.label}`}
-                            className={`math_${item?.label}`}
-                            onClick={() => {
-                              setValue("attributes.math", item);
-                              setMathEl(null);
-                            }}>
-                            {item?.value}
-                          </span>
-                        );
-                      })}
-                    </Box>
-                  </Menu>
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced Editor"
+                  ) || "Advanced Editor"}
                 </Box>
-              )}
-
-              <Box
-                mt={1}
-                style={{
-                  display: "flex",
-                  alignItems: "baseline",
-                  columnGap: "5px",
-                }}>
-                <HFSwitch
-                  id="advanced_switch"
-                  control={control}
-                  name="attributes.advanced_type"
-                />
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Advanced Editor"
-                ) || "Advanced Editor"}
               </Box>
-            </>
-          )}
+            )}
           {format === "RELATION" && !fieldData ? (
             <RelationFieldForm
               control={control}
@@ -650,7 +952,7 @@ export default function FieldCreateModal({
               relatedTableSlug={relatedTableSlug}
             />
           ) : null}
-          <Box className={style.button_group} sx={{padding: "0 5px"}}>
+          <Box className={style.button_group} sx={{ padding: "0 5px" }}>
             <Button variant="contained" color="error" onClick={handleClick}>
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}

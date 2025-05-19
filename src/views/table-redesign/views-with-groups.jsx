@@ -99,7 +99,7 @@ const viewIcons = {
   BOARD: "rows.svg",
   GRID: "grid.svg",
   TIMELINE: "line-chart-up.svg",
-  WEBSITE: "global.svg",
+  WEBSITE: "globe.svg",
   TREE: "tree.svg",
 };
 
@@ -727,11 +727,7 @@ export const NewUiViewsWithGroups = ({
                     color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                     width={18}
                     height={18}
-                    fill={
-                      view.type === "WEBSITE" || view.type === "TREE"
-                        ? "#475467"
-                        : "none"
-                    }
+                    fill={"none"}
                   />
                 }
                 fontSize={13}
@@ -788,6 +784,7 @@ export const NewUiViewsWithGroups = ({
                   setSettingsModalVisible(true);
                   setSelectedView(data);
                 }}
+                fieldsMap={fieldsMap}
               />
             </MuiPopover>
 
@@ -951,6 +948,7 @@ export const NewUiViewsWithGroups = ({
                   queryClient={queryClient}
                   settingsForm={settingsForm}
                   views={views}
+                  fieldsMapRel={fieldsMapRel}
                 />
               </>
             )}
@@ -1643,6 +1641,7 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
+  fieldsMapRel,
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
@@ -1946,8 +1945,11 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
-                    "Layout"}
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Table settings"
+                  ) || "Table settings"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>
@@ -2098,7 +2100,9 @@ const ViewOptions = ({
                       {Boolean(tabGroupColumnsCount) && (
                         <ViewOptionSubtitle>
                           {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                            ?.label || "None"}
+                            ?.attributes?.[
+                            "label_" + (i18n.language || "en")
+                          ] || "None"}
                         </ViewOptionSubtitle>
                       )}
                       <ChevronRightIcon fontSize={22} />
@@ -2236,6 +2240,7 @@ const ViewOptions = ({
             onBackClick={() => setOpenedMenu(null)}
             title={"Sub Group"}
             viewUpdateMutation={viewUpdateMutation}
+            fieldsMapRel={fieldsMapRel}
           />
         )}
 
@@ -2262,7 +2267,7 @@ const ViewOptions = ({
             onBackClick={() => setOpenedMenu(null)}
           />
         )}
-        {openedMenu === "timeline-settings" && (
+        {/* {openedMenu === "timeline-settings" && (
           <TimelineSettings
             control={settingsForm.control}
             computedColumns={computedColumns}
@@ -2273,8 +2278,8 @@ const ViewOptions = ({
               "Settings"
             }
           />
-        )}
-        {openedMenu === "calendar-settings" && (
+        )} */}
+        {/* {openedMenu === "calendar-settings" && (
           <CalendarSettings
             columns={visibleColumns}
             onBackClick={() => setOpenedMenu(null)}
@@ -2287,7 +2292,7 @@ const ViewOptions = ({
               "Settings"
             }
           />
-        )}
+        )} */}
       </PopoverContent>
     </Popover>
   );

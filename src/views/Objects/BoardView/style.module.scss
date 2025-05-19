@@ -21,7 +21,6 @@
   top: 0;
   z-index: 10;
   background-color: #fff;
-  will-change: transform;
 }
 
 .wrapper {
@@ -155,10 +154,11 @@
 
 .card {
   min-height: 120px;
+  padding: 7px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  // gap: 4px;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 4px 0px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
   transition: background-color 0.3s ease;

@@ -39,47 +39,47 @@ export const ColumnHeaderBlock = ({
   //   }
   // }, []);
 
-  return (
-    <div
-      ref={fixedElement}
-      className={`${cls.columnHeaderBlock} column-header`}
-      style={{ position: fixed ? "absolute" : "static" }}
-    >
-      <div className={cls.leftSide}>
-        <div className={cls.title}>
-          <span
-            style={{
-              background: hasColor ? color + 33 : "rgb(139, 150, 160)",
-              color: hasColor ? color - 50 : "#fff",
-            }}
-            className={cls.tabBlockStatus}
-          >
-            <span
-              className={cls.dot}
-              style={{ background: color ? color : "rgb(78, 84, 90)" }}
-            />
-            {tab.label}
-          </span>
-        </div>
-        <div className={cls.counter}>
-          {counts?.[tab.value] ||
-            computedData?.length ||
-            counts?.[tab.value] ||
-            0}
-        </div>
-      </div>
-      <div className={cls.rightSide}>
-        <IconButton
-          className={cls.addButton}
-          color="inherit"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigateToCreatePage({ tab });
+return (
+  <div
+    ref={fixedElement}
+    className={`${cls.columnHeaderBlock} column-header`}
+    style={{ position: fixed ? "absolute" : "static" }}
+  >
+    <div className={cls.leftSide}>
+      <div className={cls.title}>
+        <span
+          style={{
+            background: hasColor ? color + 33 : "rgb(139, 150, 160)",
+            color: hasColor ? color : "#fff",
           }}
+          className={cls.tabBlockStatus}
         >
-          <Add />
-        </IconButton>
+          <span
+            className={cls.dot}
+            style={{ background: color ? color : "rgb(78, 84, 90)" }}
+          />
+          {tab.label}
+        </span>
+      </div>
+      <div className={cls.counter}>
+        {counts?.[tab.value] ||
+          computedData?.length ||
+          counts?.[tab.value] ||
+          0}
       </div>
     </div>
-  );
+    <div className={cls.rightSide}>
+      <IconButton
+        className={cls.addButton}
+        color="inherit"
+        onClick={(e) => {
+          e.stopPropagation();
+          navigateToCreatePage({ tab });
+        }}
+      >
+        <Add />
+      </IconButton>
+    </div>
+  </div>
+);
 };

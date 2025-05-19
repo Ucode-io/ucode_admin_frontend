@@ -7,13 +7,19 @@ import {Button, InputAdornment, TextField} from "@mui/material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import constructorViewService from "../../../../services/constructorViewService";
 import {useParams} from "react-router-dom";
-import {useQueryClient} from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
-import {useTranslation} from "react-i18next";
-import {Controller, useForm} from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { Controller, useForm } from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import SVG from "react-inlinesvg";
+import { Box } from "@chakra-ui/react";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import constructorTableService from "../../../../services/constructorTableService";
+import listToOptions from "../../../../utils/listToOptions";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -21,22 +27,20 @@ const viewIcons = {
   BOARD: "rows.svg",
   GRID: "grid.svg",
   TIMELINE: "line-chart-up.svg",
-  WEBSITE: "global.svg",
+  WEBSITE: "globe.svg",
   TREE: "tree.svg",
 };
 
-export default function ViewTypeList({
-  computedViewTypes,
-  views,
-  handleClose,
-}) {
+export default function ViewTypeList({ computedViewTypes, views, handleClose, fieldsMap }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const { i18n } = useTranslation();
   const { tableSlug, appId } = useParams();
   const queryClient = useQueryClient();
-  const { control, watch } = useForm();
-  const [error, setError] = useState(false);
+  const { control, watch, setError, clearErrors } = useForm({});
+  const [error] = useState(false);
+
+  const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
 
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
@@ -142,6 +146,21 @@ export default function ViewTypeList({
   }, [appId, selectedViewTab, tableSlug, views]);
 
   const createView = () => {
+    if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
+      setError("group_fields", { message: "Please select group" });
+      return;
+    }
+    if (
+      isWithTimeView &&
+      (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
+    ) {
+      setError("calendar_from_slug", { message: "Please select date range" });
+      setError("calendar_to_slug", { message: "Please select date range" });
+      return;
+    } else {
+      clearErrors(["calendar_from_slug", "calendar_to_slug"]);
+    }
+
     if (selectedViewTab === "WEBSITE") {
       if (watch("web_link")) {
         setBtnLoader(true);
@@ -169,6 +188,12 @@ export default function ViewTypeList({
       }
     } else {
       setBtnLoader(true);
+      newViewJSON.attributes = {
+        ...newViewJSON?.attributes,
+        calendar_from_slug: watch("calendar_from_slug") || null,
+        calendar_to_slug: watch("calendar_to_slug") || null,
+      };
+      newViewJSON.group_fields = [watch("group_fields")] || [];
       constructorViewService
         .create(tableSlug, newViewJSON)
         .then(() => {
@@ -184,6 +209,49 @@ export default function ViewTypeList({
         });
     }
   };
+
+  const {
+    data: { fields },
+  } = useQuery(
+    ["GET_TABLE_INFO", { tableSlug }],
+    () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
+      });
+    },
+    {
+      cacheTime: 10,
+      select: (res) => {
+        const fields = res.data?.fields ?? [];
+
+        return { fields };
+      },
+    }
+  );
+
+  const computedColumns = useMemo(() => {
+    const filteredFields = fields?.filter(
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+    );
+    return listToOptions(filteredFields, "label", "slug");
+  }, [fields]);
+
+  const computedColumnsForTabGroup = (Object.values(fieldsMap) ?? []).filter(
+    (column) =>
+      ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+        column.type
+      )
+  );
+
+  const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
+    (el) => ({
+      label: el.label,
+      value:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.relation_id
+          : el?.id,
+    })
+  );
 
   return (
     <div className={style.viewTypeList}>
@@ -243,7 +311,6 @@ export default function ViewTypeList({
           <div className={style.img}>
             <img src={detectImageView} alt="add view" />
           </div>
-
           <div className={style.text}>
             <h3>{selectedViewTab}</h3>
             <p>{detectDescriptionView}</p>
@@ -277,8 +344,53 @@ export default function ViewTypeList({
                 }}
               />
             )}
+            {isWithTimeView && (
+              <MaterialUIProvider>
+                <FRow
+                  label={
+                    selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
+                  }
+                  required
+                >
+                  <HFSelect
+                    options={computedColumns}
+                    control={control}
+                    name="calendar_from_slug"
+                    MenuProps={{ disablePortal: true }}
+                    required={true}
+                  />
+                </FRow>
+                <FRow
+                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
+                  required
+                >
+                  <HFSelect
+                    options={computedColumns}
+                    control={control}
+                    name="calendar_to_slug"
+                    MenuProps={{ disablePortal: true }}
+                    required={true}
+                  />
+                </FRow>
+              </MaterialUIProvider>
+            )}
+            {selectedViewTab === "BOARD" && (
+              <MaterialUIProvider>
+                <FRow
+                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
+                  required
+                >
+                  <HFSelect
+                    options={computedColumnsForTabGroupOptions}
+                    control={control}
+                    name="group_fields"
+                    MenuProps={{ disablePortal: true }}
+                    required={true}
+                  />
+                </FRow>
+              </MaterialUIProvider>
+            )}
           </div>
-
           <div className={style.button}>
             <LoadingButton
               variant="contained"

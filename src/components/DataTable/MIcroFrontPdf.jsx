@@ -1,6 +1,6 @@
 import {MenuItem} from "@mui/material";
 import React from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 
 export default function MicroFrontPdf({
   row,
@@ -9,7 +9,9 @@ export default function MicroFrontPdf({
   projectId,
 }) {
   const {appId, tableSlug} = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const menuId = searchParams.get("menuId");
 
   const replaceUrlVariables = (urlTemplate, data) => {
     return urlTemplate?.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
@@ -29,7 +31,9 @@ export default function MicroFrontPdf({
   };
 
   const templateNavigation = () => {
-    navigate(`/main/${appId}/object/${tableSlug}/templates`);
+    navigate(
+      `/main/${appId}/object/${tableSlug}/templates?menuId=${menuId}&id=${row?.guid}`
+    );
   };
 
   return (

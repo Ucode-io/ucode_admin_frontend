@@ -9,6 +9,7 @@ import {Box, Skeleton} from "@mui/material";
 import {Container} from "react-smooth-dnd";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import Permissions from "../Components/Permission";
+import {applyDrag} from "../../../utils/applyDrag";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -83,7 +84,7 @@ function NewSubMenu({
           menus: result,
         })
         .then(() => {
-          queryClient.refetchQueries(["MENU"]);
+          // queryClient.refetchQueries(["MENU"]);
         });
     }
   };

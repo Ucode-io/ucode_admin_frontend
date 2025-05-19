@@ -97,11 +97,14 @@ const DocumentTemplates = () => {
     const url = `https://${selectedTemplate?.file_url}`;
     const data = form?.getValues();
 
-    console.log("GGGG =>", url);
-
     converToPDF({
       data: {
-        data,
+        data: {
+          ...data,
+          authors_id_data: {
+            name: "Harry Potter",
+          },
+        },
         id: searchParams.get("id"),
         table_slug: tableSlug,
       },
@@ -146,7 +149,6 @@ const DocumentTemplates = () => {
           <h3 className={styles.title}>
             <IconButton
               onClick={() => {
-                console.log("ggg =>", selectedTemplateId);
                 if (selectedTemplateId) setSelectedTemplateId("");
                 else
                   navigate(
@@ -163,7 +165,11 @@ const DocumentTemplates = () => {
             <div className={styles.buttons}>
               <Button
                 variant="outlined"
-                style={{borderColor: "#337E28", color: "#337E28"}}
+                style={{
+                  borderColor: "#007AFE",
+                  color: "#007AFE",
+                  height: "30px",
+                }}
                 className={styles.secondaryButton}
                 onClick={() => {
                   navigate(
@@ -186,7 +192,7 @@ const DocumentTemplates = () => {
 
       {!templates?.length ? (
         <div className={styles.noDataWrapper}>
-          <FileOpenIcon />
+          <FileOpenIcon style={{color: "#007afe"}} />
           <div className={styles.noDataText}>
             Пока нет шаблонов. Сначала создайте шаблон
           </div>

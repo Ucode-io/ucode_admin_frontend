@@ -3,7 +3,7 @@
   background-color: #fff;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #EAECF0;
+  border-bottom: 1px solid #eaecf0;
 
   .arrowIcon {
     margin: 0 8px;
@@ -18,16 +18,14 @@
 
     &.active {
       font-weight: 600;
-      color: #337E28;
+      color: #007afe;
     }
   }
-
 }
-
 
 .titleBlock {
   padding: 0 18px;
-  height: 66px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,15 +76,14 @@
       border-radius: 8px;
       background-color: white;
       box-shadow: none;
-      border: 1px solid #D0D5DD;
+      border: 1px solid #d0d5dd;
       color: #344054;
 
       &:hover {
-        background-color: #F5F6F7;
+        background-color: #f5f6f7;
       }
     }
   }
-
 }
 
 .content {
@@ -95,7 +92,7 @@
   .variables {
     width: 360px;
     min-width: 360px;
-    border-right: 1px solid #EAECF0;
+    border-right: 1px solid #eaecf0;
     background-color: white;
     overflow: auto;
   }
@@ -104,7 +101,6 @@
     flex: 1;
     height: calc(100vh - 127px);
   }
-
 }
 
 .titleInput {

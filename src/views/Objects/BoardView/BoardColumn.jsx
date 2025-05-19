@@ -33,6 +33,8 @@ const BoardColumn = ({
   setDateInfo,
   setDefaultValue,
   setGroupCounts,
+  searchText,
+  searchField,
 }) => {
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
@@ -297,6 +299,10 @@ const BoardColumn = ({
   //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
   //     ?.color;
 
+  const filteredComputedData = computedData?.filter((item) =>
+    item[searchField?.slug]?.toLowerCase().includes(searchText?.toLowerCase())
+  );
+
   return (
     <>
       <div
@@ -370,8 +376,8 @@ const BoardColumn = ({
           }}
           animationDuration={300}
         >
-          {computedData?.length > 0 ? (
-            computedData.map((el) => (
+          {filteredComputedData?.length > 0 ? (
+            filteredComputedData.map((el) => (
               <Draggable
                 key={el.guid}
                 index={index}

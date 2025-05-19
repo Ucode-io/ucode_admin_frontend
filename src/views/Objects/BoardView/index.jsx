@@ -229,6 +229,7 @@ const BoardView = ({
 
   useEffect(() => {
     const updatedTabs = view?.attributes?.tabs;
+    setBoardTab(updatedTabs);
     if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
       setBoardTab(updatedTabs);
     } else {

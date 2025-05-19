@@ -87,21 +87,24 @@ const FilterAutoComplete = ({
           <Divider />
 
           {options?.map((option) => (
-            <div
-              onClick={() => rowClickHandler(option)}
-              key={option.value}
-              className={styles.option}
-            >
+            <label key={option.value} className={styles.option}>
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (
-                <Checkbox id="filter_checkbox" checked />
+                <Checkbox
+                  id="filter_checkbox"
+                  onClick={() => rowClickHandler(option)}
+                  checked
+                />
               ) : (
-                <Checkbox id="filter_checkbox" />
+                <Checkbox
+                  id="filter_checkbox"
+                  onClick={() => rowClickHandler(option)}
+                />
               )}
 
               <p className={styles.label}>{option.label}</p>
-            </div>
+            </label>
           ))}
         </div>
       </Menu>

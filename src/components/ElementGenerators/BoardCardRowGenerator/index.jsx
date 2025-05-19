@@ -54,13 +54,15 @@ const BoardCardRowGenerator = ({
             {getColumnIcon({ column: field })}
           </span>
           <Box>
-            {field?.attributes?.[`label_${i18n?.language}`]}
+            {/* {field?.attributes?.[`label_${i18n?.language}`]} */}
             <Box>
               {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
             </Box>
           </Box>
           {showFieldLabel && (
-            <span className={styles.rowHint}>{field?.label}</span>
+            <span className={styles.rowHint}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
           )}
         </Box>
       );

@@ -376,10 +376,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
             )}
             {selectedViewTab === "BOARD" && (
               <MaterialUIProvider>
-                <FRow
-                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
-                  required
-                >
+                <FRow label="Group by" required>
                   <HFSelect
                     options={computedColumnsForTabGroupOptions}
                     control={control}

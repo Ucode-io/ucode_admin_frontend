@@ -189,7 +189,10 @@ const BoardCardRowGenerator = ({
 
 const FieldContainer = ({ children, field, showFieldLabel, hintPosition }) => {
   return (
-    <div key={field.id} className={clsx(styles.row)}>
+    <div
+      key={field.id}
+      className={clsx(styles.row, { [styles.isEmpty]: !children })}
+    >
       {/* <div className={styles.label}>{field.label}:</div> */}
       <div className={styles.rowWrapper}>
         <span style={{ width: "16px", height: "16px", flexShrink: "0" }}>

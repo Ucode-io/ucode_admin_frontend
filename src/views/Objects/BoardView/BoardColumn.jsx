@@ -299,9 +299,13 @@ const BoardColumn = ({
   //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
   //     ?.color;
 
-  const filteredComputedData = computedData?.filter((item) =>
-    item[searchField?.slug]?.toLowerCase().includes(searchText?.toLowerCase())
-  );
+  const filteredComputedData = searchText
+    ? computedData?.filter((item) =>
+        item[searchField?.slug]
+          ?.toLowerCase()
+          .includes(searchText?.toLowerCase())
+      )
+    : computedData;
 
   return (
     <>

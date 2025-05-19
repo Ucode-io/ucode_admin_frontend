@@ -45,7 +45,12 @@ export const BillingFares = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                  <AccountBalance color="primary" fontSize="large" />
+                  <img
+                    src="/img/bank.svg"
+                    width={"26px"}
+                    height={"26px"}
+                    alt=""
+                  />
                   <Box>
                     <Typography variant="h6">Balance</Typography>
                     <Typography variant="h6" color="primary">
@@ -77,14 +82,12 @@ export const BillingFares = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: "700",
-                      color: "#18c19d",
-                    }}>
-                    UZS
-                  </Typography>
+                  <img
+                    src="/img/cash.svg"
+                    width={"26px"}
+                    height={"26px"}
+                    alt=""
+                  />
                   <Box>
                     <Typography variant="h6">Tariff</Typography>
                     <Typography
@@ -122,7 +125,12 @@ export const BillingFares = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                  <HourglassBottom color="warning" fontSize="large" />
+                  <img
+                    src="/img/time.svg"
+                    width={"26px"}
+                    height={"26px"}
+                    alt=""
+                  />
                   <Box>
                     <Typography variant="h6">Expire Date</Typography>
                     <Typography variant="h6" color="text.secondary">

@@ -493,20 +493,22 @@ const LayoutSidebar = ({
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
-                    <Box
-                      whiteSpace="nowrap"
-                      color={
-                        (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
-                        "#475467"
-                      }
-                      pl={35}
-                      fontSize={14}>
-                      {generateLangaugeText(
-                        menuLanguages,
-                        i18n?.language,
-                        "Create"
-                      ) || "Create"}
-                    </Box>
+                    {!!sidebarIsOpen && (
+                      <Box
+                        whiteSpace="nowrap"
+                        color={
+                          (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
+                          "#475467"
+                        }
+                        pl={35}
+                        fontSize={14}>
+                        {generateLangaugeText(
+                          menuLanguages,
+                          i18n?.language,
+                          "Create"
+                        ) || "Create"}
+                      </Box>
+                    )}
                   </Flex>
                 </SidebarAppTooltip>
               )}

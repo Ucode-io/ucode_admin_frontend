@@ -61,7 +61,6 @@ const AppSidebar = ({
   const auth = store.getState().auth;
   const {appId} = useParams();
   const [loading, setLoading] = useState(false);
-  // const [activeAccordionId, setActiveAccordionId] = useState(null);
 
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
@@ -77,7 +76,7 @@ const AppSidebar = ({
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }
-    // setMenuItem(element);
+
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
 
@@ -234,9 +233,7 @@ const AppSidebar = ({
 
     if (isOpen) {
       closeMenu(el?.id);
-      // setActiveAccordionId(null);
     } else {
-      // setActiveAccordionId(el?.id);
       clickElement(el);
     }
   };

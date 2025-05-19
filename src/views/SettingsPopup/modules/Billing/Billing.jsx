@@ -43,7 +43,6 @@ export const Billing = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-                  {/* <AccountBalance color="primary" fontSize="large" /> */}
                   <img
                     src="/img/bank.svg"
                     width={"26px"}

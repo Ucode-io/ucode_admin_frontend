@@ -59,9 +59,10 @@ export const BillingTable = ({handClickBalance}) => {
         component={Paper}
         sx={{
           borderRadius: 1,
-          maxHeight: "calc(100vh - 550px)",
-          minHeight: `calc(100vh - ${transactions?.length ? "310px" : "550px"})`,
+          maxHeight: "calc(100vh - 450px)",
+          minHeight: `calc(100vh - ${transactions?.length ? "700px" : "450px"})`,
           border: "1px solid #dbe0e4",
+          marginBottom: "15px",
         }}
         className="scrollbarNone">
         <Table

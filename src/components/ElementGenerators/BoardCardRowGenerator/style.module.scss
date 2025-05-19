@@ -27,6 +27,12 @@
   }
 }
 
+.row.isEmpty {
+  &:hover .rowHint {
+    display: block;
+  }
+}
+
 .coloredElement {
   display: block !important;
   min-width: auto !important;

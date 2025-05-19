@@ -227,11 +227,11 @@ const BoardView = ({
   useEffect(() => {
     const updatedTabs = view?.attributes?.tabs;
     setBoardTab(updatedTabs);
-    // if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
-    //   setBoardTab(updatedTabs);
-    // } else {
-    //   setBoardTab(tabs);
-    // }
+    if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
+      setBoardTab(updatedTabs);
+    } else {
+      setBoardTab(tabs);
+    }
   }, [tabs, view, selectedTabIndex]);
 
   const computedColumnsFor = useMemo(() => {

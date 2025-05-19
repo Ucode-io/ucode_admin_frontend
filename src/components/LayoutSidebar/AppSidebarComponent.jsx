@@ -164,7 +164,7 @@ const AppSidebar = ({
       enabled:
         Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
       onSuccess: (res) => {
-        computeMenuChilds(appId, res?.menus ?? []);
+        // computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
       },
     },

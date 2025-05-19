@@ -126,6 +126,8 @@ export default function TimeLineDatesRow({
 
   // console.log({ computedWeekList, computedWeekListV2, months });
 
+  const { timelineSidebarWidth } = useSelector((state) => state.main);
+
   return (
     <div
       className={styles.datesRow}
@@ -203,7 +205,11 @@ export default function TimeLineDatesRow({
                   <div className={styles.monthBlock}>
                     <span
                       className={styles.monthText}
-                      style={{ left: sidebarIsOpen ? "230px" : "60px" }}
+                      style={{
+                        left: sidebarIsOpen
+                          ? `${timelineSidebarWidth + 10}px`
+                          : "60px",
+                      }}
                     >
                       {month}
                     </span>

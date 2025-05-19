@@ -23,6 +23,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
 import { useProjectGetByIdQuery } from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const BoardView = ({
   view,
@@ -66,8 +67,6 @@ const BoardView = ({
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
-
-  const searchField = columnsForSearch?.find((item) => item?.is_search);
 
   const {
     data: { layout } = {
@@ -259,7 +258,7 @@ const BoardView = ({
     if (subGroupById) {
       data?.forEach((item) => {
         const key =
-          subGroupField?.type === "LOOKUP"
+          subGroupField?.type === FIELD_TYPES.LOOKUP
             ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
             : item?.[subGroupFieldSlug];
         setSubBoardData((prev) => {
@@ -358,6 +357,8 @@ const BoardView = ({
       board.removeEventListener("scroll", onScroll);
     };
   }, [boardRef.current, fixedElement.current]);
+
+  console.log({ subBoardData: Object.keys(subBoardData) });
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -529,7 +530,7 @@ const BoardView = ({
                             subItem={el}
                             subGroupFieldSlug={subGroupFieldSlug}
                             searchText={searchText}
-                            searchField={searchField}
+                            columnsForSearch={columnsForSearch}
                             setDateInfo={setDateInfo}
                             setDefaultValue={setDefaultValue}
                             setOpenDrawerModal={setOpenDrawerModal}
@@ -585,7 +586,7 @@ const BoardView = ({
                       subGroupFieldSlug={subGroupFieldSlug}
                       setGroupCounts={setGroupCounts}
                       searchText={searchText}
-                      searchField={searchField}
+                      columnsForSearch={columnsForSearch}
                     />
                   </div>
                 ))}

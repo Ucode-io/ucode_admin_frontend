@@ -23,6 +23,8 @@ export const FIELD_TYPES = {
   FORMULA: "FORMULA",
   LOOKUP: "LOOKUP",
   FILE: "FILE",
+  INCREMENT_ID: "INCREMENT_ID",
+  FORMULA_FRONTEND: "FORMULA_FRONTEND",
 }
 
 export const fieldTypes = [

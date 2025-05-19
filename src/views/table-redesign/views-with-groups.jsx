@@ -109,6 +109,7 @@ import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutl
 import { SubGroup } from "./components/SubGroup";
 import CalendarView from "../Objects/CalendarView";
 import { CalendarSettings } from "./components/CalendarSettings";
+import { FIELD_TYPES } from "../../utils/constants/fieldTypes";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -118,6 +119,31 @@ const viewIcons = {
   TIMELINE: "line-chart-up.svg",
   WEBSITE: "globe.svg",
   TREE: "tree.svg",
+};
+
+const searchableTypes = [
+  FIELD_TYPES.SINGLE_LINE,
+  FIELD_TYPES.MULTI_LINE,
+  FIELD_TYPES.NUMBER,
+  FIELD_TYPES.PHONE,
+  FIELD_TYPES.EMAIL,
+  FIELD_TYPES.INTERNATION_PHONE,
+  FIELD_TYPES.INCREMENT_ID,
+  FIELD_TYPES.FORMULA_FRONTEND,
+];
+
+const timelineBoardSearchableTypes = [
+  ...searchableTypes,
+  FIELD_TYPES.MULTISELECT,
+  FIELD_TYPES.LOOKUP,
+  FIELD_TYPES.STATUS,
+];
+
+const isSearchable = (el, type) => {
+  if (type === "TIMELINE" || type === "BOARD") {
+    return timelineBoardSearchableTypes.includes(el?.type);
+  }
+  return searchableTypes.includes(el?.type);
 };
 
 export const NewUiViewsWithGroups = ({
@@ -283,16 +309,8 @@ export const NewUiViewsWithGroups = ({
     navigate(url);
   };
   const columnsForSearch = useMemo(() => {
-    return Object.values(fieldsMap)?.filter(
-      (el) =>
-        el?.type === "SINGLE_LINE" ||
-        el?.type === "MULTI_LINE" ||
-        el?.type === "NUMBER" ||
-        el?.type === "PHONE" ||
-        el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE" ||
-        el?.type === "INCREMENT_ID" ||
-        el?.type === "FORMULA_FRONTEND"
+    return Object.values(fieldsMap)?.filter((el) =>
+      isSearchable(el, view?.type)
     );
   }, [view, fieldsMap]);
 

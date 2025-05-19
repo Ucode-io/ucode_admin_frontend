@@ -729,7 +729,7 @@ export default function FieldCreateModal({
               </Box>
             )}
           </div>
-          {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
+          {formulaFormat === "FORMULA" && format?.startsWith("FORMULA") && (
             <Box padding="5px">
               <FRow label="Formula format">
                 <HFSelect
@@ -799,7 +799,7 @@ export default function FieldCreateModal({
             // <FormulaAttributes control={control} mainForm={{ control }} />
           )}
           {formulaFormat === "FORMULA_FRONTEND" &&
-            format.startsWith("FORMULA") && (
+            format?.startsWith("FORMULA") && (
               <Box padding="5px">
                 <FRow label="Formula format">
                   <HFSelect

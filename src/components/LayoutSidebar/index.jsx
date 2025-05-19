@@ -402,40 +402,6 @@ const LayoutSidebar = ({
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
-          {/* {isMenuListLoading && (
-            <Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-            </Box>
-            // <Box
-            //   position="absolute"
-            //   top="50%"
-            //   left="50%"
-            //   transform={"translate(-50%, -50%)"}
-            // >
-            //   <GreyLoader />
-            // </Box>
-            // <RingLoaderWithWrapper style={{height: "100%"}} />
-          )} */}
-
           {Array.isArray(menuList) && (
             <div
               className="menu-element"

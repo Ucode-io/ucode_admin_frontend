@@ -61,7 +61,6 @@ const AppSidebar = ({
   const auth = store.getState().auth;
   const {appId} = useParams();
   const [loading, setLoading] = useState(false);
-  const [activeAccordionId, setActiveAccordionId] = useState(null);
 
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
@@ -165,7 +164,7 @@ const AppSidebar = ({
       enabled:
         Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
       onSuccess: (res) => {
-        computeMenuChilds(appId, res?.menus ?? []);
+        // computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -234,9 +233,7 @@ const AppSidebar = ({
 
     if (isOpen) {
       closeMenu(el?.id);
-      setActiveAccordionId(null);
     } else {
-      setActiveAccordionId(el?.id);
       clickElement(el);
     }
   };

@@ -51,32 +51,37 @@ export const SubGroup = ({
           />
         </InputGroup>
         <div className={cls.labels}>
-          {renderFields.map((item) => {
-            return (
-              <div>
-                <div className={cls.label}>
-                  <span className={cls.text}>
-                    {fieldsMap[item]?.type &&
-                      getColumnIcon({
-                        column: { type: fieldsMap[item]?.type },
-                      })}
-                    {fieldsMap[item]?.attributes?.[
-                      "label_" + (i18n.language || "en")
-                    ] || fieldsMap[item]?.label}
-                  </span>
-                  <Switch
-                    ml="auto"
-                    checked={view?.attributes?.sub_group_by_id === item}
-                    onChange={(ev) =>
-                      handleUpdateSubGroup(item, ev.target.checked)
-                    }
-                    disabled={view?.group_fields?.[0] === item}
-                    isChecked={view?.attributes?.sub_group_by_id === item}
-                  />
+          {renderFields
+            ?.filter((item) => fieldsMap[item])
+            .map((item) => {
+              return (
+                <div>
+                  <div className={cls.label}>
+                    <span className={cls.text}>
+                      {fieldsMap[item]?.type &&
+                        getColumnIcon({
+                          column: { type: fieldsMap[item]?.type },
+                        })}
+                      {fieldsMap[item]?.type === "LOOKUP" ||
+                      fieldsMap[item]?.type === "LOOKUPS"
+                        ? fieldsMap[item]?.attributes?.[
+                            `label_${i18n?.language}`
+                          ]
+                        : fieldsMap[item]?.attributes?.field_permission?.label}
+                    </span>
+                    <Switch
+                      ml="auto"
+                      checked={view?.attributes?.sub_group_by_id === item}
+                      onChange={(ev) =>
+                        handleUpdateSubGroup(item, ev.target.checked)
+                      }
+                      disabled={view?.group_fields?.[0] === item}
+                      isChecked={view?.attributes?.sub_group_by_id === item}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </Box>
     </div>

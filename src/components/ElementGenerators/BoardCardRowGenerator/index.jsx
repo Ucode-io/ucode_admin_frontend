@@ -47,23 +47,21 @@ const BoardCardRowGenerator = ({
           showFieldLabel={showFieldLabel}
           hintPosition={hintPosition}
         >
-          {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
+          <span style={{ width: "16px", height: "16px" }}>
+            {getColumnIcon({ column: field })}
+          </span>
+          <Box>
+            {/* {field?.attributes?.[`label_${i18n?.language}`]} */}
+            <Box>
+              {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
+            </Box>
+          </Box>
+          {showFieldLabel && (
+            <span className={styles.rowHint}>
+              {field?.attributes?.[`label_${i18n?.language}`]}
+            </span>
+          )}
         </FieldContainer>
-        // <Box className={styles.rowWrapper}>
-        //   <span style={{ width: "16px", height: "16px" }}>
-        //     {getColumnIcon({ column: field })}
-        //   </span>
-        //   <Box>
-        //     <Box>
-        //       {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
-        //     </Box>
-        //   </Box>
-        //   {showFieldLabel && (
-        //     <span className={clsx(styles.rowHint, styles[hintPosition])}>
-        //       {field?.attributes?.[`label_${i18n?.language}`]}
-        //     </span>
-        //   )}
-        // </Box>
       );
 
     case FIELD_TYPES.MULTISELECT:

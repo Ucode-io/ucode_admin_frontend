@@ -6,6 +6,8 @@ export const useBoardSubGroupProps = ({
   view,
   fieldsMap,
 }) => {
+  const { i18n } = useTranslation();
+
   const [search, setSearch] = useState("");
 
   const { i18n } = useTranslation();

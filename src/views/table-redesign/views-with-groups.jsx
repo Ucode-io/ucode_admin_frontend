@@ -965,7 +965,6 @@ export const NewUiViewsWithGroups = ({
                   queryClient={queryClient}
                   settingsForm={settingsForm}
                   views={views}
-                  fieldsMapRel={fieldsMapRel}
                 />
               </>
             )}
@@ -1667,7 +1666,6 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
-  fieldsMapRel,
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
@@ -2278,7 +2276,6 @@ const ViewOptions = ({
             onBackClick={() => setOpenedMenu(null)}
             title={"Sub Group"}
             viewUpdateMutation={viewUpdateMutation}
-            fieldsMapRel={fieldsMapRel}
           />
         )}
 

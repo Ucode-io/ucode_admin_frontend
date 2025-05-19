@@ -10,8 +10,6 @@ export const useBoardSubGroupProps = ({
 
   const [search, setSearch] = useState("");
 
-  const { i18n } = useTranslation();
-
   const handleUpdateSubGroup = (type, checked) => {
     viewUpdateMutation.mutate({
       ...view,

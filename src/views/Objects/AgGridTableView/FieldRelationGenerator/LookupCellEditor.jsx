@@ -49,7 +49,6 @@ const customStyles = {
 const LookupCellEditor = (props) => {
   const [options, setOptions] = useState([]);
   const {field, setValue, data, value} = props;
-  const [filterVal, setFilterVal] = useState({});
   const [page, setPage] = useState(1);
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
@@ -64,17 +63,7 @@ const LookupCellEditor = (props) => {
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const [inputValue, setInputValue] = useState(null);
-
-  // const autoFiltersValue = useMemo(() => {
-  //   const result = {};
-  //   autoFilters?.forEach((filter) => {
-  //     const fromValue = props?.node?.data?.[filter.field_from];
-  //     if (filter.field_to && fromValue !== undefined) {
-  //       result[filter.field_to] = fromValue;
-  //     }
-  //   });
-  //   return result;
-  // }, [props?.node?.data, autoFilters]);
+  const [autoFiltersValue, setAutoFiltersValue] = useState(null);
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
@@ -85,7 +74,7 @@ const LookupCellEditor = (props) => {
   }
 
   const {refetch} = useQuery(
-    ["GET_OBJECT_LIST", field?.table_slug, filterVal, page],
+    ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue, page],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
@@ -94,7 +83,7 @@ const LookupCellEditor = (props) => {
           limit: 10,
           offset: pageToOffset(page, 10),
           with_relations: false,
-          ...filterVal,
+          ...autoFiltersValue,
         },
       });
     },
@@ -102,7 +91,7 @@ const LookupCellEditor = (props) => {
       enabled: Boolean(page > 1),
       select: (res) => res?.data?.response ?? [],
       onSuccess: (fetchedOptions) => {
-        if (Object.keys(filterVal).length > 0) {
+        if (Boolean(field?.attributes?.auto_filters?.[0]?.field_from)) {
           setOptions(fetchedOptions);
         } else
           setOptions((prevOptions) => [
@@ -125,14 +114,41 @@ const LookupCellEditor = (props) => {
   }, [options]);
 
   const handleChange = (selectedOption) => {
-    props.node.setDataValue(field.slug, selectedOption?.guid);
-    props.api.refreshCells({rowNodes: [props.node], force: true});
-    props.api.stopEditing();
-
     setInputValue(selectedOption);
     setLocalValue(selectedOption);
     setValue(selectedOption?.guid || null);
   };
+
+  const calculateAutoFilter = (dataVal) => {
+    const result = {};
+    autoFilters?.forEach((filter) => {
+      const fromValue = dataVal?.[filter.field_from];
+      if (filter.field_to && fromValue !== undefined) {
+        result[filter.field_to] = fromValue;
+      }
+    });
+
+    setOptions([]);
+    setAutoFiltersValue(result);
+  };
+
+  const onMenuOpen = () => {
+    if (Boolean(autoFilters?.[0]?.field_from)) {
+      calculateAutoFilter(props?.node?.data);
+    } else {
+      refetch();
+    }
+  };
+
+  useEffect(() => {
+    if (
+      autoFilters?.length >= 1 &&
+      autoFiltersValue &&
+      Object.keys(autoFiltersValue).length > 0
+    ) {
+      refetch();
+    }
+  }, [autoFiltersValue]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
@@ -194,9 +210,7 @@ const LookupCellEditor = (props) => {
             SingleValue: CustomSingleValue,
           }}
           onChange={handleChange}
-          onMenuOpen={() => {
-            refetch();
-          }}
+          onMenuOpen={onMenuOpen}
         />
       </Box>
       {props?.colDef?.colIndex === 0 && (

@@ -1,27 +1,27 @@
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import styles from "./index.module.scss";
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
-import { useTranslation } from "react-i18next";
-import { sortSections } from "../../../../utils/sectionsOrderNumber";
+import {useEffect, useMemo, useState} from "react";
+import {useQuery} from "react-query";
+import {useTranslation} from "react-i18next";
+import {sortSections} from "../../../../utils/sectionsOrderNumber";
 import layoutService from "../../../../services/layoutService";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import Sections from "./Sections";
 import constructorTableService from "../../../../services/constructorTableService";
-import { listToMap } from "../../../../utils/listToMap";
-import { IconButton } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {listToMap} from "../../../../utils/listToMap";
+import {IconButton} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const ObjectForm = ({ onBackButtonClick, form }) => {
-  const { tableSlug } = useParams();
+const ObjectForm = ({onBackButtonClick, form}) => {
+  const {tableSlug} = useParams();
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -32,7 +32,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
     control,
     reset,
     setValue: setFormValue,
-    formState: { errors },
+    formState: {errors},
   } = form;
 
   const getAllData = async () => {
@@ -41,14 +41,11 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
-    
+
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, layout] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
 
       const layout1 = {
         ...layout,
@@ -100,6 +97,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
         }))
       );
       if (!selectedTab?.relation_id) {
+        console.log("dataaaaaaaaa", data);
         reset(data?.response ?? {});
       }
       setSelectTab(relations[selectedTabIndex]);
@@ -191,7 +189,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
   }, [id]);
 
   const {
-    data: { views, fieldsMap, visibleColumns, visibleRelationColumns } = {
+    data: {views, fieldsMap, visibleColumns, visibleRelationColumns} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -210,7 +208,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
       );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views:
             data?.views?.filter(
@@ -225,7 +223,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
             })) ?? [],
         };
       },
-      onSuccess: ({ views }) => {
+      onSuccess: ({views}) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }

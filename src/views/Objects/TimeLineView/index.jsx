@@ -317,6 +317,8 @@ export default function TimeLineView({
               navigateToDetailPage={navigateToDetailPage}
               setNoDates={setNoDates}
               noDates={noDates}
+              searchText={searchText}
+              columnsForSearch={columnsForSearch}
             />
           )}
         </div>

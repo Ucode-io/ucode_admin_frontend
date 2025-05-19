@@ -38,6 +38,8 @@ const BoardView = ({
   visibleRelationColumns,
   layoutType,
   setLayoutType,
+  searchText,
+  columnsForSearch,
 }) => {
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
@@ -46,7 +48,6 @@ const BoardView = ({
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
   const { t, i18n } = useTranslation();
-  const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
   const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
@@ -65,6 +66,8 @@ const BoardView = ({
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const searchField = columnsForSearch?.find((item) => item?.is_search);
 
   const {
     data: { layout } = {
@@ -408,6 +411,7 @@ const BoardView = ({
               dragHandleSelector=".column-header"
               dragClass="drag-card-ghost"
               dropClass="drag-card-ghost-drop"
+              autoScrollEnabled={false}
               dropPlaceholder={{
                 animationDuration: 150,
                 showOnTop: true,
@@ -524,6 +528,8 @@ const BoardView = ({
                             subGroupData={subBoardData[el]}
                             subItem={el}
                             subGroupFieldSlug={subGroupFieldSlug}
+                            searchText={searchText}
+                            searchField={searchField}
                             setDateInfo={setDateInfo}
                             setDefaultValue={setDefaultValue}
                             setOpenDrawerModal={setOpenDrawerModal}
@@ -578,6 +584,8 @@ const BoardView = ({
                       setSelectedRow={setSelectedRow}
                       subGroupFieldSlug={subGroupFieldSlug}
                       setGroupCounts={setGroupCounts}
+                      searchText={searchText}
+                      searchField={searchField}
                     />
                   </div>
                 ))}

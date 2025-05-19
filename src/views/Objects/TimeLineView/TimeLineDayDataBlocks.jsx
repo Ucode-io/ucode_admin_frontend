@@ -3,6 +3,7 @@ import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import TimeLineDays from "./TimeLineDays";
 import styles from "./styles.module.scss";
 import TimeLineDataRecursiveRow from "./TimeLineDataRecursiveRow";
+import { useTimelineBlockContext } from "./providers/TimelineBlockProvider";
 
 export default function TimeLineDayDataBlock({
   data,

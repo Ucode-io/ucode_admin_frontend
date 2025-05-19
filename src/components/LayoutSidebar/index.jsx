@@ -526,7 +526,7 @@ const LayoutSidebar = ({
         <Flex
           display={sidebarIsOpen ? "flex" : "block"}
           mt="auto"
-          py={10}
+          py={8}
           alignItems="center"
           justifyContent={"space-between"}
           columnGap={16}

@@ -5,7 +5,13 @@ import RowClickButton from "../RowClickButton";
 
 const HFCheckboxCell = (props) => {
   const id = useId();
-  const {field, setValue, value, colDef, data} = props;
+  const {setValue, value, colDef, data} = props;
+
+  const field = props?.colDef?.fieldObj;
+
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -15,7 +21,7 @@ const HFCheckboxCell = (props) => {
       {" "}
       <Box pl={"10px"}>
         <Checkbox
-          disabled={field?.disabled}
+          disabled={disabled}
           id={`checkbox${id}`}
           icon={
             <img src="/img/checbkox.svg" alt="checkbox" style={{width: 20}} />

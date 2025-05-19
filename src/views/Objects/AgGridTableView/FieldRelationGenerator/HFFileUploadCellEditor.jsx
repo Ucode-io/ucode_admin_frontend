@@ -3,7 +3,13 @@ import RowClickButton from "../RowClickButton.jsx";
 import NewFileUploadCellEditor from "./ImageComponents/NewFileUploadCellEditor.jsx";
 
 const HFFileUploadCellEditor = (props) => {
-  const {field, value, setValue, colDef, data} = props;
+  const {value, setValue, colDef, data} = props;
+
+  const field = props?.colDef?.fieldObj;
+
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -26,7 +32,7 @@ const HFFileUploadCellEditor = (props) => {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>

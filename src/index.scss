@@ -1306,6 +1306,7 @@ div:has(.chakra-tooltip) {
 
 .childMenuFolderBtn {
   &:hover {
+    background: #eaecf0 !important;
     .childMenuFolderArrow {
       display: block;
     }
@@ -1313,5 +1314,31 @@ div:has(.chakra-tooltip) {
     .childMenuIcon {
       display: none;
     }
+  }
+}
+
+.childRegularBtn {
+  &:hover {
+    background: #eaecf0 !important;
+  }
+}
+
+.childeMenu {
+  width: 20px;
+  height: 20px;
+  display: none !important;
+  background: #000;
+  &:hover {
+    .childeMenuArrow {
+      display: block;
+    }
+  }
+
+  .childeMenuArrow {
+    display: none;
+  }
+
+  .childeMenuGenIcon {
+    display: block;
   }
 }

@@ -4,7 +4,6 @@ import {useTranslation} from "react-i18next";
 import {Container, Draggable} from "react-smooth-dnd";
 import {getColumnIcon} from "../../table-redesign/icons";
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
-
 import {Flex, Text} from "@chakra-ui/react";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -142,7 +141,11 @@ function DrawerFormDetailPage({
         return allFields.push(field);
       });
     });
-    return !!allFields.find((field) => field?.enable_multilanguage === true);
+    return !!allFields.find((field) =>
+      field?.enable_multilanguage
+        ? field?.enable_multilanguage
+        : field?.attributes?.enable_multilanguage === true
+    );
   }, [selectedTab]);
 
   useEffect(() => {

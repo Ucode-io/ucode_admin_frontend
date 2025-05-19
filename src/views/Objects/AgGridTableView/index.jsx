@@ -11,6 +11,7 @@ import {
   ColumnApiModule,
   DateEditorModule,
   NumberEditorModule,
+  RenderApiModule,
   TextEditorModule,
   UndoRedoEditModule,
   ValidationModule,
@@ -62,7 +63,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteColumnModal from "./DeleteColumnModal";
 import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
 import {useFieldArray, useForm} from "react-hook-form";
-import constructorFieldService, {
+import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../services/constructorFieldService";
@@ -72,7 +73,6 @@ import {
 } from "../../../services/relationService";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import constructorRelationService from "../../../services/constructorRelationService";
 import {transliterate} from "../../../utils/textTranslater";
 import {showAlert} from "../../../store/alert/alert.thunk";
 
@@ -94,6 +94,7 @@ ModuleRegistry.registerModules([
   CellStyleModule,
   DateEditorModule,
   UndoRedoEditModule,
+  RenderApiModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -119,6 +120,7 @@ function AgGridTableView(props) {
     setLayoutType = () => {},
     navigateToEditPage = () => {},
     getRelationFields = () => {},
+    navigateCreatePage = () => {},
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
@@ -229,7 +231,7 @@ function AgGridTableView(props) {
   );
 
   const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}],
+    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
@@ -260,33 +262,37 @@ function AgGridTableView(props) {
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields?.map((item, index) => {
-          const columnDef = {
-            view,
-            flex: 1,
-            minWidth: 250,
-            editable: true,
-            enableRowGroup: true,
-            fieldObj: item,
-            field: item?.slug,
-            rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
-              ? true
-              : false,
-            cellClass:
-              item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
-            gridApi: gridApi,
-            columnID:
-              item?.type === "LOOKUP"
-                ? item?.relation_id
-                : item?.id || generateGUID(),
-            headerName:
-              item?.attributes?.[`label_${i18n?.language}`] || item?.label,
-            headerComponent: HeaderComponent,
-            pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
-          };
-          getColumnEditorParams(item, columnDef);
-          return columnDef;
-        }),
+        fiedlsarray: res?.data?.fields
+          ?.filter((el) => el?.attributes?.field_permission?.view_permission)
+          ?.map((item, index) => {
+            const columnDef = {
+              view,
+              flex: 1,
+              minWidth: 250,
+              editable: true,
+              enableRowGroup: true,
+              fieldObj: item,
+              field: item?.slug,
+              rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
+                ? true
+                : false,
+              cellClass:
+                item?.type === "LOOKUP"
+                  ? "customFieldsRelation"
+                  : "customFields",
+              gridApi: gridApi,
+              columnID:
+                item?.type === "LOOKUP"
+                  ? item?.relation_id
+                  : item?.id || generateGUID(),
+              headerName:
+                item?.attributes?.[`label_${i18n?.language}`] || item?.label,
+              headerComponent: HeaderComponent,
+              pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
+            };
+            getColumnEditorParams(item, columnDef);
+            return columnDef;
+          }),
       };
     },
   });
@@ -901,6 +907,7 @@ function AgGridTableView(props) {
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToDetailPage}
+          navigateCreatePage={navigateCreatePage}
         />
       ) : selectedViewType === "CenterPeek" ? (
         <NewModalDetailPage
@@ -917,6 +924,7 @@ function AgGridTableView(props) {
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToDetailPage}
+          navigateCreatePage={navigateCreatePage}
         />
       ) : null}
 

@@ -176,7 +176,7 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: `0 0 0 ${level * 12}px`}} style={{marginBottom: 5}}>
+      <Box sx={{padding: `0 0 0 ${level * 10}px`}} style={{marginBottom: 5}}>
         <div
           className="parent-block column-drag-handle"
           key={element.id}
@@ -195,7 +195,7 @@ const RecursiveBlock = ({
                 background: activeMenu ? "#F0F0EF" : menuStyles?.background,
                 color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
-              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
+              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -212,12 +212,46 @@ const RecursiveBlock = ({
                   />
                 )}
                 {element?.type === "FOLDER" && (
-                  <div className="childMenuFolderArrowChild">
-                    {MenuFolderArrows({element, childBlockVisible})}
-                  </div>
+                  <Box>
+                    <div className="childMenuFolderArrow">
+                      {MenuFolderArrows({element, childBlockVisible})}
+                    </div>
+
+                    <div className="childMenuIcon">
+                      {element?.icon ||
+                      element?.data?.microfrontend?.icon ||
+                      element?.data?.webpage?.icon ? (
+                        <IconGenerator
+                          icon={
+                            element?.icon ||
+                            element?.data?.microfrontend?.icon ||
+                            element?.data?.webpage?.icon
+                          }
+                          size={20}
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            width: "20px",
+                            height: "20px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                          <Box
+                            sx={{
+                              width: "5px",
+                              height: "5px",
+                              background: "#787774",
+                              borderRadius: "50%",
+                            }}></Box>
+                        </Box>
+                      )}
+                    </div>
+                  </Box>
                 )}
 
-                {element?.icon ||
+                {(element?.type !== "FOLDER" && element?.icon) ||
                 element?.data?.microfrontend?.icon ||
                 element?.data?.webpage?.icon ? (
                   <div
@@ -255,52 +289,64 @@ const RecursiveBlock = ({
                   ""
                 )}
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                    position: "relative",
-                    color: "#465766",
-                  }}>
-                  <Box>
-                    <p>{getMenuLabel(element)}</p>
-                  </Box>
-                  {settingsButtonPermission && !userType && (
-                    <Box
-                      id="moreicon"
-                      className="icon_group"
-                      style={{
-                        position: "absolute",
-                        right: 0,
-                        // backgroundColor: "#EAECF0",
-                        padding: "2px 4px",
-                        borderRadius: 4,
-                      }}>
-                      {(element?.data?.permission?.delete ||
-                        element?.data?.permission?.update ||
-                        element?.data?.permission?.write) && (
-                        <Tooltip title="Settings" placement="top">
-                          <Box className="extra_icon" data-cy={"three-dots"}>
-                            <BsThreeDots
-                              size={13}
-                              onClick={(e) => {
-                                folderSettings(e);
-                              }}
-                              style={{
-                                color:
-                                  menuItem?.id === element?.id
-                                    ? menuStyle?.active_text
-                                    : menuStyle?.text || "",
-                              }}
-                            />
-                          </Box>
-                        </Tooltip>
-                      )}
+                <Tooltip
+                  title={
+                    Boolean(level > 2 && getMenuLabel(element)?.length > 14) &&
+                    getMenuLabel(element)
+                  }>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                      position: "relative",
+                      color: "#465766",
+                    }}>
+                    <Box>
+                      <p>
+                        {level > 2
+                          ? getMenuLabel(element)?.length > 14
+                            ? `${getMenuLabel(element)?.slice(0, 12)}...`
+                            : getMenuLabel(element)
+                          : getMenuLabel(element)}
+                      </p>
                     </Box>
-                  )}
-                </Box>
+                    {settingsButtonPermission && !userType && (
+                      <Box
+                        id="moreicon"
+                        className="icon_group"
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          // backgroundColor: "#EAECF0",
+                          padding: "2px 4px",
+                          borderRadius: 4,
+                        }}>
+                        {(element?.data?.permission?.delete ||
+                          element?.data?.permission?.update ||
+                          element?.data?.permission?.write) && (
+                          <Tooltip title="Settings" placement="top">
+                            <Box className="extra_icon" data-cy={"three-dots"}>
+                              <BsThreeDots
+                                size={13}
+                                onClick={(e) => {
+                                  folderSettings(e);
+                                }}
+                                style={{
+                                  color:
+                                    menuItem?.id === element?.id
+                                      ? menuStyle?.active_text
+                                      : menuStyle?.text || "",
+                                }}
+                              />
+                            </Box>
+                          </Tooltip>
+                        )}
+                      </Box>
+                    )}
+                  </Box>
+                </Tooltip>
               </div>
               {addButtonPermission && element?.data?.permission?.write ? (
                 <Box className="icon_group">
@@ -345,6 +391,7 @@ const RecursiveBlock = ({
               buttonProps={buttonProps}
             />
           ))}
+
           {element.id === folderIds.data_base_folder_id && (
             <>
               <TableSettingSidebar
@@ -355,7 +402,6 @@ const RecursiveBlock = ({
               />
             </>
           )}
-
           {element.id === folderIds.code_folder_id && (
             <>
               <FunctionSidebar

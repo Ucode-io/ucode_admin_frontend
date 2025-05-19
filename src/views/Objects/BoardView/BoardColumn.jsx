@@ -394,6 +394,8 @@ const BoardColumn = ({
                       fieldsMap={fieldsMap}
                       slug={selectedGroupField?.slug}
                       columnIndex={columnIndex}
+                      showFieldLabel
+                      hintPosition="left"
                     />
                   ))}
                 </div>

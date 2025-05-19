@@ -254,8 +254,15 @@ const TableRow = ({
                     </RectangleIconButton>
                   </PermissionWrapperV2>
                 </CTableCell>
-                {projectId === "b9029a9f-9431-4a44-b5e4-be148e4cc573" && (
-                  <GeneratePdfFromTable view={view} row={row} />
+                {Boolean(
+                  projectId === "b9029a9f-9431-4a44-b5e4-be148e4cc573" ||
+                    projectId === "6fd296f6-9195-4ed3-af84-c1dcca929273"
+                ) && (
+                  <GeneratePdfFromTable
+                    projectId={projectId}
+                    view={view}
+                    row={row}
+                  />
                 )}
                 {/*<PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>*/}
                 {/*  <GeneratePdfFromTable view={view} row={row}/>*/}

@@ -156,7 +156,7 @@ function InviteModal({
         <Button
           ml="auto"
           fontSize={13}
-          rightIcon={<ChevronDownIcon fontSize={20} />}
+          // rightIcon={<ChevronDownIcon fontSize={20} />}
           borderRadius={8}
           onClick={() => {
             onOpen();
@@ -173,12 +173,14 @@ function InviteModal({
           <ModalContent borderRadius={"12px"} maxW={"500px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
-            <Button onClick={copyToClipboard} className={styles.copyButton}>
-              <LinkIcon
-                style={{transform: "rotate(140deg)", color: "#A09F9D"}}
-              />
-              Invite Link
-            </Button>
+            {selectedClientType?.name !== "DEFAULT ADMIN" && (
+              <Button onClick={copyToClipboard} className={styles.copyButton}>
+                <LinkIcon
+                  style={{transform: "rotate(140deg)", color: "#A09F9D"}}
+                />
+                Invite Link
+              </Button>
+            )}
 
             <ModalBody>
               <Tabs

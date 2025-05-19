@@ -3,7 +3,13 @@ import RowClickButton from "../RowClickButton";
 import VideoUploadCellEditor from "./ImageComponents/VideoUploadCellEditor";
 
 const HFVideoUploadCellEditor = (props) => {
-  const {field, setValue, value, data, colDef} = props;
+  const {setValue, value, data, colDef} = props;
+
+  const field = props?.colDef?.fieldObj;
+
+  const disabled =
+    field?.attributes?.disabled ||
+    !field?.attributes?.field_permission?.edit_permission;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -24,7 +30,7 @@ const HFVideoUploadCellEditor = (props) => {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>

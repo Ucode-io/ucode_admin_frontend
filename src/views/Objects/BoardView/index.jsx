@@ -324,6 +324,8 @@ const BoardView = ({
 
   const [groupCounts, setGroupCounts] = useState({});
 
+  const [isOnTop, setIsOnTop] = useState(false);
+
   useEffect(() => {
     setGroupCounts(statusGroupCounts);
   }, [data, subBoardData, statusGroupCounts]);
@@ -335,6 +337,11 @@ const BoardView = ({
 
     const onScroll = () => {
       // el.style.top = `${board.scrollTop}px`;
+      if (board.scrollTop > 0) {
+        setIsOnTop(true);
+      } else {
+        setIsOnTop(false);
+      }
       el.style.transform = `translateY(${board.scrollTop}px)`;
     };
 
@@ -383,7 +390,13 @@ const BoardView = ({
           </div> */}
           {/* )} */}
 
-          <div className={styles.boardHeader} ref={fixedElement}>
+          <div
+            className={styles.boardHeader}
+            ref={fixedElement}
+            style={{
+              boxShadow: isOnTop ? "rgba(0, 0, 0, 0.1) 0px 0px 2px 0px" : "",
+            }}
+          >
             <Container
               lockAxis="x"
               onDrop={onDrop}

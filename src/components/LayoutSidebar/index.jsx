@@ -428,15 +428,6 @@ const LayoutSidebar = ({
                 <Skeleton width="100%" height="50px" />
               </Box>
             </Box>
-            // <Box
-            //   position="absolute"
-            //   top="50%"
-            //   left="50%"
-            //   transform={"translate(-50%, -50%)"}
-            // >
-            //   <GreyLoader />
-            // </Box>
-            // <RingLoaderWithWrapper style={{height: "100%"}} />
           )}
 
           {Array.isArray(menuList) && (

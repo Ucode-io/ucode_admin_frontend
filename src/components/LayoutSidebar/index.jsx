@@ -256,14 +256,11 @@ const LayoutSidebar = ({
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
+    setMenuList(result);
     if (result) {
-      menuService
-        .updateOrder({
-          menus: result,
-        })
-        .then(() => {
-          getMenuList();
-        });
+      menuService.updateOrder({
+        menus: result,
+      });
     }
   };
 
@@ -405,7 +402,7 @@ const LayoutSidebar = ({
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
-          {isMenuListLoading && (
+          {/* {isMenuListLoading && (
             <Box>
               <Box display="flex" columnGap="8px">
                 <Skeleton height="50px" width="36px" />
@@ -437,7 +434,7 @@ const LayoutSidebar = ({
             //   <GreyLoader />
             // </Box>
             // <RingLoaderWithWrapper style={{height: "100%"}} />
-          )}
+          )} */}
 
           {Array.isArray(menuList) && (
             <div

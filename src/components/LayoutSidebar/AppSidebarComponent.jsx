@@ -44,7 +44,6 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
-  setMenuItem,
   menuItem,
   menuLanguages,
   openFolderCreateModal,

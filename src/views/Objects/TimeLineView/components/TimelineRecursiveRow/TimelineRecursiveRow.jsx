@@ -33,24 +33,18 @@ export const TimelineRecursiveRow = ({
   setIsAllOpen,
   childData,
 }) => {
-  const {
-    handleClick,
-    computedValue,
-    open,
-    hoveredRowId,
-    searchText,
-    searchField,
-  } = useTimelineRecursiveRowProps({
-    item,
-    fieldsMap,
-    openedRows,
-    setOpenedRows,
-    lastLabels,
-    handleAllOpen,
-    handleAllClose,
-    computedData,
-    setIsAllOpen,
-  });
+  const { handleClick, computedValue, open, hoveredRowId, searchText } =
+    useTimelineRecursiveRowProps({
+      item,
+      fieldsMap,
+      openedRows,
+      setOpenedRows,
+      lastLabels,
+      handleAllOpen,
+      handleAllClose,
+      computedData,
+      setIsAllOpen,
+    });
 
   const slug = view?.attributes?.visible_field?.split("/")[0];
 
@@ -98,11 +92,13 @@ export const TimelineRecursiveRow = ({
               </button>
               // <>{open ? <ExpandLess /> : <ExpandMore />}</>
             )}
-            {searchText && item?.[searchField?.slug] ? (
-              <span dangerouslySetInnerHTML={{ __html: withHighlight }} />
-            ) : (
-              <span className={cls.group_by_column_header_text}>{label}</span>
-            )}
+            <span className={cls.group_by_column_header_text}>
+              {searchText && searchedChars?.length ? (
+                <span dangerouslySetInnerHTML={{ __html: withHighlight }} />
+              ) : (
+                <span>{label}</span>
+              )}
+            </span>
             {/* <span className={cls.group_by_column_header_text}>
                 {searchText ? withHighlight : label}
               </span> */}

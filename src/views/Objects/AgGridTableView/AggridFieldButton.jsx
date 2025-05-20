@@ -28,6 +28,7 @@ export default function AggridFieldButton({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  mainForm,
 }) {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
@@ -192,6 +193,7 @@ export default function AggridFieldButton({
       />
       {fieldCreateAnchor && (
         <FieldCreateModal
+          mainForm={mainForm}
           anchorEl={fieldCreateAnchor}
           setAnchorEl={setFieldCreateAnchor}
           watch={watch}

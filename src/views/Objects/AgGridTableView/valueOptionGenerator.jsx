@@ -30,6 +30,7 @@ import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
 import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
 import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
 import HFButtonFieldEditor from "./FieldRelationGenerator/HFButtonFieldEditor";
+import HFMultiFileCellEditor from "./FieldRelationGenerator/HFMultiFileCellEditor";
 
 const getColumnEditorParams = (item, columnDef) => {
   switch (item?.type) {
@@ -230,6 +231,13 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "MULTI_IMAGE":
       columnDef.cellRenderer = HFMultiImageCellEditor;
+      columnDef.cellRendererParams = {
+        field: item,
+      };
+      break;
+
+    case "MULTI_FILE":
+      columnDef.cellRenderer = HFMultiFileCellEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

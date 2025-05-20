@@ -54,10 +54,6 @@ function MultiImageUpload({
   const inputChangeHandler = (e) => {
     setLoading(true);
     const files = [...e.target.files];
-    console.log(files);
-    files.forEach((file) => {
-      console.log(file);
-    });
 
     Promise.all(
       files.map((file) => {

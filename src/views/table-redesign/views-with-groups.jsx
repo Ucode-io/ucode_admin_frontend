@@ -443,21 +443,17 @@ export const NewUiViewsWithGroups = ({
   };
 
   const navigateCreatePage = () => {
-    console.log("enteredddddddddd function");
     if (projectInfo?.new_layout) {
-      console.log("enteredddddddddd new UI");
       if (view?.attributes?.url_object) {
         navigate(view?.attributes?.url_object);
       }
       setOpen(true);
       setSelectedRow(null);
     } else {
-      console.log("enteredddddddddd new Layout else");
       if (layoutType === "PopupLayout") {
         setOpen(true);
         setSelectedRow(null);
       } else {
-        console.log("enteredddddddddd create");
         navigateToForm(
           tableSlug,
           "CREATE",

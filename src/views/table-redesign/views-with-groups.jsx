@@ -355,16 +355,8 @@ export const NewUiViewsWithGroups = ({
     navigate(url);
   };
   const columnsForSearch = useMemo(() => {
-    return Object.values(fieldsMap)?.filter(
-      (el) =>
-        el?.type === "SINGLE_LINE" ||
-        el?.type === "MULTI_LINE" ||
-        el?.type === "NUMBER" ||
-        el?.type === "PHONE" ||
-        el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE" ||
-        el?.type === "INCREMENT_ID" ||
-        el?.type === "FORMULA_FRONTEND"
+    return Object.values(fieldsMap)?.filter((el) =>
+      isSearchable(el, view?.type)
     );
   }, [view, fieldsMap]);
 

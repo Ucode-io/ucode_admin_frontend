@@ -18,6 +18,7 @@ import layoutService from "../../../services/layoutService";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import useDebounce from "../../../hooks/useDebounce";
+import { viewSearch } from "../../../utils/viewSearch";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -147,9 +148,11 @@ export default function TimeLineBlock({
 
   const searchField = columnsForSearch?.find((item) => item?.is_search);
 
-  const filteredData = computedData?.filter((item) =>
-    item?.[searchField?.slug]?.toLowerCase().includes(searchText?.toLowerCase())
-  );
+  const filteredData = viewSearch({
+    columnsForSearch,
+    computedData,
+    searchText,
+  });
 
   function findEmptyDates(data) {
     const result = [];

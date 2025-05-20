@@ -47,9 +47,9 @@ const BoardCardRowGenerator = ({
           showFieldLabel={showFieldLabel}
           hintPosition={hintPosition}
         >
-          <span style={{ width: "16px", height: "16px" }}>
+          {/* <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
-          </span>
+          </span> */}
           <Box>
             {/* {field?.attributes?.[`label_${i18n?.language}`]} */}
             <Box>

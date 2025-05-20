@@ -11,6 +11,7 @@ import { applyDrag } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import useDebounce from "../../../hooks/useDebounce";
+import { viewSearch } from "../../../utils/viewSearch";
 
 const BoardColumn = ({
   tab,
@@ -34,7 +35,7 @@ const BoardColumn = ({
   setDefaultValue,
   setGroupCounts,
   searchText,
-  searchField,
+  columnsForSearch,
 }) => {
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
@@ -299,13 +300,11 @@ const BoardColumn = ({
   //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
   //     ?.color;
 
-  const filteredComputedData = searchText
-    ? computedData?.filter((item) =>
-        item[searchField?.slug]
-          ?.toLowerCase()
-          .includes(searchText?.toLowerCase())
-      )
-    : computedData;
+  const filteredComputedData = viewSearch({
+    columnsForSearch,
+    computedData,
+    searchText,
+  });
 
   return (
     <>

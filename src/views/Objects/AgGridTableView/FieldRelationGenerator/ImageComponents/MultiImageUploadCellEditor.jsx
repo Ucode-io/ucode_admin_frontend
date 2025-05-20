@@ -239,7 +239,7 @@ function MultiImageUploadCellEditor({
                 style={{
                   display: "none",
                 }}
-                accept=".jpg, .jpeg, .png, .gif"
+                accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras"
                 className="hidden"
                 ref={inputRef}
                 tabIndex={tabIndex}

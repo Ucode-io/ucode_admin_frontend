@@ -92,6 +92,7 @@ import {CalendarSettings} from "./components/CalendarSettings";
 import {SubGroup} from "./components/SubGroup";
 import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
+import { FIELD_TYPES } from "../../utils/constants/fieldTypes";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -101,6 +102,31 @@ const viewIcons = {
   TIMELINE: "line-chart-up.svg",
   WEBSITE: "globe.svg",
   TREE: "tree.svg",
+};
+
+const searchableTypes = [
+  FIELD_TYPES.SINGLE_LINE,
+  FIELD_TYPES.MULTI_LINE,
+  FIELD_TYPES.NUMBER,
+  FIELD_TYPES.PHONE,
+  FIELD_TYPES.EMAIL,
+  FIELD_TYPES.INTERNATION_PHONE,
+  FIELD_TYPES.INCREMENT_ID,
+  FIELD_TYPES.FORMULA_FRONTEND,
+];
+
+const timelineBoardSearchableTypes = [
+  ...searchableTypes,
+  FIELD_TYPES.MULTISELECT,
+  FIELD_TYPES.LOOKUP,
+  FIELD_TYPES.STATUS,
+];
+
+const isSearchable = (el, type) => {
+  if (type === "TIMELINE" || type === "BOARD") {
+    return timelineBoardSearchableTypes.includes(el?.type);
+  }
+  return searchableTypes.includes(el?.type);
 };
 
 export const NewUiViewsWithGroups = ({

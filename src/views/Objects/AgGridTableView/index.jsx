@@ -800,54 +800,56 @@ function AgGridTableView(props) {
               </Box>
             )}
 
-            {!columns?.length ? (
-              <NoFieldsComponent />
-            ) : (
-              <>
-                <AgGridReact
-                  ref={gridApi}
-                  rowBuffer={15}
-                  theme={myTheme}
-                  gridOptions={{
-                    rowBuffer: 10,
-                    cacheBlockSize: 10,
-                    maxBlocksInCache: 10,
-                  }}
-                  onColumnMoved={getColumnsUpdated}
-                  rowData={rowData}
-                  loading={loading}
-                  columnDefs={columns}
-                  suppressRefresh={true}
-                  enableClipboard={true}
-                  groupDisplayType="single"
-                  paginationPageSize={limit}
-                  undoRedoCellEditing={true}
-                  rowSelection={rowSelection}
-                  rowModelType={"clientSide"}
-                  undoRedoCellEditingLimit={5}
-                  defaultColDef={defaultColDef}
-                  cellSelection={cellSelection}
-                  onColumnPinned={onColumnPinned}
-                  getMainMenuItems={getMainMenuItems}
-                  suppressColumnVirtualisation={true}
-                  treeData={view?.attributes?.treeData}
-                  suppressColumnMoveAnimation={true}
-                  autoGroupColumnDef={autoGroupColumnDef}
-                  suppressServerSideFullWidthLoadingRow={true}
-                  loadingOverlayComponent={CustomLoadingOverlay}
-                  getDataPath={
-                    view?.attributes?.treeData ? getDataPath : undefined
-                  }
-                  onCellValueChanged={(e) => {
-                    updateObject(e.data);
-                  }}
-                  onSelectionChanged={(e) => {
-                    setSelectedRows(e.api.getSelectedRows());
-                  }}
-                  onCellDoubleClicked={(params) => params.api.stopEditing()}
-                />
-              </>
-            )}
+            <Box className="scrollbarNone" sx={{height: "92%"}}>
+              {!columns?.length ? (
+                <NoFieldsComponent />
+              ) : (
+                <>
+                  <AgGridReact
+                    ref={gridApi}
+                    rowBuffer={15}
+                    theme={myTheme}
+                    gridOptions={{
+                      rowBuffer: 10,
+                      cacheBlockSize: 10,
+                      maxBlocksInCache: 10,
+                    }}
+                    onColumnMoved={getColumnsUpdated}
+                    rowData={rowData}
+                    loading={loading}
+                    columnDefs={columns}
+                    suppressRefresh={true}
+                    enableClipboard={true}
+                    groupDisplayType="single"
+                    paginationPageSize={limit}
+                    undoRedoCellEditing={true}
+                    rowSelection={rowSelection}
+                    rowModelType={"clientSide"}
+                    undoRedoCellEditingLimit={5}
+                    defaultColDef={defaultColDef}
+                    cellSelection={cellSelection}
+                    onColumnPinned={onColumnPinned}
+                    getMainMenuItems={getMainMenuItems}
+                    suppressColumnVirtualisation={true}
+                    treeData={view?.attributes?.treeData}
+                    suppressColumnMoveAnimation={true}
+                    autoGroupColumnDef={autoGroupColumnDef}
+                    suppressServerSideFullWidthLoadingRow={true}
+                    loadingOverlayComponent={CustomLoadingOverlay}
+                    getDataPath={
+                      view?.attributes?.treeData ? getDataPath : undefined
+                    }
+                    onCellValueChanged={(e) => {
+                      updateObject(e.data);
+                    }}
+                    onSelectionChanged={(e) => {
+                      setSelectedRows(e.api.getSelectedRows());
+                    }}
+                    onCellDoubleClicked={(params) => params.api.stopEditing()}
+                  />
+                </>
+              )}
+            </Box>
           </Box>
         </div>
       </div>

@@ -146,8 +146,6 @@ export default function TimeLineBlock({
     }
   }, [data, view?.attributes?.group_by_columns]);
 
-  const searchField = columnsForSearch?.find((item) => item?.is_search);
-
   const filteredData = viewSearch({
     columnsForSearch,
     computedData,
@@ -322,7 +320,6 @@ export default function TimeLineBlock({
         calendar_from_slug,
         calendar_to_slug,
         searchText,
-        searchField,
       }}
     >
       <div className={styles.main_container}>

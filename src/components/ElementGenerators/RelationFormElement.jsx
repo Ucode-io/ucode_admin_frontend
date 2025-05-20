@@ -44,6 +44,8 @@ const RelationFormElement = ({
   isModal = false,
   errors,
   modalClass,
+  relData,
+  setRelData = () => {},
   ...props
 }) => {
   const {i18n} = useTranslation();
@@ -78,6 +80,8 @@ const RelationFormElement = ({
           }}
           render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
+              relData={relData}
+              setRelData={setRelData}
               isModal={isModal}
               value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
@@ -161,6 +165,8 @@ const AutoCompleteElement = ({
   name,
   multipleInsertField,
   setFormValue = () => {},
+  relData,
+  setRelData = () => {},
   errors,
   required = false,
   isModal = false,
@@ -348,8 +354,12 @@ const AutoCompleteElement = ({
       if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
-
-      setLocalValue(res?.data?.response ? [res?.data?.response] : []);
+      setRelData([
+        {
+          data: res?.data?.response ? res?.data?.response : [],
+          field: field,
+        },
+      ]);
 
       if (window.location.pathname?.includes("create")) {
         setFormValue(name, data?.guid);
@@ -362,6 +372,14 @@ const AutoCompleteElement = ({
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
+
+      setRelData([
+        {
+          data: value ? value : null,
+          field: field,
+        },
+      ]);
+
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
@@ -372,6 +390,12 @@ const AutoCompleteElement = ({
     } else {
       const val = value;
 
+      setRelData([
+        {
+          data: val ? val : null,
+          field: field,
+        },
+      ]);
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
@@ -390,6 +414,12 @@ const AutoCompleteElement = ({
       field?.attributes?.object_id_from_jwt &&
       field?.id?.split("#")?.[0] === "client_type"
     ) {
+      setRelData([
+        {
+          data: value ? val : null,
+          field: field,
+        },
+      ]);
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
     }
@@ -453,6 +483,13 @@ const AutoCompleteElement = ({
       const foundOption = allOptions?.find((el) => el?.guid === isUserId);
 
       if (foundOption) {
+        setRelData([
+          {
+            data: foundOption ? foundOption : null,
+            field: field,
+          },
+        ]);
+
         setValue(foundOption?.guid);
         setLocalValue([foundOption]);
       }
@@ -461,10 +498,17 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     if (localValue?.length === 0 && computedValue?.guid) {
+      setRelData([
+        {
+          data: computedValue ? computedValue : null,
+          field: field,
+        },
+      ]);
       setLocalValue([computedValue]);
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

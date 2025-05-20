@@ -30,8 +30,7 @@ const DocumentTemplates = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {tableSlug, appId} = useParams();
-  const [step, setStep] = useState("TEMPLATES");
-  // const [selectedTemplateId, setSelectedTemplateId] = useState(null);
+  const [relData, setRelData] = useState([]);
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
 
@@ -101,9 +100,7 @@ const DocumentTemplates = () => {
       data: {
         data: {
           ...data,
-          authors_id_data: {
-            name: "Harry Potter",
-          },
+          [`${relData?.[0]?.field?.slug}_data`]: relData?.[0]?.data,
         },
         id: searchParams.get("id"),
         table_slug: tableSlug,
@@ -111,7 +108,7 @@ const DocumentTemplates = () => {
       link: url,
     });
   };
-
+  console.log("relDataaaa", relData);
   // ===== SIDEBAR CLOSING ===========
   useEffect(() => {
     setTimeout(() => {
@@ -243,6 +240,7 @@ const DocumentTemplates = () => {
             ) : (
               <div className={styles.form}>
                 <ObjectForm
+                  setRelData={setRelData}
                   form={form}
                   onBackButtonClick={() => setSelectedTemplateId("")}
                 />

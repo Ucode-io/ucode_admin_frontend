@@ -10,6 +10,7 @@ import useTabRouter from "../../../../hooks/useTabRouter";
 import {useParams, useSearchParams} from "react-router-dom";
 import RowClickButton from "../RowClickButton";
 import {pageToOffset} from "../../../../utils/pageToOffset";
+import useDebounce from "../../../../hooks/useDebounce";
 
 const customStyles = {
   control: (provided) => ({
@@ -64,6 +65,7 @@ const LookupCellEditor = (props) => {
   const menuId = searchParams.get("menuId");
   const [inputValue, setInputValue] = useState(null);
   const [autoFiltersValue, setAutoFiltersValue] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
@@ -74,13 +76,14 @@ const LookupCellEditor = (props) => {
   }
 
   const {refetch} = useQuery(
-    ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue, page],
+    ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue, page, searchText],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
         data: {
           view_fields: field?.view_fields?.map((f) => f?.slug),
           limit: 10,
+          search: searchText,
           offset: pageToOffset(page, 10),
           with_relations: false,
           ...autoFiltersValue,
@@ -88,10 +91,12 @@ const LookupCellEditor = (props) => {
       });
     },
     {
-      enabled: Boolean(page > 1),
+      enabled: Boolean(page > 1) || Boolean(searchText),
       select: (res) => res?.data?.response ?? [],
       onSuccess: (fetchedOptions) => {
-        if (Boolean(field?.attributes?.auto_filters?.[0]?.field_from)) {
+        if (Boolean(searchText)) {
+          setOptions(fetchedOptions);
+        } else if (Boolean(field?.attributes?.auto_filters?.[0]?.field_from)) {
           setOptions(fetchedOptions);
         } else
           setOptions((prevOptions) => [
@@ -184,6 +189,8 @@ const LookupCellEditor = (props) => {
     </components.SingleValue>
   );
 
+  const inputChangeHandler = useDebounce((val) => setSearchText(val), 500);
+
   return (
     <>
       <Box
@@ -194,6 +201,7 @@ const LookupCellEditor = (props) => {
           overflow: "hidden",
         }}>
         <Select
+          onInputChange={inputChangeHandler}
           onMenuScrollToBottom={loadMoreItems}
           disabled={disabled}
           isClearable={true}

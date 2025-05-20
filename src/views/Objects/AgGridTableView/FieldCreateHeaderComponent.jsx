@@ -111,6 +111,7 @@ function FieldCreateHeaderComponent(props) {
     <>
       <PermissionWrapperV2 tableSlug={tableSlug} type={"add_field"}>
         <AggridFieldButton
+          mainForm={mainForm}
           view={column?.colDef?.view}
           setFieldCreateAnchor={setFieldCreateAnchor}
           fieldCreateAnchor={fieldCreateAnchor}

@@ -773,7 +773,9 @@ function AgGridTableView(props) {
             display: "flex",
             width: "100%",
           }}>
-          <Box sx={{width: "100%", background: "#fff"}}>
+          <Box
+            className="scrollbarNone"
+            sx={{width: "100%", background: "#fff"}}>
             {Boolean(tabs?.length) && (
               <Box
                 sx={{
@@ -800,7 +802,11 @@ function AgGridTableView(props) {
               </Box>
             )}
 
-            <Box className="scrollbarNone" sx={{height: "92%"}}>
+            <Box
+              className="scrollbarNone"
+              sx={{
+                height: "100%",
+              }}>
               {!columns?.length ? (
                 <NoFieldsComponent />
               ) : (

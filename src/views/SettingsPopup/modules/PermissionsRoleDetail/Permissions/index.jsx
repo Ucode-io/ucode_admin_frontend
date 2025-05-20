@@ -63,12 +63,62 @@ const Permissions = ({
     (permission) => permission.record_permissions?.is_public === true
   );
 
+  const [allMenuReadTrue, setAllMenuReadTrue] = useState(false);
+  const [allMenuWriteTrue, setAllMenuWriteTrue] = useState(false);
+  const [allMenuUpdateTrue, setAllMenuUpdateTrue] = useState(false);
+  const [allMenuDeleteTrue, setAllMenuDeleteTrue] = useState(false);
+  const [allMenuMenuSettingsTrue, setAllMenuMenuSettingsTrue] = useState(false);
+
+  const onMenuCheckboxChange = (isChecked, type) => {
+    setCheckBoxValues((prev) => {
+      const result = prev;
+      Object.keys(prev).forEach((key) => {
+        result[key][type] = isChecked;
+      });
+      return result;
+    });
+    switch (type) {
+      case "read":
+        setAllMenuReadTrue(isChecked);
+        break;
+      case "write":
+        setAllMenuWriteTrue(isChecked);
+        break;
+      case "update":
+        setAllMenuUpdateTrue(isChecked);
+        break;
+      case "delete":
+        setAllMenuDeleteTrue(isChecked);
+        break;
+      case "menu_settings":
+        setAllMenuMenuSettingsTrue(isChecked);
+        break;
+      default:
+        break;
+    }
+  };
+
   useEffect(() => {
     const obj = {};
     allMenu?.forEach((item, index) => {
       obj[item.id] = item.permission;
     });
     setCheckBoxValues((prev) => ({ ...prev, ...obj }));
+    setAllMenuReadTrue(
+      Object.values(obj)?.every((permission) => permission?.read)
+    );
+    setAllMenuWriteTrue(
+      Object.values(obj)?.every((permission) => permission?.write)
+    );
+    setAllMenuUpdateTrue(
+      Object.values(obj)?.every((permission) => permission?.update)
+    );
+    setAllMenuDeleteTrue(
+      Object.values(obj)?.every((permission) => permission?.delete)
+    );
+    setAllMenuMenuSettingsTrue(
+      Object.values(obj)?.every((permission) => permission?.menu_settings)
+    );
   }, [allMenu]);
 
   useEffect(() => {
@@ -309,7 +359,7 @@ const Permissions = ({
                           ) || "Objects"}
                         </Box>
                       </CTableCell>
-                      <CTableCell colSpan={5} tex>
+                      <CTableCell colSpan={5}>
                         <Box
                           sx={{ justifyContent: "center", display: "flex" }}
                           color="#475467"
@@ -325,78 +375,51 @@ const Permissions = ({
                         </Box>
                       </CTableCell>
                     </CTableHeadRow>
-                    {/* <CTableHeadRow>
-                    <CTableCell>
-                      <Box
-                        color="#475467"
-                        fontSize="12px"
-                        fontWeight={500}
-                        lineHeight="18px"
-                      >
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Read"
-                        ) || "Read"}
-                      </Box>
-                    </CTableCell>
-                    <CTableCell>
-                      <Box
-                        color="#475467"
-                        fontSize="12px"
-                        fontWeight={500}
-                        lineHeight="18px"
-                      >
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Add"
-                        ) || "Add"}
-                      </Box>
-                    </CTableCell>
-                    <CTableCell>
-                      <Box
-                        color="#475467"
-                        fontSize="12px"
-                        fontWeight={500}
-                        lineHeight="18px"
-                      >
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Edit"
-                        ) || "Edit"}
-                      </Box>
-                    </CTableCell>
-                    <CTableCell>
-                      <Box
-                        color="#475467"
-                        fontSize="12px"
-                        fontWeight={500}
-                        lineHeight="18px"
-                      >
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Delete"
-                        ) || "Delete"}
-                      </Box>
-                    </CTableCell>
-                    <CTableCell>
-                      <Box
-                        color="#475467"
-                        fontSize="12px"
-                        fontWeight={500}
-                        lineHeight="18px"
-                      >
-                        {generateLangaugeText(
-                          permissionLan,
-                          i18n?.language,
-                          "Settings"
-                        ) || " Settings"}
-                      </Box>
-                    </CTableCell>
-                  </CTableHeadRow> */}
+                    <CTableHeadRow>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allMenuReadTrue}
+                          onChange={(e) =>
+                            onMenuCheckboxChange(e.target.checked, "read")
+                          }
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allMenuWriteTrue}
+                          onChange={(e) =>
+                            onMenuCheckboxChange(e.target.checked, "write")
+                          }
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allMenuUpdateTrue}
+                          onChange={(e) =>
+                            onMenuCheckboxChange(e.target.checked, "update")
+                          }
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allMenuDeleteTrue}
+                          onChange={(e) =>
+                            onMenuCheckboxChange(e.target.checked, "delete")
+                          }
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allMenuMenuSettingsTrue}
+                          onChange={(e) =>
+                            onMenuCheckboxChange(
+                              e.target.checked,
+                              "menu_settings"
+                            )
+                          }
+                        />
+                      </CTableCell>
+                    </CTableHeadRow>
                   </CTableHead>
                   <CTableBody columnsCount={6} dataLength={allMenu?.length}>
                     {allMenu?.map((app, appIndex) => (

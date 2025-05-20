@@ -86,6 +86,7 @@ export const Account = () => {
             fullWidth
             control={control}
             name="login"
+            disabled
           />
         </Box>
         <Box flex="1">

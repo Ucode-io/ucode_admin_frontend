@@ -44,8 +44,11 @@ const BoardCardRowGenerator = ({
       return (
         <FieldContainer
           field={field}
-          showFieldLabel={showFieldLabel}
+          showFieldLabel={false}
           hintPosition={hintPosition}
+          isEmpty={
+            !!getRelationFieldTableCellLabel(field, el, field.slug + "_data")
+          }
         >
           {/* <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
@@ -57,7 +60,7 @@ const BoardCardRowGenerator = ({
             </Box>
           </Box>
           {showFieldLabel && (
-            <span className={styles.rowHint}>
+            <span className={clsx(styles.rowHint, styles[hintPosition])}>
               {field?.attributes?.[`label_${i18n?.language}`]}
             </span>
           )}
@@ -70,6 +73,7 @@ const BoardCardRowGenerator = ({
           field={field}
           showFieldLabel={showFieldLabel}
           hintPosition={hintPosition}
+          isEmpty={!value?.length}
         >
           <MultiselectCellColoredElement
             value={value}
@@ -89,6 +93,7 @@ const BoardCardRowGenerator = ({
           field={field}
           showFieldLabel={showFieldLabel}
           hintPosition={hintPosition}
+          isEmpty={!value?.length}
         >
           <MultiselectCellColoredElement
             value={value}
@@ -155,6 +160,7 @@ const BoardCardRowGenerator = ({
           field={field}
           showFieldLabel={showFieldLabel}
           hintPosition={hintPosition}
+          isEmpty={!value?.length}
         >
           <Box display="flex" gap="3px">
             {value?.map((photo) => (
@@ -187,11 +193,17 @@ const BoardCardRowGenerator = ({
   }
 };
 
-const FieldContainer = ({ children, field, showFieldLabel, hintPosition }) => {
+const FieldContainer = ({
+  children,
+  field,
+  showFieldLabel,
+  hintPosition,
+  isEmpty,
+}) => {
   return (
     <div
       key={field.id}
-      className={clsx(styles.row, { [styles.isEmpty]: !children })}
+      className={clsx(styles.row, { [styles.isEmpty]: !children || isEmpty })}
     >
       {/* <div className={styles.label}>{field.label}:</div> */}
       <div className={styles.rowWrapper}>

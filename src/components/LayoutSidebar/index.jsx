@@ -1,13 +1,41 @@
+import "./style.scss";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {Container} from "react-smooth-dnd";
+import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
+import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
+import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
+import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
+import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+import TemplateModal from "../../layouts/MainLayout/TemplateModal";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import menuService, {
+  useMenuGetByIdQuery,
+  useMenuListQuery,
+} from "../../services/menuService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
+import menuSettingsService from "../../services/menuSettingsService";
 import {
-  SidebarActionTooltip,
-  SidebarAppTooltip,
-} from "@/components/LayoutSidebar/sidebar-app-tooltip";
-import authService from "@/services/auth/authService";
-import {useCompanyListQuery} from "@/services/companyService";
-import {useEnvironmentListQuery} from "@/services/environmentService";
-import {authActions} from "@/store/auth/auth.slice";
-import {companyActions} from "@/store/company/company.slice";
-import {AccordionButton, AccordionIcon, SettingsIcon} from "@chakra-ui/icons";
+  useProjectGetByIdQuery,
+  useProjectListQuery,
+} from "../../services/projectService";
+import {store} from "../../store";
+import {mainActions} from "../../store/main/main.slice";
+import {applyDrag} from "../../utils/applyDrag";
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+import AppSidebar from "./AppSidebarComponent";
+import FolderModal from "./FolderModalComponent";
+import ButtonsMenu from "./MenuButtons";
+import SubMenu from "./SubMenu";
+import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
+import {useChatwoot} from "../ProfilePanel/Chatwoot";
+import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {
   Accordion,
   AccordionItem,
@@ -22,51 +50,29 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import {Logout} from "@mui/icons-material";
-import GTranslateIcon from "@mui/icons-material/GTranslate";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import LogoutIcon from "@mui/icons-material/Logout";
-import {Modal} from "@mui/material";
-import {differenceInCalendarDays, parseISO} from "date-fns";
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useTranslation} from "react-i18next";
-import InlineSVG from "react-inlinesvg";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Container} from "react-smooth-dnd";
-import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
-import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
-import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
-import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
-import TemplateModal from "../../layouts/MainLayout/TemplateModal";
-import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
-import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
-import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
-import menuSettingsService from "../../services/menuSettingsService";
 import {
-  useProjectGetByIdQuery,
-  useProjectListQuery,
-} from "../../services/projectService";
-import {store} from "../../store";
+  SidebarActionTooltip,
+  SidebarAppTooltip,
+} from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import {useCompanyListQuery} from "@/services/companyService";
+import {AccordionButton, AccordionIcon, SettingsIcon} from "@chakra-ui/icons";
+import {useEnvironmentListQuery} from "@/services/environmentService";
+import {companyActions} from "@/store/company/company.slice";
+import authService from "@/services/auth/authService";
+import {authActions} from "@/store/auth/auth.slice";
+import InlineSVG from "react-inlinesvg";
+import {Logout} from "@mui/icons-material";
+import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {mainActions} from "../../store/main/main.slice";
-import {menuAccordionActions} from "../../store/menus/menus.slice";
-import {applyDrag} from "../../utils/applyDrag";
+import {Modal, Skeleton} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {getAllFromDB} from "../../utils/languageDB";
-import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
-import {useChatwoot} from "../ProfilePanel/Chatwoot";
-import AppSidebar from "./AppSidebarComponent";
+import {GreyLoader} from "../Loaders/GreyLoader";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 import DocsChatwootModal from "./DocsChatwootModal";
-import FolderModal from "./FolderModalComponent";
-import ButtonsMenu from "./MenuButtons";
-import "./style.scss";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -88,6 +94,7 @@ const LayoutSidebar = ({
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
+  const [menuDraggable, setMenuDraggable] = useState(false);
   const [isMenuListLoading, setIsMenuListLoading] = useState(false);
   const [tableModal, setTableModalOpen] = useState(false);
   const [linkTableModal, setLinkTableModal] = useState(false);
@@ -249,6 +256,7 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
+    setMenuDraggable(true);
     const result = applyDrag(menuList, dropResult);
     setMenuList(result);
     if (result) {
@@ -396,31 +404,6 @@ const LayoutSidebar = ({
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
-          {/* {isMenuListLoading && (
-            <Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" columnGap="8px">
-                <Skeleton height="50px" width="36px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-            </Box>
-          )} */}
-
           {Array.isArray(menuList) && (
             <div
               className="menu-element"
@@ -455,6 +438,8 @@ const LayoutSidebar = ({
                     menuStyle={menuStyle}
                     languageData={languageData}
                     subSearchText={subSearchText}
+                    menuDraggable={menuDraggable}
+                    setMenuDraggable={setMenuDraggable}
                   />
                 ))}
               </Container>
@@ -484,22 +469,20 @@ const LayoutSidebar = ({
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
-                    {!!sidebarIsOpen && (
-                      <Box
-                        whiteSpace="nowrap"
-                        color={
-                          (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
-                          "#475467"
-                        }
-                        pl={35}
-                        fontSize={14}>
-                        {generateLangaugeText(
-                          menuLanguages,
-                          i18n?.language,
-                          "Create"
-                        ) || "Create"}
-                      </Box>
-                    )}
+                    <Box
+                      whiteSpace="nowrap"
+                      color={
+                        (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
+                        "#475467"
+                      }
+                      pl={35}
+                      fontSize={14}>
+                      {generateLangaugeText(
+                        menuLanguages,
+                        i18n?.language,
+                        "Create"
+                      ) || "Create"}
+                    </Box>
                   </Flex>
                 </SidebarAppTooltip>
               )}

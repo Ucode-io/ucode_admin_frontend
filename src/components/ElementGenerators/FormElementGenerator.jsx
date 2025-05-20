@@ -60,6 +60,8 @@ const FormElementGenerator = ({
   getValues = () => {},
   checkPermission = true,
   setFormValue = () => {},
+  relData,
+  setRelData = () => {},
   modalClass,
   ...props
 }) => {
@@ -208,6 +210,8 @@ const FormElementGenerator = ({
     } else {
       return (
         <RelationFormElement
+          relData={relData}
+          setRelData={setRelData}
           isModal={isModal}
           modalClass={modalClass}
           control={control}

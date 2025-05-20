@@ -12,7 +12,12 @@ import {listToMap} from "../../../../utils/listToMap";
 import {IconButton} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const ObjectForm = ({onBackButtonClick, form}) => {
+const ObjectForm = ({
+  onBackButtonClick,
+  form,
+  setRelData = () => {},
+  relData,
+}) => {
   const {tableSlug} = useParams();
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -97,7 +102,6 @@ const ObjectForm = ({onBackButtonClick, form}) => {
         }))
       );
       if (!selectedTab?.relation_id) {
-        console.log("dataaaaaaaaa", data);
         reset(data?.response ?? {});
       }
       setSelectTab(relations[selectedTabIndex]);
@@ -241,6 +245,8 @@ const ObjectForm = ({onBackButtonClick, form}) => {
     <>
       <div className={styles.wrapper}>
         <Sections
+          relData={relData}
+          setRelData={setRelData}
           onBackButtonClick={onBackButtonClick}
           relation={tableRelations}
           editAcces={false}

@@ -9,7 +9,7 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {BsThreeDots} from "react-icons/bs";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
@@ -54,6 +54,8 @@ const AppSidebar = ({
   languageData,
   subMenuIsOpen,
   subSearchText,
+  menuDraggable,
+  setMenuDraggable,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -76,12 +78,13 @@ const AppSidebar = ({
     if (element?.id === USERS_MENU_ITEM_ID) {
       return navigate("/client-types");
     }
-
+    // setMenuItem(element);
     dispatch(menuActions.setMenuItem(element));
     dispatch(relationTabActions.clear());
 
     setSelectedApp(element);
     if (element.type === "FOLDER") {
+      setMenuDraggable(false);
       const isOpen = menuChilds[element.id]?.open;
       if (isOpen) {
         closeMenu(element.id);
@@ -164,7 +167,7 @@ const AppSidebar = ({
       enabled:
         Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
       onSuccess: (res) => {
-        computeMenuChilds(appId, res?.menus ?? []);
+        if (!menuDraggable) computeMenuChilds(appId, res?.menus ?? []);
         setLoading(false);
       },
     },

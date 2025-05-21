@@ -93,6 +93,8 @@ import {SubGroup} from "./components/SubGroup";
 import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
 import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
+import FilterPopover from "./FilterPopover";
+import FiltersList from "./FiltersList";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -1349,295 +1351,179 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   );
 });
 
-const FilterPopover = ({
-  view,
-  visibleColumns,
-  refetchViews,
-  children,
-  tableLan,
-}) => {
-  const ref = useRef();
-  const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+// const FilterPopover = ({
+//   view,
+//   visibleColumns,
+//   refetchViews,
+//   children,
+//   tableLan,
+// }) => {
+//   const ref = useRef();
+//   const [search, setSearch] = useState("");
+//   const {i18n} = useTranslation();
 
-  return (
-    <Popover>
-      <PopoverTrigger>{children}</PopoverTrigger>
-      <PopoverContent px="4px" py="8px" ref={ref}>
-        <InputGroup mb="8px">
-          <InputLeftElement>
-            <Image src="/img/search-lg.svg" alt="search" />
-          </InputLeftElement>
-          <Input
-            placeholder={
-              generateLangaugeText(
-                tableLan,
-                i18n?.language,
-                "Seaarch by filled name"
-              ) || "Search by filled name"
-            }
-            value={search}
-            onChange={(ev) => setSearch(ev.target.value)}
-          />
-        </InputGroup>
-        <FiltersSwitch
-          view={view}
-          visibleColumns={visibleColumns}
-          refetchViews={refetchViews}
-          search={search}
-        />
-      </PopoverContent>
-    </Popover>
-  );
-};
+//   return (
+//     <Popover>
+//       <PopoverTrigger>{children}</PopoverTrigger>
+//       <PopoverContent px="4px" py="8px" ref={ref}>
+//         <InputGroup mb="8px">
+//           <InputLeftElement>
+//             <Image src="/img/search-lg.svg" alt="search" />
+//           </InputLeftElement>
+//           <Input
+//             placeholder={
+//               generateLangaugeText(
+//                 tableLan,
+//                 i18n?.language,
+//                 "Seaarch by filled name"
+//               ) || "Search by filled name"
+//             }
+//             value={search}
+//             onChange={(ev) => setSearch(ev.target.value)}
+//           />
+//         </InputGroup>
+//         <FiltersSwitch
+//           view={view}
+//           visibleColumns={visibleColumns}
+//           refetchViews={refetchViews}
+//           search={search}
+//         />
+//       </PopoverContent>
+//     </Popover>
+//   );
+// };
 
-const FiltersList = ({
-  view,
-  fieldsMap,
-  visibleColumns,
-  refetchViews,
-  tableLan,
-}) => {
-  const {tableSlug} = useParams();
-  const {new_list} = useSelector((state) => state.filter);
-  const [queryParameters] = useSearchParams();
-  const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const {filters} = useFilters(tableSlug, view?.id);
-  const dispatch = useDispatch();
-  const {i18n} = useTranslation();
-  const filtersRef = useRef(null);
+// const FiltersList = ({
+//   view,
+//   fieldsMap,
+//   visibleColumns,
+//   refetchViews,
+//   tableLan,
+// }) => {
+//   const {tableSlug} = useParams();
+//   const {new_list} = useSelector((state) => state.filter);
+//   const [queryParameters] = useSearchParams();
+//   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
+//   const {filters} = useFilters(tableSlug, view?.id);
+//   const dispatch = useDispatch();
+//   const {i18n} = useTranslation();
+//   const filtersRef = useRef(null);
 
-  useEffect(() => {
-    if (queryParameters.get("specialities")?.length) {
-      dispatch(
-        filterActions.setFilter({
-          tableSlug: tableSlug,
-          viewId: view?.id,
-          name: "specialities_id",
-          value: [`${queryParameters.get("specialities")}`],
-        })
-      );
-    }
-  }, [queryParameters]);
+//   useEffect(() => {
+//     if (queryParameters.get("specialities")?.length) {
+//       dispatch(
+//         filterActions.setFilter({
+//           tableSlug: tableSlug,
+//           viewId: view?.id,
+//           name: "specialities_id",
+//           value: [`${queryParameters.get("specialities")}`],
+//         })
+//       );
+//     }
+//   }, [queryParameters]);
 
-  const computedFields = useMemo(() => {
-    const filter = view?.attributes?.quick_filters ?? [];
+//   const computedFields = useMemo(() => {
+//     const filter = view?.attributes?.quick_filters ?? [];
 
-    return (
-      [
-        ...(filter ?? []),
-        ...(new_list[tableSlug] ?? [])
-          ?.filter(
-            (fast) =>
-              fast.is_checked &&
-              !view?.attributes?.quick_filters?.find(
-                (quick) => quick?.id === fast.id
-              )
-          )
-          ?.map((fast) => fast),
-      ]
-        ?.map((el) => {
-          if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
-            return fieldsMap[el?.relation_id];
-          } else {
-            return fieldsMap[el?.id];
-          }
-        })
-        ?.filter((el) => el) ?? []
-    );
-  }, [view?.attributes?.quick_filters, fieldsMap, new_list, tableSlug]);
+//     return (
+//       [
+//         ...(filter ?? []),
+//         ...(new_list[tableSlug] ?? [])
+//           ?.filter(
+//             (fast) =>
+//               fast.is_checked &&
+//               !view?.attributes?.quick_filters?.find(
+//                 (quick) => quick?.id === fast.id
+//               )
+//           )
+//           ?.map((fast) => fast),
+//       ]
+//         ?.map((el) => {
+//           if (el?.type === "LOOKUP" || el?.type === "LOOKUPS") {
+//             return fieldsMap[el?.relation_id];
+//           } else {
+//             return fieldsMap[el?.id];
+//           }
+//         })
+//         ?.filter((el) => el) ?? []
+//     );
+//   }, [view?.attributes?.quick_filters, fieldsMap, new_list, tableSlug]);
 
-  const onChange = (value, name) => {
-    dispatch(
-      filterActions.setFilter({
-        tableSlug: tableSlug,
-        viewId: view.id,
-        name: name,
-        value,
-      })
-    );
-  };
+//   const onChange = (value, name) => {
+//     dispatch(
+//       filterActions.setFilter({
+//         tableSlug: tableSlug,
+//         viewId: view.id,
+//         name: name,
+//         value,
+//       })
+//     );
+//   };
 
-  useEffect(() => {
-    if (filtersRef.current) {
-      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
-    }
-  }, []);
+//   useEffect(() => {
+//     if (filtersRef.current) {
+//       localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
+//     }
+//   }, []);
 
-  if (!filtersOpen) {
-    return;
-  }
+//   if (!filtersOpen) {
+//     return;
+//   }
 
-  return (
-    <Flex
-      ref={filtersRef}
-      minH="max-content"
-      px="16px"
-      py="6px"
-      bg="#fff"
-      alignItems="center"
-      gap="6px"
-      borderBottom="1px solid #EAECF0"
-      flexWrap="wrap"
-      id="filterHeight">
-      <FilterPopover
-        tableLan={tableLan}
-        view={view}
-        visibleColumns={visibleColumns}
-        refetchViews={refetchViews}>
-        <Flex
-          alignItems="center"
-          columnGap="4px"
-          border="1px solid #EAECF0"
-          borderRadius={32}
-          color="#FFFFFF70"
-          py="1px"
-          px="8px"
-          cursor="pointer"
-          _hover={{bg: "#f3f3f3"}}>
-          <InlineSVG
-            src="/img/plus-icon.svg"
-            width={14}
-            height={14}
-            color="#909EAB"
-          />
-          <Box color="#909EAB">
-            {generateLangaugeText(tableLan, i18n?.language, "Add filter") ||
-              "Add filter"}
-          </Box>
-        </Flex>
-      </FilterPopover>
+//   return (
+//     <Flex
+//       ref={filtersRef}
+//       minH="max-content"
+//       px="16px"
+//       py="6px"
+//       bg="#fff"
+//       alignItems="center"
+//       gap="6px"
+//       borderBottom="1px solid #EAECF0"
+//       flexWrap="wrap"
+//       id="filterHeight">
+//       <FilterPopover
+//         tableLan={tableLan}
+//         view={view}
+//         visibleColumns={visibleColumns}
+//         refetchViews={refetchViews}>
+//         <Flex
+//           alignItems="center"
+//           columnGap="4px"
+//           border="1px solid #EAECF0"
+//           borderRadius={32}
+//           color="#FFFFFF70"
+//           py="1px"
+//           px="8px"
+//           cursor="pointer"
+//           _hover={{bg: "#f3f3f3"}}>
+//           <InlineSVG
+//             src="/img/plus-icon.svg"
+//             width={14}
+//             height={14}
+//             color="#909EAB"
+//           />
+//           <Box color="#909EAB">
+//             {generateLangaugeText(tableLan, i18n?.language, "Add filter") ||
+//               "Add filter"}
+//           </Box>
+//         </Flex>
+//       </FilterPopover>
 
-      {computedFields?.map((filter) => (
-        <div key={filter.id}>
-          <Filter
-            field={filter}
-            name={filter?.path_slug || filter.slug}
-            tableSlug={tableSlug}
-            filters={filters}
-            onChange={onChange}
-          />
-        </div>
-      ))}
-    </Flex>
-  );
-};
-
-const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
-  const dispatch = useDispatch();
-  const [queryParameters] = useSearchParams();
-
-  const columnsIds = visibleColumns?.map((item) => item?.id);
-  const quickFiltersIds = view?.attributes?.quick_filters?.map(
-    (item) => item?.id
-  );
-  const checkedColumns =
-    view?.attributes?.quick_filters?.filter((checkedField) =>
-      columnsIds?.includes(checkedField?.id)
-    ) ?? [];
-  const unCheckedColumns =
-    (view?.attributes?.quick_filters?.length === 0 ||
-    view?.attributes?.quick_filters?.length === undefined
-      ? visibleColumns
-      : visibleColumns?.filter(
-          (column) => !quickFiltersIds?.includes(column?.id)
-        )) ?? [];
-
-  const getLabel = (column) =>
-    column?.attributes?.[`label_${i18n.language}`] || column.label;
-
-  const renderColumns = [
-    ...checkedColumns.map((c) => ({...c, checked: true})),
-    ...unCheckedColumns.map((c) => ({...c, checked: false})),
-  ].filter((column) =>
-    search === ""
-      ? true
-      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const mutation = useMutation({
-    mutationFn: async (data) => {
-      await constructorViewService.update(tableSlug, data);
-      return await refetchViews();
-    },
-    onSettled: (data) => {
-      dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
-    },
-  });
-
-  const updateView = async (data, checked) => {
-    const result = data?.map((item) => ({
-      ...item,
-      is_checked: true,
-    }));
-
-    await mutation.mutateAsync({
-      ...view,
-      attributes: {...view?.attributes, quick_filters: result},
-    });
-    if (view?.attributes?.quick_filters?.length === 0) {
-      dispatch(mainActions.setTableViewFiltersOpen(true));
-    }
-    if (view?.attributes?.quick_filters?.length === 1 && !checked) {
-      dispatch(mainActions.setTableViewFiltersOpen(false));
-    }
-  };
-
-  const onChange = (column, checked) => {
-    const quickFilters = view?.attributes?.quick_filters ?? [];
-
-    !checked
-      ? dispatch(
-          filterActions.clearFilters({
-            tableSlug: tableSlug,
-            viewId: view?.id,
-            name: "specialities_id",
-            value: [`${queryParameters.get("specialities")}`],
-          })
-        )
-      : dispatch(
-          filterActions.setFilter({
-            tableSlug: tableSlug,
-            viewId: view?.id,
-            name: "specialities_id",
-            value: [`${queryParameters.get("specialities")}`],
-          })
-        );
-
-    updateView(
-      checked
-        ? [...quickFilters, column]
-        : quickFilters.filter((c) => c.id !== column.id),
-      checked
-    );
-  };
-
-  return (
-    <Flex flexDirection="column" maxHeight="300px" overflow="auto">
-      {renderColumns.map((column) => (
-        <Flex
-          key={column.id}
-          as="label"
-          p="8px"
-          columnGap="8px"
-          alignItems="center"
-          borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
-          {getLabel(column)}
-          <Switch
-            ml="auto"
-            isChecked={column.checked}
-            onChange={(ev) => onChange(column, ev.target.checked)}
-          />
-        </Flex>
-      ))}
-    </Flex>
-  );
-};
+//       {computedFields?.map((filter) => (
+//         <div key={filter.id}>
+//           <Filter
+//             field={filter}
+//             name={filter?.path_slug || filter.slug}
+//             tableSlug={tableSlug}
+//             filters={filters}
+//             onChange={onChange}
+//           />
+//         </div>
+//       ))}
+//     </Flex>
+//   );
+// };
 
 const ViewOptions = ({
   view,

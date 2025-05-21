@@ -957,6 +957,7 @@ const FieldButton = ({
           mainForm={mainForm}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
+          view={view}
         />
       )}
     </>

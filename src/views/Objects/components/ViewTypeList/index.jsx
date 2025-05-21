@@ -7,14 +7,14 @@ import {Button, InputAdornment, TextField} from "@mui/material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import constructorViewService from "../../../../services/constructorViewService";
 import {useParams} from "react-router-dom";
-import { useQuery, useQueryClient } from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useTranslation } from "react-i18next";
-import { Controller, useForm } from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import SVG from "react-inlinesvg";
-import { Box } from "@chakra-ui/react";
+import {Box} from "@chakra-ui/react";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 import FRow from "../../../../components/FormElements/FRow";
 import HFSelect from "../../../../components/FormElements/HFSelect";
@@ -31,13 +31,18 @@ const viewIcons = {
   TREE: "tree.svg",
 };
 
-export default function ViewTypeList({ computedViewTypes, views, handleClose, fieldsMap }) {
+export default function ViewTypeList({
+  computedViewTypes,
+  views,
+  handleClose,
+  fieldsMap,
+}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
-  const { i18n } = useTranslation();
-  const { tableSlug, appId } = useParams();
+  const {i18n} = useTranslation();
+  const {tableSlug, appId} = useParams();
   const queryClient = useQueryClient();
-  const { control, watch, setError, clearErrors } = useForm({});
+  const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
 
   const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
@@ -147,15 +152,15 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
 
   const createView = () => {
     if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
-      setError("group_fields", { message: "Please select group" });
+      setError("group_fields", {message: "Please select group"});
       return;
     }
     if (
       isWithTimeView &&
       (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
     ) {
-      setError("calendar_from_slug", { message: "Please select date range" });
-      setError("calendar_to_slug", { message: "Please select date range" });
+      setError("calendar_from_slug", {message: "Please select date range"});
+      setError("calendar_to_slug", {message: "Please select date range"});
       return;
     } else {
       clearErrors(["calendar_from_slug", "calendar_to_slug"]);
@@ -193,7 +198,9 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
         calendar_from_slug: watch("calendar_from_slug") || null,
         calendar_to_slug: watch("calendar_to_slug") || null,
       };
-      newViewJSON.group_fields = [watch("group_fields")] || [];
+      newViewJSON.group_fields = watch("group_fields")?.length
+        ? [watch("group_fields")]
+        : [];
       constructorViewService
         .create(tableSlug, newViewJSON)
         .then(() => {
@@ -211,9 +218,9 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
   };
 
   const {
-    data: { fields },
+    data: {fields},
   } = useQuery(
-    ["GET_TABLE_INFO", { tableSlug }],
+    ["GET_TABLE_INFO", {tableSlug}],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -224,7 +231,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
       select: (res) => {
         const fields = res.data?.fields ?? [];
 
-        return { fields };
+        return {fields};
       },
     }
   );
@@ -276,8 +283,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
                 "MuiButton-startIcon": {
                   marginLeft: 0,
                 },
-              }}
-            >
+              }}>
               {/* {type.value === "TABLE" && <TableChart className={style.icon} />}
               {type.value === "CALENDAR" && (
                 <CalendarMonth className={style.icon} />
@@ -318,7 +324,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
               <Controller
                 control={control}
                 name="web_link"
-                render={({ field: { onChange, value } }) => {
+                render={({field: {onChange, value}}) => {
                   return (
                     <TextField
                       id="website_link"
@@ -328,7 +334,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
                       value={value}
                       placeholder="website link..."
                       className="webLinkInput"
-                      sx={{ padding: 0 }}
+                      sx={{padding: 0}}
                       fullWidth
                       name="web_link"
                       InputProps={{
@@ -350,25 +356,23 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
                   label={
                     selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
                   }
-                  required
-                >
+                  required>
                   <HFSelect
                     options={computedColumns}
                     control={control}
                     name="calendar_from_slug"
-                    MenuProps={{ disablePortal: true }}
+                    MenuProps={{disablePortal: true}}
                     required={true}
                   />
                 </FRow>
                 <FRow
                   label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
-                  required
-                >
+                  required>
                   <HFSelect
                     options={computedColumns}
                     control={control}
                     name="calendar_to_slug"
-                    MenuProps={{ disablePortal: true }}
+                    MenuProps={{disablePortal: true}}
                     required={true}
                   />
                 </FRow>
@@ -381,7 +385,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
                     options={computedColumnsForTabGroupOptions}
                     control={control}
                     name="group_fields"
-                    MenuProps={{ disablePortal: true }}
+                    MenuProps={{disablePortal: true}}
                     required={true}
                   />
                 </FRow>
@@ -398,8 +402,7 @@ export default function ViewTypeList({ computedViewTypes, views, handleClose, fi
                 // setSelectedView("NEW");
                 // setTypeNewView(selectedViewTab);
                 createView();
-              }}
-            >
+              }}>
               Create View {selectedViewTab}
             </LoadingButton>
           </div>

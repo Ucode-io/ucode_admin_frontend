@@ -5,6 +5,8 @@ import {useTranslation} from "react-i18next";
 import {useEffect, useMemo, useRef} from "react";
 import {filterActions} from "../../store/filter/filter.slice";
 import {Flex} from "@chakra-ui/react";
+import {Filter} from "./FilterGenerator";
+import InlineSVG from "react-inlinesvg";
 
 const FiltersList = ({
   view,

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ import DrawerDetailPage from "../DrawerDetailPage";
 import { useProjectGetByIdQuery } from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import { Add } from "@mui/icons-material";
 
 const BoardView = ({
   view,
@@ -359,8 +360,6 @@ const BoardView = ({
     };
   }, [boardRef.current, fixedElement.current]);
 
-  console.log({ subBoardData: Object.keys(subBoardData) });
-
   return (
     <div className={styles.container} ref={boardRef}>
       {loader ? (
@@ -678,7 +677,7 @@ const queryGenerator = (groupField, filters = {}, lan) => {
       queryFn,
       select: (res) => {
         return res?.data?.response?.map((el) => ({
-          label: getRelationFieldTabsLabel(groupField, el),
+          label: getRelationFieldTabsLabel(groupField, el, lan),
           value: el.guid,
           slug: groupField?.slug,
         }));

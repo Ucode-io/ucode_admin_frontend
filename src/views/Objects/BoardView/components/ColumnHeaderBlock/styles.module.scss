@@ -29,14 +29,15 @@
 }
 
 .rightSide {
-  display: none;
+  opacity: 0;
+  display: flex;
   align-items: center;
   gap: 5px;
   color: rgba(70, 68, 64, 0.45);
 }
 
 .columnHeaderBlock:hover .rightSide {
-  display: flex;
+  opacity: 1;
 }
 
 .tabBlockStatus {

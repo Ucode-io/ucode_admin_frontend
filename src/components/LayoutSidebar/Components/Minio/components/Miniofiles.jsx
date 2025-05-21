@@ -41,7 +41,9 @@ const Card = ({ item, selected, onSelect, handleNavigate }) => {
         )}
       </Box>
       <Typography className={style.title} variant="h6">
-        <Tooltip title={item?.title}>{item?.title}</Tooltip>
+        <Tooltip title={item?.title} className={style.imgTitle}>
+          {item?.title}
+        </Tooltip>
       </Typography>
       <Typography variant="h6" className={style.text}>
         <FileTypes item={extension.toUpperCase()} />

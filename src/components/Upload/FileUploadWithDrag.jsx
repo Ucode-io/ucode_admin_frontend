@@ -4,12 +4,23 @@ import {useDropzone} from "react-dropzone";
 import "./style.scss";
 import RingLoader from "../Loaders/RingLoader";
 import { GreyLoader } from "../Loaders/GreyLoader";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../store/alert/alert.thunk";
 
-const FileUploadWithDrag = ({ onUpload, loader }) => {
+const FileUploadWithDrag = ({ onUpload, loader, maxSizeMB = 20 }) => {
   const inputRef = useRef(null);
+
+  const dispatch = useDispatch();
 
   const onDrop = useCallback((files) => {
     const file = files[0];
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+    if (file.size > maxSizeBytes) {
+      dispatch(showAlert(`Файл слишком большой. Максимум ${maxSizeMB} MB`));
+      return;
+    }
+
     const data = new FormData();
     data.append("file", file);
 

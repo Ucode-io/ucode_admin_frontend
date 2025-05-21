@@ -92,6 +92,8 @@ import {CalendarSettings} from "./components/CalendarSettings";
 import {SubGroup} from "./components/SubGroup";
 import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
+import FilterPopover from "./FilterPopover";
+import FiltersList from "./FiltersList";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -1331,47 +1333,47 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   );
 });
 
-const FilterPopover = ({
-  view,
-  visibleColumns,
-  refetchViews,
-  children,
-  tableLan,
-}) => {
-  const ref = useRef();
-  const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+// const FilterPopover = ({
+//   view,
+//   visibleColumns,
+//   refetchViews,
+//   children,
+//   tableLan,
+// }) => {
+//   const ref = useRef();
+//   const [search, setSearch] = useState("");
+//   const {i18n} = useTranslation();
 
-  return (
-    <Popover>
-      <PopoverTrigger>{children}</PopoverTrigger>
-      <PopoverContent px="4px" py="8px" ref={ref}>
-        <InputGroup mb="8px">
-          <InputLeftElement>
-            <Image src="/img/search-lg.svg" alt="search" />
-          </InputLeftElement>
-          <Input
-            placeholder={
-              generateLangaugeText(
-                tableLan,
-                i18n?.language,
-                "Seaarch by filled name"
-              ) || "Search by filled name"
-            }
-            value={search}
-            onChange={(ev) => setSearch(ev.target.value)}
-          />
-        </InputGroup>
-        <FiltersSwitch
-          view={view}
-          visibleColumns={visibleColumns}
-          refetchViews={refetchViews}
-          search={search}
-        />
-      </PopoverContent>
-    </Popover>
-  );
-};
+//   return (
+//     <Popover>
+//       <PopoverTrigger>{children}</PopoverTrigger>
+//       <PopoverContent px="4px" py="8px" ref={ref}>
+//         <InputGroup mb="8px">
+//           <InputLeftElement>
+//             <Image src="/img/search-lg.svg" alt="search" />
+//           </InputLeftElement>
+//           <Input
+//             placeholder={
+//               generateLangaugeText(
+//                 tableLan,
+//                 i18n?.language,
+//                 "Seaarch by filled name"
+//               ) || "Search by filled name"
+//             }
+//             value={search}
+//             onChange={(ev) => setSearch(ev.target.value)}
+//           />
+//         </InputGroup>
+//         <FiltersSwitch
+//           view={view}
+//           visibleColumns={visibleColumns}
+//           refetchViews={refetchViews}
+//           search={search}
+//         />
+//       </PopoverContent>
+//     </Popover>
+//   );
+// };
 
 // const FiltersList = ({
 //   view,

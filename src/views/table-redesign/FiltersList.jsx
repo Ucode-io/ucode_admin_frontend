@@ -4,9 +4,13 @@ import useFilters from "../../hooks/useFilters";
 import {useTranslation} from "react-i18next";
 import {useEffect, useMemo, useRef} from "react";
 import {filterActions} from "../../store/filter/filter.slice";
-import {Flex} from "@chakra-ui/react";
+import {Box, Flex, Switch} from "@chakra-ui/react";
 import {Filter} from "./FilterGenerator";
 import InlineSVG from "react-inlinesvg";
+import {quickFiltersActions} from "../../store/filter/quick_filter";
+import {useMutation} from "react-query";
+import FilterPopover from "./FilterPopover";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const FiltersList = ({
   view,
@@ -137,48 +141,6 @@ const FiltersList = ({
         </div>
       ))}
     </Flex>
-  );
-};
-
-const FilterPopover = ({
-  view,
-  visibleColumns,
-  refetchViews,
-  children,
-  tableLan,
-}) => {
-  const ref = useRef();
-  const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
-
-  return (
-    <Popover>
-      <PopoverTrigger>{children}</PopoverTrigger>
-      <PopoverContent px="4px" py="8px" ref={ref}>
-        <InputGroup mb="8px">
-          <InputLeftElement>
-            <Image src="/img/search-lg.svg" alt="search" />
-          </InputLeftElement>
-          <Input
-            placeholder={
-              generateLangaugeText(
-                tableLan,
-                i18n?.language,
-                "Seaarch by filled name"
-              ) || "Search by filled name"
-            }
-            value={search}
-            onChange={(ev) => setSearch(ev.target.value)}
-          />
-        </InputGroup>
-        <FiltersSwitch
-          view={view}
-          visibleColumns={visibleColumns}
-          refetchViews={refetchViews}
-          search={search}
-        />
-      </PopoverContent>
-    </Popover>
   );
 };
 

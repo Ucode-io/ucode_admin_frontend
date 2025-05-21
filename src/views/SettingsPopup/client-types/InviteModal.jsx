@@ -32,6 +32,7 @@ import PhoneNumberInput from "react-phone-number-input";
 import {
   useUserCreateMutation,
   useUserGetByIdQuery,
+  useUserUpdateMutation,
 } from "../../../services/auth/userService";
 import {useDispatch, useSelector} from "react-redux";
 import {useSearchParams} from "react-router-dom";
@@ -79,6 +80,17 @@ function InviteModal({
       setLoading(false);
     },
   });
+
+  const updateMutation = useUserUpdateMutation({
+    onSuccess: () => {
+      onClose();
+      setLoading(false);
+    },
+    onError: (err) => {
+      setLoading(false);
+    },
+  });
+
   const onSubmit = (data) => {
     setLoading(true);
     const value = {
@@ -93,7 +105,7 @@ function InviteModal({
     };
 
     if (Boolean(guid)) {
-      createMutation.mutate(data);
+      updateMutation.mutate(data);
     } else createMutation.mutate(value);
   };
 
@@ -526,12 +538,10 @@ const Statuses = ({control, placeholder = "", form}) => {
     if (typeof form.watch("status") === "string") {
       result = options?.find((type) => type.value === form.watch("status"));
     } else
-      result = options?.find(
-        (type) => type.value === form.watch("status")?.value
-      );
+      result = options?.find((type) => type.value === form.watch("status"));
     return result;
   }, [form.watch("status")]);
-  console.log('form.watch("status")form.watch("status")', form.watch("status"));
+
   return (
     <Controller
       name="status"
@@ -540,7 +550,7 @@ const Statuses = ({control, placeholder = "", form}) => {
         <Select
           placeholder={placeholder}
           value={value}
-          onChange={field.onChange}
+          onChange={(e) => field.onChange(e?.value)}
           options={options}
           getOptionLabel={({label}) => label}
           getOptionValue={({value}) => value}

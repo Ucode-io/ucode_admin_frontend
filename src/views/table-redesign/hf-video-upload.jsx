@@ -105,18 +105,19 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
     <>
       <div
         className={className}
-        style={{textAlign: "left"}}
+        style={{ textAlign: "left" }}
         onClick={(ev) => {
           if (value) {
             setAnchorEl(ev.target);
           }
-        }}>
+        }}
+      >
         {value && (
-          <div style={{display: "flex", alignItems: "center", columnGap: 5}}>
+          <div style={{ display: "flex", alignItems: "center", columnGap: 5 }}>
             <div className="video-block">
               <video ref={videoRef} src={value} />
             </div>
-            <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>
+            <div style={{ fontSize: 10, color: "#747474", fontWeight: 500 }}>
               {fileName}
             </div>
           </div>
@@ -131,12 +132,13 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               minWidth: 40,
               width: 40,
               height: 27,
-            }}>
+            }}
+          >
             {!loading && (
               <img
                 src="/img/file-docs.svg"
                 alt="Upload"
-                style={{width: 24, height: 24}}
+                style={{ width: 24, height: 24 }}
               />
             )}
             {loading && <CircularProgress size={20} />}
@@ -151,14 +153,16 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
             padding: "10px",
-          }}>
+          }}
+        >
           <Button
             sx={{
               display: "flex",
@@ -173,15 +177,17 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               } catch (err) {
                 videoRef.current.play();
               }
-            }}>
+            }}
+          >
             <OpenInFullIcon />
             Show full video
           </Button>
           <RectangleIconButton
             className="removeImg"
-            onClick={closeButtonHandler}>
+            onClick={closeButtonHandler}
+          >
             <DeleteIcon
-              style={{width: "17px", height: "17px", marginRight: "12px"}}
+              style={{ width: "17px", height: "17px", marginRight: "12px" }}
             />
             Remove video
           </RectangleIconButton>
@@ -197,7 +203,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             onClick={(e) => {
               e.stopPropagation();
               inputRef.current.click();
-            }}>
+            }}
+          >
             <ChangeCircleIcon />
             Change Video
           </Button>
@@ -206,6 +213,17 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
 
       <input
         type="file"
+        accept="
+              .MP4 (H.264/AVC),
+              .MP4,
+              .MOV,
+              .AVI,
+              .MKV,
+              .WMV,
+              .FLV,
+              .WebM,
+              .MPEG,
+              .MPEG-4"
         hidden
         ref={inputRef}
         tabIndex={tabIndex}

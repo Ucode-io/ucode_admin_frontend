@@ -23,6 +23,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
 import { useProjectGetByIdQuery } from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const BoardView = ({
   view,
@@ -38,6 +39,8 @@ const BoardView = ({
   visibleRelationColumns,
   layoutType,
   setLayoutType,
+  searchText,
+  columnsForSearch,
 }) => {
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
@@ -46,7 +49,6 @@ const BoardView = ({
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
   const { t, i18n } = useTranslation();
-  const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
   const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
@@ -256,10 +258,14 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
+        const key =
+          subGroupField?.type === FIELD_TYPES.LOOKUP
+            ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
+            : item?.[subGroupFieldSlug];
         setSubBoardData((prev) => {
           return {
             ...prev,
-            [item?.[subGroupFieldSlug]]: [
+            [key]: [
               ...data?.filter((el) => {
                 if (Array.isArray(el?.[subGroupFieldSlug])) {
                   return (
@@ -339,10 +345,11 @@ const BoardView = ({
       // el.style.top = `${board.scrollTop}px`;
       if (board.scrollTop > 0) {
         setIsOnTop(true);
+        el.style.transform = `translateY(${board.scrollTop}px)`;
       } else {
         setIsOnTop(false);
+        el.style.transform = "none";
       }
-      el.style.transform = `translateY(${board.scrollTop}px)`;
     };
 
     board.addEventListener("scroll", onScroll);
@@ -351,6 +358,8 @@ const BoardView = ({
       board.removeEventListener("scroll", onScroll);
     };
   }, [boardRef.current, fixedElement.current]);
+
+  console.log({ subBoardData: Object.keys(subBoardData) });
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -404,6 +413,7 @@ const BoardView = ({
               dragHandleSelector=".column-header"
               dragClass="drag-card-ghost"
               dropClass="drag-card-ghost-drop"
+              autoScrollEnabled={false}
               dropPlaceholder={{
                 animationDuration: 150,
                 showOnTop: true,
@@ -418,7 +428,9 @@ const BoardView = ({
               {boardTab?.map((tab, tabIndex) => (
                 <Draggable key={tabIndex}>
                   <ColumnHeaderBlock
-                    field={tab}
+                    field={computedColumnsFor?.find(
+                      (field) => field?.slug === tab?.slug
+                    )}
                     tab={tab}
                     // computedData={computedData}
                     // boardRef={boardRef}
@@ -436,7 +448,7 @@ const BoardView = ({
               height: isFilterOpen
                 ? "calc(100vh - 121px)"
                 : "calc(100vh - 91px)",
-              paddingTop: "48px",
+              paddingTop: "50px",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"
@@ -518,6 +530,8 @@ const BoardView = ({
                             subGroupData={subBoardData[el]}
                             subItem={el}
                             subGroupFieldSlug={subGroupFieldSlug}
+                            searchText={searchText}
+                            columnsForSearch={columnsForSearch}
                             setDateInfo={setDateInfo}
                             setDefaultValue={setDefaultValue}
                             setOpenDrawerModal={setOpenDrawerModal}
@@ -572,6 +586,8 @@ const BoardView = ({
                       setSelectedRow={setSelectedRow}
                       subGroupFieldSlug={subGroupFieldSlug}
                       setGroupCounts={setGroupCounts}
+                      searchText={searchText}
+                      columnsForSearch={columnsForSearch}
                     />
                   </div>
                 ))}
@@ -589,7 +605,7 @@ const BoardView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          // refetch={refetch}
+          refetch={refetch}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}

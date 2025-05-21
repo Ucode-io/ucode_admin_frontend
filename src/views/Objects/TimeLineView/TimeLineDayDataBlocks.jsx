@@ -3,6 +3,7 @@ import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import TimeLineDays from "./TimeLineDays";
 import styles from "./styles.module.scss";
 import TimeLineDataRecursiveRow from "./TimeLineDataRecursiveRow";
+import { useTimelineBlockContext } from "./providers/TimelineBlockProvider";
 
 export default function TimeLineDayDataBlock({
   data,
@@ -38,6 +39,10 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
+          height:
+            view?.attributes?.group_by_columns?.length !== 0
+              ? "calc(100% - 63px)"
+              : "100%",
         }}
       >
         <div className={styles.days} id="timelineDays">

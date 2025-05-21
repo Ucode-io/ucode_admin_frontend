@@ -883,6 +883,7 @@ function AgGridTableView(props) {
       />
 
       <FieldCreateModal
+        mainForm={mainForm}
         // tableLan={tableLan}
         anchorEl={fieldCreateAnchor}
         setAnchorEl={setFieldCreateAnchor}

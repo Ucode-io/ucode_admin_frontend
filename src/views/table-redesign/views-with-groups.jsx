@@ -92,6 +92,7 @@ import {CalendarSettings} from "./components/CalendarSettings";
 import {SubGroup} from "./components/SubGroup";
 import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
+import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 import FilterPopover from "./FilterPopover";
 import FiltersList from "./FiltersList";
 
@@ -101,8 +102,33 @@ const viewIcons = {
   BOARD: "rows.svg",
   GRID: "grid.svg",
   TIMELINE: "line-chart-up.svg",
-  WEBSITE: "global.svg",
+  WEBSITE: "globe.svg",
   TREE: "tree.svg",
+};
+
+const searchableTypes = [
+  FIELD_TYPES.SINGLE_LINE,
+  FIELD_TYPES.MULTI_LINE,
+  FIELD_TYPES.NUMBER,
+  FIELD_TYPES.PHONE,
+  FIELD_TYPES.EMAIL,
+  FIELD_TYPES.INTERNATION_PHONE,
+  FIELD_TYPES.INCREMENT_ID,
+  FIELD_TYPES.FORMULA_FRONTEND,
+];
+
+const timelineBoardSearchableTypes = [
+  ...searchableTypes,
+  FIELD_TYPES.MULTISELECT,
+  FIELD_TYPES.LOOKUP,
+  FIELD_TYPES.STATUS,
+];
+
+const isSearchable = (el, type) => {
+  if (type === "TIMELINE" || type === "BOARD") {
+    return timelineBoardSearchableTypes.includes(el?.type);
+  }
+  return searchableTypes.includes(el?.type);
 };
 
 export const NewUiViewsWithGroups = ({
@@ -331,16 +357,8 @@ export const NewUiViewsWithGroups = ({
     navigate(url);
   };
   const columnsForSearch = useMemo(() => {
-    return Object.values(fieldsMap)?.filter(
-      (el) =>
-        el?.type === "SINGLE_LINE" ||
-        el?.type === "MULTI_LINE" ||
-        el?.type === "NUMBER" ||
-        el?.type === "PHONE" ||
-        el?.type === "EMAIL" ||
-        el?.type === "INTERNATION_PHONE" ||
-        el?.type === "INCREMENT_ID" ||
-        el?.type === "FORMULA_FRONTEND"
+    return Object.values(fieldsMap)?.filter((el) =>
+      isSearchable(el, view?.type)
     );
   }, [view, fieldsMap]);
 
@@ -725,11 +743,7 @@ export const NewUiViewsWithGroups = ({
                     color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                     width={18}
                     height={18}
-                    fill={
-                      view.type === "WEBSITE" || view.type === "TREE"
-                        ? "#475467"
-                        : "none"
-                    }
+                    fill={"none"}
                   />
                 }
                 fontSize={13}
@@ -786,6 +800,7 @@ export const NewUiViewsWithGroups = ({
                   setSettingsModalVisible(true);
                   setSelectedView(data);
                 }}
+                fieldsMap={fieldsMap}
               />
             </MuiPopover>
 
@@ -940,6 +955,7 @@ export const NewUiViewsWithGroups = ({
                   viewName={viewName}
                   refetchViews={refetchViews}
                   fieldsMap={fieldsMap}
+                  fieldsMapRel={fieldsMapRel}
                   visibleRelationColumns={visibleRelationColumns}
                   checkedColumns={checkedColumns}
                   onDocsClick={() => setSelectedTabIndex(views.length)}
@@ -1081,6 +1097,8 @@ export const NewUiViewsWithGroups = ({
                     view={view}
                     layoutType={layoutType}
                     setLayoutType={setLayoutType}
+                    searchText={searchText}
+                    columnsForSearch={columnsForSearch}
                   />
                 )}
                 {view.type === "CALENDAR" && (
@@ -1512,6 +1530,7 @@ const ViewOptions = ({
   viewName,
   refetchViews,
   fieldsMap,
+  fieldsMapRel,
   visibleRelationColumns,
   searchText,
   checkedColumns,
@@ -1828,8 +1847,11 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
-                    "Layout"}
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Table settings"
+                  ) || "Table settings"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>
@@ -1879,7 +1901,7 @@ const ViewOptions = ({
                         <ViewOptionSubtitle>
                           {isTimelineView
                             ? visibleColumnsCountForTimeline
-                            : visibleColumnsCount}{" "}
+                            : Object.keys(fieldsMap)?.length}{" "}
                           {t("shown")}
                         </ViewOptionSubtitle>
                       )}
@@ -1980,7 +2002,9 @@ const ViewOptions = ({
                       {Boolean(tabGroupColumnsCount) && (
                         <ViewOptionSubtitle>
                           {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                            ?.label || "None"}
+                            ?.attributes?.[
+                            "label_" + (i18n.language || "en")
+                          ] || "None"}
                         </ViewOptionSubtitle>
                       )}
                       <ChevronRightIcon fontSize={22} />
@@ -2114,6 +2138,7 @@ const ViewOptions = ({
             tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
+            fieldsMapRel={fieldsMapRel}
             refetchViews={refetchViews}
             onBackClick={() => setOpenedMenu(null)}
             title={"Sub Group"}
@@ -2144,7 +2169,7 @@ const ViewOptions = ({
             onBackClick={() => setOpenedMenu(null)}
           />
         )}
-        {openedMenu === "timeline-settings" && (
+        {/* {openedMenu === "timeline-settings" && (
           <TimelineSettings
             control={settingsForm.control}
             computedColumns={computedColumns}
@@ -2155,8 +2180,8 @@ const ViewOptions = ({
               "Settings"
             }
           />
-        )}
-        {openedMenu === "calendar-settings" && (
+        )} */}
+        {/* {openedMenu === "calendar-settings" && (
           <CalendarSettings
             columns={visibleColumns}
             onBackClick={() => setOpenedMenu(null)}
@@ -2169,7 +2194,7 @@ const ViewOptions = ({
               "Settings"
             }
           />
-        )}
+        )} */}
       </PopoverContent>
     </Popover>
   );

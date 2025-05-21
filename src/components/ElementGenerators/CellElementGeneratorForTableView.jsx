@@ -63,7 +63,7 @@ const CellElementGeneratorForTableView = ({
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   let relationTableSlug = "";
   // console.log({ startDate: watch("multi.10.start_date") });
   // console.log({ startDate: watch("multi.10.end_date") });
@@ -128,7 +128,7 @@ const CellElementGeneratorForTableView = ({
 
     if (!defaultValue) return undefined;
 
-    const {error, result} = parser.parse(defaultValue);
+    const { error, result } = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field, objectIdFromJWT]);
@@ -653,6 +653,7 @@ const CellElementGeneratorForTableView = ({
           isFormEdit
           name={computedSlug}
           required={field?.required}
+          setValue={setFormValue}
         />
       );
 
@@ -795,7 +796,7 @@ const CellElementGeneratorForTableView = ({
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

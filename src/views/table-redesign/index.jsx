@@ -709,12 +709,50 @@ const FieldButton = ({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  mainForm,
 }) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const dispatch = useDispatch();
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const { control, watch, setValue, reset, handleSubmit } = useForm({
+    defaultValues: {
+      attributes: {
+        todo: {
+          options: [
+            {
+              label: "To Do",
+              value: "to-do",
+              color: "#8b96a0",
+            },
+          ],
+        },
+        progress: {
+          options: [
+            {
+              label: "In Progress",
+              value: "in-progress",
+              color: "#ff8600",
+            },
+          ],
+        },
+        complete: {
+          options: [
+            {
+              label: "Excluded",
+              value: "excluded",
+              color: "#f31d2f",
+            },
+            {
+              label: "Complete",
+              value: "complete",
+              color: "#00d717",
+            },
+          ],
+        },
+      },
+    },
+  });
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
@@ -741,7 +779,7 @@ const FieldButton = ({
       });
   };
 
-  const {mutate: createField} = useFieldCreateMutation({
+  const { mutate: createField } = useFieldCreateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -754,7 +792,7 @@ const FieldButton = ({
     },
   });
 
-  const {mutate: updateField} = useFieldUpdateMutation({
+  const { mutate: updateField } = useFieldUpdateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -764,7 +802,7 @@ const FieldButton = ({
     },
   });
 
-  const {mutate: createRelation} = useRelationsCreateMutation({
+  const { mutate: createRelation } = useRelationsCreateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -774,7 +812,7 @@ const FieldButton = ({
     },
   });
 
-  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
+  const { mutate: updateRelation } = useRelationFieldUpdateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -832,17 +870,17 @@ const FieldButton = ({
 
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
+        createField({ data, tableSlug });
       }
       if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
+        createRelation({ data: relationData, tableSlug });
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
+        updateRelation({ data: values, tableSlug });
       } else {
-        updateField({data, tableSlug});
+        updateField({ data, tableSlug });
       }
     }
   };
@@ -859,7 +897,8 @@ const FieldButton = ({
     } else {
       reset({
         attributes: {
-          math: {label: "plus", value: "+"},
+          ...watch("attributes"),
+          math: { label: "plus", value: "+" },
         },
       });
     }
@@ -882,8 +921,9 @@ const FieldButton = ({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}>
-        <AddRoundedIcon style={{marginTop: "3px"}} />
+        }}
+      >
+        <AddRoundedIcon style={{ marginTop: "3px" }} />
       </Box>
       <FieldOptionModal
         tableLan={tableLan}
@@ -907,6 +947,7 @@ const FieldButton = ({
           setFieldOptionAnchor={setFieldOptionAnchor}
           reset={reset}
           menuItem={menuItem}
+          mainForm={mainForm}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
         />

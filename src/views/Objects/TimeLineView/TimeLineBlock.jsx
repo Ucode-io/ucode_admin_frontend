@@ -17,6 +17,8 @@ import { useProjectGetByIdQuery } from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import useDebounce from "../../../hooks/useDebounce";
+import { viewSearch } from "../../../utils/viewSearch";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -44,6 +46,8 @@ export default function TimeLineBlock({
   setNoDates,
   noDates,
   calendarRef,
+  searchText,
+  columnsForSearch,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -141,6 +145,12 @@ export default function TimeLineBlock({
       setComputedData(result);
     }
   }, [data, view?.attributes?.group_by_columns]);
+
+  const filteredData = viewSearch({
+    columnsForSearch,
+    computedData,
+    searchText,
+  });
 
   function findEmptyDates(data) {
     const result = [];
@@ -309,13 +319,14 @@ export default function TimeLineBlock({
         setOpenDrawerModal,
         calendar_from_slug,
         calendar_to_slug,
+        searchText,
       }}
     >
       <div className={styles.main_container}>
         {view?.attributes?.group_by_columns?.length !== 0 && (
           <Sidebar
             view={view}
-            computedData={computedData}
+            computedData={filteredData}
             hasSameDay={hasSameDay}
             openedRows={openedRows}
             setOpenedRows={setOpenedRows}
@@ -357,7 +368,7 @@ export default function TimeLineBlock({
               setFocusedDays={setFocusedDays}
               selectedType={selectedType}
               zoomPosition={zoomPosition}
-              data={computedData}
+              data={filteredData}
               fieldsMap={fieldsMap}
               view={view}
               tabs={tabs}

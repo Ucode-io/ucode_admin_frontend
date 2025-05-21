@@ -126,6 +126,7 @@ const ObjectsPage = () => {
       enabled: Boolean(tableSlug),
 
       select: ({data}) => {
+        console.log({ f: data?.fields });
         return {
           views:
             data?.views?.filter(

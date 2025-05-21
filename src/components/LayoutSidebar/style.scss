@@ -519,6 +519,10 @@ $main-color: #0365f2;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
 
   &:hover {
     background: #f3f3f3;

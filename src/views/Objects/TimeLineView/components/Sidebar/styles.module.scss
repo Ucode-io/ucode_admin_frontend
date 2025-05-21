@@ -87,12 +87,14 @@
 // }
 
 .group_by {
+  min-width: 100px;
   width: 200px;
   border-right: 1px solid #e5e9eb;
   position: sticky;
   left: 0;
   z-index: 25;
   background-color: #fff;
+  user-select: none;
 
   .fakeDiv {
     height: 64px;
@@ -156,5 +158,24 @@
     display: flex;
     align-items: center;
     column-gap: 8px;
+  }
+}
+
+.sidebarResizeHandle {
+  width: 5px;
+  cursor: ew-resize;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgba(35, 131, 226, 0.8);
+  opacity: 0;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:active {
+    opacity: 1;
   }
 }

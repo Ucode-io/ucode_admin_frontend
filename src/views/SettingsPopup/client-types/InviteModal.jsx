@@ -210,10 +210,10 @@ function InviteModal({
                   </Flex>
                 </TabList>
                 <TabPanels>
-                  <TabPanel h={"230px"} mt={0} p={"0"}>
+                  <TabPanel h={"270px"} mt={0} p={"0"}>
                     <LoginForm guid={guid} form={mainForm} />
                   </TabPanel>
-                  <TabPanel h={"190px"} mt={0} p={"0"}>
+                  <TabPanel h={"230px"} mt={0} p={"0"}>
                     <Controller
                       name="phone"
                       control={mainForm.control}
@@ -274,7 +274,7 @@ function InviteModal({
                     />
                     <TypesComponent guid={guid} form={mainForm} />
                   </TabPanel>
-                  <TabPanel p={"0"} h={"190px"}>
+                  <TabPanel p={"0"} h={"230px"}>
                     <EmailComponent guid={guid} form={mainForm} />
                   </TabPanel>
                 </TabPanels>
@@ -423,6 +423,9 @@ const TypesComponent = ({form}) => {
       <Box mt={2}>
         <Role placeholder="Role" form={form} control={form.control} />
       </Box>
+      <Box mt={2}>
+        <Statuses placeholder="Status" form={form} control={form.control} />
+      </Box>
     </Box>
   );
 };
@@ -494,6 +497,53 @@ const Role = ({control, placeholder = "", form}) => {
           options={roles}
           getOptionLabel={({name}) => name}
           getOptionValue={({guid}) => guid}
+          menuPlacement="top"
+          size="lg"
+        />
+      )}
+    />
+  );
+};
+
+const Statuses = ({control, placeholder = "", form}) => {
+  const options = [
+    {
+      label: "ACTIVE",
+      value: "ACTIVE",
+    },
+    {
+      label: "INACTIVE",
+      value: "INACTIVE",
+    },
+    {
+      label: "BLOCKED",
+      value: "BLOCKED",
+    },
+  ];
+
+  const value = useMemo(() => {
+    let result;
+    if (typeof form.watch("status") === "string") {
+      result = options?.find((type) => type.value === form.watch("status"));
+    } else
+      result = options?.find(
+        (type) => type.value === form.watch("status")?.value
+      );
+    return result;
+  }, [form.watch("status")]);
+  console.log('form.watch("status")form.watch("status")', form.watch("status"));
+  return (
+    <Controller
+      name="status"
+      control={control}
+      render={({field}) => (
+        <Select
+          placeholder={placeholder}
+          value={value}
+          onChange={field.onChange}
+          options={options}
+          getOptionLabel={({label}) => label}
+          getOptionValue={({value}) => value}
           menuPlacement="top"
           size="lg"
         />

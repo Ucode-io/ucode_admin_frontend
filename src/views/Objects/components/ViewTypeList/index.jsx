@@ -198,9 +198,7 @@ export default function ViewTypeList({
         calendar_from_slug: watch("calendar_from_slug") || null,
         calendar_to_slug: watch("calendar_to_slug") || null,
       };
-      newViewJSON.group_fields = watch("group_fields")?.length
-        ? [watch("group_fields")]
-        : [];
+      newViewJSON.group_fields = watch("group_fields") ?? [];
       constructorViewService
         .create(tableSlug, newViewJSON)
         .then(() => {

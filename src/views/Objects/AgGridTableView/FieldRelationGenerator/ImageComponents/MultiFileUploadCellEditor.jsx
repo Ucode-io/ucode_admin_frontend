@@ -30,7 +30,6 @@ function MultiFileUploadCellEditor({
   tabIndex,
   onChange = () => {},
   isTableView,
-  updateObject,
   newUi,
   disabled,
   drawerDetail = false,
@@ -60,13 +59,14 @@ function MultiFileUploadCellEditor({
       })
     )
       .then((res) => {
-        onChange([...value, import.meta.env.VITE_CDN_BASE_URL + res?.link]),
-          setImageList([
-            ...imageList,
-            ...res?.map(
-              (item) => import.meta.env.VITE_CDN_BASE_URL + item?.link
-            ),
-          ]);
+        onChange([
+          ...(value ?? []),
+          ...res?.map((item) => import.meta.env.VITE_CDN_BASE_URL + item?.link),
+        ]);
+        setImageList([
+          ...imageList,
+          ...res?.map((item) => import.meta.env.VITE_CDN_BASE_URL + item?.link),
+        ]);
       })
       .finally(() => setLoading(false));
   };
@@ -342,7 +342,6 @@ function MultiFileUploadCellEditor({
             <Button
               variant="contained"
               onClick={() => {
-                isTableView && updateObject();
                 handleClose();
               }}>
               Save

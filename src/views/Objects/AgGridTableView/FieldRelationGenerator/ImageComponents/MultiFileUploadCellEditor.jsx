@@ -2,13 +2,13 @@ import {Box, Button, Modal, Typography} from "@mui/material";
 import React, {useRef, useState} from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import styles from "./styles.module.scss";
+import styles from "../style.module.scss";
 import UploadIcon from "@mui/icons-material/Upload";
-import fileService from "../../../services/fileService";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import {Flex} from "@chakra-ui/react";
 import {DeleteIcon} from "@chakra-ui/icons";
-import useDownloader from "../../../hooks/useDownloader";
+import fileService from "../../../../../services/fileService";
+import useDownloader from "../../../../../hooks/useDownloader";
 
 const style = {
   position: "absolute",
@@ -24,13 +24,12 @@ const style = {
   boxShadow: 24,
 };
 
-function MultiFileUpload({
+function MultiFileUploadCellEditor({
   value = [],
   field,
   tabIndex,
   onChange = () => {},
   isTableView,
-  updateObject,
   newUi,
   disabled,
   drawerDetail = false,
@@ -60,7 +59,6 @@ function MultiFileUpload({
       })
     )
       .then((res) => {
-        console.log({res});
         onChange([
           ...(value ?? []),
           ...res?.map((item) => import.meta.env.VITE_CDN_BASE_URL + item?.link),
@@ -344,7 +342,6 @@ function MultiFileUpload({
             <Button
               variant="contained"
               onClick={() => {
-                isTableView && updateObject();
                 handleClose();
               }}>
               Save
@@ -356,4 +353,4 @@ function MultiFileUpload({
   );
 }
 
-export default MultiFileUpload;
+export default MultiFileUploadCellEditor;

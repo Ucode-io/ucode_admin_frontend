@@ -58,7 +58,7 @@ return (
             className={cls.dot}
             style={{ background: color ? color : "rgb(78, 84, 90)" }}
           />
-          {tab.label}
+          <span className={cls.label}>{tab.label}</span>
         </span>
       </div>
       <div className={cls.counter}>

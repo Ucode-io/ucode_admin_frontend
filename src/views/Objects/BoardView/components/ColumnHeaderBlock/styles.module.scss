@@ -41,6 +41,7 @@
 }
 
 .tabBlockStatus {
+  max-width: 190px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -52,7 +53,14 @@
   font-weight: 500;
   border-radius: 10px;
 
+  .label {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .dot {
+    flex-shrink: 0;
     width: 8px;
     height: 8px;
     border-radius: 50%;

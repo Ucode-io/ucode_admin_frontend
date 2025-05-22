@@ -250,7 +250,12 @@ export default function ViewTypeList({
 
   const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
     (el) => ({
-      label: el.label,
+      label:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.attributes?.[`label_${i18n.language}`] ||
+            el?.attributes?.label ||
+            el?.label
+          : el.label,
       value:
         el?.type === "LOOKUP" || el?.type === "LOOKUPS"
           ? el?.relation_id

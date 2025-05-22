@@ -66,8 +66,22 @@ const permissionFolder = {
   },
 };
 
-export const useSettingsPopupProps = ({onClose}) => {
-  const {t, i18n} = useTranslation();
+const profileSearchParamsList = [
+  "tab",
+  "profileMenuId",
+  "activeTab",
+  "permissionId",
+  "envId",
+  "invite",
+  "roleId",
+  "apiKeyId",
+  "view",
+  "functionId",
+  "microfrontendId",
+];
+
+export const useSettingsPopupProps = ({ onClose }) => {
+  const { t, i18n } = useTranslation();
 
   const userInfo = useSelector((state) => state?.auth?.userInfo);
   const globalPermissions = useSelector(
@@ -126,7 +140,7 @@ export const useSettingsPopupProps = ({onClose}) => {
     }
   );
 
-  const {isLoading: loading} = useMenuListQuery({
+  const { isLoading: loading } = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
@@ -276,27 +290,36 @@ export const useSettingsPopupProps = ({onClose}) => {
     tabs.splice(1);
   }
 
+  const clearProfileSearchParams = () => {
+    profileSearchParamsList.forEach((param) => {
+      searchParams.delete(param);
+      setSearchParams(searchParams);
+    });
+  };
+
   const handleClose = () => {
-    onClose();
-    setSearchParams({});
+    clearProfileSearchParams();
     setActiveTab("profile");
+    onClose();
   };
 
   const handleChangeTab = (key) => {
-    setSearchParams({});
+    clearProfileSearchParams();
     if (key !== activeTab) {
       setActiveTab(key);
     }
   };
 
   const handlePermissionClick = (element) => {
+    clearProfileSearchParams();
     setActiveTab(TAB_COMPONENTS?.PERMISSIONS.PERMISSIONS);
     updateSearchParam("permissionId", element?.guid);
   };
 
   const handleFilesClick = (element) => {
+    clearProfileSearchParams();
     setActiveTab(TAB_COMPONENTS?.FILES?.FILES);
-    updateSearchParam("menuId", element?.id);
+    updateSearchParam("profileMenuId", element?.id);
   };
 
   const handleOpenClientTypeModal = () => {

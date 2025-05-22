@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import {Box, Card, Modal, Typography} from "@mui/material";
-import {useFieldArray} from "react-hook-form";
+import { Controller, useFieldArray } from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,8 +10,10 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../../../../../utils/generateLanguageText";
+import cls from "./styles.module.scss";
+import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
 
 const TableViewPermission = ({
   closeModal,
@@ -20,8 +22,8 @@ const TableViewPermission = ({
   permissionLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.table_view_permissions`;
-  const {i18n} = useTranslation();
-  const {fields} = useFieldArray({
+  const { i18n } = useTranslation();
+  const { fields } = useFieldArray({
     control,
     name: basePath,
     keyName: "key",
@@ -53,64 +55,110 @@ const TableViewPermission = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}>
+                }}
+              >
                 <CTableHead>
                   <CTableHeadRow>
-                    <CTableCell w={2}>No</CTableCell>
+                    <CTableCell w={2}>
+                      <Box className={cls.headCellBox}>No</Box>
+                    </CTableCell>
                     <CTableCell w={250}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Label"
-                      ) ?? "Label"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Label"
+                        ) ?? "Label"}
+                      </Box>
                     </CTableCell>
                     <CTableCell w={150}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "View"
-                      ) ?? "View"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "View"
+                        ) ?? "View"}
+                      </Box>
                     </CTableCell>
                     <CTableCell w={150}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Edit"
-                      ) ?? "Edit"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Edit"
+                        ) ?? "Edit"}
+                      </Box>
                     </CTableCell>
                     <CTableCell w={150}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Delete"
-                      ) ?? "Delete"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Delete"
+                        ) ?? "Delete"}
+                      </Box>
                     </CTableCell>
                   </CTableHeadRow>
                 </CTableHead>
                 <CTableBody columnsCount={3} dataLength={fields?.length}>
                   {fields?.map((field, fieldIndex) => (
                     <CTableHeadRow key={field.guid}>
-                      <CTableCell>{fieldIndex + 1}</CTableCell>
-                      <CTableCell>{field.name}</CTableCell>
                       <CTableCell>
-                        <FormCheckbox
+                        {console.log(field)}
+                        <Box className={cls.bodyCellBox}>{fieldIndex + 1}</Box>
+                      </CTableCell>
+                      <CTableCell>
+                        <Box className={cls.bodyCellBox}>{field.name}</Box>
+                      </CTableCell>
+                      <CTableCell>
+                        <Controller
                           name={`${basePath}.${fieldIndex}.view`}
                           control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <CustomCheckbox
+                              onChange={onChange}
+                              checked={value}
+                            />
+                          )}
                         />
+                        {/* <FormCheckbox
+                          name={`${basePath}.${fieldIndex}.view`}
+                          control={control}
+                        /> */}
                       </CTableCell>
 
                       <CTableCell>
-                        <FormCheckbox
+                        <Controller
                           name={`${basePath}.${fieldIndex}.edit`}
                           control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <CustomCheckbox
+                              onChange={onChange}
+                              checked={value}
+                            />
+                          )}
                         />
+                        {/* <FormCheckbox
+                          name={`${basePath}.${fieldIndex}.edit`}
+                          control={control}
+                        /> */}
                       </CTableCell>
 
                       <CTableCell>
-                        <FormCheckbox
+                        <Controller
                           name={`${basePath}.${fieldIndex}.delete`}
                           control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <CustomCheckbox
+                              onChange={onChange}
+                              checked={value}
+                            />
+                          )}
                         />
+                        {/* <FormCheckbox
+                          name={`${basePath}.${fieldIndex}.delete`}
+                          control={control}
+                        /> */}
                       </CTableCell>
                     </CTableHeadRow>
                   ))}

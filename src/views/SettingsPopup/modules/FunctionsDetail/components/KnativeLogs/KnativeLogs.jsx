@@ -40,39 +40,55 @@ export const KnativeLogs = ({
 
   return (
     <Box>
-      <Box sx={{padding: "15px 0", fontWeight: 700}}>Label filters</Box>
-      <Box sx={{display: "flex", gap: "10px",}}>
-        <Box sx={{width: "70%", display: "flex", gap: "10px"}}>
+      <Box sx={{ padding: "15px 0", fontWeight: 700 }}>Label filters</Box>
+      <Box sx={{ display: "flex", gap: "10px" }}>
+        <Box sx={{ width: "70%", display: "flex", gap: "10px" }}>
           <HFTextField
             disabled
             name={"namespace"}
             defaultValue="namespace"
             control={knativeForm.control}
-            sx={{width: "20%"}}
+            sx={{ width: "20%" }}
+            showLockWhenDisabled={false}
+            inputStyleProps={{
+              backgroundColor: "#f5f5f5",
+            }}
           />
           <HFTextField
             disabled
             name={"type"}
             defaultValue={type}
             control={knativeForm.control}
-            sx={{width: "20%"}}
+            sx={{ width: "20%" }}
+            showLockWhenDisabled={false}
+            inputStyleProps={{
+              backgroundColor: "#f5f5f5",
+            }}
           />
           <HFTextField
             disabled
             name={"app"}
             defaultValue="app"
             control={knativeForm.control}
-            sx={{width: "20%"}}
+            sx={{ width: "20%" }}
+            showLockWhenDisabled={false}
+            inputStyleProps={{
+              backgroundColor: "#f5f5f5",
+            }}
           />
           <HFTextField
             disabled
             name={"path"}
             defaultValue={knativeForm.watch("path")}
             control={knativeForm.control}
-            sx={{width: "40%"}}
+            sx={{ width: "40%" }}
+            showLockWhenDisabled={false}
+            inputStyleProps={{
+              backgroundColor: "#f5f5f5",
+            }}
           />
         </Box>
-        <Box sx={{width: "30%", display: "flex", gap: "15px"}}>
+        <Box sx={{ width: "30%", display: "flex", gap: "15px" }}>
           <HFSelect
             width="50%"
             name={"time_frame"}
@@ -89,12 +105,13 @@ export const KnativeLogs = ({
               alignItems: "center",
               gap: "5px",
             }}
-            variant="contained">
+            variant="contained"
+          >
             {loader ? (
-              <CircularProgress style={{color: "#fff"}} size={20} />
+              <CircularProgress style={{ color: "#fff" }} size={20} />
             ) : (
               <>
-                <AutorenewIcon style={{color: "#fff"}} />
+                <AutorenewIcon style={{ color: "#fff" }} />
                 Show logs
               </>
             )}
@@ -110,7 +127,8 @@ export const KnativeLogs = ({
           height: "calc(100vh - 230px)",
           overflowY: "auto",
           background: "#f8f9fa",
-        }}>
+        }}
+      >
         {logsList?.length > 0 ? (
           logsList.map((log, index) => {
             const isJson = log.trim().startsWith("{");
@@ -123,7 +141,8 @@ export const KnativeLogs = ({
                   padding: "10px",
                   marginBottom: "8px",
                   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-                }}>
+                }}
+              >
                 {isJson ? (
                   <pre
                     style={{
@@ -132,13 +151,15 @@ export const KnativeLogs = ({
                       wordWrap: "break-word",
                       fontSize: "14px",
                       fontFamily: "monospace",
-                    }}>
+                    }}
+                  >
                     {JSON.stringify(JSON.parse(log), null, 2)}
                   </pre>
                 ) : (
                   <Typography
                     variant="body2"
-                    sx={{fontSize: "14px", fontFamily: "monospace"}}>
+                    sx={{ fontSize: "14px", fontFamily: "monospace" }}
+                  >
                     {log}
                   </Typography>
                 )}
@@ -147,7 +168,8 @@ export const KnativeLogs = ({
           })
         ) : (
           <Typography
-            sx={{textAlign: "center", color: "#aaa", padding: "20px"}}>
+            sx={{ textAlign: "center", color: "#aaa", padding: "20px" }}
+          >
             No logs available
           </Typography>
         )}

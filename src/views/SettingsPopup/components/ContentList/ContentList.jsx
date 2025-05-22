@@ -1,10 +1,11 @@
 import {Badge, Box, Menu, Skeleton} from "@mui/material";
 import {useState} from "react";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {groupedResources} from "../../../../utils/resourceConstants";
+import { useNavigate, useParams } from "react-router-dom";
+import { groupedResources } from "../../../../utils/resourceConstants";
 import AddIcon from "@mui/icons-material/Add";
-import {ResourcesDetail} from "../../modules/ResourcesDetail";
-import {useQueryClient} from "react-query";
+import { ResourcesDetail } from "../../modules/ResourcesDetail";
+import { useQueryClient } from "react-query";
+import useSearchParams from "../../../../hooks/useSearchParams";
 
 export const ContentList = ({
   arr,
@@ -108,6 +109,7 @@ const ResourceButton = ({
   val,
   arr = [],
   clickHandler = () => {},
+  onItemClick = () => {},
 }) => {
   const computedElements = arr?.filter(
     (el) =>
@@ -122,7 +124,7 @@ const ResourceButton = ({
   const open = Boolean(anchorEl);
   const [chosenResource, setChosenResource] = useState();
   const handleClick = (e) => setAnchorEl(e.currentTarget);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const handleClose = () => setAnchorEl(null);
 
   return (
@@ -177,7 +179,9 @@ const ResourceButton = ({
                 setSearchParams({
                   tab: "resources",
                   resource_type: val?.value,
+                  resourceType: val?.type,
                   edit: true,
+                  resourceId: el?.id,
                 });
                 setChosenResource(val);
               }}

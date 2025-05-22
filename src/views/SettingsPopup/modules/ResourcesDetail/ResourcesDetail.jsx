@@ -7,8 +7,16 @@ import {
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {Box, Button, CircularProgress} from "@mui/material";
-import {useEnvironmentsListQuery} from "@/services/environmentService";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import { useEnvironmentsListQuery } from "@/services/environmentService";
 import resourceService, {
   useCreateResourceMutationV1,
   useResourceConfigureMutation,
@@ -21,28 +29,32 @@ import resourceService, {
   useResourceUpdateMutation,
   useResourceUpdateMutationV2,
 } from "@/services/resourceService";
-import {store} from "@/store";
+import { store } from "@/store";
 import ResourceeEnvironments from "./ResourceEnvironment";
 import Form from "./Form";
-import {resourceTypes} from "@/utils/resourceConstants";
+import { resourceTypes } from "@/utils/resourceConstants";
 import resourceVariableService from "@/services/resourceVariableService";
-import {useDispatch, useSelector} from "react-redux";
-import {showAlert} from "@/store/alert/alert.thunk";
-import {useGithubLoginMutation} from "@/services/githubService";
+import { useDispatch, useSelector } from "react-redux";
+import { showAlert } from "@/store/alert/alert.thunk";
+import { useGithubLoginMutation } from "@/services/githubService";
 import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
-import {useQuery, useQueryClient} from "react-query";
-import {useGitlabLoginMutation} from "@/services/githubService";
+import { useQuery, useQueryClient } from "react-query";
+import { useGitlabLoginMutation } from "@/services/githubService";
 import GitLabForm from "./GitlabForm";
-import {useTranslation} from "react-i18next";
-import {getAllFromDB} from "@/utils/languageDB";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
-import {ContentTitle} from "../../components/ContentTitle";
-import {useSettingsPopupContext} from "../../providers";
-import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
-import {SMSType} from "./SMSType";
+import { useTranslation } from "react-i18next";
+import { getAllFromDB } from "@/utils/languageDB";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
+import { ContentTitle } from "../../components/ContentTitle";
+import { useSettingsPopupContext } from "../../providers";
+import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
+import { SMSType } from "./SMSType";
 import PostgresCreate from "./PostgresCreate";
-import {useResourcePostgreCreateMutationV2} from "../../../../services/resourceService";
+import {
+  useResourceDeleteMutation,
+  useResourcePostgreCreateMutationV2,
+} from "../../../../services/resourceService";
+import PermissionYesOrNoPopup from "../../../Matrix/PermissionYesOrNoPopup";
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},
@@ -71,12 +83,12 @@ export const ResourcesDetail = ({
   const company = store.getState().company;
   const authStore = store.getState().auth;
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [settingLan, setSettingLan] = useState(null);
 
   const isEditPage = !!resourceId;
 
-  const {control, reset, handleSubmit, setValue, watch} = useForm({
+  const { control, reset, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       name: "",
       variables: variables?.variables,
@@ -90,7 +102,7 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {isLoading} = useResourceGetByIdQueryV2({
+  const { isLoading } = useResourceGetByIdQueryV2({
     id: resourceId,
     params: {
       type: resourceType,
@@ -110,7 +122,13 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {data: clickHouseList} = useQuery(
+  const deleteResource = useResourceDeleteMutation({
+    onSuccess() {
+      setSearchParams({ tab: "resources" });
+    },
+  });
+
+  const { data: clickHouseList } = useQuery(
     ["GET_OBJECT_LIST"],
     () => {
       return resourceService.getListClickHouse({
@@ -136,7 +154,7 @@ export const ResourcesDetail = ({
     }
   );
 
-  const {isLoadingClickH} = useResourceGetByIdClickHouse({
+  const { isLoadingClickH } = useResourceGetByIdClickHouse({
     id: resourceId,
     params: {
       type: resourceType,
@@ -150,7 +168,7 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {data: projectEnvironments} = useEnvironmentsListQuery({
+  const { data: projectEnvironments } = useEnvironmentsListQuery({
     params: {
       project_id: projectId,
     },
@@ -163,7 +181,7 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {isLoading: formLoading} = useResourceEnvironmentGetByIdQuery({
+  const { isLoading: formLoading } = useResourceEnvironmentGetByIdQuery({
     id: selectedEnvironment?.[0]?.resource_environment_id,
     queryParams: {
       cacheTime: false,
@@ -182,14 +200,14 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {mutate: createResource, isLoading: createLoading} =
+  const { mutate: createResource, isLoading: createLoading } =
     useResourceCreateMutation({
       onSuccess: () => {
         navigate(-1);
       },
     });
 
-  const {mutate: createResourceV2, isLoading: createLoadingV2} =
+  const { mutate: createResourceV2, isLoading: createLoadingV2 } =
     useResourceCreateMutationV2({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -212,7 +230,7 @@ export const ResourcesDetail = ({
     }
   };
 
-  const {mutate: createResourceV1, isLoading: createLoadingV1} =
+  const { mutate: createResourceV1, isLoading: createLoadingV1 } =
     useCreateResourceMutationV1({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -222,7 +240,7 @@ export const ResourcesDetail = ({
       },
     });
 
-  const {mutate: configureResource, isLoading: configureLoading} =
+  const { mutate: configureResource, isLoading: configureLoading } =
     useResourceConfigureMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
@@ -230,14 +248,14 @@ export const ResourcesDetail = ({
       },
     });
 
-  const {mutate: updateResource, isLoading: updateLoading} =
+  const { mutate: updateResource, isLoading: updateLoading } =
     useResourceUpdateMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
       },
     });
 
-  const {mutate: updateResourceV2, isLoading: updateLoadingV2} =
+  const { mutate: updateResourceV2, isLoading: updateLoadingV2 } =
     useResourceUpdateMutationV2({
       onSuccess: () => {
         dispatch(showAlert("Resources are updated!", "success"));
@@ -246,26 +264,26 @@ export const ResourcesDetail = ({
       },
     });
 
-  const {mutate: reconnectResource, isLoading: reconnectLoading} =
+  const { mutate: reconnectResource, isLoading: reconnectLoading } =
     useResourceReconnectMutation(
-      {projectId: projectId},
+      { projectId: projectId },
       {
         onSuccess: () => {},
       }
     );
 
-  const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
+  const { mutate: githubLogin, isLoading: githubLoginIsLoading } =
     useGithubLoginMutation({
       onSuccess: (res) => {
-        setSearchParams({access_token: res.access_token});
+        setSearchParams({ access_token: res.access_token });
       },
       onError: () => {},
     });
 
-  const {mutate: gitlabLogin, isLoading: gitlabLoginIsLoading} =
+  const { mutate: gitlabLogin, isLoading: gitlabLoginIsLoading } =
     useGitlabLoginMutation({
       onSuccess: (res) => {
-        setSearchParams({access_token: res.access_token});
+        setSearchParams({ access_token: res.access_token });
         setSelectedGitlab(res);
       },
       onError: () => {},
@@ -274,8 +292,8 @@ export const ResourcesDetail = ({
   useEffect(() => {
     const code = searchParams.get("code");
     if (Boolean(code)) {
-      if (code?.length <= 20) githubLogin({code});
-      else if (code?.length > 20) gitlabLogin({code});
+      if (code?.length <= 20) githubLogin({ code });
+      else if (code?.length > 20) gitlabLogin({ code });
     }
   }, [searchParams.get("code")]);
 
@@ -392,7 +410,7 @@ export const ResourcesDetail = ({
         name: values?.name,
         type: values?.type || undefined,
         id: values?.id,
-        settings: {...values?.settings},
+        settings: { ...values?.settings },
       });
       resourceVariableService
         .updateV2({
@@ -498,15 +516,30 @@ export const ResourcesDetail = ({
   }, []);
 
   function backBtn() {
-    setSearchParams({tab: "resources"});
+    setSearchParams({ tab: "resources" });
     setOpenResource(null);
     setResourceVal(null);
     queryClient.refetchQueries(["RESOURCESV2"]);
   }
 
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => setOpen(false);
+
+  const handleDeleteResource = () => {
+    deleteResource.mutate({
+      id: resourceId,
+    });
+    setOpen(false);
+  };
+
   return (
-    <Box className="scrollbarNone" sx={{height: "670px", overflow: "hidden"}}>
-      <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
+    <Box className="scrollbarNone" sx={{ height: "670px", overflow: "hidden" }}>
+      <form
+        style={{ height: "100%" }}
+        flex={1}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {resourceType === "SMS" ? (
           <SMSType
             settingLan={settingLan}
@@ -537,13 +570,15 @@ export const ResourcesDetail = ({
               onBackClick={() => {
                 backBtn();
               }}
-              style={{marginBottom: 0}}>
+              style={{ marginBottom: 0 }}
+            >
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                }}>
+                }}
+              >
                 <span>
                   {generateLangaugeText(
                     settingLan,
@@ -551,41 +586,57 @@ export const ResourcesDetail = ({
                     "Resource settings"
                   ) || "Resource settings"}
                 </span>
-                <Box>
+                <Box sx={{ display: "flex" }}>
                   {(resourceType === "CLICK_HOUSE"
                     ? !isEditPage
                     : resource_type !== 2 ||
                       (resource_type === 2 &&
                         !isEditPage &&
                         clickHouseList?.length === 0)) && (
-                    <Button
-                      loading={loading}
-                      type="submit"
-                      sx={{
-                        fontSize: "14px",
-                        margin: "0 10px",
-                        background: "#007aff",
-                        color: "#fff",
-                        "&:hover": {
+                    <>
+                      <Button
+                        loading={loading}
+                        type="submit"
+                        sx={{
+                          fontSize: "14px",
+                          margin: "0 10px",
                           background: "#007aff",
-                        },
-                      }}
-                      isLoading={createLoading}>
-                      {loading ? (
-                        <CircularProgress
-                          style={{color: "#fff", width: "20px", height: "20px"}}
-                        />
-                      ) : (
-                        generateLangaugeText(
-                          settingLan,
-                          i18n?.language,
-                          "Save"
-                        ) || "Save"
-                      )}
-                    </Button>
+                          color: "#fff",
+                          "&:hover": {
+                            background: "#007aff",
+                          },
+                        }}
+                        isLoading={createLoading}
+                      >
+                        {loading ? (
+                          <CircularProgress
+                            style={{
+                              color: "#fff",
+                              width: "20px",
+                              height: "20px",
+                            }}
+                          />
+                        ) : (
+                          generateLangaugeText(
+                            settingLan,
+                            i18n?.language,
+                            "Save"
+                          ) || "Save"
+                        )}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setOpen(true);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </>
                   )}
 
-                  {isEditPage && variables?.type !== "REST" && (
+                  {/* {isEditPage && variables?.type !== "REST" && (
                     <Button
                       sx={{
                         color: "#fff",
@@ -595,29 +646,30 @@ export const ResourcesDetail = ({
                       hidden={!isEditPage}
                       color={"success"}
                       variant="contained"
-                      onClick={() => reconnectResource({id: resourceId})}
-                      isLoading={reconnectLoading}>
+                      onClick={() => reconnectResource({ id: resourceId })}
+                      isLoading={reconnectLoading}
+                    >
                       {generateLangaugeText(
                         settingLan,
                         i18n?.language,
                         "Reconnect"
                       ) || "Reconnect"}
                     </Button>
-                  )}
+                  )} */}
                 </Box>
               </Box>
             </ContentTitle>
 
-            <Box sx={{display: "flex"}}>
-              {isEditPage && (
+            <Box sx={{ display: "flex" }}>
+              {/* {isEditPage && (
                 <ResourceeEnvironments
                   control={control}
                   selectedEnvironment={selectedEnvironment}
                   setSelectedEnvironment={setSelectedEnvironment}
                 />
-              )}
+              )} */}
               {formLoading || isLoading ? (
-                <Box sx={{maxWidth: "289px", width: "100%"}}>
+                <Box sx={{ maxWidth: "289px", width: "100%" }}>
                   <GreyLoader />
                 </Box>
               ) : resourceType === "GITHUB" ? (
@@ -679,6 +731,35 @@ export const ResourcesDetail = ({
             </Box>
           </>
         )}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Are you sure you want to permanently delete this resource?
+          </DialogTitle>
+          <DialogContent>
+            {/* <DialogContentText id="alert-dialog-description">
+            Let Google help apps determine location. This means sending anonymous
+            location data to Google, even when no apps are running.
+          </DialogContentText> */}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} fullWidth variant="outlined">
+              No
+            </Button>
+            <Button
+              onClick={handleDeleteResource}
+              fullWidth
+              variant="contained"
+              autoFocus
+            >
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
       </form>
     </Box>
   );

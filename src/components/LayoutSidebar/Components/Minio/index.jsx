@@ -16,10 +16,10 @@ const MinioPage = ({modal = false}) => {
   const [menuItem, setMenuItem] = useState(null);
 
   useEffect(() => {
-    if (searchParams.get("menuId")) {
+    if (searchParams.get("profileMenuId")) {
       menuService
         .getByID({
-          menuId: searchParams.get("menuId"),
+          menuId: searchParams.get("profileMenuId"),
         })
         .then((res) => {
           setMenuItem(res);

@@ -51,7 +51,7 @@ function InviteModal({
 }) {
   const dispatch = useDispatch();
   const finalRef = useRef(null);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
@@ -90,6 +90,7 @@ function InviteModal({
           : data.client_type_id?.guid,
       phone: data?.phone,
       project_id,
+      status: data?.status || "ACTIVE",
     };
 
     if (Boolean(guid)) {
@@ -160,8 +161,9 @@ function InviteModal({
           borderRadius={8}
           onClick={() => {
             onOpen();
-            setSearchParams({invite: true});
-          }}>
+            setSearchParams({ invite: true });
+          }}
+        >
           {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
             "Invite"}
         </Button>
@@ -173,20 +175,21 @@ function InviteModal({
           <ModalContent borderRadius={"12px"} maxW={"500px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
-            {selectedClientType?.name !== "DEFAULT ADMIN" && (
+            {/* {selectedClientType?.name !== "DEFAULT ADMIN" && (
               <Button onClick={copyToClipboard} className={styles.copyButton}>
                 <LinkIcon
-                  style={{transform: "rotate(140deg)", color: "#A09F9D"}}
+                  style={{ transform: "rotate(140deg)", color: "#A09F9D" }}
                 />
                 Invite Link
               </Button>
-            )}
+            )} */}
 
             <ModalBody>
               <Tabs
                 index={tabIndex}
                 onChange={onTabChange}
-                className={styles.react_tab}>
+                className={styles.react_tab}
+              >
                 <TabList borderBottom={"none"}>
                   <Flex
                     p={"4px"}
@@ -194,30 +197,39 @@ function InviteModal({
                     borderRadius={"8px"}
                     h={"32px"}
                     mb={"5px"}
-                    border={"1px solid #EAECF0"}>
+                    border={"1px solid #EAECF0"}
+                  >
                     <Tab
-                      className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                      className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}
+                    >
                       Login
                     </Tab>
                     <Tab
-                      className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                      className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}
+                    >
                       Phone
                     </Tab>
                     <Tab
-                      className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                      className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}
+                    >
                       Email
+                    </Tab>
+                    <Tab
+                      className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}
+                    >
+                      Invite Link
                     </Tab>
                   </Flex>
                 </TabList>
                 <TabPanels>
-                  <TabPanel h={"230px"} mt={0} p={"0"}>
+                  <TabPanel minH={"300px"} mt={0} p={"0"}>
                     <LoginForm guid={guid} form={mainForm} />
                   </TabPanel>
-                  <TabPanel h={"190px"} mt={0} p={"0"}>
+                  <TabPanel minH={"300px"} mt={0} p={"0"}>
                     <Controller
                       name="phone"
                       control={mainForm.control}
-                      render={({field}) => (
+                      render={({ field }) => (
                         <Box
                           mt={2}
                           px={"0px"}
@@ -244,8 +256,8 @@ function InviteModal({
                               borderRight: "1px solid",
                               borderColor: "inherit",
                               bg: "transparent",
-                              _hover: {bg: "gray.50"},
-                              _focus: {outline: "none"},
+                              _hover: { bg: "gray.50" },
+                              _focus: { outline: "none" },
                               backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
                               backgroundRepeat: "no-repeat",
                               backgroundPosition: "right 0.5rem center",
@@ -254,9 +266,10 @@ function InviteModal({
                             ".PhoneInputInput": {
                               border: "none !important",
                               boxShadow: "none !important",
-                              _focus: {boxShadow: "none !important"},
+                              _focus: { boxShadow: "none !important" },
                             },
-                          }}>
+                          }}
+                        >
                           <PhoneNumberInput
                             numberInputProps={{
                               size: "lg",
@@ -274,23 +287,41 @@ function InviteModal({
                     />
                     <TypesComponent guid={guid} form={mainForm} />
                   </TabPanel>
-                  <TabPanel p={"0"} h={"190px"}>
+                  <TabPanel p={"0"} minH={"300px"}>
                     <EmailComponent guid={guid} form={mainForm} />
+                  </TabPanel>
+                  <TabPanel p={"0"} minH={"300px"}>
+                    <LinkComponent guid={guid} form={mainForm} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>
             </ModalBody>
-
             <ModalFooter>
               <Box>
-                <Button
-                  ml={"10px"}
-                  isLoading={loading}
-                  w={"100px"}
-                  type="submit"
-                  bg={"#007aff"}>
-                  Invite
-                </Button>
+                {tabIndex === 3 &&
+                mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" ? (
+                  <Button
+                    onClick={copyToClipboard}
+                    className={styles.copyButton}
+                  >
+                    <LinkIcon
+                      style={{ transform: "rotate(140deg)", color: "#A09F9D" }}
+                    />
+                    Invite Link
+                  </Button>
+                ) : (
+                  tabIndex !== 3 && (
+                    <Button
+                      ml={"10px"}
+                      isLoading={loading}
+                      w={"100px"}
+                      type="submit"
+                      bg={"#007aff"}
+                    >
+                      Invite
+                    </Button>
+                  )
+                )}
               </Box>
             </ModalFooter>
           </ModalContent>
@@ -316,13 +347,13 @@ const PasswordInput = forwardRef(
             <Visibility
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{color: "#667085"}}
+              style={{ color: "#667085" }}
             />
           ) : (
             <VisibilityOff
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{color: "#667085"}}
+              style={{ color: "#667085" }}
             />
           )}
         </InputRightElement>
@@ -331,7 +362,7 @@ const PasswordInput = forwardRef(
   }
 );
 
-const EmailComponent = ({form, placeholder = "Email", guid}) => {
+const EmailComponent = ({ form, placeholder = "Email", guid }) => {
   const errors = form.formState.errors;
   return (
     <Box mt={2}>
@@ -342,12 +373,20 @@ const EmailComponent = ({form, placeholder = "Email", guid}) => {
         {...form.register("email")}
         isInvalid={errors?.email}
       />
-      <TypesComponent form={form} />
+      <TypesComponent guid={guid} form={form} />
     </Box>
   );
 };
 
-const LoginForm = ({form, placeholder = "", guid}) => {
+const LinkComponent = ({ form, placeholder = "Link", guid }) => {
+  return (
+    <Box mt={2}>
+      <TypesComponent guid={guid} form={form} disabledOptionName={"ADMIN1"} />
+    </Box>
+  );
+};
+
+const LoginForm = ({ form, placeholder = "", guid }) => {
   const [changePassword, setChangePassword] = useState(false);
   const errors = form.formState.errors;
   const [searchParams] = useSearchParams();
@@ -358,7 +397,7 @@ const LoginForm = ({form, placeholder = "", guid}) => {
         <Input
           placeholder="Login"
           size="lg"
-          {...form.register("login", {required: true})}
+          {...form.register("login", { required: true })}
           isInvalid={errors?.name}
         />
       </Box>
@@ -374,7 +413,8 @@ const LoginForm = ({form, placeholder = "", guid}) => {
             h={"26px"}
             _hover={{
               background: "#fff",
-            }}>
+            }}
+          >
             Change Password
           </Button>
         )}
@@ -385,18 +425,18 @@ const LoginForm = ({form, placeholder = "", guid}) => {
             <PasswordInput
               placeholder="Enter new password"
               size="lg"
-              {...form.register("new_password", {required: true})}
+              {...form.register("new_password", { required: true })}
               isInvalid={errors?.password}
             />
           </Box>
         ))}
 
-      <TypesComponent form={form} />
+      <TypesComponent guid={guid} form={form} />
     </>
   );
 };
 
-const TypesComponent = ({form}) => {
+const TypesComponent = ({ form, disabledOptionName, guid }) => {
   return (
     <Box
       sx={{
@@ -408,26 +448,38 @@ const TypesComponent = ({form}) => {
         // border: "1px solid #eee",
         // borderRadius: "8px",
         // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}>
+      }}
+    >
       <Box
         sx={{
           fontSize: "13px",
           fontWeight: 600,
           color: "#91918E",
-        }}>
+        }}
+      >
         User Info
       </Box>
       <Box mt={2}>
-        <UserType placeholder="User type" form={form} control={form.control} />
+        <UserType
+          disabledOptionName={disabledOptionName}
+          placeholder="User type"
+          form={form}
+          control={form.control}
+        />
       </Box>
       <Box mt={2}>
         <Role placeholder="Role" form={form} control={form.control} />
       </Box>
+      {Boolean(guid) && (
+        <Box mt={2}>
+          <Statuses placeholder="Status" form={form} control={form.control} />
+        </Box>
+      )}
     </Box>
   );
 };
 
-const UserType = ({control, placeholder = "", form}) => {
+const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
   const clientTypesQuery = useClientTypesQuery();
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
 
@@ -447,29 +499,30 @@ const UserType = ({control, placeholder = "", form}) => {
     <Controller
       name="client_type_id"
       control={control}
-      render={({field}) => (
+      render={({ field }) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={clientTypes}
-          getOptionLabel={({name}) => name}
-          getOptionValue={({guid}) => guid}
+          getOptionLabel={({ name }) => name}
+          getOptionValue={({ guid }) => guid}
           menuPlacement="top"
           size="lg"
+          isOptionDisabled={(option) => option?.name === disabledOptionName}
         />
       )}
     />
   );
 };
 
-const Role = ({control, placeholder = "", form}) => {
-  const clientTypeId = useWatch({control, name: "client_type_id"});
+const Role = ({ control, placeholder = "", form }) => {
+  const clientTypeId = useWatch({ control, name: "client_type_id" });
   const id =
     typeof clientTypeId === "string" ? clientTypeId : clientTypeId?.guid;
   const rolesQuery = useRoleListQuery({
-    params: id ? {"client-type-id": id} : {},
-    queryParams: {enabled: Boolean(id)},
+    params: id ? { "client-type-id": id } : {},
+    queryParams: { enabled: Boolean(id) },
   });
   const roles = rolesQuery.data?.data?.response ?? [];
 
@@ -486,16 +539,62 @@ const Role = ({control, placeholder = "", form}) => {
     <Controller
       name="role_id"
       control={control}
-      render={({field}) => (
+      render={({ field }) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={roles}
-          getOptionLabel={({name}) => name}
-          getOptionValue={({guid}) => guid}
+          getOptionLabel={({ name }) => name}
+          getOptionValue={({ guid }) => guid}
           menuPlacement="top"
           size="lg"
+        />
+      )}
+    />
+  );
+};
+
+const Statuses = ({ control, placeholder = "", form }) => {
+  const options = [
+    {
+      label: "ACTIVE",
+      value: "ACTIVE",
+    },
+    {
+      label: "INACTIVE",
+      value: "INACTIVE",
+    },
+    {
+      label: "BLOCKED",
+      value: "BLOCKED",
+    },
+  ];
+
+  const value = useMemo(() => {
+    let result;
+    if (typeof form.watch("status") === "string") {
+      result = options?.find((type) => type.value === form.watch("status"));
+    } else
+      result = options?.find((type) => type.value === form.watch("status"));
+    return result;
+  }, [form.watch("status")]);
+
+  return (
+    <Controller
+      name="status"
+      control={control}
+      render={({ field }) => (
+        <Select
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => field.onChange(e?.value)}
+          options={options}
+          getOptionLabel={({ label }) => label}
+          getOptionValue={({ value }) => value}
+          menuPlacement="top"
+          size="lg"
+          defaultValue={options[0]}
         />
       )}
     />

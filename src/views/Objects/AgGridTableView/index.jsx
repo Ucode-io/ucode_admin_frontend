@@ -40,6 +40,7 @@ import {
   TreeDataModule,
   CellSelectionModule,
   ClipboardModule,
+  MasterDetailModule,
 } from "ag-grid-enterprise";
 import AggridDefaultComponents, {
   IndexColumn,
@@ -95,6 +96,7 @@ ModuleRegistry.registerModules([
   DateEditorModule,
   UndoRedoEditModule,
   RenderApiModule,
+  MasterDetailModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -154,6 +156,10 @@ function AgGridTableView(props) {
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
+  const recursiveField = visibleColumns?.find(
+    (el) => el?.table_slug === tableSlug
+  );
+
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents({
@@ -235,13 +241,21 @@ function AgGridTableView(props) {
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
-        [groupTab?.slug]: [groupTab?.value],
+
+        [recursiveField?.slug]: [null],
         ...filters,
       }),
     {
       enabled: Boolean(tableSlug && view?.attributes?.treeData),
       onSuccess: (data) => {
-        setRowData([...(data?.data?.response ?? [])]);
+        const computedRow = data?.data?.response?.map((item) => ({
+          ...item,
+          path: item?.path,
+          has_children: true,
+          group: true,
+          children: [],
+        }));
+        setRowData([...(computedRow ?? [])]);
         setLoading(false);
       },
       onError: () => {
@@ -759,7 +773,7 @@ function AgGridTableView(props) {
     name: "fields",
     keyName: "key",
   });
-
+  console.log("rowDataaaaaaa", rowData);
   return (
     <Box
       sx={{
@@ -842,6 +856,7 @@ function AgGridTableView(props) {
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
+                    onRowGroupOpened={(e) => console.log("sssssssssssssss", e)}
                     getDataPath={
                       view?.attributes?.treeData ? getDataPath : undefined
                     }

@@ -31,6 +31,8 @@ const resourceService = {
     request.post("/company/project/create-resource", data),
   getResourceEnvironment: (id) =>
     request.get(`v1/company/project/resource-environment/${id}`),
+  deleteResourceEnvironment: (data) =>
+    request.delete(`v1/company/project/resource`, data),
   configureResource: (data) =>
     request.post("/v1/company/project/configure-resource", data),
   delete: (data) => request.delete(`/company/project/resource`, {data}),
@@ -152,6 +154,10 @@ export const useResourceEnvironmentGetByIdQuery = ({id, queryParams} = {}) => {
     queryParams
   );
 };
+
+// export const useResourceDeleteMutation = (mutationSettings) => {
+//   return useMutation((data) => resourceService.deleteResourceEnvironment(data), mutationSettings)
+// }
 
 export const useResourceDeleteMutation = (mutationSettings) => {
   return useMutation((data) => resourceService.delete(data), mutationSettings);

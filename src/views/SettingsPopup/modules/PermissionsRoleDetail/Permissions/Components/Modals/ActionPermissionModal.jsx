@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import {Box, Card, Modal, Typography} from "@mui/material";
-import {useFieldArray} from "react-hook-form";
+import { Controller, useFieldArray } from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -12,6 +12,8 @@ import {
 import FormCheckbox from "../Checkbox/FormCheckbox";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import cls from "./styles.module.scss";
+import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
 
 const ActionPermissionModal = ({
   closeModal,
@@ -53,36 +55,57 @@ const ActionPermissionModal = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}>
+                }}
+              >
                 <CTableHead>
                   <CTableHeadRow>
-                    <CTableCell w={2}>No</CTableCell>
+                    <CTableCell w={2}>
+                      <Box className={cls.headCellBox}>No</Box>
+                    </CTableCell>
                     <CTableCell w={250}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Action name"
-                      ) ?? "Action name"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Action name"
+                        ) ?? "Action name"}
+                      </Box>
                     </CTableCell>
                     <CTableCell w={150}>
-                      {generateLangaugeText(
-                        permissionLan,
-                        i18n?.language,
-                        "Permission"
-                      ) ?? "Permission"}
+                      <Box className={cls.headCellBox}>
+                        {generateLangaugeText(
+                          permissionLan,
+                          i18n?.language,
+                          "Permission"
+                        ) ?? "Permission"}
+                      </Box>
                     </CTableCell>
                   </CTableHeadRow>
                 </CTableHead>
                 <CTableBody columnsCount={3} dataLength={fields?.length}>
                   {fields?.map((field, fieldIndex) => (
                     <CTableHeadRow key={field.guid}>
-                      <CTableCell>{fieldIndex + 1}</CTableCell>
-                      <CTableCell>{field.label}</CTableCell>
                       <CTableCell>
-                        <FormCheckbox
+                        <Box className={cls.bodyCellBox}>{fieldIndex + 1}</Box>
+                      </CTableCell>
+                      <CTableCell>
+                        <Box className={cls.bodyCellBox}>{field.label}</Box>
+                      </CTableCell>
+                      <CTableCell>
+                        <Controller
                           name={`${basePath}.${fieldIndex}.permission`}
                           control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <CustomCheckbox
+                              onChange={onChange}
+                              checked={value}
+                            />
+                          )}
                         />
+                        {/* <FormCheckbox
+                          name={`${basePath}.${fieldIndex}.permission`}
+                          control={control}
+                        /> */}
                       </CTableCell>
                     </CTableHeadRow>
                   ))}

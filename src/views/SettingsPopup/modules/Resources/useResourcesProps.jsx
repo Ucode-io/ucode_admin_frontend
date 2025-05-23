@@ -19,6 +19,7 @@ export const useResourcesProps = () => {
   const { t, i18n } = useTranslation()
 
   const handleItemClick = (row) => {
+    console.log({ row });
     setSearchParams({
       tab: TAB_COMPONENTS?.RESOURCES?.RESOURCES_DETAIL,
       resourceId: row?.id,

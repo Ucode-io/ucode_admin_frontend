@@ -16,10 +16,10 @@ const MinioPage = ({modal = false}) => {
   const [menuItem, setMenuItem] = useState(null);
 
   useEffect(() => {
-    if (searchParams.get("menuId")) {
+    if (searchParams.get("profileMenuId")) {
       menuService
         .getByID({
-          menuId: searchParams.get("menuId"),
+          menuId: searchParams.get("profileMenuId"),
         })
         .then((res) => {
           setMenuItem(res);
@@ -34,10 +34,10 @@ const MinioPage = ({modal = false}) => {
   const [sort, setSort] = useState("asc");
   const company = store.getState().company;
 
-  const {data: minios, isLoading} = useMinioObjectListQuery({
+  const { data: minios, isLoading } = useMinioObjectListQuery({
     params: {
       folder_name: menuItem?.attributes?.path,
-      // sort: sort,
+      sort: sort,
       project_id: company.projectId,
     },
     queryParams: {
@@ -58,8 +58,8 @@ const MinioPage = ({modal = false}) => {
   };
 
   const selectAllCards = () => {
-    if (!selectAll) {
-      setSelectedCards(minios?.objects);
+    if (!selectedCards.length < minios?.files?.length) {
+      setSelectedCards(minios?.files);
     } else {
       setSelectedCards([]);
     }

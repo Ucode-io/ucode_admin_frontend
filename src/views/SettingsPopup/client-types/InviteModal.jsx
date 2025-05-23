@@ -318,7 +318,7 @@ function InviteModal({
                       type="submit"
                       bg={"#007aff"}
                     >
-                      Invite
+                      {guid ? "Save" : "Invite"}
                     </Button>
                   )
                 )}
@@ -566,14 +566,17 @@ const Statuses = ({ control, placeholder = "", form }) => {
     {
       label: "ACTIVE",
       value: "ACTIVE",
+      color: "teal.400",
     },
     {
       label: "INACTIVE",
       value: "INACTIVE",
+      color: "gray.400",
     },
     {
       label: "BLOCKED",
       value: "BLOCKED",
+      color: "red.400",
     },
   ];
 
@@ -601,6 +604,17 @@ const Statuses = ({ control, placeholder = "", form }) => {
           menuPlacement="top"
           size="lg"
           defaultValue={options[0]}
+          chakraStyles={{
+            option: (provided, state) => ({
+              ...provided,
+              background: state.data.color,
+              color: "#fff",
+            }),
+            singleValue: (provided, state) => ({
+              ...provided,
+              color: state.data.color,
+            }),
+          }}
         />
       )}
     />

@@ -259,6 +259,7 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
+        console.log({ item, subGroupById, fieldsMap });
         const key =
           subGroupField?.type === FIELD_TYPES.LOOKUP
             ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]

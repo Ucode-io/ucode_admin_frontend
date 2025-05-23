@@ -172,7 +172,15 @@ const Permissions = ({
                 type={"withoutPadding"}
                 bodyClassname={styles.body}
               >
-                <CTable removableHeight={284} disablePagination>
+                <CTable
+                  tableStyle={{
+                    width: "auto",
+                    overflow: "visible",
+                    position: "static",
+                  }}
+                  removableHeight={284}
+                  disablePagination
+                >
                   <CTableHead>
                     <CTableHeadRow>
                       <CTableCell

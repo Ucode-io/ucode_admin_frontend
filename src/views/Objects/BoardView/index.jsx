@@ -151,7 +151,7 @@ const BoardView = ({
       return constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
-          limit: 100,
+          limit: 300,
           offset: 0,
         },
       });

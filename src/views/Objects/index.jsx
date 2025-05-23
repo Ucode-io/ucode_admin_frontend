@@ -125,8 +125,7 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({data}) => {
-        console.log({ f: data?.fields });
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -142,7 +141,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }

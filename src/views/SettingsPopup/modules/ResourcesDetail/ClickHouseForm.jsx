@@ -1,11 +1,10 @@
 import {Box, Button, Stack} from "@mui/material";
-import React from "react";
-import {useWatch} from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import Footer from "@/components/Footer";
 import HFTextField from "@/components/FormElements/HFTextField";
 import VariableResources from "@/components/LayoutSidebar/Components/Resources/VariableResource";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
 
 const headerStyle = {
   width: "100",
@@ -21,17 +20,18 @@ const ClickHouseForm = ({
   selectedEnvironment,
   settingLan,
 }) => {
-  const resurceType = useWatch({
+  const resourceType = useWatch({
     control,
     name: "resource_type",
   });
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   // host, port, username, password, database
   return (
     <Box
       flex={1}
-      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
+      sx={{ borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)` }}
+    >
       <Box sx={headerStyle}>
         <h2 variant="h6">
           {generateLangaugeText(settingLan, i18n?.language, "Resource info") ||
@@ -42,15 +42,17 @@ const ClickHouseForm = ({
       <Box
         style={{
           overflow: "auto",
-        }}>
+        }}
+      >
         <Stack spacing={4}>
           <Box
             sx={{
               // borderBottom: "1px solid #e5e9eb",
               padding: "15px",
               fontWeight: "bold",
-            }}>
-            <Box sx={{fontSize: "14px", marginBottom: "15px"}}>
+            }}
+          >
+            <Box sx={{ fontSize: "14px", marginBottom: "15px" }}>
               {generateLangaugeText(settingLan, i18n?.language, "Host") ||
                 "Host"}
             </Box>
@@ -66,7 +68,8 @@ const ClickHouseForm = ({
             />
 
             <Box
-              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
+              sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "10px" }}
+            >
               {generateLangaugeText(settingLan, i18n?.language, "Port") ||
                 "Port"}
             </Box>
@@ -83,7 +86,8 @@ const ClickHouseForm = ({
             />
 
             <Box
-              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
+              sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "10px" }}
+            >
               {generateLangaugeText(settingLan, i18n?.language, "Username") ||
                 "Username"}
             </Box>
@@ -100,7 +104,8 @@ const ClickHouseForm = ({
             />
 
             <Box
-              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
+              sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "10px" }}
+            >
               {generateLangaugeText(settingLan, i18n?.language, "Password") ||
                 "Password"}
             </Box>
@@ -117,7 +122,8 @@ const ClickHouseForm = ({
             />
 
             <Box
-              sx={{fontSize: "14px", marginTop: "10px", marginBottom: "10px"}}>
+              sx={{ fontSize: "14px", marginTop: "10px", marginBottom: "10px" }}
+            >
               {generateLangaugeText(settingLan, i18n?.language, "Database") ||
                 "Database"}
             </Box>
@@ -135,7 +141,7 @@ const ClickHouseForm = ({
           </Box>
         </Stack>
       </Box>
-      {resurceType === 4 && <VariableResources control={control} />}
+      {resourceType === 4 && <VariableResources control={control} />}
 
       <Footer>
         {selectedEnvironment?.length && (

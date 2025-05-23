@@ -142,17 +142,19 @@ export const SettingsPopup = ({open, onClose}) => {
                                       </Box>
                                     </>
                                   ))}
-                                  <button
-                                    className={cls.addClientTypeBtn}
-                                    onClick={handleOpenClientTypeModal}
-                                  >
-                                    <span>
-                                      <span className={cls.addIcon}>
-                                        <AddIcon />
+                                  {tab?.key === "permissions" && (
+                                    <button
+                                      className={cls.addClientTypeBtn}
+                                      onClick={handleOpenClientTypeModal}
+                                    >
+                                      <span>
+                                        <span className={cls.addIcon}>
+                                          <AddIcon />
+                                        </span>
+                                        <span>Add client type</span>
                                       </span>
-                                      <span>Add client type</span>
-                                    </span>
-                                  </button>
+                                    </button>
+                                  )}
                                 </AccordionDetails>
                               </Accordion>
                             ) : (

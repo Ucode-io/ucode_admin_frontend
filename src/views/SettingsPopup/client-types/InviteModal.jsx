@@ -393,7 +393,7 @@ const EmailComponent = ({ form, placeholder = "Email", guid }) => {
 const LinkComponent = ({ form, placeholder = "Link", guid }) => {
   return (
     <Box mt={2}>
-      <TypesComponent guid={guid} form={form} disabledOptionName={"ADMIN1"} />
+      <TypesComponent guid={guid} form={form} />
     </Box>
   );
 };
@@ -480,7 +480,12 @@ const TypesComponent = ({ form, disabledOptionName, guid }) => {
         />
       </Box>
       <Box mt={2}>
-        <Role placeholder="Role" form={form} control={form.control} />
+        <Role
+          placeholder="Role"
+          form={form}
+          control={form.control}
+          disabledRoleOptionName={"DEFAULT ADMIN"}
+        />
       </Box>
       {Boolean(guid) && (
         <Box mt={2}>
@@ -528,7 +533,7 @@ const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
   );
 };
 
-const Role = ({ control, placeholder = "", form }) => {
+const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
   const clientTypeId = useWatch({ control, name: "client_type_id" });
   const id =
     typeof clientTypeId === "string" ? clientTypeId : clientTypeId?.guid;
@@ -559,6 +564,7 @@ const Role = ({ control, placeholder = "", form }) => {
           options={roles}
           getOptionLabel={({ name }) => name}
           getOptionValue={({ guid }) => guid}
+          isOptionDisabled={(option) => option?.name === disabledRoleOptionName}
           menuPlacement="top"
           size="lg"
         />

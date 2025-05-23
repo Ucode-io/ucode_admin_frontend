@@ -43,7 +43,7 @@ const Form = ({
     }));
   }, [projectEnvironments]);
 
-  const resurceType = useWatch({
+  const resourceType = useWatch({
     control,
     name: "resource_type",
   });
@@ -115,17 +115,20 @@ const Form = ({
   return (
     <Box
       flex={1}
-      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
+      sx={{ borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)` }}
+    >
       <Box
         style={{
           overflow: "auto",
-        }}>
+        }}
+      >
         <Stack spacing={4}>
           <Box
             sx={{
               padding: "15px",
               fontWeight: "bold",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -133,8 +136,9 @@ const Form = ({
                 gap: "20px",
                 flexWrap: "nowrap",
                 justifyContent: "space-between",
-              }}>
-              <Box sx={{width: "48%"}}>
+              }}
+            >
+              <Box sx={{ width: "48%" }}>
                 <FieldLabel
                   children={
                     generateLangaugeText(settingLan, i18n?.language, "Name") ||
@@ -152,7 +156,7 @@ const Form = ({
                 />
               </Box>
 
-              <Box sx={{width: "48%"}}>
+              <Box sx={{ width: "48%" }}>
                 <FieldLabel
                   children={
                     generateLangaugeText(settingLan, i18n?.language, "Type") ||
@@ -165,14 +169,14 @@ const Form = ({
                   onChange={onResourceTypeChange}
                   required
                   name="resource_type"
-                  resurceType={resurceType}
+                  resourceType={resourceType}
                   disabled={isEditPage}
                 />
               </Box>
             </Box>
 
             {!isEditPage && (
-              <Box sx={{marginTop: "20px", marginBottom: "20px"}}>
+              <Box sx={{ marginTop: "20px", marginBottom: "20px" }}>
                 <FieldLabel
                   children={
                     generateLangaugeText(
@@ -194,7 +198,7 @@ const Form = ({
               </Box>
             )}
 
-            {Number(resurceType) === 11 && Boolean(editTrue) && (
+            {Number(resourceType) === 11 && Boolean(editTrue) && (
               <Box
                 sx={{
                   display: "flex",
@@ -202,8 +206,9 @@ const Form = ({
                   justifyContent: "space-between",
                   flexWrap: "wrap",
                   gap: "20px",
-                }}>
-                <Box sx={{width: "48%"}}>
+                }}
+              >
+                <Box sx={{ width: "48%" }}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -227,7 +232,7 @@ const Form = ({
                 </Box>
                 {Boolean(editTrue) && (
                   <>
-                    <Box sx={{width: "48%"}}>
+                    <Box sx={{ width: "48%" }}>
                       <FieldLabel
                         children={
                           generateLangaugeText(
@@ -248,7 +253,7 @@ const Form = ({
                         }}
                       />
                     </Box>
-                    <Box sx={{width: "48%"}}>
+                    <Box sx={{ width: "48%" }}>
                       <FieldLabel
                         children={
                           generateLangaugeText(
@@ -274,7 +279,7 @@ const Form = ({
               </Box>
             )}
 
-            {Boolean(Number(resurceType) === 7 || type === "SMTP") && (
+            {Boolean(Number(resourceType) === 7 || type === "SMTP") && (
               <Box
                 sx={{
                   display: "flex",
@@ -282,7 +287,8 @@ const Form = ({
                   justifyContent: "space-between",
                   flexWrap: "wrap",
                   gap: "20px",
-                }}>
+                }}
+              >
                 <Box width={"48%"}>
                   <FieldLabel
                     children={
@@ -371,15 +377,16 @@ const Form = ({
               </Box>
             )}
 
-            {Boolean(Number(resurceType) === 6 || type === "SMS") && (
+            {Boolean(Number(resourceType) === 6 || type === "SMS") && (
               <Box
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
                   gap: "20px",
                   justifyContent: "space-between",
-                }}>
-                <Box sx={{width: "48%"}}>
+                }}
+              >
+                <Box sx={{ width: "48%" }}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -400,7 +407,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{width: "48%"}}>
+                <Box sx={{ width: "48%" }}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -421,7 +428,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{width: "48%"}}>
+                <Box sx={{ width: "48%" }}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -443,7 +450,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{width: "48%"}}>
+                <Box sx={{ width: "48%" }}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -464,7 +471,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{width: "48%"}}>
+                <Box sx={{ width: "48%" }}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -487,7 +494,7 @@ const Form = ({
               </Box>
             )}
 
-            {Number(resurceType) === 5 || type === "GITHUB" ? (
+            {Number(resourceType) === 5 || type === "GITHUB" ? (
               <>
                 <FieldLabel
                   children={
@@ -526,7 +533,7 @@ const Form = ({
               </>
             ) : null}
 
-            {Number(resurceType) === 8 ? (
+            {Number(resourceType) === 8 ? (
               <>
                 <FieldLabel
                   children={
@@ -570,7 +577,7 @@ const Form = ({
         </Stack>
       </Box>
 
-      {resurceType === 4 && (
+      {resourceType === 4 && (
         <VariableResources settingLan={settingLan} control={control} />
       )}
     </Box>

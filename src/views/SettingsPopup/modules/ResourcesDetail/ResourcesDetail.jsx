@@ -55,6 +55,7 @@ import {
   useResourcePostgreCreateMutationV2,
 } from "../../../../services/resourceService";
 import PermissionYesOrNoPopup from "../../../Matrix/PermissionYesOrNoPopup";
+import { ConfirmPopup } from "../../components/ConfirmPopup";
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},
@@ -540,7 +541,7 @@ export const ResourcesDetail = ({
         flex={1}
         onSubmit={handleSubmit(onSubmit)}
       >
-        {resourceType === "SMS" ? (
+        {/* {resourceType === "SMS" ? (
           <SMSType
             settingLan={settingLan}
             i18n={i18n}
@@ -563,80 +564,82 @@ export const ResourcesDetail = ({
             reconnectLoading={reconnectLoading}
             variables={variables}
           />
-        ) : (
-          <>
-            <ContentTitle
-              withBackBtn
-              onBackClick={() => {
-                backBtn();
+        ) : ( */}
+        <>
+          <ContentTitle
+            withBackBtn
+            onBackClick={() => {
+              backBtn();
+            }}
+            style={{ marginBottom: 0 }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
-              style={{ marginBottom: 0 }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <span>
-                  {generateLangaugeText(
-                    settingLan,
-                    i18n?.language,
-                    "Resource settings"
-                  ) || "Resource settings"}
-                </span>
-                <Box sx={{ display: "flex" }}>
-                  {(resourceType === "CLICK_HOUSE"
-                    ? !isEditPage
-                    : resource_type !== 2 ||
-                      (resource_type === 2 &&
-                        !isEditPage &&
-                        clickHouseList?.length === 0)) && (
-                    <>
-                      <Button
-                        loading={loading}
-                        type="submit"
-                        sx={{
-                          fontSize: "14px",
-                          margin: "0 10px",
+              <span>
+                {generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Resource settings"
+                ) || "Resource settings"}
+              </span>
+              <Box sx={{ display: "flex" }}>
+                {(resourceType === "CLICK_HOUSE"
+                  ? !isEditPage
+                  : resource_type !== 2 ||
+                    (resource_type === 2 &&
+                      !isEditPage &&
+                      clickHouseList?.length === 0)) && (
+                  <>
+                    <Button
+                      loading={loading}
+                      type="submit"
+                      sx={{
+                        fontSize: "14px",
+                        margin: "0 10px",
+                        background: "#007aff",
+                        color: "#fff",
+                        "&:hover": {
                           background: "#007aff",
-                          color: "#fff",
-                          "&:hover": {
-                            background: "#007aff",
-                          },
-                        }}
-                        isLoading={createLoading}
-                      >
-                        {loading ? (
-                          <CircularProgress
-                            style={{
-                              color: "#fff",
-                              width: "20px",
-                              height: "20px",
-                            }}
-                          />
-                        ) : (
-                          generateLangaugeText(
-                            settingLan,
-                            i18n?.language,
-                            "Save"
-                          ) || "Save"
-                        )}
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setOpen(true);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </>
-                  )}
+                        },
+                      }}
+                      isLoading={createLoading}
+                    >
+                      {loading ? (
+                        <CircularProgress
+                          style={{
+                            color: "#fff",
+                            width: "20px",
+                            height: "20px",
+                          }}
+                        />
+                      ) : (
+                        generateLangaugeText(
+                          settingLan,
+                          i18n?.language,
+                          "Save"
+                        ) || "Save"
+                      )}
+                    </Button>
+                  </>
+                )}
+                {resourceId && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => {
+                      setOpen(true);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )}
 
-                  {/* {isEditPage && variables?.type !== "REST" && (
+                {/* {isEditPage && variables?.type !== "REST" && (
                     <Button
                       sx={{
                         color: "#fff",
@@ -656,82 +659,89 @@ export const ResourcesDetail = ({
                       ) || "Reconnect"}
                     </Button>
                   )} */}
-                </Box>
               </Box>
-            </ContentTitle>
+            </Box>
+          </ContentTitle>
 
-            <Box sx={{ display: "flex" }}>
-              {/* {isEditPage && (
+          <Box sx={{ display: "flex" }}>
+            {/* {isEditPage && (
                 <ResourceeEnvironments
                   control={control}
                   selectedEnvironment={selectedEnvironment}
                   setSelectedEnvironment={setSelectedEnvironment}
                 />
               )} */}
-              {formLoading || isLoading ? (
-                <Box sx={{ maxWidth: "289px", width: "100%" }}>
-                  <GreyLoader />
-                </Box>
-              ) : resourceType === "GITHUB" ? (
-                <GitForm
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                />
-              ) : resourceType === "CLICK_HOUSE" ? (
-                <ClickHouseForm
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                />
-              ) : resourceType === "GITLAB" ? (
-                <GitLabForm
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                />
-              ) : Number(searchParams.get("resource_type")) === 3 ? (
-                <PostgresCreate
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                />
-              ) : (
-                <Form
-                  settingLan={settingLan}
-                  control={control}
-                  selectedEnvironment={selectedEnvironment}
-                  btnLoading={configureLoading || updateLoading}
-                  setSelectedEnvironment={setSelectedEnvironment}
-                  projectEnvironments={projectEnvironments}
-                  isEditPage={isEditPage}
-                  watch={watch}
-                  setValue={setValue}
-                />
-              )}
-            </Box>
-          </>
-        )}
-        <Dialog
+            {formLoading || isLoading ? (
+              <Box sx={{ maxWidth: "289px", width: "100%" }}>
+                <GreyLoader />
+              </Box>
+            ) : resourceType === "GITHUB" ? (
+              <GitForm
+                settingLan={settingLan}
+                control={control}
+                selectedEnvironment={selectedEnvironment}
+                btnLoading={configureLoading || updateLoading}
+                setSelectedEnvironment={setSelectedEnvironment}
+                projectEnvironments={projectEnvironments}
+                isEditPage={isEditPage}
+                watch={watch}
+              />
+            ) : resourceType === "CLICK_HOUSE" ? (
+              <ClickHouseForm
+                settingLan={settingLan}
+                control={control}
+                selectedEnvironment={selectedEnvironment}
+                btnLoading={configureLoading || updateLoading}
+                setSelectedEnvironment={setSelectedEnvironment}
+                projectEnvironments={projectEnvironments}
+                isEditPage={isEditPage}
+              />
+            ) : resourceType === "GITLAB" ? (
+              <GitLabForm
+                settingLan={settingLan}
+                control={control}
+                selectedEnvironment={selectedEnvironment}
+                btnLoading={configureLoading || updateLoading}
+                setSelectedEnvironment={setSelectedEnvironment}
+                projectEnvironments={projectEnvironments}
+                isEditPage={isEditPage}
+                watch={watch}
+              />
+            ) : Number(searchParams.get("resource_type")) === 3 ? (
+              <PostgresCreate
+                settingLan={settingLan}
+                control={control}
+                selectedEnvironment={selectedEnvironment}
+                btnLoading={configureLoading || updateLoading}
+                setSelectedEnvironment={setSelectedEnvironment}
+                projectEnvironments={projectEnvironments}
+                isEditPage={isEditPage}
+                watch={watch}
+              />
+            ) : (
+              <Form
+                settingLan={settingLan}
+                control={control}
+                selectedEnvironment={selectedEnvironment}
+                btnLoading={configureLoading || updateLoading}
+                setSelectedEnvironment={setSelectedEnvironment}
+                projectEnvironments={projectEnvironments}
+                isEditPage={false}
+                watch={watch}
+                setValue={setValue}
+              />
+            )}
+          </Box>
+        </>
+        {/* )} */}
+
+        <ConfirmPopup
+          onConfirm={handleDeleteResource}
+          onNotConfirm={handleClose}
+          handleClose={handleClose}
+          open={open}
+        />
+        {/* <Dialog
           open={open}
           onClose={handleClose}
           aria-labelledby="alert-dialog-title"
@@ -740,12 +750,6 @@ export const ResourcesDetail = ({
           <DialogTitle id="alert-dialog-title">
             Are you sure you want to permanently delete this resource?
           </DialogTitle>
-          <DialogContent>
-            {/* <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
-          </DialogContentText> */}
-          </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} fullWidth variant="outlined">
               No
@@ -759,7 +763,7 @@ export const ResourcesDetail = ({
               Yes
             </Button>
           </DialogActions>
-        </Dialog>
+        </Dialog> */}
       </form>
     </Box>
   );

@@ -35,7 +35,7 @@ export default function ViewTypeList({
   computedViewTypes,
   views,
   handleClose,
-  fieldsMap,
+  fieldsMap = {},
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
@@ -218,7 +218,9 @@ export default function ViewTypeList({
   };
 
   const {
-    data: {fields},
+    data: {fields} = {
+      fields: [],
+    },
   } = useQuery(
     ["GET_TABLE_INFO", {tableSlug}],
     () => {
@@ -229,9 +231,9 @@ export default function ViewTypeList({
     {
       cacheTime: 10,
       select: (res) => {
-        const fields = res.data?.fields ?? [];
-
-        return {fields};
+        return {
+          fields: res?.data?.fields ?? [],
+        };
       },
     }
   );

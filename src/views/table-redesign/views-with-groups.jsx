@@ -95,6 +95,7 @@ import TableView from "./table-view";
 import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 import FilterPopover from "./FilterPopover";
 import FiltersList from "./FiltersList";
+import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -1014,7 +1015,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" && groupTable?.length ? (
                       <MaterialUIProvider>
                         {" "}
-                        <AgGridTableView
+                        <AggridTreeView
                           navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
@@ -1120,7 +1121,7 @@ export const NewUiViewsWithGroups = ({
                     <TabPanel key={tab.value}>
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
-                          <AgGridTableView
+                          <AggridTreeView
                             navigateCreatePage={navigateCreatePage}
                             getRelationFields={getRelationFields}
                             mainForm={mainForm}
@@ -1208,7 +1209,7 @@ export const NewUiViewsWithGroups = ({
                   <>
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
-                        <AgGridTableView
+                        <AggridTreeView
                           navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}

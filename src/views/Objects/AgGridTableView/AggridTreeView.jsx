@@ -1,81 +1,70 @@
-import {useQuery, useQueryClient} from "react-query";
-import style from "./style.module.scss";
-import {Box, Button, Drawer} from "@mui/material";
-import {AgGridReact} from "ag-grid-react";
-import AggridFooter from "./AggridFooter";
-import {useParams} from "react-router-dom";
-import {useTranslation} from "react-i18next";
+import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {Box, Button} from "@mui/material";
 import {
   CellStyleModule,
   CheckboxEditorModule,
+  ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
+  ModuleRegistry,
   NumberEditorModule,
   RenderApiModule,
+  RowSelectionModule,
   TextEditorModule,
   UndoRedoEditModule,
   ValidationModule,
   themeQuartz,
 } from "ag-grid-community";
-import useFilters from "../../../hooks/useFilters";
-import {generateGUID} from "../../../utils/generateID";
-import {pageToOffset} from "../../../utils/pageToOffset";
-import CustomLoadingOverlay from "./CustomLoadingOverlay";
-import getColumnEditorParams from "./valueOptionGenerator";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import constructorViewService from "../../../services/constructorViewService";
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import constructorTableService from "../../../services/constructorTableService";
-import constructorObjectService from "../../../services/constructorObjectService";
 import {
-  ClientSideRowModelModule,
-  ModuleRegistry,
-  RowSelectionModule,
-} from "ag-grid-community";
-import {
-  MenuModule,
-  ColumnsToolPanelModule,
-  ServerSideRowModelModule,
-  RowGroupingModule,
-  TreeDataModule,
   CellSelectionModule,
   ClipboardModule,
+  ColumnsToolPanelModule,
   MasterDetailModule,
+  MenuModule,
+  RowGroupingModule,
+  ServerSideRowModelModule,
+  TreeDataModule,
 } from "ag-grid-enterprise";
-import AggridDefaultComponents, {
-  IndexColumn,
-  ActionsColumn,
-} from "./Functions/AggridDefaultComponents";
-import {mergeStringAndState} from "@/utils/jsonPath";
-import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
-import {Flex, Text} from "@chakra-ui/react";
-import {getColumnIcon} from "../../table-redesign/icons";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {Button as ChakraButton} from "@chakra-ui/react";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import NewModalDetailPage from "../../../components/NewModalDetailPage";
-import DrawerDetailPage from "../DrawerDetailPage";
-import layoutService from "../../../services/layoutService";
+import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import useTabRouter from "../../../hooks/useTabRouter";
+import {useParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DeleteColumnModal from "./DeleteColumnModal";
-import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
-import {useFieldArray, useForm} from "react-hook-form";
+import useFilters from "../../../hooks/useFilters";
+import useTabRouter from "../../../hooks/useTabRouter";
 import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../services/constructorFieldService";
+import constructorObjectService from "../../../services/constructorObjectService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorViewService from "../../../services/constructorViewService";
+import layoutService from "../../../services/layoutService";
 import {
   useRelationFieldUpdateMutation,
   useRelationsCreateMutation,
 } from "../../../services/relationService";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import {transliterate} from "../../../utils/textTranslater";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {generateGUID} from "../../../utils/generateID";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import {transliterate} from "../../../utils/textTranslater";
+import {getColumnIcon} from "../../table-redesign/icons";
+import AggridFooter from "./AggridFooter";
+import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
+import CustomLoadingOverlay from "./CustomLoadingOverlay";
+import AggridDefaultComponents, {
+  ActionsColumn,
+  IndexColumn,
+} from "./Functions/AggridDefaultComponents";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import style from "./style.module.scss";
+import getColumnEditorParams from "./valueOptionGenerator";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -104,7 +93,7 @@ const myTheme = themeQuartz.withParams({
   rowHeight: "32px",
 });
 
-function AgGridTableView(props) {
+function AggridTreeView(props) {
   const {
     open,
     view,
@@ -112,17 +101,13 @@ function AgGridTableView(props) {
     menuItem,
     fieldsMap,
     searchText,
-    selectedRow,
     projectInfo,
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
     computedVisibleFields,
-    setOpen = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
-    getRelationFields = () => {},
-    navigateCreatePage = () => {},
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
@@ -251,6 +236,7 @@ function AgGridTableView(props) {
         const computedRow = data?.data?.response?.map((item) => ({
           ...item,
         }));
+        console.log("dataaaaaaaaaaa", data);
         setRowData([...(computedRow ?? [])]);
         setLoading(false);
       },
@@ -526,34 +512,6 @@ function AgGridTableView(props) {
     });
   };
 
-  const navigateToDetailPage = (row) => {
-    if (
-      view?.attributes?.navigate?.params?.length ||
-      view?.attributes?.navigate?.url
-    ) {
-      const params = view?.attributes?.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&");
-
-      const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
-
-      const matches = replaceUrlVariables(urlTemplate, row);
-
-      navigate(`${matches}${params ? "?" + params : ""}`);
-    } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
-    }
-  };
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -658,117 +616,52 @@ function AgGridTableView(props) {
     }
   }, [fieldData]);
 
-  const {mutate: createField} = useFieldCreateMutation({
-    onSuccess: (res) => {
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful created", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const {mutate: updateField} = useFieldUpdateMutation({
-    onSuccess: (res) => {
-      queryClient.refetchQueries(["GET_TABLE_INFO"]);
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful updated", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const {mutate: createRelation} = useRelationsCreateMutation({
-    onSuccess: (res) => {
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful updated", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
-    onSuccess: (res) => {
-      queryClient.refetchQueries(["GET_TABLE_INFO"]);
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful updated", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const onSubmit = (values) => {
-    const data = {
-      ...values,
-      slug: slug,
-      table_id: menuItem?.table_id,
-      label: slug,
-      index: "string",
-      required: false,
-      show_label: true,
-      id: fieldData ? fieldData?.id : generateGUID(),
-      attributes: {
-        ...values.attributes,
-        formula: values?.attributes?.advanced_type
-          ? values?.attributes?.formula
-          : values?.attributes?.from_formula +
-            " " +
-            values?.attributes?.math?.value +
-            " " +
-            values?.attributes?.to_formula,
-      },
-    };
-
-    const relationData = {
-      ...values,
-      attributes: {
-        ...values.attributes,
-        label: values?.table_to?.split("/")?.[0],
-        ...Object.fromEntries(
-          languages.map((lang) => [
-            `label_${lang.slug}`,
-            values?.table_to?.split("/")?.[0],
-          ])
-        ),
-        ...Object.fromEntries(
-          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
-        ),
-      },
-      table_to: values?.table_to?.split("/")?.[1],
-      relation_table_slug: tableSlug,
-      label: values?.table_from,
-      type: values?.relation_type,
-      required: false,
-      multiple_insert: false,
-      show_label: true,
-      id: fieldData ? fieldData?.id : generateGUID(),
-    };
-
-    if (!fieldData) {
-      if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
-      }
-      if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
-      }
-    }
-    if (fieldData) {
-      if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
-      } else {
-        updateField({data, tableSlug});
-      }
-    }
+  const isServerSideGroup = (dataItem) => {
+    return dataItem.has_child;
   };
 
-  const {update} = useFieldArray({
-    control: mainForm.control,
-    name: "fields",
-    keyName: "key",
-  });
+  const getServerSideGroupKey = (dataItem) => {
+    return dataItem.guid;
+  };
+
+  const createServerSideDatasource = (parentId) => {
+    return {
+      getRows: async (params) => {
+        const parentGuid = [params?.parentNode?.data?.guid] ?? parentId;
+
+        try {
+          const resp = await constructorObjectService.getListTreeData(
+            tableSlug,
+            {
+              fields: [...visibleFields, "guid"],
+              [recursiveField?.slug]: parentGuid,
+            }
+          );
+
+          const items = resp?.data?.response || [];
+
+          const rowData = items.map((item) => ({
+            ...item,
+            group: item.has_child,
+          }));
+
+          params.success({rowData});
+        } catch (error) {
+          console.error("Error loading tree data:", error);
+          params.fail();
+        }
+      },
+    };
+  };
+
+  const onGridReady = useCallback(
+    (params) => {
+      const parentGuid = [params?.parentNode?.data?.guid] ?? [null];
+      const datasource = createServerSideDatasource(parentGuid);
+      params.api.setGridOption("serverSideDatasource", datasource);
+    },
+    [tableSlug, visibleFields]
+  );
 
   return (
     <Box
@@ -831,7 +724,7 @@ function AgGridTableView(props) {
                       maxBlocksInCache: 10,
                     }}
                     onColumnMoved={getColumnsUpdated}
-                    rowData={rowData}
+                    // rowData={rowData}
                     loading={loading}
                     columnDefs={columns}
                     suppressRefresh={true}
@@ -840,7 +733,9 @@ function AgGridTableView(props) {
                     paginationPageSize={limit}
                     undoRedoCellEditing={true}
                     rowSelection={rowSelection}
-                    rowModelType={"clientSide"}
+                    isServerSideGroup={isServerSideGroup}
+                    getServerSideGroupKey={getServerSideGroupKey}
+                    rowModelType={"serverSide"}
                     undoRedoCellEditingLimit={5}
                     defaultColDef={defaultColDef}
                     cellSelection={cellSelection}
@@ -852,7 +747,7 @@ function AgGridTableView(props) {
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
-                    onRowGroupOpened={(e) => console.log("sssssssssssssss", e)}
+                    onGridReady={onGridReady}
                     getDataPath={
                       view?.attributes?.treeData ? getDataPath : undefined
                     }
@@ -884,118 +779,6 @@ function AgGridTableView(props) {
         selectedRows={selectedRows}
         updateTreeData={updateTreeData}
       />
-
-      <DeleteColumnModal
-        view={view}
-        columnId={columnId}
-        tableSlug={tableSlug}
-        handleCloseModal={handleCloseModal}
-        openDeleteModal={openDeleteModal}
-      />
-
-      <FieldCreateModal
-        mainForm={mainForm}
-        // tableLan={tableLan}
-        anchorEl={fieldCreateAnchor}
-        setAnchorEl={setFieldCreateAnchor}
-        watch={watch}
-        control={control}
-        setValue={setValue}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        // target={target}
-        fields={visibleColumns}
-        setFieldOptionAnchor={setFieldOptionAnchor}
-        reset={reset}
-        menuItem={menuItem}
-        fieldData={fieldData}
-        handleOpenFieldDrawer={handleOpenFieldDrawer}
-      />
-
-      {Boolean(open && projectInfo?.new_layout) &&
-      selectedViewType === "SidePeek" ? (
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
-        />
-      ) : selectedViewType === "CenterPeek" ? (
-        <NewModalDetailPage
-          modal={true}
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
-        />
-      ) : null}
-
-      {Boolean(open && !projectInfo?.new_layout) && (
-        <ModalDetailPage
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-        />
-      )}
-
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <FieldSettings
-          closeSettingsBlock={() => setDrawerState(null)}
-          isTableView={true}
-          onSubmit={(index, field) => update(index, field)}
-          field={drawerState}
-          formType={drawerState}
-          mainForm={mainForm}
-          selectedTabIndex={selectedTabIndex}
-          height={`calc(100vh - 48px)`}
-          getRelationFields={getRelationFields}
-          menuItem={menuItem}
-        />
-      </Drawer>
-
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <RelationSettings
-          relation={drawerStateField}
-          closeSettingsBlock={() => setDrawerStateField(null)}
-          getRelationFields={getRelationFields}
-          formType={drawerStateField}
-          height={`calc(100vh - 48px)`}
-        />
-      </Drawer>
     </Box>
   );
 }
@@ -1037,4 +820,4 @@ const HeaderComponent = (props) => {
   );
 };
 
-export default AgGridTableView;
+export default AggridTreeView;

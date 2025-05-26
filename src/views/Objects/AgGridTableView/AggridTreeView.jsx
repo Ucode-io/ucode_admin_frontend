@@ -128,7 +128,6 @@ function AggridTreeView(props) {
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
-  const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -196,13 +195,12 @@ function AggridTreeView(props) {
         ...filters,
       }),
     {
-      enabled: Boolean(view?.attributes?.treeData),
+      enabled: false,
       onSuccess: (data) => {
         const computedRow = data?.data?.response?.map((item) => ({
           ...item,
         }));
 
-        setRowData([...(computedRow ?? [])]);
         setLoading(false);
       },
       onError: () => {
@@ -469,12 +467,6 @@ function AggridTreeView(props) {
 
   const getDataPath = useCallback((data) => data.path, []);
 
-  const replaceUrlVariables = (urlTemplate, data) => {
-    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-      return data[variable] || "";
-    });
-  };
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -692,7 +684,6 @@ function AggridTreeView(props) {
   });
 
   const isServerSideGroup = (dataItem) => {
-    console.log("dataItemdataItemdataItem", dataItem);
     return dataItem.has_child;
   };
 
@@ -792,7 +783,6 @@ function AggridTreeView(props) {
                 <>
                   <AgGridReact
                     ref={gridApi}
-                    rowBuffer={15}
                     theme={myTheme}
                     gridOptions={{
                       rowBuffer: 10,
@@ -800,9 +790,7 @@ function AggridTreeView(props) {
                       maxBlocksInCache: 10,
                     }}
                     onColumnMoved={getColumnsUpdated}
-                    // loading={loading}
                     columnDefs={columns}
-                    suppressRefresh={true}
                     enableClipboard={true}
                     groupDisplayType="single"
                     paginationPageSize={limit}
@@ -816,9 +804,7 @@ function AggridTreeView(props) {
                     cellSelection={cellSelection}
                     onColumnPinned={onColumnPinned}
                     getMainMenuItems={getMainMenuItems}
-                    suppressColumnVirtualisation={true}
                     treeData={true}
-                    suppressColumnMoveAnimation={true}
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
@@ -843,7 +829,6 @@ function AggridTreeView(props) {
         view={view}
         limit={limit}
         count={count}
-        rowData={rowData}
         setLimit={setLimit}
         setOffset={setOffset}
         setLoading={setLoading}

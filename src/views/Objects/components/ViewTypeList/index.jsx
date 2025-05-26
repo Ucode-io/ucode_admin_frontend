@@ -103,7 +103,7 @@ export default function ViewTypeList({
 
   const newViewJSON = useMemo(() => {
     return {
-      type: selectedViewTab === "TREE" ? "GRID" : selectedViewTab,
+      type: selectedViewTab,
       users: [],
       name: "",
       default_limit: "",

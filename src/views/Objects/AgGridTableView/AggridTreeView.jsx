@@ -24,6 +24,7 @@ import {
   MasterDetailModule,
   MenuModule,
   RowGroupingModule,
+  ServerSideRowModelApiModule,
   ServerSideRowModelModule,
   TreeDataModule,
 } from "ag-grid-enterprise";
@@ -93,6 +94,7 @@ ModuleRegistry.registerModules([
   UndoRedoEditModule,
   RenderApiModule,
   MasterDetailModule,
+  ServerSideRowModelApiModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -433,26 +435,6 @@ function AggridTreeView(props) {
     });
   };
 
-  const createChild = () => {
-    if (!selectedRows?.length) {
-      return;
-    }
-
-    const parentRow = selectedRows[0];
-    const newChild = {
-      guid: generateGUID(),
-      [`${tableSlug}_id`]: parentRow.guid,
-      path: [...parentRow.path, generateGUID()],
-    };
-    gridApi.current.api.applyTransaction({
-      add: [newChild],
-    });
-
-    constructorObjectService.create(tableSlug, {
-      data: newChild,
-    });
-  };
-
   function createChildTree(parentObj) {
     const newChild = {
       guid: generateGUID(),
@@ -691,7 +673,14 @@ function AggridTreeView(props) {
     return dataItem.guid;
   };
 
-  const createServerSideDatasource = (parentId) => {
+  const cleanedFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+    if (Array.isArray(value) && value.length > 0 && value[0] !== "null") {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+
+  const createServerSideDatasource = (parentId, updatedFilters, searchtext) => {
     return {
       getRows: async (params) => {
         const {startRow, endRow} = params.request;
@@ -707,8 +696,9 @@ function AggridTreeView(props) {
             {
               fields: [...visibleFields, "guid"],
               [recursiveField?.slug]: parentGuid,
-              limit: limit,
-              offset: offset,
+              limit,
+              offset,
+              ...updatedFilters,
             }
           );
 
@@ -721,7 +711,7 @@ function AggridTreeView(props) {
 
           params.success({
             rowData,
-            rowCount: undefined, // or set rowCount if known
+            rowCount: undefined,
           });
         } catch (error) {
           console.error("Error loading tree data:", error);
@@ -734,11 +724,22 @@ function AggridTreeView(props) {
   const onGridReady = useCallback(
     (params) => {
       const parentGuid = [params?.parentNode?.data?.guid] ?? [null];
-      const datasource = createServerSideDatasource(parentGuid);
-      params.api.setGridOption("serverSideDatasource", datasource);
+      const datasource = createServerSideDatasource(parentGuid, cleanedFilters);
+      params.api?.setGridOption("serverSideDatasource", datasource);
     },
-    [tableSlug, visibleFields]
+    [tableSlug, visibleFields, cleanedFilters]
   );
+
+  useEffect(() => {
+    if (gridApi?.current) {
+      const newDatasource = createServerSideDatasource(null, cleanedFilters);
+      gridApi?.current?.api?.setGridOption(
+        "serverSideDatasource",
+        newDatasource
+      );
+      //   gridApi?.current?.api?.refreshServerSide({route: "", purge: true});
+    }
+  }, [cleanedFilters]);
 
   return (
     <Box
@@ -746,7 +747,7 @@ function AggridTreeView(props) {
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
         overflow: "scroll",
       }}>
-      <div className={style.gridTable}>
+      <div className={style.gridTableTree}>
         <div
           className="ag-theme-quartz"
           style={{
@@ -799,7 +800,7 @@ function AggridTreeView(props) {
                       cacheBlockSize: 100,
                       maxBlocksInCache: 10,
                     }}
-                    serverSideStoreType="partial"
+                    serverSideStoreType="full"
                     onColumnMoved={getColumnsUpdated}
                     columnDefs={columns}
                     enableClipboard={true}
@@ -835,18 +836,6 @@ function AggridTreeView(props) {
           </Box>
         </div>
       </div>
-
-      <AggridFooter
-        view={view}
-        limit={limit}
-        count={count}
-        setLimit={setLimit}
-        setOffset={setOffset}
-        setLoading={setLoading}
-        createChild={createChild}
-        selectedRows={selectedRows}
-        updateTreeData={refetch}
-      />
 
       <DeleteColumnModal
         view={view}

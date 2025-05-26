@@ -163,6 +163,15 @@
   overflow: auto;
 }
 
+.gridTableTree {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+}
+
 .wrapper {
   padding: 8px 8px;
   display: flex;

@@ -30,10 +30,12 @@ const DocumentTemplates = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {tableSlug, appId} = useParams();
+
   const [relData, setRelData] = useState([]);
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
 
+  const itemId = searchParams.get("id");
   const [pdfIsLoading, setPDFIsLoading] = useState(false);
 
   const selectedTemplateId = searchParams.get("templateId");
@@ -193,18 +195,20 @@ const DocumentTemplates = () => {
           <div className={styles.noDataText}>
             Пока нет шаблонов. Сначала создайте шаблон
           </div>
-          <div style={{width: "300px"}}>
-            <Button
-              variant="outlined"
-              className={styles.addTemplateButton}
-              onClick={() => {
-                navigate(
-                  `${pathname}/create?menuId=${searchParams.get("menuId")}&templateId=${searchParams.get("templateId")}&id=${searchParams.get("id")}`
-                );
-              }}>
-              Создать шаблон
-            </Button>
-          </div>
+          {!Boolean(itemId) && (
+            <div style={{width: "300px"}}>
+              <Button
+                variant="outlined"
+                className={styles.addTemplateButton}
+                onClick={() => {
+                  navigate(
+                    `${pathname}/create?menuId=${searchParams.get("menuId")}&templateId=${searchParams.get("templateId")}&id=${searchParams.get("id")}`
+                  );
+                }}>
+                Создать шаблон
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -223,18 +227,20 @@ const DocumentTemplates = () => {
                       {template.title}
                     </div>
                   ))}
-                  <div className={styles.buttonWrapper}>
-                    <Button
-                      variant="outlined"
-                      className={styles.addTemplateButton}
-                      onClick={() => {
-                        navigate(
-                          `${pathname}/create?menuId=${searchParams.get("menuId")}&templateId=${searchParams.get("templateId")}&id=${searchParams.get("id")}`
-                        );
-                      }}>
-                      Создать шаблон
-                    </Button>
-                  </div>
+                  {!Boolean(itemId) && (
+                    <div className={styles.buttonWrapper}>
+                      <Button
+                        variant="outlined"
+                        className={styles.addTemplateButton}
+                        onClick={() => {
+                          navigate(
+                            `${pathname}/create?menuId=${searchParams.get("menuId")}&templateId=${searchParams.get("templateId")}&id=${searchParams.get("id")}`
+                          );
+                        }}>
+                        Создать шаблон
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (

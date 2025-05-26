@@ -691,10 +691,10 @@ function AggridTreeView(props) {
     return dataItem.guid;
   };
 
-  const createServerSideDatasource = (parentId) => {
+  const createServerSideDatasource = () => {
     return {
       getRows: async (params) => {
-        const parentGuid = [params?.parentNode?.data?.guid] ?? parentId;
+        const parentGuid = [params?.parentNode?.data?.guid] ?? [null];
 
         try {
           const resp = await constructorObjectService.getListTreeData(
@@ -712,7 +712,9 @@ function AggridTreeView(props) {
             group: item.has_child,
           }));
 
-          params.success({rowData});
+          params.success({
+            rowData,
+          });
         } catch (error) {
           console.error("Error loading tree data:", error);
           params.fail();
@@ -789,6 +791,7 @@ function AggridTreeView(props) {
                       cacheBlockSize: 10,
                       maxBlocksInCache: 10,
                     }}
+                    serverSideStoreType="full"
                     onColumnMoved={getColumnsUpdated}
                     columnDefs={columns}
                     enableClipboard={true}

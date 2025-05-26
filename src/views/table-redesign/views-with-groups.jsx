@@ -1002,6 +1002,7 @@ export const NewUiViewsWithGroups = ({
             direction={"ltr"}
             defaultIndex={0}
             // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+            style={{ height: "100%" }}
           >
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
@@ -1500,7 +1501,8 @@ const FiltersList = ({
       alignItems="center"
       gap="6px"
       borderBottom="1px solid #EAECF0"
-      flexWrap="wrap"
+      // flexWrap="wrap"
+      overflow="auto"
       id="filterHeight"
     >
       <FilterPopover
@@ -1518,6 +1520,7 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
+          flexShrink={0}
           _hover={{ bg: "#f3f3f3" }}
         >
           <InlineSVG
@@ -1534,7 +1537,7 @@ const FiltersList = ({
       </FilterPopover>
 
       {computedFields?.map((filter) => (
-        <div key={filter.id}>
+        <div key={filter.id} style={{ flexShrink: 0 }}>
           <Filter
             field={filter}
             name={filter?.path_slug || filter.slug}

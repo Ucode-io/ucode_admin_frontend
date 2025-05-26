@@ -1,9 +1,14 @@
 import { add, differenceInDays } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 export const useDateLineProps = ({ setCenterDate = () => {} }) => {
   const [months, setMonths] = useState([]);
   const [selectedType, setSelectedType] = useState("day");
+
+  const tableViewFiltersOpen = useSelector(
+    (state) => state.main.tableViewFiltersOpen
+  );
 
   const calendarRef = useRef(null);
   const isLoading = useRef(false);
@@ -182,5 +187,6 @@ export const useDateLineProps = ({ setCenterDate = () => {} }) => {
     datesList,
     selectedType,
     setSelectedType,
+    tableViewFiltersOpen,
   };
 };

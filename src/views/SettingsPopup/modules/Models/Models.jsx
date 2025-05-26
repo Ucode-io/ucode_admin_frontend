@@ -85,9 +85,9 @@ export const Models = ({onClose}) => {
   return (
     <>
       <Tabs>
-        <TabList style={{borderBottom: "none", marginBottom: "10px"}}>
-          <Tab style={{padding: "10px"}}>Models</Tab>
-          <Tab style={{padding: "10px"}}>ChartDB</Tab>
+        <TabList style={{ borderBottom: "none", marginBottom: "10px" }}>
+          <Tab style={{ padding: "10px" }}>Models</Tab>
+          <Tab style={{ padding: "10px" }}>ChartDB</Tab>
           {/* <Tab style={{padding: "10px"}}>External Databases</Tab> */}
         </TabList>
         <TabPanel>
@@ -96,7 +96,8 @@ export const Models = ({onClose}) => {
               <Box
                 display={"flex"}
                 justifyContent="space-between"
-                alignItems={"center"}>
+                alignItems={"center"}
+              >
                 <span>Таблицы</span>
                 <Box display={"flex"} gap="10px">
                   <SearchInput
@@ -111,15 +112,19 @@ export const Models = ({onClose}) => {
                   <Button
                     variant="outlined"
                     onClick={() => trackConnection(notTrackedTablesIds)}
-                    disabled={!notTrackedTablesIds?.length}>
+                    disabled={!notTrackedTablesIds?.length}
+                  >
                     Track all
                   </Button>
                 </Box>
               </Box>
             </ContentTitle>
 
-            <TableCard type={"withoutPadding"}>
-              <CTable disablePagination removableHeight={120}>
+            <TableCard
+              type={"withoutPadding"}
+              bodyClassname={cls.tableCardBody}
+            >
+              <CTable disablePagination removableHeight={false}>
                 <CTableHead>
                   <CTableCell className={cls.tableHeadCell} width={10}>
                     №
@@ -135,8 +140,9 @@ export const Models = ({onClose}) => {
                   {renderTables?.map((element, index) => (
                     <CTableRow key={element.id}>
                       <CTableCell
-                        style={{textAlign: "center"}}
-                        className={cls.tBodyCell}>
+                        style={{ textAlign: "center" }}
+                        className={cls.tBodyCell}
+                      >
                         {index + 1}
                       </CTableCell>
                       <CTableCell className={cls.tBodyCell}>
@@ -161,7 +167,8 @@ export const Models = ({onClose}) => {
                             element?.is_tracked || Boolean(element?.slug)
                               ? "contained"
                               : "outlined"
-                          }>
+                          }
+                        >
                           {loadingId === element.id ? (
                             <CircularProgress size={20} />
                           ) : element?.is_tracked ? (
@@ -173,12 +180,14 @@ export const Models = ({onClose}) => {
                       </CTableCell>
 
                       <CTableCell
-                        className={clsx(cls.tBodyCell, cls.tBodyAction)}>
+                        className={clsx(cls.tBodyCell, cls.tBodyAction)}
+                      >
                         <RectangleIconButton
                           id="delete_btn"
                           color="error"
                           size="small"
-                          onClick={() => deleteMenuTable(element)}>
+                          onClick={() => deleteMenuTable(element)}
+                        >
                           <Delete color="error" />
                         </RectangleIconButton>
                       </CTableCell>
@@ -190,7 +199,7 @@ export const Models = ({onClose}) => {
           </div>
         </TabPanel>
         <TabPanel>
-          <Box sx={{height: "585px"}}>
+          <Box sx={{ height: "585px" }}>
             <ChartDb />
           </Box>
         </TabPanel>

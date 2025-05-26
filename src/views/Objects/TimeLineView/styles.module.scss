@@ -1,5 +1,9 @@
 @use "/src/scss/colors";
 
+.timelineViewWrapper {
+  height: 100%;
+}
+
 .gantt {
   // overflow: auto;
   background-color: #fff;

@@ -156,9 +156,6 @@ function AgGridTableView(props) {
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
-  const recursiveField = visibleColumns?.find(
-    (el) => el?.table_slug === tableSlug
-  );
 
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
@@ -224,34 +221,10 @@ function AgGridTableView(props) {
         },
       }),
     {
-      enabled: !!tableSlug && !view?.attributes?.treeData,
+      enabled: !!tableSlug,
       onSuccess: (data) => {
         setCount(data?.data?.count);
         setRowData([...(data?.data?.response ?? [])] ?? []);
-        setLoading(false);
-      },
-      onError: () => {
-        setLoading(false);
-      },
-    }
-  );
-
-  const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
-    () =>
-      constructorObjectService.getListTreeData(tableSlug, {
-        fields: [...visibleFields, "guid"],
-
-        [recursiveField?.slug]: [null],
-        ...filters,
-      }),
-    {
-      enabled: Boolean(tableSlug && view?.attributes?.treeData),
-      onSuccess: (data) => {
-        const computedRow = data?.data?.response?.map((item) => ({
-          ...item,
-        }));
-        setRowData([...(computedRow ?? [])]);
         setLoading(false);
       },
       onError: () => {
@@ -378,10 +351,8 @@ function AgGridTableView(props) {
           menuItem,
           removeRow,
           createChildTree,
-          addRowTree,
           addRow,
           deleteFunction: deleteHandler,
-          updateTreeData: updateTreeData,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
             : "actionBtnNoBorder",
@@ -401,22 +372,7 @@ function AgGridTableView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        view?.attributes?.treeData ? updateTreeData() : refetch();
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }
-
-  function addRowTree(data) {
-    setLoading(true);
-
-    constructorObjectService
-      .create(tableSlug, {
-        data: data,
-      })
-      .then((res) => {
-        delete data?.new_field;
-        updateTreeData();
+        refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -474,7 +430,7 @@ function AgGridTableView(props) {
     });
 
     constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
-      view?.attributes?.treeData ? null : refetch();
+      refetch();
     });
   }
 
@@ -847,15 +803,11 @@ function AgGridTableView(props) {
                     onColumnPinned={onColumnPinned}
                     getMainMenuItems={getMainMenuItems}
                     suppressColumnVirtualisation={true}
-                    treeData={view?.attributes?.treeData}
                     suppressColumnMoveAnimation={true}
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
                     onRowGroupOpened={(e) => console.log("sssssssssssssss", e)}
-                    getDataPath={
-                      view?.attributes?.treeData ? getDataPath : undefined
-                    }
                     onCellValueChanged={(e) => {
                       updateObject(e.data);
                     }}
@@ -882,7 +834,6 @@ function AgGridTableView(props) {
         setLoading={setLoading}
         createChild={createChild}
         selectedRows={selectedRows}
-        updateTreeData={updateTreeData}
       />
 
       <DeleteColumnModal

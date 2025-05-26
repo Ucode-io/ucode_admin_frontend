@@ -690,14 +690,16 @@ function AggridTreeView(props) {
   const getServerSideGroupKey = (dataItem) => {
     return dataItem.guid;
   };
-  const createServerSideDatasource = () => {
+
+  const createServerSideDatasource = (parentId) => {
     return {
       getRows: async (params) => {
-        const {startRow, endRow, parentNode} = params.request;
+        const {startRow, endRow} = params.request;
+
         const limit = endRow - startRow;
         const offset = startRow;
 
-        const parentGuid = parentNode?.data?.guid ?? null;
+        const parentGuid = [params?.parentNode?.data?.guid] ?? parentId;
 
         try {
           const resp = await constructorObjectService.getListTreeData(

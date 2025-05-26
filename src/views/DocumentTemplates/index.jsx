@@ -100,7 +100,7 @@ const DocumentTemplates = () => {
       data: {
         data: {
           ...data,
-          [`${relData?.[0]?.field?.slug}_data`]: relData?.[0]?.data,
+          // [`${relData?.[0]?.field?.slug}_data`]: relData?.[0]?.data,
         },
         id: searchParams.get("id"),
         table_slug: tableSlug,
@@ -108,7 +108,7 @@ const DocumentTemplates = () => {
       link: url,
     });
   };
-  console.log("relDataaaa", relData);
+
   // ===== SIDEBAR CLOSING ===========
   useEffect(() => {
     setTimeout(() => {

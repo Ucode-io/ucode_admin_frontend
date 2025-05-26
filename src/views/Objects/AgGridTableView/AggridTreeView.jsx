@@ -1,81 +1,77 @@
-import {useQuery, useQueryClient} from "react-query";
-import style from "./style.module.scss";
+import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button, Drawer} from "@mui/material";
-import {AgGridReact} from "ag-grid-react";
-import AggridFooter from "./AggridFooter";
-import {useParams} from "react-router-dom";
-import {useTranslation} from "react-i18next";
 import {
   CellStyleModule,
   CheckboxEditorModule,
+  ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
+  ModuleRegistry,
   NumberEditorModule,
   RenderApiModule,
+  RowSelectionModule,
   TextEditorModule,
   UndoRedoEditModule,
   ValidationModule,
   themeQuartz,
 } from "ag-grid-community";
-import useFilters from "../../../hooks/useFilters";
-import {generateGUID} from "../../../utils/generateID";
-import {pageToOffset} from "../../../utils/pageToOffset";
-import CustomLoadingOverlay from "./CustomLoadingOverlay";
-import getColumnEditorParams from "./valueOptionGenerator";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import constructorViewService from "../../../services/constructorViewService";
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import constructorTableService from "../../../services/constructorTableService";
-import constructorObjectService from "../../../services/constructorObjectService";
 import {
-  ClientSideRowModelModule,
-  ModuleRegistry,
-  RowSelectionModule,
-} from "ag-grid-community";
-import {
-  MenuModule,
-  ColumnsToolPanelModule,
-  ServerSideRowModelModule,
-  RowGroupingModule,
-  TreeDataModule,
   CellSelectionModule,
   ClipboardModule,
+  ColumnsToolPanelModule,
   MasterDetailModule,
+  MenuModule,
+  RowGroupingModule,
+  ServerSideRowModelModule,
+  TreeDataModule,
 } from "ag-grid-enterprise";
-import AggridDefaultComponents, {
-  IndexColumn,
-  ActionsColumn,
-} from "./Functions/AggridDefaultComponents";
-import {mergeStringAndState} from "@/utils/jsonPath";
-import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
-import {Flex, Text} from "@chakra-ui/react";
-import {getColumnIcon} from "../../table-redesign/icons";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {Button as ChakraButton} from "@chakra-ui/react";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import NewModalDetailPage from "../../../components/NewModalDetailPage";
-import DrawerDetailPage from "../DrawerDetailPage";
-import layoutService from "../../../services/layoutService";
+import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import {useDispatch, useSelector} from "react-redux";
-import useTabRouter from "../../../hooks/useTabRouter";
-import useDebounce from "../../../hooks/useDebounce";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DeleteColumnModal from "./DeleteColumnModal";
-import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import useDebounce from "../../../hooks/useDebounce";
+import useFilters from "../../../hooks/useFilters";
+import useTabRouter from "../../../hooks/useTabRouter";
 import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../services/constructorFieldService";
+import constructorObjectService from "../../../services/constructorObjectService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorViewService from "../../../services/constructorViewService";
+import layoutService from "../../../services/layoutService";
 import {
   useRelationFieldUpdateMutation,
   useRelationsCreateMutation,
 } from "../../../services/relationService";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {generateGUID} from "../../../utils/generateID";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import {transliterate} from "../../../utils/textTranslater";
+import {getColumnIcon} from "../../table-redesign/icons";
+import AggridFooter from "./AggridFooter";
+import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
+import CustomLoadingOverlay from "./CustomLoadingOverlay";
+import AggridDefaultComponents, {
+  ActionsColumn,
+  IndexColumn,
+} from "./Functions/AggridDefaultComponents";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import style from "./style.module.scss";
+import getColumnEditorParams from "./valueOptionGenerator";
+import DeleteColumnModal from "./DeleteColumnModal";
+import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
+import DrawerDetailPage from "../DrawerDetailPage";
+import NewModalDetailPage from "../../../components/NewModalDetailPage";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import {transliterate} from "../../../utils/textTranslater";
-import {showAlert} from "../../../store/alert/alert.thunk";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -104,7 +100,7 @@ const myTheme = themeQuartz.withParams({
   rowHeight: "32px",
 });
 
-function AgGridTableView(props) {
+function AggridTreeView(props) {
   const {
     open,
     view,
@@ -112,17 +108,14 @@ function AgGridTableView(props) {
     menuItem,
     fieldsMap,
     searchText,
-    selectedRow,
     projectInfo,
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
     computedVisibleFields,
-    setOpen = () => {},
+    getRelationFields = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
-    getRelationFields = () => {},
-    navigateCreatePage = () => {},
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
@@ -135,7 +128,6 @@ function AgGridTableView(props) {
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
-  const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -156,6 +148,9 @@ function AgGridTableView(props) {
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
+  const recursiveField = visibleColumns?.find(
+    (el) => el?.table_slug === tableSlug
+  );
 
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
@@ -190,41 +185,22 @@ function AgGridTableView(props) {
       .map((item) => item?.slug);
   }, [visibleColumns, computedVisibleFields]);
 
-  const {isLoading, refetch} = useQuery(
-    [
-      "GET_OBJECTS_LIST_DATA",
-      {
-        tableSlug,
-        filters: {
-          offset,
-          limit,
-          ...filters,
-          searchText,
-          [groupTab?.slug]: groupTab?.value,
-        },
-      },
-    ],
+  const {isLoading: isLoadingTree, refetch} = useQuery(
+    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
     () =>
-      constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...filters,
-          limit,
-          search: tableSearch,
-          view_fields: checkedColumns,
-          [groupTab?.slug]: groupTab
-            ? Object.values(fieldsMap).find((el) => el.slug === groupTab?.slug)
-                ?.type === "MULTISELECT"
-              ? [`${groupTab?.value}`]
-              : groupTab?.value
-            : "",
-          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
-        },
+      constructorObjectService.getListTreeData(tableSlug, {
+        fields: [...visibleFields, "guid"],
+
+        [recursiveField?.slug]: [null],
+        ...filters,
       }),
     {
-      enabled: !!tableSlug,
+      enabled: false,
       onSuccess: (data) => {
-        setCount(data?.data?.count);
-        setRowData([...(data?.data?.response ?? [])] ?? []);
+        const computedRow = data?.data?.response?.map((item) => ({
+          ...item,
+        }));
+
         setLoading(false);
       },
       onError: () => {
@@ -351,8 +327,10 @@ function AgGridTableView(props) {
           menuItem,
           removeRow,
           createChildTree,
+          addRowTree,
           addRow,
           deleteFunction: deleteHandler,
+          updateTreeData: refetch,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
             : "actionBtnNoBorder",
@@ -366,6 +344,21 @@ function AgGridTableView(props) {
 
   function addRow(data) {
     setLoading(true);
+    constructorObjectService
+      .create(tableSlug, {
+        data: data,
+      })
+      .then((res) => {
+        delete data?.new_field;
+        refetch();
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }
+
+  function addRowTree(data) {
+    setLoading(true);
+
     constructorObjectService
       .create(tableSlug, {
         data: data,
@@ -429,9 +422,7 @@ function AgGridTableView(props) {
       remove: [rowToRemove],
     });
 
-    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
-      refetch();
-    });
+    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {});
   }
 
   const onColumnPinned = (event) => {
@@ -475,40 +466,6 @@ function AgGridTableView(props) {
   }
 
   const getDataPath = useCallback((data) => data.path, []);
-
-  const replaceUrlVariables = (urlTemplate, data) => {
-    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-      return data[variable] || "";
-    });
-  };
-
-  const navigateToDetailPage = (row) => {
-    if (
-      view?.attributes?.navigate?.params?.length ||
-      view?.attributes?.navigate?.url
-    ) {
-      const params = view?.attributes?.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&");
-
-      const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
-
-      const matches = replaceUrlVariables(urlTemplate, row);
-
-      navigate(`${matches}${params ? "?" + params : ""}`);
-    } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
-    }
-  };
 
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
@@ -726,6 +683,53 @@ function AgGridTableView(props) {
     keyName: "key",
   });
 
+  const isServerSideGroup = (dataItem) => {
+    return dataItem.has_child;
+  };
+
+  const getServerSideGroupKey = (dataItem) => {
+    return dataItem.guid;
+  };
+
+  const createServerSideDatasource = (parentId) => {
+    return {
+      getRows: async (params) => {
+        const parentGuid = [params?.parentNode?.data?.guid] ?? parentId;
+
+        try {
+          const resp = await constructorObjectService.getListTreeData(
+            tableSlug,
+            {
+              fields: [...visibleFields, "guid"],
+              [recursiveField?.slug]: parentGuid,
+            }
+          );
+
+          const items = resp?.data?.response || [];
+
+          const rowData = items.map((item) => ({
+            ...item,
+            group: item.has_child,
+          }));
+
+          params.success({rowData});
+        } catch (error) {
+          console.error("Error loading tree data:", error);
+          params.fail();
+        }
+      },
+    };
+  };
+
+  const onGridReady = useCallback(
+    (params) => {
+      const parentGuid = [params?.parentNode?.data?.guid] ?? [null];
+      const datasource = createServerSideDatasource(parentGuid);
+      params.api.setGridOption("serverSideDatasource", datasource);
+    },
+    [tableSlug, visibleFields]
+  );
+
   return (
     <Box
       sx={{
@@ -779,7 +783,6 @@ function AgGridTableView(props) {
                 <>
                   <AgGridReact
                     ref={gridApi}
-                    rowBuffer={15}
                     theme={myTheme}
                     gridOptions={{
                       rowBuffer: 10,
@@ -787,27 +790,26 @@ function AgGridTableView(props) {
                       maxBlocksInCache: 10,
                     }}
                     onColumnMoved={getColumnsUpdated}
-                    rowData={rowData}
-                    loading={loading}
                     columnDefs={columns}
-                    suppressRefresh={true}
                     enableClipboard={true}
                     groupDisplayType="single"
                     paginationPageSize={limit}
                     undoRedoCellEditing={true}
                     rowSelection={rowSelection}
-                    rowModelType={"clientSide"}
+                    isServerSideGroup={isServerSideGroup}
+                    getServerSideGroupKey={getServerSideGroupKey}
+                    rowModelType={"serverSide"}
                     undoRedoCellEditingLimit={5}
                     defaultColDef={defaultColDef}
                     cellSelection={cellSelection}
                     onColumnPinned={onColumnPinned}
                     getMainMenuItems={getMainMenuItems}
-                    suppressColumnVirtualisation={true}
-                    suppressColumnMoveAnimation={true}
+                    treeData={true}
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
-                    onRowGroupOpened={(e) => console.log("sssssssssssssss", e)}
+                    onGridReady={onGridReady}
+                    getDataPath={getDataPath}
                     onCellValueChanged={(e) => {
                       updateObject(e.data);
                     }}
@@ -827,13 +829,12 @@ function AgGridTableView(props) {
         view={view}
         limit={limit}
         count={count}
-        rowData={rowData}
-        refetch={refetch}
         setLimit={setLimit}
         setOffset={setOffset}
         setLoading={setLoading}
         createChild={createChild}
         selectedRows={selectedRows}
+        updateTreeData={refetch}
       />
 
       <DeleteColumnModal
@@ -988,4 +989,4 @@ const HeaderComponent = (props) => {
   );
 };
 
-export default AgGridTableView;
+export default AggridTreeView;

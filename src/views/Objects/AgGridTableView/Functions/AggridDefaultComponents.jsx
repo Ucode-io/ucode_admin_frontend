@@ -31,7 +31,6 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
         suppressCount: true,
       },
       minWidth: 280,
-
       cellRendererParams: {
         innerRenderer: (params) => {
           return (

@@ -27,6 +27,7 @@ const HFMultiImageCellEditor = (props) => {
         },
       }}>
       <MultiImageUploadCellEditor
+        isTableView={true}
         value={value ?? []}
         onChange={setValue}
         field={field}

@@ -1015,7 +1015,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" && groupTable?.length ? (
                       <MaterialUIProvider>
                         {" "}
-                        <AggridTreeView
+                        <AgGridTableView
                           navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
@@ -1121,7 +1121,7 @@ export const NewUiViewsWithGroups = ({
                     <TabPanel key={tab.value}>
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
-                          <AggridTreeView
+                          <AgGridTableView
                             navigateCreatePage={navigateCreatePage}
                             getRelationFields={getRelationFields}
                             mainForm={mainForm}
@@ -1148,12 +1148,30 @@ export const NewUiViewsWithGroups = ({
                           />
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
-                        <TreeView
-                          tableSlug={tableSlug}
-                          filters={filters}
+                        <AggridTreeView
+                          navigateCreatePage={navigateCreatePage}
+                          getRelationFields={getRelationFields}
+                          mainForm={mainForm}
+                          searchText={searchText}
+                          open={open}
+                          setOpen={setOpen}
+                          selectedRow={selectedRow}
+                          projectInfo={projectInfo}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
+                          selectedTabIndex={selectedTabIndex}
                           view={view}
+                          views={views}
                           fieldsMap={fieldsMap}
-                          tab={tab}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
                         />
                       ) : (
                         <TableView
@@ -1209,7 +1227,7 @@ export const NewUiViewsWithGroups = ({
                   <>
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
-                        <AggridTreeView
+                        <AgGridTableView
                           navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
@@ -1236,11 +1254,30 @@ export const NewUiViewsWithGroups = ({
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
+                      <AggridTreeView
+                        navigateCreatePage={navigateCreatePage}
+                        getRelationFields={getRelationFields}
+                        mainForm={mainForm}
+                        searchText={searchText}
+                        open={open}
+                        setOpen={setOpen}
+                        selectedRow={selectedRow}
+                        projectInfo={projectInfo}
+                        setLayoutType={setLayoutType}
+                        navigateToEditPage={navigateToEditPage}
+                        selectedTabIndex={selectedTabIndex}
                         view={view}
+                        views={views}
                         fieldsMap={fieldsMap}
+                        computedVisibleFields={computedVisibleFields}
+                        checkedColumns={checkedColumns}
+                        setCheckedColumns={setCheckedColumns}
+                        columnsForSearch={columnsForSearch}
+                        updateField={updateField}
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
+                        menuItem={menuItem}
                       />
                     ) : (
                       <TableView

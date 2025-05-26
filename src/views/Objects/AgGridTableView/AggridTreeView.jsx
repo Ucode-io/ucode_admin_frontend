@@ -1,7 +1,7 @@
 import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {Box, Button} from "@mui/material";
+import {Box, Button, Drawer} from "@mui/material";
 import {
   CellStyleModule,
   CheckboxEditorModule,
@@ -30,7 +30,7 @@ import {
 import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useForm} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -65,6 +65,13 @@ import AggridDefaultComponents, {
 import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
 import style from "./style.module.scss";
 import getColumnEditorParams from "./valueOptionGenerator";
+import DeleteColumnModal from "./DeleteColumnModal";
+import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
+import DrawerDetailPage from "../DrawerDetailPage";
+import NewModalDetailPage from "../../../components/NewModalDetailPage";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -106,6 +113,7 @@ function AggridTreeView(props) {
     checkedColumns,
     selectedTabIndex,
     computedVisibleFields,
+    getRelationFields = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
   } = props;
@@ -178,50 +186,7 @@ function AggridTreeView(props) {
       .map((item) => item?.slug);
   }, [visibleColumns, computedVisibleFields]);
 
-  const {isLoading, refetch} = useQuery(
-    [
-      "GET_OBJECTS_LIST_DATA",
-      {
-        tableSlug,
-        filters: {
-          offset,
-          limit,
-          ...filters,
-          searchText,
-          [groupTab?.slug]: groupTab?.value,
-        },
-      },
-    ],
-    () =>
-      constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...filters,
-          limit,
-          search: tableSearch,
-          view_fields: checkedColumns,
-          [groupTab?.slug]: groupTab
-            ? Object.values(fieldsMap).find((el) => el.slug === groupTab?.slug)
-                ?.type === "MULTISELECT"
-              ? [`${groupTab?.value}`]
-              : groupTab?.value
-            : "",
-          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
-        },
-      }),
-    {
-      enabled: !!tableSlug && !view?.attributes?.treeData,
-      onSuccess: (data) => {
-        setCount(data?.data?.count);
-        setRowData([...(data?.data?.response ?? [])] ?? []);
-        setLoading(false);
-      },
-      onError: () => {
-        setLoading(false);
-      },
-    }
-  );
-
-  const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
+  const {isLoading: isLoadingTree, refetch} = useQuery(
     ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
@@ -231,12 +196,12 @@ function AggridTreeView(props) {
         ...filters,
       }),
     {
-      enabled: Boolean(tableSlug && view?.attributes?.treeData),
+      enabled: Boolean(view?.attributes?.treeData),
       onSuccess: (data) => {
         const computedRow = data?.data?.response?.map((item) => ({
           ...item,
         }));
-        console.log("dataaaaaaaaaaa", data);
+
         setRowData([...(computedRow ?? [])]);
         setLoading(false);
       },
@@ -367,7 +332,7 @@ function AggridTreeView(props) {
           addRowTree,
           addRow,
           deleteFunction: deleteHandler,
-          updateTreeData: updateTreeData,
+          updateTreeData: refetch,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
             : "actionBtnNoBorder",
@@ -387,7 +352,7 @@ function AggridTreeView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        view?.attributes?.treeData ? updateTreeData() : refetch();
+        refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -402,7 +367,7 @@ function AggridTreeView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        updateTreeData();
+        refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -459,9 +424,7 @@ function AggridTreeView(props) {
       remove: [rowToRemove],
     });
 
-    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
-      view?.attributes?.treeData ? null : refetch();
-    });
+    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {});
   }
 
   const onColumnPinned = (event) => {
@@ -616,7 +579,120 @@ function AggridTreeView(props) {
     }
   }, [fieldData]);
 
+  const {mutate: createField} = useFieldCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful created", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: updateField} = useFieldUpdateMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: createRelation} = useRelationsCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const onSubmit = (values) => {
+    const data = {
+      ...values,
+      slug: slug,
+      table_id: menuItem?.table_id,
+      label: slug,
+      index: "string",
+      required: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+      attributes: {
+        ...values.attributes,
+        formula: values?.attributes?.advanced_type
+          ? values?.attributes?.formula
+          : values?.attributes?.from_formula +
+            " " +
+            values?.attributes?.math?.value +
+            " " +
+            values?.attributes?.to_formula,
+      },
+    };
+
+    const relationData = {
+      ...values,
+      attributes: {
+        ...values.attributes,
+        label: values?.table_to?.split("/")?.[0],
+        ...Object.fromEntries(
+          languages.map((lang) => [
+            `label_${lang.slug}`,
+            values?.table_to?.split("/")?.[0],
+          ])
+        ),
+        ...Object.fromEntries(
+          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
+        ),
+      },
+      table_to: values?.table_to?.split("/")?.[1],
+      relation_table_slug: tableSlug,
+      label: values?.table_from,
+      type: values?.relation_type,
+      required: false,
+      multiple_insert: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+    };
+
+    if (!fieldData) {
+      if (values?.type !== "RELATION") {
+        createField({data, tableSlug});
+      }
+      if (values?.type === "RELATION") {
+        createRelation({data: relationData, tableSlug});
+      }
+    }
+    if (fieldData) {
+      if (values?.view_fields) {
+        updateRelation({data: values, tableSlug});
+      } else {
+        updateField({data, tableSlug});
+      }
+    }
+  };
+
+  const {update} = useFieldArray({
+    control: mainForm.control,
+    name: "fields",
+    keyName: "key",
+  });
+
   const isServerSideGroup = (dataItem) => {
+    console.log("dataItemdataItemdataItem", dataItem);
     return dataItem.has_child;
   };
 
@@ -724,8 +800,7 @@ function AggridTreeView(props) {
                       maxBlocksInCache: 10,
                     }}
                     onColumnMoved={getColumnsUpdated}
-                    // rowData={rowData}
-                    loading={loading}
+                    // loading={loading}
                     columnDefs={columns}
                     suppressRefresh={true}
                     enableClipboard={true}
@@ -742,15 +817,13 @@ function AggridTreeView(props) {
                     onColumnPinned={onColumnPinned}
                     getMainMenuItems={getMainMenuItems}
                     suppressColumnVirtualisation={true}
-                    treeData={view?.attributes?.treeData}
+                    treeData={true}
                     suppressColumnMoveAnimation={true}
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
                     onGridReady={onGridReady}
-                    getDataPath={
-                      view?.attributes?.treeData ? getDataPath : undefined
-                    }
+                    getDataPath={getDataPath}
                     onCellValueChanged={(e) => {
                       updateObject(e.data);
                     }}
@@ -771,14 +844,125 @@ function AggridTreeView(props) {
         limit={limit}
         count={count}
         rowData={rowData}
-        refetch={refetch}
         setLimit={setLimit}
         setOffset={setOffset}
         setLoading={setLoading}
         createChild={createChild}
         selectedRows={selectedRows}
-        updateTreeData={updateTreeData}
+        updateTreeData={refetch}
       />
+
+      <DeleteColumnModal
+        view={view}
+        columnId={columnId}
+        tableSlug={tableSlug}
+        handleCloseModal={handleCloseModal}
+        openDeleteModal={openDeleteModal}
+      />
+
+      <FieldCreateModal
+        mainForm={mainForm}
+        // tableLan={tableLan}
+        anchorEl={fieldCreateAnchor}
+        setAnchorEl={setFieldCreateAnchor}
+        watch={watch}
+        control={control}
+        setValue={setValue}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        // target={target}
+        fields={visibleColumns}
+        setFieldOptionAnchor={setFieldOptionAnchor}
+        reset={reset}
+        menuItem={menuItem}
+        fieldData={fieldData}
+        handleOpenFieldDrawer={handleOpenFieldDrawer}
+      />
+
+      {Boolean(open && projectInfo?.new_layout) &&
+      selectedViewType === "SidePeek" ? (
+        <DrawerDetailPage
+          projectInfo={projectInfo}
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+          navigateCreatePage={navigateCreatePage}
+        />
+      ) : selectedViewType === "CenterPeek" ? (
+        <NewModalDetailPage
+          modal={true}
+          projectInfo={projectInfo}
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+          navigateCreatePage={navigateCreatePage}
+        />
+      ) : null}
+
+      {Boolean(open && !projectInfo?.new_layout) && (
+        <ModalDetailPage
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      )}
+
+      <Drawer
+        open={drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal">
+        <FieldSettings
+          closeSettingsBlock={() => setDrawerState(null)}
+          isTableView={true}
+          onSubmit={(index, field) => update(index, field)}
+          field={drawerState}
+          formType={drawerState}
+          mainForm={mainForm}
+          selectedTabIndex={selectedTabIndex}
+          height={`calc(100vh - 48px)`}
+          getRelationFields={getRelationFields}
+          menuItem={menuItem}
+        />
+      </Drawer>
+
+      <Drawer
+        open={drawerStateField}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal">
+        <RelationSettings
+          relation={drawerStateField}
+          closeSettingsBlock={() => setDrawerStateField(null)}
+          getRelationFields={getRelationFields}
+          formType={drawerStateField}
+          height={`calc(100vh - 48px)`}
+        />
+      </Drawer>
     </Box>
   );
 }

@@ -727,7 +727,7 @@ function AggridTreeView(props) {
       const datasource = createServerSideDatasource(parentGuid, cleanedFilters);
       params.api?.setGridOption("serverSideDatasource", datasource);
     },
-    [tableSlug, visibleFields, cleanedFilters]
+    [tableSlug, cleanedFilters]
   );
 
   useEffect(() => {
@@ -737,7 +737,6 @@ function AggridTreeView(props) {
         "serverSideDatasource",
         newDatasource
       );
-      //   gridApi?.current?.api?.refreshServerSide({route: "", purge: true});
     }
   }, [cleanedFilters]);
 

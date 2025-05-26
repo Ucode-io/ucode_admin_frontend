@@ -213,16 +213,21 @@ const LayoutSidebar = ({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
-        const computedMenus = res?.menus?.filter(
-          (el) =>
-            el?.id !== "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9" &&
-            el?.id !== "9e988322-cffd-484c-9ed6-460d8701551b" &&
-            el?.data?.permission?.read &&
-            Boolean(
-              el?.data?.permission?.read ||
-                el?.id === "c57eedc3-a954-4262-a0af-376c65b5a280"
-            )
-        );
+        const computedMenus = res?.menus?.filter((el) => {
+          const id = el?.id;
+          const permission = el?.data?.permission?.read;
+
+          if (id === "c57eedc3-a954-4262-a0af-376c65b5a280") {
+            return true;
+          }
+
+          const excludedIds = [
+            "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
+            "9e988322-cffd-484c-9ed6-460d8701551b",
+          ];
+
+          return !excludedIds.includes(id) && permission;
+        });
         setMenuList(computedMenus);
         setIsMenuListLoading(false);
       })

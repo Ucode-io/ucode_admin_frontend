@@ -59,7 +59,8 @@ export const SettingsPopup = ({open, onClose}) => {
         updateSearchParam,
         handleClose,
         permissionChild,
-      }}>
+      }}
+    >
       <Dialog
         open={open}
         onClose={handleClose}
@@ -70,8 +71,9 @@ export const SettingsPopup = ({open, onClose}) => {
             maxWidth: "1150px !important",
             width: "100% !important",
           },
-        }}>
-        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
+        }}
+      >
+        <DialogContent className={cls.dialogContent} sx={{ padding: 0 }}>
           <Box className={cls.content}>
             <Box className={cls.leftBarWrapper}>
               <Box className={cls.leftBar}>
@@ -182,7 +184,14 @@ export const SettingsPopup = ({open, onClose}) => {
                 [cls.smPadding]:
                   searchParams.get("tab") ===
                   TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
-              })}>
+              })}
+              overflow={
+                activeTab === TAB_COMPONENTS.LANGUAGE_CONTROL ||
+                activeTab === TAB_COMPONENTS.MODELS
+                  ? "hidden"
+                  : "auto"
+              }
+            >
               {isValidElement(tabComponents[activeTab])
                 ? tabComponents[activeTab]
                 : (tabComponents[activeTab]?.[searchParams.get("tab")] ??

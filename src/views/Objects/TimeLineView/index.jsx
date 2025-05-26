@@ -43,6 +43,7 @@ export default function TimeLineView({
     datesList,
     selectedType,
     setSelectedType,
+    tableViewFiltersOpen,
   } = useDateLineProps({ setCenterDate });
 
   const { tableSlug, appId } = useParams();
@@ -276,11 +277,11 @@ export default function TimeLineView({
 
   return (
     <MaterialUIProvider>
-      <div>
+      <div className={styles.timelineViewWrapper}>
         <div
           className={styles.wrapper}
           style={{
-            height: "calc(100vh - 135px)",
+            height: `calc(100vh - ${tableViewFiltersOpen ? "134px" : "98px"})`,
             overflow: "auto",
             // height: "100vh",
           }}

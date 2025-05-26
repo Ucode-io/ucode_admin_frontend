@@ -25,7 +25,6 @@ export const viewSearch = ({ columnsForSearch, searchText, computedData}) => {
     ? searchFields
         ?.map((searchField) => {
           return computedData.filter((item) => {
-            console.log({ lab: getLabel(item, searchField?.slug) });
             return getLabel(item, searchField?.slug)
               ?.toLowerCase()
               .includes(searchText?.toLowerCase());

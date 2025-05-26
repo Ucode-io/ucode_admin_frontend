@@ -985,6 +985,7 @@ export const NewUiViewsWithGroups = ({
             direction={"ltr"}
             defaultIndex={0}
             // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+            style={{ height: "100%" }}
           >
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&

@@ -8,7 +8,7 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 function ActionButtons(props) {
   const {colDef, data} = props;
   const {view} = colDef;
-  console.log("dataaaaaaaaaaa", data);
+
   return (
     <>
       {data?.new_field ? (

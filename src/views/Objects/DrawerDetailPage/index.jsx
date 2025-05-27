@@ -576,7 +576,7 @@ function DrawerDetailPage({
                     fieldsMap={fieldsMap}
                     control={control}
                     watch={watch}
-                    reset={reset}
+                    getAllData={getAllData}
                   />
                 </DrawerBody>
               </TabPanel>

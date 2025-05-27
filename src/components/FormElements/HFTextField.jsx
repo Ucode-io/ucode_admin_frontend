@@ -38,6 +38,7 @@ const HFTextField = ({
   inputHeight,
   watch,
   disabled_text = "This field is disabled for this role!",
+  onRowClick = () => {},
   setFormValue = () => {},
   customOnChange = () => {},
   exist = false,

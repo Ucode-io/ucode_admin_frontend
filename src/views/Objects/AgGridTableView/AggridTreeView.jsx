@@ -447,21 +447,19 @@ function AggridTreeView(props) {
     });
   };
   function createChildTree(parentObj) {
-    const newChildGUID = generateGUID();
-
-    const childPath = [...parentObj.path, newChildGUID];
-    const route = getRouteToNode([parentObj]);
-    const newChild = {
-      guid: newChildGUID,
-      [`${tableSlug}_id`]: parentObj.guid,
-      path: childPath,
-      new_field: true,
-    };
-
-    gridApi?.current?.api.applyServerSideTransaction({
-      route: route.slice(0, route.length - 1),
-      update: [newChild],
-    });
+    // const newChildGUID = generateGUID();
+    // const childPath = [...parentObj.path, newChildGUID];
+    // const route = getRouteToNode([parentObj]);
+    // const newChild = {
+    //   guid: newChildGUID,
+    //   [`${tableSlug}_id`]: parentObj.guid,
+    //   path: childPath,
+    //   new_field: true,
+    // };
+    // gridApi?.current?.api.applyServerSideTransaction({
+    //   route: route.slice(0, route.length - 1),
+    //   update: [newChild],
+    // });
   }
 
   const getDataPath = useCallback((data) => data.path, []);

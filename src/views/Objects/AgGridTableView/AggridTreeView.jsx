@@ -817,7 +817,7 @@ function AggridTreeView(props) {
                       cacheBlockSize: 100,
                       maxBlocksInCache: 10,
                     }}
-                    serverSideStoreType="serverSide"
+                    serverSideStoreType="partial"
                     serverSideTransaction={true}
                     onColumnMoved={getColumnsUpdated}
                     columnDefs={columns}

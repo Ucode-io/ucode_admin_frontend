@@ -1,17 +1,14 @@
 import {MenuItem} from "@mui/material";
 import React from "react";
+import {useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 
-export default function MicroFrontPdf({
-  row,
-  handleClose = () => {},
-  view,
-  projectId,
-}) {
+export default function MicroFrontPdf({row, handleClose = () => {}, view}) {
   const {appId, tableSlug} = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const menuId = searchParams.get("menuId");
+  const projectId = useSelector((state) => state.auth.projectId);
 
   const replaceUrlVariables = (urlTemplate, data) => {
     return urlTemplate?.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
@@ -40,10 +37,8 @@ export default function MicroFrontPdf({
     <>
       <MenuItem
         onClick={(event) => {
-          Boolean(
-            projectId === "342fba37-fc7d-4b6f-b02f-57b21beb0218" ||
-              projectId === "b9029a9f-9431-4a44-b5e4-be148e4cc573"
-          )
+          projectId === "342fba37-fc7d-4b6f-b02f-57b21beb0218" ||
+          projectId === "b9029a9f-9431-4a44-b5e4-be148e4cc573"
             ? navigateToDocumentEditPage(event)
             : templateNavigation();
         }}>

@@ -98,12 +98,12 @@ const ViewTabSelector = ({
       <div className={style.selector} style={{ minWidth: "fit-content" }}>
         <div className={style.leftSide}>
           <div className={style.button}>
-            <Button
+            {/* <Button
               style={{ height: "100%" }}
               onClick={() => navigate(`/main/${menuItem?.parent_id}`)}
             >
               <ArrowBackIcon style={{ color: "#000" }} />
-            </Button>
+            </Button> */}
           </div>
 
           <div className={style.title}>

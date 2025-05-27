@@ -217,10 +217,8 @@ export default function ViewTypeList({
     }
   };
 
-  const {
-    data: {fields},
-  } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug}],
+  const { data } = useQuery(
+    ["GET_TABLE_INFO", { tableSlug }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -229,12 +227,14 @@ export default function ViewTypeList({
     {
       cacheTime: 10,
       select: (res) => {
-        const fields = res.data?.fields ?? [];
+        const fields = res?.data?.fields ?? [];
 
         return {fields};
       },
     }
   );
+
+  const fields = data?.fields ?? [];
 
   const computedColumns = useMemo(() => {
     const filteredFields = fields?.filter(

@@ -446,20 +446,23 @@ function AggridTreeView(props) {
       [fieldId]: {pinned},
     });
   };
+
   function createChildTree(parentObj) {
-    // const newChildGUID = generateGUID();
-    // const childPath = [...parentObj.path, newChildGUID];
-    // const route = getRouteToNode([parentObj]);
-    // const newChild = {
-    //   guid: newChildGUID,
-    //   [`${tableSlug}_id`]: parentObj.guid,
-    //   path: childPath,
-    //   new_field: true,
-    // };
-    // gridApi?.current?.api.applyServerSideTransaction({
-    //   route: route.slice(0, route.length - 1),
-    //   update: [newChild],
-    // });
+    const newChildGUID = generateGUID();
+    const childPath = [...parentObj.path, newChildGUID];
+
+    const newChild = {
+      guid: generateGUID(),
+      [`${tableSlug}_id`]: parentObj.guid,
+      path: [...parentObj.path, generateGUID()],
+      new_field: true,
+    };
+
+    gridApi.current.api.applyTransaction({
+      add: [newChild],
+    });
+
+    gridApi?.current?.api.getRowNode(parentObj.guid)?.setExpanded(true);
   }
 
   const getDataPath = useCallback((data) => data.path, []);
@@ -814,7 +817,7 @@ function AggridTreeView(props) {
                       cacheBlockSize: 100,
                       maxBlocksInCache: 10,
                     }}
-                    serverSideStoreType="partial"
+                    serverSideStoreType="serverSide"
                     serverSideTransaction={true}
                     onColumnMoved={getColumnsUpdated}
                     columnDefs={columns}

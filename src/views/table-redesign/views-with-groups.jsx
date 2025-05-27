@@ -53,49 +53,54 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
-import {Backdrop, Popover as MuiPopover} from "@mui/material";
-import {addDays, endOfMonth, startOfMonth} from "date-fns";
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {default as InlineSVG, default as SVG} from "react-inlinesvg";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {
+  Backdrop,
+  Popover as MuiPopover,
+  Button as MuiButton,
+} from "@mui/material";
+import { addDays, endOfMonth, startOfMonth } from "date-fns";
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { default as InlineSVG, default as SVG } from "react-inlinesvg";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import {useGetLang} from "../../hooks/useGetLang";
+import { useGetLang } from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorRelationService from "../../services/constructorRelationService";
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../services/constructorTableService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {generateGUID} from "../../utils/generateID";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {mergeStringAndState} from "../../utils/jsonPath";
-import {listToMap} from "../../utils/listToMap";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { generateGUID } from "../../utils/generateID";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { mergeStringAndState } from "../../utils/jsonPath";
+import { listToMap } from "../../utils/listToMap";
 import listToOptions from "../../utils/listToOptions";
 import BoardView from "../Objects/BoardView";
 import CalendarView from "../Objects/CalendarView";
 import TimeLineView from "../Objects/TimeLineView";
-import {Filter} from "./FilterGenerator";
-import {LayoutPopup} from "./LayoutPopup";
+import { Filter } from "./FilterGenerator";
+import { LayoutPopup } from "./LayoutPopup";
 import ViewSettingsModal from "./ViewSettings";
-import {CalendarSettings} from "./components/CalendarSettings";
-import {SubGroup} from "./components/SubGroup";
-import {TimelineSettings} from "./components/TimelineSettings";
+import { CalendarSettings } from "./components/CalendarSettings";
+import { SubGroup } from "./components/SubGroup";
+import { TimelineSettings } from "./components/TimelineSettings";
 import TableView from "./table-view";
 import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 import FilterPopover from "./FilterPopover";
 import FiltersList from "./FiltersList";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
+
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -966,6 +971,7 @@ export const NewUiViewsWithGroups = ({
                   queryClient={queryClient}
                   settingsForm={settingsForm}
                   views={views}
+                  setSelectedTabIndex={setSelectedTabIndex}
                 />
               </>
             )}
@@ -985,6 +991,7 @@ export const NewUiViewsWithGroups = ({
             direction={"ltr"}
             defaultIndex={0}
             // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+            style={{ height: "100%" }}
           >
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
@@ -1581,6 +1588,7 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
+  setSelectedTabIndex,
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
@@ -2082,6 +2090,7 @@ const ViewOptions = ({
                 view={view}
                 refetchViews={refetchViews}
                 tableLan={tableLan}
+                setSelectedTabIndex={setSelectedTabIndex}
               />
             </Box>
           </>
@@ -2185,8 +2194,8 @@ const ColumnsVisibility = ({
   onBackClick,
   tableLan,
 }) => {
-  const {i18n, t} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n, t } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2302,7 +2311,8 @@ const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}>
+          onClick={onBackClick}
+        >
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
@@ -2343,7 +2353,8 @@ const ColumnsVisibility = ({
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
-        overflow="auto">
+        overflow="auto"
+      >
         {/* {view?.type === "TIMELINE" ? (
           checkedColumns?.length || unCheckedColumns?.length ? (
             <Container
@@ -2470,10 +2481,11 @@ const ColumnsVisibility = ({
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                zIndex={999999}>
-                {column?.type && getColumnIcon({column})}
+                zIndex={999999}
+              >
+                {column?.type && getColumnIcon({ column })}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Switch
                   ml="auto"
@@ -2499,9 +2511,9 @@ const ColumnsVisibility = ({
   );
 };
 
-const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2558,7 +2570,8 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
             "Group columns"}
@@ -2589,9 +2602,10 @@ const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -2620,8 +2634,8 @@ const TabGroup = ({
   label = "Tab group columns",
   isBoardView,
 }) => {
-  const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const { i18n } = useTranslation();
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2685,7 +2699,8 @@ const TabGroup = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, label) ||
             "Tab group columns"}
@@ -2716,9 +2731,10 @@ const TabGroup = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             {isBoardView ? (
               <Switch
@@ -2754,10 +2770,16 @@ const TabGroup = ({
   );
 };
 
-const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {tableSlug} = useParams();
+const FixColumns = ({
+  view,
+  fieldsMap,
+  refetchViews,
+  onBackClick,
+  tableLan,
+}) => {
+  const { tableSlug } = useParams();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -2813,7 +2835,8 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Fix columns") ||
             "Fix columns"}
@@ -2844,9 +2867,10 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{column?.label}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -2864,9 +2888,9 @@ const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
   );
 };
 
-const ExcelExportButton = ({fieldsMap, tableLan}) => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const {i18n} = useTranslation();
+const ExcelExportButton = ({ fieldsMap, tableLan }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { i18n } = useTranslation();
   return (
     <>
       <Flex
@@ -2875,9 +2899,10 @@ const ExcelExportButton = ({fieldsMap, tableLan}) => {
         columnGap="8px"
         alignItems="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        _hover={{ bg: "#EAECF0" }}
         cursor="pointer"
-        onClick={onOpen}>
+        onClick={onOpen}
+      >
         <Image src="/img/file-download.svg" alt="Docs" />
         <ViewOptionTitle>
           {generateLangaugeText(tableLan, i18n?.language, "Import") || "Import"}
@@ -2901,13 +2926,13 @@ const ExcelImportButton = ({
   computedVisibleFields,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
-  const {download} = useDownloader();
-  const {i18n} = useTranslation();
+  const { tableSlug } = useParams();
+  const { download } = useDownloader();
+  const { i18n } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const {data} = await constructorObjectService.downloadExcel(tableSlug, {
+      const { data } = await constructorObjectService.downloadExcel(tableSlug, {
         data: {
           field_ids: computedVisibleFields,
           language: i18n.language,
@@ -2929,9 +2954,10 @@ const ExcelImportButton = ({
       columnGap="8px"
       alignItems="center"
       borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
+      _hover={{ bg: "#EAECF0" }}
       cursor="pointer"
-      onClick={mutation.mutate}>
+      onClick={mutation.mutate}
+    >
       {mutation.isLoading ? (
         <Spinner w="20px" h="20px" />
       ) : (
@@ -2945,12 +2971,20 @@ const ExcelImportButton = ({
   );
 };
 
-const DeleteViewButton = ({view, refetchViews, tableLan}) => {
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+const DeleteViewButton = ({
+  view,
+  refetchViews,
+  tableLan,
+  setSelectedTabIndex,
+}) => {
+  const { tableSlug } = useParams();
+  const { i18n } = useTranslation();
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
-    onSuccess: () => refetchViews(),
+    onSuccess: () => {
+      refetchViews();
+      setSelectedTabIndex(0);
+    },
   });
 
   return (
@@ -2960,9 +2994,10 @@ const DeleteViewButton = ({view, refetchViews, tableLan}) => {
       columnGap="8px"
       alignItems="center"
       borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
+      _hover={{ bg: "#EAECF0" }}
       cursor="pointer"
-      onClick={() => mutation.mutate()}>
+      onClick={() => mutation.mutate()}
+    >
       {mutation.isLoading ? (
         <Spinner w="20px" h="20px" />
       ) : (

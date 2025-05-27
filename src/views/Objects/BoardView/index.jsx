@@ -259,6 +259,7 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
+        console.log({ item, subGroupById, fieldsMap });
         const key =
           subGroupField?.type === FIELD_TYPES.LOOKUP
             ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
@@ -401,9 +402,9 @@ const BoardView = ({
           <div
             className={styles.boardHeader}
             ref={fixedElement}
-            style={{
-              boxShadow: isOnTop ? "rgba(0, 0, 0, 0.1) 0px 0px 2px 0px" : "",
-            }}
+            // style={{
+            //   boxShadow: isOnTop ? "rgba(0, 0, 0, 0.1) 0px 0px 2px 0px" : "",
+            // }}
           >
             <Container
               lockAxis="x"
@@ -420,12 +421,25 @@ const BoardView = ({
               }}
               style={{
                 display: "flex",
-                gap: 8,
-                padding: "0 16px",
+                // padding: "0 16px",
               }}
             >
               {boardTab?.map((tab, tabIndex) => (
-                <Draggable key={tabIndex}>
+                <Draggable
+                  key={tabIndex}
+                  style={{
+                    borderBottom: isOnTop
+                      ? "1px solid rgba(0, 0, 0, 0.1)"
+                      : "none",
+                    // boxShadow: isOnTop
+                    //   ? "rgba(0, 0, 0, 0.1) 0 4px 2px -2px"
+                    //   : "none",
+                    padding: "0 8px",
+                    paddingLeft: tabIndex === 0 ? "16px" : "0",
+                    paddingRight:
+                      tabIndex === boardTab?.length - 1 ? "16px" : "0",
+                  }}
+                >
                   <ColumnHeaderBlock
                     field={computedColumnsFor?.find(
                       (field) => field?.slug === tab?.slug

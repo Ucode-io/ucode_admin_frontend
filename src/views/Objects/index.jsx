@@ -24,8 +24,28 @@ import TimeLineView from "./TimeLineView";
 import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useSelector} from "react-redux";
 import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
+import {
+  Button,
+  ChakraProvider,
+  Flex,
+  IconButton,
+  Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Spinner,
+  Switch,
+  useDisclosure,
+} from "@chakra-ui/react";
 
-import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
+import { NewUiViewsWithGroups } from "@/views/table-redesign/views-with-groups";
 import {
   Box,
   Skeleton,
@@ -35,19 +55,20 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import {TableDataSkeleton} from "../../components/TableDataSkeleton";
-import {DynamicTable} from "../table-redesign";
+import { TableDataSkeleton } from "../../components/TableDataSkeleton";
+import { DynamicTable } from "../table-redesign";
+import { ArrowBackIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const ObjectsPage = () => {
-  const {tableSlug} = useParams();
-  const {state} = useLocation();
+  const { tableSlug } = useParams();
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -70,25 +91,27 @@ const ObjectsPage = () => {
   const resultDefaultLink =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
-  const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
-    projectId: projectId,
-    roleId: roleId,
-    parentId: appId,
-    queryParams: {
-      enabled: Boolean(menuId),
-      onSuccess: (res) => {
-        if (
-          !res?.menus
-            ?.filter((item) => item?.permission?.read)
-            ?.some((el) => el?.id === menuId)
-        ) {
-          console.log("object");
-          navigate(resultDefaultLink);
-        }
+  const { isLoading: permissionGetByIdLoading } = useMenuPermissionGetByIdQuery(
+    {
+      projectId: projectId,
+      roleId: roleId,
+      parentId: appId,
+      queryParams: {
+        enabled: Boolean(menuId),
+        onSuccess: (res) => {
+          if (
+            !res?.menus
+              ?.filter((item) => item?.permission?.read)
+              ?.some((el) => el?.id === menuId)
+          ) {
+            console.log("object");
+            navigate(resultDefaultLink);
+          }
+        },
+        cacheTime: false,
       },
-      cacheTime: false,
-    },
-  });
+    }
+  );
 
   const params = {
     language_setting: i18n?.language,
@@ -125,8 +148,7 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({data}) => {
-        console.log({ f: data?.fields });
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -142,7 +164,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -154,7 +176,7 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -271,6 +293,8 @@ const ObjectsPage = () => {
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
+  console.log({ selectedTabIndex, views });
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
@@ -282,14 +306,14 @@ const ObjectsPage = () => {
               </TabPanel>
             );
           })}
-          <TabPanel>
+          {/* <TabPanel>
             <DocView
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
             />
-          </TabPanel>
+          </TabPanel> */}
         </div>
       </Tabs>
 

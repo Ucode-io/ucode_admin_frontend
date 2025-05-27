@@ -1,3 +1,8 @@
+.labels {
+  overflow: scroll;
+  max-height: 480px;
+}
+
 .label {
   display: flex;
   align-items: center;

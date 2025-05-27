@@ -963,7 +963,7 @@ export const NewUiViewsWithGroups = ({
                   fieldsMapRel={fieldsMapRel}
                   visibleRelationColumns={visibleRelationColumns}
                   checkedColumns={checkedColumns}
-                  onDocsClick={() => setSelectedTabIndex(views.length)}
+                  // onDocsClick={() => setSelectedTabIndex(views.length)}
                   searchText={searchText}
                   computedVisibleFields={computedVisibleFields}
                   handleOpenPopup={handleOpenPopup}
@@ -1578,7 +1578,6 @@ const ViewOptions = ({
   visibleRelationColumns,
   searchText,
   checkedColumns,
-  onDocsClick,
   computedVisibleFields,
   tableLan,
   handleOpenPopup,
@@ -1592,6 +1591,7 @@ const ViewOptions = ({
   // queryClient,
 }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const {appId, tableSlug} = useParams();
   const {i18n, t} = useTranslation();
   const [searchParams] = useSearchParams();
@@ -1607,6 +1607,10 @@ const ViewOptions = ({
   const isTimelineView = view?.type === "TIMELINE";
   const isBoardView = view?.type === "BOARD";
   const isCalendarView = view?.type === "CALENDAR";
+
+  const onDocsClick = () => {
+    navigate(`/main/${appId}/object/${tableSlug}/templates`);
+  };
 
   useEffect(() => {
     if (ref.current) {
@@ -1643,30 +1647,6 @@ const ViewOptions = ({
     },
   });
 
-  // const updateViewColumns = () => {
-  //   // setUpdateLoading(true);
-  //   constructorViewService
-  //     .update(tableSlug, {
-  //       ...views?.[selectedTabIndex],
-  //       attributes: {
-  //         ...views?.[selectedTabIndex]?.attributes,
-  //         group_by_columns: form
-  //           .watch("group_fields")
-  //           ?.filter((el) => el !== "" && el !== null && el !== undefined),
-  //       },
-  //       group_fields: form
-  //         .watch("group_fields")
-  //         ?.filter((el) => el !== "" && el !== null && el !== undefined),
-  //     })
-  //     .then(() => {})
-  //     .finally(() => {
-  //       // setUpdateLoading(false);
-  //       queryClient.refetchQueries(["GET_TABLE_INFO"]);
-  //       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-  //       queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-  //     });
-  // };
-
   const onViewNameChange = useDebounce((ev) => {
     updateView.mutate(ev.target.value);
   }, 500);
@@ -1679,26 +1659,6 @@ const ViewOptions = ({
   const tabGroupColumnsCount = view?.group_fields?.length;
   const visibleColumnsCountForTimeline =
     view?.attributes?.visible_field?.split("/")?.length ?? 0;
-
-  // const queryClient = useQueryClient();
-
-  // const [anchorElSettings, setAnchorElSettings] = useState(null);
-  // const openSettings = Boolean(anchorElSettings);
-
-  // const handleClickSettings = (event) => {
-  //   setAnchorElSettings(event.currentTarget);
-  // };
-
-  // const handleCloseSettings = () => {
-  //   setAnchorElSettings(null);
-  // };
-
-  // const form = useForm({
-  //   defaultValues: {
-  //     calendar_from_slug: "",
-  //     calendar_to_slug: "",
-  //   },
-  // });
 
   const {
     data: {fields, visibleColumns} = {data: []},
@@ -1740,33 +1700,33 @@ const ViewOptions = ({
     }
   );
 
-  const computedColumns = useMemo(() => {
-    const filteredFields = fields?.filter(
-      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
-    );
-    return listToOptions(filteredFields, "label", "slug");
-  }, [fields]);
+  // const computedColumns = useMemo(() => {
+  //   const filteredFields = fields?.filter(
+  //     (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+  //   );
+  //   return listToOptions(filteredFields, "label", "slug");
+  // }, [fields]);
 
-  const saveSettings = () => {
-    const computedData = {
-      ...view,
-      attributes: {
-        ...view.attributes,
-        calendar_from_slug: settingsForm.getValues("calendar_from_slug"),
-        calendar_to_slug: settingsForm.getValues("calendar_to_slug"),
-        // visible_field: settingsForm.getValues("visible_field"),
-      },
-    };
+  // const saveSettings = () => {
+  //   const computedData = {
+  //     ...view,
+  //     attributes: {
+  //       ...view.attributes,
+  //       calendar_from_slug: settingsForm.getValues("calendar_from_slug"),
+  //       calendar_to_slug: settingsForm.getValues("calendar_to_slug"),
+  //       // visible_field: settingsForm.getValues("visible_field"),
+  //     },
+  //   };
 
-    constructorViewService
-      .update(tableSlug, {
-        ...computedData,
-      })
-      .then(() => {
-        refetchViews();
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-      });
-  };
+  //   constructorViewService
+  //     .update(tableSlug, {
+  //       ...computedData,
+  //     })
+  //     .then(() => {
+  //       refetchViews();
+  //       queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+  //     });
+  // };
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -1782,26 +1742,6 @@ const ViewOptions = ({
       }
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
-
-  // const saveSettings = () => {
-  //   const computedData = {
-  //     ...view,
-  //     attributes: {
-  //       ...view.attributes,
-  //       calendar_from_slug: form.getValues("calendar_from_slug"),
-  //       calendar_to_slug: form.getValues("calendar_to_slug"),
-  //       visible_field: form.getValues("visible_field"),
-  //     },
-  //   };
-
-  //   constructorViewService
-  //     .update(tableSlug, {
-  //       ...computedData,
-  //     })
-  //     .then(() => {
-  //       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-  //     });
-  // };
 
   const viewUpdateMutation = useMutation({
     mutationFn: async (data) => {

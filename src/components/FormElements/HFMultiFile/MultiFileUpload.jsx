@@ -60,7 +60,6 @@ function MultiFileUpload({
       })
     )
       .then((res) => {
-        console.log({res});
         onChange([
           ...(value ?? []),
           ...res?.map((item) => import.meta.env.VITE_CDN_BASE_URL + item?.link),

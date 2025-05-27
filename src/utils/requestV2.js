@@ -20,6 +20,7 @@ const requestV2 = axios.create({
 // }
 
 const errorHandler = (error, hooks) => {
+  console.log({error})
   if (
     error?.response?.status === 401 &&
     error?.response?.data?.data ===

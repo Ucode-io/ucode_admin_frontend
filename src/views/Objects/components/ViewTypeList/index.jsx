@@ -35,7 +35,7 @@ export default function ViewTypeList({
   computedViewTypes,
   views,
   handleClose,
-  fieldsMap,
+  fieldsMap = {},
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
@@ -229,7 +229,7 @@ export default function ViewTypeList({
       select: (res) => {
         const fields = res?.data?.fields ?? [];
 
-        return {fields};
+        return { fields };
       },
     }
   );

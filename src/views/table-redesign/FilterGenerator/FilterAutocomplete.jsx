@@ -31,6 +31,10 @@ const FilterAutoComplete = ({
   };
 
   const inputChangeHandler = useDebounce((val) => {
+    if (val === "-") {
+      setSearchText("");
+      return;
+    }
     setSearchText(val);
   }, 300);
 

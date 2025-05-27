@@ -576,19 +576,19 @@ const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
 const Statuses = ({ control, placeholder = "", form }) => {
   const options = [
     {
-      label: "ACTIVE",
+      label: "Active",
       value: "ACTIVE",
-      color: "teal.400",
+      color: "#38B2AC",
     },
     {
-      label: "INACTIVE",
+      label: "Inactive",
       value: "INACTIVE",
-      color: "gray.400",
+      color: "#A0AEC0",
     },
     {
-      label: "BLOCKED",
+      label: "Blocked",
       value: "BLOCKED",
-      color: "red.400",
+      color: "#F56565",
     },
   ];
 
@@ -617,14 +617,22 @@ const Statuses = ({ control, placeholder = "", form }) => {
           size="lg"
           defaultValue={options[0]}
           chakraStyles={{
-            option: (provided, state) => ({
-              ...provided,
-              background: state.data.color,
-              color: "#fff",
-            }),
+            // option: (provided, state) => ({
+            //   ...provided,
+            //   background: state.data.color,
+            //   color: "#fff",
+            // }),
             singleValue: (provided, state) => ({
               ...provided,
               color: state.data.color,
+              padding: "2px",
+              borderRadius: "4px",
+              border: "1px solid #EAECF0",
+              background: state.data.color + "20",
+              fontSize: "14px",
+              fontWeight: "500",
+              lineHeight: "20px",
+              width: "fit-content",
             }),
           }}
         />

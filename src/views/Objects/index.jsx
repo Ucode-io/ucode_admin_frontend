@@ -1,53 +1,35 @@
-import {useEffect, useMemo, useState} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {TabPanel, Tabs} from "react-tabs";
+import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import {useQuery} from "react-query";
+import { useQuery } from "react-query";
 import PageFallback from "../../components/PageFallback";
-import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
+import { listToMap, listToMapWithoutRel } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import {store} from "../../store";
-import {useTranslation} from "react-i18next";
+import { store } from "../../store";
+import { useTranslation } from "react-i18next";
 import constructorTableService from "../../services/constructorTableService";
 import TimeLineView from "./TimeLineView";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
-import {useSelector} from "react-redux";
-import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
-import {
-  Button,
-  ChakraProvider,
-  Flex,
-  IconButton,
-  Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Spinner,
-  Switch,
-  useDisclosure,
-} from "@chakra-ui/react";
+import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
+import { useSelector } from "react-redux";
+import { useMenuPermissionGetByIdQuery } from "../../services/rolePermissionService";
+import chakraUITheme from "@/theme/chakraUITheme";
 
 import { NewUiViewsWithGroups } from "@/views/table-redesign/views-with-groups";
 import {
   Box,
+  Popover,
   Skeleton,
   Table,
   TableBody,
@@ -57,7 +39,12 @@ import {
 } from "@mui/material";
 import { TableDataSkeleton } from "../../components/TableDataSkeleton";
 import { DynamicTable } from "../table-redesign";
-import { ArrowBackIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { AddIcon, ArrowBackIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Button, ChakraProvider, Image, Text } from "@chakra-ui/react";
+import NoDataPng from "../../assets/images/no-data.png";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import ViewTypeList from "./components/ViewTypeList";
+import { viewTypes } from "../../utils/constants/viewTypes";
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams();
@@ -68,7 +55,7 @@ const ObjectsPage = () => {
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -90,6 +77,16 @@ const ObjectsPage = () => {
 
   const resultDefaultLink =
     parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
+
+  const [isViewCreateModalOpen, setIsViewCreateModalOpen] = useState(false);
+  const addViewRef = useRef(null);
+  const handleAddViewClick = () => {
+    setIsViewCreateModalOpen(true);
+  };
+
+  const handleCloseViewCreateModal = () => {
+    setIsViewCreateModalOpen(false);
+  };
 
   const { isLoading: permissionGetByIdLoading } = useMenuPermissionGetByIdQuery(
     {
@@ -293,7 +290,7 @@ const ObjectsPage = () => {
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
-  console.log({ selectedTabIndex, views });
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
 
   return (
     <>
@@ -317,16 +314,82 @@ const ObjectsPage = () => {
         </div>
       </Tabs>
 
-      {!views?.length && (
-        <FiltersBlock>
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-            menuItem={menuItem}
-          />
-        </FiltersBlock>
-      )}
+      <ChakraProvider theme={chakraUITheme}>
+        {!views?.length && (
+          <Box height="100%">
+            <Box
+              height="40px"
+              width="100%"
+              bgcolor="#fff"
+              borderBottom="1px solid #EAECF0"
+              padding="0 16px"
+              display="flex"
+              alignItems="center"
+            >
+              <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
+                <Button
+                  leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  color="#475467"
+                  ref={addViewRef}
+                  onClick={handleAddViewClick}
+                >
+                  {t("add")}
+                </Button>
+                {/* <div
+                // className={style.element}
+                variant="contained"
+                onClick={handleAddViewClick}
+                ref={addViewRef}
+              >
+                <AddIcon style={{ color: "#000" }} />
+                <strong style={{ color: "#000" }}>{t("add")}</strong>
+              </div> */}
+              </PermissionWrapperV2>
+            </Box>
+            <Box
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+              height="100%"
+              gap="16px"
+            >
+              <img src={NoDataPng} alt="No data" width={250} />
+              <Text fontSize="16px" fontWeight="500" color="#475467">
+                No data found
+              </Text>
+            </Box>
+          </Box>
+          // <FiltersBlock>
+          //   <ViewTabSelector
+          //     selectedTabIndex={selectedTabIndex}
+          //     setSelectedTabIndex={setSelectedTabIndex}
+          //     views={views}
+          //     menuItem={menuItem}
+          //   />
+          // </FiltersBlock>
+        )}
+      </ChakraProvider>
+      <Popover
+        id={"add-view-popover"}
+        open={isViewCreateModalOpen}
+        anchorEl={addViewRef.current}
+        onClose={handleCloseViewCreateModal}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <ViewTypeList
+          views={views}
+          computedViewTypes={computedViewTypes}
+          fieldsMap={fieldsMap}
+          handleClose={handleCloseViewCreateModal}
+        />
+      </Popover>
     </>
   );
 };

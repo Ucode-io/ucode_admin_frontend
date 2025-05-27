@@ -1,10 +1,11 @@
-import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
+import {Button as ChakraButton, Flex, Text, grid} from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button, Drawer} from "@mui/material";
 import {
   CellStyleModule,
   CheckboxEditorModule,
+  ClientSideRowModelApiModule,
   ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
@@ -95,6 +96,7 @@ ModuleRegistry.registerModules([
   RenderApiModule,
   MasterDetailModule,
   ServerSideRowModelApiModule,
+  ClientSideRowModelApiModule,
 ]);
 
 const myTheme = themeQuartz.withParams({
@@ -427,6 +429,16 @@ function AggridTreeView(props) {
     constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {});
   }
 
+  const getRouteToNode = (rowNode) => {
+    if (!rowNode.has_child) {
+      return [];
+    }
+    return [
+      ...getRouteToNode(rowNode.has_child),
+      rowNode.key ? rowNode.key : rowNode.data.guid,
+    ];
+  };
+
   const onColumnPinned = (event) => {
     const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
@@ -434,17 +446,20 @@ function AggridTreeView(props) {
       [fieldId]: {pinned},
     });
   };
-
   function createChildTree(parentObj) {
-    const newChild = {
-      guid: generateGUID(),
-      [`${tableSlug}_id`]: parentObj.guid,
-      path: [...parentObj.path, generateGUID()],
-      new_field: true,
-    };
-    gridApi.current.api.applyTransaction({
-      add: [newChild],
-    });
+    // const newChildGUID = generateGUID();
+    // const childPath = [...parentObj.path, newChildGUID];
+    // const route = getRouteToNode([parentObj]);
+    // const newChild = {
+    //   guid: newChildGUID,
+    //   [`${tableSlug}_id`]: parentObj.guid,
+    //   path: childPath,
+    //   new_field: true,
+    // };
+    // gridApi?.current?.api.applyServerSideTransaction({
+    //   route: route.slice(0, route.length - 1),
+    //   update: [newChild],
+    // });
   }
 
   const getDataPath = useCallback((data) => data.path, []);
@@ -799,7 +814,8 @@ function AggridTreeView(props) {
                       cacheBlockSize: 100,
                       maxBlocksInCache: 10,
                     }}
-                    serverSideStoreType="full"
+                    serverSideStoreType="partial"
+                    serverSideTransaction={true}
                     onColumnMoved={getColumnsUpdated}
                     columnDefs={columns}
                     enableClipboard={true}

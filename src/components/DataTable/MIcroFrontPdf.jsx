@@ -40,7 +40,7 @@ export default function MicroFrontPdf({
     <>
       <MenuItem
         onClick={(event) => {
-          projectId === "6fd296f6-9195-4ed3-af84-c1dcca929273"
+          projectId !== "b9029a9f-9431-4a44-b5e4-be148e4cc573"
             ? templateNavigation()
             : navigateToDocumentEditPage(event);
         }}>

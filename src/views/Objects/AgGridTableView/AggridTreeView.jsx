@@ -451,25 +451,30 @@ function AggridTreeView(props) {
     const newChildGUID = generateGUID();
     const newChildPath = [...parentData.path, newChildGUID];
 
-    const newChild = {
+    const newChild = sanitizeRowForGrid({
       guid: newChildGUID,
       [`${tableSlug}_id`]: parentData.guid,
       path: newChildPath,
       new_field: true,
       has_child: false,
-    };
+    });
 
-    const updatedParent = {
+    const updatedParent = sanitizeRowForGrid({
       ...parentData,
       has_child: true,
-    };
+    });
 
     parentNode.setExpanded(true);
 
-    gridApi.current.api.applyServerSideTransaction({
-      route: parentData.path,
+    const route = parentData.path;
+
+    const txResult = gridApi.current.api.applyServerSideTransaction({
+      route,
       add: [newChild],
+      update: [updatedParent],
     });
+
+    console.log("Check aggrid store for child", txResult);
   }
 
   const getDataPath = useCallback((data) => data.path, []);

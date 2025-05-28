@@ -176,7 +176,6 @@ const Permissions = ({
                   tableStyle={{
                     width: "auto",
                     overflow: "visible",
-                    position: "static",
                   }}
                   removableHeight={284}
                   disablePagination

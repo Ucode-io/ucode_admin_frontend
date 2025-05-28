@@ -188,7 +188,7 @@ const TableRow = ({
                     {/* {index === 0 && ( */}
                     <div
                       onClick={() => onRowClick(row, rowIndex)}
-                      className="first_button">
+                      className="newUIi_first_button">
                       <OpenInFullIcon style={{width: 14}} fill="#007aff" />
                     </div>
                     {/* )} */}
@@ -292,7 +292,7 @@ const TableRow = ({
                 onClick={() => {
                   onRowClick(row, rowIndex);
                 }}
-                className="first_button"
+                className="newUIi_first_button"
                 style={{
                   minWidth: "max-content",
                 }}>
@@ -449,7 +449,7 @@ const TableRow = ({
                 onClick={() => {
                   onRowClick(row, rowIndex);
                 }}
-                className="first_button"
+                className="newUIi_first_button"
                 style={{
                   minWidth: "max-content",
                 }}>

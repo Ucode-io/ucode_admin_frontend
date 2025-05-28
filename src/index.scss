@@ -142,6 +142,16 @@ div {
 .overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &:hover {
+    .first_button {
+      display: flex !important;
+    }
+  }
+}
+
+.first_button {
+  display: none !important;
 }
 
 .text_overflow_line {

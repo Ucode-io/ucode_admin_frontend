@@ -1,11 +1,9 @@
 import React, {useMemo, useState} from "react";
 import style from "./style.module.scss";
 import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
-import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {Button, InputAdornment, TextField} from "@mui/material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import constructorViewService from "../../../../services/constructorViewService";
 import {useParams} from "react-router-dom";
 import {useQueryClient} from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -13,9 +11,12 @@ import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
+import constructorViewService from "../../../services/constructorViewService";
+import IconGenerator from "../../../components/IconPicker/IconGenerator";
+import {computedViewTypes} from "../../../utils/constants/viewTypes";
+import layoutService from "../../../services/layoutService";
 
-export default function ViewTypeList({
-  computedViewTypes,
+export default function RelationViewTypeList({
   views,
   handleClose,
   refetchViews,
@@ -84,6 +85,27 @@ export default function ViewTypeList({
     }
   }, [selectedViewTab]);
 
+  function updateLayout() {
+    const updatedTabs = layout.tabs.map((tab, index) =>
+      index === selectedTabIndex
+        ? {
+            ...tab,
+            attributes: {
+              ...tab?.attributes,
+              layout_heading: watch("attributes.layout_heading"),
+            },
+          }
+        : tab
+    );
+
+    const currentUpdatedLayout = {
+      ...layout,
+      tabs: updatedTabs,
+    };
+
+    layoutService.update(currentUpdatedLayout, tableSlug);
+  }
+
   const newViewJSON = useMemo(() => {
     return {
       type: selectedViewTab,
@@ -128,9 +150,8 @@ export default function ViewTypeList({
       filters: [],
       number_field: "",
       menu_id: menuId,
-      order: views.length + 1,
     };
-  }, [menuId, selectedViewTab, tableSlug, views]);
+  }, [menuId, selectedViewTab, tableSlug]);
 
   const createView = () => {
     if (selectedViewTab === "WEBSITE") {
@@ -139,7 +160,6 @@ export default function ViewTypeList({
         constructorViewService
           .createViewMenuId(menuId, {
             ...newViewJSON,
-            is_relation: true,
             attributes: {
               ...newViewJSON?.attributes,
               web_link: watch("web_link"),
@@ -151,7 +171,7 @@ export default function ViewTypeList({
             //   tableSlug,
             //   i18n?.language,
             // ]);
-            refetchViews();
+            // refetchViews();
           })
           .finally(() => {
             setBtnLoader(false);
@@ -165,7 +185,7 @@ export default function ViewTypeList({
       constructorViewService
         .createViewMenuId(menuId, newViewJSON)
         .then(() => {
-          refetchViews();
+          //   refetchViews();
           // queryClient.refetchQueries([
           //   "GET_VIEWS_LIST",
           //   tableSlug,

@@ -28,6 +28,7 @@ import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import menuService from "../../../services/menuService";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
+import ViewAddMenu from "./ViewAddMenu";
 
 function DrawerDetailPage({
   view,
@@ -530,6 +531,7 @@ function DrawerDetailPage({
                       ))}
                     </TabList>
                   )}
+                  <ViewAddMenu setData={setData} fieldsMap={fieldsMap} />
                 </Flex>
 
                 {/* {selectedTabIndex === 0 && ( */}

@@ -22,7 +22,7 @@ function RowIndexField(props) {
         {view?.attributes?.treeData ? (
           <Button
             onClick={() => {
-              colDef?.createChildTree(data);
+              colDef?.createChildTree(node);
             }}
             className="editButton"
             style={{minWidth: "max-content"}}>

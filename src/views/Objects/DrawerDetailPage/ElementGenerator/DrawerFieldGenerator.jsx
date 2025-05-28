@@ -47,6 +47,7 @@ function DrawerFieldGenerator({
   drawerDetail,
   isDisabled,
   activeLang = "",
+  setFormValue = () => {},
 }) {
   const removeLangFromSlug = (slug) => {
     var lastIndex = slug.lastIndexOf("_");
@@ -92,6 +93,7 @@ function DrawerFieldGenerator({
           field={field}
           control={control}
           name={computedSlug}
+          setFormValue={setFormValue}
         />
       );
     case "MULTI_LINE":
@@ -356,12 +358,14 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           control={control}
           name={computedSlug}
+          field={field}
         />
       );
   }
 }
 
 const InputField = ({
+  field,
   control,
   name = "",
   type = "text",

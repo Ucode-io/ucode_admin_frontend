@@ -21,13 +21,14 @@ const TableDataForm = ({
   relOptions,
   isTableView,
   relationfields,
+  onRowClick = () => {},
   getValues = () => {},
   setFormValue = () => {},
   newUi,
 }) => {
-  const { mutate: updateObject } = useMutation(() =>
+  const {mutate: updateObject} = useMutation(() =>
     constructorObjectService.update(tableSlug, {
-      data: { ...getValues(`multi.${index}`) },
+      data: {...getValues(`multi.${index}`)},
     })
   );
 
@@ -52,8 +53,7 @@ const TableDataForm = ({
         position: "relative",
         minWidth: "150px",
         boxSizing: "border-box",
-      }}
-    >
+      }}>
       {Boolean(view?.attributes?.table_editable) ? (
         <CellElementGeneratorForTable field={field} row={row} />
       ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
@@ -94,6 +94,7 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
+          onRowClick={onRowClick}
           newUi={newUi}
         />
       )}

@@ -185,13 +185,13 @@ const TableRow = ({
                       <CellElementGenerator field={virtualColumn} row={row} />
                     )}
 
-                    {index === 0 && (
-                      <div
-                        onClick={() => onRowClick(row, rowIndex)}
-                        className="first_button">
-                        <OpenInFullIcon style={{width: 14}} fill="#007aff" />
-                      </div>
-                    )}
+                    {/* {index === 0 && ( */}
+                    <div
+                      onClick={() => onRowClick(row, rowIndex)}
+                      className="first_button">
+                      <OpenInFullIcon style={{width: 14}} fill="#007aff" />
+                    </div>
+                    {/* )} */}
                     {(virtualColumn.attributes?.disabled ||
                       !virtualColumn.attributes?.field_permission
                         ?.edit_permission) && (

@@ -23,6 +23,12 @@ import styles from "./style.module.scss";
 const RelationTableDrawer = forwardRef(
   (
     {
+      refetch,
+      count,
+      pageCount,
+      columns,
+      dataFetchingLoading,
+      tableData,
       getValues,
       relation,
       shouldGet,
@@ -40,7 +46,6 @@ const RelationTableDrawer = forwardRef(
       setFormVisible,
       formVisible,
       selectedTab,
-      type,
       relatedTable = {},
       getAllData = () => {},
       layoutData,
@@ -49,27 +54,26 @@ const RelationTableDrawer = forwardRef(
       inputChangeHandler = () => {},
       currentPage,
       searchText,
+      tableSlug,
+      filters,
+      setFilters,
+      limit,
+      setLimit,
+      fieldsMap,
     },
     ref
   ) => {
-    const {appId, tableSlug} = useParams();
+    const {menuId} = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const {navigateToForm} = useTabRouter();
     const tableRef = useRef(null);
-    const [filters, setFilters] = useState({});
-    const [drawerState, setDrawerState] = useState(null);
 
-    const [limit, setLimit] = useState(10);
+    const [drawerState, setDrawerState] = useState(null);
     const {i18n} = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
     const [searchParams] = useSearchParams();
-    const menuId = searchParams.get("menuId");
     const [menuItem, setMenuItem] = useState(null);
-
-    const paginationInfo = useSelector(
-      (state) => state?.pagination?.paginationInfo
-    );
 
     const filterChangeHandler = (value, name) => {
       setFilters({
@@ -82,7 +86,7 @@ const RelationTableDrawer = forwardRef(
       defaultValues: {
         show_in_menu: true,
         fields: [],
-        app_id: appId,
+        app_id: menuId,
         summary_section: {
           id: generateGUID(),
           label: "Summary",
@@ -100,24 +104,6 @@ const RelationTableDrawer = forwardRef(
       },
       mode: "all",
     });
-
-    const paginiation = useMemo(() => {
-      const getObject = paginationInfo.find(
-        (el) => el?.tableSlug === tableSlug
-      );
-
-      return getObject?.pageLimit ?? limit;
-    }, [paginationInfo, tableSlug]);
-
-    const limitPage = useMemo(() => {
-      if (typeof paginiation === "number") {
-        return paginiation;
-      } else if (paginiation === "all" && limit === "all") {
-        return undefined;
-      } else {
-        return pageToOffset(currentPage, limit);
-      }
-    }, [paginiation, limit, currentPage]);
 
     const {loader: menuLoader} = useMenuGetByIdQuery({
       menuId: searchParams.get("menuId"),
@@ -257,100 +243,101 @@ const RelationTableDrawer = forwardRef(
       return sortedArray;
     }
 
-    const {
-      data: {
-        tableData = [],
-        pageCount = 1,
-        columns = [],
-        quickFilters = [],
-        fieldsMap = {},
-        count = 0,
-      } = {},
-      refetch,
-      isLoading: dataFetchingLoading,
-    } = useQuery(
-      [
-        "GET_OBJECT_LIST",
-        relatedTableSlug,
-        shouldGet,
-        {
-          filters: computedFilters,
-          offset: pageToOffset(currentPage, limit),
-          limit,
-          searchText,
-        },
-      ],
-      () => {
-        return constructorObjectService.getList(
-          relatedTableSlug,
-          {
-            data: {
-              offset: pageToOffset(currentPage, limit),
-              limit: limitPage !== 0 ? limitPage : limit,
-              from_tab: type === "relation" ? true : false,
-              search: searchText,
-              ...computedFilters,
-            },
-          },
-          {
-            language_setting: i18n?.language,
-          }
-        );
-      },
-      {
-        enabled: !!relatedTableSlug,
-        select: ({data}) => {
-          const tableData = id ? objectToArray(data.response ?? {}) : [];
-          const pageCount =
-            isNaN(data?.count) || tableData.length === 0
-              ? 1
-              : Math.ceil(data.count / paginiation);
+    // const {
+    //   data: {
+    //     tableData = [],
+    //     pageCount = 1,
+    //     columns = [],
+    //     quickFilters = [],
+    //     fieldsMap = {},
+    //     count = 0,
+    //   } = {},
+    //   refetch,
+    //   isLoading: dataFetchingLoading,
+    // } = useQuery(
+    //   [
+    //     "GET_OBJECT_LIST",
+    //     relatedTableSlug,
+    //     shouldGet,
+    //     {
+    //       filters: computedFilters,
+    //       offset: pageToOffset(currentPage, limit),
+    //       limit,
+    //       searchText,
+    //     },
+    //     selectedTab,
+    //   ],
+    //   () => {
+    //     return constructorObjectService.getList(
+    //       relatedTableSlug,
+    //       {
+    //         data: {
+    //           offset: pageToOffset(currentPage, limit),
+    //           limit: limitPage !== 0 ? limitPage : limit,
+    //           from_tab: type === "relation" ? true : false,
+    //           search: searchText,
+    //           ...computedFilters,
+    //         },
+    //       },
+    //       {
+    //         language_setting: i18n?.language,
+    //       }
+    //     );
+    //   },
+    //   {
+    //     enabled: !!relatedTableSlug,
+    //     select: ({data}) => {
+    //       const tableData = id ? objectToArray(data.response ?? {}) : [];
+    //       const pageCount =
+    //         isNaN(data?.count) || tableData.length === 0
+    //           ? 1
+    //           : Math.ceil(data.count / paginiation);
 
-          const fieldsMap = listToMap(data.fields);
-          const count = data?.count;
+    //       const fieldsMap = listToMap(data.fields);
+    //       const count = data?.count;
 
-          const array = [];
-          for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
-            if (
-              getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)
-            ) {
-              if (getRelatedTabeSlug?.attributes?.fixedColumns[key])
-                array.push({
-                  id: key,
-                  value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key],
-                });
-            }
-          }
+    //       const array = [];
+    //       for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
+    //         if (
+    //           getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)
+    //         ) {
+    //           if (getRelatedTabeSlug?.attributes?.fixedColumns[key])
+    //             array.push({
+    //               id: key,
+    //               value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key],
+    //             });
+    //         }
+    //       }
 
-          const columns = customSortArray(
-            (Array.isArray(
-              layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
-            )
-              ? layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
-              : []) ?? getRelatedTabeSlug?.columns,
-            array.map((el) => el.id)
-          )
-            ?.map((el) => fieldsMap[el])
-            ?.filter((el) => el);
+    //       const columns = customSortArray(
+    //         (Array.isArray(
+    //           layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+    //         )
+    //           ? layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+    //           : []) ?? getRelatedTabeSlug?.columns,
+    //         array.map((el) => el.id)
+    //       )
+    //         ?.map((el) => fieldsMap[el])
+    //         ?.filter((el) => el);
 
-          const quickFilters = getRelatedTabeSlug.quick_filters
-            ?.map(({field_id}) => fieldsMap[field_id])
-            ?.filter((el) => el);
+    //       const quickFilters = getRelatedTabeSlug.quick_filters
+    //         ?.map(({field_id}) => fieldsMap[field_id])
+    //         ?.filter((el) => el);
 
-          return {
-            tableData,
-            pageCount,
-            columns,
-            quickFilters,
-            fieldsMap,
-            count,
-          };
-        },
-        onSuccess: () => {
-          setFormValue("multi", tableData);
-        },
-      }
-    );
+    //       return {
+    //         tableData,
+    //         pageCount,
+    //         columns,
+    //         quickFilters,
+    //         fieldsMap,
+    //         count,
+    //       };
+    //     },
+    //     onSuccess: () => {
+    //       setFormValue("multi", tableData);
+    //     },
+    //   }
+    // );
 
     const computedRelationFields = useMemo(() => {
       return Object.values(fieldsMap)?.filter((element) => {
@@ -451,17 +438,17 @@ const RelationTableDrawer = forwardRef(
       }
     );
 
-    const {data: {custom_events: customEvents = []} = {}} =
-      useCustomActionsQuery({
-        tableSlug: relatedTableSlug,
-      });
+    // const {data: {custom_events: customEvents = []} = {}} =
+    //   useCustomActionsQuery({
+    //     tableSlug: relatedTableSlug,
+    //   });
 
     const navigateToEditPage = (row) => {
       navigateToForm(relatedTableSlug, "EDIT", row, {}, menuId);
     };
 
     const navigateToTablePage = () => {
-      navigate(`/main/${appId}/object/${relatedTableSlug}`, {
+      navigate(`/main/${menuId}/object/${relatedTableSlug}`, {
         state: {
           [`${tableSlug}_${
             getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"
@@ -490,6 +477,7 @@ const RelationTableDrawer = forwardRef(
         <div className={styles.tableBlock}>
           {viewPermission && (
             <DrawerObjectDataTable
+              fieldsMap={fieldsMap}
               selectedTab={selectedTab}
               relOptions={relOptions}
               defaultLimit={getRelatedTabeSlug?.default_limit}
@@ -542,7 +530,7 @@ const RelationTableDrawer = forwardRef(
                 getRelatedTabeSlug?.attributes?.summaries
               }
               isChecked={(row) => selectedObjects?.includes(row?.guid)}
-              onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+              // onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
               title={"First, you need to create an object"}
               tableStyle={{

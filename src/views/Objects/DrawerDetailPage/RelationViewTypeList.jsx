@@ -5,29 +5,28 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {Button, InputAdornment, TextField} from "@mui/material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import {useParams} from "react-router-dom";
-import {useQueryClient} from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
-import constructorViewService from "../../../services/constructorViewService";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import {computedViewTypes} from "../../../utils/constants/viewTypes";
 import layoutService from "../../../services/layoutService";
 
 export default function RelationViewTypeList({
+  tableSlug,
+  layoutTabs,
   relationField,
   layout,
   handleClose = () => {},
+  setLayoutTabs = () => {},
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
-  const tableSlug = relationField?.table_slug;
 
-  const queryClient = useQueryClient();
   const {control, watch} = useForm();
   const [error, setError] = useState(false);
 
@@ -128,32 +127,19 @@ export default function RelationViewTypeList({
     } else {
       setBtnLoader(true);
       updateLayout(newViewJSON);
-      // constructorViewService
-      //   .createViewMenuId(menuId, newViewJSON)
-      //   .then(() => {
-      //     //   refetchViews();
-      //     // queryClient.refetchQueries([
-      //     //   "GET_VIEWS_LIST",
-      //     //   tableSlug,
-      //     //   i18n?.language,
-      //     // ]);
-      //   })
-      //   .finally(() => {
-      //     setBtnLoader(false);
-      //     handleClose();
-      //   });
     }
   };
 
   function updateLayout(newTab) {
-    const updatedTabs = [...layout?.tabs, newTab];
+    const updatedTabs = [...layoutTabs, newTab];
 
     const currentUpdatedLayout = {
       ...layout,
       tabs: updatedTabs,
     };
 
-    layoutService.update(currentUpdatedLayout, tableSlug).then(() => {
+    layoutService.update(currentUpdatedLayout, tableSlug).then((res) => {
+      setLayoutTabs(res?.tabs);
       setBtnLoader(false);
       handleClose();
     });
@@ -244,10 +230,6 @@ export default function RelationViewTypeList({
               variant="contained"
               loading={btnLoader}
               onClick={() => {
-                // handleClose();
-                // openModal();
-                // setSelectedView("NEW");
-                // setTypeNewView(selectedViewTab);
                 createView();
               }}>
               Create View {selectedViewTab}

@@ -6,7 +6,13 @@ import {useTranslation} from "react-i18next";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import RelationViewTypeList from "./RelationViewTypeList";
 
-function ViewAddMenu({fieldsMap, layout, setData = () => {}}) {
+function ViewAddMenu({
+  fieldsMap,
+  layoutTabs,
+  tableSlug,
+  layout,
+  setLayoutTabs = () => {},
+}) {
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const [viewCreate, setViewCreate] = useState(false);
@@ -72,6 +78,9 @@ function ViewAddMenu({fieldsMap, layout, setData = () => {}}) {
 
       <Dialog open={viewCreate} onClose={handleCloseModal}>
         <RelationViewTypeList
+          layoutTabs={layoutTabs}
+          setLayoutTabs={setLayoutTabs}
+          tableSlug={tableSlug}
           layout={layout}
           relationField={relationField}
           handleClose={handleCloseModal}

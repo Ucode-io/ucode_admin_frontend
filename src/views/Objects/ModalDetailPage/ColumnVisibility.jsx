@@ -1,4 +1,3 @@
-import {ChevronLeftIcon} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -10,12 +9,11 @@ import {
   Spinner,
   Switch,
 } from "@chakra-ui/react";
-import {useEffect, useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import layoutService from "../../../services/layoutService";
-import menuService from "../../../services/menuService";
 import {columnIcons} from "../../../utils/constants/columnIcons";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import {useMutation} from "react-query";
@@ -24,20 +22,19 @@ import useDebounce from "../../../hooks/useDebounce";
 const ColumnsVisibility = ({
   data,
   fieldsMap,
+  tableSlug,
+  layoutTabs,
   onBackClick,
   tableLan,
   selectedTabIndex,
   getAllData = () => {},
-  setOpenedMenu = () => {},
 }) => {
-  const {tableSlug} = useParams();
   const [searchTerm, setSearchTerm] = useState("");
 
   const {i18n} = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [menuItem, setMenuItem] = useState(null);
   const [computedColumns, setComputedColumns] = useState(
-    data?.tabs?.[selectedTabIndex]?.attributes?.columns || []
+    layoutTabs?.[selectedTabIndex]?.attributes?.columns || []
   );
 
   const allFields = useMemo(() => {
@@ -49,7 +46,7 @@ const ColumnsVisibility = ({
       await layoutService.update(
         {
           ...data,
-          tabs: data.tabs.map((item, index) =>
+          tabs: layoutTabs?.map((item, index) =>
             index === selectedTabIndex
               ? {
                   ...item,
@@ -68,7 +65,7 @@ const ColumnsVisibility = ({
 
         return () => setComputedColumns(previousColumns);
       },
-      onSuccess: () => {
+      onSuccess: (data) => {
         getAllData();
       },
       onError: (err, _, rollback) => {
@@ -121,18 +118,6 @@ const ColumnsVisibility = ({
       );
     }
   };
-
-  useEffect(() => {
-    if (searchParams.get("menuId")) {
-      menuService
-        .getByID({
-          menuId: searchParams.get("menuId"),
-        })
-        .then((res) => {
-          setMenuItem(res);
-        });
-    }
-  }, []);
 
   const inputChangeHandler = useDebounce((val) => setSearchTerm(val), 500);
 

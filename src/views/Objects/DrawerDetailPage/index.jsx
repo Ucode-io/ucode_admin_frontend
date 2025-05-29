@@ -29,6 +29,7 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import menuService from "../../../services/menuService";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import ViewAddMenu from "./ViewAddMenu";
+import RemoveRelationView from "./RemoveRelationView";
 
 function DrawerDetailPage({
   view,
@@ -73,6 +74,7 @@ function DrawerDetailPage({
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
+  const [layoutTabs, setLayoutTabs] = useState([]);
 
   const permissions = useSelector(
     (state) => state?.permissions?.permissions?.[tableSlug]
@@ -137,6 +139,7 @@ function DrawerDetailPage({
           };
         }),
       };
+      setLayoutTabs(layout2?.tabs);
       setData(layout2);
       setSections(sortSections(sections));
       setSummary(layout?.summary_fields ?? []);
@@ -208,6 +211,7 @@ function DrawerDetailPage({
           };
         }),
       };
+      setLayoutTabs(layout2?.tabs);
       setData(layout2);
       setSections(sortSections(sections));
 
@@ -503,11 +507,13 @@ function DrawerDetailPage({
 
                   {!layout?.is_visible_section && (
                     <TabList
+                      // className={"scrollbarNone"}
                       style={{
                         borderBottom: "none",
                         overflowX: "auto",
+                        maxWidth: "72%",
                       }}>
-                      {data?.tabs?.map((el, index) => (
+                      {layoutTabs?.map((el, index) => (
                         <Tab
                           onClick={(e) => {
                             setSelectTab(el);
@@ -517,25 +523,51 @@ function DrawerDetailPage({
                           style={{
                             whiteSpace: "nowrap",
                             height: "24px",
-                            padding: "0 10px",
+                            padding:
+                              el?.type === "section"
+                                ? `0 10px 0 10px`
+                                : `0 0 0 10px`,
                             fontSize: "11px",
                             fontWeight: "500",
                           }}>
-                          {el?.type === "relation"
-                            ? el?.label ||
-                              el?.relation?.attributes?.[
-                                `label_to_${i18n?.language}`
-                              ]
-                            : el?.attributes?.[`label_${i18n?.language}`] ||
-                              el?.label}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: "6px",
+                            }}>
+                            <Box>
+                              {el?.type === "relation"
+                                ? el?.label ||
+                                  el?.relation?.attributes?.[
+                                    `label_to_${i18n?.language}`
+                                  ]
+                                : el?.attributes?.[`label_${i18n?.language}`] ||
+                                  el?.label}
+                            </Box>
+                            {el?.type !== "section" && (
+                              <RemoveRelationView
+                                setSelectTab={setSelectTab}
+                                setSelectedTabIndex={setSelectedTabIndex}
+                                tableSlug={tableSlug}
+                                layoutTabs={layoutTabs}
+                                layout={layout}
+                                setLayoutTabs={setLayoutTabs}
+                                tab={el}
+                              />
+                            )}
+                          </Box>
                         </Tab>
                       ))}
                     </TabList>
                   )}
                   <ViewAddMenu
+                    layoutTabs={layoutTabs}
+                    tableSlug={tableSlug}
                     layout={layout}
-                    setData={setData}
                     fieldsMap={fieldsMap}
+                    setLayoutTabs={setLayoutTabs}
                   />
                 </Flex>
 
@@ -582,12 +614,13 @@ function DrawerDetailPage({
                   />
                 </DrawerBody>
               </TabPanel>
-              {data?.tabs
+              {layoutTabs
                 ?.filter((tab) => tab?.type !== "section")
                 .map(() => (
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        layoutTabs={layoutTabs}
                         selectedTab={selectedTab}
                         getValues={getValues}
                         handleMouseDown={handleMouseDown}

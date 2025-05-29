@@ -56,6 +56,7 @@ const DrawerObjectDataTable = ({
   multipleDelete = () => {},
   pageCount,
   tableLan = {},
+  fieldsMap,
   layoutData,
 }) => {
   const location = useLocation();

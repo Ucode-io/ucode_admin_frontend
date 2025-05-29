@@ -522,7 +522,8 @@ function DrawerDetailPage({
                             fontWeight: "500",
                           }}>
                           {el?.type === "relation"
-                            ? el?.relation?.attributes?.[
+                            ? el?.label ||
+                              el?.relation?.attributes?.[
                                 `label_to_${i18n?.language}`
                               ]
                             : el?.attributes?.[`label_${i18n?.language}`] ||

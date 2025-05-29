@@ -16,21 +16,21 @@ import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import {computedViewTypes} from "../../../utils/constants/viewTypes";
 import layoutService from "../../../services/layoutService";
 
-export default function RelationViewTypeList({relationField, layout}) {
+export default function RelationViewTypeList({
+  relationField,
+  layout,
+  handleClose = () => {},
+}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
   const tableSlug = relationField?.table_slug;
 
-  const tabs = layout?.tabs;
-
-  // console.log("tabstabs", [...tabs, {label: "sdsdas", value: "sss"}]);
-
   const queryClient = useQueryClient();
   const {control, watch} = useForm();
   const [error, setError] = useState(false);
-  console.log("relationFieldrelationField", relationField);
+
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
       case "TABLE":
@@ -153,7 +153,10 @@ export default function RelationViewTypeList({relationField, layout}) {
       tabs: updatedTabs,
     };
 
-    layoutService.update(currentUpdatedLayout, tableSlug);
+    layoutService.update(currentUpdatedLayout, tableSlug).then(() => {
+      setBtnLoader(false);
+      handleClose();
+    });
   }
 
   return (

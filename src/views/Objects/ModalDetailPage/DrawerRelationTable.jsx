@@ -168,7 +168,6 @@ const DrawerRelationTable = ({
             <PermissionWrapperV2 tableSlug={tableSlug} type="write">
               <Button
                 h={"30px"}
-                rightIcon={<ChevronDownIcon fontSize={18} />}
                 onClick={() =>
                   navigateToForm(
                     selectedTab?.relation?.relation_table_slug,

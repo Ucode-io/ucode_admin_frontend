@@ -531,7 +531,11 @@ function DrawerDetailPage({
                       ))}
                     </TabList>
                   )}
-                  <ViewAddMenu setData={setData} fieldsMap={fieldsMap} />
+                  <ViewAddMenu
+                    layout={layout}
+                    setData={setData}
+                    fieldsMap={fieldsMap}
+                  />
                 </Flex>
 
                 {/* {selectedTabIndex === 0 && ( */}

@@ -16,21 +16,21 @@ import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import {computedViewTypes} from "../../../utils/constants/viewTypes";
 import layoutService from "../../../services/layoutService";
 
-export default function RelationViewTypeList({
-  views,
-  handleClose,
-  refetchViews,
-  tableSlug,
-}) {
+export default function RelationViewTypeList({relationField, layout}) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
+  const tableSlug = relationField?.table_slug;
+
+  const tabs = layout?.tabs;
+
+  // console.log("tabstabs", [...tabs, {label: "sdsdas", value: "sss"}]);
 
   const queryClient = useQueryClient();
   const {control, watch} = useForm();
   const [error, setError] = useState(false);
-
+  console.log("relationFieldrelationField", relationField);
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
       case "TABLE":
@@ -85,18 +85,68 @@ export default function RelationViewTypeList({
     }
   }, [selectedViewTab]);
 
-  function updateLayout() {
-    const updatedTabs = layout.tabs.map((tab, index) =>
-      index === selectedTabIndex
-        ? {
-            ...tab,
-            attributes: {
-              ...tab?.attributes,
-              layout_heading: watch("attributes.layout_heading"),
-            },
-          }
-        : tab
-    );
+  const newViewJSON = useMemo(() => {
+    return {
+      type: "relation",
+      view_type: selectedViewTab,
+      label: relationField?.attributes?.[`label_${i18n?.language}`],
+      layout_id: layout?.id,
+      relation_id: relationField?.relation_id,
+      relation: {
+        ...relationField,
+      },
+    };
+  }, [menuId, selectedViewTab, tableSlug]);
+
+  const createView = () => {
+    if (selectedViewTab === "WEBSITE") {
+      if (watch("web_link")) {
+        setBtnLoader(true);
+        // constructorViewService
+        //   .createViewMenuId(menuId, {
+        //     ...newViewJSON,
+        //     attributes: {
+        //       ...newViewJSON?.attributes,
+        //       web_link: watch("web_link"),
+        //     },
+        //   })
+        //   .then(() => {
+        //     // queryClient.refetchQueries([
+        //     //   "GET_VIEWS_LIST",
+        //     //   tableSlug,
+        //     //   i18n?.language,
+        //     // ]);
+        //     // refetchViews();
+        //   })
+        //   .finally(() => {
+        //     setBtnLoader(false);
+        //     handleClose();
+        //   });
+      } else {
+        setError(true);
+      }
+    } else {
+      setBtnLoader(true);
+      updateLayout(newViewJSON);
+      // constructorViewService
+      //   .createViewMenuId(menuId, newViewJSON)
+      //   .then(() => {
+      //     //   refetchViews();
+      //     // queryClient.refetchQueries([
+      //     //   "GET_VIEWS_LIST",
+      //     //   tableSlug,
+      //     //   i18n?.language,
+      //     // ]);
+      //   })
+      //   .finally(() => {
+      //     setBtnLoader(false);
+      //     handleClose();
+      //   });
+    }
+  };
+
+  function updateLayout(newTab) {
+    const updatedTabs = [...layout?.tabs, newTab];
 
     const currentUpdatedLayout = {
       ...layout,
@@ -105,99 +155,6 @@ export default function RelationViewTypeList({
 
     layoutService.update(currentUpdatedLayout, tableSlug);
   }
-
-  const newViewJSON = useMemo(() => {
-    return {
-      type: selectedViewTab,
-      users: [],
-      name: "",
-      default_limit: "",
-      main_field: "",
-      time_interval: 60,
-      status_field_slug: "",
-      disable_dates: {
-        day_slug: "",
-        table_slug: "",
-        time_from_slug: "",
-        time_to_slug: "",
-      },
-      columns: [],
-      group_fields: [],
-      navigate: {
-        params: [],
-        url: "",
-        headers: [],
-        cookies: [],
-      },
-      table_slug: tableSlug,
-      updated_fields: [],
-      multiple_insert: false,
-      multiple_insert_field: "",
-      chartOfAccounts: [{}],
-      attributes: {
-        chart_of_accounts: [
-          {
-            chart_of_account: [],
-          },
-        ],
-        percent: {
-          field_id: null,
-        },
-        group_by_columns: [],
-        summaries: [],
-        name_ru: "",
-      },
-      filters: [],
-      number_field: "",
-      menu_id: menuId,
-    };
-  }, [menuId, selectedViewTab, tableSlug]);
-
-  const createView = () => {
-    if (selectedViewTab === "WEBSITE") {
-      if (watch("web_link")) {
-        setBtnLoader(true);
-        constructorViewService
-          .createViewMenuId(menuId, {
-            ...newViewJSON,
-            attributes: {
-              ...newViewJSON?.attributes,
-              web_link: watch("web_link"),
-            },
-          })
-          .then(() => {
-            // queryClient.refetchQueries([
-            //   "GET_VIEWS_LIST",
-            //   tableSlug,
-            //   i18n?.language,
-            // ]);
-            // refetchViews();
-          })
-          .finally(() => {
-            setBtnLoader(false);
-            handleClose();
-          });
-      } else {
-        setError(true);
-      }
-    } else {
-      setBtnLoader(true);
-      constructorViewService
-        .createViewMenuId(menuId, newViewJSON)
-        .then(() => {
-          //   refetchViews();
-          // queryClient.refetchQueries([
-          //   "GET_VIEWS_LIST",
-          //   tableSlug,
-          //   i18n?.language,
-          // ]);
-        })
-        .finally(() => {
-          setBtnLoader(false);
-          handleClose();
-        });
-    }
-  };
 
   return (
     <div className={style.viewTypeList}>

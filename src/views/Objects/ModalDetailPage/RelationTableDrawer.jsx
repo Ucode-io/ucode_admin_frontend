@@ -195,144 +195,11 @@ const RelationTableDrawer = forwardRef(
       });
     };
 
-    const computedFilters = useMemo(() => {
-      const relationFilter = {};
-
-      if (getRelatedTabeSlug?.type === "Many2Many")
-        relationFilter[`${tableSlug}_ids`] = id;
-      else if (getRelatedTabeSlug?.type === "Many2Dynamic")
-        relationFilter[
-          `${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`
-        ] = id;
-      else if (
-        getRelatedTabeSlug?.relation_index &&
-        getRelatedTabeSlug?.relation_index > 1
-      )
-        relationFilter[
-          `${tableSlug}_id_${getRelatedTabeSlug?.relation_index}`
-        ] = id;
-      else relationFilter[`${tableSlug}_id`] = id;
-      return {
-        ...filters,
-        ...relationFilter,
-      };
-    }, [
-      filters,
-      tableSlug,
-      id,
-      getRelatedTabeSlug?.type,
-      getRelatedTabeSlug?.relation_field_slug,
-    ]);
-
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
       if (getRelatedTabeSlug?.permission?.view_permission) return true;
       else return false;
     }, [getRelatedTabeSlug?.permission?.view_permission]);
-
-    function customSortArray(a, b) {
-      const commonItems = a?.filter((item) => b.includes(item));
-      commonItems?.sort();
-      const remainingItems = a?.filter((item) => !b.includes(item));
-      const sortedArray = commonItems?.concat(remainingItems);
-      return sortedArray;
-    }
-
-    // const {
-    //   data: {
-    //     tableData = [],
-    //     pageCount = 1,
-    //     columns = [],
-    //     quickFilters = [],
-    //     fieldsMap = {},
-    //     count = 0,
-    //   } = {},
-    //   refetch,
-    //   isLoading: dataFetchingLoading,
-    // } = useQuery(
-    //   [
-    //     "GET_OBJECT_LIST",
-    //     relatedTableSlug,
-    //     shouldGet,
-    //     {
-    //       filters: computedFilters,
-    //       offset: pageToOffset(currentPage, limit),
-    //       limit,
-    //       searchText,
-    //     },
-    //     selectedTab,
-    //   ],
-    //   () => {
-    //     return constructorObjectService.getList(
-    //       relatedTableSlug,
-    //       {
-    //         data: {
-    //           offset: pageToOffset(currentPage, limit),
-    //           limit: limitPage !== 0 ? limitPage : limit,
-    //           from_tab: type === "relation" ? true : false,
-    //           search: searchText,
-    //           ...computedFilters,
-    //         },
-    //       },
-    //       {
-    //         language_setting: i18n?.language,
-    //       }
-    //     );
-    //   },
-    //   {
-    //     enabled: !!relatedTableSlug,
-    //     select: ({data}) => {
-    //       const tableData = id ? objectToArray(data.response ?? {}) : [];
-    //       const pageCount =
-    //         isNaN(data?.count) || tableData.length === 0
-    //           ? 1
-    //           : Math.ceil(data.count / paginiation);
-
-    //       const fieldsMap = listToMap(data.fields);
-    //       const count = data?.count;
-
-    //       const array = [];
-    //       for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
-    //         if (
-    //           getRelatedTabeSlug?.attributes?.fixedColumns.hasOwnProperty(key)
-    //         ) {
-    //           if (getRelatedTabeSlug?.attributes?.fixedColumns[key])
-    //             array.push({
-    //               id: key,
-    //               value: getRelatedTabeSlug?.attributes?.fixedColumns?.[key],
-    //             });
-    //         }
-    //       }
-
-    //       const columns = customSortArray(
-    //         (Array.isArray(
-    //           layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
-    //         )
-    //           ? layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
-    //           : []) ?? getRelatedTabeSlug?.columns,
-    //         array.map((el) => el.id)
-    //       )
-    //         ?.map((el) => fieldsMap[el])
-    //         ?.filter((el) => el);
-
-    //       const quickFilters = getRelatedTabeSlug.quick_filters
-    //         ?.map(({field_id}) => fieldsMap[field_id])
-    //         ?.filter((el) => el);
-
-    //       return {
-    //         tableData,
-    //         pageCount,
-    //         columns,
-    //         quickFilters,
-    //         fieldsMap,
-    //         count,
-    //       };
-    //     },
-    //     onSuccess: () => {
-    //       setFormValue("multi", tableData);
-    //     },
-    //   }
-    // );
 
     const computedRelationFields = useMemo(() => {
       return Object.values(fieldsMap)?.filter((element) => {
@@ -432,11 +299,6 @@ const RelationTableDrawer = forwardRef(
         },
       }
     );
-
-    // const {data: {custom_events: customEvents = []} = {}} =
-    //   useCustomActionsQuery({
-    //     tableSlug: relatedTableSlug,
-    //   });
 
     const navigateToEditPage = (row) => {
       navigate(`/${menuId}/detail?p=${row?.guid}`, {

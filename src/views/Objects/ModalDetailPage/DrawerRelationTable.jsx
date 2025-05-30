@@ -18,7 +18,7 @@ import {Box} from "@mui/material";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useTabRouter from "../../../hooks/useTabRouter";
 import RelationTableDrawer from "./RelationTableDrawer";
@@ -47,20 +47,22 @@ const DrawerRelationTable = ({
   data,
   tableLan = {},
   relatedTable,
-  tableSlug: tableSlugFromProps,
+  tableSlug,
   getValues = () => {},
   handleMouseDown = () => {},
 }) => {
   const myRef = useRef();
   const {i18n} = useTranslation();
   const {navigateToForm} = useTabRouter();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
+  const {menuId} = useParams();
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+  const id = searchParams.get("p");
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({});
@@ -68,9 +70,6 @@ const DrawerRelationTable = ({
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
-
-  const tableSlug = tableSlugFromProps || tableSlugFromParams;
-  const id = idFromProps ?? idFromParams;
 
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
@@ -167,7 +166,7 @@ const DrawerRelationTable = ({
             limit: limitPage !== 0 ? limitPage : limit,
             from_tab: true,
             search: searchText,
-            ...computedFilters,
+            // ...computedFilters,
           },
         },
         {
@@ -178,7 +177,7 @@ const DrawerRelationTable = ({
     {
       enabled: !!relatedTableSlug,
       select: ({data}) => {
-        const tableData = id ? objectToArray(data.response ?? {}) : [];
+        const tableData = data?.response || [];
         const pageCount =
           isNaN(data?.count) || tableData.length === 0
             ? 1
@@ -199,7 +198,7 @@ const DrawerRelationTable = ({
               });
           }
         }
-        console.log("datadatadatadatadata", layoutTabs);
+
         const columns = customSortArray(
           (Array.isArray(layoutTabs?.[selectedTabIndex]?.attributes?.columns)
             ? layoutTabs?.[selectedTabIndex]?.attributes?.columns
@@ -227,7 +226,7 @@ const DrawerRelationTable = ({
       },
     }
   );
-
+  console.log("tableDatatableData", tableData);
   const setCreateFormVisible = (relationId, value) => {
     setRelationsCreateFormVisible((prev) => ({
       ...prev,
@@ -254,7 +253,7 @@ const DrawerRelationTable = ({
     setCurrentPage(1);
     setSearchText(val);
   }, 300);
-  console.log("columnscolumns", columns);
+
   return (
     <>
       <Box py={"5px"} sx={{height: "100vh"}}>
@@ -292,13 +291,11 @@ const DrawerRelationTable = ({
               <Button
                 h={"30px"}
                 onClick={() =>
-                  navigateToForm(
-                    selectedTab?.relation?.relation_table_slug,
-                    "CREATE",
-                    {},
-                    {id: idFromParams},
-                    searchParams.get("menuId")
-                  )
+                  navigate(`/${menuId}/detail/create`, {
+                    state: {
+                      tableSlug: relatedTableSlug,
+                    },
+                  })
                 }>
                 Create item
               </Button>

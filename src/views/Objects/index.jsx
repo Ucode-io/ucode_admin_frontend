@@ -109,7 +109,6 @@ const ObjectsPage = () => {
     },
     {
       enabled: Boolean(selectedView?.table_slug),
-
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),

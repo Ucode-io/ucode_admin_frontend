@@ -620,6 +620,7 @@ function DrawerDetailPage({
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        navigateToEditPage={navigateToEditPage}
                         layoutTabs={layoutTabs}
                         selectedTab={selectedTab}
                         getValues={getValues}

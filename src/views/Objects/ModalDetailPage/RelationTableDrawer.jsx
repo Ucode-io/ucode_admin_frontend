@@ -2,20 +2,16 @@ import {Drawer} from "@mui/material";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
+import {useMutation, useQueryClient} from "react-query";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import useTabRouter from "../../../hooks/useTabRouter";
-import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import {useMenuGetByIdQuery} from "../../../services/menuService";
 import {generateGUID} from "../../../utils/generateID";
 import {listToMap} from "../../../utils/listToMap";
-import {objectToArray} from "../../../utils/objectToArray";
-import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import DrawerObjectDataTable from "./DrawerObjectDataTable";
 import styles from "./style.module.scss";
@@ -74,6 +70,7 @@ const RelationTableDrawer = forwardRef(
     const [relOptions, setRelOptions] = useState([]);
     const [searchParams] = useSearchParams();
     const [menuItem, setMenuItem] = useState(null);
+    const relatedTableSlug = selectedTab?.relation.relation_table_slug;
 
     const filterChangeHandler = (value, name) => {
       setFilters({
@@ -105,15 +102,15 @@ const RelationTableDrawer = forwardRef(
       mode: "all",
     });
 
-    const {loader: menuLoader} = useMenuGetByIdQuery({
-      menuId: searchParams.get("menuId"),
-      queryParams: {
-        enabled: Boolean(searchParams.get("menuId")),
-        onSuccess: (res) => {
-          setMenuItem(res);
-        },
-      },
-    });
+    // const {loader: menuLoader} = useMenuGetByIdQuery({
+    //   menuId: searchParams.get("menuId"),
+    //   queryParams: {
+    //     enabled: Boolean(searchParams.get("menuId")),
+    //     onSuccess: (res) => {
+    //       setMenuItem(res);
+    //     },
+    //   },
+    // });
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
@@ -232,8 +229,6 @@ const RelationTableDrawer = forwardRef(
       if (getRelatedTabeSlug?.permission?.view_permission) return true;
       else return false;
     }, [getRelatedTabeSlug?.permission?.view_permission]);
-
-    const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
     function customSortArray(a, b) {
       const commonItems = a?.filter((item) => b.includes(item));
@@ -444,7 +439,12 @@ const RelationTableDrawer = forwardRef(
     //   });
 
     const navigateToEditPage = (row) => {
-      navigateToForm(relatedTableSlug, "EDIT", row, {}, menuId);
+      navigate(`/${menuId}/detail?p=${row?.guid}`, {
+        state: {
+          table_slug: relatedTableSlug,
+        },
+      });
+      // navigateToForm(relatedTableSlug, "EDIT", row, {}, menuId);
     };
 
     const navigateToTablePage = () => {
@@ -530,7 +530,6 @@ const RelationTableDrawer = forwardRef(
                 getRelatedTabeSlug?.attributes?.summaries
               }
               isChecked={(row) => selectedObjects?.includes(row?.guid)}
-              // onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
               title={"First, you need to create an object"}
               tableStyle={{

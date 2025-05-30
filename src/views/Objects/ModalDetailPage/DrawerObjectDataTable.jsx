@@ -76,6 +76,7 @@ const DrawerObjectDataTable = ({
   useOnClickOutside(popupRef, () => setColumnId(""));
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
+
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -287,6 +288,7 @@ const DrawerObjectDataTable = ({
             {(isRelationTable ? fields : data).map(
               (virtualRowObject, index) => (
                 <TableRow
+                  relatedTableSlug={relatedTableSlug}
                   key={isRelationTable ? virtualRowObject?.id : index}
                   tableView={tableView}
                   width={"40px"}
@@ -302,7 +304,6 @@ const DrawerObjectDataTable = ({
                   selectedObjectsForDelete={selectedObjectsForDelete}
                   setSelectedObjectsForDelete={setSelectedObjectsForDelete}
                   isRelationTable={isRelationTable}
-                  relatedTableSlug={relatedTableSlug}
                   onRowClick={onRowClick}
                   isChecked={isChecked}
                   calculateWidthFixedColumn={calculateWidthFixedColumn}

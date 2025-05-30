@@ -43,7 +43,7 @@ const FileUploadModal = ({closeModal, menuItem}) => {
             {loader ? (
               <CircularProgress />
             ) : (
-              <FileUploadWithDrag onUpload={onUpload} />
+              <FileUploadWithDrag maxSizeMB={10} onUpload={onUpload} />
             )}
           </Box>
         </Card>

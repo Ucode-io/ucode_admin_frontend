@@ -5,6 +5,7 @@ import {Chip} from "./chip";
 import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
 import {useTranslation} from "react-i18next";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const FilterAutoComplete = ({
   options = [],
@@ -31,7 +32,16 @@ const FilterAutoComplete = ({
   };
 
   const inputChangeHandler = useDebounce((val) => {
-    setSearchText(val);
+    if (field.type === FIELD_TYPES.NUMBER) {
+      if (val === "-") {
+        setSearchText("");
+        return;
+      } else {
+        setSearchText(Number(val));
+      }
+    } else {
+      setSearchText(val);
+    }
   }, 300);
 
   const closeMenu = () => {

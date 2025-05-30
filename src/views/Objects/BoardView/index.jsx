@@ -1,40 +1,26 @@
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {Badge, Box, Button, IconButton} from "@mui/material";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import {Box} from "@mui/material";
+import clsx from "clsx";
 import {useEffect, useId, useMemo, useRef, useState} from "react";
-import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
-import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
-import useTabRouter from "../../../hooks/useTabRouter";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import constructorObjectService from "../../../services/constructorObjectService";
-import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
+import layoutService from "../../../services/layoutService";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
 import {applyDrag} from "../../../utils/applyDrag";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
-import ColumnVisible from "../ColumnVisible";
-import ShareModal from "../ShareModal/ShareModal";
-import FastFilter from "../components/FastFilter";
-import ViewTabSelector from "../components/ViewTypeSelector";
-import style from "../style.module.scss";
-import BoardColumn from "./BoardColumn";
-import BoardGroupButton from "./BoardGroupBy";
-import styles from "./style.module.scss";
-import {Add} from "@mui/icons-material";
-import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
-import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import clsx from "clsx";
-import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
-import {useProjectGetByIdQuery} from "../../../services/projectService";
-import layoutService from "../../../services/layoutService";
+import FastFilter from "../components/FastFilter";
+import BoardColumn from "./BoardColumn";
+import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
+import styles from "./style.module.scss";
 
 const BoardView = ({
   view,
@@ -51,35 +37,26 @@ const BoardView = ({
   layoutType,
   setLayoutType,
 }) => {
-  const visibleForm = useForm();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.company?.projectId);
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const {tableSlug, appId} = useParams();
+  const {menuId} = useParams();
+  const tableSlug = view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const id = useId();
   const {t, i18n} = useTranslation();
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
   const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
-
   const [selectedView, setSelectedView] = useState(null);
-  const [tab, setTab] = useState();
-  const {navigateToForm} = useTabRouter();
   const {filters} = useFilters(tableSlug, view.id);
-
   const boardRef = useRef(null);
   const subGroupById = view?.attributes?.sub_group_by_id;
-
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
-
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const {
@@ -94,7 +71,7 @@ const BoardView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {
@@ -146,7 +123,7 @@ const BoardView = ({
   };
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
 

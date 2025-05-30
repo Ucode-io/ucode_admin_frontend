@@ -260,7 +260,6 @@ const TableRow = ({
               }}>
               <Button
                 onClick={() => {
-                  console.log("ssssssss", row);
                   onRowClick(row, rowIndex);
                 }}
                 className="first_button"

@@ -74,6 +74,7 @@ import NewModalDetailPage from "../../../components/NewModalDetailPage";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -115,22 +116,22 @@ function AggridTreeView(props) {
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
+    selectedRow,
     computedVisibleFields,
+    setOpen = () => {},
     getRelationFields = () => {},
     setLayoutType = () => {},
+    navigateToDetailPage = () => {},
     navigateToEditPage = () => {},
-    navigateCreatePage,
-    setOpen,
-    selectedRow,
-    navigateToDetailPage,
+    navigateCreatePage = () => {},
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
-  const { navigateToForm } = useTabRouter();
-  const { tableSlug, appId } = useParams();
-  const { i18n, t } = useTranslation();
+  const {navigateToForm} = useTabRouter();
+  const {tableSlug, appId} = useParams();
+  const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -150,7 +151,7 @@ function AggridTreeView(props) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const languages = useSelector((state) => state.languages.list);
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
-  const { control, watch, setValue, reset, handleSubmit } = useForm();
+  const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
 
   const groupFieldId = view?.group_fields?.[0];
@@ -159,8 +160,8 @@ function AggridTreeView(props) {
     (el) => el?.table_slug === tableSlug
   );
 
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
-  const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents({
       customAutoGroupColumnDef: {
         suppressCount: true,
@@ -184,7 +185,7 @@ function AggridTreeView(props) {
   };
 
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const visibleFields = useMemo(() => {
     return visibleColumns
@@ -192,13 +193,8 @@ function AggridTreeView(props) {
       .map((item) => item?.slug);
   }, [visibleColumns, computedVisibleFields]);
 
-  const { isLoading: isLoadingTree, refetch } = useQuery(
-    [
-      "GET_OBJECTS_TREEDATA",
-      filters,
-      { [groupTab?.slug]: groupTab },
-      searchText,
-    ],
+  const {isLoading: isLoadingTree, refetch} = useQuery(
+    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
@@ -222,15 +218,14 @@ function AggridTreeView(props) {
   );
 
   const {
-    data: { fiedlsarray } = {
+    data: {fiedlsarray} = {
       pageCount: 1,
       fiedlsarray: [],
       custom_events: [],
     },
   } = useQuery({
     queryKey: ["GET_TABLE_INFO", tableSlug, view],
-    queryFn: () =>
-      constructorTableService.getTableInfo(tableSlug, { data: {} }),
+    queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
@@ -270,7 +265,7 @@ function AggridTreeView(props) {
   });
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -385,7 +380,7 @@ function AggridTreeView(props) {
   }
 
   function appendNewRow() {
-    const newRow = { new_field: true, guid: generateGUID() };
+    const newRow = {new_field: true, guid: generateGUID()};
     gridApi.current.api.applyTransaction({
       add: [newRow],
       addIndex: 0,
@@ -407,7 +402,7 @@ function AggridTreeView(props) {
   }
 
   const updateView = (pinnedField, updatedColumns = []) => {
-    pinFieldsRef.current = { ...pinFieldsRef.current, ...pinnedField };
+    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -422,7 +417,7 @@ function AggridTreeView(props) {
 
   const updateObject = (data) => {
     if (!data?.new_field) {
-      constructorObjectService.update(tableSlug, { data: { ...data } });
+      constructorObjectService.update(tableSlug, {data: {...data}});
     }
   };
 
@@ -439,10 +434,10 @@ function AggridTreeView(props) {
   }
 
   const onColumnPinned = (event) => {
-    const { column, pinned } = event;
+    const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
     updateView({
-      [fieldId]: { pinned },
+      [fieldId]: {pinned},
     });
   };
 
@@ -587,7 +582,7 @@ function AggridTreeView(props) {
     } else {
       reset({
         attributes: {
-          math: { label: "plus", value: "+" },
+          math: {label: "plus", value: "+"},
         },
       });
     }
@@ -781,214 +776,216 @@ function AggridTreeView(props) {
   }, [cleanedFilters]);
 
   return (
-    <Box
-      sx={{
-        height: `calc(100vh - ${calculatedHeight + 85}px)`,
-        overflow: "scroll",
-      }}>
-      <div className={style.gridTableTree}>
-        <div
-          className="ag-theme-quartz"
-          style={{
-            display: "flex",
-            width: "100%",
-          }}>
-          <Box
-            className="scrollbarNone"
-            sx={{width: "100%", background: "#fff"}}>
-            {Boolean(tabs?.length) && (
-              <Box
-                sx={{
-                  display: "flex",
-                  padding: "10px 0 0 20px",
-                  borderBottom: "1px solid #eee",
-                }}>
-                {tabs?.map((item) => (
-                  <Button
-                    key={item.value}
-                    onClick={() => {
-                      setLoading(true);
-                      setGroupTab(item);
-                    }}
-                    variant="outlined"
-                    className={
-                      groupTab?.value === item?.value
-                        ? style.tabGroupBtnActive
-                        : style.tabGroupBtn
-                    }>
-                    {item?.label}
-                  </Button>
-                ))}
-              </Box>
-            )}
-
+    <MaterialUIProvider>
+      <Box
+        sx={{
+          height: `calc(100vh - ${calculatedHeight + 85}px)`,
+          overflow: "scroll",
+        }}>
+        <div className={style.gridTableTree}>
+          <div
+            className="ag-theme-quartz"
+            style={{
+              display: "flex",
+              width: "100%",
+            }}>
             <Box
               className="scrollbarNone"
-              sx={{
-                height: "100%",
-              }}>
-              {!columns?.length ? (
-                <NoFieldsComponent />
-              ) : (
-                <>
-                  <AgGridReact
-                    ref={gridApi}
-                    theme={myTheme}
-                    gridOptions={{
-                      rowBuffer: 10,
-                      cacheBlockSize: 100,
-                      maxBlocksInCache: 10,
-                    }}
-                    serverSideStoreType="serverSide"
-                    serverSideTransaction={true}
-                    onColumnMoved={getColumnsUpdated}
-                    columnDefs={columns}
-                    enableClipboard={true}
-                    groupDisplayType="single"
-                    paginationPageSize={limit}
-                    undoRedoCellEditing={true}
-                    rowSelection={rowSelection}
-                    isServerSideGroup={isServerSideGroup}
-                    getServerSideGroupKey={getServerSideGroupKey}
-                    rowModelType={"serverSide"}
-                    undoRedoCellEditingLimit={5}
-                    defaultColDef={defaultColDef}
-                    cellSelection={cellSelection}
-                    onColumnPinned={onColumnPinned}
-                    getMainMenuItems={getMainMenuItems}
-                    treeData={true}
-                    autoGroupColumnDef={autoGroupColumnDef}
-                    suppressServerSideFullWidthLoadingRow={true}
-                    loadingOverlayComponent={CustomLoadingOverlay}
-                    onGridReady={onGridReady}
-                    getDataPath={getDataPath}
-                    onCellValueChanged={(e) => {
-                      updateObject(e.data);
-                    }}
-                    onSelectionChanged={(e) => {
-                      setSelectedRows(e.api.getSelectedRows());
-                    }}
-                    onCellDoubleClicked={(params) => params.api.stopEditing()}
-                  />
-                </>
+              sx={{width: "100%", background: "#fff"}}>
+              {Boolean(tabs?.length) && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    padding: "10px 0 0 20px",
+                    borderBottom: "1px solid #eee",
+                  }}>
+                  {tabs?.map((item) => (
+                    <Button
+                      key={item.value}
+                      onClick={() => {
+                        setLoading(true);
+                        setGroupTab(item);
+                      }}
+                      variant="outlined"
+                      className={
+                        groupTab?.value === item?.value
+                          ? style.tabGroupBtnActive
+                          : style.tabGroupBtn
+                      }>
+                      {item?.label}
+                    </Button>
+                  ))}
+                </Box>
               )}
+
+              <Box
+                className="scrollbarNone"
+                sx={{
+                  height: "100%",
+                }}>
+                {!columns?.length ? (
+                  <NoFieldsComponent />
+                ) : (
+                  <>
+                    <AgGridReact
+                      ref={gridApi}
+                      theme={myTheme}
+                      gridOptions={{
+                        rowBuffer: 10,
+                        cacheBlockSize: 100,
+                        maxBlocksInCache: 10,
+                      }}
+                      serverSideStoreType="serverSide"
+                      serverSideTransaction={true}
+                      onColumnMoved={getColumnsUpdated}
+                      columnDefs={columns}
+                      enableClipboard={true}
+                      groupDisplayType="single"
+                      paginationPageSize={limit}
+                      undoRedoCellEditing={true}
+                      rowSelection={rowSelection}
+                      isServerSideGroup={isServerSideGroup}
+                      getServerSideGroupKey={getServerSideGroupKey}
+                      rowModelType={"serverSide"}
+                      undoRedoCellEditingLimit={5}
+                      defaultColDef={defaultColDef}
+                      cellSelection={cellSelection}
+                      onColumnPinned={onColumnPinned}
+                      getMainMenuItems={getMainMenuItems}
+                      treeData={true}
+                      autoGroupColumnDef={autoGroupColumnDef}
+                      suppressServerSideFullWidthLoadingRow={true}
+                      loadingOverlayComponent={CustomLoadingOverlay}
+                      onGridReady={onGridReady}
+                      getDataPath={getDataPath}
+                      onCellValueChanged={(e) => {
+                        updateObject(e.data);
+                      }}
+                      onSelectionChanged={(e) => {
+                        setSelectedRows(e.api.getSelectedRows());
+                      }}
+                      onCellDoubleClicked={(params) => params.api.stopEditing()}
+                    />
+                  </>
+                )}
+              </Box>
             </Box>
-          </Box>
+          </div>
         </div>
-      </div>
 
-      <DeleteColumnModal
-        view={view}
-        columnId={columnId}
-        tableSlug={tableSlug}
-        handleCloseModal={handleCloseModal}
-        openDeleteModal={openDeleteModal}
-      />
-
-      <FieldCreateModal
-        mainForm={mainForm}
-        // tableLan={tableLan}
-        anchorEl={fieldCreateAnchor}
-        setAnchorEl={setFieldCreateAnchor}
-        watch={watch}
-        control={control}
-        setValue={setValue}
-        handleSubmit={handleSubmit}
-        onSubmit={onSubmit}
-        // target={target}
-        fields={visibleColumns}
-        setFieldOptionAnchor={setFieldOptionAnchor}
-        reset={reset}
-        menuItem={menuItem}
-        fieldData={fieldData}
-        handleOpenFieldDrawer={handleOpenFieldDrawer}
-      />
-
-      {Boolean(open && projectInfo?.new_layout) &&
-      selectedViewType === "SidePeek" ? (
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
+        <DeleteColumnModal
+          view={view}
+          columnId={columnId}
+          tableSlug={tableSlug}
+          handleCloseModal={handleCloseModal}
+          openDeleteModal={openDeleteModal}
         />
-      ) : selectedViewType === "CenterPeek" ? (
-        <NewModalDetailPage
-          modal={true}
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
-        />
-      ) : null}
 
-      {Boolean(open && !projectInfo?.new_layout) && (
-        <ModalDetailPage
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-        />
-      )}
-
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <FieldSettings
-          closeSettingsBlock={() => setDrawerState(null)}
-          isTableView={true}
-          onSubmit={(index, field) => update(index, field)}
-          field={drawerState}
-          formType={drawerState}
+        <FieldCreateModal
           mainForm={mainForm}
-          selectedTabIndex={selectedTabIndex}
-          height={`calc(100vh - 48px)`}
-          getRelationFields={getRelationFields}
+          // tableLan={tableLan}
+          anchorEl={fieldCreateAnchor}
+          setAnchorEl={setFieldCreateAnchor}
+          watch={watch}
+          control={control}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          // target={target}
+          fields={visibleColumns}
+          setFieldOptionAnchor={setFieldOptionAnchor}
+          reset={reset}
           menuItem={menuItem}
+          fieldData={fieldData}
+          handleOpenFieldDrawer={handleOpenFieldDrawer}
         />
-      </Drawer>
 
-      <Drawer
-        open={drawerStateField}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <RelationSettings
-          relation={drawerStateField}
-          closeSettingsBlock={() => setDrawerStateField(null)}
-          getRelationFields={getRelationFields}
-          formType={drawerStateField}
-          height={`calc(100vh - 48px)`}
-        />
-      </Drawer>
-    </Box>
+        {Boolean(open && projectInfo?.new_layout) &&
+        selectedViewType === "SidePeek" ? (
+          <DrawerDetailPage
+            projectInfo={projectInfo}
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+            navigateCreatePage={navigateCreatePage}
+          />
+        ) : selectedViewType === "CenterPeek" ? (
+          <NewModalDetailPage
+            modal={true}
+            projectInfo={projectInfo}
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+            navigateCreatePage={navigateCreatePage}
+          />
+        ) : null}
+
+        {Boolean(open && !projectInfo?.new_layout) && (
+          <ModalDetailPage
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        )}
+
+        <Drawer
+          open={drawerState}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <FieldSettings
+            closeSettingsBlock={() => setDrawerState(null)}
+            isTableView={true}
+            onSubmit={(index, field) => update(index, field)}
+            field={drawerState}
+            formType={drawerState}
+            mainForm={mainForm}
+            selectedTabIndex={selectedTabIndex}
+            height={`calc(100vh - 48px)`}
+            getRelationFields={getRelationFields}
+            menuItem={menuItem}
+          />
+        </Drawer>
+
+        <Drawer
+          open={drawerStateField}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <RelationSettings
+            relation={drawerStateField}
+            closeSettingsBlock={() => setDrawerStateField(null)}
+            getRelationFields={getRelationFields}
+            formType={drawerStateField}
+            height={`calc(100vh - 48px)`}
+          />
+        </Drawer>
+      </Box>
+    </MaterialUIProvider>
   );
 }
 

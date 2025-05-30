@@ -4,7 +4,7 @@ import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 
-function HFStatusFieldEditor({ value, setValue, colDef, data }) {
+function HFStatusFieldEditor({value, setValue, colDef, data}) {
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
@@ -26,8 +26,7 @@ function HFStatusFieldEditor({ value, setValue, colDef, data }) {
           "&:hover .rowClickButton": {
             display: "block",
           },
-        }}
-      >
+        }}>
         {" "}
         <Box>
           <Select
@@ -70,13 +69,11 @@ function HFStatusFieldEditor({ value, setValue, colDef, data }) {
                     color: selectedOption?.color || "#000",
                     padding: "0px 6px 0px 6px",
                     borderRadius: "4px",
-                  }}
-                >
+                  }}>
                   {selected}
                 </Box>
               );
-            }}
-          >
+            }}>
             <ListSubheader className={styles.selectGroup}>To do</ListSubheader>
             {colDef?.cellRendererParams?.field?.attributes?.todo?.options?.map(
               (el) => (
@@ -87,8 +84,7 @@ function HFStatusFieldEditor({ value, setValue, colDef, data }) {
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  value={el?.label}
-                >
+                  value={el?.label}>
                   {el?.label}
                 </MenuItem>
               )
@@ -105,8 +101,7 @@ function HFStatusFieldEditor({ value, setValue, colDef, data }) {
                   color: el?.color ? el?.color : "#000",
                 }}
                 className={styles.optionField}
-                value={el?.label}
-              >
+                value={el?.label}>
                 {el?.label}
               </MenuItem>
             ))}
@@ -122,8 +117,7 @@ function HFStatusFieldEditor({ value, setValue, colDef, data }) {
                   color: el?.color ? el?.color : "#000",
                 }}
                 className={styles.optionField}
-                value={el?.label}
-              >
+                value={el?.label}>
                 {el?.label}
               </MenuItem>
             ))}
@@ -141,11 +135,10 @@ function HFStatusFieldEditor({ value, setValue, colDef, data }) {
               overflow: "hidden",
               padding: "0 0 0 0",
               background: "#fff",
-            }}
-          >
+            }}>
             <img
               src="/table-icons/lock.svg"
-              style={{ width: "20px", height: "20px" }}
+              style={{width: "20px", height: "20px"}}
               alt="lock"
             />
           </Box>

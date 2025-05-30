@@ -144,13 +144,13 @@ div {
   text-overflow: ellipsis;
 
   &:hover {
-    .first_button {
+    .newUIi_first_button {
       display: flex !important;
     }
   }
 }
 
-.first_button {
+.newUIi_first_button {
   display: none !important;
 }
 

@@ -11,6 +11,7 @@ import {useParams, useSearchParams} from "react-router-dom";
 import RowClickButton from "../RowClickButton";
 import {pageToOffset} from "../../../../utils/pageToOffset";
 import useDebounce from "../../../../hooks/useDebounce";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 
 const customStyles = {
   control: (provided) => ({
@@ -192,7 +193,7 @@ const LookupCellEditor = (props) => {
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 500);
 
   return (
-    <>
+    <MaterialUIProvider>
       <Box
         sx={{
           position: "relative",
@@ -224,7 +225,7 @@ const LookupCellEditor = (props) => {
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} />
       )}
-    </>
+    </MaterialUIProvider>
   );
 };
 

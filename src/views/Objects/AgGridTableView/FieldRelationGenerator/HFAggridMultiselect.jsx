@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 const HFAggridMultiselect = (props) => {
   const classes = useStyles();
 
-  const { value, setValue = () => {}, width = "100%", colDef, data } = props;
+  const {value, setValue = () => {}, width = "100%", colDef, data} = props;
   const field = colDef?.fieldObj;
   const options = colDef?.cellEditorParams?.field?.attributes?.options;
   const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
@@ -68,8 +68,7 @@ const HFAggridMultiselect = (props) => {
           height: "100%",
           left: 0,
           top: 0,
-        }}
-      >
+        }}>
         <AutoCompleteElement
           value={value}
           width={width}
@@ -111,7 +110,7 @@ const AutoCompleteElement = ({
   onNavigateToDetail = () => {},
 }) => {
   const [dialogState, setDialogState] = useState(null);
-  const { appId } = useParams();
+  const {appId} = useParams();
 
   const editPermission = field?.attributes?.field_permission?.edit_permission;
 
@@ -148,149 +147,148 @@ const AutoCompleteElement = ({
   };
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        background: "#0000",
+    <MaterialUIProvider>
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          background: "#0000",
 
-        "&:hover .rowClickButton": {
-          display: "block",
-        },
-      }}
-    >
-      {" "}
-      <FormControl
-        id="multiSelectForm"
-        className={styles.aggridMultiSelect}
-        sx={{ width }}
-      >
-        <InputLabel size="small">{label}</InputLabel>
-        <Autocomplete
-          multiple
-          id={`multiselect`}
-          value={computedValue}
-          options={localOptions}
-          popupIcon={
-            isBlackBg ? (
-              <ArrowDropDownIcon style={{ color: "#fff" }} />
-            ) : (
-              <ArrowDropDownIcon />
-            )
-          }
-          disableCloseOnSelect
-          getOptionLabel={(option) => option?.label ?? option?.value}
-          isOptionEqualToValue={(option, value) =>
-            option?.value === value?.value
-          }
-          onChange={changeHandler}
-          filterOptions={(options, params) => {
-            const filtered = filter(options, params);
-            if (params.inputValue !== "" && field?.attributes?.creatable) {
-              filtered.push({
-                value: "NEW",
-                inputValue: params.inputValue,
-                label: `Add "${params.inputValue}"`,
-              });
+          "&:hover .rowClickButton": {
+            display: "block",
+          },
+        }}>
+        {" "}
+        <FormControl
+          id="multiSelectForm"
+          className={styles.aggridMultiSelect}
+          sx={{width}}>
+          <InputLabel size="small">{label}</InputLabel>
+          <Autocomplete
+            multiple
+            id={`multiselect`}
+            value={computedValue}
+            options={localOptions}
+            popupIcon={
+              isBlackBg ? (
+                <ArrowDropDownIcon style={{color: "#fff"}} />
+              ) : (
+                <ArrowDropDownIcon />
+              )
             }
+            disableCloseOnSelect
+            getOptionLabel={(option) => option?.label ?? option?.value}
+            isOptionEqualToValue={(option, value) =>
+              option?.value === value?.value
+            }
+            onChange={changeHandler}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              if (params.inputValue !== "" && field?.attributes?.creatable) {
+                filtered.push({
+                  value: "NEW",
+                  inputValue: params.inputValue,
+                  label: `Add "${params.inputValue}"`,
+                });
+              }
 
-            return filtered;
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder={computedValue?.length ? "" : placeholder}
-              sx={{
-                "&.MuiInputAdornment-root": {
-                  position: "absolute",
-                  right: 0,
-                },
-                backgroundColor: "transparent",
-                "& .MuiInputBase-root": {
+              return filtered;
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={computedValue?.length ? "" : placeholder}
+                sx={{
+                  "&.MuiInputAdornment-root": {
+                    position: "absolute",
+                    right: 0,
+                  },
                   backgroundColor: "transparent",
-                },
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "transparent",
-                },
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "transparent",
-                },
-              }}
-              InputProps={{
-                ...params.InputProps,
-                classes: {
-                  input: isBlackBg ? classes.input : "",
-                },
+                  "& .MuiInputBase-root": {
+                    backgroundColor: "transparent",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "transparent",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "transparent",
+                  },
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  classes: {
+                    input: isBlackBg ? classes.input : "",
+                  },
 
-                endAdornment: Boolean(
-                  appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
-                ) && (
-                  <Tooltip
-                    title="This field is disabled for this role!"
-                    style={{
-                      position: "absolute",
-                      right: 0,
-                    }}
-                  >
-                    <InputAdornment position="start">
-                      <img src="/table-icons/lock.svg" alt="lock" />
-                    </InputAdornment>
-                  </Tooltip>
-                ),
-              }}
-              className={`multiselectAggrid multiSelectInput`}
-              size="small"
-            />
-          )}
-          noOptionsText={"No options"}
-          disabled={
-            appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" ? true : disabled
-          }
-          renderTags={(values, getTagProps) => (
-            <div className={styles.valuesWrapper}>
-              {values?.map((el, index) => (
-                <div
-                  key={el?.value}
-                  className={styles.multipleAutocompleteTags}
-                  style={
-                    hasColor
-                      ? { color: el?.color, background: `${el?.color}30` }
-                      : {}
-                  }
-                >
-                  {hasIcon && <IconGenerator icon={el?.icon} />}
-                  <p className={styles.value}>{el?.label ?? el?.value}</p>
-                  {field?.attributes?.disabled === false && editPermission && (
-                    <Close
-                      fontSize="10"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        getTagProps({ index })?.onDelete();
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        />
-        {!disabledHelperText && error?.message && (
-          <FormHelperText error>{error?.message}</FormHelperText>
-        )}
-
-        <Dialog open={!!dialogState} onClose={handleClose}>
-          <AddOptionBlock
-            field={field}
-            dialogState={dialogState}
-            handleClose={handleClose}
-            addNewOption={addNewOption}
+                  endAdornment: Boolean(
+                    appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
+                  ) && (
+                    <Tooltip
+                      title="This field is disabled for this role!"
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                      }}>
+                      <InputAdornment position="start">
+                        <img src="/table-icons/lock.svg" alt="lock" />
+                      </InputAdornment>
+                    </Tooltip>
+                  ),
+                }}
+                className={`multiselectAggrid multiSelectInput`}
+                size="small"
+              />
+            )}
+            noOptionsText={"No options"}
+            disabled={
+              appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" ? true : disabled
+            }
+            renderTags={(values, getTagProps) => (
+              <div className={styles.valuesWrapper}>
+                {values?.map((el, index) => (
+                  <div
+                    key={el?.value}
+                    className={styles.multipleAutocompleteTags}
+                    style={
+                      hasColor
+                        ? {color: el?.color, background: `${el?.color}30`}
+                        : {}
+                    }>
+                    {hasIcon && <IconGenerator icon={el?.icon} />}
+                    <p className={styles.value}>{el?.label ?? el?.value}</p>
+                    {field?.attributes?.disabled === false &&
+                      editPermission && (
+                        <Close
+                          fontSize="10"
+                          style={{cursor: "pointer"}}
+                          onClick={() => {
+                            getTagProps({index})?.onDelete();
+                          }}
+                        />
+                      )}
+                  </div>
+                ))}
+              </div>
+            )}
           />
-        </Dialog>
-      </FormControl>
-      {/* {props?.colDef?.colIndex === 0 && ( */}
-      <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
-      {/* )} */}
-    </Box>
+          {!disabledHelperText && error?.message && (
+            <FormHelperText error>{error?.message}</FormHelperText>
+          )}
+
+          <Dialog open={!!dialogState} onClose={handleClose}>
+            <AddOptionBlock
+              field={field}
+              dialogState={dialogState}
+              handleClose={handleClose}
+              addNewOption={addNewOption}
+            />
+          </Dialog>
+        </FormControl>
+        {/* {props?.colDef?.colIndex === 0 && ( */}
+        <RowClickButton onRowClick={onNavigateToDetail} right="5px" />
+        {/* )} */}
+      </Box>
+    </MaterialUIProvider>
   );
 };
 

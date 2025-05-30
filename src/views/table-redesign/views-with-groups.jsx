@@ -1122,6 +1122,7 @@ export const NewUiViewsWithGroups = ({
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
                           <AgGridTableView
+                            navigateToDetailPage={navigateToDetailPage}
                             navigateCreatePage={navigateCreatePage}
                             getRelationFields={getRelationFields}
                             mainForm={mainForm}
@@ -1149,6 +1150,7 @@ export const NewUiViewsWithGroups = ({
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
                         <AggridTreeView
+                          navigateToDetailPage={navigateToDetailPage}
                           navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
@@ -1228,6 +1230,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          navigateToDetailPag={navigateToDetailPage}
                           navigateCreatePage={navigateCreatePage}
                           getRelationFields={getRelationFields}
                           mainForm={mainForm}
@@ -1255,6 +1258,7 @@ export const NewUiViewsWithGroups = ({
                       </MaterialUIProvider>
                     ) : view.type === "TREE" ? (
                       <AggridTreeView
+                        navigateToDetailPage={navigateToDetailPage}
                         navigateCreatePage={navigateCreatePage}
                         getRelationFields={getRelationFields}
                         mainForm={mainForm}

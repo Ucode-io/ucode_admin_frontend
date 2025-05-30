@@ -115,10 +115,14 @@ function AggridTreeView(props) {
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
+    selectedRow,
     computedVisibleFields,
+    setOpen = () => {},
     getRelationFields = () => {},
     setLayoutType = () => {},
+    navigateToDetailPage = () => {},
     navigateToEditPage = () => {},
+    navigateCreatePage = () => {},
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();

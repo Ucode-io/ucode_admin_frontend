@@ -1173,31 +1173,33 @@ export const NewUiViewsWithGroups = ({
                           />
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
-                        <AggridTreeView
-                          navigateCreatePage={navigateCreatePage}
-                          getRelationFields={getRelationFields}
-                          mainForm={mainForm}
-                          searchText={searchText}
-                          open={open}
-                          setOpen={setOpen}
-                          selectedRow={selectedRow}
-                          projectInfo={projectInfo}
-                          setLayoutType={setLayoutType}
-                          navigateToEditPage={navigateToEditPage}
-                          selectedTabIndex={selectedTabIndex}
-                          view={view}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                          computedVisibleFields={computedVisibleFields}
-                          checkedColumns={checkedColumns}
-                          setCheckedColumns={setCheckedColumns}
-                          columnsForSearch={columnsForSearch}
-                          updateField={updateField}
-                          visibleColumns={visibleColumns}
-                          visibleRelationColumns={visibleRelationColumns}
-                          visibleForm={visibleForm}
-                          menuItem={menuItem}
-                        />
+                        <MaterialUIProvider>
+                          <AggridTreeView
+                            navigateCreatePage={navigateCreatePage}
+                            getRelationFields={getRelationFields}
+                            mainForm={mainForm}
+                            searchText={searchText}
+                            open={open}
+                            setOpen={setOpen}
+                            selectedRow={selectedRow}
+                            projectInfo={projectInfo}
+                            setLayoutType={setLayoutType}
+                            navigateToEditPage={navigateToEditPage}
+                            selectedTabIndex={selectedTabIndex}
+                            view={view}
+                            views={views}
+                            fieldsMap={fieldsMap}
+                            computedVisibleFields={computedVisibleFields}
+                            checkedColumns={checkedColumns}
+                            setCheckedColumns={setCheckedColumns}
+                            columnsForSearch={columnsForSearch}
+                            updateField={updateField}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            menuItem={menuItem}
+                          />
+                        </MaterialUIProvider>
                       ) : (
                         <TableView
                           selectedRow={selectedRow}

@@ -327,7 +327,7 @@ function MultiFileUpload({
                 style={{
                   display: "none",
                 }}
-                accept=".pdf, .doc, .docx, .xls, .xlsx, .csv, .ppt, .pptx, .txt, .rtf, .odt, .ods, .odp"
+                // accept=".pdf, .doc, .docx, .xls, .xlsx, .csv, .ppt, .pptx, .txt, .rtf, .odt, .ods, .odp"
                 className="hidden"
                 ref={inputRef}
                 tabIndex={tabIndex}

@@ -43,17 +43,21 @@ const MultiLineInput = ({
           "&:hover": {
             backgroundColor: "#F7F7F7",
           },
-        }}>
+        }}
+      >
         <Box
-          sx={{width: "100%", fontSize: "14px"}}
+          sx={{ width: "100%", fontSize: "14px" }}
           id="textAreaInput"
           onClick={(e) => {
             !isDisabled && handleClick(e);
-          }}>
-          {stripHtmlTags(
-            value
-              ? `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
-              : "Empty"
+          }}
+        >
+          {value ? (
+            stripHtmlTags(
+              `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
+            )
+          ) : (
+            <span style={{ color: "#adb5bd" }}>Empty</span>
           )}
         </Box>
 
@@ -69,7 +73,8 @@ const MultiLineInput = ({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}>
+          }}
+        >
           <HFTextEditor
             drawerDetail={true}
             id="multi_line"

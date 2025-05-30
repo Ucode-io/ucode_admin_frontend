@@ -11,6 +11,12 @@
   cursor: pointer;
   transition-duration: .2s;
 
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
   &.long {
     gap: 8px;
     padding: 0 8px;

@@ -1,6 +1,7 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
-import {format, isValid, parse} from "date-fns";
+import { format, isValid, parse, parseISO } from "date-fns";
+import "./style.scss";
 
 export const HFDatePickerField = ({
   control,
@@ -18,19 +19,25 @@ export const HFDatePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      defaultValue={defaultValue}
-      render={({field: {onChange, value}}) => {
+      defaultValue={defaultValue || undefined}
+      render={({ field: { onChange, value } }) => {
         return (
           <DatePickerInput
             placeholder="Empty"
             id="dateField"
-            value={getValue(value) ?? defaultValue}
+            value={
+              value && isValid(new Date(value))
+                ? new Date(value)
+                : value
+                  ? parse(value, "yyyy-MM-dd", new Date())
+                  : undefined
+            }
             valueFormat="DD.MM.YYYY"
             rightSection={
               drawerDetail ? "" : <img src="/table-icons/date.svg" alt="" />
             }
             onChange={(value) => {
-              onChange(value);
+              onChange(value ? format(new Date(value), "yyyy-MM-dd") : "");
             }}
             styles={{
               input: {
@@ -45,6 +52,7 @@ export const HFDatePickerField = ({
             }}
             highlightToday
             disabled={disabled}
+            className="datePickerInput"
           />
         );
       }}
@@ -69,7 +77,7 @@ export const HFDateTimePickerField = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <DateTimePicker
             placeholder="Empty"
@@ -97,6 +105,7 @@ export const HFDateTimePickerField = ({
             }}
             highlightToday
             disabled={disabled}
+            className="dateTimePickerInput"
           />
         );
       }}

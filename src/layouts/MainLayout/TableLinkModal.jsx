@@ -34,7 +34,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   }, [tables]);
 
   const onSubmit = (data) => {
-    if (selectedFolder.type === "TABLE") {
+    if (selectedFolder?.type === "TABLE") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -88,7 +88,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   };
 
   useEffect(() => {
-    if (selectedFolder.type === "TABLE")
+    if (selectedFolder?.type === "TABLE")
       menuSettingsService
         .getById(selectedFolder.id, projectId)
         .then((res) => {

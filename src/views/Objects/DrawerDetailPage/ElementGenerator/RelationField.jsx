@@ -137,7 +137,7 @@ const AutoCompleteElement = ({
     placeholder: (provided) => ({
       ...provided,
       fontSize: "13px",
-      color: "#787774",
+      color: "#adb5bd",
     }),
     indicatorSeparator: () => ({
       display: "none",
@@ -183,7 +183,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -227,7 +227,9 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  console.log({ field });
+
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -311,7 +313,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -322,7 +324,7 @@ const AutoCompleteElement = ({
       setLocalValue(val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -359,7 +361,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -429,6 +431,8 @@ const AutoCompleteElement = ({
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
+
+  console.log({ allOptions });
 
   return (
     <Box sx={{width: "330px", height: "32px"}}>

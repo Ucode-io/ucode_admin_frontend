@@ -19,6 +19,8 @@ const HFPolygonField = ({
   polygons = [],
   width = 0,
   height = 0,
+  setValue = () => {},
+  polygonValue = [],
   ...props
 }) => {
   const mapRef = useRef();
@@ -36,8 +38,8 @@ const HFPolygonField = ({
     };
 
     const handleGeolocationSuccess = (position) => {
-      const {latitude, longitude} = position.coords;
-      setSelectedCoordinates({lat: latitude, long: longitude});
+      const { latitude, longitude } = position.coords;
+      setSelectedCoordinates({ lat: latitude, long: longitude });
     };
 
     const getCurrentLocation = () => {
@@ -84,7 +86,7 @@ const HFPolygonField = ({
         required: required ? "This is a required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         const parsedPolygon = isJSONParsable(value) ? JSON.parse(value) : [];
         return (
           <Box
@@ -94,18 +96,21 @@ const HFPolygonField = ({
               height: "100%",
               overflow: "hidden",
               position: "relative",
-            }}>
+            }}
+          >
             <YMaps
               query={{
                 load: "package.full",
                 apikey: "a152ff76-8337-42f9-a5c1-be25f9008dd0",
-              }}>
+              }}
+            >
               <Map
                 id="map_polygon_field"
                 width={width !== 0 ? width : "265px"}
                 height={height !== 0 ? height : "200px"}
                 defaultState={mapState}
-                modules={["geoObject.addon.editor"]}>
+                modules={["geoObject.addon.editor"]}
+              >
                 <Polygon
                   id="polygon"
                   editingPolygon={true}
@@ -115,7 +120,7 @@ const HFPolygonField = ({
                         ?._coordinates;
                     if (coordinates) {
                       const coordinatesJson = JSON.stringify(coordinates);
-                      onChange(coordinatesJson);
+                      setValue(coordinatesJson);
                     }
                   }}
                   instanceRef={(ref) =>
@@ -123,7 +128,9 @@ const HFPolygonField = ({
                       ? ref && draw(ref)
                       : draw({})
                   }
-                  geometry={parsedPolygon}
+                  geometry={
+                    parsedPolygon?.length > 0 ? parsedPolygon : polygonValue
+                  }
                   options={{
                     editorDrawingCursor: "crosshair",
                     editorMaxPoints: 8,

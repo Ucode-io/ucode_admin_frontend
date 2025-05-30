@@ -13,6 +13,7 @@ const RectangleIconButton = forwardRef(
       size = "",
       type = "delete",
       onClick = () => {},
+      disabled = false,
       ...props
     },
     ref
@@ -21,6 +22,11 @@ const RectangleIconButton = forwardRef(
       <div
         onClick={(e) => {
           e.stopPropagation();
+        }}
+        style={{
+          opacity: disabled ? 0.5 : 1,
+          cursor: disabled ? "not-allowed" : "pointer",
+          pointerEvents: disabled ? "none" : "auto",
         }}
       >
         <DeleteWrapperModal
@@ -39,7 +45,7 @@ const RectangleIconButton = forwardRef(
       </div>
     ) : (
       <div
-        className={`RectangleIconButton ${color} ${className} ${size}`}
+        className={`RectangleIconButton ${color} ${className} ${size} ${disabled ? "disabled" : ""}`}
         onClick={(e) => {
           e.stopPropagation();
           onClick(e);

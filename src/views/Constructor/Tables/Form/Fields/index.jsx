@@ -66,7 +66,9 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
   };
 
   const openEditForm = (field) => {
-    setDrawerState(field);
+    if (field.type !== "LOOKUP" && field.type !== "LOOKUPS") {
+      setDrawerState(field);
+    }
   };
 
   const deleteField = (field, index) => {
@@ -109,6 +111,10 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
     [defaultLanguage]
   );
 
+  const isDisabledEdit = (field) => {
+    return field.type === "LOOKUP" || field.type === "LOOKUPS";
+  };
+
   return (
     <TableCard>
       <DataTable
@@ -122,12 +128,14 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
         tableSlug={"app"}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
+        isDisabledEdit={isDisabledEdit}
         additionalRow={
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>
               <div
                 className={styles.createButton}
-                onClick={() => setDrawerState("CREATE")}>
+                onClick={() => setDrawerState("CREATE")}
+              >
                 <Add color="primary" />
                 <p>
                   {generateLangaugeText(tableLan, i18n?.language, "Add") ||
@@ -143,7 +151,8 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <FieldSettings
           tableLan={tableLan}
           closeSettingsBlock={() => setDrawerState(null)}

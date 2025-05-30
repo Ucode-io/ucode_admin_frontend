@@ -62,7 +62,6 @@ function HFModalMap({
         InputProps={{
           style: {
             background: isTransparent ? "transparent" : "",
-            height: "100%x",
             height: "100%",
             padding: "0 0",
           },

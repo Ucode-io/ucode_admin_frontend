@@ -120,14 +120,18 @@ function AggridTreeView(props) {
     getRelationFields = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
+    navigateCreatePage,
+    setOpen,
+    selectedRow,
+    navigateToDetailPage,
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
-  const {navigateToForm} = useTabRouter();
-  const {tableSlug, appId} = useParams();
-  const {i18n, t} = useTranslation();
+  const { navigateToForm } = useTabRouter();
+  const { tableSlug, appId } = useParams();
+  const { i18n, t } = useTranslation();
   const [columnId, setColumnId] = useState();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -147,7 +151,7 @@ function AggridTreeView(props) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const languages = useSelector((state) => state.languages.list);
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const { control, watch, setValue, reset, handleSubmit } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
 
   const groupFieldId = view?.group_fields?.[0];
@@ -156,8 +160,8 @@ function AggridTreeView(props) {
     (el) => el?.table_slug === tableSlug
   );
 
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
-  const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
     AggridDefaultComponents({
       customAutoGroupColumnDef: {
         suppressCount: true,
@@ -181,7 +185,7 @@ function AggridTreeView(props) {
   };
 
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const visibleFields = useMemo(() => {
     return visibleColumns
@@ -189,8 +193,13 @@ function AggridTreeView(props) {
       .map((item) => item?.slug);
   }, [visibleColumns, computedVisibleFields]);
 
-  const {isLoading: isLoadingTree, refetch} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
+  const { isLoading: isLoadingTree, refetch } = useQuery(
+    [
+      "GET_OBJECTS_TREEDATA",
+      filters,
+      { [groupTab?.slug]: groupTab },
+      searchText,
+    ],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
@@ -214,14 +223,15 @@ function AggridTreeView(props) {
   );
 
   const {
-    data: {fiedlsarray} = {
+    data: { fiedlsarray } = {
       pageCount: 1,
       fiedlsarray: [],
       custom_events: [],
     },
   } = useQuery({
     queryKey: ["GET_TABLE_INFO", tableSlug, view],
-    queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
+    queryFn: () =>
+      constructorTableService.getTableInfo(tableSlug, { data: {} }),
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
@@ -261,7 +271,7 @@ function AggridTreeView(props) {
   });
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -376,7 +386,7 @@ function AggridTreeView(props) {
   }
 
   function appendNewRow() {
-    const newRow = {new_field: true, guid: generateGUID()};
+    const newRow = { new_field: true, guid: generateGUID() };
     gridApi.current.api.applyTransaction({
       add: [newRow],
       addIndex: 0,
@@ -398,7 +408,7 @@ function AggridTreeView(props) {
   }
 
   const updateView = (pinnedField, updatedColumns = []) => {
-    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
+    pinFieldsRef.current = { ...pinFieldsRef.current, ...pinnedField };
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -413,7 +423,7 @@ function AggridTreeView(props) {
 
   const updateObject = (data) => {
     if (!data?.new_field) {
-      constructorObjectService.update(tableSlug, {data: {...data}});
+      constructorObjectService.update(tableSlug, { data: { ...data } });
     }
   };
 
@@ -440,10 +450,10 @@ function AggridTreeView(props) {
   };
 
   const onColumnPinned = (event) => {
-    const {column, pinned} = event;
+    const { column, pinned } = event;
     const fieldId = column?.colDef?.columnID;
     updateView({
-      [fieldId]: {pinned},
+      [fieldId]: { pinned },
     });
   };
   function createChildTree(parentObj) {
@@ -562,7 +572,7 @@ function AggridTreeView(props) {
     } else {
       reset({
         attributes: {
-          math: {label: "plus", value: "+"},
+          math: { label: "plus", value: "+" },
         },
       });
     }

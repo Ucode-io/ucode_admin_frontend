@@ -60,7 +60,7 @@ const TreeView = ({groupField, fieldsMap, group, view, tab, filters}) => {
   }, []);
 
   return (
-    <div style={{background: "#fff"}}>
+    <div style={{ background: "#fff" }}>
       <div className={style.extraAdd}>
         <div className={style.extraAddButton}>
           <RectangleIconButton color="primary" onClick={navigateToCreatePage}>

@@ -27,6 +27,8 @@ import {
   createFilterOptions,
 } from "@mui/material";
 import RowClickButton from "../RowClickButton";
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 
 const filter = createFilterOptions();
 
@@ -41,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 const HFAggridMultiselect = (props) => {
   const classes = useStyles();
 
-  const {value, setValue = () => {}, width = "100%", colDef, data} = props;
+  const { value, setValue = () => {}, width = "100%", colDef, data } = props;
   const field = colDef?.fieldObj;
   const options = colDef?.cellEditorParams?.field?.attributes?.options;
   const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
@@ -58,31 +60,34 @@ const HFAggridMultiselect = (props) => {
   };
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        left: 0,
-        top: 0,
-      }}>
-      <AutoCompleteElement
-        value={value}
-        width={width}
-        field={field}
-        classes={classes}
-        options={options}
-        hasIcon={hasIcon}
-        hasColor={hasColor}
-        className="hf-select"
-        onFormChange={setValue}
-        required={field?.required}
-        disabled={disabled}
-        isMultiSelect={isMultiSelect}
-        props={props}
-        onNavigateToDetail={onNavigateToDetail}
-      />
-    </Box>
+    <MaterialUIProvider>
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          left: 0,
+          top: 0,
+        }}
+      >
+        <AutoCompleteElement
+          value={value}
+          width={width}
+          field={field}
+          classes={classes}
+          options={options}
+          hasIcon={hasIcon}
+          hasColor={hasColor}
+          className="hf-select"
+          onFormChange={setValue}
+          required={field?.required}
+          disabled={disabled}
+          isMultiSelect={isMultiSelect}
+          props={props}
+          onNavigateToDetail={onNavigateToDetail}
+        />
+      </Box>
+    </MaterialUIProvider>
   );
 };
 
@@ -106,7 +111,7 @@ const AutoCompleteElement = ({
   onNavigateToDetail = () => {},
 }) => {
   const [dialogState, setDialogState] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
 
   const editPermission = field?.attributes?.field_permission?.edit_permission;
 
@@ -127,7 +132,7 @@ const AutoCompleteElement = ({
         );
       } else {
         return localOptions?.find((item) => {
-          item?.value === value;
+          return item?.value === value;
         });
       }
     else return [localOptions?.find((option) => option.value === value?.[0])];
@@ -152,12 +157,14 @@ const AutoCompleteElement = ({
         "&:hover .rowClickButton": {
           display: "block",
         },
-      }}>
+      }}
+    >
       {" "}
       <FormControl
         id="multiSelectForm"
         className={styles.aggridMultiSelect}
-        sx={{width}}>
+        sx={{ width }}
+      >
         <InputLabel size="small">{label}</InputLabel>
         <Autocomplete
           multiple
@@ -166,7 +173,7 @@ const AutoCompleteElement = ({
           options={localOptions}
           popupIcon={
             isBlackBg ? (
-              <ArrowDropDownIcon style={{color: "#fff"}} />
+              <ArrowDropDownIcon style={{ color: "#fff" }} />
             ) : (
               <ArrowDropDownIcon />
             )
@@ -223,7 +230,8 @@ const AutoCompleteElement = ({
                     style={{
                       position: "absolute",
                       right: 0,
-                    }}>
+                    }}
+                  >
                     <InputAdornment position="start">
                       <img src="/table-icons/lock.svg" alt="lock" />
                     </InputAdornment>
@@ -246,17 +254,18 @@ const AutoCompleteElement = ({
                   className={styles.multipleAutocompleteTags}
                   style={
                     hasColor
-                      ? {color: el?.color, background: `${el?.color}30`}
+                      ? { color: el?.color, background: `${el?.color}30` }
                       : {}
-                  }>
+                  }
+                >
                   {hasIcon && <IconGenerator icon={el?.icon} />}
                   <p className={styles.value}>{el?.label ?? el?.value}</p>
                   {field?.attributes?.disabled === false && editPermission && (
                     <Close
                       fontSize="10"
-                      style={{cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
-                        getTagProps({index})?.onDelete();
+                        getTagProps({ index })?.onDelete();
                       }}
                     />
                   )}

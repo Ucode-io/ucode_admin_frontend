@@ -1,25 +1,25 @@
 import {Add} from "@mui/icons-material";
 import {Button, IconButton} from "@mui/material";
-import { useEffect, useMemo, useRef } from "react";
-import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {useEffect, useMemo, useRef} from "react";
+import {useState} from "react";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { applyDrag, applyDragIndex } from "../../../utils/applyDrag";
+import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import BoardModalDetailPage from "./components/BoardModaleDetailPage";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
 import DrawerDetailPage from "../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
-import { useSelector } from "react-redux";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
+import {useSelector} from "react-redux";
 import layoutService from "../../../services/layoutService";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import useDebounce from "../../../hooks/useDebounce";
-import { getColumnIcon } from "../../table-redesign/icons";
-import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
+import {getColumnIcon} from "../../table-redesign/icons";
+import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
 
 const BoardColumn = ({
   tab,
@@ -41,12 +41,13 @@ const BoardColumn = ({
   setSelectedRow,
   setDateInfo,
   setDefaultValue,
+  tableSlug,
 }) => {
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
   const isStatusType = selectedGroupField?.type === "STATUS";
 
-  const { tableSlug, appId } = useParams();
+  const {menuId} = useParams();
   const queryClient = useQueryClient();
 
   const [index, setIndex] = useState();
@@ -69,8 +70,8 @@ const BoardColumn = ({
       : localStorage?.getItem("detailPage")
   );
 
-  const { mutate } = useMutation(
-    ({ data, index }) => {
+  const {mutate} = useMutation(
+    ({data, index}) => {
       const mutateData = {
         ...data,
         board_order: index + 1,
@@ -93,7 +94,7 @@ const BoardColumn = ({
     }
   );
 
-  const mutateDrop = useDebounce(({ data, index }) => {
+  const mutateDrop = useDebounce(({data, index}) => {
     const mutateData = {
       ...data,
       board_order: index + 1,
@@ -140,7 +141,7 @@ const BoardColumn = ({
   // });
 
   const onDrop = (dropResult) => {
-    let dropResultTemp = { ...dropResult };
+    let dropResultTemp = {...dropResult};
 
     const payload = dropResultTemp.payload;
 
@@ -162,7 +163,7 @@ const BoardColumn = ({
     if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
     if (result?.length >= computedData?.length) {
-      mutateDrop({ data: dropResult.payload, index: dropResult.addedIndex });
+      mutateDrop({data: dropResult.payload, index: dropResult.addedIndex});
     }
   };
 
@@ -285,8 +286,7 @@ const BoardColumn = ({
         className={styles.column}
         style={{
           backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
-        }}
-      >
+        }}>
         {/* {!subGroupById && (
           <ColumnHeaderBlock
             field={field}
@@ -312,20 +312,17 @@ const BoardColumn = ({
           style={{
             padding: "10px 8px 0 8px",
           }}
-          animationDuration={300}
-        >
+          animationDuration={300}>
           {computedData?.length > 0 ? (
             computedData.map((el) => (
               <Draggable
                 key={el.guid}
                 index={index}
-                className={styles.cardWrapper}
-              >
+                className={styles.cardWrapper}>
                 <div
                   className={styles.card}
                   key={el.guid}
-                  onClick={() => navigateToEditPage(el)}
-                >
+                  onClick={() => navigateToEditPage(el)}>
                   {viewFields.map((field) => (
                     <BoardPhotoGenerator key={field.id} field={field} el={el} />
                   ))}
@@ -353,15 +350,14 @@ const BoardColumn = ({
 
         <div className={styles.columnFooterBlock}>
           <Button
-            style={{ height: "41px" }}
+            style={{height: "41px"}}
             id={`addBoardItem`}
             variant="contain"
             fullWidth
             onClick={(e) => {
               e.stopPropagation();
               navigateToCreatePage();
-            }}
-          >
+            }}>
             <Add /> Add new
           </Button>
         </div>

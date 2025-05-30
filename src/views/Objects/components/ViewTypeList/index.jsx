@@ -7,28 +7,45 @@ import {Button, InputAdornment, TextField} from "@mui/material";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import constructorViewService from "../../../../services/constructorViewService";
 import {useParams} from "react-router-dom";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
+import SVG from "react-inlinesvg";
+import {Box} from "@chakra-ui/react";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import constructorTableService from "../../../../services/constructorTableService";
+import listToOptions from "../../../../utils/listToOptions";
+
+const viewIcons = {
+  TABLE: "layout-alt-01.svg",
+  CALENDAR: "calendar.svg",
+  BOARD: "rows.svg",
+  GRID: "grid.svg",
+  TIMELINE: "line-chart-up.svg",
+  WEBSITE: "globe.svg",
+  TREE: "treeView.svg",
+};
 
 export default function ViewTypeList({
   computedViewTypes,
   views,
   handleClose,
-  refetchViews,
-  tableSlug,
+  fieldsMap = {},
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
-  const {menuId} = useParams();
-
+  const {tableSlug, appId} = useParams();
   const queryClient = useQueryClient();
-  const {control, watch} = useForm();
-  const [error, setError] = useState(false);
+  const {control, watch, setError, clearErrors} = useForm({});
+  const [error] = useState(false);
+
+  const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
 
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
@@ -124,34 +141,48 @@ export default function ViewTypeList({
         group_by_columns: [],
         summaries: [],
         name_ru: "",
+        treeData: selectedViewTab === "TREE",
       },
       filters: [],
       number_field: "",
-      menu_id: menuId,
+      app_id: appId,
       order: views.length + 1,
     };
-  }, [menuId, selectedViewTab, tableSlug, views]);
+  }, [appId, selectedViewTab, tableSlug, views]);
 
   const createView = () => {
+    if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
+      setError("group_fields", {message: "Please select group"});
+      return;
+    }
+    if (
+      isWithTimeView &&
+      (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
+    ) {
+      setError("calendar_from_slug", {message: "Please select date range"});
+      setError("calendar_to_slug", {message: "Please select date range"});
+      return;
+    } else {
+      clearErrors(["calendar_from_slug", "calendar_to_slug"]);
+    }
+
     if (selectedViewTab === "WEBSITE") {
       if (watch("web_link")) {
         setBtnLoader(true);
         constructorViewService
-          .createViewMenuId(menuId, {
+          .create(tableSlug, {
             ...newViewJSON,
-            is_relation: true,
             attributes: {
               ...newViewJSON?.attributes,
               web_link: watch("web_link"),
             },
           })
           .then(() => {
-            // queryClient.refetchQueries([
-            //   "GET_VIEWS_LIST",
-            //   tableSlug,
-            //   i18n?.language,
-            // ]);
-            refetchViews();
+            queryClient.refetchQueries([
+              "GET_VIEWS_AND_FIELDS",
+              tableSlug,
+              i18n?.language,
+            ]);
           })
           .finally(() => {
             setBtnLoader(false);
@@ -162,15 +193,22 @@ export default function ViewTypeList({
       }
     } else {
       setBtnLoader(true);
+      newViewJSON.attributes = {
+        ...newViewJSON?.attributes,
+        calendar_from_slug: watch("calendar_from_slug") || null,
+        calendar_to_slug: watch("calendar_to_slug") || null,
+      };
+      newViewJSON.group_fields = Boolean(watch("group_fields"))
+        ? [watch("group_fields")]
+        : [];
       constructorViewService
-        .createViewMenuId(menuId, newViewJSON)
+        .create(tableSlug, newViewJSON)
         .then(() => {
-          refetchViews();
-          // queryClient.refetchQueries([
-          //   "GET_VIEWS_LIST",
-          //   tableSlug,
-          //   i18n?.language,
-          // ]);
+          queryClient.refetchQueries([
+            "GET_VIEWS_AND_FIELDS",
+            tableSlug,
+            i18n?.language,
+          ]);
         })
         .finally(() => {
           setBtnLoader(false);
@@ -178,6 +216,54 @@ export default function ViewTypeList({
         });
     }
   };
+
+  const {data} = useQuery(
+    ["GET_TABLE_INFO", {tableSlug}],
+    () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
+      });
+    },
+    {
+      cacheTime: 10,
+      select: (res) => {
+        const fields = res?.data?.fields ?? [];
+
+        return {fields};
+      },
+    }
+  );
+
+  const fields = data?.fields ?? [];
+
+  const computedColumns = useMemo(() => {
+    const filteredFields = fields?.filter(
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+    );
+    return listToOptions(filteredFields, "label", "slug");
+  }, [fields]);
+
+  const computedColumnsForTabGroup = (Object.values(fieldsMap) ?? []).filter(
+    (column) =>
+      ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+        column.type
+      )
+  );
+
+  const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
+    (el) => ({
+      label:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.attributes?.[`label_${i18n.language}`] ||
+            el?.attributes?.label ||
+            el?.label
+          : el.label,
+      value:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.relation_id
+          : el?.id,
+    })
+  );
 
   return (
     <div className={style.viewTypeList}>
@@ -189,8 +275,21 @@ export default function ViewTypeList({
               className={type.value === selectedViewTab ? style.active : ""}
               onClick={() => {
                 setSelectedViewTab(type.value);
+              }}
+              startIcon={
+                <SVG
+                  src={`/img/${viewIcons[type?.value]}`}
+                  width={18}
+                  height={18}
+                />
+              }
+              style={{
+                columnGap: "8px",
+                "MuiButton-startIcon": {
+                  marginLeft: 0,
+                },
               }}>
-              {type.value === "TABLE" && <TableChart className={style.icon} />}
+              {/* {type.value === "TABLE" && <TableChart className={style.icon} />}
               {type.value === "CALENDAR" && (
                 <CalendarMonth className={style.icon} />
               )}
@@ -213,7 +312,7 @@ export default function ViewTypeList({
               {type.value === "WEBSITE" && (
                 <LanguageIcon className={style.icon} />
               )}
-              {type.value === "GRID" && <FiberNewIcon className={style.icon} />}
+              {type.value === "GRID" && <FiberNewIcon className={style.icon} />} */}
               {type.label}
             </Button>
           ))}
@@ -223,7 +322,6 @@ export default function ViewTypeList({
           <div className={style.img}>
             <img src={detectImageView} alt="add view" />
           </div>
-
           <div className={style.text}>
             <h3>{selectedViewTab}</h3>
             <p>{detectDescriptionView}</p>
@@ -257,8 +355,48 @@ export default function ViewTypeList({
                 }}
               />
             )}
+            {isWithTimeView && (
+              <MaterialUIProvider>
+                <FRow
+                  label={
+                    selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
+                  }
+                  required>
+                  <HFSelect
+                    options={computedColumns}
+                    control={control}
+                    name="calendar_from_slug"
+                    MenuProps={{disablePortal: true}}
+                    required={true}
+                  />
+                </FRow>
+                <FRow
+                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
+                  required>
+                  <HFSelect
+                    options={computedColumns}
+                    control={control}
+                    name="calendar_to_slug"
+                    MenuProps={{disablePortal: true}}
+                    required={true}
+                  />
+                </FRow>
+              </MaterialUIProvider>
+            )}
+            {selectedViewTab === "BOARD" && (
+              <MaterialUIProvider>
+                <FRow label="Group by" required>
+                  <HFSelect
+                    options={computedColumnsForTabGroupOptions}
+                    control={control}
+                    name="group_fields"
+                    MenuProps={{disablePortal: true}}
+                    required={true}
+                  />
+                </FRow>
+              </MaterialUIProvider>
+            )}
           </div>
-
           <div className={style.button}>
             <LoadingButton
               variant="contained"
@@ -278,3 +416,22 @@ export default function ViewTypeList({
     </div>
   );
 }
+
+{
+  /* <HFTextFieldLogin */
+}
+//   name="web_link"
+//   control={control}
+//   required
+//   fullWidth
+//   placeholder={"website link..."}
+//   autoFocus
+//   InputProps={{
+//     startAdornment: (
+//       <InputAdornment position="start">
+//         {/* <img src="/img/user-circle.svg" height={"23px"} alt="" /> */}
+//         <LanguageIcon />
+//       </InputAdornment>
+//     ),
+//   }}
+// />

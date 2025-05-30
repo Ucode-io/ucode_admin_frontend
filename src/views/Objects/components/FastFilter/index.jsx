@@ -18,9 +18,9 @@ const FastFilter = ({
   visibleForm,
   isVisibleLoading,
   setFilterVisible,
-  container
+  container,
+  tableSlug,
 }) => {
-  const {tableSlug} = useParams();
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
 

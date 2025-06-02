@@ -44,7 +44,6 @@ const AppSidebar = ({
   setSelectedApp,
   selectedApp,
   menuTemplate,
-  setMenuItem,
   menuItem,
   menuLanguages,
   openFolderCreateModal,
@@ -55,6 +54,8 @@ const AppSidebar = ({
   languageData,
   subMenuIsOpen,
   subSearchText,
+  menuDraggable,
+  setMenuDraggable,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -253,7 +254,7 @@ const AppSidebar = ({
             borderRadius={6}
             _hover={{bg: "#EAECF0"}}
             cursor="pointer"
-            className="parent-folder column-drag-handle menu-button active-with-child"
+            className="parent-folder column-drag-handle"
             bg={activeMenu ? `${"#F0F0EF"} !important` : menuStyle?.background}
             color={
               Boolean(
@@ -305,7 +306,7 @@ const AppSidebar = ({
                         id={"three_dots"}
                         size={13}
                         onClick={(e) => {
-                          handleOpenNotify(e, "FOLDER");
+                          handleOpenNotify(e, "FOLDER", true);
                         }}
                         style={{
                           color: activeMenu
@@ -323,7 +324,7 @@ const AppSidebar = ({
                       id={"create_folder"}
                       className="extra_icon"
                       onClick={(e) => {
-                        handleOpenNotify(e, "CREATE_TO_FOLDER");
+                        handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
                       <AddIcon
                         size={13}

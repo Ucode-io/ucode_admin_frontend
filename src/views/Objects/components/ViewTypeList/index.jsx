@@ -1,10 +1,6 @@
 import React, {useMemo, useState} from "react";
 import style from "./style.module.scss";
-import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
-import IconGenerator from "../../../../components/IconPicker/IconGenerator";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {Button, InputAdornment, TextField} from "@mui/material";
-import ClearAllIcon from "@mui/icons-material/ClearAll";
 import constructorViewService from "../../../../services/constructorViewService";
 import {useParams} from "react-router-dom";
 import {useQuery, useQueryClient} from "react-query";
@@ -12,9 +8,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
-import FiberNewIcon from "@mui/icons-material/FiberNew";
 import SVG from "react-inlinesvg";
-import {Box} from "@chakra-ui/react";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 import FRow from "../../../../components/FormElements/FRow";
 import HFSelect from "../../../../components/FormElements/HFSelect";
@@ -40,7 +34,7 @@ export default function ViewTypeList({
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
-  const {tableSlug, appId} = useParams();
+  const {tableSlug, menuId} = useParams();
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
@@ -145,10 +139,10 @@ export default function ViewTypeList({
       },
       filters: [],
       number_field: "",
-      app_id: appId,
+      app_id: menuId,
       order: views.length + 1,
     };
-  }, [appId, selectedViewTab, tableSlug, views]);
+  }, [menuId, selectedViewTab, tableSlug, views]);
 
   const createView = () => {
     if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
@@ -225,6 +219,7 @@ export default function ViewTypeList({
       });
     },
     {
+      enabled: Boolean(tableSlug),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];

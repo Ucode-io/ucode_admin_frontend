@@ -511,7 +511,8 @@ function DrawerDetailPage({
                       style={{
                         borderBottom: "none",
                         overflowX: "auto",
-                        maxWidth: "72%",
+                        display: "flex",
+                        width: "80%",
                       }}>
                       {layoutTabs?.map((el, index) => (
                         <Tab

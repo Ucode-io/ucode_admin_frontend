@@ -81,7 +81,7 @@ const LayoutSidebar = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const {appId} = useParams();
+  const {menuId} = useParams();
 
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
@@ -137,7 +137,7 @@ const LayoutSidebar = ({
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
-  const handleOpenNotify = (event, type, root) => {
+  const handleOpenNotify = (event, type, root = false) => {
     setMenu({event: event?.currentTarget, type: type, root: root});
   };
   const handleCloseNotify = () => {
@@ -241,12 +241,12 @@ const LayoutSidebar = ({
   };
 
   const {isLoadingUser} = useQuery(
-    ["GET_CLIENT_TYPE_LIST", appId],
+    ["GET_CLIENT_TYPE_LIST", menuId],
     () => {
       return clientTypeServiceV2.getList();
     },
     {
-      enabled: Boolean(appId === "9e988322-cffd-484c-9ed6-460d8701551b"),
+      enabled: Boolean(menuId === "9e988322-cffd-484c-9ed6-460d8701551b"),
       onSuccess: (res) => {
         setChild(
           res.data.response?.map((row) => ({
@@ -292,12 +292,12 @@ const LayoutSidebar = ({
   }, []);
 
   useEffect(() => {
-    setSelectedApp(menuList?.find((item) => item?.id === appId));
+    setSelectedApp(menuList?.find((item) => item?.id === menuId));
   }, [menuList]);
 
   useEffect(() => {
-    setSelectedApp(menuList?.find((item) => item?.id === appId));
-  }, [appId]);
+    setSelectedApp(menuList?.find((item) => item?.id === menuId));
+  }, [menuId]);
 
   useEffect(() => {
     if (
@@ -307,15 +307,15 @@ const LayoutSidebar = ({
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
-    menuId: searchParams.get("menuId"),
-    queryParams: {
-      enabled: Boolean(searchParams.get("menuId")),
-      onSuccess: (res) => {
-        // setMenuItem(res);
-      },
-    },
-  });
+  // const {loader: menuLoader} = useMenuGetByIdQuery({
+  //   menuId: searchParams.get("menuId"),
+  //   queryParams: {
+  //     enabled: Boolean(searchParams.get("menuId")),
+  //     onSuccess: (res) => {
+  //       // setMenuItem(res);
+  //     },
+  //   },
+  // });
 
   const itemConditionalProps = {};
   if (!sidebarIsOpen) {
@@ -539,7 +539,7 @@ const LayoutSidebar = ({
             closeModal={closeModal}
             selectedFolder={selectedFolder}
             modalType={modalType}
-            appId={appId}
+            appId={menuId}
             getMenuList={getMenuList}
           />
         )}
@@ -548,7 +548,7 @@ const LayoutSidebar = ({
             closeModal={closeModal}
             selectedFolder={selectedFolder}
             modalType={modalType}
-            appId={appId}
+            appId={menuId}
             getMenuList={getMenuList}
           />
         ) : null}
@@ -622,7 +622,7 @@ const LayoutSidebar = ({
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}
           setFolderModalType={setFolderModalType}
-          appId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : appId}
+          appId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : menuId}
           setTableModal={setTableModal}
           setLinkedTableModal={setLinkedTableModal}
           setMicrofrontendModal={setMicrofrontendModal}

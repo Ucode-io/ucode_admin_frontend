@@ -227,8 +227,6 @@ const AutoCompleteElement = ({
     }
   );
 
-  console.log({ field });
-
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
@@ -432,7 +430,6 @@ const AutoCompleteElement = ({
     }
   }, [state?.id, computedValue]);
 
-  console.log({ allOptions });
 
   return (
     <Box sx={{width: "330px", height: "32px"}}>

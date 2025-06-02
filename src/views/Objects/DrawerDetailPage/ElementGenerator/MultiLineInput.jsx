@@ -46,7 +46,13 @@ const MultiLineInput = ({
         }}
       >
         <Box
-          sx={{ width: "100%", fontSize: "14px" }}
+          sx={{
+            width: "100%",
+            fontSize: "14px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
           id="textAreaInput"
           onClick={(e) => {
             !isDisabled && handleClick(e);

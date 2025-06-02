@@ -130,9 +130,10 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <DateTimePicker
+            placeholder="Empty"
             id="dateTimeZoneField"
             value={value ? getNoTimezoneValue(value) : defaultValue}
             valueFormat="DD.MM.YYYY HH:mm"

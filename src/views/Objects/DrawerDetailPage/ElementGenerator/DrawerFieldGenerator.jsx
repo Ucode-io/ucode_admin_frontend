@@ -50,6 +50,8 @@ import { useQuery } from "react-query";
 import constructorFunctionService from "../../../../services/constructorFunctionService";
 import listToOptions from "../../../../utils/listToOptions";
 import HFCodeField from "../../../../components/FormElements/HFCodeField";
+import JSONInput from "react-json-editor-ajrm";
+import { isJSONParsable } from "../../../../utils/isJsonValid";
 
 function DrawerFieldGenerator({
   field,
@@ -699,7 +701,6 @@ const JSONField = ({
           placeholder="Empty"
           size="small"
           value={value}
-          name={name}
           disabled={disabled}
           onClick={handleClick}
         />

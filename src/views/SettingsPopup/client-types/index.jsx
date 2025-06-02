@@ -83,7 +83,7 @@ export const UserClientTypes = () => {
   return (
     <ChakraProvider theme={chakraUITheme}>
       <Box h="100%" display="flex" flexDirection="column" bg="#fff">
-        <Flex pt="10px">
+        <Flex pt="10px" justifyContent="space-between">
           <Tabs index={tabIndex} onChange={onTabChange}>
             <TabList className={styles.react_tab}>
               <Flex
@@ -92,12 +92,16 @@ export const UserClientTypes = () => {
                 borderRadius={"8px"}
                 h={"32px"}
                 mb={"5px"}
-                border={"1px solid #EAECF0"}>
+                border={"1px solid #EAECF0"}
+                overflow="auto"
+                maxWidth="720px"
+              >
                 {clientTypes.map((type, index) => (
                   <Tab
-                    className={`${tabIndex === index ? styles.reactTabIteActive : styles.reactTabItem}`}
-                    sx={{fontSize: "12px"}}
-                    key={type.guid}>
+                    className={`${tabIndex === index ? styles.reactTabIteActive : styles.reactTabItem} ${styles.userTab}`}
+                    sx={{ fontSize: "12px" }}
+                    key={type.guid}
+                  >
                     {type.name}
                   </Tab>
                 ))}
@@ -122,7 +126,8 @@ export const UserClientTypes = () => {
           <Grid
             templateColumns={templateColumns}
             borderBottom="1px solid #EAECF0"
-            borderLeft="1px solid #EAECF0">
+            borderLeft="1px solid #EAECF0"
+          >
             <Th justifyContent="center">
               <img src="/img/hash.svg" alt="index" />
             </Th>
@@ -159,7 +164,8 @@ export const UserClientTypes = () => {
               key={user.id}
               templateColumns={templateColumns}
               borderBottom="1px solid #EAECF0"
-              borderLeft="1px solid #EAECF0">
+              borderLeft="1px solid #EAECF0"
+            >
               <Td display="flex" justifyContent="center" fontWeight={600}>
                 {index + 1}
               </Td>
@@ -185,20 +191,22 @@ export const UserClientTypes = () => {
         <Flex
           p="8px 16px 0px"
           borderTop="1px solid #EAECF0"
-          justifyContent="space-between">
+          justifyContent="space-between"
+        >
           <Flex
             columnGap="16px"
             alignItems="center"
             fontSize={14}
             fontWeight={600}
-            color="#344054">
+            color="#344054"
+          >
             {generateLangaugeText(userInviteLan, i18n?.language, "Show") ||
               "Show"}
             <Select
-              value={{value: limit, label: `${limit} rows`}}
+              value={{ value: limit, label: `${limit} rows` }}
               options={limitOptions}
               menuPlacement="top"
-              onChange={({value}) => onLimitChange(value)}
+              onChange={({ value }) => onLimitChange(value)}
             />
             out of {usersCount}
           </Flex>
@@ -209,7 +217,7 @@ export const UserClientTypes = () => {
             count={Math.ceil((usersCount ?? 0) / limit)}
             variant="outlined"
             shape="rounded"
-            style={{marginLeft: 40}}
+            style={{ marginLeft: 40 }}
           />
 
           <div />

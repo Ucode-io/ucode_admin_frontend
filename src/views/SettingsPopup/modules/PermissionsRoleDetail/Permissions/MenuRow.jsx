@@ -41,8 +41,7 @@ const MenuRow = ({
   setValue,
   allMenus,
   childIndex,
-  setCheckBoxValues,
-  checkBoxValues,
+  watch,
 }) => {
   const { roleId } = useParams();
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
@@ -76,7 +75,7 @@ const MenuRow = ({
             obj[item?.id] = item.permission;
           });
 
-          setCheckBoxValues((prev) => ({ ...prev, ...obj }));
+          // setCheckBoxValues((prev) => ({ ...prev, ...obj }));
 
           setData(res?.menus);
           if (!parentId) {
@@ -100,15 +99,9 @@ const MenuRow = ({
         setChangedData={setChangedData}
         changedData={changedData}
         setValue={setValue}
-        checkBoxValues={checkBoxValues}
-        setCheckBoxValues={setCheckBoxValues}
       />
     ));
   };
-
-  const rowPermissions = useMemo(() => {
-    return checkBoxValues?.[app?.id];
-  }, [checkBoxValues, app?.id]);
 
   const detectDuplicate = (checked, type) => {
     if (changedData?.find((obj) => obj?.id === app?.id)?.id) {
@@ -142,14 +135,7 @@ const MenuRow = ({
 
   const handleChange = (e, type) => {
     detectDuplicate(e, type);
-
-    setCheckBoxValues((prev) => ({
-      ...prev,
-      [app?.id]: {
-        ...prev?.[app?.id],
-        [type]: e,
-      },
-    }));
+    setValue(`menus.${appIndex}.permission.${type}`, e);
   };
 
   return (
@@ -197,46 +183,46 @@ const MenuRow = ({
 
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.read, "read");
+              onChange={(e) => {
+                handleChange(e.target.checked, "read");
               }}
-              checked={rowPermissions?.read ?? false}
+              checked={watch(`menus.${appIndex}.permission.read`)}
               label="Read"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.write, "write");
+              onChange={(e) => {
+                handleChange(e.target.checked, "write");
               }}
-              checked={rowPermissions?.write ?? false}
+              checked={watch(`menus.${appIndex}.permission.write`)}
               label="Write"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.update, "update");
+              onChange={(e) => {
+                handleChange(e.target.checked, "update");
               }}
-              checked={rowPermissions?.update ?? false}
+              checked={watch(`menus.${appIndex}.permission.update`)}
               label="Update"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.delete, "delete");
+              onChange={(e) => {
+                handleChange(e.target.checked, "delete");
               }}
-              checked={rowPermissions?.delete ?? false}
+              checked={watch(`menus.${appIndex}.permission.delete`)}
               label="Delete"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.menu_settings, "menu_settings");
+              onChange={(e) => {
+                handleChange(e.target.checked, "menu_settings");
               }}
-              checked={rowPermissions?.menu_settings ?? false}
+              checked={watch(`menus.${appIndex}.permission.menu_settings`)}
               label="Settings"
             />
           </CTableCell>
@@ -262,46 +248,46 @@ const MenuRow = ({
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.read, "read");
+              onChange={(e) => {
+                handleChange(e.target.checked, "read");
               }}
-              checked={rowPermissions?.read ?? false}
+              checked={watch(`menus.${appIndex}.permission.read`)}
               label="Read"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.write, "write");
+              onChange={(e) => {
+                handleChange(e.target.checked, "write");
               }}
-              checked={rowPermissions?.write ?? false}
+              checked={watch(`menus.${appIndex}.permission.write`)}
               label="Write"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.update, "update");
+              onChange={(e) => {
+                handleChange(e.target.checked, "update");
               }}
-              checked={rowPermissions?.update ?? false}
+              checked={watch(`menus.${appIndex}.permission.update`)}
               label="Update"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.delete, "delete");
+              onChange={(e) => {
+                handleChange(e.target.checked, "delete");
               }}
-              checked={rowPermissions?.delete ?? false}
+              checked={watch(`menus.${appIndex}.permission.delete`)}
               label="Delete"
             />
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>
             <MenuCheckbox
-              onChange={() => {
-                handleChange(!rowPermissions?.menu_settings, "menu_settings");
+              onChange={(e) => {
+                handleChange(e.target.checked, "menu_settings");
               }}
-              checked={rowPermissions?.menu_settings ?? false}
+              checked={watch(`menus.${appIndex}.permission.menu_settings`)}
               label="Settings"
             />
           </CTableCell>

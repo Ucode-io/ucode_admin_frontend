@@ -62,7 +62,7 @@ const TableRow = ({
   const selected = Boolean(
     selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)
   );
-  console.log("projectIdprojectId", projectId);
+
   return (
     <>
       {!relationAction ? (

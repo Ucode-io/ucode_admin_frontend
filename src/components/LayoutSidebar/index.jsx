@@ -137,7 +137,7 @@ const LayoutSidebar = ({
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
-  const handleOpenNotify = (event, type, root = false) => {
+  const handleOpenNotify = (event, type, root) => {
     setMenu({event: event?.currentTarget, type: type, root: root});
   };
   const handleCloseNotify = () => {

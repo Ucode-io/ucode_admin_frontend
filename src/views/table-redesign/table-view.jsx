@@ -80,7 +80,6 @@ const TableView = ({
   const navigate = useNavigate();
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
-  console.log("tableSlugtableSlug", tableSlug);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();

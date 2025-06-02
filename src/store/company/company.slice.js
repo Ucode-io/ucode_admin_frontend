@@ -1,20 +1,22 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+const initialState = {
+  companies: [],
+  projects: [],
+  environments: [],
+  companyItem: {},
+  projectItem: {},
+  environmentItem: {},
+  companyId: null,
+  projectId: null,
+  environmentId: null,
+  version: null,
+  defaultPage: "",
+};
+
 export const {actions: companyActions, reducer: companyReducer} = createSlice({
   name: "company",
-  initialState: {
-    companies: [],
-    projects: [],
-    environments: [],
-    companyItem: {},
-    projectItem: {},
-    environmentItem: {},
-    companyId: null,
-    projectId: null,
-    environmentId: null,
-    version: null,
-    defaultPage: "",
-  },
+  initialState,
   reducers: {
     setCompanies: (state, {payload}) => {
       state.companies = payload ?? [];
@@ -49,5 +51,6 @@ export const {actions: companyActions, reducer: companyReducer} = createSlice({
     setDefaultPage: (state, {payload}) => {
       state.defaultPage = payload ?? "";
     },
+    logout: (state) => initialState,
   },
 });

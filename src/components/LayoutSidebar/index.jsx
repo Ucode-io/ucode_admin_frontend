@@ -963,7 +963,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
       indexedDB.deleteDatabase("ChartDB");
       dispatch(menuAccordionActions.toggleMenuChilds({}));
       store.dispatch(authActions.logout());
-      dispatch(companyActions.setCompanies([]));
+      dispatch(companyActions.logout());
     });
   };
 

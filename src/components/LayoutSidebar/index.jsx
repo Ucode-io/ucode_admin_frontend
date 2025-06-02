@@ -361,7 +361,7 @@ const LayoutSidebar = ({
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
       : isWarning <= 7;
-
+  console.log("menuIdmenuId", menuId);
   return (
     <>
       <Flex
@@ -622,7 +622,7 @@ const LayoutSidebar = ({
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}
           setFolderModalType={setFolderModalType}
-          appId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : menuId}
+          menuId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : menuId}
           setTableModal={setTableModal}
           setLinkedTableModal={setLinkedTableModal}
           setMicrofrontendModal={setMicrofrontendModal}

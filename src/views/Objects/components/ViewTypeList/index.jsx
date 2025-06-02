@@ -26,15 +26,18 @@ const viewIcons = {
 };
 
 export default function ViewTypeList({
+  view,
   computedViewTypes,
   views,
   handleClose,
   fieldsMap = {},
+  refetchViews,
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
-  const {tableSlug, menuId} = useParams();
+  const {menuId} = useParams();
+  const tableSlug = view?.table_slug;
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
@@ -172,11 +175,7 @@ export default function ViewTypeList({
             },
           })
           .then(() => {
-            queryClient.refetchQueries([
-              "GET_VIEWS_AND_FIELDS",
-              tableSlug,
-              i18n?.language,
-            ]);
+            refetchViews();
           })
           .finally(() => {
             setBtnLoader(false);
@@ -198,11 +197,7 @@ export default function ViewTypeList({
       constructorViewService
         .create(tableSlug, newViewJSON)
         .then(() => {
-          queryClient.refetchQueries([
-            "GET_VIEWS_AND_FIELDS",
-            tableSlug,
-            i18n?.language,
-          ]);
+          refetchViews();
         })
         .finally(() => {
           setBtnLoader(false);

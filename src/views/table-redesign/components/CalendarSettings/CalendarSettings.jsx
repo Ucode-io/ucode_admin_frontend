@@ -1,23 +1,31 @@
-import cls from "./styles.module.scss"
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import cls from "./styles.module.scss";
+import {useEffect, useMemo} from "react";
+import {useTranslation} from "react-i18next";
 import listToLanOptions from "../../../../utils/listToLanOptions";
 import FRow from "../../../../components/FormElements/FRow";
 import HFSelect from "../../../../components/FormElements/HFSelect";
-import { Box, Button } from "@chakra-ui/react";
-import { Button as MuiButton } from "@mui/material"
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { useForm } from "react-hook-form";
+import {Box, Button} from "@chakra-ui/react";
+import {Button as MuiButton} from "@mui/material";
+import {ChevronLeftIcon} from "@chakra-ui/icons";
+import {useForm} from "react-hook-form";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 import constructorViewService from "../../../../services/constructorViewService";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 
-export const CalendarSettings = ({ onBackClick, title, columns, tableSlug, views, selectedTabIndex, initialValues }) => {
+export const CalendarSettings = ({
+  onBackClick,
+  title,
+  columns,
+  tableSlug,
+  views,
+  selectedTabIndex,
+  initialValues,
+}) => {
   const {i18n} = useTranslation();
 
   const form = useForm();
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const computedColumns = useMemo(() => {
     return listToLanOptions(columns, "label", "slug", i18n?.language);
@@ -42,7 +50,7 @@ export const CalendarSettings = ({ onBackClick, title, columns, tableSlug, views
     };
     constructorViewService.update(tableSlug, computedValues).then(() => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      console.log("first")
+      console.log("first");
       onBackClick();
     });
   };
@@ -71,12 +79,12 @@ export const CalendarSettings = ({ onBackClick, title, columns, tableSlug, views
     };
   };
 
-    useEffect(() => {
-      form.reset({
-        ...getInitialValues(initialValues),
-        filters: [],
-      });
-    }, [initialValues, tableSlug, form]);
+  useEffect(() => {
+    form.reset({
+      ...getInitialValues(initialValues),
+      filters: [],
+    });
+  }, [initialValues, tableSlug, form]);
 
   return (
     <div>
@@ -93,35 +101,37 @@ export const CalendarSettings = ({ onBackClick, title, columns, tableSlug, views
         </Button>
       </Box>
       <div className={cls.section}>
+        <div className={cls.sectionBody}>
+          <MaterialUIProvider>
+            <div className={cls.formRow} onClick={(e) => e.stopPropagation()}>
+              <FRow label="Time from">
+                <HFSelect
+                  options={computedColumns}
+                  control={form.control}
+                  name="calendar_from_slug"
+                  MenuProps={{disablePortal: true}}
+                />
+              </FRow>
+              <FRow label="Time to">
+                <HFSelect
+                  options={computedColumns}
+                  control={form.control}
+                  name="calendar_to_slug"
+                  MenuProps={{disablePortal: true}}
+                />
+              </FRow>
+            </div>
+          </MaterialUIProvider>
+          <Box>
+            <MuiButton
+              fullWidth
+              variant="contained"
+              onClick={form.handleSubmit(onSubmit)}>
+              Save
+            </MuiButton>
+          </Box>
 
-          <div className={cls.sectionBody}>
-            <MaterialUIProvider>
-              <div className={cls.formRow} onClick={(e) => e.stopPropagation()}>
-                  <FRow label="Time from">
-                    <HFSelect
-                      options={computedColumns}
-                      control={form.control}
-                      name="calendar_from_slug"
-                      MenuProps={{ disablePortal: true }}
-                    />
-                  </FRow>
-                  <FRow label="Time to">
-                    <HFSelect
-                      options={computedColumns}
-                      control={form.control}
-                      name="calendar_to_slug"
-                      MenuProps={{ disablePortal: true }}
-                    />
-                  </FRow>
-              </div>
-            </MaterialUIProvider>
-            <Box>
-              <MuiButton fullWidth variant="contained" onClick={form.handleSubmit(onSubmit)}>
-                Save
-              </MuiButton>
-            </Box>
-
-            {/* <div className={styles.formRow}>
+          {/* <div className={styles.formRow}>
               <FRow label="Time interval">
                 <HFSelect
                   options={timeIntervalOptions}
@@ -138,7 +148,7 @@ export const CalendarSettings = ({ onBackClick, title, columns, tableSlug, views
                 />
               </FRow>
             </div> */}
-          </div>
+        </div>
       </div>
     </div>
   );

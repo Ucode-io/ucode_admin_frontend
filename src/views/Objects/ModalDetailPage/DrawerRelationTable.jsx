@@ -30,7 +30,8 @@ import {useQuery} from "react-query";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {useSelector} from "react-redux";
 import {objectToArray} from "../../../utils/objectToArray";
-import {listToMap} from "../../../utils/listToMap";
+import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
+import BoardView from "../BoardView";
 
 const DrawerRelationTable = ({
   layoutTabs,
@@ -48,8 +49,12 @@ const DrawerRelationTable = ({
   tableLan = {},
   relatedTable,
   tableSlug,
+  menuItem,
+  layoutType,
+  setLayoutType = () => {},
   getValues = () => {},
   handleMouseDown = () => {},
+  setSelectedTabIndex = () => {},
 }) => {
   const myRef = useRef();
   const {i18n} = useTranslation();
@@ -141,6 +146,8 @@ const DrawerRelationTable = ({
       columns = [],
       quickFilters = [],
       fieldsMap = {},
+      fieldsMapRel = {},
+      visibleColumns = [],
       count = 0,
     } = {},
     refetch,
@@ -184,7 +191,9 @@ const DrawerRelationTable = ({
             : Math.ceil(data.count / paginiation);
 
         const fieldsMap = listToMap(data.fields);
+        const fieldsMapRel = listToMapWithoutRel(data?.fields ?? []);
         const count = data?.count;
+        const visibleColumns = data?.fields ?? [];
 
         const array = [];
         for (const key in getRelatedTabeSlug?.attributes?.fixedColumns) {
@@ -218,6 +227,8 @@ const DrawerRelationTable = ({
           columns,
           quickFilters,
           fieldsMap,
+          visibleColumns,
+          fieldsMapRel,
           count,
         };
       },
@@ -226,7 +237,7 @@ const DrawerRelationTable = ({
       },
     }
   );
-  console.log("tableDatatableData", tableData);
+
   const setCreateFormVisible = (relationId, value) => {
     setRelationsCreateFormVisible((prev) => ({
       ...prev,
@@ -234,9 +245,9 @@ const DrawerRelationTable = ({
     }));
   };
 
-  useEffect(() => {
-    update();
-  }, [update]);
+  // useEffect(() => {
+  //   update();
+  // }, [update]);
 
   useEffect(() => {
     setSelectedObjects([]);
@@ -313,50 +324,66 @@ const DrawerRelationTable = ({
           </Flex>
         </ChakraProvider>
 
-        <RelationTableDrawer
-          refetch={refetch}
-          count={count}
-          pageCount={pageCount}
-          columns={columns}
-          dataFetchingLoading={dataFetchingLoading}
-          tableData={tableData}
-          fieldsMap={fieldsMap}
-          limit={limit}
-          setLimit={setLimit}
-          setFilters={setFilters}
-          filters={filters}
-          ref={myRef}
-          tableSlug={tableSlug}
-          loader={loader}
-          remove={remove}
-          reset={reset}
-          searchText={searchText}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
-          selectedTabIndex={selectedTabIndex}
-          watch={watch}
-          selectedTab={selectedTab}
-          control={control}
-          setFormValue={setFormValue}
-          fields={fields}
-          setFormVisible={setFormVisible}
-          formVisible={formVisible}
-          key={selectedTab.id}
-          relation={relations}
-          getRelatedTabeSlug={getRelatedTabeSlug}
-          createFormVisible={relationsCreateFormVisible}
-          setCreateFormVisible={setCreateFormVisible}
-          selectedObjects={selectedObjects}
-          setSelectedObjects={setSelectedObjects}
-          inputChangeHandler={inputChangeHandler}
-          removableHeight={140}
-          id={id}
-          getValues={getValues}
-          getAllData={getAllData}
-          relatedTable={relatedTable}
-          type={"relation"}
-          layoutData={data}
-        />
+        {selectedTab?.view_type === "BOARD" ? (
+          <BoardView
+            menuItem={menuItem}
+            fieldsMapRel={fieldsMapRel}
+            selectedTabIndex={selectedTabIndex}
+            setSelectedTabIndex={setSelectedTabIndex}
+            visibleColumns={visibleColumns}
+            visibleRelationColumns={[]}
+            views={[]}
+            fieldsMap={fieldsMap}
+            view={selectedTab}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+          />
+        ) : (
+          <RelationTableDrawer
+            refetch={refetch}
+            count={count}
+            pageCount={pageCount}
+            columns={columns}
+            dataFetchingLoading={dataFetchingLoading}
+            tableData={tableData}
+            fieldsMap={fieldsMap}
+            limit={limit}
+            setLimit={setLimit}
+            setFilters={setFilters}
+            filters={filters}
+            ref={myRef}
+            tableSlug={tableSlug}
+            loader={loader}
+            remove={remove}
+            reset={reset}
+            searchText={searchText}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            selectedTabIndex={selectedTabIndex}
+            watch={watch}
+            selectedTab={selectedTab}
+            control={control}
+            setFormValue={setFormValue}
+            fields={fields}
+            setFormVisible={setFormVisible}
+            formVisible={formVisible}
+            key={selectedTab.id}
+            relation={relations}
+            getRelatedTabeSlug={getRelatedTabeSlug}
+            createFormVisible={relationsCreateFormVisible}
+            setCreateFormVisible={setCreateFormVisible}
+            selectedObjects={selectedObjects}
+            setSelectedObjects={setSelectedObjects}
+            inputChangeHandler={inputChangeHandler}
+            removableHeight={140}
+            id={id}
+            getValues={getValues}
+            getAllData={getAllData}
+            relatedTable={relatedTable}
+            type={"relation"}
+            layoutData={data}
+          />
+        )}
       </Box>
 
       <Box

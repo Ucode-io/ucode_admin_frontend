@@ -624,6 +624,7 @@ const TableView = ({
             layout={layout}
             fieldsMap={fieldsMap}
             refetch={refetch}
+            layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}

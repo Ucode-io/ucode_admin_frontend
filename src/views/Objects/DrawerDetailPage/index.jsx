@@ -45,6 +45,7 @@ function DrawerDetailPage({
   fullScreen = false,
   projectInfo,
   defaultValue,
+  layoutType,
   setLayoutType = () => {},
   setFullScreen = () => {},
   navigateToEditPage = () => {},
@@ -74,7 +75,7 @@ function DrawerDetailPage({
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
-  const [layoutTabs, setLayoutTabs] = useState([]);
+  const [layoutTabs, setLayoutTabs] = useState(layout?.tabs || []);
 
   const permissions = useSelector(
     (state) => state?.permissions?.permissions?.[tableSlug]
@@ -507,12 +508,10 @@ function DrawerDetailPage({
 
                   {!layout?.is_visible_section && (
                     <TabList
-                      // className={"scrollbarNone"}
                       style={{
                         borderBottom: "none",
                         overflowX: "auto",
                         display: "flex",
-                        width: "80%",
                       }}>
                       {layoutTabs?.map((el, index) => (
                         <Tab
@@ -547,17 +546,18 @@ function DrawerDetailPage({
                                 : el?.attributes?.[`label_${i18n?.language}`] ||
                                   el?.label}
                             </Box>
-                            {el?.type !== "section" && (
-                              <RemoveRelationView
-                                setSelectTab={setSelectTab}
-                                setSelectedTabIndex={setSelectedTabIndex}
-                                tableSlug={tableSlug}
-                                layoutTabs={layoutTabs}
-                                layout={layout}
-                                setLayoutTabs={setLayoutTabs}
-                                tab={el}
-                              />
-                            )}
+                            {el?.type !== "section" &&
+                              index === selectedTabIndex && (
+                                <RemoveRelationView
+                                  setSelectTab={setSelectTab}
+                                  setSelectedTabIndex={setSelectedTabIndex}
+                                  tableSlug={tableSlug}
+                                  layoutTabs={layoutTabs}
+                                  layout={layout}
+                                  setLayoutTabs={setLayoutTabs}
+                                  tab={el}
+                                />
+                              )}
                           </Box>
                         </Tab>
                       ))}
@@ -621,6 +621,9 @@ function DrawerDetailPage({
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        menuItem={menuItem}
+                        layoutType={layoutType}
+                        setLayoutType={setLayoutType}
                         navigateToEditPage={navigateToEditPage}
                         layoutTabs={layoutTabs}
                         selectedTab={selectedTab}

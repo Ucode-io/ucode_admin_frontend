@@ -56,7 +56,10 @@ function PolygonFieldTable({
         onClick={handleOpen}
       >
         <Box
-          sx={{ fontSize: drawerDetail ? "13px" : "11px", color: "#adb5bd" }}
+          sx={{
+            fontSize: drawerDetail ? "13px" : "11px",
+            color: polygonValue ? "#212b36" : "#adb5bd",
+          }}
         >
           Polygon
         </Box>

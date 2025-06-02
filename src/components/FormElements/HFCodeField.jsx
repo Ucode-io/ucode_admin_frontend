@@ -43,7 +43,8 @@ const HFCodeField = ({
     <FRowMultiLine
       label={label}
       required={field?.required}
-      extraClassName={isNewTableView ? "tableView" : ""}>
+      extraClassName={isNewTableView ? "tableView" : ""}
+    >
       <Controller
         control={control}
         name={name}
@@ -52,8 +53,8 @@ const HFCodeField = ({
           required: required ? "This is required field" : false,
           ...rules,
         }}
-        render={({field: {onChange}, fieldState: {error}}) => (
-          <Box sx={{position: "relative"}}>
+        render={({ field: { onChange }, fieldState: { error } }) => (
+          <Box sx={{ position: "relative" }}>
             <Button
               onClick={handleCopyJSON}
               sx={{
@@ -61,7 +62,8 @@ const HFCodeField = ({
                 zIndex: "99",
                 top: "6px",
                 right: "35px",
-              }}>
+              }}
+            >
               <ContentCopyIcon />
             </Button>
             <JSONInput

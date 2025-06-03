@@ -1,10 +1,15 @@
 import {MenuItem} from "@mui/material";
 import React from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
-export default function MicroFrontPdf({row, handleClose = () => {}, view}) {
-  const {appId, tableSlug} = useParams();
-
+export default function MicroFrontPdf({
+  row,
+  handleClose = () => {},
+  view,
+  projectId,
+}) {
+  const {menuId, tableSlug} = useParams();
+  const navigate = useNavigate();
   const replaceUrlVariables = (urlTemplate, data) => {
     return urlTemplate?.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
       return data[variable] || "";
@@ -22,11 +27,17 @@ export default function MicroFrontPdf({row, handleClose = () => {}, view}) {
     }
   };
 
+  const navigateTemplates = () => {
+    navigate(`/${menuId}/templates`);
+  };
+
   return (
     <>
       <MenuItem
         onClick={(event) => {
-          navigateToDocumentEditPage(event);
+          projectId === "6fd296f6-9195-4ed3-af84-c1dcca929273"
+            ? navigateTemplates()
+            : navigateToDocumentEditPage(event);
         }}>
         PDF page
       </MenuItem>

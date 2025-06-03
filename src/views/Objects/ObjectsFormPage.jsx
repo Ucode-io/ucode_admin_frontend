@@ -40,6 +40,7 @@ const ObjectsFormPage = ({
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const {state = {}} = useLocation();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {navigateToForm} = useTabRouter();
@@ -59,10 +60,7 @@ const ObjectsFormPage = ({
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
   const itemId = searchParams.get("p");
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || state?.tableSlug;
-  }, [selectedView?.table_slug, tableSlugFromProps]);
+  const tableSlug = state?.table_slug;
 
   const {menuId} = useParams();
 
@@ -317,6 +315,7 @@ const ObjectsFormPage = ({
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
+          tableSlug={tableSlug}
           getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -327,7 +326,6 @@ const ObjectsFormPage = ({
           onSubmit={onSubmit}
           reset={reset}
           setFormValue={setFormValue}
-          tableSlug={tableSlugFromProps}
           watch={watch}
           loader={loader}
           setSelectTab={setSelectTab}

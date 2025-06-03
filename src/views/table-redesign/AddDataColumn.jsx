@@ -32,20 +32,13 @@ const AddDataColumn = React.memo(
     calculateWidthFixedColumn,
     firstRowWidth = 45,
     isTableView = false,
-    tableSlugProp = "",
+    tableSlug,
   }) => {
     const dispatch = useDispatch();
-    const {tableSlug: tableSlugParams, id} = useParams();
-
-    const computedSlug = isRelationTable
-      ? `${relatedTableSlug}_id`
-      : tableSlugProp || tableSlugParams;
-
+    const {id} = useParams();
+    const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
-
-    const computedTableSlug = isRelationTable
-      ? view?.relatedTable
-      : tableSlugProp || tableSlugParams;
+    const computedTableSlug = isRelationTable ? relatedTableSlug : tableSlug;
 
     const {
       handleSubmit,
@@ -130,7 +123,7 @@ const AddDataColumn = React.memo(
               }`,
             }}>
             <NewTableDataForm
-              tableSlug={tableSlugProp}
+              tableSlug={tableSlug}
               fields={columns}
               field={column}
               getValues={getValues}

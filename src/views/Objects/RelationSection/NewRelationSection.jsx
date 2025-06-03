@@ -35,8 +35,6 @@ const NewRelationSection = ({
   relations,
   loader,
   getAllData = () => {},
-  tableSlug: tableSlugFromProps,
-  id: idFromProps,
   limit,
   setLimit,
   relatedTable,
@@ -48,20 +46,12 @@ const NewRelationSection = ({
   setSelectTab,
   selectedTab,
   errors,
-  menuItem,
   data,
+  id,
+  tableSlug,
 }) => {
-  const {
-    tableSlug: tableSlugFromParams,
-    id: idFromParams,
-    appId,
-    menuId,
-  } = useParams();
-
-  const id = idFromProps ?? idFromParams;
-
+  const {menuId} = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
@@ -109,8 +99,6 @@ const NewRelationSection = ({
       },
     }
   );
-
-  const tableSlug = selectedView?.table_slug || tableSlugFromProps;
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -179,7 +167,7 @@ const NewRelationSection = ({
 
   const navigateToCreatePage = () => {
     let mapped = {
-      [`${tableSlug}_id`]: idFromParams ?? "",
+      [`${tableSlug}_id`]: id ?? "",
     };
     defaultValuesFromJwt.forEach((el) => {
       let keys = Object.keys(el);
@@ -219,8 +207,7 @@ const NewRelationSection = ({
             data: {
               offset: 0,
               limit: 0,
-              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
-                idFromParams,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: id,
             },
           },
           {
@@ -235,7 +222,7 @@ const NewRelationSection = ({
           );
         })
         .catch((a) => console.log("error", a));
-  }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
+  }, [getRelatedTabeSlug, id, relationFieldSlug, tableSlug]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
@@ -339,7 +326,7 @@ const NewRelationSection = ({
 
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-
+  console.log("datadata", data);
   return (
     <>
       {selectedManyToManyRelation && (
@@ -386,7 +373,8 @@ const NewRelationSection = ({
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
                         {el?.type === "relation"
-                          ? el?.relation?.attributes?.[
+                          ? el?.label ||
+                            el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
                             ]
                           : el?.attributes?.[`label_${i18n?.language}`] ||

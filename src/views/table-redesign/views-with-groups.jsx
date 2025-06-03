@@ -618,6 +618,8 @@ export const NewUiViewsWithGroups = ({
                 horizontal: "left",
               }}>
               <ViewTypeList
+                view={view}
+                fieldsMap={fieldsMap}
                 tableSlug={tableSlug}
                 views={views}
                 refetchViews={refetchViews}
@@ -2027,6 +2029,7 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
+            tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
@@ -2041,6 +2044,7 @@ const ViewOptions = ({
 
         {openedMenu === "group" && (
           <Group
+            tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
@@ -2051,6 +2055,7 @@ const ViewOptions = ({
 
         {openedMenu === "sub-group" && (
           <SubGroup
+            tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
@@ -2063,6 +2068,7 @@ const ViewOptions = ({
 
         {openedMenu === "tab-group" && (
           <TabGroup
+            tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
@@ -2077,6 +2083,7 @@ const ViewOptions = ({
 
         {openedMenu === "fix-column" && (
           <FixColumns
+            tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
             fieldsMap={fieldsMap}
@@ -2086,6 +2093,7 @@ const ViewOptions = ({
         )}
         {openedMenu === "timeline-settings" && (
           <TimelineSettings
+            tableSlug={tableSlug}
             control={settingsForm.control}
             computedColumns={computedColumns}
             onBackClick={() => setOpenedMenu(null)}
@@ -2098,11 +2106,11 @@ const ViewOptions = ({
         )}
         {openedMenu === "calendar-settings" && (
           <CalendarSettings
+            tableSlug={tableSlug}
             columns={visibleColumns}
             onBackClick={() => setOpenedMenu(null)}
             selectedTabIndex={selectedTabIndex}
             views={views}
-            tableSlug={tableSlug}
             initialValues={view}
             title={
               generateLangaugeText(tableLan, i18n?.language, "Settings") ||
@@ -2121,9 +2129,9 @@ const ColumnsVisibility = ({
   refetchViews,
   onBackClick,
   tableLan,
+  tableSlug,
 }) => {
   const {i18n, t} = useTranslation();
-  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2436,9 +2444,15 @@ const ColumnsVisibility = ({
   );
 };
 
-const Group = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
+const Group = ({
+  view,
+  fieldsMap,
+  refetchViews,
+  onBackClick,
+  tableLan,
+  tableSlug,
+}) => {
   const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2556,9 +2570,9 @@ const TabGroup = ({
   visibleColumns,
   label = "Tab group columns",
   isBoardView,
+  tableSlug,
 }) => {
   const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -2691,8 +2705,14 @@ const TabGroup = ({
   );
 };
 
-const FixColumns = ({view, fieldsMap, refetchViews, onBackClick, tableLan}) => {
-  const {tableSlug} = useParams();
+const FixColumns = ({
+  view,
+  fieldsMap,
+  refetchViews,
+  onBackClick,
+  tableLan,
+  tableSlug,
+}) => {
   const [search, setSearch] = useState("");
   const {i18n} = useTranslation();
 

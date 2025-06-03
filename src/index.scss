@@ -1194,10 +1194,11 @@ div:has(.chakra-tooltip) {
 }
 
 .scrollbarNone {
-  scrollbar-width: none;
+  overflow-x: hidden;
+  scrollbar-width: none !important;
 
   &::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
 }
 

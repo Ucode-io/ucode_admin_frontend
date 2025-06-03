@@ -15,7 +15,12 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
 import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {Flex, Text} from "@chakra-ui/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -33,9 +38,10 @@ const FullpagePeekMaininfo = ({
   computedSections = [],
   updateCurrentLayout = () => {},
 }) => {
-  const {tableSlug, menuId} = useParams();
+  const {menuId} = useParams();
   const {i18n} = useTranslation();
   const navigate = useNavigate();
+  const {state} = useLocation();
   const [isShow, setIsShow] = useState(true);
   const [activeLang, setActiveLang] = useState();
   const [dragAction, setDragAction] = useState(false);
@@ -44,6 +50,7 @@ const FullpagePeekMaininfo = ({
   const rowData = watch();
   const [searchParams] = useSearchParams();
   const id = searchParams.get("p");
+  const tableSlug = state?.tableSlug;
 
   const auth = store.getState().auth;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
@@ -133,9 +140,10 @@ const FullpagePeekMaininfo = ({
               }}>
               <Button
                 onClick={() =>
-                  navigate(`/${menuId}/layout-settings/${tableSlug}/${id}`, {
+                  navigate(`/${menuId}/customize/${id}`, {
                     state: {
                       ...rowData,
+                      tableSlug,
                     },
                   })
                 }
@@ -158,6 +166,7 @@ const FullpagePeekMaininfo = ({
               fields={fieldsList}
               selectedTab={selectedTab}
               layoutData={relation}
+              tableSlug={tableSlug}
             />
           </Box>
 
@@ -278,8 +287,8 @@ const HeadingOptions = ({
   selectedTab,
   layoutData,
   setFormValue = () => {},
+  tableSlug,
 }) => {
-  const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 

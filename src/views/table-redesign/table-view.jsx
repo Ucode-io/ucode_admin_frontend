@@ -80,7 +80,6 @@ const TableView = ({
   const navigate = useNavigate();
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
-  console.log("tableSlugtableSlug", tableSlug);
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
@@ -625,6 +624,7 @@ const TableView = ({
             layout={layout}
             fieldsMap={fieldsMap}
             refetch={refetch}
+            layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}

@@ -461,6 +461,7 @@ export const DynamicTable = ({
                   type="add_field"
                   id="addField">
                   <FieldButton
+                    tableSlug={tableSlug}
                     tableLan={tableLan}
                     openFieldSettings={openFieldSettings}
                     view={view}
@@ -711,10 +712,10 @@ const FieldButton = ({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  tableSlug,
 }) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
-  const {tableSlug} = useParams();
   const dispatch = useDispatch();
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
@@ -746,6 +747,7 @@ const FieldButton = ({
   const {mutate: createField} = useFieldCreateMutation({
     onSuccess: (res) => {
       reset({});
+      queryClient.refetchQueries(["GET_VIEWS_LIST"]);
       setFieldOptionAnchor(null);
       setFieldCreateAnchor(null);
       dispatch(showAlert("Successful created", "success"));
@@ -786,7 +788,7 @@ const FieldButton = ({
     const data = {
       ...values,
       slug: slug,
-      table_id: menuItem?.table_id,
+      table_id: tableSlug,
       label: slug,
       index: "string",
       required: false,

@@ -109,7 +109,6 @@ const ObjectsPage = () => {
     },
     {
       enabled: Boolean(selectedView?.table_slug),
-
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
@@ -214,7 +213,7 @@ const ObjectsPage = () => {
   };
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
-
+  console.log("viewsviewsviewsviews=====>", views);
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>

@@ -24,7 +24,7 @@ const ButtonsMenu = ({
   deleteFolder,
   menuType,
   setFolderModalType,
-  appId,
+  menuId,
   setTableModal,
   setMicrofrontendModal,
   setLinkedTableModal,
@@ -36,6 +36,8 @@ const ButtonsMenu = ({
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
+
+  const menuID = element?.type === "FOLDER" ? element?.id : menuId;
 
   return (
     <Menu
@@ -138,7 +140,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               handleCloseNotify();
             }}
           />
@@ -487,7 +489,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               handleCloseNotify();
             }}
           />
@@ -584,7 +586,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${appId}/objects/create`, {
+              navigate(`/settings/constructor/apps/${menuID}/objects/create`, {
                 state: {
                   create_table: true,
                 },
@@ -720,7 +722,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               handleCloseNotify();
             }}
           />

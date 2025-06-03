@@ -1,48 +1,42 @@
 import React, {useMemo, useState} from "react";
 import style from "./style.module.scss";
+import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import {Button, InputAdornment, TextField} from "@mui/material";
-import constructorViewService from "../../../../services/constructorViewService";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
 import {useParams} from "react-router-dom";
-import {useQuery, useQueryClient} from "react-query";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import LanguageIcon from "@mui/icons-material/Language";
-import SVG from "react-inlinesvg";
-import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
-import FRow from "../../../../components/FormElements/FRow";
-import HFSelect from "../../../../components/FormElements/HFSelect";
-import constructorTableService from "../../../../services/constructorTableService";
-import listToOptions from "../../../../utils/listToOptions";
+import FiberNewIcon from "@mui/icons-material/FiberNew";
+import IconGenerator from "../../../components/IconPicker/IconGenerator";
+import {computedViewTypes} from "../../../utils/constants/viewTypes";
+import layoutService from "../../../services/layoutService";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import FRow from "../../../components/FormElements/FRow";
+import constructorTableService from "../../../services/constructorTableService";
+import {useQuery} from "react-query";
+import {listToMap} from "../../../utils/listToMap";
 
-const viewIcons = {
-  TABLE: "layout-alt-01.svg",
-  CALENDAR: "calendar.svg",
-  BOARD: "rows.svg",
-  GRID: "grid.svg",
-  TIMELINE: "line-chart-up.svg",
-  WEBSITE: "globe.svg",
-  TREE: "treeView.svg",
-};
-
-export default function ViewTypeList({
-  view,
-  computedViewTypes,
-  views,
-  handleClose,
-  fieldsMap = {},
-  refetchViews,
+export default function RelationViewTypeList({
+  tableSlug,
+  selectedTab,
+  layoutTabs,
+  relationField,
+  layout,
+  // fieldsMap,
+  handleClose = () => {},
+  setLayoutTabs = () => {},
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
-  const tableSlug = view?.table_slug;
-  const queryClient = useQueryClient();
-  const {control, watch, setError, clearErrors} = useForm({});
-  const [error] = useState(false);
-
-  const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
+  const relatedTableSlug = relationField?.table_slug;
+  const {control, watch} = useForm();
+  const [error, setError] = useState(false);
 
   const detectImageView = useMemo(() => {
     switch (selectedViewTab) {
@@ -98,140 +92,87 @@ export default function ViewTypeList({
     }
   }, [selectedViewTab]);
 
+  const {
+    data: {fieldsMap} = {
+      views: [],
+      fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    () => {
+      return constructorTableService.getTableInfo(
+        relatedTableSlug,
+        {
+          data: {},
+        },
+        {
+          language_setting: i18n?.language,
+        }
+      );
+    },
+    {
+      enabled: Boolean(relatedTableSlug),
+      select: ({data}) => {
+        return {
+          fieldsMap: listToMap(data?.fields),
+        };
+      },
+      enabled: !!relatedTableSlug,
+    }
+  );
+  console.log("fieldsMapfieldsMap", fieldsMap);
   const newViewJSON = useMemo(() => {
     return {
-      type: selectedViewTab,
-      users: [],
-      name: "",
-      default_limit: "",
-      main_field: "",
-      time_interval: 60,
-      status_field_slug: "",
-      disable_dates: {
-        day_slug: "",
-        table_slug: "",
-        time_from_slug: "",
-        time_to_slug: "",
-      },
-      columns: [],
-      group_fields: [],
-      navigate: {
-        params: [],
-        url: "",
-        headers: [],
-        cookies: [],
-      },
-      table_slug: tableSlug,
-      updated_fields: [],
-      multiple_insert: false,
-      multiple_insert_field: "",
-      chartOfAccounts: [{}],
       attributes: {
-        chart_of_accounts: [
-          {
-            chart_of_account: [],
-          },
-        ],
-        percent: {
-          field_id: null,
-        },
-        group_by_columns: [],
-        summaries: [],
-        name_ru: "",
-        treeData: selectedViewTab === "TREE",
+        group_fields: [],
       },
-      filters: [],
-      number_field: "",
-      app_id: menuId,
-      order: views.length + 1,
+      type: "relation",
+      view_type: selectedViewTab,
+      label: relationField?.attributes?.[`label_${i18n?.language}`],
+      layout_id: layout?.id,
+      relation_id: relationField?.relation_id,
+      relation: {
+        ...relationField,
+      },
     };
-  }, [menuId, selectedViewTab, tableSlug, views]);
+  }, [menuId, selectedViewTab, tableSlug]);
 
   const createView = () => {
+    const data = {
+      ...newViewJSON,
+      attributes: {
+        ...newViewJSON?.attributes,
+        group_fields: Boolean(watch("group_fields"))
+          ? [watch("group_fields")]
+          : [],
+      },
+    };
+
     if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
       setError("group_fields", {message: "Please select group"});
       return;
-    }
-    if (
-      isWithTimeView &&
-      (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
-    ) {
-      setError("calendar_from_slug", {message: "Please select date range"});
-      setError("calendar_to_slug", {message: "Please select date range"});
-      return;
-    } else {
-      clearErrors(["calendar_from_slug", "calendar_to_slug"]);
-    }
-
-    if (selectedViewTab === "WEBSITE") {
-      if (watch("web_link")) {
-        setBtnLoader(true);
-        constructorViewService
-          .create(tableSlug, {
-            ...newViewJSON,
-            attributes: {
-              ...newViewJSON?.attributes,
-              web_link: watch("web_link"),
-            },
-          })
-          .then(() => {
-            refetchViews();
-          })
-          .finally(() => {
-            setBtnLoader(false);
-            handleClose();
-          });
-      } else {
-        setError(true);
-      }
     } else {
       setBtnLoader(true);
-      newViewJSON.attributes = {
-        ...newViewJSON?.attributes,
-        calendar_from_slug: watch("calendar_from_slug") || null,
-        calendar_to_slug: watch("calendar_to_slug") || null,
-      };
-      newViewJSON.group_fields = Boolean(watch("group_fields"))
-        ? [watch("group_fields")]
-        : [];
-      constructorViewService
-        .create(tableSlug, newViewJSON)
-        .then(() => {
-          refetchViews();
-        })
-        .finally(() => {
-          setBtnLoader(false);
-          handleClose();
-        });
+      updateLayout(data);
     }
   };
 
-  const {data} = useQuery(
-    ["GET_TABLE_INFO", {tableSlug}],
-    () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {},
-      });
-    },
-    {
-      enabled: Boolean(tableSlug),
-      cacheTime: 10,
-      select: (res) => {
-        const fields = res?.data?.fields ?? [];
+  function updateLayout(newTab) {
+    const updatedTabs = [...layoutTabs, newTab];
 
-        return {fields};
-      },
-    }
-  );
+    const currentUpdatedLayout = {
+      ...layout,
+      tabs: updatedTabs,
+    };
 
-  const fields = data?.fields ?? [];
-
-  const computedColumns = useMemo(() => {
-    const filteredFields = fields?.filter(
-      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
-    );
-    return listToOptions(filteredFields, "label", "slug");
-  }, [fields]);
+    layoutService.update(currentUpdatedLayout, tableSlug).then((res) => {
+      setLayoutTabs(res?.tabs);
+      setBtnLoader(false);
+      handleClose();
+    });
+  }
 
   const computedColumnsForTabGroup = (Object.values(fieldsMap) ?? []).filter(
     (column) =>
@@ -265,21 +206,8 @@ export default function ViewTypeList({
               className={type.value === selectedViewTab ? style.active : ""}
               onClick={() => {
                 setSelectedViewTab(type.value);
-              }}
-              startIcon={
-                <SVG
-                  src={`/img/${viewIcons[type?.value]}`}
-                  width={18}
-                  height={18}
-                />
-              }
-              style={{
-                columnGap: "8px",
-                "MuiButton-startIcon": {
-                  marginLeft: 0,
-                },
               }}>
-              {/* {type.value === "TABLE" && <TableChart className={style.icon} />}
+              {type.value === "TABLE" && <TableChart className={style.icon} />}
               {type.value === "CALENDAR" && (
                 <CalendarMonth className={style.icon} />
               )}
@@ -302,7 +230,7 @@ export default function ViewTypeList({
               {type.value === "WEBSITE" && (
                 <LanguageIcon className={style.icon} />
               )}
-              {type.value === "GRID" && <FiberNewIcon className={style.icon} />} */}
+              {type.value === "GRID" && <FiberNewIcon className={style.icon} />}
               {type.label}
             </Button>
           ))}
@@ -312,6 +240,7 @@ export default function ViewTypeList({
           <div className={style.img}>
             <img src={detectImageView} alt="add view" />
           </div>
+
           <div className={style.text}>
             <h3>{selectedViewTab}</h3>
             <p>{detectDescriptionView}</p>
@@ -345,34 +274,6 @@ export default function ViewTypeList({
                 }}
               />
             )}
-            {isWithTimeView && (
-              <MaterialUIProvider>
-                <FRow
-                  label={
-                    selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
-                  }
-                  required>
-                  <HFSelect
-                    options={computedColumns}
-                    control={control}
-                    name="calendar_from_slug"
-                    MenuProps={{disablePortal: true}}
-                    required={true}
-                  />
-                </FRow>
-                <FRow
-                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
-                  required>
-                  <HFSelect
-                    options={computedColumns}
-                    control={control}
-                    name="calendar_to_slug"
-                    MenuProps={{disablePortal: true}}
-                    required={true}
-                  />
-                </FRow>
-              </MaterialUIProvider>
-            )}
             {selectedViewTab === "BOARD" && (
               <MaterialUIProvider>
                 <FRow label="Group by" required>
@@ -387,15 +288,12 @@ export default function ViewTypeList({
               </MaterialUIProvider>
             )}
           </div>
+
           <div className={style.button}>
             <LoadingButton
               variant="contained"
               loading={btnLoader}
               onClick={() => {
-                // handleClose();
-                // openModal();
-                // setSelectedView("NEW");
-                // setTypeNewView(selectedViewTab);
                 createView();
               }}>
               Create View {selectedViewTab}
@@ -406,22 +304,3 @@ export default function ViewTypeList({
     </div>
   );
 }
-
-{
-  /* <HFTextFieldLogin */
-}
-//   name="web_link"
-//   control={control}
-//   required
-//   fullWidth
-//   placeholder={"website link..."}
-//   autoFocus
-//   InputProps={{
-//     startAdornment: (
-//       <InputAdornment position="start">
-//         {/* <img src="/img/user-circle.svg" height={"23px"} alt="" /> */}
-//         <LanguageIcon />
-//       </InputAdornment>
-//     ),
-//   }}
-// />

@@ -255,7 +255,7 @@ const ConstructorTablesFormPage = () => {
       .then((res) => {
         createType(res);
         setPermission(res?.record_permission, res?.slug);
-        navigate("main/c57eedc3-a954-4262-a0af-376c65b5a28");
+        navigate("/", {replace: true});
       })
       .catch(() => setBtnLoader(false));
   };
@@ -286,6 +286,7 @@ const ConstructorTablesFormPage = () => {
       ...data,
       id: data?.id,
       show_in_menu: true,
+      menu_id: menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
     };
 
     if (data?.id) {

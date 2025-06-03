@@ -203,7 +203,7 @@ const Router = () => {
             }
           />
 
-          <Route index element={<Navigate to={redirectLink} />} />
+          {/* <Route index element={<Navigate to={redirectLink} />} /> */}
 
           {/* <Route path=":menuId" element={<div></div>} /> */}
 

@@ -81,7 +81,7 @@ const MainLayout = ({setFavicon, favicon}) => {
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
       : isWarning <= 7;
-
+  console.log("Rendered the page!");
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">

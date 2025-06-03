@@ -1,3 +1,30 @@
+export const FIELD_TYPES = {
+  SINGLE_LINE: "SINGLE_LINE",
+  MULTI_LINE: "MULTI_LINE",
+  PICK_LIST: "PICK_LIST",
+  DATE: "DATE",
+  TIME: "TIME",
+  DATE_TIME: "DATE_TIME",
+  NUMBER: "NUMBER",
+  CHECKBOX: "CHECKBOX",
+  EMAIL: "EMAIL",
+  MULTISELECT: "MULTISELECT",
+  MAP: "MAP",
+  JSON: "JSON",
+  STATUS: "STATUS",
+  PROGRAMMING_LANGUAGE: "PROGRAMMING_LANGUAGE",
+  SWITCH: "SWITCH",
+  PHOTO: "PHOTO",
+  PHONE: "PHONE",
+  MULTI_IMAGE: "MULTI_IMAGE",
+  INTERNATION_PHONE: "INTERNATION_PHONE",
+  ICON: "ICON",
+  PASSWORD: "PASSWORD",
+  FORMULA: "FORMULA",
+  LOOKUP: "LOOKUP",
+  FILE: "FILE",
+};
+
 export const fieldTypes = [
   "SINGLE_LINE",
   "MULTI_LINE",
@@ -579,6 +606,14 @@ export const newFieldTypes = [
     value: "FORMULA_FRONTEND",
     icon: "plus-minus.svg",
   },
+  // {
+  //   label: "Formula backend",
+  //   label_ru: "Формула backend",
+  //   label_en: "Formula backend",
+  //   label_uz: "Formula backend",
+  //   value: "FORMULA",
+  //   icon: "plus-minus.svg",
+  // },
   {
     label: "Relation",
     label_ru: "Связь",
@@ -757,9 +792,14 @@ export const fieldFormats = [
     icon: "square-caret-down.svg",
   },
   {
-    label: "Formula",
+    label: "Formula frontend",
     value: "FORMULA_FRONTEND",
     icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    value: "FORMULA",
+    icon: "square-root-variable.svg",
   },
   {
     label: "Relation",

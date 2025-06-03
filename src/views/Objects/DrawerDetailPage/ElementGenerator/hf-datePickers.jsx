@@ -202,6 +202,7 @@ export const HFTimePickerField = ({
                 color: "#787774",
               },
             }}
+            placeholder="Empty"
             disabled={disabled}
           />
         );

@@ -91,6 +91,10 @@ const HFLinkField = ({
               margin: "0px",
               border: "none",
               borderRadius: "8px",
+              "& .MuiInputBase-input::placeholder": {
+                color: "#adb5bd",
+                fontSize: "14px",
+              },
             }}
             name={name}
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
@@ -102,7 +106,7 @@ const HFLinkField = ({
               readOnly: disabled,
               inputProps: {
                 tabIndex,
-                style: {height: inputHeight, color: "blue"},
+                style: { height: inputHeight, color: "blue" },
               },
               classes: {
                 input: isBlackBg ? classes.input : "",
@@ -129,8 +133,9 @@ const HFLinkField = ({
                       disabled={Boolean(!value)}
                       className={styles.linkBtn}
                       onClick={() => navigateToNewPage(value)}
-                      sx={{cursor: "pointer"}}>
-                      <LaunchIcon style={{fontSize: "20px"}} />
+                      sx={{ cursor: "pointer" }}
+                    >
+                      <LaunchIcon style={{ fontSize: "20px" }} />
                     </button>
                   ) : (
                     ""

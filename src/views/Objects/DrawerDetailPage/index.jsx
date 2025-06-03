@@ -591,6 +591,7 @@ function DrawerDetailPage({
                     control={control}
                     watch={watch}
                     getAllData={getAllData}
+                    errors={errors}
                   />
                 </DrawerBody>
               </TabPanel>

@@ -8,6 +8,7 @@ import RelationViewTypeList from "./RelationViewTypeList";
 
 function ViewAddMenu({
   fieldsMap,
+  selectedTab,
   layoutTabs,
   tableSlug,
   layout,
@@ -22,7 +23,7 @@ function ViewAddMenu({
   const relationFields = Object.values(fieldsMap)?.filter(
     (el) => el?.type === "LOOKUP"
   );
-
+  console.log("relationFieldrelationField", relationField);
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
   const handleClickModal = (field) => {
@@ -78,6 +79,9 @@ function ViewAddMenu({
 
       <Dialog open={viewCreate} onClose={handleCloseModal}>
         <RelationViewTypeList
+          relationFields={relationFields}
+          selectedTab={selectedTab}
+          fieldsMap={fieldsMap}
           layoutTabs={layoutTabs}
           setLayoutTabs={setLayoutTabs}
           tableSlug={tableSlug}

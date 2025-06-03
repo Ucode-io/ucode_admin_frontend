@@ -189,7 +189,6 @@ const DrawerRelationTable = ({
           isNaN(data?.count) || tableData.length === 0
             ? 1
             : Math.ceil(data.count / paginiation);
-
         const fieldsMap = listToMap(data.fields);
         const fieldsMapRel = listToMapWithoutRel(data?.fields ?? []);
         const count = data?.count;
@@ -326,6 +325,7 @@ const DrawerRelationTable = ({
 
         {selectedTab?.view_type === "BOARD" ? (
           <BoardView
+            drawerTable={true}
             menuItem={menuItem}
             fieldsMapRel={fieldsMapRel}
             selectedTabIndex={selectedTabIndex}

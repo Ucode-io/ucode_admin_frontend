@@ -13,12 +13,20 @@ import FiberNewIcon from "@mui/icons-material/FiberNew";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import {computedViewTypes} from "../../../utils/constants/viewTypes";
 import layoutService from "../../../services/layoutService";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import FRow from "../../../components/FormElements/FRow";
+import constructorTableService from "../../../services/constructorTableService";
+import {useQuery} from "react-query";
+import {listToMap} from "../../../utils/listToMap";
 
 export default function RelationViewTypeList({
   tableSlug,
+  selectedTab,
   layoutTabs,
   relationField,
   layout,
+  // fieldsMap,
   handleClose = () => {},
   setLayoutTabs = () => {},
 }) {
@@ -26,7 +34,7 @@ export default function RelationViewTypeList({
   const [btnLoader, setBtnLoader] = useState(false);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
-
+  const relatedTableSlug = relationField?.table_slug;
   const {control, watch} = useForm();
   const [error, setError] = useState(false);
 
@@ -84,8 +92,42 @@ export default function RelationViewTypeList({
     }
   }, [selectedViewTab]);
 
+  const {
+    data: {fieldsMap} = {
+      views: [],
+      fieldsMap: {},
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
+    () => {
+      return constructorTableService.getTableInfo(
+        relatedTableSlug,
+        {
+          data: {},
+        },
+        {
+          language_setting: i18n?.language,
+        }
+      );
+    },
+    {
+      enabled: Boolean(relatedTableSlug),
+      select: ({data}) => {
+        return {
+          fieldsMap: listToMap(data?.fields),
+        };
+      },
+      enabled: !!relatedTableSlug,
+    }
+  );
+  console.log("fieldsMapfieldsMap", fieldsMap);
   const newViewJSON = useMemo(() => {
     return {
+      attributes: {
+        group_fields: [],
+      },
       type: "relation",
       view_type: selectedViewTab,
       label: relationField?.attributes?.[`label_${i18n?.language}`],
@@ -98,35 +140,22 @@ export default function RelationViewTypeList({
   }, [menuId, selectedViewTab, tableSlug]);
 
   const createView = () => {
-    if (selectedViewTab === "WEBSITE") {
-      if (watch("web_link")) {
-        setBtnLoader(true);
-        // constructorViewService
-        //   .createViewMenuId(menuId, {
-        //     ...newViewJSON,
-        //     attributes: {
-        //       ...newViewJSON?.attributes,
-        //       web_link: watch("web_link"),
-        //     },
-        //   })
-        //   .then(() => {
-        //     // queryClient.refetchQueries([
-        //     //   "GET_VIEWS_LIST",
-        //     //   tableSlug,
-        //     //   i18n?.language,
-        //     // ]);
-        //     // refetchViews();
-        //   })
-        //   .finally(() => {
-        //     setBtnLoader(false);
-        //     handleClose();
-        //   });
-      } else {
-        setError(true);
-      }
+    const data = {
+      ...newViewJSON,
+      attributes: {
+        ...newViewJSON?.attributes,
+        group_fields: Boolean(watch("group_fields"))
+          ? [watch("group_fields")]
+          : [],
+      },
+    };
+
+    if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
+      setError("group_fields", {message: "Please select group"});
+      return;
     } else {
       setBtnLoader(true);
-      updateLayout(newViewJSON);
+      updateLayout(data);
     }
   };
 
@@ -144,6 +173,28 @@ export default function RelationViewTypeList({
       handleClose();
     });
   }
+
+  const computedColumnsForTabGroup = (Object.values(fieldsMap) ?? []).filter(
+    (column) =>
+      ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+        column.type
+      )
+  );
+
+  const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
+    (el) => ({
+      label:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.attributes?.[`label_${i18n.language}`] ||
+            el?.attributes?.label ||
+            el?.label
+          : el.label,
+      value:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.relation_id
+          : el?.id,
+    })
+  );
 
   return (
     <div className={style.viewTypeList}>
@@ -222,6 +273,19 @@ export default function RelationViewTypeList({
                   );
                 }}
               />
+            )}
+            {selectedViewTab === "BOARD" && (
+              <MaterialUIProvider>
+                <FRow label="Group by" required>
+                  <HFSelect
+                    options={computedColumnsForTabGroupOptions}
+                    control={control}
+                    name="group_fields"
+                    MenuProps={{disablePortal: true}}
+                    required={true}
+                  />
+                </FRow>
+              </MaterialUIProvider>
             )}
           </div>
 

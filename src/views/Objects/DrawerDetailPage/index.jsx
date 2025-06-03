@@ -65,8 +65,7 @@ function DrawerDetailPage({
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const {menuId} = useParams();
-  const tableSlug = view?.table_slug;
-
+  const [relationFieldsmap, setRelationFieldsmap] = useState({});
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
@@ -76,6 +75,7 @@ function DrawerDetailPage({
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
   const [layoutTabs, setLayoutTabs] = useState(layout?.tabs || []);
+  const tableSlug = view?.table_slug || view?.relation?.table_to?.slug;
 
   const permissions = useSelector(
     (state) => state?.permissions?.permissions?.[tableSlug]
@@ -362,7 +362,7 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    if (itemId) getAllData();
+    if (itemId && selectedTab?.view_type === "TABLE") getAllData();
     else getFields();
   }, [itemId]);
 
@@ -564,6 +564,7 @@ function DrawerDetailPage({
                     </TabList>
                   )}
                   <ViewAddMenu
+                    selectedTab={selectedTab}
                     layoutTabs={layoutTabs}
                     tableSlug={tableSlug}
                     layout={layout}

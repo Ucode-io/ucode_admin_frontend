@@ -43,7 +43,12 @@ const BoardColumn = ({
   setDefaultValue,
   tableSlug,
 }) => {
-  const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
+  const selectedGroupField =
+    fieldsMap?.[
+      view?.group_fields
+        ? view?.group_fields?.[0]
+        : view?.attributes?.group_fields?.[0]
+    ];
 
   const isStatusType = selectedGroupField?.type === "STATUS";
 
@@ -194,9 +199,13 @@ const BoardColumn = ({
   //     }
   //   };
   // }, [onDropData, computedData]);
-
+  console.log("viewview", view);
   const viewFields = useMemo(() => {
-    return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
+    return (
+      (view.columns ? view?.columns : view?.attributes?.columns)
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => el) ?? []
+    );
   }, [view, fieldsMap, data]);
 
   useEffect(() => {

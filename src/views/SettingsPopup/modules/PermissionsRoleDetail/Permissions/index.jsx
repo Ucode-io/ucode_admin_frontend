@@ -29,7 +29,6 @@ const Permissions = ({
   watch,
   activeTab,
 }) => {
-  const [checkBoxValues, setCheckBoxValues] = useState({});
   const [modalData, setModalData] = useState(null);
   const [permissionLan, setPermissionLan] = useState(null);
   const { i18n } = useTranslation();
@@ -63,63 +62,13 @@ const Permissions = ({
     (permission) => permission.record_permissions?.is_public === true
   );
 
-  const [allMenuReadTrue, setAllMenuReadTrue] = useState(false);
-  const [allMenuWriteTrue, setAllMenuWriteTrue] = useState(false);
-  const [allMenuUpdateTrue, setAllMenuUpdateTrue] = useState(false);
-  const [allMenuDeleteTrue, setAllMenuDeleteTrue] = useState(false);
-  const [allMenuMenuSettingsTrue, setAllMenuMenuSettingsTrue] = useState(false);
-
-  const onMenuCheckboxChange = (isChecked, type) => {
-    setCheckBoxValues((prev) => {
-      const result = prev;
-      Object.keys(prev).forEach((key) => {
-        result[key][type] = isChecked;
-      });
-      return result;
-    });
-    switch (type) {
-      case "read":
-        setAllMenuReadTrue(isChecked);
-        break;
-      case "write":
-        setAllMenuWriteTrue(isChecked);
-        break;
-      case "update":
-        setAllMenuUpdateTrue(isChecked);
-        break;
-      case "delete":
-        setAllMenuDeleteTrue(isChecked);
-        break;
-      case "menu_settings":
-        setAllMenuMenuSettingsTrue(isChecked);
-        break;
-      default:
-        break;
-    }
-  };
-
-  useEffect(() => {
-    const obj = {};
-    allMenu?.forEach((item, index) => {
-      obj[item.id] = item.permission;
-    });
-    setCheckBoxValues((prev) => ({ ...prev, ...obj }));
-    setAllMenuReadTrue(
-      Object.values(obj)?.every((permission) => permission?.read)
-    );
-    setAllMenuWriteTrue(
-      Object.values(obj)?.every((permission) => permission?.write)
-    );
-    setAllMenuUpdateTrue(
-      Object.values(obj)?.every((permission) => permission?.update)
-    );
-    setAllMenuDeleteTrue(
-      Object.values(obj)?.every((permission) => permission?.delete)
-    );
-    setAllMenuMenuSettingsTrue(
-      Object.values(obj)?.every((permission) => permission?.menu_settings)
-    );
-  }, [allMenu]);
+  const allMenuReadTrue = allMenu?.every((item) => item.permission?.read);
+  const allMenuWriteTrue = allMenu?.every((item) => item.permission?.write);
+  const allMenuUpdateTrue = allMenu?.every((item) => item.permission?.update);
+  const allMenuDeleteTrue = allMenu?.every((item) => item.permission?.delete);
+  const allMenuMenuSettingsTrue = allMenu?.every(
+    (item) => item.permission?.menu_settings
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -386,44 +335,86 @@ const Permissions = ({
                       <CTableCell>
                         <CustomCheckbox
                           checked={allMenuReadTrue}
-                          onChange={(e) =>
-                            onMenuCheckboxChange(e.target.checked, "read")
-                          }
+                          onChange={(e) => {
+                            setValue(
+                              "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  read: e.target.checked,
+                                },
+                              }))
+                            );
+                          }}
                         />
                       </CTableCell>
                       <CTableCell>
                         <CustomCheckbox
                           checked={allMenuWriteTrue}
-                          onChange={(e) =>
-                            onMenuCheckboxChange(e.target.checked, "write")
-                          }
+                          onChange={(e) => {
+                            setValue(
+                              "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  write: e.target.checked,
+                                },
+                              }))
+                            );
+                          }}
                         />
                       </CTableCell>
                       <CTableCell>
                         <CustomCheckbox
                           checked={allMenuUpdateTrue}
-                          onChange={(e) =>
-                            onMenuCheckboxChange(e.target.checked, "update")
-                          }
+                          onChange={(e) => {
+                            setValue(
+                              "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  update: e.target.checked,
+                                },
+                              }))
+                            );
+                          }}
                         />
                       </CTableCell>
                       <CTableCell>
                         <CustomCheckbox
                           checked={allMenuDeleteTrue}
-                          onChange={(e) =>
-                            onMenuCheckboxChange(e.target.checked, "delete")
-                          }
+                          onChange={(e) => {
+                            setValue(
+                              "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  delete: e.target.checked,
+                                },
+                              }))
+                            );
+                          }}
                         />
                       </CTableCell>
                       <CTableCell>
                         <CustomCheckbox
                           checked={allMenuMenuSettingsTrue}
-                          onChange={(e) =>
-                            onMenuCheckboxChange(
-                              e.target.checked,
-                              "menu_settings"
-                            )
-                          }
+                          onChange={(e) => {
+                            setValue(
+                              "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  menu_settings: e.target.checked,
+                                },
+                              }))
+                            );
+                          }}
                         />
                       </CTableCell>
                     </CTableHeadRow>
@@ -437,10 +428,9 @@ const Permissions = ({
                         changedData={changedData}
                         appIndex={appIndex}
                         control={control}
-                        checkBoxValues={checkBoxValues}
-                        setCheckBoxValues={setCheckBoxValues}
                         setChangedData={setChangedData}
                         setValue={setValue}
+                        watch={watch}
                       />
                     ))}
                   </CTableBody>

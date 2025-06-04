@@ -20,9 +20,9 @@ import {Controller, useWatch} from "react-hook-form";
 import {
   ChakraProvider,
   Box as ChakraBox,
-  FormHelperText,
   Input,
   InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { NumericFormat } from "react-number-format";
 import {
@@ -436,32 +436,39 @@ const InputField = ({
         return (
           <ChakraProvider>
             <ChakraBox position="relative">
-              <Input
-                disabled={isDisabled}
-                type={inputType}
-                value={inputValue ?? value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={
-                  field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
-                }
-                height="30px"
-                fontSize="13px"
-                px={"9.6px"}
-                width="100%"
-                border="none"
-                borderRadius={"4px"}
-                _hover={{
-                  bg: "#F7F7F7",
-                }}
-                _placeholder={{
-                  color: "#adb5bd",
-                }}
-                _focus={{
-                  backgroundColor: "#F7F7F7",
-                  border: "none",
-                  outline: "none",
-                }}
-              />
+              <InputGroup>
+                <Input
+                  disabled={isDisabled}
+                  type={inputType}
+                  value={inputValue ?? value}
+                  onChange={(e) => onChange(e.target.value)}
+                  placeholder={
+                    field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
+                  }
+                  height="30px"
+                  fontSize="13px"
+                  px={"9.6px"}
+                  width="100%"
+                  border="none"
+                  borderRadius={"4px"}
+                  _hover={{
+                    bg: "#F7F7F7",
+                  }}
+                  _placeholder={{
+                    color: "#adb5bd",
+                  }}
+                  _focus={{
+                    backgroundColor: "#F7F7F7",
+                    border: "none",
+                    outline: "none",
+                  }}
+                />
+                {isDisabled && (
+                  <InputRightElement pointerEvents="none">
+                    <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+                  </InputRightElement>
+                )}
+              </InputGroup>
               {errors?.[name] && (
                 <span
                   style={{

@@ -27,7 +27,7 @@ function PolygonFieldTable({
   setValue = () => {},
 }) {
   const [open, setOpen] = useState(false);
-  const [polygonValue, setPolygonValue] = useState([]);
+  const [polygonValue, setPolygonValue] = useState(null);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -78,7 +78,7 @@ function PolygonFieldTable({
               name={computedSlug}
               isNewTableView={isNewTableView}
               setValue={setPolygonValue}
-              polygonValue={polygonValue}
+              polygonValue={polygonValue || []}
             />
           </Box>
 

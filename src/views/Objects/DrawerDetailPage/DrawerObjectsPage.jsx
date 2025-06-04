@@ -122,6 +122,7 @@ function DrawerObjectsPage({setViews}) {
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  relationView={true}
                   views={views}
                   view={view}
                   selectedTabIndex={selectedTabIndex}

@@ -121,6 +121,7 @@ export const NewUiViewsWithGroups = ({
   setViews,
   setSelectedView,
   selectedView,
+  relationView = false,
 }) => {
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
@@ -586,6 +587,7 @@ export const NewUiViewsWithGroups = ({
                 horizontal: "left",
               }}>
               <ViewTypeList
+                relationView={relationView}
                 view={view}
                 fieldsMap={fieldsMap}
                 tableSlug={tableSlug}

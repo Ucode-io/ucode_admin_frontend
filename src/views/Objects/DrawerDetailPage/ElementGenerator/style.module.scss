@@ -179,7 +179,9 @@
     outline: none;
     background: transparent;
 
-    &:focus {
+    &:disabled {
+      cursor: not-allowed;
+      color: #adb5bd;
     }
 
     &:hover {

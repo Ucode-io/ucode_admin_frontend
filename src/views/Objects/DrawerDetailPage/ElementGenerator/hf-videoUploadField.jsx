@@ -114,7 +114,10 @@ const VideoUpload = ({
     <>
       <div
         className={className}
-        style={{ textAlign: "left" }}
+        style={{
+          textAlign: "left",
+          cursor: disabled ? "not-allowed" : "pointer",
+        }}
         onClick={(ev) => {
           if (value) {
             setAnchorEl(ev.target);
@@ -143,6 +146,7 @@ const VideoUpload = ({
           {!value && (
             <Button
               id="video_button_field"
+              disabled={disabled}
               onClick={() => inputRef.current.click()}
               sx={{
                 padding: 0,

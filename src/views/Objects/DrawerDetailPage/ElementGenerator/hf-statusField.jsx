@@ -34,6 +34,7 @@ function HFStatusField({
                   alignItems: "center",
                   padding: "8px",
                   borderRadius: "4px",
+                  cursor: disabled ? "not-allowed" : "pointer",
                 },
               }}
               value={value || ""}
@@ -68,11 +69,13 @@ function HFStatusField({
                       padding: "4px 8px",
                       borderRadius: "4px",
                       fontSize: "11px",
-                    }}>
+                    }}
+                  >
                     {selected}
                   </Box>
                 );
-              }}>
+              }}
+            >
               <ListSubheader className={styles.selectGroup}>
                 To do
               </ListSubheader>
@@ -85,7 +88,8 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}>
+                  value={el?.label}
+                >
                   {el?.label}
                 </MenuItem>
               ))}
@@ -102,7 +106,8 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}>
+                  value={el?.label}
+                >
                   {el?.label}
                 </MenuItem>
               ))}
@@ -119,7 +124,8 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}>
+                  value={el?.label}
+                >
                   {el?.label}
                 </MenuItem>
               ))}

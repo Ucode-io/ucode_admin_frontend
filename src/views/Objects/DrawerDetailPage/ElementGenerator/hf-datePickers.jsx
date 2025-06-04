@@ -2,6 +2,8 @@ import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
 import { format, isValid, parse, parseISO } from "date-fns";
 import "./style.scss";
+import { Box } from "@chakra-ui/react";
+import { Lock } from "@mui/icons-material";
 
 export const HFDatePickerField = ({
   control,
@@ -22,38 +24,57 @@ export const HFDatePickerField = ({
       defaultValue={defaultValue || undefined}
       render={({ field: { onChange, value } }) => {
         return (
-          <DatePickerInput
-            placeholder="Empty"
-            id="dateField"
-            value={
-              value && isValid(new Date(value))
-                ? new Date(value)
-                : value
-                  ? parse(value, "yyyy-MM-dd", new Date())
-                  : undefined
-            }
-            valueFormat="DD.MM.YYYY"
-            rightSection={
-              drawerDetail ? "" : <img src="/table-icons/date.svg" alt="" />
-            }
-            onChange={(value) => {
-              onChange(value ? format(new Date(value), "yyyy-MM-dd") : "");
-            }}
-            styles={{
-              input: {
-                background: "inherit",
-                border: "none",
-                "&:hover": {
-                  background: "red",
+          <Box position="relative">
+            <DatePickerInput
+              placeholder="Empty"
+              id="dateField"
+              value={
+                value && isValid(new Date(value))
+                  ? new Date(value)
+                  : value
+                    ? parse(value, "yyyy-MM-dd", new Date())
+                    : undefined
+              }
+              valueFormat="DD.MM.YYYY"
+              rightSection={
+                drawerDetail ? "" : <img src="/table-icons/date.svg" alt="" />
+              }
+              onChange={(value) => {
+                onChange(value ? format(new Date(value), "yyyy-MM-dd") : "");
+              }}
+              styles={{
+                input: {
+                  background: "inherit",
+                  border: "none",
+                  "&:hover": {
+                    background: "red",
+                  },
+                  fontSize: "13px",
+                  color: "#787774",
                 },
-                fontSize: "13px",
-                color: "#787774",
-              },
-            }}
-            highlightToday
-            disabled={disabled}
-            className="datePickerInput"
-          />
+              }}
+              highlightToday
+              disabled={disabled}
+              className="datePickerInput"
+            />
+            {disabled && (
+              <Box
+                sx={{
+                  width: "2.5rem",
+                  height: "2.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "1px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+              </Box>
+            )}
+          </Box>
         );
       }}
     />
@@ -79,34 +100,53 @@ export const HFDateTimePickerField = ({
       defaultValue={defaultValue}
       render={({ field: { onChange, value } }) => {
         return (
-          <DateTimePicker
-            placeholder="Empty"
-            id="dateTimeField"
-            value={getValue(value) ?? defaultValue}
-            valueFormat="DD.MM.YYYY HH:mm"
-            rightSection={
-              drawerDetail ? (
-                ""
-              ) : (
-                <img src="/table-icons/date-time.svg" alt="" />
-              )
-            }
-            onChange={(value) => {
-              onChange(value);
-            }}
-            styles={{
-              input: {
-                background: "inherit",
-                border: "none",
-                width: "330px",
-                fontSize: "13px",
-                color: "#787774",
-              },
-            }}
-            highlightToday
-            disabled={disabled}
-            className="dateTimePickerInput"
-          />
+          <Box position="relative">
+            <DateTimePicker
+              placeholder="Empty"
+              id="dateTimeField"
+              value={getValue(value) ?? defaultValue}
+              valueFormat="DD.MM.YYYY HH:mm"
+              rightSection={
+                drawerDetail ? (
+                  ""
+                ) : (
+                  <img src="/table-icons/date-time.svg" alt="" />
+                )
+              }
+              onChange={(value) => {
+                onChange(value);
+              }}
+              styles={{
+                input: {
+                  background: "inherit",
+                  border: "none",
+                  width: "330px",
+                  fontSize: "13px",
+                  color: "#787774",
+                },
+              }}
+              highlightToday
+              disabled={disabled}
+              className="dateTimePickerInput"
+            />
+            {disabled && (
+              <Box
+                sx={{
+                  width: "2.5rem",
+                  height: "2.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "1px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+              </Box>
+            )}
+          </Box>
         );
       }}
     />
@@ -132,35 +172,54 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
       defaultValue={defaultValue}
       render={({ field: { onChange, value } }) => {
         return (
-          <DateTimePicker
-            placeholder="Empty"
-            id="dateTimeZoneField"
-            value={value ? getNoTimezoneValue(value) : defaultValue}
-            valueFormat="DD.MM.YYYY HH:mm"
-            rightSection={
-              drawerDetail ? (
-                ""
-              ) : (
-                <img src="/table-icons/date-time.svg" alt="" />
-              )
-            }
-            onChange={(value) => {
-              onChange(
-                value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
-              );
-            }}
-            styles={{
-              input: {
-                background: "inherit",
-                border: "none",
-                width: "330px",
-                fontSize: "13px",
-                color: "#787774",
-              },
-            }}
-            highlightToday
-            disabled={disabled}
-          />
+          <Box position="relative">
+            <DateTimePicker
+              placeholder="Empty"
+              id="dateTimeZoneField"
+              value={value ? getNoTimezoneValue(value) : defaultValue}
+              valueFormat="DD.MM.YYYY HH:mm"
+              rightSection={
+                drawerDetail ? (
+                  ""
+                ) : (
+                  <img src="/table-icons/date-time.svg" alt="" />
+                )
+              }
+              onChange={(value) => {
+                onChange(
+                  value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
+                );
+              }}
+              styles={{
+                input: {
+                  background: "inherit",
+                  border: "none",
+                  width: "330px",
+                  fontSize: "13px",
+                  color: "#787774",
+                },
+              }}
+              highlightToday
+              disabled={disabled}
+            />
+            {disabled && (
+              <Box
+                sx={{
+                  width: "2.5rem",
+                  height: "2.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "1px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+              </Box>
+            )}
+          </Box>
         );
       }}
     />
@@ -182,29 +241,48 @@ export const HFTimePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value } }) => {
         return (
-          <TimeInput
-            id="timeField"
-            value={value}
-            rightSection={
-              drawerDetail ? "" : <img src="/table-icons/time.svg" alt="" />
-            }
-            onChange={(value) => {
-              onChange(value);
-            }}
-            styles={{
-              input: {
-                background: "inherit",
-                border: "none",
-                width: "330px",
-                fontSize: "13px",
-                color: "#787774",
-              },
-            }}
-            placeholder="Empty"
-            disabled={disabled}
-          />
+          <Box position="relative">
+            {disabled && (
+              <Box
+                sx={{
+                  width: "2.5rem",
+                  height: "2.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "absolute",
+                  right: "1px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+              </Box>
+            )}
+            <TimeInput
+              id="timeField"
+              value={value}
+              rightSection={
+                drawerDetail ? "" : <img src="/table-icons/time.svg" alt="" />
+              }
+              onChange={(value) => {
+                onChange(value);
+              }}
+              styles={{
+                input: {
+                  background: "inherit",
+                  border: "none",
+                  width: "330px",
+                  fontSize: "13px",
+                  color: "#787774",
+                },
+              }}
+              placeholder="Empty"
+              disabled={disabled}
+            />
+          </Box>
         );
       }}
     />

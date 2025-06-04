@@ -382,10 +382,23 @@ function DrawerFieldGenerator({
       );
 
     case "INTERNATION_PHONE":
-      return <HFInternationalPhone control={control} name={computedSlug} />;
+      return (
+        <HFInternationalPhone
+          disabled={isDisabled}
+          control={control}
+          name={computedSlug}
+        />
+      );
 
     case "JSON":
-      return <JSONField control={control} name={computedSlug} field={field} />;
+      return (
+        <JSONField
+          disabled={isDisabled}
+          control={control}
+          name={computedSlug}
+          field={field}
+        />
+      );
 
     default:
       return (
@@ -509,7 +522,7 @@ const NumberField = ({
     }
   };
   return (
-    <>
+    <Box position="relative">
       <Controller
         control={control}
         name={name}
@@ -534,6 +547,7 @@ const NumberField = ({
                 outline: "none",
                 color: "#212b36",
                 fontSize: "13px",
+                cursor: disabled ? "not-allowed" : "text",
               }}
               value={typeof value === "number" ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
@@ -544,7 +558,24 @@ const NumberField = ({
           );
         }}
       />
-    </>
+      {disabled && (
+        <Box
+          sx={{
+            width: "2.5rem",
+            height: "2.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            right: 0,
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+        </Box>
+      )}
+    </Box>
   );
 };
 
@@ -702,7 +733,7 @@ const JSONField = ({
 
   return (
     <div>
-      <Box>
+      <Box position="relative">
         <TextField
           className="formulaField"
           placeholder="Empty"
@@ -711,6 +742,23 @@ const JSONField = ({
           disabled={disabled}
           onClick={handleClick}
         />
+        {disabled && (
+          <Box
+            sx={{
+              width: "2.5rem",
+              height: "2.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "absolute",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}
+          >
+            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+          </Box>
+        )}
       </Box>
       <Popover
         open={open}

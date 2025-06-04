@@ -2,6 +2,7 @@ import {Box, Popover} from "@mui/material";
 import {useState} from "react";
 import {useWatch} from "react-hook-form";
 import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
+import { Lock } from "@mui/icons-material";
 
 const MultiLineInput = ({
   control,
@@ -40,6 +41,7 @@ const MultiLineInput = ({
           color: "#787774",
           padding: "5px 9.6px",
           borderRadius: "4px",
+          position: "relative",
           "&:hover": {
             backgroundColor: "#F7F7F7",
           },
@@ -52,6 +54,7 @@ const MultiLineInput = ({
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            cursor: isDisabled ? "not-allowed" : "pointer",
           }}
           id="textAreaInput"
           onClick={(e) => {
@@ -66,6 +69,23 @@ const MultiLineInput = ({
             <span style={{ color: "#adb5bd" }}>Empty</span>
           )}
         </Box>
+        {isDisabled && (
+          <Box
+            sx={{
+              width: "20px",
+              height: "20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "absolute",
+              right: "1px",
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}
+          >
+            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+          </Box>
+        )}
 
         <Popover
           id={id}

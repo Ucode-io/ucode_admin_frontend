@@ -430,9 +430,14 @@ const AutoCompleteElement = ({
     }
   }, [state?.id, computedValue]);
 
-
   return (
-    <Box sx={{width: "330px", height: "32px"}}>
+    <Box
+      sx={{
+        width: "330px",
+        height: "32px",
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
+    >
       <Select
         placeholder="Empty"
         id={`relationField`}
@@ -467,10 +472,10 @@ const AutoCompleteElement = ({
         }
         components={{
           DropdownIndicator: () => null,
-          MultiValue: ({data}) => (
+          MultiValue: ({ data }) => (
             <IconGenerator
               icon="arrow-up-right-from-square.svg"
-              style={{marginLeft: "10px", cursor: "pointer"}}
+              style={{ marginLeft: "10px", cursor: "pointer" }}
               size={15}
               onClick={(e) => {
                 e.stopPropagation();
@@ -488,7 +493,8 @@ const AutoCompleteElement = ({
             fontSize: "10px",
             textAlign: "center",
             marginTop: "5px",
-          }}>
+          }}
+        >
           {"This field is required!"}
         </div>
       )}

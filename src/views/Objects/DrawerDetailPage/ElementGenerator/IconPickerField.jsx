@@ -67,20 +67,28 @@ const IconPickerField = ({
         padding: drawerDetail ? "0 9.6px" : "0",
       }}
       onClick={(e) => e.stopPropagation()}
-      {...props}>
+      {...props}
+    >
       <div
         ref={buttonRef}
         className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
-        style={{backgroundColor: value ?? "#fff"}}
+        style={{ backgroundColor: value ?? "#fff" }}
         aria-describedby={id}
-        onClick={customeClick ? clickItself : !disabled && handleOpen}>
+        onClick={customeClick ? clickItself : !disabled && handleOpen}
+      >
         {disabled ? (
           <Tooltip title="This field is disabled for this role!">
-            <Lock style={{fontSize: "20px"}} />
+            <Lock
+              style={{
+                fontSize: "20px",
+                color: "#adb5bd",
+                cursor: "not-allowed",
+              }}
+            />
           </Tooltip>
         ) : (
           <IconGenerator
-            style={{width: "15px", height: "15px"}}
+            style={{ width: "15px", height: "15px" }}
             icon={value}
             disabled={disabled}
           />
@@ -92,14 +100,15 @@ const IconPickerField = ({
         anchorEl={buttonRef.current}
         onClose={handleClose}
         open={dropdownIsOpen}
-        anchorOrigin={{horizontal: "left", vertical: "bottom"}}
-        classes={{paper: styles.menuPaper, list: styles.menuList}}>
+        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        classes={{ paper: styles.menuPaper, list: styles.menuList }}
+      >
         <TextField
           size="small"
           fullWidth
           value={searchText}
           autoFocus={tabIndex === 1}
-          inputProps={{tabIndex}}
+          inputProps={{ tabIndex }}
           onChange={(e) => setSearchText(e.target.value)}
         />
 
@@ -111,7 +120,8 @@ const IconPickerField = ({
               onClick={() => {
                 onChange(icon);
                 handleClose();
-              }}>
+              }}
+            >
               <IconGenerator icon={icon} />
             </div>
           ))}

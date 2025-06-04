@@ -25,6 +25,9 @@ import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import styles from "./style.module.scss";
 import FRow from "../../../../components/FormElements/FRow";
+import { generateGUID } from "../../../../utils/generateID";
+import constructorFieldService from "../../../../services/constructorFieldService";
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 
 const filter = createFilterOptions();
 
@@ -128,7 +131,7 @@ const AutoCompleteElement = ({
   newUi = false,
 }) => {
   const [dialogState, setDialogState] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
 
   const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
@@ -152,7 +155,7 @@ const AutoCompleteElement = ({
         );
       } else {
         return localOptions?.find((item) => {
-          item?.value === value;
+          return item?.value === value;
         });
       }
     else return [localOptions?.find((option) => option.value === value[0])];
@@ -183,9 +186,10 @@ const AutoCompleteElement = ({
         width: "330px",
         paddingLeft: "4px",
         overflow: "hidden",
-        ...(value?.length > 2 ? {minHeight: "30px"} : {height: "34px"}),
-      }}>
-      <FormControl style={{width}}>
+        ...(value?.length > 2 ? { minHeight: "30px" } : { height: "34px" }),
+      }}
+    >
+      <FormControl style={{ width }}>
         <InputLabel size="small">{label}</InputLabel>
         <Autocomplete
           multiple
@@ -194,7 +198,7 @@ const AutoCompleteElement = ({
           options={localOptions}
           popupIcon={
             isBlackBg ? (
-              <ArrowDropDownIcon style={{color: "#fff"}} />
+              <ArrowDropDownIcon style={{ color: "#fff" }} />
             ) : (
               <ArrowDropDownIcon />
             )
@@ -234,13 +238,16 @@ const AutoCompleteElement = ({
                 classes: {
                   input: classes.input,
                 },
-                inputProps: isNewTableView
-                  ? {
-                      ...params.inputProps,
-                      style:
-                        computedValue?.length > 0 ? {height: 0} : undefined,
-                    }
-                  : params.inputProps,
+                inputProps: {
+                  style: {
+                    cursor: disabled ? "not-allowed" : "text",
+                    height:
+                      isNewTableView && computedValue?.length > 0
+                        ? { height: 0 }
+                        : "auto",
+                  },
+                  ...params.inputProps,
+                },
                 endAdornment: Boolean(
                   appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
                 ) && (
@@ -249,9 +256,10 @@ const AutoCompleteElement = ({
                     style={{
                       position: "absolute",
                       right: 0,
-                    }}>
+                    }}
+                  >
                     <InputAdornment position="start">
-                      <Lock style={{fontSize: "20px"}} />
+                      <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
                     </InputAdornment>
                   </Tooltip>
                 ),
@@ -270,9 +278,10 @@ const AutoCompleteElement = ({
                   className={styles.multipleAutocompleteTags}
                   style={
                     hasColor
-                      ? {color: el?.color, background: `${el?.color}30`}
+                      ? { color: el?.color, background: `${el?.color}30` }
                       : {}
-                  }>
+                  }
+                >
                   {hasIcon && <IconGenerator icon={el?.icon} />}
                   <p
                     className={styles.value}
@@ -284,15 +293,16 @@ const AutoCompleteElement = ({
                       borderRadius: "6px",
                       fontSize: "13px",
                       overflow: "hidden",
-                    }}>
+                    }}
+                  >
                     {el?.label ?? el?.value}
                   </p>
                   {field?.attributes?.disabled === false && editPermission && (
                     <Close
                       fontSize="10"
-                      style={{cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
-                        getTagProps({index})?.onDelete();
+                        getTagProps({ index })?.onDelete();
                       }}
                     />
                   )}

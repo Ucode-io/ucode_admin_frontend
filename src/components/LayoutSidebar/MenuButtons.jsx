@@ -31,6 +31,7 @@ const ButtonsMenu = ({
   setWebsiteModalLink,
   menuLanguages,
 }) => {
+  console.log("menuIdmenuIdmenuIdmenuId", menuId, element);
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const permissionButton =

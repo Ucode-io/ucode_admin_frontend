@@ -32,6 +32,7 @@ export default function ViewTypeList({
   handleClose,
   fieldsMap = {},
   refetchViews,
+  relationView = false,
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
@@ -126,6 +127,7 @@ export default function ViewTypeList({
       multiple_insert: false,
       multiple_insert_field: "",
       chartOfAccounts: [{}],
+      is_relation_view: relationView,
       attributes: {
         chart_of_accounts: [
           {
@@ -142,7 +144,7 @@ export default function ViewTypeList({
       },
       filters: [],
       number_field: "",
-      app_id: menuId,
+      menu_id: menuId,
       order: views.length + 1,
     };
   }, [menuId, selectedViewTab, tableSlug, views]);

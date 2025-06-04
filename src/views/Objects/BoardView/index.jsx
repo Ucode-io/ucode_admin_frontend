@@ -42,16 +42,12 @@ const BoardView = ({
   setLayoutType,
   searchText,
   columnsForSearch,
-  drawerTable = false,
 }) => {
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const {menuId} = useParams();
-  const tableSlug = Boolean(drawerTable)
-    ? view?.relation?.table_to?.slug
-    : view?.table_slug;
-
+  const tableSlug = view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const id = useId();
   const {t, i18n} = useTranslation();
@@ -86,9 +82,8 @@ const BoardView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, menuId);
+      return layoutService.getLayout(tableSlug, appId);
     },
-    enabled: Boolean(tableSlug),
     select: (data) => {
       return {
         layout: data ?? {},
@@ -139,7 +134,7 @@ const BoardView = ({
   };
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
 
@@ -180,9 +175,7 @@ const BoardView = ({
     });
   };
 
-  const groupFieldId = view?.group_fields
-    ? view?.group_fields?.[0]
-    : view?.attributes?.group_fields;
+  const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel[groupFieldId];
 
   const {data: tabs, isLoading: tabsLoader} = useQuery(
@@ -238,11 +231,7 @@ const BoardView = ({
   useEffect(() => {
     const updatedTabs = view?.attributes?.tabs;
     setBoardTab(updatedTabs);
-    if (
-      tabs?.length === updatedTabs?.length && Boolean(drawerTable)
-        ? view?.view_type === "BOARD"
-        : view?.type === "BOARD"
-    ) {
+    if (tabs?.length === updatedTabs?.length && view?.type === "BOARD") {
       setBoardTab(updatedTabs);
     } else {
       setBoardTab(tabs);

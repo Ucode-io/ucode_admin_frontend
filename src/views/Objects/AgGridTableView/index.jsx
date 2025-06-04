@@ -96,15 +96,15 @@ function AgGridTableView(props) {
     visibleColumns,
     checkedColumns,
     selectedTabIndex,
-
     computedVisibleFields,
     setOpen = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
   } = props;
+  const tableSlug = view?.table_slug;
   const gridApi = useRef(null);
   const pinFieldsRef = useRef({});
-  const {tableSlug, appId} = useParams();
+  const {menuId} = useParams();
   const {i18n, t} = useTranslation();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -265,7 +265,7 @@ function AgGridTableView(props) {
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {
@@ -479,7 +479,7 @@ function AgGridTableView(props) {
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuId);
     }
   };
 

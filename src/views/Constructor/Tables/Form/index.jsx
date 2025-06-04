@@ -42,6 +42,7 @@ const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {id, tableSlug, appId} = useParams();
+
   const queryClient = useQueryClient();
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
@@ -59,13 +60,15 @@ const ConstructorTablesFormPage = () => {
       ...value,
     }))
   );
+
+  console.log("appIdappIdappId", appId, menuItem);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
-      app_id: appId,
+      menu_id: appId,
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -222,25 +225,25 @@ const ConstructorTablesFormPage = () => {
     });
   };
 
-  const createType = async (data) => {
-    await menuSettingsService
-      .create({
-        parent_id:
-          menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: "TABLE",
-        table_id: data?.id,
-        label: data?.label,
-        attributes: data?.attributes,
-        icon: data?.icon,
-      })
-      .then(() => {
-        queryClient.refetchQueries(["MENU"], menuItem?.id);
-        navigate(-1);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  // const createType = async (data) => {
+  //   await menuSettingsService
+  //     .create({
+  //       parent_id:
+  //         menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
+  //       type: "TABLE",
+  //       table_id: data?.id,
+  //       label: data?.label,
+  //       attributes: data?.attributes,
+  //       icon: data?.icon,
+  //     })
+  //     .then(() => {
+  //       queryClient.refetchQueries(["MENU"], menuItem?.id);
+  //       navigate(-1);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   const createConstructorTable = (data) => {
     setBtnLoader(true);
@@ -253,7 +256,7 @@ const ConstructorTablesFormPage = () => {
     )
       .unwrap()
       .then((res) => {
-        createType(res);
+        queryClient.refetchQueries(["GET_UPDATED_MENU_LIST"]);
         setPermission(res?.record_permission, res?.slug);
         navigate("/", {replace: true});
       })

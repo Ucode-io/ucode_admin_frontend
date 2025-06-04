@@ -121,6 +121,7 @@ export const NewUiViewsWithGroups = ({
   setViews,
   setSelectedView,
   selectedView,
+  relationView = false,
 }) => {
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
@@ -328,38 +329,6 @@ export const NewUiViewsWithGroups = ({
       },
     },
   });
-
-  // const navigateToDetailPage = (row) => {
-  //   if (
-  //     view?.attributes?.navigate?.params?.length ||
-  //     view?.attributes?.navigate?.url
-  //   ) {
-  //     const params = view?.attributes?.navigate?.params
-  //       ?.map(
-  //         (param) =>
-  //           `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-  //             param.value,
-  //             row
-  //           )}`
-  //       )
-  //       .join("&");
-
-  //     const urlTemplate = view?.attributes?.navigate?.url;
-  //     let query = urlTemplate;
-
-  //     const variablePattern = /\{\{\$\.(.*?)\}\}/g;
-
-  //     const matches = replaceUrlVariables(urlTemplate, row);
-
-  //     navigate(`${matches}${params ? "?" + params : ""}`, {
-  //       state: {
-  //         roleInfo: roleInfo,
-  //       },
-  //     });
-  //   } else {
-  //     navigateToForm(tableSlug, "EDIT", row, {}, menuId);
-  //   }
-  // };
 
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
@@ -618,6 +587,7 @@ export const NewUiViewsWithGroups = ({
                 horizontal: "left",
               }}>
               <ViewTypeList
+                relationView={relationView}
                 view={view}
                 fieldsMap={fieldsMap}
                 tableSlug={tableSlug}
@@ -1660,26 +1630,6 @@ const ViewOptions = ({
     }
   }, [visibleColumns, visibleRelationColumns, view.type]);
 
-  // const saveSettings = () => {
-  //   const computedData = {
-  //     ...view,
-  //     attributes: {
-  //       ...view.attributes,
-  //       calendar_from_slug: form.getValues("calendar_from_slug"),
-  //       calendar_to_slug: form.getValues("calendar_to_slug"),
-  //       visible_field: form.getValues("visible_field"),
-  //     },
-  //   };
-
-  //   constructorViewService
-  //     .update(tableSlug, {
-  //       ...computedData,
-  //     })
-  //     .then(() => {
-  //       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-  //     });
-  // };
-
   const viewUpdateMutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
@@ -2289,122 +2239,6 @@ const ColumnsVisibility = ({
         mt="8px"
         maxHeight="300px"
         overflow="auto">
-        {/* {view?.type === "TIMELINE" ? (
-          checkedColumns?.length || unCheckedColumns?.length ? (
-            <Container
-              groupName="1"
-              onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-              getChildPayload={(i) => ({
-                ...allColumnsForTimeline?.checkedColumns[i],
-                field_name:
-                  allColumnsForTimeline?.checkedColumns[i]?.label ??
-                  allColumnsForTimeline?.checkedColumns[i]?.title,
-              })}
-            >
-              {allColumnsForTimeline?.checkedColumns?.map((column) => (
-                <Draggable
-                  key={column?.id}
-                  style={{
-                    overflow: "visible",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    cursor: "move",
-                    borderBottom: "1px solid #e5e5e5",
-                    padding: "5px 0",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <div>{columnIcons[column?.type] ?? <LinkIcon />}</div>
-                    <div>
-                      {column?.attributes?.[`label_${i18n.language}`] ??
-                        column?.label}
-                    </div>
-                  </div>
-
-                  <Switch
-                    size="small"
-                    // disabled={isLoading || updateLoading}
-                    checked={
-                      allColumns?.checkedColumns?.includes(column?.id) ||
-                      view?.group_fields?.includes(column?.id)
-                    }
-                    onChange={(e, val) => changeHandler(e, val, column?.id)}
-                  />
-                </Draggable>
-              ))}
-
-              {allColumnsForTimeline?.unCheckedColumns?.map((item) => (
-                <div
-                  key={item?.id}
-                  style={{
-                    overflow: "visible",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    borderBottom: "1px solid #e5e5e5",
-                    padding: "5px 0",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <div>{columnIcons[item?.type] ?? <LinkIcon />}</div>
-                    <div>
-                      {item?.attributes?.[`label_${i18n.language}`] ??
-                        item?.label}
-                    </div>
-                  </div>
-
-                  <Switch
-                    sx={{
-                      "& .MuiSwitch-switchBase": {
-                        transitionDuration: "0ms",
-                      },
-
-                      "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                        {
-                          backgroundColor: "#3f51b5",
-                        },
-
-                      "& .MuiSwitch-switchBase.Mui-disabled + .MuiSwitch-track":
-                        {
-                          backgroundColor: "#e5e5e5",
-                        },
-
-                      "& .MuiSwitch-switchBase.Mui-disabled": {
-                        color: "#e5e5e5",
-                      },
-
-                      "& .MuiSwitch-colorSecondary.Mui-checked": {
-                        color: "#3f51b5",
-                      },
-                    }}
-                    size="small"
-                    // disabled={isLoading || updateLoading}
-                    checked={false}
-                    onChange={(e, val) => changeHandler(e, val, item?.id)}
-                  />
-                </div>
-              ))}
-            </Container>
-          ) : (
-            <Box style={{ padding: "10px" }}>
-              <Typography>No columns to set group!</Typography>
-            </Box>
-          )
-        ) : ( */}
         <Container onDrop={onDrop}>
           {renderFields.map((column) => (
             <Draggable key={column.id}>
@@ -2609,7 +2443,7 @@ const TabGroup = ({
       : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const [selected, setSelected] = useState(view?.group_fields[0] ?? null);
+  const [selected, setSelected] = useState(view?.group_fields?.[0] ?? null);
   const onChange = (column, checked) => {
     if (isBoardView && selected === column.id) {
       return;

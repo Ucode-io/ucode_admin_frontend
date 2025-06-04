@@ -53,12 +53,16 @@ function PolygonFieldTable({
             background: "#f7f7f7",
           },
         }}
-        onClick={handleOpen}
+        onClick={() => {
+          if (disabled) return;
+          handleOpen();
+        }}
       >
         <Box
           sx={{
             fontSize: drawerDetail ? "13px" : "11px",
             color: polygonValue ? "#212b36" : "#adb5bd",
+            cursor: disabled ? "not-allowed" : "pointer",
           }}
         >
           Polygon

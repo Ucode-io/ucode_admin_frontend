@@ -117,6 +117,7 @@ function MultiImageUpload({
                 alignItems: "center",
                 gap: "3px",
                 padding: drawerDetail ? "0 9.6px" : "0",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}
             >
               {value?.map((img, index) => (
@@ -159,8 +160,8 @@ function MultiImageUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
                 position: "relative",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}
             >
               <img
@@ -206,7 +207,7 @@ function MultiImageUpload({
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 justifyContent: "flex-start",
                 alignItems: "center",
               }}
@@ -251,7 +252,7 @@ function MultiImageUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}
             >
               <Box
@@ -332,7 +333,7 @@ function MultiImageUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
               }}
               onClick={(e) => {

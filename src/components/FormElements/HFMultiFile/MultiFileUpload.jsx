@@ -135,7 +135,7 @@ function MultiFileUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
               }}>
               <img
@@ -180,7 +180,7 @@ function MultiFileUpload({
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 justifyContent: "flex-start",
                 alignItems: "center",
               }}>
@@ -216,8 +216,9 @@ function MultiFileUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
-              }}>
+                cursor: disabled ? "not-allowed" : "pointer",
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -302,7 +303,7 @@ function MultiFileUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
               }}
               onClick={(e) => {

@@ -6,6 +6,8 @@ import {useLocation} from "react-router-dom";
 import LaunchIcon from "@mui/icons-material/Launch";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {InputAdornment, TextField} from "@mui/material";
+import { Box } from "@chakra-ui/react";
+import { Lock } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -61,97 +63,121 @@ const HFLinkField = ({
   };
 
   return (
-    <Controller
-      name={name}
-      control={control}
-      defaultValue={defaultValue}
-      rules={{
-        required: required ? "This is required field" : false,
-        ...rules,
-      }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
-        return (
-          <TextField
-            size="small"
-            value={value}
-            onChange={(e) => {
-              onChange(
-                withTrim
-                  ? e.target.value?.trim()
-                  : typeof e.target.value === "number"
-                    ? numberWithSpaces(e.target.value)
-                    : e.target.value
-              );
-              customOnChange(e);
-              isNewTableView && updateObject();
-            }}
-            sx={{
-              width: "335px",
-              padding: "0px",
-              margin: "0px",
-              border: "none",
-              borderRadius: "8px",
-              "& .MuiInputBase-input::placeholder": {
-                color: "#adb5bd",
-                fontSize: "14px",
-              },
-            }}
-            name={name}
-            id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
-            error={error}
-            fullWidth={fullWidth}
-            placeholder={placeholder}
-            autoFocus={tabIndex === 1}
-            InputProps={{
-              readOnly: disabled,
-              inputProps: {
-                tabIndex,
-                style: { height: inputHeight, color: "blue" },
-              },
-              classes: {
-                input: isBlackBg ? classes.input : "",
-              },
-              style: disabled
-                ? {
-                    background: "#f8f8f8",
-                    padding: "0px",
-                  }
-                : isNewTableView
+    <Box position="relative">
+      <Controller
+        name={name}
+        control={control}
+        defaultValue={defaultValue}
+        rules={{
+          required: required ? "This is required field" : false,
+          ...rules,
+        }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
+          return (
+            <TextField
+              size="small"
+              value={value}
+              onChange={(e) => {
+                onChange(
+                  withTrim
+                    ? e.target.value?.trim()
+                    : typeof e.target.value === "number"
+                      ? numberWithSpaces(e.target.value)
+                      : e.target.value
+                );
+                customOnChange(e);
+                isNewTableView && updateObject();
+              }}
+              sx={{
+                width: "335px",
+                padding: "0px",
+                margin: "0px",
+                border: "none",
+                borderRadius: "8px",
+                "& .MuiInputBase-input::placeholder": {
+                  color: "#adb5bd",
+                  fontSize: "14px",
+                },
+                "& input": {
+                  cursor: disabled ? "not-allowed" : "pointer",
+                },
+              }}
+              name={name}
+              id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
+              error={error}
+              fullWidth={fullWidth}
+              placeholder={placeholder}
+              autoFocus={tabIndex === 1}
+              InputProps={{
+                readOnly: disabled,
+                inputProps: {
+                  tabIndex,
+                  style: { height: inputHeight, color: "blue" },
+                },
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
+                style: disabled
                   ? {
-                      background: "inherit",
-                      color: "inherit",
-                      padding: "0px !important",
-                      margin: "0px !important",
-                      height: "25px",
+                      // background: "#f8f8f8",
+                      padding: "0px",
                     }
-                  : {},
+                  : isNewTableView
+                    ? {
+                        background: "inherit",
+                        color: "inherit",
+                        padding: "0px !important",
+                        margin: "0px !important",
+                        height: "25px",
+                      }
+                    : {},
 
-              endAdornment: (
-                <InputAdornment position="start">
-                  {Boolean(value) ? (
-                    <button
-                      disabled={Boolean(!value)}
-                      className={styles.linkBtn}
-                      onClick={() => navigateToNewPage(value)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      <LaunchIcon style={{ fontSize: "20px" }} />
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </InputAdornment>
-              ),
+                endAdornment: (
+                  <InputAdornment position="start">
+                    {Boolean(value) ? (
+                      <button
+                        disabled={Boolean(!value)}
+                        className={styles.linkBtn}
+                        onClick={() => navigateToNewPage(value)}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        <LaunchIcon style={{ fontSize: "20px" }} />
+                      </button>
+                    ) : (
+                      ""
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+              helperText={!disabledHelperText && error?.message}
+              className={
+                drawerDetail ? "customLinkFieldDrawer" : "customLinkField"
+              }
+              {...props}
+            />
+          );
+        }}
+      />
+      <Box>
+        {disabled && (
+          <Box
+            sx={{
+              width: "2.5rem",
+              height: "2.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "absolute",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
             }}
-            helperText={!disabledHelperText && error?.message}
-            className={
-              drawerDetail ? "customLinkFieldDrawer" : "customLinkField"
-            }
-            {...props}
-          />
-        );
-      }}
-    />
+          >
+            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 

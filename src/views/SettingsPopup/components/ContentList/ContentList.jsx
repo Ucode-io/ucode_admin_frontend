@@ -18,6 +18,7 @@ export const ContentList = ({
   handleClose = () => {},
   handleDelete = () => {},
   handleEdit = () => {},
+  resources,
   ...props
 }) => {
   const navigate = useNavigate();
@@ -77,6 +78,7 @@ export const ContentList = ({
                   arr={arr}
                   val={val}
                   onItemClick={onItemClick}
+                  resources={resources}
                 >
                   {getElementIcon(val?.icon)}
                   <p>{val?.label}</p>
@@ -110,6 +112,7 @@ const ResourceButton = ({
   arr = [],
   clickHandler = () => {},
   onItemClick = () => {},
+  resources,
 }) => {
   const computedElements = arr?.filter(
     (el) =>
@@ -181,7 +184,12 @@ const ResourceButton = ({
                   resource_type: val?.value,
                   resourceType: val?.type,
                   edit: true,
-                  resourceId: el?.id,
+                  resourceId:
+                    val?.type === "CLICK_HOUSE"
+                      ? resources?.find(
+                          (resource) => resource?.resource_type === 2
+                        )?.id
+                      : el?.id,
                 });
                 setChosenResource(val);
               }}

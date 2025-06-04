@@ -30,6 +30,7 @@ import menuService from "../../../services/menuService";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import ViewAddMenu from "./ViewAddMenu";
 import RemoveRelationView from "./RemoveRelationView";
+import DrawerObjectsPage from "./DrawerObjectsPage";
 
 function DrawerDetailPage({
   view,
@@ -408,258 +409,383 @@ function DrawerDetailPage({
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
+  const setViews = () => {};
 
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
-      <Tabs selectedIndex={selectedTabIndex}>
-        <Box position={"relative"} zIndex={9}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <DrawerContent
-              boxShadow="
+      <DrawerContent
+        boxShadow="
         rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
         rgba(15, 15, 15, 0.03) 0px 3px 6px,
         rgba(15, 15, 15, 0.06) 0px 9px 24px
       "
-              zIndex={9}
-              ref={drawerRef}
-              bg={"white"}
-              resize={"both"}
-              position={"relative"}>
-              <DrawerHeader
-                px="12px"
-                bg="white"
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                pr={6}>
-                <Flex h={"44px"} align="center" justify="space-between">
-                  <Box
-                    onClick={handleClose}
-                    cursor="pointer"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    width="24px"
-                    height="24px">
-                    <KeyboardDoubleArrowRightIcon
-                      style={{color: "rgba(55, 53, 47, 0.45)"}}
-                      w={6}
-                      h={6}
-                    />
-                  </Box>
-                  {!layout?.is_visible_section && (
-                    <>
-                      {" "}
-                      <Box
-                        sx={{
-                          width: "1px",
-                          height: "14px",
-                          margin: "0 6px",
-                          background: "rgba(55, 53, 47, 0.16)",
-                        }}
-                      />
-                      <Box>
-                        <ScreenOptions
-                          selectedViewType={selectedViewType}
-                          setSelectedViewType={setSelectedViewType}
-                          setLayoutType={setLayoutType}
-                          selectedRow={selectedRow}
-                          navigateToEditPage={navigateToEditPage}
-                        />
-                      </Box>
-                      <Box
-                        sx={{
-                          width: "1px",
-                          height: "14px",
-                          margin: "0 6px",
-                          background: "rgba(55, 53, 47, 0.16)",
-                        }}
-                      />
-                      {Boolean(permissions?.settings) && (
-                        <>
-                          <Button
-                            onClick={() =>
-                              navigate(`/${menuId}/customize/${itemId}`, {
-                                state: {
-                                  ...data,
-                                  tableSlug,
-                                },
-                              })
-                            }
-                            w={18}
-                            h={18}
-                            display={"flex"}
-                            alignItems={"center"}
-                            variant="outlined">
-                            <SpaceDashboardIcon style={{color: "#808080"}} />
-                          </Button>
-                          <Box
-                            sx={{
-                              width: "1px",
-                              height: "14px",
-                              margin: "0 6px",
-                              background: "rgba(55, 53, 47, 0.16)",
-                            }}
-                          />
-                        </>
-                      )}
-                    </>
-                  )}
-
-                  {!layout?.is_visible_section && (
-                    <TabList
-                      style={{
-                        borderBottom: "none",
-                        overflowX: "auto",
-                        display: "flex",
-                      }}>
-                      {layoutTabs?.map((el, index) => (
-                        <Tab
-                          onClick={(e) => {
-                            setSelectTab(el);
-                            setSelectedTabIndex(index);
-                          }}
-                          key={index}
-                          style={{
-                            whiteSpace: "nowrap",
-                            height: "24px",
-                            padding:
-                              el?.type === "section"
-                                ? `0 10px 0 10px`
-                                : `0 0 0 10px`,
-                            fontSize: "11px",
-                            fontWeight: "500",
-                          }}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              gap: "6px",
-                            }}>
-                            <Box>
-                              {el?.type === "relation"
-                                ? el?.label ||
-                                  el?.relation?.attributes?.[
-                                    `label_to_${i18n?.language}`
-                                  ]
-                                : el?.attributes?.[`label_${i18n?.language}`] ||
-                                  el?.label}
-                            </Box>
-                            {el?.type !== "section" &&
-                              index === selectedTabIndex && (
-                                <RemoveRelationView
-                                  setSelectTab={setSelectTab}
-                                  setSelectedTabIndex={setSelectedTabIndex}
-                                  tableSlug={tableSlug}
-                                  layoutTabs={layoutTabs}
-                                  layout={layout}
-                                  setLayoutTabs={setLayoutTabs}
-                                  tab={el}
-                                />
-                              )}
-                          </Box>
-                        </Tab>
-                      ))}
-                    </TabList>
-                  )}
-                  <ViewAddMenu
-                    selectedTab={selectedTab}
-                    layoutTabs={layoutTabs}
-                    tableSlug={tableSlug}
-                    layout={layout}
-                    fieldsMap={fieldsMap}
-                    setLayoutTabs={setLayoutTabs}
-                  />
-                </Flex>
-
-                {/* {selectedTabIndex === 0 && ( */}
-                <Button
-                  isLoading={btnLoader}
-                  disabled={btnLoader}
-                  type="submit"
-                  rounded={4}
-                  bg={"#007aff"}
-                  color={"#fff"}
-                  w={100}
-                  h={10}>
-                  Save
-                </Button>
-                {/* )} */}
-              </DrawerHeader>
-
-              <TabPanel>
-                <DrawerBody
-                  position={"relative"}
-                  p="0px 50px"
-                  overflow={"auto"}>
-                  <DrawerFormDetailPage
-                    projectInfo={projectInfo}
-                    handleMouseDown={handleMouseDown}
-                    getValues={getValues}
-                    setFormValue={setFormValue}
-                    layout={layout}
-                    selectedTab={selectedTab}
-                    selectedTabIndex={selectedTabIndex}
-                    menuItem={menuItem}
-                    data={data}
+        zIndex={9}
+        ref={drawerRef}
+        bg={"white"}
+        resize={"both"}
+        position={"relative"}>
+        {/* <DrawerHeader
+          px="12px"
+          bg="white"
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          pr={6}>
+          <Flex h={"44px"} align="center" justify="space-between">
+            <Box
+              onClick={handleClose}
+              cursor="pointer"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width="24px"
+              height="24px">
+              <KeyboardDoubleArrowRightIcon
+                style={{color: "rgba(55, 53, 47, 0.45)"}}
+                w={6}
+                h={6}
+              />
+            </Box>
+            {!layout?.is_visible_section && (
+              <>
+                {" "}
+                <Box
+                  sx={{
+                    width: "1px",
+                    height: "14px",
+                    margin: "0 6px",
+                    background: "rgba(55, 53, 47, 0.16)",
+                  }}
+                />
+                <Box>
+                  <ScreenOptions
+                    selectedViewType={selectedViewType}
+                    setSelectedViewType={setSelectedViewType}
+                    setLayoutType={setLayoutType}
                     selectedRow={selectedRow}
-                    handleClose={handleClose}
-                    modal={true}
-                    dateInfo={dateInfo}
-                    setFullScreen={setFullScreen}
-                    fullScreen={fullScreen}
-                    fieldsMap={fieldsMap}
-                    control={control}
-                    watch={watch}
-                    reset={reset}
+                    navigateToEditPage={navigateToEditPage}
                   />
-                </DrawerBody>
-              </TabPanel>
-              {layoutTabs
-                ?.filter((tab) => tab?.type !== "section")
-                .map(() => (
-                  <TabPanel>
-                    <DrawerBody p="0px 0px" overflow={"auto"}>
-                      <DrawerRelationTable
-                        menuItem={menuItem}
-                        layoutType={layoutType}
-                        setLayoutType={setLayoutType}
-                        navigateToEditPage={navigateToEditPage}
-                        layoutTabs={layoutTabs}
-                        selectedTab={selectedTab}
-                        getValues={getValues}
-                        handleMouseDown={handleMouseDown}
-                        getAllData={getAllData}
-                        selectedTabIndex={selectedTabIndex}
-                        setSelectedTabIndex={setSelectedTabIndex}
-                        relations={tableRelations}
-                        control={control}
-                        handleSubmit={handleSubmit}
-                        onSubmit={onSubmit}
-                        reset={reset}
-                        setFormValue={setFormValue}
-                        tableSlug={tableSlug}
-                        watch={watch}
-                        loader={loader}
-                        setSelectTab={setSelectTab}
-                        errors={errors}
-                        relatedTable={
-                          tableRelations[selectedTabIndex]?.relatedTable
-                        }
-                        id={itemId}
-                        fieldsMap={fieldsMap}
-                        data={data}
-                        setData={setData}
-                      />
-                    </DrawerBody>
-                  </TabPanel>
-                ))}
-            </DrawerContent>
-          </form>
+                </Box>
+                <Box
+                  sx={{
+                    width: "1px",
+                    height: "14px",
+                    margin: "0 6px",
+                    background: "rgba(55, 53, 47, 0.16)",
+                  }}
+                />
+                {Boolean(permissions?.settings) && (
+                  <>
+                    <Button
+                      onClick={() =>
+                        navigate(`/${menuId}/customize/${itemId}`, {
+                          state: {
+                            ...data,
+                            tableSlug,
+                          },
+                        })
+                      }
+                      w={18}
+                      h={18}
+                      display={"flex"}
+                      alignItems={"center"}
+                      variant="outlined">
+                      <SpaceDashboardIcon style={{color: "#808080"}} />
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
+          </Flex>
+        </DrawerHeader> */}
+        <Box>
+          <DrawerObjectsPage view={view} setViews={setViews} />
+
+          {/* <DrawerFormDetailPage
+            projectInfo={projectInfo}
+            handleMouseDown={handleMouseDown}
+            getValues={getValues}
+            setFormValue={setFormValue}
+            layout={layout}
+            selectedTab={layout?.tabs?.[0]}
+            selectedTabIndex={selectedTabIndex}
+            menuItem={menuItem}
+            data={data}
+            selectedRow={selectedRow}
+            handleClose={handleClose}
+            modal={true}
+            dateInfo={dateInfo}
+            setFullScreen={setFullScreen}
+            fullScreen={fullScreen}
+            fieldsMap={fieldsMap}
+            control={control}
+            watch={watch}
+            reset={reset}
+          /> */}
         </Box>
-      </Tabs>
+        <Box
+          onMouseDown={handleMouseDown}
+          sx={{
+            position: "absolute",
+            height: "calc(100vh - 50px)",
+            width: "3px",
+            left: 0,
+            top: 0,
+            cursor: "col-resize",
+          }}
+        />
+      </DrawerContent>
     </Drawer>
+    // <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
+    //   <Tabs selectedIndex={selectedTabIndex}>
+    //     <Box position={"relative"} zIndex={9}>
+    //       <form onSubmit={handleSubmit(onSubmit)}>
+    //         <DrawerContent
+    //           boxShadow="
+    //     rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
+    //     rgba(15, 15, 15, 0.03) 0px 3px 6px,
+    //     rgba(15, 15, 15, 0.06) 0px 9px 24px
+    //   "
+    //           zIndex={9}
+    //           ref={drawerRef}
+    //           bg={"white"}
+    //           resize={"both"}
+    //           position={"relative"}>
+    //           <DrawerHeader
+    //             px="12px"
+    //             bg="white"
+    //             display={"flex"}
+    //             justifyContent={"space-between"}
+    //             alignItems={"center"}
+    //             pr={6}>
+    //             <Flex h={"44px"} align="center" justify="space-between">
+    //               <Box
+    //                 onClick={handleClose}
+    //                 cursor="pointer"
+    //                 display="flex"
+    //                 alignItems="center"
+    //                 justifyContent="center"
+    //                 width="24px"
+    //                 height="24px">
+    //                 <KeyboardDoubleArrowRightIcon
+    //                   style={{color: "rgba(55, 53, 47, 0.45)"}}
+    //                   w={6}
+    //                   h={6}
+    //                 />
+    //               </Box>
+    //               {!layout?.is_visible_section && (
+    //                 <>
+    //                   {" "}
+    //                   <Box
+    //                     sx={{
+    //                       width: "1px",
+    //                       height: "14px",
+    //                       margin: "0 6px",
+    //                       background: "rgba(55, 53, 47, 0.16)",
+    //                     }}
+    //                   />
+    //                   <Box>
+    //                     <ScreenOptions
+    //                       selectedViewType={selectedViewType}
+    //                       setSelectedViewType={setSelectedViewType}
+    //                       setLayoutType={setLayoutType}
+    //                       selectedRow={selectedRow}
+    //                       navigateToEditPage={navigateToEditPage}
+    //                     />
+    //                   </Box>
+    //                   <Box
+    //                     sx={{
+    //                       width: "1px",
+    //                       height: "14px",
+    //                       margin: "0 6px",
+    //                       background: "rgba(55, 53, 47, 0.16)",
+    //                     }}
+    //                   />
+    //                   {Boolean(permissions?.settings) && (
+    //                     <>
+    //                       <Button
+    //                         onClick={() =>
+    //                           navigate(`/${menuId}/customize/${itemId}`, {
+    //                             state: {
+    //                               ...data,
+    //                               tableSlug,
+    //                             },
+    //                           })
+    //                         }
+    //                         w={18}
+    //                         h={18}
+    //                         display={"flex"}
+    //                         alignItems={"center"}
+    //                         variant="outlined">
+    //                         <SpaceDashboardIcon style={{color: "#808080"}} />
+    //                       </Button>
+    //                       <Box
+    //                         sx={{
+    //                           width: "1px",
+    //                           height: "14px",
+    //                           margin: "0 6px",
+    //                           background: "rgba(55, 53, 47, 0.16)",
+    //                         }}
+    //                       />
+    //                     </>
+    //                   )}
+    //                 </>
+    //               )}
+
+    //               {!layout?.is_visible_section && (
+    //                 <TabList
+    //                   style={{
+    //                     borderBottom: "none",
+    //                     overflowX: "auto",
+    //                     display: "flex",
+    //                   }}>
+    //                   {layoutTabs?.map((el, index) => (
+    //                     <Tab
+    //                       onClick={(e) => {
+    //                         setSelectTab(el);
+    //                         setSelectedTabIndex(index);
+    //                       }}
+    //                       key={index}
+    //                       style={{
+    //                         whiteSpace: "nowrap",
+    //                         height: "24px",
+    //                         padding:
+    //                           el?.type === "section"
+    //                             ? `0 10px 0 10px`
+    //                             : `0 0 0 10px`,
+    //                         fontSize: "11px",
+    //                         fontWeight: "500",
+    //                       }}>
+    //                       <Box
+    //                         sx={{
+    //                           display: "flex",
+    //                           alignItems: "center",
+    //                           justifyContent: "space-between",
+    //                           gap: "6px",
+    //                         }}>
+    //                         <Box>
+    //                           {el?.type === "relation"
+    //                             ? el?.label ||
+    //                               el?.relation?.attributes?.[
+    //                                 `label_to_${i18n?.language}`
+    //                               ]
+    //                             : el?.attributes?.[`label_${i18n?.language}`] ||
+    //                               el?.label}
+    //                         </Box>
+    //                         {el?.type !== "section" &&
+    //                           index === selectedTabIndex && (
+    //                             <RemoveRelationView
+    //                               setSelectTab={setSelectTab}
+    //                               setSelectedTabIndex={setSelectedTabIndex}
+    //                               tableSlug={tableSlug}
+    //                               layoutTabs={layoutTabs}
+    //                               layout={layout}
+    //                               setLayoutTabs={setLayoutTabs}
+    //                               tab={el}
+    //                             />
+    //                           )}
+    //                       </Box>
+    //                     </Tab>
+    //                   ))}
+    //                 </TabList>
+    //               )}
+    //               <ViewAddMenu
+    //                 selectedTab={selectedTab}
+    //                 layoutTabs={layoutTabs}
+    //                 tableSlug={tableSlug}
+    //                 layout={layout}
+    //                 fieldsMap={fieldsMap}
+    //                 setLayoutTabs={setLayoutTabs}
+    //               />
+    //             </Flex>
+
+    //             {/* {selectedTabIndex === 0 && ( */}
+    //             <Button
+    //               isLoading={btnLoader}
+    //               disabled={btnLoader}
+    //               type="submit"
+    //               rounded={4}
+    //               bg={"#007aff"}
+    //               color={"#fff"}
+    //               w={100}
+    //               h={10}>
+    //               Save
+    //             </Button>
+    //             {/* )} */}
+    //           </DrawerHeader>
+
+    //           <TabPanel>
+    //             <DrawerBody
+    //               position={"relative"}
+    //               p="0px 50px"
+    //               overflow={"auto"}>
+    //               <DrawerFormDetailPage
+    //                 projectInfo={projectInfo}
+    //                 handleMouseDown={handleMouseDown}
+    //                 getValues={getValues}
+    //                 setFormValue={setFormValue}
+    //                 layout={layout}
+    //                 selectedTab={selectedTab}
+    //                 selectedTabIndex={selectedTabIndex}
+    //                 menuItem={menuItem}
+    //                 data={data}
+    //                 selectedRow={selectedRow}
+    //                 handleClose={handleClose}
+    //                 modal={true}
+    //                 dateInfo={dateInfo}
+    //                 setFullScreen={setFullScreen}
+    //                 fullScreen={fullScreen}
+    //                 fieldsMap={fieldsMap}
+    //                 control={control}
+    //                 watch={watch}
+    //                 reset={reset}
+    //               />
+    //             </DrawerBody>
+    //           </TabPanel>
+    //           {layoutTabs
+    //             ?.filter((tab) => tab?.type !== "section")
+    //             .map(() => (
+    //               <TabPanel>
+    //                 <DrawerBody p="0px 0px" overflow={"auto"}>
+    //                   <DrawerRelationTable
+    //                     menuItem={menuItem}
+    //                     layoutType={layoutType}
+    //                     setLayoutType={setLayoutType}
+    //                     navigateToEditPage={navigateToEditPage}
+    //                     layoutTabs={layoutTabs}
+    //                     selectedTab={selectedTab}
+    //                     getValues={getValues}
+    //                     handleMouseDown={handleMouseDown}
+    //                     getAllData={getAllData}
+    //                     selectedTabIndex={selectedTabIndex}
+    //                     setSelectedTabIndex={setSelectedTabIndex}
+    //                     relations={tableRelations}
+    //                     control={control}
+    //                     handleSubmit={handleSubmit}
+    //                     onSubmit={onSubmit}
+    //                     reset={reset}
+    //                     setFormValue={setFormValue}
+    //                     tableSlug={tableSlug}
+    //                     watch={watch}
+    //                     loader={loader}
+    //                     setSelectTab={setSelectTab}
+    //                     errors={errors}
+    //                     relatedTable={
+    //                       tableRelations[selectedTabIndex]?.relatedTable
+    //                     }
+    //                     id={itemId}
+    //                     fieldsMap={fieldsMap}
+    //                     data={data}
+    //                     setData={setData}
+    //                   />
+    //                 </DrawerBody>
+    //               </TabPanel>
+    //             ))}
+    //         </DrawerContent>
+    //       </form>
+    //     </Box>
+    //   </Tabs>
+    // </Drawer>
   );
 }
 

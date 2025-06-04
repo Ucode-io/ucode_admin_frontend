@@ -213,7 +213,7 @@ const ObjectsPage = () => {
   };
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
-  console.log("viewsviewsviewsviews=====>", views);
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>

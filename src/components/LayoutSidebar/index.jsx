@@ -104,7 +104,7 @@ const LayoutSidebar = ({
   const [templateModal, setTemplateModalOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState();
   const [child, setChild] = useState();
-  const [element, setElement] = useState();
+  const [element, setElement] = useState(null);
   const [subSearchText, setSubSearchText] = useState();
   const [menu, setMenu] = useState({event: "", type: "", root: false});
   const openSidebarMenu = Boolean(menu?.event);
@@ -240,6 +240,38 @@ const LayoutSidebar = ({
       });
   };
 
+  const {menuLoader} = useQuery(
+    ["GET_UPDATED_MENU_LIST", menuId],
+    () => {
+      return menuSettingsService.getList({
+        parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+      });
+    },
+    {
+      enabled: false,
+      onSuccess: (res) => {
+        const computedMenus = res?.menus?.filter((el) => {
+          const id = el?.id;
+          const permission = el?.data?.permission?.read;
+
+          if (id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
+            return true;
+          }
+
+          const excludedIds = [
+            "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
+            "9e988322-cffd-484c-9ed6-460d8701551b",
+          ];
+
+          return !excludedIds.includes(id) && permission;
+        });
+
+        setMenuList(computedMenus);
+        setIsMenuListLoading(false);
+      },
+    }
+  );
+
   const {isLoadingUser} = useQuery(
     ["GET_CLIENT_TYPE_LIST", menuId],
     () => {
@@ -361,7 +393,7 @@ const LayoutSidebar = ({
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
       : isWarning <= 7;
-  console.log("menuIdmenuId", menuId);
+
   return (
     <>
       <Flex
@@ -479,20 +511,22 @@ const LayoutSidebar = ({
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
-                    <Box
-                      whiteSpace="nowrap"
-                      color={
-                        (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
-                        "#475467"
-                      }
-                      pl={35}
-                      fontSize={14}>
-                      {generateLangaugeText(
-                        menuLanguages,
-                        i18n?.language,
-                        "Create"
-                      ) || "Create"}
-                    </Box>
+                    {sidebarIsOpen && (
+                      <Box
+                        whiteSpace="nowrap"
+                        color={
+                          (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
+                          "#475467"
+                        }
+                        pl={35}
+                        fontSize={14}>
+                        {generateLangaugeText(
+                          menuLanguages,
+                          i18n?.language,
+                          "Create"
+                        ) || "Create"}
+                      </Box>
+                    )}
                   </Flex>
                 </SidebarAppTooltip>
               )}

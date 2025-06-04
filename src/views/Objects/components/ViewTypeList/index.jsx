@@ -142,7 +142,7 @@ export default function ViewTypeList({
       },
       filters: [],
       number_field: "",
-      app_id: menuId,
+      menu_id: menuId,
       order: views.length + 1,
     };
   }, [menuId, selectedViewTab, tableSlug, views]);

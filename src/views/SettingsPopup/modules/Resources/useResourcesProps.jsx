@@ -73,9 +73,13 @@ export const useResourcesProps = () => {
     });
 
     const computedResources = useMemo(() => {
-      return [...(data?.resources || []), ...(clickHouseList || [])];
+      return [
+        ...(data?.resources || []),
+        ...(clickHouseList || []),
+        ...(resources || []),
+      ];
     }, [data, resources, clickHouseList]);
-
+    console.log({ computedResources });
   return {
     computedResources,
     i18n,
@@ -84,5 +88,6 @@ export const useResourcesProps = () => {
     isLoading,
     handleItemClick,
     handleAddClick,
-  }
+    resources,
+  };
 };

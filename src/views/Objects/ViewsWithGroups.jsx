@@ -51,6 +51,7 @@ import style from "./style.module.scss";
 import {mergeStringAndState} from "../../utils/jsonPath";
 import useTabRouter from "../../hooks/useTabRouter";
 import TimeLineView from "./TimeLineView/index.jsx";
+import {generateGUID} from "../../utils/generateID";
 
 const ViewsWithGroups = ({
   views,
@@ -130,6 +131,28 @@ const ViewsWithGroups = ({
   const handleCloseSearch = () => {
     setAnchorElSearch(null);
   };
+
+  const mainForm = useForm({
+    defaultValues: {
+      show_in_menu: true,
+      fields: [],
+      app_id: appId,
+      summary_section: {
+        id: generateGUID(),
+        label: "Summary",
+        fields: [],
+        icon: "",
+        order: 1,
+        column: "SINGLE",
+        is_summary_section: true,
+      },
+      label: "",
+      description: "",
+      slug: "",
+      icon: "",
+    },
+    mode: "all",
+  });
 
   const tableHeightOptions = [
     {
@@ -399,6 +422,7 @@ const ViewsWithGroups = ({
             navigateToEditPage={navigateToEditPage}
             selectedTabIndex={selectedTabIndex}
             view={view}
+            mainForm={mainForm}
             views={views}
             fieldsMap={fieldsMap}
             computedVisibleFields={computedVisibleFields}

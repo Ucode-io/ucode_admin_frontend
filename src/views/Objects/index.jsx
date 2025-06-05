@@ -74,7 +74,11 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(menuId),
       select: (res) => {
-        return res?.views ?? [];
+        return (
+          res?.views?.filter(
+            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view)
+          ) ?? []
+        );
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);

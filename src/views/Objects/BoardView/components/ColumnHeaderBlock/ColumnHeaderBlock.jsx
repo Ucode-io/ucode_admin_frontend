@@ -1,85 +1,58 @@
 import cls from "./styles.module.scss";
 import { IconButton } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 export const ColumnHeaderBlock = ({
   tab,
-  computedData,
   navigateToCreatePage,
-  boardRef,
-  fixed,
-  field,
+  groupField,
+  boardTab,
   counts,
 }) => {
   const fixedElement = useRef(null);
-  const hasColor = tab?.color || field?.attributes?.has_color;
 
-  const color =
-    tab?.color ||
-    field?.attributes?.options?.find((item) => item?.value === tab?.value)
-      ?.color;
+  const color = groupField?.attributes?.options?.find(
+    (item) => item?.label === tab?.name || item?.value === tab?.name
+  )?.color;
 
-  // useEffect(() => {
-  //   if (fixed) {
-  //     const board = boardRef.current;
-  //     const el = fixedElement.current;
-  //     if (!board || !el) return;
-
-  //     const onScroll = () => {
-  //       // el.style.top = `${board.scrollTop}px`;
-  //       el.style.transform = `translateY(${board.scrollTop}px)`;
-  //     };
-
-  //     board.addEventListener("scroll", onScroll);
-
-  //     return () => {
-  //       board.removeEventListener("scroll", onScroll);
-  //     };
-  //   }
-  // }, []);
-
-return (
-  <div
-    ref={fixedElement}
-    className={`${cls.columnHeaderBlock} column-header`}
-    style={{ position: fixed ? "absolute" : "static" }}
-  >
-    <div className={cls.leftSide}>
-      <div className={cls.title}>
-        <span
-          style={{
-            background: hasColor ? color + 33 : "rgb(139, 150, 160)",
-            color: hasColor ? color : "#fff",
-          }}
-          className={cls.tabBlockStatus}
-        >
+  return (
+    <div
+      ref={fixedElement}
+      className={`${cls.columnHeaderBlock} column-header`}
+    >
+      <div className={cls.leftSide}>
+        <div className={cls.title}>
           <span
-            className={cls.dot}
-            style={{ background: color ? color : "rgb(78, 84, 90)" }}
-          />
-          <span className={cls.label}>{tab.label}</span>
-        </span>
+            style={{
+              background: color ? color + 33 : "rgb(139, 150, 160)",
+              color: color ? color : "#fff",
+            }}
+            className={cls.tabBlockStatus}
+          >
+            <span
+              className={cls.dot}
+              style={{ background: color ? color : "rgb(78, 84, 90)" }}
+            />
+            <span className={cls.label}>{tab.name}</span>
+          </span>
+        </div>
+        <div className={cls.counter}>
+          {(counts?.[tab?.name] || tab?.count) ?? 0}
+        </div>
       </div>
-      <div className={cls.counter}>
-        {counts?.[tab.value] ||
-          computedData?.length ||
-          counts?.[tab.value] ||
-          0}
+      <div className={cls.rightSide}>
+        <IconButton
+          className={cls.addButton}
+          color="inherit"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateToCreatePage({ tab: tab?.name });
+          }}
+        >
+          <Add />
+        </IconButton>
       </div>
     </div>
-    <div className={cls.rightSide}>
-      <IconButton
-        className={cls.addButton}
-        color="inherit"
-        onClick={(e) => {
-          e.stopPropagation();
-          navigateToCreatePage({ tab });
-        }}
-      >
-        <Add />
-      </IconButton>
-    </div>
-  </div>
-);
+  );
 };

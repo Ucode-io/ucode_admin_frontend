@@ -12,10 +12,13 @@ import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import useDebounce from "../../../hooks/useDebounce";
 import { viewSearch } from "../../../utils/viewSearch";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const BoardColumn = ({
   tab,
+  group,
   data = [],
+  boardData = [],
   fieldsMap,
   view = {},
   computedColumnsFor,
@@ -26,7 +29,7 @@ const BoardColumn = ({
   boardRef,
   index: columnIndex,
   subGroupById,
-  subGroupData,
+  subGroupData = [],
   subItem,
   subGroupFieldSlug,
   setOpenDrawerModal,
@@ -36,7 +39,12 @@ const BoardColumn = ({
   setGroupCounts,
   searchText,
   columnsForSearch,
+  groupSlug,
+  mutateBoardData,
+  getGroupCounts,
 }) => {
+  const [computedBoardData, setComputedBoardData] = useState(boardData);
+
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -70,7 +78,6 @@ const BoardColumn = ({
         ...data,
         board_order: index + 1,
       };
-
       if (isStatusType) {
         mutateData[selectedGroupField?.slug] = tab.value;
       } else {
@@ -88,51 +95,23 @@ const BoardColumn = ({
     }
   );
 
-  const mutateDrop = useDebounce(({ data, index }) => {
-    const mutateData = {
-      ...data,
-      board_order: index + 1,
-    };
-
-    if (isStatusType) {
-      mutateData[selectedGroupField?.slug] = tab.value;
-    } else {
-      mutateData[tab.slug] = tab.value;
-    }
+  const mutateDrop = useDebounce((mutateData) => {
+    // console.log({ selectedGroupField });
+    // if (isStatusType) {
+    //   mutateData[groupSlug] = [group?.name];
+    // } else {
+    // }
 
     constructorObjectService
       .update(tableSlug, {
         data: mutateData,
       })
       .then(() => {
+        getGroupCounts();
         // queryClient.refetchListQueriesQueries(["GET_OBJECT_LIST_ALL"]);
         // refetchListQueries();
       });
   }, 0);
-
-  // const {
-  //   data: { layout } = {
-  //     layout: [],
-  //   },
-  // } = useQuery({
-  //   queryKey: [
-  //     "GET_LAYOUT",
-  //     {
-  //       tableSlug,
-  //     },
-  //   ],
-  //   queryFn: () => {
-  //     return layoutService.getLayout(tableSlug, appId);
-  //   },
-  //   select: (data) => {
-  //     return {
-  //       layout: data ?? {},
-  //     };
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error", error);
-  //   },
-  // });
 
   const onDrop = (dropResult) => {
     let dropResultTemp = { ...dropResult };
@@ -144,94 +123,59 @@ const BoardColumn = ({
     }
 
     if (isStatusType) {
-      payload[selectedGroupField?.slug] = tab?.label;
+      payload[selectedGroupField?.slug] = tab?.name;
     } else {
-      if (Array.isArray(payload[tab.slug]))
-        payload[tab.slug].includes(tab.value);
-      payload[tab.slug] = tab.value;
+      // if (Array.isArray(payload[subGroupFieldSlug]))
+      //   payload[subGroupFieldSlug].includes(tab.value);
+      // payload[subGroupFieldSlug] = tab.value;
     }
 
     payload["color"] = tab?.color || color;
 
-    const result = applyDrag(computedData, dropResultTemp);
-    if (result) {
-      setComputedData(result);
-      if (!subGroupById) {
-        setGroupCounts((prev) => {
-          return {
-            ...prev,
-            [tab?.slug]: result.length,
-          };
-        });
-      } else {
-        if (dropResult?.removedIndex !== null) {
-          setGroupCounts((prev) => {
-            return {
-              ...prev,
-              [tab?.slug]: prev[tab?.slug] - 1,
-            };
-          });
-        } else {
-          setGroupCounts((prev) => {
-            return {
-              ...prev,
-              [tab?.slug]: prev[tab?.slug] + 1,
-            };
-          });
-        }
-      }
+    if (subGroupById && payload[subGroupFieldSlug] !== subItem) {
+      payload[subGroupFieldSlug] = subItem;
     }
+
+    payload[groupSlug] = [group?.name];
+
+    const result = applyDrag(boardData, dropResultTemp);
+
     setIndex(dropResult?.addedIndex);
-    if (result?.length >= computedData?.length) {
-      mutateDrop({ data: dropResult.payload, index: dropResult.addedIndex });
+
+    if (result) {
+      setComputedBoardData(result);
+    }
+
+    if (
+      result?.length >= boardData?.length &&
+      dropResult?.addedIndex !== dropResult?.removedIndex
+    ) {
+      const mutateData = {
+        ...dropResult.payload,
+        board_order: dropResult.addedIndex + 1,
+      };
+
+      mutateDrop(mutateData);
     }
   };
-
-  // const timerRef = useRef(null);
-
-  // useEffect(() => {
-  //   if (timerRef.current) {
-  //     clearTimeout(timerRef.current);
-  //   }
-
-  //   if (onDropData) {
-  //     const { dropResult, result } = onDropData;
-
-  //     timerRef.current = setTimeout(() => {
-  //       if (result?.length >= computedData?.length) {
-  //         console.log("MUTATE");
-  //         mutateDrop({
-  //           data: dropResult.payload,
-  //           index: dropResult.addedIndex,
-  //         });
-  //       }
-  //     }, 2000);
-  //   }
-
-  //   return () => {
-  //     if (timerRef.current) {
-  //       clearTimeout(timerRef.current);
-  //     }
-  //   };
-  // }, [onDropData, computedData]);
 
   const viewFields = useMemo(() => {
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
   }, [view, fieldsMap, data]);
 
-  useEffect(() => {
-    setComputedData(
-      (subGroupById ? subGroupData : data).filter((el) => {
-        if (isStatusType) {
-          return el?.[selectedGroupField?.slug] === tab?.label;
-        } else {
-          if (Array.isArray(el[tab.slug]))
-            return el[tab.slug].includes(tab.value);
-          return el[tab.slug] === tab.value;
-        }
-      })
-    );
-  }, [data, subGroupById, subGroupData]);
+  // useEffect(() => {
+  //   setComputedData(
+  //     (subGroupById ? subGroupData : data).filter((el) => {
+  //       if (isStatusType) {
+  //         return el?.[selectedGroupField?.slug] === tab?.label;
+  //       } else {
+  //         if (Array.isArray(el[tab.slug]))
+  //           return el[tab.slug].includes(tab.value);
+  //         return el[tab.slug] === tab.value;
+  //       }
+  //     })
+  //   );
+  // }, [data, subGroupById, subGroupData]);
 
   const navigateToEditPage = (el) => {
     setOpenDrawerModal(true);
@@ -266,7 +210,6 @@ const BoardColumn = ({
   };
   const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  // const hasColor = tab?.color || field?.attributes?.has_color;
   const color =
     tab?.color ||
     field?.attributes?.options?.find((item) => item?.value === tab?.value)
@@ -295,16 +238,21 @@ const BoardColumn = ({
     };
   }, []);
 
-  // const color =
-  //   tab?.color ||
-  //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
-  //     ?.color;
-
   const filteredComputedData = viewSearch({
     columnsForSearch,
     computedData,
     searchText,
   });
+
+  const photoViewFields = viewFields.filter(
+    (field) => field?.type === FIELD_TYPES.PHOTO
+  );
+
+  useEffect(() => {
+    if (boardData?.length !== computedBoardData?.length) {
+      setComputedBoardData(boardData);
+    }
+  }, [boardData]);
 
   return (
     <>
@@ -314,58 +262,9 @@ const BoardColumn = ({
           backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
         }}
       >
-        {/* {!subGroupById && (
-          
-        )} */}
-        {/* {(!subGroupById || subGroupIndex === 0) && (
-          <ColumnHeaderBlock
-            field={field}
-            tab={tab}
-            computedData={computedData}
-            boardRef={boardRef}
-            navigateToCreatePage={navigateToCreatePage}
-            fixed
-          />
-        )} */}
-        {/* <div
-          ref={fixedElement}
-          className={`${cls.columnHeaderBlock} column-header`}
-        >
-          <div className={cls.leftSide}>
-            <div className={cls.title}>
-              <span
-                style={{
-                  background: hasColor ? color + 33 : "rgb(139, 150, 160)",
-                  color: hasColor ? color - 50 : "#fff",
-                }}
-                className={cls.tabBlockStatus}
-              >
-                <span
-                  className={cls.dot}
-                  style={{ background: color ? color : "rgb(78, 84, 90)" }}
-                />
-                {tab.label}
-              </span>
-            </div>
-            <div className={cls.counter}>{computedData?.length || 0}</div>
-          </div>
-          <div className={cls.rightSide}>
-            <IconButton
-              className={cls.addButton}
-              color="inherit"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigateToCreatePage({ tab });
-              }}
-            >
-              <Add />
-            </IconButton>
-          </div>
-        </div> */}
-
         <Container
           groupName="subtask"
-          getChildPayload={(i) => computedData[i]}
+          getChildPayload={(i) => computedBoardData[i]}
           onDrop={(e) => {
             onDrop(e);
           }}
@@ -379,8 +278,8 @@ const BoardColumn = ({
           }}
           animationDuration={300}
         >
-          {filteredComputedData?.length > 0 ? (
-            filteredComputedData.map((el) => (
+          {computedBoardData?.length > 0 ? (
+            computedBoardData.map((el) => (
               <Draggable
                 key={el.guid}
                 index={index}
@@ -391,7 +290,7 @@ const BoardColumn = ({
                   key={el.guid}
                   onClick={() => navigateToEditPage(el)}
                 >
-                  {viewFields.map((field) => (
+                  {photoViewFields.map((field) => (
                     <BoardPhotoGenerator
                       key={field.id}
                       field={field}
@@ -401,6 +300,7 @@ const BoardColumn = ({
                           height: "200px",
                           width: "100%",
                           objectFit: "cover",
+                          pointerEvents: "none",
                         },
                         width: "260",
                         height: "200",
@@ -413,17 +313,19 @@ const BoardColumn = ({
                     />
                   ))}
                   {viewFields.map((field) => (
-                    <BoardCardRowGenerator
-                      key={field.id}
-                      isStatus={field?.type === "STATUS"}
-                      field={field}
-                      el={el}
-                      fieldsMap={fieldsMap}
-                      slug={selectedGroupField?.slug}
-                      columnIndex={columnIndex}
-                      showFieldLabel
-                      hintPosition={columnIndex === 0 ? "top" : "left"}
-                    />
+                    <>
+                      <BoardCardRowGenerator
+                        key={field.id}
+                        isStatus={field?.type === "STATUS"}
+                        field={field}
+                        el={el}
+                        fieldsMap={fieldsMap}
+                        slug={selectedGroupField?.slug}
+                        columnIndex={columnIndex}
+                        showFieldLabel
+                        hintPosition={columnIndex === 0 ? "top" : "left"}
+                      />
+                    </>
                   ))}
                 </div>
               </Draggable>
@@ -451,12 +353,6 @@ const BoardColumn = ({
           </Button>
         </div>
       </div>
-      {/* <BoardModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        dateInfo={dateInfo}
-        selectedRow={selectedRow}
-      /> */}
     </>
   );
 };

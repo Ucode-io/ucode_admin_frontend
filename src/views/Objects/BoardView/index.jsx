@@ -25,6 +25,10 @@ import { useProjectGetByIdQuery } from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 import { Add } from "@mui/icons-material";
+import {
+  useGetBoardMutation,
+  useGetBoardStructureMutation,
+} from "../../../services/boardViewService";
 
 const BoardView = ({
   view,
@@ -66,6 +70,13 @@ const BoardView = ({
   const [defaultValue, setDefaultValue] = useState(null);
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
+  const [groupsCounts, setGroupsCounts] = useState({});
+
+  const subGroupField = fieldsMap[subGroupById];
+  const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
+
+  const groupFieldId = view?.group_fields?.[0];
+  const groupField = fieldsMapRel[groupFieldId];
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
@@ -141,25 +152,121 @@ const BoardView = ({
     setSelectedView(views?.[selectedTabIndex] ?? {});
   }, [views, selectedTabIndex]);
 
-  const {
-    data = [],
-    isLoading: dataLoader,
-    refetch,
-  } = useQuery(
-    ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters, filterTab }],
-    () => {
-      return constructorObjectService.getListV2(tableSlug, {
-        data: {
-          ...filters,
-          limit: 300,
-          offset: 0,
-        },
-      });
-    },
+  // const {
+  //   data: boardDataContent = [],
+  //   isLoading: boardDataContentLoader,
+  //   refetch: refetchBoardDataContent,
+  // } = useQuery(
+  //   ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters, filterTab }],
+  //   () => {
+  //     return constructorObjectService.getListV2(tableSlug, {
+  //       data: {
+  //         ...filters,
+  //         limit: 300,
+  //         offset: 0,
+  //       },
+  //     });
+  //   },
+  //   {
+  //     select: ({ data }) => data?.response ?? [],
+  //   }
+  // );
+  // console.log({ boardDataContent });
+  const dataLoader = false;
+  const refetch = () => {};
+  const data = useMemo(() => {
+    return [];
+  }, []);
+
+  const [groups, setGroups] = useState([]);
+  const [subGroups, setSubGroups] = useState([]);
+  const [boardData, setBoardData] = useState([]);
+
+  const boardMutation = useGetBoardMutation(
     {
-      select: ({ data }) => data?.response ?? [],
-    }
+      onSuccess: (data) => {
+        setBoardData(data?.data?.response ?? []);
+      },
+    },
+    tableSlug
   );
+
+  const mutateBoardData = () => {
+    const fields = [
+      ...visibleColumns?.map((el) => el?.slug),
+      "guid",
+      "board_order",
+    ] ?? ["guid", "board_order"];
+    boardMutation.mutate({
+      data: {
+        group_by: {
+          field: groupField.slug,
+        },
+        subgroup_by: {
+          field: subGroupFieldSlug,
+        },
+        limit: 300,
+        offset: 0,
+        fields: fields,
+      },
+    });
+  };
+
+  const boardStructureMutation = useGetBoardStructureMutation(
+    {
+      onSuccess: (data) => {
+        const attributesTabs = view?.attributes?.tabs;
+
+        if (attributesTabs?.length === data?.data?.groups?.length) {
+          setGroups(() => {
+            const tempGroups = data?.data?.groups?.map((item) => ({
+              ...item,
+              order: attributesTabs?.find((el) => el?.name === item?.name)
+                ?.order,
+            }));
+            tempGroups.sort((a, b) => a?.order - b?.order);
+            return tempGroups;
+          });
+        } else {
+          setGroups(data?.data?.groups ?? []);
+        }
+        setSubGroups(data?.data?.subgroups ?? []);
+        mutateBoardData();
+      },
+    },
+    tableSlug
+  );
+
+  const groupMutationForCounts = useGetBoardStructureMutation(
+    {
+      onSuccess: (data) => {
+        const result = {};
+        data?.data?.groups?.forEach((el) => {
+          result[el?.name] = el?.count;
+        });
+        setGroupsCounts(result);
+      },
+    },
+    tableSlug
+  );
+
+  useEffect(() => {
+    const mutateBody = {
+      data: {
+        group_by: {
+          field: groupField.slug,
+        },
+      },
+    };
+
+    if (subGroupById) {
+      mutateBody.data.subgroup_by = {
+        field: subGroupFieldSlug,
+      };
+    }
+
+    boardStructureMutation.mutate(mutateBody);
+  }, [groupField, subGroupFieldSlug, subGroupById]);
 
   const updateView = (tabs) => {
     const computedData = {
@@ -174,24 +281,26 @@ const BoardView = ({
     });
   };
 
-  const groupFieldId = view?.group_fields?.[0];
-  const groupField = fieldsMapRel[groupFieldId];
-
   const { data: tabs, isLoading: tabsLoader } = useQuery(
     queryGenerator(groupField, filters, i18n?.language)
   );
 
-  const loader = dataLoader || tabsLoader;
+  // const loader = dataLoader || tabsLoader;
+  const loader = boardStructureMutation.isLoading;
 
   // const navigateToCreatePage = () => {
   //   navigateToForm(tableSlug);
   // };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(boardTab, dropResult);
-    setBoardTab(result);
-    if (result) {
-      updateView(result);
+    const result = applyDrag(groups, dropResult);
+    const orderedResult = result.map((el, index) => ({
+      ...el,
+      order: index + 1,
+    }));
+    setGroups(orderedResult);
+    if (orderedResult) {
+      updateView(orderedResult);
     }
   };
 
@@ -246,8 +355,6 @@ const BoardView = ({
   }, [visibleColumns, visibleRelationColumns, view.type]);
 
   const [subBoardData, setSubBoardData] = useState({});
-  const subGroupField = fieldsMap[subGroupById];
-  const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -259,7 +366,6 @@ const BoardView = ({
     setSubBoardData({});
     if (subGroupById) {
       data?.forEach((item) => {
-        console.log({ item, subGroupById, fieldsMap });
         const key =
           subGroupField?.type === FIELD_TYPES.LOOKUP
             ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
@@ -295,8 +401,19 @@ const BoardView = ({
   };
 
   useEffect(() => {
-    setOpenedGroups(Object.keys(subBoardData));
-  }, [subBoardData]);
+    setOpenedGroups(subGroups?.map((el) => el?.name));
+  }, [subGroups]);
+
+  const getGroupCounts = () => {
+    const mutateBody = {
+      data: {
+        group_by: {
+          field: groupField.slug,
+        },
+      },
+    };
+    groupMutationForCounts.mutate(mutateBody);
+  };
 
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -324,7 +441,7 @@ const BoardView = ({
     }
 
     return result;
-  }, [subBoardData, groupField, data, boardTab, view]);
+  }, [subBoardData, groupField, data, view]);
 
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
@@ -344,7 +461,6 @@ const BoardView = ({
     if (!board || !el) return;
 
     const onScroll = () => {
-      // el.style.top = `${board.scrollTop}px`;
       if (board.scrollTop > 0) {
         setIsOnTop(true);
         el.style.transform = `translateY(${board.scrollTop}px)`;
@@ -381,34 +497,11 @@ const BoardView = ({
               </Box>
             </div>
           )}
-
-          {/* {subGroupById && ( */}
-          {/* <div className={styles.header}>
-            {boardTab?.map((tab) => (
-              <ColumnHeaderBlock
-                key={tab.value}
-                tab={tab}
-                computedData={subBoardData[tab.value]}
-                counts={statusGroupCounts}
-                navigateToCreatePage={navigateToCreatePage}
-                field={computedColumnsFor?.find(
-                  (field) => field?.slug === tab?.slug
-                )}
-              />
-            ))}
-          </div> */}
-          {/* )} */}
-
-          <div
-            className={styles.boardHeader}
-            ref={fixedElement}
-            // style={{
-            //   boxShadow: isOnTop ? "rgba(0, 0, 0, 0.1) 0px 0px 2px 0px" : "",
-            // }}
-          >
+          <div className={styles.boardHeader} ref={fixedElement}>
             <Container
               lockAxis="x"
               onDrop={onDrop}
+              getChildPayload={(i) => groups[i]}
               orientation="horizontal"
               dragHandleSelector=".column-header"
               dragClass="drag-card-ghost"
@@ -424,38 +517,155 @@ const BoardView = ({
                 // padding: "0 16px",
               }}
             >
-              {boardTab?.map((tab, tabIndex) => (
+              {groups?.map((tab, tabIndex) => (
                 <Draggable
                   key={tabIndex}
                   style={{
                     borderBottom: isOnTop
                       ? "1px solid rgba(0, 0, 0, 0.1)"
                       : "none",
-                    // boxShadow: isOnTop
-                    //   ? "rgba(0, 0, 0, 0.1) 0 4px 2px -2px"
-                    //   : "none",
-                    padding: "0 8px",
-                    paddingLeft: tabIndex === 0 ? "16px" : "0",
+                    padding: "0 16px",
+                    paddingLeft: tabIndex === 0 ? "16px" : "8px",
                     paddingRight:
-                      tabIndex === boardTab?.length - 1 ? "16px" : "0",
+                      tabIndex === groups?.length - 1 ? "16px" : "0",
                   }}
                 >
                   <ColumnHeaderBlock
                     field={computedColumnsFor?.find(
-                      (field) => field?.slug === tab?.slug
+                      (field) => field?.label === tab?.name
                     )}
                     tab={tab}
-                    // computedData={computedData}
-                    // boardRef={boardRef}
+                    groupField={groupField}
                     navigateToCreatePage={navigateToCreatePage}
-                    counts={groupCounts}
+                    counts={groupsCounts}
                   />
                 </Draggable>
               ))}
             </Container>
           </div>
-
           <div
+            className={styles.board}
+            style={{
+              height: isFilterOpen
+                ? "calc(100vh - 121px)"
+                : "calc(100vh - 91px)",
+              paddingTop: "50px",
+            }}
+          >
+            {subGroupById ? (
+              <div className={styles.boardSubGroupWrapper}>
+                {subGroups?.map((subGroup, subGroupIndex) => (
+                  <div key={subGroup?.name}>
+                    <button
+                      className={styles.boardSubGroupBtn}
+                      onClick={() => handleToggle(subGroup?.name)}
+                    >
+                      <span
+                        className={clsx(styles.boardSubGroupBtnInner, {
+                          [styles.selected]: openedGroups.includes(
+                            subGroup?.name
+                          ),
+                        })}
+                      >
+                        <span className={styles.iconWrapper}>
+                          <span className={styles.icon}>
+                            <PlayArrowRoundedIcon fontSize="small" />
+                          </span>
+                        </span>
+                        <span
+                          className={styles.boardSubGroupBtnLabel}
+                          style={{
+                            color: getColor(subGroup?.name),
+                            background: getColor(subGroup?.name) + 33,
+                          }}
+                        >
+                          {subGroup?.name}
+                        </span>
+                      </span>
+                    </button>
+                    {openedGroups?.includes(subGroup?.name) && (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        {groups?.map((group, index) => (
+                          <BoardColumn
+                            mutateBoardData={mutateBoardData}
+                            boardData={boardData[subGroup?.name]?.[group?.name]}
+                            computedColumnsFor={computedColumnsFor}
+                            key={group.value}
+                            group={group}
+                            tab={group}
+                            data={[]}
+                            fieldsMap={fieldsMap}
+                            view={view}
+                            menuItem={menuItem}
+                            layoutType={layoutType}
+                            setLayoutType={setLayoutType}
+                            refetch={refetch}
+                            boardRef={boardRef}
+                            index={index}
+                            subGroupIndex={subGroupIndex}
+                            subGroupById={subGroupById}
+                            subGroupData={subBoardData[subGroup?.name]}
+                            subItem={subGroup?.name}
+                            subGroupFieldSlug={subGroupFieldSlug}
+                            searchText={searchText}
+                            columnsForSearch={columnsForSearch}
+                            setDateInfo={setDateInfo}
+                            setDefaultValue={setDefaultValue}
+                            setOpenDrawerModal={setOpenDrawerModal}
+                            setSelectedRow={setSelectedRow}
+                            setGroupCounts={setGroupCounts}
+                            groupSlug={groupField.slug}
+                            getGroupCounts={getGroupCounts}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>
+                {groups?.map((group, index) => (
+                  <div key={group.value} className={styles.draggable}>
+                    <BoardColumn
+                      mutateBoardData={mutateBoardData}
+                      boardData={boardData?.[group?.name]}
+                      computedColumnsFor={computedColumnsFor}
+                      key={group.value}
+                      group={group}
+                      tab={group}
+                      data={[]}
+                      fieldsMap={fieldsMap}
+                      view={view}
+                      menuItem={menuItem}
+                      layoutType={layoutType}
+                      setLayoutType={setLayoutType}
+                      refetch={refetch}
+                      boardRef={boardRef}
+                      index={index}
+                      searchText={searchText}
+                      columnsForSearch={columnsForSearch}
+                      setDateInfo={setDateInfo}
+                      setDefaultValue={setDefaultValue}
+                      setOpenDrawerModal={setOpenDrawerModal}
+                      setSelectedRow={setSelectedRow}
+                      setGroupCounts={setGroupCounts}
+                      groupSlug={groupField.slug}
+                      getGroupCounts={getGroupCounts}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* <div
             className={styles.board}
             style={{
               height: isFilterOpen
@@ -472,7 +682,7 @@ const BoardView = ({
           >
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>
-                {Object.keys(subBoardData)?.map((el, subGroupIndex) => (
+                {subGroups?.map((el, subGroupIndex) => (
                   <div key={el}>
                     <button
                       className={styles.boardSubGroupBtn}
@@ -520,7 +730,7 @@ const BoardView = ({
                           // position: "static",
                         }}
                       >
-                        {boardTab?.map((tab, index) => (
+                        {groups?.map((tab, index) => (
                           // <Draggable
                           //   key={tab.value}
                           //   className={styles.draggable}
@@ -606,7 +816,7 @@ const BoardView = ({
                 ))}
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       )}
       <MaterialUIProvider>

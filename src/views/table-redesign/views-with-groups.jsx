@@ -98,6 +98,7 @@ import {SubGroup} from "./components/SubGroup";
 import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -110,18 +111,32 @@ const viewIcons = {
 export const NewUiViewsWithGroups = ({
   views,
   selectedTabIndex,
-  setSelectedTabIndex,
   view,
   fieldsMap,
   menuItem,
   visibleRelationColumns,
   visibleColumns,
-  refetchViews,
   fieldsMapRel,
-  setViews,
-  setSelectedView,
   selectedView,
   relationView = false,
+  projectInfo,
+  getValuesRoot,
+  layout,
+  rootForm,
+  selectedRow: row,
+  selectedTab,
+  data,
+  modal,
+  dateInfo,
+  setFullScreen,
+  fullScreen,
+  onSubmit = () => {},
+  setViews = () => {},
+  refetchViews = () => {},
+  setSelectedView = () => {},
+  handleClose = () => {},
+  handleMouseDown = () => {},
+  setSelectedTabIndex = () => {},
 }) => {
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
@@ -240,7 +255,6 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const projectId = useSelector((state) => state.company?.projectId);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
@@ -679,13 +693,15 @@ export const NewUiViewsWithGroups = ({
               </PopoverContent>
             </Popover>
 
-            <FilterPopover
-              tableLan={tableLan}
-              view={view}
-              visibleColumns={visibleColumns}
-              refetchViews={refetchViews}>
-              <FilterButton view={view} />
-            </FilterPopover>
+            {view?.type !== "SECTION" && (
+              <FilterPopover
+                tableLan={tableLan}
+                view={view}
+                visibleColumns={visibleColumns}
+                refetchViews={refetchViews}>
+                <FilterButton view={view} />
+              </FilterPopover>
+            )}
 
             {view?.type === "TIMELINE" && noDates.length > 0 && (
               <Popover>
@@ -720,40 +736,44 @@ export const NewUiViewsWithGroups = ({
               </Popover>
             )}
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-              <Button
-                h={"30px"}
-                rightIcon={<ChevronDownIcon fontSize={18} />}
-                onClick={() => navigateCreatePage()}>
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Create item"
-                ) || "Create item"}
-              </Button>
-            </PermissionWrapperV2>
-
-            <ViewOptions
-              refetchViews={refetchViews}
-              selectedTabIndex={selectedTabIndex}
-              isChanged={isChanged}
-              setIsChanged={setIsChanged}
-              selectedView={selectedView}
-              tableLan={tableLan}
-              view={view}
-              viewName={viewName}
-              fieldsMap={fieldsMap}
-              visibleRelationColumns={visibleRelationColumns}
-              setSelectedTabIndex={setSelectedTabIndex}
-              checkedColumns={checkedColumns}
-              onDocsClick={() => setSelectedTabIndex(views.length)}
-              searchText={searchText}
-              computedVisibleFields={computedVisibleFields}
-              handleOpenPopup={handleOpenPopup}
-              queryClient={queryClient}
-              settingsForm={settingsForm}
-              views={views}
-            />
+            {view?.type !== "SECTION" && (
+              <>
+                {" "}
+                <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                  <Button
+                    h={"30px"}
+                    rightIcon={<ChevronDownIcon fontSize={18} />}
+                    onClick={() => navigateCreatePage()}>
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Create item"
+                    ) || "Create item"}
+                  </Button>
+                </PermissionWrapperV2>
+                <ViewOptions
+                  refetchViews={refetchViews}
+                  selectedTabIndex={selectedTabIndex}
+                  isChanged={isChanged}
+                  setIsChanged={setIsChanged}
+                  selectedView={selectedView}
+                  tableLan={tableLan}
+                  view={view}
+                  viewName={viewName}
+                  fieldsMap={fieldsMap}
+                  visibleRelationColumns={visibleRelationColumns}
+                  setSelectedTabIndex={setSelectedTabIndex}
+                  checkedColumns={checkedColumns}
+                  onDocsClick={() => setSelectedTabIndex(views.length)}
+                  searchText={searchText}
+                  computedVisibleFields={computedVisibleFields}
+                  handleOpenPopup={handleOpenPopup}
+                  queryClient={queryClient}
+                  settingsForm={settingsForm}
+                  views={views}
+                />
+              </>
+            )}
           </Flex>
 
           {view?.attributes?.quick_filters?.length > 0 && (
@@ -792,7 +812,30 @@ export const NewUiViewsWithGroups = ({
                   </div>
                 </div>
               )}
-            {
+            {view?.type === "SECTION" ? (
+              <Box px={10}>
+                <form onSubmit={rootForm.handleSubmit(onSubmit)}>
+                  <DrawerFormDetailPage
+                    onSubmit={onSubmit}
+                    rootForm={rootForm}
+                    projectInfo={projectInfo}
+                    handleMouseDown={handleMouseDown}
+                    layout={layout}
+                    selectedTab={layout?.tabs?.[0]}
+                    selectedTabIndex={selectedTabIndex}
+                    menuItem={menuItem}
+                    data={data}
+                    selectedRow={row}
+                    handleClose={handleClose}
+                    modal={true}
+                    dateInfo={dateInfo}
+                    setFullScreen={setFullScreen}
+                    fullScreen={fullScreen}
+                    fieldsMap={fieldsMap}
+                  />
+                </form>
+              </Box>
+            ) : (
               <>
                 {!tabs?.length && (
                   <>
@@ -1058,7 +1101,7 @@ export const NewUiViewsWithGroups = ({
                   </>
                 ) : null}
               </>
-            }
+            )}
           </Tabs>
         </Flex>
       </ChakraProvider>

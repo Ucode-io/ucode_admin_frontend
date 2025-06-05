@@ -17,10 +17,9 @@ import {applyDrag} from "../../../utils/applyDrag";
 import "./style.scss";
 import {store} from "../../../store";
 import {useSelector} from "react-redux";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 function DrawerFormDetailPage({
-  control,
-  watch,
   data,
   layout,
   fieldsMap,
@@ -29,7 +28,8 @@ function DrawerFormDetailPage({
   selectedTabIndex = 0,
   handleMouseDown,
   projectInfo,
-  setFormValue = () => {},
+  rootForm,
+  onSubmit = () => {},
 }) {
   const {i18n} = useTranslation();
   const {tableSlug} = useParams();
@@ -90,16 +90,16 @@ function DrawerFormDetailPage({
 
   useEffect(() => {
     if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
-      setFormValue(
+      rootForm.setValue(
         selectedRow?.FROM_DATE_SLUG,
         selectedRow?.[selectedRow?.FROM_DATE_SLUG]
       );
-      setFormValue(
+      rootForm.setValue(
         selectedRow?.TO_DATE_SLUG,
         selectedRow?.[selectedRow?.TO_DATE_SLUG]
       );
     }
-    setFormValue(
+    rootForm.setValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
     );
@@ -111,14 +111,15 @@ function DrawerFormDetailPage({
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
       fields: section?.fields?.filter(
-        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
+        (el) =>
+          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id
       ),
     }));
 
     setSections((prevSections) =>
       isEqual(prevSections, updatedSections) ? prevSections : updatedSections
     );
-  }, [data, watch("attributes.layout_heading")]);
+  }, [data, rootForm.watch("attributes.layout_heading")]);
 
   const getFieldLanguageLabel = (el) => {
     if (el?.enable_multilanguage) {
@@ -163,7 +164,7 @@ function DrawerFormDetailPage({
   };
 
   return (
-    <>
+    <MaterialUIProvider>
       <Box
         mt="10px"
         sx={{height: "calc(100vh - 44px)"}}
@@ -183,11 +184,11 @@ function DrawerFormDetailPage({
 
         <HeadingOptions
           selectedRow={selectedRow}
-          watch={watch}
-          control={control}
+          watch={rootForm.watch}
+          control={rootForm.control}
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
-          setFormValue={setFormValue}
+          setFormValue={rootForm.setValue}
         />
 
         {sections?.map((section, secIndex) => (
@@ -267,9 +268,9 @@ function DrawerFormDetailPage({
                         <DrawerFieldGenerator
                           activeLang={activeLang}
                           drawerDetail={true}
-                          control={control}
+                          control={rootForm.control}
                           field={field}
-                          watch={watch}
+                          watch={rootForm.watch}
                           isDisabled={field?.attributes?.disabled}
                         />
                       </Box>
@@ -292,7 +293,7 @@ function DrawerFormDetailPage({
           cursor: "col-resize",
         }}
       />
-    </>
+    </MaterialUIProvider>
   );
 }
 
@@ -382,6 +383,9 @@ const HeadingOptions = ({
             {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </Flex>
         </Box>
+        <Button variant="contained" type="submit">
+          Save
+        </Button>
       </Box>
 
       <Menu

@@ -12,14 +12,30 @@ import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {TabPanel, Tabs} from "react-tabs";
 
-function DrawerObjectsPage({setViews}) {
+function DrawerObjectsPage({
+  projectInfo,
+  layout,
+  selectedTab,
+  menuItem,
+  data,
+  dateInfo,
+  selectedRow,
+  handleClose,
+  fullScreen,
+  rootForm,
+  selectedView,
+  onSubmit = () => {},
+  setSelectedView = () => {},
+  setViews = () => {},
+  setFullScreen = () => {},
+  handleMouseDown = () => {},
+  setFormValue = () => {},
+}) {
   const {state} = useLocation();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
-  const [selectedView, setSelectedView] = useState(null);
-  const [menuItem, setMenuItem] = useState(null);
   const roleId = useSelector((state) => state.auth?.roleInfo?.id);
   const projectId = store.getState().company.projectId;
   const auth = useSelector((state) => state.auth);
@@ -122,6 +138,8 @@ function DrawerObjectsPage({setViews}) {
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  onSubmit={onSubmit}
+                  rootForm={rootForm}
                   relationView={true}
                   views={views}
                   view={view}
@@ -131,11 +149,21 @@ function DrawerObjectsPage({setViews}) {
                   menuItem={menuItem}
                   visibleRelationColumns={visibleRelationColumns}
                   visibleColumns={visibleColumns}
-                  refetchViews={refetch}
                   fieldsMapRel={fieldsMapRel}
                   setViews={setViews}
                   setSelectedView={setSelectedView}
                   selectedView={selectedView}
+                  projectInfo={projectInfo}
+                  handleMouseDown={handleMouseDown}
+                  layout={layout}
+                  selectedTab={layout?.tabs?.[0]}
+                  data={data}
+                  selectedRow={selectedRow}
+                  handleClose={handleClose}
+                  modal={true}
+                  dateInfo={dateInfo}
+                  setFullScreen={setFullScreen}
+                  fullScreen={fullScreen}
                 />
               </TabPanel>
             );

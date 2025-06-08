@@ -156,7 +156,6 @@ export const NewUiViewsWithGroups = ({
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
-  const groupTable = view?.attributes.group_by_columns;
   const [inputKey, setInputKey] = useState(0);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
@@ -167,6 +166,7 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+  const groupTable = view?.attributes.group_by_columns;
 
   const settingsForm = useForm({
     defaultValues: {
@@ -1532,30 +1532,6 @@ const ViewOptions = ({
     },
   });
 
-  // const updateViewColumns = () => {
-  //   // setUpdateLoading(true);
-  //   constructorViewService
-  //     .update(tableSlug, {
-  //       ...views?.[selectedTabIndex],
-  //       attributes: {
-  //         ...views?.[selectedTabIndex]?.attributes,
-  //         group_by_columns: form
-  //           .watch("group_fields")
-  //           ?.filter((el) => el !== "" && el !== null && el !== undefined),
-  //       },
-  //       group_fields: form
-  //         .watch("group_fields")
-  //         ?.filter((el) => el !== "" && el !== null && el !== undefined),
-  //     })
-  //     .then(() => {})
-  //     .finally(() => {
-  //       // setUpdateLoading(false);
-  //       queryClient.refetchQueries(["GET_TABLE_INFO"]);
-  //       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-  //       queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-  //     });
-  // };
-
   const onViewNameChange = useDebounce((ev) => {
     updateView.mutate(ev.target.value);
   }, 500);
@@ -1568,26 +1544,6 @@ const ViewOptions = ({
   const tabGroupColumnsCount = view?.group_fields?.length;
   const visibleColumnsCountForTimeline =
     view?.attributes?.visible_field?.split("/")?.length ?? 0;
-
-  // const queryClient = useQueryClient();
-
-  // const [anchorElSettings, setAnchorElSettings] = useState(null);
-  // const openSettings = Boolean(anchorElSettings);
-
-  // const handleClickSettings = (event) => {
-  //   setAnchorElSettings(event.currentTarget);
-  // };
-
-  // const handleCloseSettings = () => {
-  //   setAnchorElSettings(null);
-  // };
-
-  // const form = useForm({
-  //   defaultValues: {
-  //     calendar_from_slug: "",
-  //     calendar_to_slug: "",
-  //   },
-  // });
 
   const {
     data: {fields, visibleColumns} = {data: []},

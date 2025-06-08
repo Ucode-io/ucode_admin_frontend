@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from "react";
 import style from "./style.module.scss";
-import {Button, InputAdornment, TextField} from "@mui/material";
+import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import constructorViewService from "../../../../services/constructorViewService";
 import {useParams} from "react-router-dom";
 import {useQuery, useQueryClient} from "react-query";
@@ -14,6 +14,7 @@ import FRow from "../../../../components/FormElements/FRow";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import constructorTableService from "../../../../services/constructorTableService";
 import listToOptions from "../../../../utils/listToOptions";
+import LinkIcon from "@mui/icons-material/Link";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -36,6 +37,7 @@ export default function ViewTypeList({
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
+  const [relationField, setRelationField] = useState(null);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
   const tableSlug = view?.table_slug;
@@ -122,7 +124,7 @@ export default function ViewTypeList({
         headers: [],
         cookies: [],
       },
-      table_slug: tableSlug,
+      table_slug: relationView ? relationField?.table_slug : tableSlug,
       updated_fields: [],
       multiple_insert: false,
       multiple_insert_field: "",
@@ -227,6 +229,9 @@ export default function ViewTypeList({
   );
 
   const fields = data?.fields ?? [];
+  const relationFields = Object.values(fieldsMap)?.filter(
+    (el) => el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+  );
 
   const computedColumns = useMemo(() => {
     const filteredFields = fields?.filter(
@@ -258,30 +263,59 @@ export default function ViewTypeList({
   );
 
   return (
-    <div className={style.viewTypeList}>
-      <div className={style.wrapper}>
-        <div className={style.left}>
-          {computedViewTypes.map((type, index) => (
-            <Button
-              key={index}
-              className={type.value === selectedViewTab ? style.active : ""}
-              onClick={() => {
-                setSelectedViewTab(type.value);
-              }}
-              startIcon={
-                <SVG
-                  src={`/img/${viewIcons[type?.value]}`}
-                  width={18}
-                  height={18}
-                />
-              }
-              style={{
-                columnGap: "8px",
-                "MuiButton-startIcon": {
-                  marginLeft: 0,
+    <>
+      {relationView && Boolean(!relationField) ? (
+        <Box
+          sx={{
+            width: "200px",
+            border: "1px solid #e2e8f0",
+            borderRadius: "8px",
+            padding: "6px",
+          }}>
+          {relationFields?.map((item) => (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "4px",
+                cursor: "pointer",
+                borderRadius: "6px",
+                "&:hover": {
+                  background: "#edf2f6",
                 },
-              }}>
-              {/* {type.value === "TABLE" && <TableChart className={style.icon} />}
+              }}
+              onClick={() => setRelationField(item)}>
+              {" "}
+              <LinkIcon /> {item?.attributes?.[`label_${i18n?.language}`]}
+            </Box>
+          ))}
+        </Box>
+      ) : (
+        <div className={style.viewTypeList}>
+          <div className={style.wrapper}>
+            <div className={style.left}>
+              {computedViewTypes.map((type, index) => (
+                <Button
+                  key={index}
+                  className={type.value === selectedViewTab ? style.active : ""}
+                  onClick={() => {
+                    setSelectedViewTab(type.value);
+                  }}
+                  startIcon={
+                    <SVG
+                      src={`/img/${viewIcons[type?.value]}`}
+                      width={18}
+                      height={18}
+                    />
+                  }
+                  style={{
+                    columnGap: "8px",
+                    "MuiButton-startIcon": {
+                      marginLeft: 0,
+                    },
+                  }}>
+                  {/* {type.value === "TABLE" && <TableChart className={style.icon} />}
               {type.value === "CALENDAR" && (
                 <CalendarMonth className={style.icon} />
               )}
@@ -305,107 +339,113 @@ export default function ViewTypeList({
                 <LanguageIcon className={style.icon} />
               )}
               {type.value === "GRID" && <FiberNewIcon className={style.icon} />} */}
-              {type.label}
-            </Button>
-          ))}
-        </div>
+                  {type.label}
+                </Button>
+              ))}
+            </div>
 
-        <div className={style.right}>
-          <div className={style.img}>
-            <img src={detectImageView} alt="add view" />
-          </div>
-          <div className={style.text}>
-            <h3>{selectedViewTab}</h3>
-            <p>{detectDescriptionView}</p>
-            {selectedViewTab === "WEBSITE" && (
-              <Controller
-                control={control}
-                name="web_link"
-                render={({field: {onChange, value}}) => {
-                  return (
-                    <TextField
-                      id="website_link"
-                      onChange={(e) => {
-                        onChange(e.target.value);
-                      }}
-                      value={value}
-                      placeholder="website link..."
-                      className="webLinkInput"
-                      sx={{padding: 0}}
-                      fullWidth
-                      name="web_link"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LanguageIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      error={error}
-                    />
-                  );
-                }}
-              />
-            )}
-            {isWithTimeView && (
-              <MaterialUIProvider>
-                <FRow
-                  label={
-                    selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
-                  }
-                  required>
-                  <HFSelect
-                    options={computedColumns}
+            <div className={style.right}>
+              <div className={style.img}>
+                <img src={detectImageView} alt="add view" />
+              </div>
+              <div className={style.text}>
+                <h3>{selectedViewTab}</h3>
+                <p>{detectDescriptionView}</p>
+                {selectedViewTab === "WEBSITE" && (
+                  <Controller
                     control={control}
-                    name="calendar_from_slug"
-                    MenuProps={{disablePortal: true}}
-                    required={true}
+                    name="web_link"
+                    render={({field: {onChange, value}}) => {
+                      return (
+                        <TextField
+                          id="website_link"
+                          onChange={(e) => {
+                            onChange(e.target.value);
+                          }}
+                          value={value}
+                          placeholder="website link..."
+                          className="webLinkInput"
+                          sx={{padding: 0}}
+                          fullWidth
+                          name="web_link"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <LanguageIcon />
+                              </InputAdornment>
+                            ),
+                          }}
+                          error={error}
+                        />
+                      );
+                    }}
                   />
-                </FRow>
-                <FRow
-                  label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
-                  required>
-                  <HFSelect
-                    options={computedColumns}
-                    control={control}
-                    name="calendar_to_slug"
-                    MenuProps={{disablePortal: true}}
-                    required={true}
-                  />
-                </FRow>
-              </MaterialUIProvider>
-            )}
-            {selectedViewTab === "BOARD" && (
-              <MaterialUIProvider>
-                <FRow label="Group by" required>
-                  <HFSelect
-                    options={computedColumnsForTabGroupOptions}
-                    control={control}
-                    name="group_fields"
-                    MenuProps={{disablePortal: true}}
-                    required={true}
-                  />
-                </FRow>
-              </MaterialUIProvider>
-            )}
-          </div>
-          <div className={style.button}>
-            <LoadingButton
-              variant="contained"
-              loading={btnLoader}
-              onClick={() => {
-                // handleClose();
-                // openModal();
-                // setSelectedView("NEW");
-                // setTypeNewView(selectedViewTab);
-                createView();
-              }}>
-              Create View {selectedViewTab}
-            </LoadingButton>
+                )}
+                {isWithTimeView && (
+                  <MaterialUIProvider>
+                    <FRow
+                      label={
+                        selectedViewTab === "CALENDAR"
+                          ? "Date from"
+                          : "Time from"
+                      }
+                      required>
+                      <HFSelect
+                        options={computedColumns}
+                        control={control}
+                        name="calendar_from_slug"
+                        MenuProps={{disablePortal: true}}
+                        required={true}
+                      />
+                    </FRow>
+                    <FRow
+                      label={
+                        selectedViewTab === "CALENDAR" ? "Date to" : "Time to"
+                      }
+                      required>
+                      <HFSelect
+                        options={computedColumns}
+                        control={control}
+                        name="calendar_to_slug"
+                        MenuProps={{disablePortal: true}}
+                        required={true}
+                      />
+                    </FRow>
+                  </MaterialUIProvider>
+                )}
+                {selectedViewTab === "BOARD" && (
+                  <MaterialUIProvider>
+                    <FRow label="Group by" required>
+                      <HFSelect
+                        options={computedColumnsForTabGroupOptions}
+                        control={control}
+                        name="group_fields"
+                        MenuProps={{disablePortal: true}}
+                        required={true}
+                      />
+                    </FRow>
+                  </MaterialUIProvider>
+                )}
+              </div>
+              <div className={style.button}>
+                <LoadingButton
+                  variant="contained"
+                  loading={btnLoader}
+                  onClick={() => {
+                    // handleClose();
+                    // openModal();
+                    // setSelectedView("NEW");
+                    // setTypeNewView(selectedViewTab);
+                    createView();
+                  }}>
+                  Create View {selectedViewTab}
+                </LoadingButton>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 

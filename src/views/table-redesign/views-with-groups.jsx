@@ -156,7 +156,6 @@ export const NewUiViewsWithGroups = ({
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
-  const groupTable = view?.attributes.group_by_columns;
   const [inputKey, setInputKey] = useState(0);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
@@ -167,6 +166,7 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+  const groupTable = view?.attributes.group_by_columns;
 
   const settingsForm = useForm({
     defaultValues: {

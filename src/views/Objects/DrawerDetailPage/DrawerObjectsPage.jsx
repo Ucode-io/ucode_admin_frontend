@@ -54,23 +54,23 @@ function DrawerObjectsPage({
     ? auth?.clientType?.default_page?.split("/")
     : companyDefaultLink.split("/");
 
-  const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
-    projectId: projectId,
-    roleId: roleId,
-    parentId: menuId,
-    queryParams: {
-      enabled: Boolean(menuId),
-      onSuccess: (res) => {
-        if (
-          !res?.menus
-            ?.filter((item) => item?.permission?.read)
-            ?.some((el) => el?.id === menuId)
-        ) {
-        }
-      },
-      cacheTime: false,
-    },
-  });
+  // const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
+  //   projectId: projectId,
+  //   roleId: roleId,
+  //   parentId: menuId,
+  //   queryParams: {
+  //     enabled: Boolean(menuId),
+  //     onSuccess: (res) => {
+  //       if (
+  //         !res?.menus
+  //           ?.filter((item) => item?.permission?.read)
+  //           ?.some((el) => el?.id === menuId)
+  //       ) {
+  //       }
+  //     },
+  //     cacheTime: false,
+  //   },
+  // });
 
   const {data: views, refetch} = useQuery(
     ["GET_VIEWS_LIST", menuId],
@@ -95,9 +95,16 @@ function DrawerObjectsPage({
   );
 
   const {
-    data: {fieldsMap, fieldsMapRel, visibleColumns, visibleRelationColumns} = {
+    data: {
+      fieldsMap,
+      fieldsMapRel,
+      visibleColumns,
+      visibleRelationColumns,
+      tableInfo,
+    } = {
       fieldsMap: {},
       fieldsMapRel: {},
+      tableInfo: {},
       visibleColumns: [],
       visibleRelationColumns: [],
     },
@@ -124,6 +131,7 @@ function DrawerObjectsPage({
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
+          tableInfo: data?.table_info || {},
           visibleRelationColumns:
             data?.relation_fields?.map((el) => ({
               ...el,
@@ -142,6 +150,7 @@ function DrawerObjectsPage({
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  tableInfo={tableInfo}
                   onSubmit={onSubmit}
                   rootForm={rootForm}
                   relationView={true}

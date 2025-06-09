@@ -1,76 +1,29 @@
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import FiltersBlock from "../../components/FiltersBlock";
-import constructorTableService from "../../services/constructorTableService";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
-import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
-import {store} from "../../store";
+import menuService from "../../services/menuService";
 import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import CalendarHourView from "./CalendarHourView";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
 import ViewsWithGroups from "./ViewsWithGroups";
 import ViewTabSelector from "./components/ViewTypeSelector";
-
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
 import {Box, Skeleton} from "@mui/material";
-import {DynamicTable} from "../table-redesign";
 import constructorViewService from "../../services/constructorViewService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import {DynamicTable} from "../table-redesign";
 
 const ObjectsPage = () => {
   const {state, pathname} = useLocation();
   const {menuId} = useParams();
   const navigate = useNavigate();
   const {i18n} = useTranslation();
-  const [searchParams] = useSearchParams();
-  const queryTab = searchParams.get("view");
   const [selectedView, setSelectedView] = useState(null);
-  const [menuItem, setMenuItem] = useState(null);
-  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
-  const projectId = store.getState().company.projectId;
-  const auth = useSelector((state) => state.auth);
-  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
-  const tableSlug = selectedView?.table_slug;
-
-  const viewSelectedIndex = useSelector(
-    (state) =>
-      state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
-        ?.tabIndex
-  );
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-
-  const parts = auth?.clientType?.default_page
-    ? auth?.clientType?.default_page?.split("/")
-    : companyDefaultLink.split("/");
-
-  const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
-    projectId: projectId,
-    roleId: roleId,
-    parentId: menuId,
-    queryParams: {
-      enabled: Boolean(menuId),
-      onSuccess: (res) => {
-        if (
-          !res?.menus
-            ?.filter((item) => item?.permission?.read)
-            ?.some((el) => el?.id === menuId)
-        ) {
-        }
-      },
-      cacheTime: false,
-    },
-  });
 
   const {data: views, refetch} = useQuery(
     ["GET_VIEWS_LIST", menuId],
@@ -97,9 +50,16 @@ const ObjectsPage = () => {
   );
 
   const {
-    data: {fieldsMap, fieldsMapRel, visibleColumns, visibleRelationColumns} = {
+    data: {
+      fieldsMap,
+      fieldsMapRel,
+      visibleColumns,
+      visibleRelationColumns,
+      tableInfo,
+    } = {
       fieldsMap: {},
       fieldsMapRel: {},
+      tableInfo: {},
       visibleColumns: [],
       visibleRelationColumns: [],
     },
@@ -126,6 +86,7 @@ const ObjectsPage = () => {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
+          tableInfo: data?.table_info || {},
           visibleRelationColumns:
             data?.relation_fields?.map((el) => ({
               ...el,
@@ -174,44 +135,24 @@ const ObjectsPage = () => {
     selectedView: selectedView,
     views: views,
     fieldsMap: fieldsMap,
-    menuItem,
     fieldsMapRel,
   };
 
   const renderView = {
-    // BOARD: (props) => (
-    //   <BoardView
-    //     menuItem={menuItem}
-    //     fieldsMapRel={fieldsMapRel}
-    //     {...defaultProps}
-    //     {...props}
-    //   />
-    // ),
-    // CALENDAR: (props) => (
-    //   <CalendarView menuItem={menuItem} {...defaultProps} {...props} />
-    // ),
     "CALENDAR HOUR": (props) => (
       <CalendarHourView {...defaultProps} {...props} />
     ),
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
+        tableInfo={tableInfo}
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
-        menuItem={menuItem}
         refetchViews={refetch}
         {...defaultProps}
         {...props}
       />
     ),
-    // TIMELINE: (props) => (
-    //   <TimeLineView
-    //     setViews={() => {}}
-    //     isViewLoading={isLoading}
-    //     {...defaultProps}
-    //     {...props}
-    //   />
-    // ),
   };
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
@@ -244,7 +185,6 @@ const ObjectsPage = () => {
             selectedTabIndex={selectedTabIndex}
             setSelectedTabIndex={setSelectedTabIndex}
             views={views}
-            menuItem={menuItem}
           />
         </FiltersBlock>
       )}

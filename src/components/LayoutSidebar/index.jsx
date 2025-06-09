@@ -86,6 +86,9 @@ const LayoutSidebar = ({
   handleOpenProfileModal = () => {},
   handleOpenUserInvite = () => {},
 }) => {
+
+  const DEFAULT_ADMIN = "DEFAULT ADMIN";
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const { appId } = useParams();
@@ -143,6 +146,7 @@ const LayoutSidebar = ({
 
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
+  const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
   const handleOpenNotify = (event, type, root) => {
     setMenu({ event: event?.currentTarget, type: type, root: root });
@@ -336,6 +340,8 @@ const LayoutSidebar = ({
       : {
           onMouseEnter: () =>
             dispatch(mainActions.setSidebarHighlightedAction(id)),
+          onMouseLeave: () =>
+            dispatch(mainActions.setSidebarHighlightedAction(null)),
         };
 
   useEffect(() => {
@@ -513,7 +519,9 @@ const LayoutSidebar = ({
               )}
 
               <Box mt={46}>
-                {Boolean(permissions?.chat) && (
+                {Boolean(
+                  permissions?.chat && userRoleName === DEFAULT_ADMIN
+                ) && (
                   <Flex
                     position="relative"
                     h={30}
@@ -560,173 +568,182 @@ const LayoutSidebar = ({
                     </SidebarActionTooltip>
                   </Flex>
                 )}
-                <Flex
-                  position="relative"
-                  h={30}
-                  mx={8}
-                  mb={4}
-                  alignItems="center"
-                  whiteSpace="nowrap"
-                  borderRadius={6}
-                  color="#475467"
-                  fontSize={14}
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  _hover={{
-                    bg: "#EAECF0",
-                    ".accordionFolderIcon": {
-                      display: "none",
-                    },
-                    ".accordionIcon": {
-                      display: "block",
-                    },
-                  }}
-                  cursor="pointer"
-                  onMouseLeave={
-                    sidebarIsOpen
-                      ? undefined
-                      : () =>
-                          dispatch(
-                            mainActions.setSidebarHighlightedAction(null)
-                          )
-                  }
-                >
-                  <SidebarActionTooltip id="settings" title="Settings">
-                    <Flex
-                      w={sidebarIsOpen ? "100%" : 36}
-                      alignItems="center"
-                      justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                      gap={8}
-                      onClick={handleOpenProfileModal}
-                      {...getActionProps("settings")}
-                    >
-                      <Box
-                        pl={sidebarIsOpen ? "5px" : 0}
-                        display="flex"
+                {userRoleName === DEFAULT_ADMIN && (
+                  <Flex
+                    position="relative"
+                    h={30}
+                    mx={8}
+                    mb={4}
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    borderRadius={6}
+                    color="#475467"
+                    fontSize={14}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    _hover={{
+                      bg: "#EAECF0",
+                      ".accordionFolderIcon": {
+                        display: "none",
+                      },
+                      ".accordionIcon": {
+                        display: "block",
+                      },
+                    }}
+                    cursor="pointer"
+                    onMouseLeave={
+                      sidebarIsOpen
+                        ? undefined
+                        : () =>
+                            dispatch(
+                              mainActions.setSidebarHighlightedAction(null)
+                            )
+                    }
+                  >
+                    <SidebarActionTooltip id="settings" title="Settings">
+                      <Flex
+                        w={sidebarIsOpen ? "100%" : 36}
                         alignItems="center"
-                        justifyContent="center"
+                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
+                        gap={8}
+                        onClick={handleOpenProfileModal}
+                        {...getActionProps("settings")}
                       >
-                        {/* <SettingsIcon color="#475467" fontSize={16} /> */}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          x="0px"
-                          y="0px"
-                          width="20"
-                          height="20"
-                          viewBox="0,0,256,256"
+                        <Box
+                          pl={sidebarIsOpen ? "5px" : 0}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
                         >
-                          <g
-                            fill="rgba(55, 53, 47, 0.85)"
-                            fillRule="nonzero"
-                            stroke="none"
-                            strokeWidth="1"
-                            strokeLinecap="butt"
-                            strokeLinejoin="miter"
-                            strokeMiterlimit="10"
-                            strokeDasharray=""
-                            strokeDashoffset="0"
-                            fontFamily="none"
-                            fontWeight="none"
-                            fontSize="none"
-                            textAnchor="none"
-                            style={{ mixBlendMode: "normal" }}
+                          {/* <SettingsIcon color="#475467" fontSize={16} /> */}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="20"
+                            height="20"
+                            viewBox="0,0,256,256"
                           >
-                            <g transform="scale(10.66667,10.66667)">
-                              <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
+                            <g
+                              fill="rgba(55, 53, 47, 0.85)"
+                              fillRule="nonzero"
+                              stroke="none"
+                              strokeWidth="1"
+                              strokeLinecap="butt"
+                              strokeLinejoin="miter"
+                              strokeMiterlimit="10"
+                              strokeDasharray=""
+                              strokeDashoffset="0"
+                              fontFamily="none"
+                              fontWeight="none"
+                              fontSize="none"
+                              textAnchor="none"
+                              style={{ mixBlendMode: "normal" }}
+                            >
+                              <g transform="scale(10.66667,10.66667)">
+                                <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
+                              </g>
                             </g>
-                          </g>
-                        </svg>
-                      </Box>
-                      {sidebarIsOpen ? <span>Settings</span> : null}
-                    </Flex>
-                  </SidebarActionTooltip>
-                </Flex>
+                          </svg>
+                        </Box>
+                        {sidebarIsOpen ? <span>Settings</span> : null}
+                      </Flex>
+                    </SidebarActionTooltip>
+                  </Flex>
+                )}
               </Box>
             </div>
           )}
         </Box>
 
-        <Flex
-          display={sidebarIsOpen ? "flex" : "block"}
-          mt="auto"
-          py={8}
-          alignItems="center"
-          justifyContent={"space-between"}
-          columnGap={16}
-          px={8}
-          borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
-          onMouseLeave={
-            sidebarIsOpen
-              ? undefined
-              : () => dispatch(mainActions.setSidebarHighlightedAction(null))
-          }
-        >
-          {/* {Boolean(permissions?.settings) && ( */}
-          <>
-            <SidebarActionTooltip id="user-invite" title="User Invite">
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "0 8px",
-                  height: "28px",
-                  background: "#fff",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  "&:hover": {
-                    background: "#F3F3F3",
-                  },
-                }}
-                onClick={handleOpenUserInvite}
-              >
-                {/* color: rgb(161, 160, 156) */}
-                {/* <img src={UserIcon} alt="user" /> */}
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+        {userRoleName === DEFAULT_ADMIN && (
+          <Flex
+            display={sidebarIsOpen ? "flex" : "block"}
+            mt="auto"
+            py={8}
+            alignItems="center"
+            justifyContent={"space-between"}
+            columnGap={16}
+            px={8}
+            borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
+            onMouseLeave={
+              sidebarIsOpen
+                ? undefined
+                : () => dispatch(mainActions.setSidebarHighlightedAction(null))
+            }
+            onClick={
+              sidebarIsOpen
+                ? undefined
+                : () => dispatch(mainActions.setSidebarHighlightedAction(null))
+            }
+          >
+            {/* {Boolean(permissions?.settings) && ( */}
+            <>
+              <SidebarActionTooltip id="user-invite" title="User Invite">
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "0 8px",
+                    height: "28px",
+                    background: "#fff",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    "&:hover": {
+                      background: "#F3F3F3",
+                    },
+                  }}
+                  onClick={handleOpenUserInvite}
                 >
-                  <path
-                    d="M7.63314 9.68341C7.60814 9.68341 7.59147 9.68341 7.56647 9.68341C7.5248 9.67508 7.46647 9.67508 7.41647 9.68341C4.9998 9.60841 3.1748 7.70841 3.1748 5.36675C3.1748 2.98341 5.11647 1.04175 7.4998 1.04175C9.88314 1.04175 11.8248 2.98341 11.8248 5.36675C11.8165 7.70841 9.98314 9.60841 7.65814 9.68341C7.6498 9.68341 7.64147 9.68341 7.63314 9.68341ZM7.4998 2.29175C5.80814 2.29175 4.4248 3.67508 4.4248 5.36675C4.4248 7.03341 5.7248 8.37508 7.38314 8.43341C7.43314 8.42508 7.54147 8.42508 7.64981 8.43341C9.28314 8.35841 10.5665 7.01675 10.5748 5.36675C10.5748 3.67508 9.19147 2.29175 7.4998 2.29175Z"
-                    fill="rgb(161, 160, 156)"
-                  />
-                  <path
-                    d="M13.783 9.79159C13.758 9.79159 13.733 9.79159 13.708 9.78325C13.3663 9.81659 13.0163 9.57492 12.983 9.23325C12.9496 8.89159 13.158 8.58325 13.4996 8.54159C13.5996 8.53325 13.708 8.53325 13.7996 8.53325C15.0163 8.46659 15.9663 7.46659 15.9663 6.24159C15.9663 4.97492 14.9413 3.94992 13.6746 3.94992C13.333 3.95825 13.0496 3.67492 13.0496 3.33325C13.0496 2.99159 13.333 2.70825 13.6746 2.70825C15.6246 2.70825 17.2163 4.29992 17.2163 6.24992C17.2163 8.16659 15.7163 9.71659 13.808 9.79159C13.7996 9.79159 13.7913 9.79159 13.783 9.79159Z"
-                    fill="rgb(161, 160, 156)"
-                  />
-                  <path
-                    d="M7.64134 18.7916C6.00801 18.7916 4.36634 18.3749 3.12467 17.5416C1.96634 16.7749 1.33301 15.7249 1.33301 14.5833C1.33301 13.4416 1.96634 12.3833 3.12467 11.6083C5.62467 9.94992 9.67467 9.94992 12.158 11.6083C13.308 12.3749 13.9497 13.4249 13.9497 14.5666C13.9497 15.7083 13.3163 16.7666 12.158 17.5416C10.908 18.3749 9.27467 18.7916 7.64134 18.7916ZM3.81634 12.6583C3.01634 13.1916 2.58301 13.8749 2.58301 14.5916C2.58301 15.2999 3.02467 15.9833 3.81634 16.5083C5.89134 17.8999 9.39134 17.8999 11.4663 16.5083C12.2663 15.9749 12.6997 15.2916 12.6997 14.5749C12.6997 13.8666 12.258 13.1833 11.4663 12.6583C9.39134 11.2749 5.89134 11.2749 3.81634 12.6583Z"
-                    fill="rgb(161, 160, 156)"
-                  />
-                  <path
-                    d="M15.283 17.2917C14.9913 17.2917 14.733 17.0917 14.6746 16.7917C14.608 16.45 14.8246 16.125 15.158 16.05C15.683 15.9417 16.1663 15.7333 16.5413 15.4417C17.0163 15.0833 17.2746 14.6333 17.2746 14.1583C17.2746 13.6833 17.0163 13.2333 16.5496 12.8833C16.183 12.6 15.7246 12.4 15.183 12.275C14.8496 12.2 14.633 11.8667 14.708 11.525C14.783 11.1917 15.1163 10.975 15.458 11.05C16.1746 11.2083 16.7996 11.4917 17.308 11.8833C18.083 12.4667 18.5246 13.2917 18.5246 14.1583C18.5246 15.025 18.0746 15.85 17.2996 16.4417C16.783 16.8417 16.133 17.1333 15.4163 17.275C15.3663 17.2917 15.3246 17.2917 15.283 17.2917Z"
-                    fill="rgb(161, 160, 156)"
-                  />
-                </svg>
-                {sidebarIsOpen ? (
-                  <span style={{ color: "rgb(161, 160, 156)" }}>
-                    User Invite
-                  </span>
-                ) : null}
-              </Box>
+                  {/* color: rgb(161, 160, 156) */}
+                  {/* <img src={UserIcon} alt="user" /> */}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.63314 9.68341C7.60814 9.68341 7.59147 9.68341 7.56647 9.68341C7.5248 9.67508 7.46647 9.67508 7.41647 9.68341C4.9998 9.60841 3.1748 7.70841 3.1748 5.36675C3.1748 2.98341 5.11647 1.04175 7.4998 1.04175C9.88314 1.04175 11.8248 2.98341 11.8248 5.36675C11.8165 7.70841 9.98314 9.60841 7.65814 9.68341C7.6498 9.68341 7.64147 9.68341 7.63314 9.68341ZM7.4998 2.29175C5.80814 2.29175 4.4248 3.67508 4.4248 5.36675C4.4248 7.03341 5.7248 8.37508 7.38314 8.43341C7.43314 8.42508 7.54147 8.42508 7.64981 8.43341C9.28314 8.35841 10.5665 7.01675 10.5748 5.36675C10.5748 3.67508 9.19147 2.29175 7.4998 2.29175Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                    <path
+                      d="M13.783 9.79159C13.758 9.79159 13.733 9.79159 13.708 9.78325C13.3663 9.81659 13.0163 9.57492 12.983 9.23325C12.9496 8.89159 13.158 8.58325 13.4996 8.54159C13.5996 8.53325 13.708 8.53325 13.7996 8.53325C15.0163 8.46659 15.9663 7.46659 15.9663 6.24159C15.9663 4.97492 14.9413 3.94992 13.6746 3.94992C13.333 3.95825 13.0496 3.67492 13.0496 3.33325C13.0496 2.99159 13.333 2.70825 13.6746 2.70825C15.6246 2.70825 17.2163 4.29992 17.2163 6.24992C17.2163 8.16659 15.7163 9.71659 13.808 9.79159C13.7996 9.79159 13.7913 9.79159 13.783 9.79159Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                    <path
+                      d="M7.64134 18.7916C6.00801 18.7916 4.36634 18.3749 3.12467 17.5416C1.96634 16.7749 1.33301 15.7249 1.33301 14.5833C1.33301 13.4416 1.96634 12.3833 3.12467 11.6083C5.62467 9.94992 9.67467 9.94992 12.158 11.6083C13.308 12.3749 13.9497 13.4249 13.9497 14.5666C13.9497 15.7083 13.3163 16.7666 12.158 17.5416C10.908 18.3749 9.27467 18.7916 7.64134 18.7916ZM3.81634 12.6583C3.01634 13.1916 2.58301 13.8749 2.58301 14.5916C2.58301 15.2999 3.02467 15.9833 3.81634 16.5083C5.89134 17.8999 9.39134 17.8999 11.4663 16.5083C12.2663 15.9749 12.6997 15.2916 12.6997 14.5749C12.6997 13.8666 12.258 13.1833 11.4663 12.6583C9.39134 11.2749 5.89134 11.2749 3.81634 12.6583Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                    <path
+                      d="M15.283 17.2917C14.9913 17.2917 14.733 17.0917 14.6746 16.7917C14.608 16.45 14.8246 16.125 15.158 16.05C15.683 15.9417 16.1663 15.7333 16.5413 15.4417C17.0163 15.0833 17.2746 14.6333 17.2746 14.1583C17.2746 13.6833 17.0163 13.2333 16.5496 12.8833C16.183 12.6 15.7246 12.4 15.183 12.275C14.8496 12.2 14.633 11.8667 14.708 11.525C14.783 11.1917 15.1163 10.975 15.458 11.05C16.1746 11.2083 16.7996 11.4917 17.308 11.8833C18.083 12.4667 18.5246 13.2917 18.5246 14.1583C18.5246 15.025 18.0746 15.85 17.2996 16.4417C16.783 16.8417 16.133 17.1333 15.4163 17.275C15.3663 17.2917 15.3246 17.2917 15.283 17.2917Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                  </svg>
+                  {sidebarIsOpen ? (
+                    <span style={{ color: "rgb(161, 160, 156)" }}>
+                      User Invite
+                    </span>
+                  ) : null}
+                </Box>
 
-              {/* <AIChat
+                {/* <AIChat
                   sidebarOpen={sidebarIsOpen}
                   {...getActionProps("ai-chat")}
                 /> */}
-            </SidebarActionTooltip>
-          </>
-          {/* )} */}
+              </SidebarActionTooltip>
+            </>
+            {/* )} */}
 
-          <DocsChatwootModal
-            sidebarIsOpen={sidebarIsOpen}
-            getActionProps={getActionProps}
-            permissions={permissions}
-          />
-        </Flex>
+            <DocsChatwootModal
+              sidebarIsOpen={sidebarIsOpen}
+              getActionProps={getActionProps}
+              permissions={permissions}
+            />
+          </Flex>
+        )}
 
         {(modalType === "create" ||
           modalType === "parent" ||

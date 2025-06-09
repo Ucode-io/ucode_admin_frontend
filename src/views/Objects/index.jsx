@@ -2,7 +2,12 @@ import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useLocation, useParams, useSearchParams} from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import FiltersBlock from "../../components/FiltersBlock";
 import constructorTableService from "../../services/constructorTableService";
@@ -23,8 +28,9 @@ import constructorViewService from "../../services/constructorViewService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 
 const ObjectsPage = () => {
-  const {state} = useLocation();
+  const {state, pathname} = useLocation();
   const {menuId} = useParams();
+  const navigate = useNavigate();
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
@@ -82,7 +88,9 @@ const ObjectsPage = () => {
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
-        updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
+        if (!pathname.includes("/login")) {
+          updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+        }
         if (state?.toDocsTab) setSelectedTabIndex(data?.length);
       },
     }
@@ -128,21 +136,11 @@ const ObjectsPage = () => {
     }
   );
 
-  // useEffect(() => {
-  //   queryTab
-  //     ? setSelectedTabIndex(parseInt(queryTab - 1))
-  //     : setSelectedTabIndex(viewSelectedIndex || 0);
-  // }, [queryTab]);
-
-  // const {loader: menuLoader} = useMenuGetByIdQuery({
-  //   menuId: menuId,
-  //   queryParams: {
-  //     enabled: Boolean(menuId),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   },
-  // });
+  useEffect(() => {
+    if (pathname.includes("/login")) {
+      navigate("/", {replace: false});
+    }
+  }, []);
 
   const setViews = () => {};
 

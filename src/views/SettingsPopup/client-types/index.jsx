@@ -20,42 +20,50 @@ import {useUsersListQuery} from "@/services/userService";
 import {Select} from "chakra-react-select";
 import {Pagination} from "@mui/material";
 
-import {useNavigate} from "react-router-dom";
-import {useUserDeleteMutation} from "@/services/auth/userService";
-import {useRoleListQuery} from "@/services/roleServiceV2";
-import {useTranslation} from "react-i18next";
-import {useClientTypesQuery} from "../../client-types/utils";
-import {CreateDrawer, EditDrawer} from "../../client-types/actions";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import { useUserDeleteMutation } from "@/services/auth/userService";
+import { useRoleListQuery } from "@/services/roleServiceV2";
+import { useTranslation } from "react-i18next";
+import { useClientTypesQuery } from "../../client-types/utils";
+import { CreateDrawer, EditDrawer } from "../../client-types/actions";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
 import styles from "./style.module.scss";
 import InviteModal from "./InviteModal";
+import useSearchParams from "../../../hooks/useSearchParams";
 
 const templateColumns =
   "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
 
 const limitOptions = [
-  {value: 10, label: "10 rows"},
-  {value: 20, label: "20 rows"},
-  {value: 30, label: "30 rows"},
-  {value: 40, label: "40 rows"},
+  { value: 10, label: "10 rows" },
+  { value: 20, label: "20 rows" },
+  { value: 30, label: "30 rows" },
+  { value: 40, label: "40 rows" },
 ];
 
 export const UserClientTypes = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [editUserGuid, setEditUserGuid] = useState("");
+  const [searchParams] = useSearchParams();
+
+  const isDefaultOpen = Boolean(searchParams.get("defaultOpenModal"));
+
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [userInviteLan, setUserInviteLan] = useState(null);
-  const {i18n} = useTranslation();
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { i18n } = useTranslation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const clientTypesQuery = useClientTypesQuery();
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
   const clientTypeId = clientTypes[tabIndex]?.guid;
 
   const usersListQuery = useUsersListQuery({
-    params: {"client-type-id": clientTypeId, limit, offset: (page - 1) * limit},
-    queryParams: {enabled: Boolean(clientTypeId)},
+    params: {
+      "client-type-id": clientTypeId,
+      limit,
+      offset: (page - 1) * limit,
+    },
+    queryParams: { enabled: Boolean(clientTypeId) },
   });
   const users = usersListQuery.data?.users ?? [];
   const usersCount = usersListQuery.data?.count;
@@ -110,7 +118,7 @@ export const UserClientTypes = () => {
           </Tabs>
           <InviteModal
             selectedClientType={selectedClientType}
-            isOpen={isOpen}
+            isOpen={isDefaultOpen || isOpen}
             onClose={() => {
               onClose();
               setEditUserGuid(null);

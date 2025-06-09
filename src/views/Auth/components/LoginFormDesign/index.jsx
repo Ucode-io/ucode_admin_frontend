@@ -194,14 +194,14 @@ const LoginFormDesign = ({
           computeCompanyElement(res?.companies ?? "");
           localStorage.setItem(
             "newUi",
-            res?.companies?.[0]?.projects?.[0]?.new_design
+            res?.companies?.[0]?.projects?.[0]?.new_design || false
           );
           res?.companies?.[0]?.projects?.[0]?.new_layout
             ? localStorage.setItem("detailPage", "SidePeek")
             : localStorage.setItem("detailPage", "");
           localStorage.setItem(
             "newLayout",
-            res?.companies?.[0]?.projects?.[0]?.new_layout
+            res?.companies?.[0]?.projects?.[0]?.new_layout || false
           );
         } else {
           dispatch(showAlert("The company does not exist", "error"));

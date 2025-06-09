@@ -33,6 +33,7 @@ import "./style.scss";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {useState} from "react";
 
 export default function FieldCreateModal({
   tableLan,

@@ -87,7 +87,6 @@ import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../services/constructorTableService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
 import {generateGUID} from "../../utils/generateID";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {listToMap} from "../../utils/listToMap";
@@ -125,16 +124,14 @@ export const NewUiViewsWithGroups = ({
   selectedView,
   relationView = false,
   projectInfo,
-  getValuesRoot,
   layout,
   rootForm,
   selectedRow: row,
-  selectedTab,
   data,
-  modal,
   dateInfo,
   setFullScreen,
   fullScreen,
+  tableInfo,
   onSubmit = () => {},
   setViews = () => {},
   refetchViews = () => {},
@@ -260,12 +257,11 @@ export const NewUiViewsWithGroups = ({
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
-  const projectId = useSelector((state) => state.company?.projectId);
 
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${tableSlug}?menuId=${menuId}`;
+    const url = `/settings/constructor/apps/${menuId}/objects/${tableSlug}?menuId=${menuId}`;
     navigate(url);
   };
   const columnsForSearch = useMemo(() => {
@@ -446,10 +442,7 @@ export const NewUiViewsWithGroups = ({
     );
   }
 
-  const tableName =
-    menuItem?.attributes?.[`label_${i18n.language}`] ??
-    menuItem?.label ??
-    menuItem?.title;
+  const tableName = tableInfo?.label;
 
   const viewName =
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
@@ -899,7 +892,6 @@ export const NewUiViewsWithGroups = ({
                       <TimeLineView
                         view={view}
                         noDates={noDates}
-                        // selectedTable={selectedTable}
                         searchText={searchText}
                         columnsForSearch={columnsForSearch}
                         setViews={() => {}}

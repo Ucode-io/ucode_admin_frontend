@@ -14,18 +14,20 @@ export const Resources = ({handleClose = () => {}}) => {
     isLoading,
     handleItemClick,
     handleAddClick,
+    resources,
   } = useResourcesProps();
 
   return (
     <Box>
       <ContentList
         handleClose={handleClose}
-        sx={{marginTop: "36px"}}
+        sx={{ marginTop: "36px" }}
         arr={computedResources}
         onItemClick={(row) => handleItemClick(row)}
         handleDelete={(row) => console.log(row)}
         isLoading={isLoading}
         canDelete
+        resources={resources}
       />
     </Box>
   );

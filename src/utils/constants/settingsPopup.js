@@ -3,6 +3,7 @@ export const TAB_COMPONENTS = {
   BILLING: "billing",
   TARIFFS: "tariffs",
   PROJECT_SETTINGS: "projectSettings",
+  USERS: "users",
   MODELS: "models",
   ENVIRONMENTS: {
     ENVIRONMENTS: "environments",

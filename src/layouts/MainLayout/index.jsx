@@ -73,6 +73,11 @@ const MainLayout = ({setFavicon, favicon}) => {
     handleOpenProfileModal();
   };
 
+  const handleOpenUserInvite = () => {
+    updateSearchParam("activeTab", TAB_COMPONENTS.USERS);
+    handleOpenProfileModal();
+  };
+
   const isWarning =
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
@@ -91,13 +96,15 @@ const MainLayout = ({setFavicon, favicon}) => {
           handleOpenBilling={handleOpenBilling}
         />
         <div
-          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
+          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}
+        >
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
             handleOpenProfileModal={handleOpenProfileModal}
+            handleOpenUserInvite={handleOpenUserInvite}
           />
           <div
             className={
@@ -105,7 +112,8 @@ const MainLayout = ({setFavicon, favicon}) => {
               location.pathname?.includes("object")
                 ? styles.contentLayout
                 : styles.content
-            }>
+            }
+          >
             <Outlet />
             <ToastContainer hideProgressBar />
           </div>

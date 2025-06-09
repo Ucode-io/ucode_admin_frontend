@@ -28,6 +28,8 @@ import resourceService, {
   useResourceReconnectMutation,
   useResourceUpdateMutation,
   useResourceUpdateMutationV2,
+  useResourceDeleteMutation,
+  useResourceGetByIdQueryV1,
 } from "@/services/resourceService";
 import {store} from "@/store";
 import ResourceeEnvironments from "./ResourceEnvironment";
@@ -50,10 +52,6 @@ import {useSettingsPopupContext} from "../../providers";
 import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
 import PostgresCreate from "./PostgresCreate";
-import {
-  useResourceDeleteMutation,
-  useResourcePostgreCreateMutationV2,
-} from "../../../../services/resourceService";
 import PermissionYesOrNoPopup from "../../../Matrix/PermissionYesOrNoPopup";
 import {ConfirmPopup} from "../../components/ConfirmPopup";
 
@@ -87,6 +85,8 @@ export const ResourcesDetail = ({
   const {i18n} = useTranslation();
   const [settingLan, setSettingLan] = useState(null);
 
+  const resourceTypeNumber = Number(searchParams.get("resource_type"));
+
   const isEditPage = !!resourceId;
 
   const {control, reset, handleSubmit, setValue, watch} = useForm({
@@ -111,11 +111,25 @@ export const ResourcesDetail = ({
     queryParams: {
       cacheTime: false,
       enabled:
-        isEditPage &&
-        location?.state?.type !== "REST" &&
-        location?.state?.type !== "CLICK_HOUSE",
+        isEditPage && resourceType !== "REST" && resourceType !== "CLICK_HOUSE",
       onSuccess: (res) => {
         reset(res);
+        setSelectedEnvironment(
+          res.environments?.filter((env) => env.is_configured)
+        );
+      },
+    },
+  });
+  const { isLoading: isLoadingClickHouse } = useResourceGetByIdQueryV1({
+    id: resourceId,
+    params: {
+      type: resourceType,
+    },
+    queryParams: {
+      cacheTime: false,
+      enabled: isEditPage && resourceTypeNumber === 2,
+      onSuccess: (res) => {
+        reset(res?.credentials);
         setSelectedEnvironment(
           res.environments?.filter((env) => env.is_configured)
         );
@@ -132,7 +146,7 @@ export const ResourcesDetail = ({
   const {data: clickHouseList} = useQuery(
     ["GET_OBJECT_LIST"],
     () => {
-      return resourceService.getListClickHouse({
+      return resourceService.getListClickHouseV2({
         data: {
           environment_id: authStore.environmentId,
           limit: 0,
@@ -186,7 +200,10 @@ export const ResourcesDetail = ({
     id: selectedEnvironment?.[0]?.resource_environment_id,
     queryParams: {
       cacheTime: false,
-      enabled: Boolean(selectedEnvironment?.[0]?.resource_environment_id),
+      enabled:
+        resourceTypeNumber !== 1 &&
+        resourceTypeNumber !== 2 &&
+        Boolean(selectedEnvironment?.[0]?.resource_environment_id),
       onSuccess: (res) => {
         const isDefault = Boolean(
           res.environments?.find(

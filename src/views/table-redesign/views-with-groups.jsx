@@ -68,7 +68,12 @@ import {useTranslation} from "react-i18next";
 import {default as InlineSVG, default as SVG} from "react-inlinesvg";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
@@ -138,6 +143,7 @@ export const NewUiViewsWithGroups = ({
   handleMouseDown = () => {},
   setSelectedTabIndex = () => {},
 }) => {
+  const location = useLocation();
   const {id, menuId} = useParams();
   const tableSlug = view?.table_slug;
   const queryClient = useQueryClient();
@@ -372,7 +378,9 @@ export const NewUiViewsWithGroups = ({
   };
 
   const viewHandler = (viewEl) => {
-    updateQueryWithoutRerender("v", viewEl?.id);
+    if (Boolean(!location?.pathname?.includes("login"))) {
+      updateQueryWithoutRerender("v", viewEl?.id);
+    }
   };
 
   useEffect(() => {

@@ -61,7 +61,6 @@ const ConstructorTablesFormPage = () => {
     }))
   );
 
-  console.log("appIdappIdappId", appId, menuItem);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
@@ -160,12 +159,7 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const getFieldsData = constructorFieldService.getList(
-        {
-          table_id: id,
-        },
-        tableSlug
-      );
+      const getFieldsData = constructorFieldService.getList({}, tableSlug);
 
       const getRelations = constructorRelationService.getList(
         {

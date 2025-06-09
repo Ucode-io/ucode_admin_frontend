@@ -89,7 +89,7 @@ const ObjectsPage = () => {
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
         if (!pathname.includes("/login")) {
-          updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+          updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
         }
         if (state?.toDocsTab) setSelectedTabIndex(data?.length);
       },

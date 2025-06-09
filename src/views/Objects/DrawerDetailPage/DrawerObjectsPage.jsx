@@ -80,7 +80,11 @@ function DrawerObjectsPage({
     {
       enabled: Boolean(menuId),
       select: (res) => {
-        return res?.views ?? [];
+        return (
+          res?.views?.filter(
+            (item) => item?.type === "SECTION" || item?.is_relation_view
+          ) ?? []
+        );
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);

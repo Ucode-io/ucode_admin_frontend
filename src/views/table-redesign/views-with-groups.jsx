@@ -265,7 +265,7 @@ export const NewUiViewsWithGroups = ({
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuId}`;
+    const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${tableSlug}?menuId=${menuId}`;
     navigate(url);
   };
   const columnsForSearch = useMemo(() => {

@@ -25,7 +25,6 @@ const BoardColumn = ({
   menuItem,
   layoutType,
   setLayoutType,
-  refetch: refetchListQueries,
   boardRef,
   index: columnIndex,
   subGroupById,
@@ -36,12 +35,15 @@ const BoardColumn = ({
   setSelectedRow,
   setDateInfo,
   setDefaultValue,
-  setGroupCounts,
+  // setGroupCounts,
   searchText,
   columnsForSearch,
   groupSlug,
-  mutateBoardData,
+  // mutateBoardData,
   getGroupCounts,
+  setBoardData,
+  groupItem,
+  groupField,
 }) => {
   const [computedBoardData, setComputedBoardData] = useState(boardData);
 
@@ -54,17 +56,17 @@ const BoardColumn = ({
 
   const [index, setIndex] = useState();
 
-  const [computedData, setComputedData] = useState(
-    (subGroupById ? subGroupData : data).filter((el) => {
-      if (isStatusType) {
-        return el?.[selectedGroupField?.slug];
-      } else {
-        if (Array.isArray(el[tab.slug]))
-          return el[tab.slug].includes(tab.value);
-        return el[tab.slug] === tab.value;
-      }
-    })
-  );
+  // const [computedData, setComputedData] = useState(
+  //   (subGroupById ? subGroupData : data).filter((el) => {
+  //     if (isStatusType) {
+  //       return el?.[selectedGroupField?.slug];
+  //     } else {
+  //       if (Array.isArray(el[tab.slug]))
+  //         return el[tab.slug].includes(tab.value);
+  //       return el[tab.slug] === tab.value;
+  //     }
+  //   })
+  // );
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -122,13 +124,13 @@ const BoardColumn = ({
       payload[subGroupFieldSlug] = subItem;
     }
 
-    if (isStatusType) {
-      payload[selectedGroupField?.slug] = tab?.name;
-    } else {
-      // if (Array.isArray(payload[subGroupFieldSlug]))
-      //   payload[subGroupFieldSlug].includes(tab.value);
-      // payload[subGroupFieldSlug] = tab.value;
-    }
+    // if (isStatusType) {
+    //   payload[selectedGroupField?.slug] = tab?.name;
+    // } else {
+    // if (Array.isArray(payload[subGroupFieldSlug]))
+    //   payload[subGroupFieldSlug].includes(tab.value);
+    // payload[subGroupFieldSlug] = tab.value;
+    // }
 
     payload["color"] = tab?.color || color;
 
@@ -136,7 +138,17 @@ const BoardColumn = ({
       payload[subGroupFieldSlug] = subItem;
     }
 
-    payload[groupSlug] = [group?.name];
+    if (
+      groupField?.type === FIELD_TYPES.LOOKUP ||
+      groupField?.type === FIELD_TYPES.LOOKUPS
+    ) {
+      payload[groupField?.slug] =
+        group?.name === "Unassigned" ? null : group?.name;
+    } else if (groupField?.type === FIELD_TYPES.MULTISELECT) {
+      payload[groupSlug] = group?.name === "Unassigned" ? null : [group?.name];
+    } else {
+      payload[groupSlug] = group?.name === "Unassigned" ? null : group?.name;
+    }
 
     const result = applyDrag(boardData, dropResultTemp);
 
@@ -144,6 +156,25 @@ const BoardColumn = ({
 
     if (result) {
       setComputedBoardData(result);
+
+      if (subGroupById) {
+        setBoardData((prev) => {
+          return {
+            ...prev,
+            [subItem]: {
+              ...prev[subItem],
+              [groupItem]: result,
+            },
+          };
+        });
+      } else {
+        setBoardData((prev) => {
+          return {
+            ...prev,
+            [groupItem]: result,
+          };
+        });
+      }
     }
 
     if (
@@ -238,11 +269,11 @@ const BoardColumn = ({
     };
   }, []);
 
-  const filteredComputedData = viewSearch({
-    columnsForSearch,
-    computedData,
-    searchText,
-  });
+  // const filteredComputedData = viewSearch({
+  //   columnsForSearch,
+  //   computedData,
+  //   searchText,
+  // });
 
   const photoViewFields = viewFields.filter(
     (field) => field?.type === FIELD_TYPES.PHOTO
@@ -279,7 +310,7 @@ const BoardColumn = ({
           animationDuration={300}
         >
           {computedBoardData?.length > 0 ? (
-            computedBoardData.map((el) => (
+            computedBoardData.map((el, boardDataIndex) => (
               <Draggable
                 key={el.guid}
                 index={index}
@@ -289,6 +320,20 @@ const BoardColumn = ({
                   className={styles.card}
                   key={el.guid}
                   onClick={() => navigateToEditPage(el)}
+                  data-guid={el.guid}
+                  // ref={
+                  //   subGroupById
+                  //     ? computedBoardData[computedBoardData?.length - 1]?.[
+                  //         subGroupFieldSlug
+                  //       ] === lastSubGroup?.name &&
+                  //       group?.name === largestGroup?.name
+                  //       ? lastElementRef
+                  //       : null
+                  //     : boardDataIndex === computedBoardData?.length - 1 &&
+                  //         el?.[groupSlug] === largestGroup?.name
+                  //       ? lastElementRef
+                  //       : null
+                  // }
                 >
                   {photoViewFields.map((field) => (
                     <BoardPhotoGenerator

@@ -4,16 +4,17 @@ import { Add } from "@mui/icons-material";
 import { useRef } from "react";
 
 export const ColumnHeaderBlock = ({
-  tab,
+  group,
   navigateToCreatePage,
   groupField,
   boardTab,
   counts,
+  field,
 }) => {
   const fixedElement = useRef(null);
 
   const color = groupField?.attributes?.options?.find(
-    (item) => item?.label === tab?.name || item?.value === tab?.name
+    (item) => item?.label === group?.name || item?.value === group?.name
   )?.color;
 
   return (
@@ -34,11 +35,11 @@ export const ColumnHeaderBlock = ({
               className={cls.dot}
               style={{ background: color ? color : "rgb(78, 84, 90)" }}
             />
-            <span className={cls.label}>{tab.name}</span>
+            <span className={cls.label}>{field}</span>
           </span>
         </div>
         <div className={cls.counter}>
-          {(counts?.[tab?.name] || tab?.count) ?? 0}
+          {(counts?.[group?.name] || group?.count) ?? 0}
         </div>
       </div>
       <div className={cls.rightSide}>
@@ -47,7 +48,7 @@ export const ColumnHeaderBlock = ({
           color="inherit"
           onClick={(e) => {
             e.stopPropagation();
-            navigateToCreatePage({ tab: tab?.name });
+            navigateToCreatePage({ tab: group?.name });
           }}
         >
           <Add />

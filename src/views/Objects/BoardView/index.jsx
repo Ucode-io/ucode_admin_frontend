@@ -1,5 +1,12 @@
 import { Box, IconButton } from "@mui/material";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
@@ -29,6 +36,57 @@ import {
   useGetBoardMutation,
   useGetBoardStructureMutation,
 } from "../../../services/boardViewService";
+import useDebounce from "../../../hooks/useDebounce";
+
+const getMergedDataSubgroup = ({ data, prev }) => {
+  const newData = data?.data?.response;
+
+  const merged = { ...prev };
+
+  for (const authorId in newData) {
+    const newStatuses = newData[authorId];
+
+    if (!merged[authorId]) {
+      merged[authorId] = {};
+    }
+
+    for (const status in newStatuses) {
+      const newItems = newStatuses[status];
+      const existingItems = merged[authorId][status] || [];
+
+      // Объединение и удаление дубликатов по guid
+      const combined = [...existingItems, ...newItems];
+      const unique = Array.from(
+        new Map(combined.map((item) => [item.guid, item])).values()
+      );
+
+      merged[authorId][status] = unique;
+    }
+  }
+  return merged;
+};
+
+const getMergedDataGroup = ({ data, prev }) => {
+  const newData = data?.data?.response;
+
+  const merged = Object.keys(newData).reduce(
+    (acc, key) => {
+      const existing = prev[key] || [];
+      const combined = [...existing, ...newData[key]];
+      const unique = Array.from(
+        new Map(combined.map((item) => [item.guid, item])).values()
+      );
+
+      return {
+        ...acc,
+        [key]: unique,
+      };
+    },
+    { ...prev }
+  );
+
+  return merged;
+};
 
 const BoardView = ({
   view,
@@ -172,20 +230,40 @@ const BoardView = ({
   //   }
   // );
   // console.log({ boardDataContent });
-  const dataLoader = false;
-  const refetch = () => {};
-  const data = useMemo(() => {
-    return [];
-  }, []);
 
   const [groups, setGroups] = useState([]);
   const [subGroups, setSubGroups] = useState([]);
-  const [boardData, setBoardData] = useState([]);
+
+  const [boardData, setBoardData] = useState({});
+  const [loadingData, setLoadingData] = useState(false);
+
+  const lastElementRef = useRef(null);
+
+  const limit = 10;
+  const [offset, setOffset] = useState(1);
 
   const boardMutation = useGetBoardMutation(
     {
       onSuccess: (data) => {
-        setBoardData(data?.data?.response ?? []);
+        if (offset === 0) {
+          setBoardData(data?.data?.response ?? {});
+        } else {
+          setBoardData((prev) => {
+            if (subGroupById) {
+              return getMergedDataSubgroup({ data, prev });
+            } else {
+              return getMergedDataGroup({ data, prev });
+            }
+          });
+
+          setLoadingData(false);
+          // setBoardData((prev) => {
+          //   return {
+          //     ...prev,
+          //     ...data?.data?.response,
+          //   };
+          // });
+        }
       },
     },
     tableSlug
@@ -205,8 +283,8 @@ const BoardView = ({
         subgroup_by: {
           field: subGroupFieldSlug,
         },
-        limit: 300,
-        offset: 0,
+        limit,
+        offset,
         fields: fields,
       },
     });
@@ -231,7 +309,6 @@ const BoardView = ({
           setGroups(data?.data?.groups ?? []);
         }
         setSubGroups(data?.data?.subgroups ?? []);
-        mutateBoardData();
       },
     },
     tableSlug
@@ -362,33 +439,33 @@ const BoardView = ({
       : localStorage?.getItem("detailPage")
   );
 
-  useEffect(() => {
-    setSubBoardData({});
-    if (subGroupById) {
-      data?.forEach((item) => {
-        const key =
-          subGroupField?.type === FIELD_TYPES.LOOKUP
-            ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
-            : item?.[subGroupFieldSlug];
-        setSubBoardData((prev) => {
-          return {
-            ...prev,
-            [key]: [
-              ...data?.filter((el) => {
-                if (Array.isArray(el?.[subGroupFieldSlug])) {
-                  return (
-                    el?.[subGroupFieldSlug]?.[0] ===
-                    item?.[subGroupFieldSlug]?.[0]
-                  );
-                }
-                return el?.[subGroupFieldSlug] === item?.[subGroupFieldSlug];
-              }),
-            ],
-          };
-        });
-      });
-    }
-  }, [data, view]);
+  // useEffect(() => {
+  //   setSubBoardData({});
+  //   if (subGroupById) {
+  //     data?.forEach((item) => {
+  //       const key =
+  //         subGroupField?.type === FIELD_TYPES.LOOKUP
+  //           ? item?.[subGroupFieldSlug + "_data"]?.[subGroupField?.table_slug]
+  //           : item?.[subGroupFieldSlug];
+  //       setSubBoardData((prev) => {
+  //         return {
+  //           ...prev,
+  //           [key]: [
+  //             ...data?.filter((el) => {
+  //               if (Array.isArray(el?.[subGroupFieldSlug])) {
+  //                 return (
+  //                   el?.[subGroupFieldSlug]?.[0] ===
+  //                   item?.[subGroupFieldSlug]?.[0]
+  //                 );
+  //               }
+  //               return el?.[subGroupFieldSlug] === item?.[subGroupFieldSlug];
+  //             }),
+  //           ],
+  //         };
+  //       });
+  //     });
+  //   }
+  // }, [data, view]);
 
   const [openedGroups, setOpenedGroups] = useState([]);
 
@@ -418,42 +495,181 @@ const BoardView = ({
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
 
-  const statusGroupCounts = useMemo(() => {
-    const result = {};
-    if (subGroupById) {
-      Object.entries(subBoardData)?.forEach(([key, value]) => {
-        value?.forEach((item) => {
-          if (result[item?.[groupField?.slug]]) {
-            result[item?.[groupField?.slug]] += 1;
-          } else {
-            result[item?.[groupField?.slug]] = 1;
-          }
-        });
-      });
-    } else {
-      data?.forEach((item) => {
-        if (result[item?.[groupField?.slug]]) {
-          result[item?.[groupField?.slug]] += 1;
-        } else {
-          result[item?.[groupField?.slug]] = 1;
-        }
-      });
-    }
+  // const statusGroupCounts = useMemo(() => {
+  //   const result = {};
+  //   if (subGroupById) {
+  //     Object.entries(subBoardData)?.forEach(([key, value]) => {
+  //       value?.forEach((item) => {
+  //         if (result[item?.[groupField?.slug]]) {
+  //           result[item?.[groupField?.slug]] += 1;
+  //         } else {
+  //           result[item?.[groupField?.slug]] = 1;
+  //         }
+  //       });
+  //     });
+  //   } else {
+  //     data?.forEach((item) => {
+  //       if (result[item?.[groupField?.slug]]) {
+  //         result[item?.[groupField?.slug]] += 1;
+  //       } else {
+  //         result[item?.[groupField?.slug]] = 1;
+  //       }
+  //     });
+  //   }
 
-    return result;
-  }, [subBoardData, groupField, data, view]);
+  //   return result;
+  // }, [subBoardData, groupField, data, view]);
 
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
 
-  const [groupCounts, setGroupCounts] = useState({});
+  // const [groupCounts, setGroupCounts] = useState({});
 
   const [isOnTop, setIsOnTop] = useState(false);
 
+  // useEffect(() => {
+  //   setGroupCounts(statusGroupCounts);
+  // }, [data, subBoardData, statusGroupCounts]);
+
+  const smallestGroup = useMemo(() => {
+    return boardData?.length > 0
+      ? groups.reduce(
+          (max, group) => (group.count < max.count ? group : max),
+          groups[0]
+        )
+      : {};
+  }, [groups, boardData]);
+
+  const sortedBoardDataByLength = Object.entries(boardData)
+    .sort((a, b) => a[1].length - b[1].length)
+    .map(([name, value]) => ({ name, value }))
+    .filter(
+      (item) =>
+        item?.value?.length <
+        groups?.find((groupItem) => item?.name === groupItem?.name)?.count
+    );
+
+  const lastSubGroup = subGroups[subGroups.length - 1];
+  const lastGroupArr = subGroupById
+    ? boardData[lastSubGroup?.name]?.[smallestGroup?.name]
+    : sortedBoardDataByLength[0]?.value;
+  const lastGroupItem = useRef(null);
+
   useEffect(() => {
-    setGroupCounts(statusGroupCounts);
-  }, [data, subBoardData, statusGroupCounts]);
+    lastGroupItem.current = lastGroupArr?.[lastGroupArr?.length - 1];
+  }, [lastGroupArr]);
+
+  function isInViewportOrScrolledToTop(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.bottom <= 0 ||
+      (rect.bottom > 0 &&
+        rect.top <
+          (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right > 0 &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth))
+    );
+  }
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.bottom > 0 &&
+      rect.top <
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right > 0 &&
+      rect.left < (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
+  // function isScrolledOutTop(element) {
+  //   if (!element) return false;
+
+  //   const rect = element.getBoundingClientRect();
+
+  //   return rect.bottom <= 250;
+  // }
+
+  const fetchedSubGroups = useRef([]);
+
+  const handleSetOffsetOnScroll = () => {
+    if (subGroupById) {
+      // const fetchedSubGroups = []
+      // const elSubGroups =
+      //   boardRef.current?.querySelectorAll(`[data-sub-group]`);
+
+      // if (elSubGroups.length && !loadingData) {
+      //   let shouldIncreaseOffset = false;
+
+      //   elSubGroups.forEach((item) => {
+      //     const subGroup = subGroups.find(
+      //       (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
+      //     );
+
+      //     const isElementInViewport = isInViewport(item);
+
+      //     const hasMore = boardData?.[subGroup?.name]
+      //       ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
+      //         subGroup.count
+      //       : true;
+
+      //     if (isElementInViewport && hasMore) {
+      //       shouldIncreaseOffset = true;
+      //     }
+      //   });
+
+      //   if (shouldIncreaseOffset && !fetchedSubGroups.includes()) {
+      //     setOffset((prev) => prev + 1);
+      //     setLoadingData(true);
+      //   }
+      // }
+      const elSubGroups =
+        boardRef.current?.querySelectorAll(`[data-sub-group]`);
+
+      if (elSubGroups.length) {
+        elSubGroups?.forEach((item, index) => {
+          const subGroup = subGroups.find(
+            (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
+          );
+
+          const isElementInViewport = isInViewport(item);
+
+          const hasMore = boardData?.[subGroup?.name]
+            ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
+              subGroup.count
+            : true;
+
+          if (
+            isElementInViewport &&
+            !loadingData &&
+            hasMore &&
+            !fetchedSubGroups.current.includes(index)
+            // (!fetchedSubGroups.current.includes(index) ||
+            //   index === subGroups.length - 1)
+          ) {
+            fetchedSubGroups.current.push(index);
+            setOffset((prev) => prev + 1);
+            setLoadingData(true);
+          }
+        });
+      }
+    } else {
+      const lastCard = boardRef.current?.querySelector(
+        `[data-guid = "${lastGroupItem?.current?.guid}"]`
+      );
+
+      const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
+
+      if (isLastElementInViewport && !loadingData) {
+        setOffset((prev) => prev + 1);
+        setLoadingData(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    mutateBoardData();
+  }, [offset, groupField, subGroupField, subGroupFieldSlug]);
 
   useEffect(() => {
     const board = boardRef.current;
@@ -468,6 +684,8 @@ const BoardView = ({
         setIsOnTop(false);
         el.style.transform = "none";
       }
+
+      handleSetOffsetOnScroll();
     };
 
     board.addEventListener("scroll", onScroll);
@@ -475,7 +693,23 @@ const BoardView = ({
     return () => {
       board.removeEventListener("scroll", onScroll);
     };
-  }, [boardRef.current, fixedElement.current]);
+  }, [boardRef.current, fixedElement.current, boardData]);
+
+  useEffect(() => {
+    setOffset(0);
+  }, [subGroupById]);
+
+  const getSubgroupFieldLabel = (subGroup) => {
+    return boardData?.[subGroup?.name]?.[groups[0]?.name]?.[0]?.[
+      `${subGroupFieldSlug}_data`
+    ]?.[fieldsMap?.[subGroupField?.relation_id]?.view_fields?.[0]?.slug];
+  };
+
+  const getGroupFieldLabel = (group) => {
+    return boardData?.[group?.name]?.[0]?.[`${groupField?.slug}_data`]?.[
+      fieldsMap?.[groupField?.relation_id]?.view_fields?.[0]?.slug
+    ];
+  };
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -517,7 +751,7 @@ const BoardView = ({
                 // padding: "0 16px",
               }}
             >
-              {groups?.map((tab, tabIndex) => (
+              {groups?.map((group, tabIndex) => (
                 <Draggable
                   key={tabIndex}
                   style={{
@@ -531,10 +765,15 @@ const BoardView = ({
                   }}
                 >
                   <ColumnHeaderBlock
-                    field={computedColumnsFor?.find(
-                      (field) => field?.label === tab?.name
-                    )}
-                    tab={tab}
+                    field={
+                      group?.name === "Unassigned"
+                        ? "Unassigned"
+                        : groupField?.type === FIELD_TYPES.LOOKUP ||
+                            groupField?.type === FIELD_TYPES.LOOKUPS
+                          ? getGroupFieldLabel(group)
+                          : group?.name
+                    }
+                    group={group}
                     groupField={groupField}
                     navigateToCreatePage={navigateToCreatePage}
                     counts={groupsCounts}
@@ -555,7 +794,7 @@ const BoardView = ({
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>
                 {subGroups?.map((subGroup, subGroupIndex) => (
-                  <div key={subGroup?.name}>
+                  <div key={subGroup?.name} data-sub-group={subGroup?.name}>
                     <button
                       className={styles.boardSubGroupBtn}
                       onClick={() => handleToggle(subGroup?.name)}
@@ -579,7 +818,12 @@ const BoardView = ({
                             background: getColor(subGroup?.name) + 33,
                           }}
                         >
-                          {subGroup?.name}
+                          {subGroup?.name === "Unassigned"
+                            ? "Unassigned"
+                            : subGroupField?.type === FIELD_TYPES.LOOKUP ||
+                                subGroupField?.type === FIELD_TYPES.LOOKUPS
+                              ? getSubgroupFieldLabel(subGroup)
+                              : subGroup?.name}
                         </span>
                       </span>
                     </button>
@@ -593,25 +837,30 @@ const BoardView = ({
                       >
                         {groups?.map((group, index) => (
                           <BoardColumn
-                            mutateBoardData={mutateBoardData}
-                            boardData={boardData[subGroup?.name]?.[group?.name]}
+                            // mutateBoardData={mutateBoardData}
+                            boardData={
+                              boardData?.[subGroup?.name]?.[group?.name]
+                            }
+                            setBoardData={setBoardData}
+                            data={boardData}
                             computedColumnsFor={computedColumnsFor}
                             key={group.value}
                             group={group}
+                            smallestGroup={smallestGroup}
+                            lastElementRef={lastElementRef}
                             tab={group}
-                            data={[]}
                             fieldsMap={fieldsMap}
                             view={view}
                             menuItem={menuItem}
                             layoutType={layoutType}
                             setLayoutType={setLayoutType}
-                            refetch={refetch}
                             boardRef={boardRef}
                             index={index}
                             subGroupIndex={subGroupIndex}
                             subGroupById={subGroupById}
                             subGroupData={subBoardData[subGroup?.name]}
                             subItem={subGroup?.name}
+                            groupItem={group?.name}
                             subGroupFieldSlug={subGroupFieldSlug}
                             searchText={searchText}
                             columnsForSearch={columnsForSearch}
@@ -619,9 +868,11 @@ const BoardView = ({
                             setDefaultValue={setDefaultValue}
                             setOpenDrawerModal={setOpenDrawerModal}
                             setSelectedRow={setSelectedRow}
-                            setGroupCounts={setGroupCounts}
+                            // setGroupCounts={setGroupCounts}
                             groupSlug={groupField.slug}
+                            groupField={groupField}
                             getGroupCounts={getGroupCounts}
+                            lastSubGroup={subGroups[subGroups.length - 1]}
                           />
                         ))}
                       </div>
@@ -634,19 +885,20 @@ const BoardView = ({
                 {groups?.map((group, index) => (
                   <div key={group.value} className={styles.draggable}>
                     <BoardColumn
-                      mutateBoardData={mutateBoardData}
+                      // mutateBoardData={mutateBoardData}
                       boardData={boardData?.[group?.name]}
+                      setBoardData={setBoardData}
+                      data={boardData}
                       computedColumnsFor={computedColumnsFor}
                       key={group.value}
                       group={group}
                       tab={group}
-                      data={[]}
                       fieldsMap={fieldsMap}
                       view={view}
                       menuItem={menuItem}
+                      groupItem={group?.name}
                       layoutType={layoutType}
                       setLayoutType={setLayoutType}
-                      refetch={refetch}
                       boardRef={boardRef}
                       index={index}
                       searchText={searchText}
@@ -655,9 +907,12 @@ const BoardView = ({
                       setDefaultValue={setDefaultValue}
                       setOpenDrawerModal={setOpenDrawerModal}
                       setSelectedRow={setSelectedRow}
-                      setGroupCounts={setGroupCounts}
+                      // setGroupCounts={setGroupCounts}
                       groupSlug={groupField.slug}
+                      groupField={groupField}
                       getGroupCounts={getGroupCounts}
+                      smallestGroup={smallestGroup}
+                      lastElementRef={lastElementRef}
                     />
                   </div>
                 ))}
@@ -828,7 +1083,7 @@ const BoardView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          refetch={refetch}
+          // refetch={refetch}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}

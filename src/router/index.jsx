@@ -445,7 +445,7 @@ const Router = () => {
             element={<ConstructorTablesFormPage />}
           />
           <Route
-            path="constructor/apps/:appId/objects/:id/:tableSlug"
+            path="constructor/apps/:appId/objects/:tableSlug"
             element={<ConstructorTablesFormPage />}
           />
           <Route

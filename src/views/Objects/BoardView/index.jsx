@@ -37,10 +37,10 @@ import {
   useGetBoardStructureMutation,
 } from "../../../services/boardViewService";
 import useDebounce from "../../../hooks/useDebounce";
+import { useThrottledCallback } from "@mantine/hooks";
+import { throttle } from "lodash-es";
 
-const getMergedDataSubgroup = ({ data, prev }) => {
-  const newData = data?.data?.response;
-
+const getMergedDataSubgroup = ({ newData, prev }) => {
   const merged = { ...prev };
 
   for (const authorId in newData) {
@@ -54,36 +54,23 @@ const getMergedDataSubgroup = ({ data, prev }) => {
       const newItems = newStatuses[status];
       const existingItems = merged[authorId][status] || [];
 
-      // Объединение и удаление дубликатов по guid
       const combined = [...existingItems, ...newItems];
-      const unique = Array.from(
-        new Map(combined.map((item) => [item.guid, item])).values()
-      );
 
-      merged[authorId][status] = unique;
+      merged[authorId][status] = combined;
     }
   }
   return merged;
 };
 
-const getMergedDataGroup = ({ data, prev }) => {
-  const newData = data?.data?.response;
+const getMergedDataGroup = ({ newData, prev }) => {
+  const merged = { ...prev };
 
-  const merged = Object.keys(newData).reduce(
-    (acc, key) => {
-      const existing = prev[key] || [];
-      const combined = [...existing, ...newData[key]];
-      const unique = Array.from(
-        new Map(combined.map((item) => [item.guid, item])).values()
-      );
+  for (const statusKey in newData) {
+    const existing = prev[statusKey] || [];
+    const incoming = newData[statusKey] || [];
 
-      return {
-        ...acc,
-        [key]: unique,
-      };
-    },
-    { ...prev }
-  );
+    merged[statusKey] = [...existing, ...incoming];
+  }
 
   return merged;
 };
@@ -240,36 +227,55 @@ const BoardView = ({
   const lastElementRef = useRef(null);
 
   const limit = 10;
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState(0);
+  const [count, setCount] = useState(0);
 
   const boardMutation = useGetBoardMutation(
     {
       onSuccess: (data) => {
+        setCount(data?.data?.count ?? 0);
         if (offset === 0) {
           setBoardData(data?.data?.response ?? {});
         } else {
+          const newData = data?.data?.response;
+          if (!newData) return;
+
           setBoardData((prev) => {
             if (subGroupById) {
-              return getMergedDataSubgroup({ data, prev });
+              return getMergedDataSubgroup({ newData, prev });
             } else {
-              return getMergedDataGroup({ data, prev });
+              return getMergedDataGroup({ newData, prev });
             }
           });
-
-          setLoadingData(false);
-          // setBoardData((prev) => {
-          //   return {
-          //     ...prev,
-          //     ...data?.data?.response,
-          //   };
-          // });
         }
+        setLoadingData(false);
       },
+      // onSuccess: (data) => {
+      //   if (offset === 0) {
+      //     setBoardData(data?.data?.response ?? {});
+      //   } else {
+      //     setBoardData((prev) => {
+      //       if (subGroupById) {
+      //         return getMergedDataSubgroup({ data, prev });
+      //       } else {
+      //         return getMergedDataGroup({ data, prev });
+      //       }
+      //     });
+
+      //     setLoadingData(false);
+      //     // setBoardData((prev) => {
+      //     //   return {
+      //     //     ...prev,
+      //     //     ...data?.data?.response,
+      //     //   };
+      //     // });
+      //   }
+      // },
     },
     tableSlug
   );
 
-  const mutateBoardData = () => {
+  const mutateBoardData = (offsetProp) => {
     const fields = [
       ...visibleColumns?.map((el) => el?.slug),
       "guid",
@@ -284,7 +290,7 @@ const BoardView = ({
           field: subGroupFieldSlug,
         },
         limit,
-        offset,
+        offset: offsetProp ?? offset,
         fields: fields,
       },
     });
@@ -561,6 +567,7 @@ const BoardView = ({
   }, [lastGroupArr]);
 
   function isInViewportOrScrolledToTop(element) {
+    if (!element) return false;
     const rect = element.getBoundingClientRect();
     return (
       rect.bottom <= 0 ||
@@ -592,80 +599,52 @@ const BoardView = ({
 
   const fetchedSubGroups = useRef([]);
 
-  const handleSetOffsetOnScroll = () => {
-    if (subGroupById) {
-      // const fetchedSubGroups = []
-      // const elSubGroups =
-      //   boardRef.current?.querySelectorAll(`[data-sub-group]`);
+  const handleSetOffsetOnScroll = throttle(() => {
+    const elSubGroups = boardRef.current?.querySelectorAll(`[data-sub-group]`);
 
-      // if (elSubGroups.length && !loadingData) {
-      //   let shouldIncreaseOffset = false;
+    if (elSubGroups.length) {
+      elSubGroups?.forEach((item, index) => {
+        const subGroup = subGroups.find(
+          (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
+        );
 
-      //   elSubGroups.forEach((item) => {
-      //     const subGroup = subGroups.find(
-      //       (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
-      //     );
+        const isElementInViewport = isInViewport(item);
 
-      //     const isElementInViewport = isInViewport(item);
+        const hasMore = boardData?.[subGroup?.name]
+          ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
+            subGroup.count
+          : true;
 
-      //     const hasMore = boardData?.[subGroup?.name]
-      //       ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
-      //         subGroup.count
-      //       : true;
-
-      //     if (isElementInViewport && hasMore) {
-      //       shouldIncreaseOffset = true;
-      //     }
-      //   });
-
-      //   if (shouldIncreaseOffset && !fetchedSubGroups.includes()) {
-      //     setOffset((prev) => prev + 1);
-      //     setLoadingData(true);
-      //   }
-      // }
-      const elSubGroups =
-        boardRef.current?.querySelectorAll(`[data-sub-group]`);
-
-      if (elSubGroups.length) {
-        elSubGroups?.forEach((item, index) => {
-          const subGroup = subGroups.find(
-            (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
-          );
-
-          const isElementInViewport = isInViewport(item);
-
-          const hasMore = boardData?.[subGroup?.name]
-            ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
-              subGroup.count
-            : true;
-
-          if (
-            isElementInViewport &&
-            !loadingData &&
-            hasMore &&
-            !fetchedSubGroups.current.includes(index)
-            // (!fetchedSubGroups.current.includes(index) ||
-            //   index === subGroups.length - 1)
-          ) {
-            fetchedSubGroups.current.push(index);
-            setOffset((prev) => prev + 1);
-            setLoadingData(true);
-          }
-        });
-      }
-    } else {
-      const lastCard = boardRef.current?.querySelector(
-        `[data-guid = "${lastGroupItem?.current?.guid}"]`
-      );
-
-      const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
-
-      if (isLastElementInViewport && !loadingData) {
-        setOffset((prev) => prev + 1);
-        setLoadingData(true);
-      }
+        if (
+          isElementInViewport &&
+          !loadingData &&
+          hasMore &&
+          !fetchedSubGroups.current.includes(index)
+          // (!fetchedSubGroups.current.includes(index) ||
+          //   index === subGroups.length - 1)
+        ) {
+          fetchedSubGroups.current.push(index);
+          setOffset((prev) => prev + limit);
+          setLoadingData(true);
+        }
+      });
     }
-  };
+  }, 1500);
+
+  const handleSetOffsetOnScrollGroup = throttle(() => {
+    const lastCard = boardRef.current?.querySelector(
+      `[data-guid = "${lastGroupItem?.current?.guid}"]`
+    );
+
+    const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
+
+    const boardDataLength = Object.values(boardData).flat().length;
+
+    if (isLastElementInViewport && !loadingData && boardDataLength < count) {
+      setOffset((prev) => prev + limit);
+      setLoadingData(true);
+    }
+  }, 1000);
 
   useEffect(() => {
     mutateBoardData();
@@ -685,7 +664,11 @@ const BoardView = ({
         el.style.transform = "none";
       }
 
-      handleSetOffsetOnScroll();
+      if (subGroupById) {
+        handleSetOffsetOnScroll();
+      } else {
+        handleSetOffsetOnScrollGroup();
+      }
     };
 
     board.addEventListener("scroll", onScroll);

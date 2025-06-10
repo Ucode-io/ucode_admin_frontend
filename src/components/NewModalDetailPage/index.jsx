@@ -1,46 +1,35 @@
-import {Box, Button, Flex} from "@chakra-ui/react";
-import {Check} from "@mui/icons-material";
-import {Dialog, Menu, MenuItem, Modal} from "@mui/material";
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import {Box} from "@chakra-ui/react";
+import {Dialog} from "@mui/material";
+import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
-import {store} from "../../store";
-import {sortSections} from "../../utils/sectionsOrderNumber";
-import NewModalFormPage from "./NewModalFormPage";
-import NewModalRelationTable from "./NewModalRelationTable";
-import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {showAlert} from "../../store/alert/alert.thunk";
 import menuService from "../../services/menuService";
+import {store} from "../../store";
+import {showAlert} from "../../store/alert/alert.thunk";
+import {sortSections} from "../../utils/sectionsOrderNumber";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import DrawerObjectsPage from "../../views/Objects/DrawerDetailPage/DrawerObjectsPage";
 
 function NewModalDetailPage({
   view,
   open,
   layout,
-  refetch,
   setOpen,
   menuItem,
-  fieldsMap,
   selectedRow,
   projectInfo,
+  defaultValue,
   dateInfo = {},
   modal = false,
   selectedViewType,
   fullScreen = false,
-  setLayoutType = () => {},
   setFullScreen = () => {},
-  navigateToEditPage = () => {},
   setSelectedViewType = () => {},
 }) {
   const navigate = useNavigate();
@@ -49,13 +38,14 @@ function NewModalDetailPage({
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
-
+  const handleClose = () => {
+    updateQueryWithoutRerender("p", null);
+    setOpen(false);
+  };
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const {menuId} = useParams();
-  const tableSlug = view?.table_slug;
-
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
@@ -64,11 +54,12 @@ function NewModalDetailPage({
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
+  const tableSlug = view?.table_slug || view?.relation?.table_to?.slug;
+  const [selectedView, setSelectedView] = useState(null);
 
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v");
   const itemId = query.get("p");
-
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -78,10 +69,11 @@ function NewModalDetailPage({
     return savedWidth ? parseInt(savedWidth, 10) : 650;
   });
 
-  const handleClose = () => {
-    setOpen(false);
-    setData({});
-  };
+  const rootForm = useForm({
+    ...state,
+    ...dateInfo,
+    invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
+  });
 
   const getAllData = async () => {
     setLoader(true);
@@ -89,7 +81,7 @@ function NewModalDetailPage({
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
-    // const getFormData = constructorObjectService.getById(tableSlug, id);
+
     const getFormData = menuService.getFieldsTableDataById(
       menuId,
       viewId,
@@ -151,9 +143,9 @@ function NewModalDetailPage({
         }))
       );
 
-      if (!selectedTab?.relation_id) {
-        reset(data?.response ?? {});
-      }
+      // if (!selectedTab?.relation_id) {
+      rootForm.reset(data?.response ?? {});
+      // }
       setSelectTab(relations[selectedTabIndex]);
 
       setLoader(false);
@@ -220,7 +212,7 @@ function NewModalDetailPage({
               : relation.table_from?.slug,
         }))
       );
-      if (!itemId) {
+      if (!menuId) {
         setLoader(false);
       }
       setSelectTab(relations[selectedTabIndex]);
@@ -229,23 +221,19 @@ function NewModalDetailPage({
     }
   };
 
-  const {
-    reset,
-    watch,
-    control,
-    handleSubmit,
-    formState: {errors},
-    setValue: setFormValue,
-    getValues,
-  } = useForm({
-    defaultValues: {
-      ...state,
-      ...dateInfo,
-      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
-    },
-  });
-
-  const rowData = watch();
+  useEffect(() => {
+    if (defaultValue) {
+      if (Array.isArray(defaultValue)) {
+        defaultValue.forEach((item) => {
+          rootForm.setValue(item?.field, item?.value);
+        });
+      } else {
+        if (defaultValue?.field && defaultValue?.value) {
+          rootForm.setValue(defaultValue?.field, defaultValue?.value);
+        }
+      }
+    }
+  }, [defaultValue]);
 
   const update = (data) => {
     delete data.invite;
@@ -256,13 +244,15 @@ function NewModalDetailPage({
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
+        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
+          table_slug: tableSlug,
+        });
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
         setBtnLoader(false);
       });
   };
-
   const create = (data) => {
     setBtnLoader(true);
 
@@ -270,6 +260,7 @@ function NewModalDetailPage({
       .create(tableSlug, {data})
       .then((res) => {
         updateLayout();
+        setOpen(false);
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -284,20 +275,25 @@ function NewModalDetailPage({
         });
         if (modal) {
           handleClose();
-
+          queryClient.refetchQueries(
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            tableSlug,
+            {
+              table_slug: tableSlug,
+            }
+          );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
           navigate(-1);
           handleClose();
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
-
         dispatch(showAlert("Successfully updated!", "success"));
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
         setBtnLoader(false);
-        refetch();
+        rootForm.refetch();
       });
   };
 
@@ -308,7 +304,7 @@ function NewModalDetailPage({
             ...tab,
             attributes: {
               ...tab?.attributes,
-              layout_heading: watch("attributes.layout_heading"),
+              layout_heading: rootForm.watch("attributes.layout_heading"),
             },
           }
         : tab
@@ -331,9 +327,9 @@ function NewModalDetailPage({
   };
 
   useEffect(() => {
-    if (itemId) getAllData();
+    if (itemId && selectedView?.type === "SECTION") getAllData();
     else getFields();
-  }, [itemId]);
+  }, [itemId, selectedView]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -373,8 +369,13 @@ function NewModalDetailPage({
   useEffect(() => {
     if (drawerRef.current) {
       drawerRef.current.style.width = `${drawerWidth}px`;
+      drawerRef.current.closest(".chakra-portal").style.position = "relative";
+      drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
+
+  const setViews = () => {};
+
   return (
     <Dialog
       disablePortal
@@ -386,256 +387,44 @@ function NewModalDetailPage({
       }}
       onClose={handleClose}>
       <Box w={"950px"} borderRadius={"8px"} border={"none"}>
-        <Tabs selectedIndex={selectedTabIndex}>
-          <Box position={"relative"} zIndex={9}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Flex
-                px={5}
-                h={"44px"}
-                align="center"
-                justifyContent={"space-between"}>
-                <Flex alignItems={"center"} gap="5px">
-                  <ScreenOptions
-                    selectedViewType={selectedViewType}
-                    setSelectedViewType={setSelectedViewType}
-                    setLayoutType={setLayoutType}
-                    selectedRow={selectedRow}
-                    navigateToEditPage={navigateToEditPage}
-                  />
-
-                  <Box
-                    sx={{
-                      width: "1px",
-                      height: "14px",
-                      margin: "0 6px",
-                      background: "rgba(55, 53, 47, 0.16)",
-                    }}
-                  />
-
-                  <Button
-                    onClick={() =>
-                      navigate(
-                        `/main/${menuId}/layout-settings/${tableSlug}/${itemId}`,
-                        {
-                          state: {
-                            ...rowData,
-                          },
-                        }
-                      )
-                    }
-                    w={18}
-                    h={18}
-                    display={"flex"}
-                    alignItems={"center"}
-                    variant="outlined">
-                    <SpaceDashboardIcon style={{color: "#808080"}} />
-                  </Button>
-
-                  <Box
-                    sx={{
-                      width: "1px",
-                      height: "14px",
-                      margin: "0 6px",
-                      background: "rgba(55, 53, 47, 0.16)",
-                    }}
-                  />
-
-                  <TabList style={{borderBottom: "none"}}>
-                    {data?.tabs?.map((el, index) => (
-                      <Tab
-                        onClick={(e) => {
-                          setSelectTab(el);
-                          setSelectedTabIndex(index);
-                        }}
-                        key={index}
-                        style={{
-                          height: "24px",
-                          padding: "0 10px",
-                          fontSize: "11px",
-                          fontWeight: "500",
-                        }}>
-                        {el?.label}
-                      </Tab>
-                    ))}
-                  </TabList>
-                </Flex>
-
-                {selectedTabIndex === 0 && (
-                  <Button
-                    isLoading={btnLoader}
-                    disabled={btnLoader}
-                    type="submit"
-                    rounded={4}
-                    bg={"#007aff"}
-                    color={"#fff"}
-                    w={100}
-                    h={10}>
-                    Save
-                  </Button>
-                )}
-              </Flex>
-
-              <TabPanel>
-                <Box overflow={"auto"} h={"600px"} p="0px 80px">
-                  <NewModalFormPage
-                    projectInfo={projectInfo}
-                    handleMouseDown={handleMouseDown}
-                    getValues={getValues}
-                    setFormValue={setFormValue}
-                    layout={layout}
-                    selectedTab={selectedTab}
-                    selectedTabIndex={selectedTabIndex}
-                    menuItem={menuItem}
-                    data={data}
-                    selectedRow={selectedRow}
-                    handleClose={handleClose}
-                    modal={true}
-                    dateInfo={dateInfo}
-                    setFullScreen={setFullScreen}
-                    fullScreen={fullScreen}
-                    fieldsMap={fieldsMap}
-                    control={control}
-                    watch={watch}
-                    reset={reset}
-                  />
-                </Box>
-              </TabPanel>
-              {data?.tabs
-                ?.filter((tab) => tab?.type !== "section")
-                .map(() => (
-                  <TabPanel>
-                    <Box id="modalTable" p="0px 0px" h={550}>
-                      <NewModalRelationTable
-                        handleMouseDown={handleMouseDown}
-                        getAllData={getAllData}
-                        selectedTabIndex={selectedTabIndex}
-                        setSelectedTabIndex={setSelectedTabIndex}
-                        relations={tableRelations}
-                        control={control}
-                        handleSubmit={handleSubmit}
-                        onSubmit={onSubmit}
-                        reset={reset}
-                        setFormValue={setFormValue}
-                        tableSlug={tableSlug}
-                        watch={watch}
-                        loader={loader}
-                        setSelectTab={setSelectTab}
-                        selectedTab={selectedTab}
-                        errors={errors}
-                        relatedTable={
-                          tableRelations[selectedTabIndex]?.relatedTable
-                        }
-                        id={itemId}
-                        fieldsMap={fieldsMap}
-                        data={data}
-                        setData={setData}
-                      />
-                    </Box>
-                  </TabPanel>
-                ))}
-            </form>
-          </Box>
-        </Tabs>
+        <Box bg={"red"}>
+          <DrawerObjectsPage
+            onSubmit={onSubmit}
+            selectedView={selectedView}
+            setSelectedView={setSelectedView}
+            projectInfo={projectInfo}
+            handleMouseDown={handleMouseDown}
+            layout={layout}
+            selectedTab={layout?.tabs?.[0]}
+            menuItem={menuItem}
+            data={data}
+            selectedRow={selectedRow}
+            handleClose={handleClose}
+            modal={true}
+            dateInfo={dateInfo}
+            setFullScreen={setFullScreen}
+            fullScreen={fullScreen}
+            view={view}
+            setViews={setViews}
+            rootForm={rootForm}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        </Box>
+        <Box
+          onMouseDown={handleMouseDown}
+          sx={{
+            position: "absolute",
+            height: "400px",
+            width: "3px",
+            left: 0,
+            top: 0,
+            cursor: "col-resize",
+          }}
+        />
       </Box>
     </Dialog>
   );
 }
-
-const ScreenOptions = ({
-  selectedViewType,
-  selectedRow,
-  setSelectedViewType = () => {},
-  setLayoutType = () => {},
-  navigateToEditPage = () => {},
-}) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const options = [
-    {label: "Side peek", icon: "SidePeek"},
-    {label: "Center peek", icon: "CenterPeek"},
-    {label: "Full page", icon: "FullPage"},
-  ];
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = (option) => {
-    localStorage.setItem("detailPage", option?.icon);
-    if (option?.icon === "FullPage") {
-      setLayoutType("SimpleLayout");
-      navigateToEditPage(selectedRow);
-    }
-
-    if (option) setSelectedViewType(option?.icon);
-    setAnchorEl(null);
-  };
-
-  return (
-    <Box>
-      <Button onClick={handleClick} variant="outlined">
-        <span>{getColumnFieldIcon(selectedViewType)}</span>
-      </Button>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "220px", padding: "4px 0"}}>
-          {options.map((option) => (
-            <MenuItem
-              style={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: "6px",
-                color: "#37352f",
-              }}
-              key={option.label}
-              onClick={() => handleClose(option)}>
-              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
-                <span>{getColumnFieldIcon(option)}</span>
-                {option.label}
-              </Box>
-
-              <Box>{option?.icon === selectedViewType ? <Check /> : ""}</Box>
-            </MenuItem>
-          ))}
-        </Box>
-      </Menu>
-    </Box>
-  );
-};
-
-export const getColumnFieldIcon = (column) => {
-  if (column === "SidePeek") {
-    return (
-      <img
-        src="/img/drawerPeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-  } else if (column === "CenterPeek") {
-    return (
-      <img
-        src="/img/centerPeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-  } else
-    return (
-      <img
-        src="/img/fullpagePeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-};
 
 export default NewModalDetailPage;

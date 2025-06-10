@@ -69,7 +69,7 @@ const FullpagePeekMaininfo = ({
       });
     });
     return fields;
-  }, [relation]);
+  }, []);
 
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
@@ -165,7 +165,6 @@ const FullpagePeekMaininfo = ({
               watch={watch}
               fields={fieldsList}
               selectedTab={selectedTab}
-              layoutData={relation}
               tableSlug={tableSlug}
             />
           </Box>

@@ -1,6 +1,4 @@
-import {Box, Button, Drawer, DrawerContent} from "@chakra-ui/react";
-import {Check} from "@mui/icons-material";
-import {Menu, MenuItem} from "@mui/material";
+import {Box, Drawer, DrawerContent} from "@chakra-ui/react";
 import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -15,26 +13,21 @@ import {store} from "../../../store";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-
 import DrawerObjectsPage from "./DrawerObjectsPage";
 
 function DrawerDetailPage({
   view,
   open,
   layout,
-  refetch = () => {},
   setOpen = () => {},
   menuItem,
   selectedRow,
   dateInfo = {},
-  selectedViewType,
   fullScreen = false,
   projectInfo,
   defaultValue,
-  layoutType,
-  setLayoutType = () => {},
+  selectedViewType,
   setFullScreen = () => {},
-  navigateToEditPage = () => {},
   setSelectedViewType = () => {},
 }) {
   const navigate = useNavigate();
@@ -51,7 +44,6 @@ function DrawerDetailPage({
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const {menuId} = useParams();
-  const [relationFieldsmap, setRelationFieldsmap] = useState({});
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
@@ -64,9 +56,6 @@ function DrawerDetailPage({
   const tableSlug = view?.table_slug || view?.relation?.table_to?.slug;
   const [selectedView, setSelectedView] = useState(null);
 
-  const permissions = useSelector(
-    (state) => state?.permissions?.permissions?.[tableSlug]
-  );
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v");
   const itemId = query.get("p");
@@ -78,22 +67,6 @@ function DrawerDetailPage({
     const savedWidth = localStorage.getItem("drawerWidth");
     return savedWidth ? parseInt(savedWidth, 10) : 650;
   });
-
-  // const {
-  //   reset,
-  //   watch,
-  //   control,
-  //   handleSubmit,
-  //   formState: {errors},
-  //   setValue: setFormValue,
-  //   getValues,
-  // } = useForm({
-  //   defaultValues: {
-  //     ...state,
-  //     ...dateInfo,
-  //     invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
-  //   },
-  // });
 
   const rootForm = useForm({
     ...state,
@@ -436,6 +409,8 @@ function DrawerDetailPage({
             view={view}
             setViews={setViews}
             rootForm={rootForm}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
           />
         </Box>
         <Box
@@ -453,102 +428,5 @@ function DrawerDetailPage({
     </Drawer>
   );
 }
-
-const ScreenOptions = ({
-  selectedViewType,
-  selectedRow,
-  setSelectedViewType = () => {},
-  setLayoutType = () => {},
-  navigateToEditPage = () => {},
-}) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const options = [
-    {label: "Side peek", icon: "SidePeek"},
-    {label: "Center peek", icon: "CenterPeek"},
-    {label: "Full page", icon: "FullPage"},
-  ];
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = (option) => {
-    localStorage.setItem("detailPage", option?.icon);
-    if (option?.icon === "FullPage") {
-      setLayoutType("SimpleLayout");
-      navigateToEditPage(selectedRow);
-    }
-
-    if (option) setSelectedViewType(option?.icon);
-    setAnchorEl(null);
-  };
-
-  return (
-    <Box>
-      <Button onClick={handleClick} variant="outlined">
-        <span>{getColumnFieldIcon(selectedViewType)}</span>
-      </Button>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "220px", padding: "4px 0"}}>
-          {options.map((option) => (
-            <MenuItem
-              style={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: "6px",
-                color: "#37352f",
-              }}
-              key={option.label}
-              onClick={() => handleClose(option)}>
-              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
-                <span>{getColumnFieldIcon(option)}</span>
-                {option.label}
-              </Box>
-
-              <Box>{option.icon === selectedViewType ? <Check /> : ""}</Box>
-            </MenuItem>
-          ))}
-        </Box>
-      </Menu>
-    </Box>
-  );
-};
-
-export const getColumnFieldIcon = (column) => {
-  if (column === "SidePeek") {
-    return (
-      <img
-        src="/img/drawerPeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-  } else if (column === "CenterPeek") {
-    return (
-      <img
-        src="/img/centerPeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-  } else
-    return (
-      <img
-        src="/img/fullpagePeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-};
 
 export default DrawerDetailPage;

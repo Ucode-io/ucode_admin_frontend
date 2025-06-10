@@ -2,14 +2,7 @@ import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import {useLocation, useParams, useSearchParams} from "react-router-dom";
-import {useMenuPermissionGetByIdQuery} from "../../../services/rolePermissionService";
-import constructorViewService from "../../../services/constructorViewService";
-import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-import menuService from "../../../services/menuService";
-import {store} from "../../../store";
 import {useQuery} from "react-query";
-import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {TabPanel, Tabs} from "react-tabs";
 
 function DrawerObjectsPage({

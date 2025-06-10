@@ -11,15 +11,17 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {isEqual} from "lodash";
 import {Controller} from "react-hook-form";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import {applyDrag} from "../../../utils/applyDrag";
 import "./style.scss";
 import {store} from "../../../store";
 import {useSelector} from "react-redux";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 
 function DrawerFormDetailPage({
+  modal,
   data,
   layout,
   fieldsMap,
@@ -29,10 +31,15 @@ function DrawerFormDetailPage({
   handleMouseDown,
   projectInfo,
   rootForm,
-  onSubmit = () => {},
+  tableInfo,
+  selectedViewType,
+  setLayoutType = () => {},
+  navigateToEditPage = () => {},
+  setSelectedViewType = () => {},
 }) {
+  const navigate = useNavigate();
   const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const {tableSlug, menuId} = useParams();
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
@@ -167,7 +174,7 @@ function DrawerFormDetailPage({
     <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{height: "calc(100vh - 44px)"}}
+        // sx={{height: modal ? "500px" : "calc(100vh - 44px)"}}
         pb={"10px"}
         overflow={"auto"}>
         {isMultiLanguage && (
@@ -181,6 +188,48 @@ function DrawerFormDetailPage({
             ))}
           </div>
         )}
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "10px",
+          }}>
+          <ScreenOptions
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            setLayoutType={setLayoutType}
+            selectedRow={selectedRow}
+            navigateToEditPage={navigateToEditPage}
+          />
+          <Box
+            sx={{
+              marginLeft: "10px",
+              height: "18px",
+            }}>
+            <Box
+              onClick={() =>
+                navigate(`/${menuId}/customize/${tableInfo?.id}`, {
+                  state: {
+                    ...data,
+                    tableSlug,
+                  },
+                })
+              }
+              sx={{
+                cursor: "pointer",
+                alignItems: "center",
+                gap: "5px",
+                color: "rgba(55, 53, 47, 0.5)",
+                "&:hover": {
+                  background: "rgba(55, 53, 47, 0.06)",
+                },
+              }}>
+              <SpaceDashboardIcon />
+              {/* Customize layout */}
+            </Box>
+          </Box>
+        </Box>
 
         <HeadingOptions
           selectedRow={selectedRow}
@@ -451,6 +500,103 @@ const CHTextField = ({
       )}
     />
   );
+};
+
+const ScreenOptions = ({
+  selectedViewType,
+  selectedRow,
+  setSelectedViewType = () => {},
+  setLayoutType = () => {},
+  navigateToEditPage = () => {},
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const options = [
+    {label: "Side peek", icon: "SidePeek"},
+    {label: "Center peek", icon: "CenterPeek"},
+    {label: "Full page", icon: "FullPage"},
+  ];
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (option) => {
+    localStorage.setItem("detailPage", option?.icon);
+    if (option?.icon === "FullPage") {
+      setLayoutType("SimpleLayout");
+      navigateToEditPage(selectedRow);
+    }
+
+    if (option) setSelectedViewType(option?.icon);
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box>
+      <Box onClick={handleClick}>
+        <span>{getColumnFieldIcon(selectedViewType)}</span>
+      </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => handleClose(null)}>
+        <Box sx={{width: "220px", padding: "4px 0"}}>
+          {options.map((option) => (
+            <MenuItem
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: "6px",
+                color: "#37352f",
+              }}
+              key={option.label}
+              onClick={() => handleClose(option)}>
+              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+                <span>{getColumnFieldIcon(option)}</span>
+                {option.label}
+              </Box>
+
+              <Box>{option?.icon === selectedViewType ? <Check /> : ""}</Box>
+            </MenuItem>
+          ))}
+        </Box>
+      </Menu>
+    </Box>
+  );
+};
+
+export const getColumnFieldIcon = (column) => {
+  if (column === "SidePeek") {
+    return (
+      <img
+        src="/img/drawerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else if (column === "CenterPeek") {
+    return (
+      <img
+        src="/img/centerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else
+    return (
+      <img
+        src="/img/fullpagePeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
 };
 
 export default DrawerFormDetailPage;

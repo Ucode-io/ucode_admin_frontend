@@ -2,15 +2,14 @@ import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import {useLocation, useParams, useSearchParams} from "react-router-dom";
-import {useMenuPermissionGetByIdQuery} from "../../../services/rolePermissionService";
-import constructorViewService from "../../../services/constructorViewService";
-import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-import menuService from "../../../services/menuService";
-import {store} from "../../../store";
 import {useQuery} from "react-query";
-import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {TabPanel, Tabs} from "react-tabs";
+import constructorViewService from "../../services/constructorViewService";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import menuService from "../../services/menuService";
+import {NewUiViewsWithGroups} from "../../views/table-redesign/views-with-groups";
+import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
+import {Box} from "@chakra-ui/react";
 
 function DrawerObjectsPage({
   projectInfo,
@@ -74,7 +73,7 @@ function DrawerObjectsPage({
   //   },
   // });
 
-  const {data: views, refetch} = useQuery(
+  const {data: views, refetch: refetchViews} = useQuery(
     ["GET_VIEWS_LIST", menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
@@ -145,13 +144,15 @@ function DrawerObjectsPage({
   );
 
   return (
-    <>
+    <Box>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  modal={true}
+                  refetchViews={refetchViews}
                   selectedViewType={selectedViewType}
                   setSelectedViewType={setSelectedViewType}
                   tableInfo={tableInfo}
@@ -177,7 +178,6 @@ function DrawerObjectsPage({
                   data={data}
                   selectedRow={selectedRow}
                   handleClose={handleClose}
-                  modal={true}
                   dateInfo={dateInfo}
                   setFullScreen={setFullScreen}
                   fullScreen={fullScreen}
@@ -187,7 +187,7 @@ function DrawerObjectsPage({
           })}
         </div>
       </Tabs>
-    </>
+    </Box>
   );
 }
 

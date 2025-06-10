@@ -22,6 +22,7 @@ export const FIELD_TYPES = {
   PASSWORD: "PASSWORD",
   FORMULA: "FORMULA",
   LOOKUP: "LOOKUP",
+  LOOKUPS: "LOOKUPS",
   FILE: "FILE",
 }
 

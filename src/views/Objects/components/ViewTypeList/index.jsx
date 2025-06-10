@@ -179,7 +179,7 @@ export default function ViewTypeList({
             },
           })
           .then(() => {
-            refetchViews();
+            queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
             setBtnLoader(false);
@@ -200,8 +200,9 @@ export default function ViewTypeList({
         : [];
       constructorViewService
         .create(tableSlug, newViewJSON)
-        .then(() => {
-          refetchViews();
+        .then((res) => {
+          queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+          // refetchViews();
         })
         .finally(() => {
           setBtnLoader(false);

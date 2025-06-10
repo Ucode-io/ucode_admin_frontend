@@ -115,80 +115,84 @@ const BoardColumn = ({
       });
   }, 0);
 
-  const onDrop = (dropResult) => {
-    let dropResultTemp = { ...dropResult };
+const onDrop = (dropResult) => {
+  let dropResultTemp = { ...dropResult };
 
-    const payload = dropResultTemp.payload;
+  const payload = dropResultTemp.payload;
 
-    if (dropResult?.addedIndex !== null && subGroupById) {
-      payload[subGroupFieldSlug] = subItem;
-    }
+  if (dropResult?.addedIndex !== null && subGroupById) {
+    payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
+  }
 
-    // if (isStatusType) {
-    //   payload[selectedGroupField?.slug] = tab?.name;
-    // } else {
-    // if (Array.isArray(payload[subGroupFieldSlug]))
-    //   payload[subGroupFieldSlug].includes(tab.value);
-    // payload[subGroupFieldSlug] = tab.value;
+  // if (isStatusType) {
+  //   payload[selectedGroupField?.slug] = tab?.name;
+  // } else {
+  // if (Array.isArray(payload[subGroupFieldSlug]))
+  //   payload[subGroupFieldSlug].includes(tab.value);
+  // payload[subGroupFieldSlug] = tab.value;
+  // }
+
+  payload["color"] = tab?.color || color;
+
+  if (subGroupById && payload[subGroupFieldSlug] !== subItem) {
+    payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
+  }
+
+  if (
+    groupField?.type === FIELD_TYPES.LOOKUP ||
+    groupField?.type === FIELD_TYPES.LOOKUPS
+  ) {
+    payload[groupField?.slug] =
+      group?.name === "Unassigned" ? null : group?.name;
+
+    // if (subGroupById) {
+    //   payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
     // }
+  } else if (groupField?.type === FIELD_TYPES.MULTISELECT) {
+    payload[groupSlug] = group?.name === "Unassigned" ? null : [group?.name];
+  } else {
+    payload[groupSlug] = group?.name === "Unassigned" ? null : group?.name;
+  }
 
-    payload["color"] = tab?.color || color;
+  const result = applyDrag(boardData, dropResultTemp);
 
-    if (subGroupById && payload[subGroupFieldSlug] !== subItem) {
-      payload[subGroupFieldSlug] = subItem;
-    }
+  setIndex(dropResult?.addedIndex);
 
-    if (
-      groupField?.type === FIELD_TYPES.LOOKUP ||
-      groupField?.type === FIELD_TYPES.LOOKUPS
-    ) {
-      payload[groupField?.slug] =
-        group?.name === "Unassigned" ? null : group?.name;
-    } else if (groupField?.type === FIELD_TYPES.MULTISELECT) {
-      payload[groupSlug] = group?.name === "Unassigned" ? null : [group?.name];
-    } else {
-      payload[groupSlug] = group?.name === "Unassigned" ? null : group?.name;
-    }
+  if (result) {
+    setComputedBoardData(result);
 
-    const result = applyDrag(boardData, dropResultTemp);
-
-    setIndex(dropResult?.addedIndex);
-
-    if (result) {
-      setComputedBoardData(result);
-
-      if (subGroupById) {
-        setBoardData((prev) => {
-          return {
-            ...prev,
-            [subItem]: {
-              ...prev[subItem],
-              [groupItem]: result,
-            },
-          };
-        });
-      } else {
-        setBoardData((prev) => {
-          return {
-            ...prev,
+    if (subGroupById) {
+      setBoardData((prev) => {
+        return {
+          ...prev,
+          [subItem]: {
+            ...prev[subItem],
             [groupItem]: result,
-          };
-        });
-      }
+          },
+        };
+      });
+    } else {
+      setBoardData((prev) => {
+        return {
+          ...prev,
+          [groupItem]: result,
+        };
+      });
     }
+  }
 
-    if (
-      result?.length >= boardData?.length &&
-      dropResult?.addedIndex !== dropResult?.removedIndex
-    ) {
-      const mutateData = {
-        ...dropResult.payload,
-        board_order: dropResult.addedIndex + 1,
-      };
+  if (
+    result?.length >= boardData?.length &&
+    dropResult?.addedIndex !== dropResult?.removedIndex
+  ) {
+    const mutateData = {
+      ...dropResult.payload,
+      board_order: dropResult.addedIndex + 1,
+    };
 
-      mutateDrop(mutateData);
-    }
-  };
+    mutateDrop(mutateData);
+  }
+};
 
   const viewFields = useMemo(() => {
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];

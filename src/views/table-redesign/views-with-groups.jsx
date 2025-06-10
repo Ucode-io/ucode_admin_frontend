@@ -262,7 +262,11 @@ export const NewUiViewsWithGroups = ({
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${menuId}/objects/${tableSlug}?menuId=${menuId}`;
-    navigate(url);
+    navigate(url, {
+      state: {
+        tableInfo: tableInfo,
+      },
+    });
   };
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(

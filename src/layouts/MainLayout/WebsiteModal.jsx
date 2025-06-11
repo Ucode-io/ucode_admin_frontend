@@ -99,31 +99,37 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFIconPicker name="icon" control={control} />
-              {languages?.map((item, index) => (
-                <>
-                  <HFTextField
-                    autoFocus
-                    fullWidth
-                    required
-                    label={`Title ${item.slug}`}
-                    control={control}
-                    name={`attributes.label_${item.slug}`}
-                  />
-                </>
-              ))}
-            </Box>
-            <Box>
-              <HFTextField
-                autoFocus
-                fullWidth
-                required
-                placeholder={"Website link"}
-                // label={`Title ${item.slug}`}
-                control={control}
-                name={`attributes.website_link`}
-              />
+            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+              <Box
+                display={"flex"}
+                columnGap={"16px"}
+                className="form-elements"
+              >
+                <HFIconPicker name="icon" control={control} />
+                {languages?.map((item, index) => (
+                  <>
+                    <HFTextField
+                      autoFocus
+                      fullWidth
+                      required
+                      label={`Title ${item.slug}`}
+                      control={control}
+                      name={`attributes.label_${item.slug}`}
+                    />
+                  </>
+                ))}
+              </Box>
+              <Box>
+                <HFTextField
+                  autoFocus
+                  fullWidth
+                  required
+                  placeholder={"Website link"}
+                  // label={`Title ${item.slug}`}
+                  control={control}
+                  name={`attributes.website_link`}
+                />
+              </Box>
             </Box>
             <div className="btns-row">
               <SaveButton title="Add" type="submit" loading={loading} />

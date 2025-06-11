@@ -122,28 +122,38 @@ const MicrofrontendLinkModal = ({
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFIconPicker name="icon" control={control} />
-              {languages?.map((item, index) => (
-                <HFTextField
-                  autoFocus
+            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+              <Box
+                display={"flex"}
+                columnGap={"16px"}
+                className="form-elements"
+              >
+                <HFIconPicker name="icon" control={control} />
+                {languages?.map((item, index) => (
+                  <HFTextField
+                    autoFocus
+                    fullWidth
+                    required
+                    label={`Title ${item.slug}`}
+                    control={control}
+                    name={`attributes.label_${item.slug}`}
+                  />
+                ))}
+              </Box>
+              <Box
+                display={"flex"}
+                columnGap={"16px"}
+                className="form-elements"
+              >
+                <HFSelect
                   fullWidth
-                  required
-                  label={`Title ${item.slug}`}
+                  label="Microfrontend"
                   control={control}
-                  name={`attributes.label_${item.slug}`}
+                  name="microfrontend_id"
+                  options={microfrontendOptions}
+                  required
                 />
-              ))}
-            </Box>
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFSelect
-                fullWidth
-                label="Microfrontend"
-                control={control}
-                name="microfrontend_id"
-                options={microfrontendOptions}
-                required
-              />
+              </Box>
             </Box>
             {values?.map((elements, index) => (
               <div key={elements?.key} className={styles.navigateWrap}>
@@ -161,7 +171,8 @@ const MicrofrontendLinkModal = ({
                 />
                 <RectangleIconButton
                   onClick={() => deleteField(index)}
-                  color="error">
+                  color="error"
+                >
                   <Delete color="error" />
                 </RectangleIconButton>
               </div>
@@ -170,7 +181,8 @@ const MicrofrontendLinkModal = ({
               className={styles.button}
               variant="contained"
               fullWidth
-              onClick={addField}>
+              onClick={addField}
+            >
               Add params
             </Button>
             <div className="btns-row">

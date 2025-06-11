@@ -76,6 +76,7 @@ import {ClientTypes} from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
+import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -406,7 +407,8 @@ const Router = () => {
             path=":menuId/detail"
             element={
               <KeepAliveWrapper>
-                <ObjectsFormPage />
+                {/* <ObjectsFormPage /> */}
+                <NewObjectsFormPage />
               </KeepAliveWrapper>
             }
           />

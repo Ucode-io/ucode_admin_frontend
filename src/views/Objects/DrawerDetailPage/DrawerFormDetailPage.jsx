@@ -21,6 +21,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 
 function DrawerFormDetailPage({
+  view,
   modal,
   data,
   layout,
@@ -196,6 +197,8 @@ function DrawerFormDetailPage({
             marginBottom: "10px",
           }}>
           <ScreenOptions
+            projectInfo={projectInfo}
+            view={view}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}
             setLayoutType={setLayoutType}
@@ -503,12 +506,16 @@ const CHTextField = ({
 };
 
 const ScreenOptions = ({
+  projectInfo,
+  view,
   selectedViewType,
   selectedRow,
   setSelectedViewType = () => {},
   setLayoutType = () => {},
   navigateToEditPage = () => {},
 }) => {
+  const navigate = useNavigate();
+  const {menuId} = useParams();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const options = [
@@ -525,7 +532,14 @@ const ScreenOptions = ({
     localStorage.setItem("detailPage", option?.icon);
     if (option?.icon === "FullPage") {
       setLayoutType("SimpleLayout");
-      navigateToEditPage(selectedRow);
+      navigate(`/${menuId}/detail?p=${selectedRow?.guid}`, {
+        state: {
+          viewId: view?.id,
+          table_slug: view?.table_slug,
+          projectInfo: projectInfo,
+          selectedRow: selectedRow,
+        },
+      });
     }
 
     if (option) setSelectedViewType(option?.icon);

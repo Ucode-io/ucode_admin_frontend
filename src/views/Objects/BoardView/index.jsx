@@ -39,6 +39,7 @@ import {
 import useDebounce from "../../../hooks/useDebounce";
 import { useThrottledCallback } from "@mantine/hooks";
 import { throttle } from "lodash-es";
+import { flushSync } from "react-dom";
 
 const getMergedDataSubgroup = ({ newData, prev }) => {
   const merged = { ...prev };
@@ -229,12 +230,17 @@ const BoardView = ({
   const limit = 10;
   const [offset, setOffset] = useState(0);
   const [count, setCount] = useState(0);
+  const [subgroupsQueue, setSubgroupsQueue] = useState([]);
+  const [currentSubgroupIndex, setCurrentSubgroupIndex] = useState(0);
+
+  const tempMergedData = useRef({});
+  const prevOffset = useRef(null);
 
   const boardMutation = useGetBoardMutation(
     {
       onSuccess: (data) => {
         setCount(data?.data?.count ?? 0);
-        if (offset === 0) {
+        if (offset === 0 && !subGroupById) {
           setBoardData(data?.data?.response ?? {});
         } else {
           const newData = data?.data?.response;
@@ -242,12 +248,30 @@ const BoardView = ({
 
           setBoardData((prev) => {
             if (subGroupById) {
-              return getMergedDataSubgroup({ newData, prev });
+              tempMergedData.current = getMergedDataSubgroup({ newData, prev });
+              return tempMergedData.current;
             } else {
               return getMergedDataGroup({ newData, prev });
             }
           });
+
+          if (subGroupById) {
+            const currentSubgroup = subgroupsQueue[currentSubgroupIndex];
+
+            // if (boardData) {
+            //   const dataLength = Object.values(
+            //     boardData[currentSubgroup?.name]
+            //   ).flat()?.length;
+
+            //   if (dataLength >= currentSubgroup.count) {
+            //     setCurrentSubgroupIndex((prev) => prev + 1);
+            //   } else {
+            //     setOffset((prev) => prev + limit);
+            //   }
+            // }
+          }
         }
+
         setLoadingData(false);
       },
       // onSuccess: (data) => {
@@ -274,6 +298,24 @@ const BoardView = ({
     },
     tableSlug
   );
+
+  useEffect(() => {
+    if (subGroupById && currentSubgroupIndex < subgroupsQueue.length) {
+      const currentSubgroup = subgroupsQueue[currentSubgroupIndex];
+
+      if (boardData[currentSubgroup?.name]) {
+        const dataLength = Object.values(
+          boardData[currentSubgroup?.name]
+        ).flat().length;
+
+        if (dataLength >= currentSubgroup.count) {
+          setCurrentSubgroupIndex((prev) => prev + 1);
+        } else {
+          setOffset((prev) => prev + limit);
+        }
+      }
+    }
+  }, [boardData]);
 
   const mutateBoardData = (offsetProp) => {
     const fields = [
@@ -315,6 +357,7 @@ const BoardView = ({
           setGroups(data?.data?.groups ?? []);
         }
         setSubGroups(data?.data?.subgroups ?? []);
+        setSubgroupsQueue([data?.data?.subgroups[0]] ?? []);
       },
     },
     tableSlug
@@ -610,23 +653,45 @@ const BoardView = ({
 
         const isElementInViewport = isInViewport(item);
 
-        const hasMore = boardData?.[subGroup?.name]
-          ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
-            subGroup.count
-          : true;
-
-        if (
-          isElementInViewport &&
-          !loadingData &&
-          hasMore &&
-          !fetchedSubGroups.current.includes(index)
-          // (!fetchedSubGroups.current.includes(index) ||
-          //   index === subGroups.length - 1)
-        ) {
-          fetchedSubGroups.current.push(index);
-          setOffset((prev) => prev + limit);
-          setLoadingData(true);
+        if (isElementInViewport) {
+          flushSync(() => {
+            setSubgroupsQueue((prev) => {
+              if (prev?.find((item) => item?.name === subGroup?.name)) {
+                return prev;
+              } else {
+                setOffset((prev) => prev + limit);
+                return [...prev, subGroup];
+              }
+            });
+          });
         }
+
+        // const hasMore = boardData?.[subGroup?.name]
+        //   ? Object.values(boardData?.[subGroup?.name])?.flat()?.length <
+        //     subGroup.count
+        //   : true;
+
+        // if (isElementInViewport && hasMore) {
+        //   setSubgroupsQueue((prev) => {
+        //     console.log({ subGroup });
+        //     if (prev?.find((item) => item?.name === subGroup?.name))
+        //       return prev;
+        //     return [...prev, subGroup];
+        //   });
+        // }
+
+        // if (
+        //   isElementInViewport &&
+        //   !loadingData &&
+        //   hasMore &&
+        //   !fetchedSubGroups.current.includes(index)
+        //   // (!fetchedSubGroups.current.includes(index) ||
+        //   //   index === subGroups.length - 1)
+        // ) {
+        //   fetchedSubGroups.current.push(index);
+        //   setOffset((prev) => prev + limit);
+        //   setLoadingData(true);
+        // }
       });
     }
   }, 1500);
@@ -647,8 +712,20 @@ const BoardView = ({
   }, 1000);
 
   useEffect(() => {
-    mutateBoardData();
+    if (!subGroupById) {
+      mutateBoardData();
+    }
   }, [offset, groupField, subGroupField, subGroupFieldSlug]);
+
+  const isFirstGet = useRef(true);
+
+  useEffect(() => {
+    if (subGroupById && !isFirstGet.current && prevOffset.current !== offset) {
+      mutateBoardData();
+    } else {
+      isFirstGet.current = false;
+    }
+  }, [offset, groupField, subGroupField, subGroupFieldSlug, subgroupsQueue]);
 
   useEffect(() => {
     const board = boardRef.current;

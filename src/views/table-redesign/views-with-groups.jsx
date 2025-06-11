@@ -130,7 +130,6 @@ export const NewUiViewsWithGroups = ({
   selectedRow: row,
   data,
   dateInfo,
-  setFullScreen,
   fullScreen,
   tableInfo,
   selectedViewType,
@@ -139,6 +138,7 @@ export const NewUiViewsWithGroups = ({
   refetchViews = () => {},
   setSelectedView = () => {},
   handleClose = () => {},
+  setFullScreen = () => {},
   handleMouseDown = () => {},
   setSelectedTabIndex = () => {},
   setSelectedViewType = () => {},
@@ -458,7 +458,7 @@ export const NewUiViewsWithGroups = ({
     <>
       <ChakraProvider theme={chakraUITheme}>
         <Flex
-          h={modal ? `80vh` : "100vh"}
+          h={modal ? `100vh` : "100vh"}
           overflow={"hidden"}
           flexDirection="column"
           bg={"white"}>
@@ -824,6 +824,7 @@ export const NewUiViewsWithGroups = ({
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
                   <DrawerFormDetailPage
+                    view={view}
                     modal={modal}
                     tableInfo={tableInfo}
                     navigateToEditPage={navigateToEditPage}

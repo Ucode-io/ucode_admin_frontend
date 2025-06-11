@@ -52,7 +52,6 @@ function DrawerDetailPage({
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
-  const [layoutTabs, setLayoutTabs] = useState(layout?.tabs || []);
   const tableSlug = view?.table_slug || view?.relation?.table_to?.slug;
   const [selectedView, setSelectedView] = useState(null);
 
@@ -122,7 +121,6 @@ function DrawerDetailPage({
           };
         }),
       };
-      setLayoutTabs(layout2?.tabs);
       setData(layout2);
       setSections(sortSections(sections));
       setSummary(layout?.summary_fields ?? []);
@@ -194,7 +192,6 @@ function DrawerDetailPage({
           };
         }),
       };
-      setLayoutTabs(layout2?.tabs);
       setData(layout2);
       setSections(sortSections(sections));
 

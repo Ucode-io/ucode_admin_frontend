@@ -24,21 +24,21 @@ import {Button} from "../Button";
 import {AddIcon} from "@chakra-ui/icons";
 
 const tableHeads = [
-  "Date",
   "Project",
-  "Fare",
-  "Payment Type",
-  "Type",
-  "Status",
-  "Currency",
   "Amount",
+  // "Fare",
+  // "Payment Type",
+  "Type",
+  // "Status",
+  // "Currency",
+  "Date",
 ];
 
-export const BillingTable = ({handClickBalance}) => {
-  const {transactions, project, isLoading} = useBillingTableProps();
+export const BillingTable = ({ handClickBalance }) => {
+  const { transactions, project, isLoading } = useBillingTableProps();
 
   return (
-    <Box sx={{mt: 2}}>
+    <Box sx={{ mt: 2 }}>
       <Typography
         variant="h6"
         sx={{
@@ -46,7 +46,8 @@ export const BillingTable = ({handClickBalance}) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         Transactions
         <Button className={cls.btn} onClick={handClickBalance} primary>
           <Box display="flex" alignItems="center" gap="4px">
@@ -64,14 +65,16 @@ export const BillingTable = ({handClickBalance}) => {
           border: "1px solid #dbe0e4",
           marginBottom: "15px",
         }}
-        className="scrollbarNone">
+        className="scrollbarNone"
+      >
         <Table
           sx={{
             position: "relative",
             borderTop: "0px",
             borderRadius: "8px",
           }}
-          stickyHeader>
+          stickyHeader
+        >
           <TableHead>
             <TableRow>
               {tableHeads?.map((item, index) => (
@@ -100,23 +103,27 @@ export const BillingTable = ({handClickBalance}) => {
                       },
                     },
                     // "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
-                  }}>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
-                    {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
+                  }}
+                >
+                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
                     {project?.title}
                   </TableCell>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
+                  <TableCell sx={{ fontSize: "14px" }}>
+                    {numberWithSpaces(row.amount)} UZS
+                  </TableCell>
+                  {/* <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.fare?.name ?? ""}
                   </TableCell>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
+                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
                     {row.payment_type ?? ""}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
+                  </TableCell> */}
+                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
                     {row.transaction_type ?? ""}
                   </TableCell>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
+                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                    {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
+                  </TableCell>
+                  {/* <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.payment_status === "accepted" ? (
                       <Typography
                         variant="body2"
@@ -157,10 +164,7 @@ export const BillingTable = ({handClickBalance}) => {
                   </TableCell>
                   <TableCell sx={{fontSize: "14px"}}>
                     {row?.currency?.code}
-                  </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
-                    {numberWithSpaces(row.amount)}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))
             ) : (
@@ -178,10 +182,11 @@ export const BillingTable = ({handClickBalance}) => {
                   borderTop: "0px",
                   borderBottomLeftRadius: "8px",
                   borderBottomRightRadius: "8px",
-                }}>
+                }}
+              >
                 No transactions are found.
-                <Box sx={{marginTop: "12px"}}>
-                  <BackupTableIcon style={{width: "40px", height: "30px"}} />
+                <Box sx={{ marginTop: "12px" }}>
+                  <BackupTableIcon style={{ width: "40px", height: "30px" }} />
                 </Box>
               </Box>
             )}

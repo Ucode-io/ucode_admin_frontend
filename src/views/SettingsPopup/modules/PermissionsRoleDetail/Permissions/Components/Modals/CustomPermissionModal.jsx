@@ -60,11 +60,11 @@ const CustomPermissionModal = ({
       name: "Add field",
       controlName: "add_field",
     },
-    {
-      guid: "8",
-      name: "Delete All",
-      controlName: "delete_all",
-    },
+    // {
+    //   guid: "8",
+    //   name: "Delete All",
+    //   controlName: "delete_all",
+    // },
     // {
     //   guid: "9",
     //   name: "Add filter",
@@ -115,7 +115,7 @@ const CustomPermissionModal = ({
       language_btn: val ? "Yes" : "No",
       settings: val ? "Yes" : "No",
       pdf_action: val ? "Yes" : "No",
-      delete_all: val ? "Yes" : "No",
+      // delete_all: val ? "Yes" : "No",
       add_filter: val ? "Yes" : "No",
       field_filter: val ? "Yes" : "No",
       fix_column: val ? "Yes" : "No",

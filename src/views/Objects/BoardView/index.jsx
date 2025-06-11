@@ -227,7 +227,7 @@ const BoardView = ({
 
   const lastElementRef = useRef(null);
 
-  const limit = 10;
+  const limit = 100;
   const [offset, setOffset] = useState(0);
   const [count, setCount] = useState(0);
   const [subgroupsQueue, setSubgroupsQueue] = useState([]);

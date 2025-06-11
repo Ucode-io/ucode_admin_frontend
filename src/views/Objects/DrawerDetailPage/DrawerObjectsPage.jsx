@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import {useLocation, useParams, useSearchParams} from "react-router-dom";
@@ -11,6 +11,7 @@ import {useQuery} from "react-query";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {TabPanel, Tabs} from "react-tabs";
+import constructorRelationService from "../../../services/constructorRelationService";
 
 function DrawerObjectsPage({
   projectInfo,
@@ -144,6 +145,23 @@ function DrawerObjectsPage({
     }
   );
 
+  const {data: {relations} = {relations: []}} = useQuery(
+    ["GET_VIEWS_AND_FIELDS", tableSlug],
+    () => {
+      return constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        tableSlug
+      );
+    },
+    {
+      enabled: Boolean(tableSlug),
+      onSuccess: (res) => res?.relations ?? [],
+    }
+  );
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
@@ -152,6 +170,7 @@ function DrawerObjectsPage({
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  relationFields={relations}
                   selectedViewType={selectedViewType}
                   setSelectedViewType={setSelectedViewType}
                   tableInfo={tableInfo}

@@ -133,6 +133,7 @@ export const NewUiViewsWithGroups = ({
   fullScreen,
   tableInfo,
   selectedViewType,
+  relationFields = [],
   onSubmit = () => {},
   setViews = () => {},
   refetchViews = () => {},
@@ -325,11 +326,22 @@ export const NewUiViewsWithGroups = ({
     }
   };
 
-  // const replaceUrlVariables = (urlTemplate, data) => {
-  //   return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-  //     return data[variable] || "";
-  //   });
-  // };
+  function getTableRelations(relationFields, tableSlug) {
+    return relationFields?.filter((relation) => {
+      return !(
+        (relation.type === "Many2One" &&
+          relation.table_from?.slug === tableSlug) ||
+        (relation.type === "One2Many" &&
+          relation.table_to?.slug === tableSlug) ||
+        relation.type === "Recursive" ||
+        (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+        (relation.type === "Many2Dynamic" &&
+          relation.table_from?.slug === tableSlug)
+      );
+    });
+  }
+
+  const tableRelations = getTableRelations(relationFields, tableSlug);
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
     const db = await openDB();
@@ -609,6 +621,7 @@ export const NewUiViewsWithGroups = ({
                 horizontal: "left",
               }}>
               <ViewTypeList
+                tableRelations={tableRelations}
                 relationView={relationView}
                 view={view}
                 fieldsMap={fieldsMap}
@@ -760,6 +773,7 @@ export const NewUiViewsWithGroups = ({
                   </Button>
                 </PermissionWrapperV2>
                 <ViewOptions
+                  relationView={relationView}
                   refetchViews={refetchViews}
                   selectedTabIndex={selectedTabIndex}
                   isChanged={isChanged}
@@ -1042,6 +1056,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          tableSlug={tableSlug}
                           searchText={searchText}
                           open={open}
                           setOpen={setOpen}
@@ -1473,6 +1488,7 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
 };
 
 const ViewOptions = ({
+  relationView,
   view,
   viewName,
   refetchViews,
@@ -1491,7 +1507,6 @@ const ViewOptions = ({
   setSelectedTabIndex,
   settingsForm,
   views,
-  // queryClient,
 }) => {
   const queryClient = useQueryClient();
   const {menuId} = useParams();
@@ -1981,6 +1996,7 @@ const ViewOptions = ({
             </Box>
             <Box px="8px" py="4px">
               <DeleteViewButton
+                relationView={relationView}
                 view={view}
                 refetchViews={refetchViews}
                 tableLan={tableLan}
@@ -2750,6 +2766,7 @@ const ExcelImportButton = ({
 };
 
 const DeleteViewButton = ({
+  relationView,
   view,
   refetchViews,
   tableLan,
@@ -2757,11 +2774,15 @@ const DeleteViewButton = ({
 }) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
+  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
     onSuccess: () => {
       setSelectedTabIndex(0);
-      refetchViews();
+
+      relationView
+        ? queryClient.refetchQueries(["GET_VIEWS_LIST"])
+        : refetchViews();
     },
   });
 

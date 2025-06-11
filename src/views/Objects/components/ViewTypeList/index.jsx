@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import style from "./style.module.scss";
 import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import constructorViewService from "../../../../services/constructorViewService";
@@ -15,6 +15,7 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import constructorTableService from "../../../../services/constructorTableService";
 import listToOptions from "../../../../utils/listToOptions";
 import LinkIcon from "@mui/icons-material/Link";
+import constructorRelationService from "../../../../services/constructorRelationService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -28,11 +29,11 @@ const viewIcons = {
 
 export default function ViewTypeList({
   view,
+  tableRelations = [],
   computedViewTypes,
   views,
   handleClose,
   fieldsMap = {},
-  refetchViews,
   relationView = false,
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
@@ -40,7 +41,9 @@ export default function ViewTypeList({
   const [relationField, setRelationField] = useState(null);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
-  const tableSlug = view?.table_slug;
+  const tableSlug = relationView
+    ? relationField?.table_from?.slug
+    : view?.table_slug;
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
@@ -202,7 +205,6 @@ export default function ViewTypeList({
         .create(tableSlug, newViewJSON)
         .then((res) => {
           queryClient.refetchQueries(["GET_VIEWS_LIST"]);
-          // refetchViews();
         })
         .finally(() => {
           setBtnLoader(false);
@@ -230,9 +232,6 @@ export default function ViewTypeList({
   );
 
   const fields = data?.fields ?? [];
-  const relationFields = Object.values(fieldsMap)?.filter(
-    (el) => el?.type === "LOOKUP" || el?.type === "LOOKUPS"
-  );
 
   const computedColumns = useMemo(() => {
     const filteredFields = fields?.filter(
@@ -273,7 +272,7 @@ export default function ViewTypeList({
             borderRadius: "8px",
             padding: "6px",
           }}>
-          {relationFields?.map((item) => (
+          {tableRelations?.map((item) => (
             <Box
               sx={{
                 display: "flex",
@@ -288,7 +287,7 @@ export default function ViewTypeList({
               }}
               onClick={() => setRelationField(item)}>
               {" "}
-              <LinkIcon /> {item?.attributes?.[`label_${i18n?.language}`]}
+              <LinkIcon /> {item?.table_from?.label}
             </Box>
           ))}
         </Box>

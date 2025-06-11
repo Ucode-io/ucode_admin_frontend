@@ -317,26 +317,34 @@ const BoardView = ({
     }
   }, [boardData]);
 
-  const mutateBoardData = (offsetProp) => {
-    const fields = [
-      ...visibleColumns?.map((el) => el?.slug),
-      "guid",
-      "board_order",
-    ] ?? ["guid", "board_order"];
-    boardMutation.mutate({
-      data: {
-        group_by: {
-          field: groupField.slug,
-        },
-        subgroup_by: {
-          field: subGroupFieldSlug,
-        },
-        limit,
-        offset: offsetProp ?? offset,
-        fields: fields,
+const mutateBoardData = (offsetProp) => {
+  const fields = [
+    ...visibleColumns
+      ?.filter((item) => {
+        if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
+          return view?.columns?.includes(item?.relation_id);
+        } else {
+          return view?.columns?.includes(item?.id);
+        }
+      })
+      ?.map((el) => el?.slug),
+    "guid",
+    "board_order",
+  ] ?? ["guid", "board_order"];
+  boardMutation.mutate({
+    data: {
+      group_by: {
+        field: groupField.slug,
       },
-    });
-  };
+      subgroup_by: {
+        field: subGroupFieldSlug,
+      },
+      limit,
+      offset: offsetProp ?? offset,
+      fields: fields,
+    },
+  });
+};
 
   const boardStructureMutation = useGetBoardStructureMutation(
     {

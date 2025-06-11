@@ -15,7 +15,6 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import constructorTableService from "../../../../services/constructorTableService";
 import listToOptions from "../../../../utils/listToOptions";
 import LinkIcon from "@mui/icons-material/Link";
-import constructorRelationService from "../../../../services/constructorRelationService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -41,9 +40,10 @@ export default function ViewTypeList({
   const [relationField, setRelationField] = useState(null);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
-  const tableSlug = relationView
+  const tableSlug = Boolean(relationView)
     ? relationField?.table_from?.slug
     : view?.table_slug;
+
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
@@ -127,7 +127,7 @@ export default function ViewTypeList({
         headers: [],
         cookies: [],
       },
-      table_slug: relationView ? relationField?.table_slug : tableSlug,
+      table_slug: tableSlug,
       updated_fields: [],
       multiple_insert: false,
       multiple_insert_field: "",
@@ -176,6 +176,7 @@ export default function ViewTypeList({
         constructorViewService
           .create(tableSlug, {
             ...newViewJSON,
+            table_slug: tableSlug,
             attributes: {
               ...newViewJSON?.attributes,
               web_link: watch("web_link"),
@@ -202,7 +203,10 @@ export default function ViewTypeList({
         ? [watch("group_fields")]
         : [];
       constructorViewService
-        .create(tableSlug, newViewJSON)
+        .create(tableSlug, {
+          ...newViewJSON,
+          table_slug: tableSlug,
+        })
         .then((res) => {
           queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })

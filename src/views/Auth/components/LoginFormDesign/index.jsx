@@ -363,7 +363,7 @@ const LoginFormDesign = ({
   useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
-        if (connection.options.length === 1) {
+        if (connection?.options?.length === 1) {
           setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
           setSelectedCollection(connection.options[0]?.value);
           setValue(

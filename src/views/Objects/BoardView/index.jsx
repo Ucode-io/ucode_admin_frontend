@@ -63,6 +63,7 @@ const BoardView = ({
     isOnTop,
     subGroups,
     boardData,
+    refetchAfterChangeBoard,
   } = useBoardViewProps({
     view,
     fieldsMap,
@@ -266,13 +267,14 @@ const BoardView = ({
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          // refetch={refetch}
+          refetch={refetchAfterChangeBoard}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToEditPage}
           dateInfo={dateInfo}
           defaultValue={defaultValue}
+          modal
         />
       </MaterialUIProvider>
     </div>

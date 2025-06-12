@@ -130,12 +130,12 @@ export const useBoardViewProps = ({
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
-        value: [group?.name],
+        value: group?.name,
       });
     } else {
       setDefaultValue({
         field: group.slug,
-        value: [group.name],
+        value: group.name,
       });
     }
   };
@@ -223,7 +223,7 @@ export const useBoardViewProps = ({
     {
       onSuccess: (data) => {
         setCount(data?.data?.count ?? 0);
-        if (offset === 0 && !subGroupById) {
+        if (offset === 0) {
           setBoardData(data?.data?.response ?? {});
         } else {
           const newData = data?.data?.response;
@@ -331,7 +331,7 @@ export const useBoardViewProps = ({
     }
   }, [boardData]);
 
-  useEffect(() => {
+  const mutateBoardStructure = () => {
     const mutateBody = {
       data: {
         group_by: {
@@ -347,7 +347,17 @@ export const useBoardViewProps = ({
     }
 
     boardStructureMutation.mutate(mutateBody);
-  }, []);
+  };
+
+  const refetchAfterChangeBoard = () => {
+    mutateBoardStructure();
+    setOffset(0);
+  };
+
+  useEffect(() => {
+    mutateBoardStructure();
+    setOffset(0);
+  }, [subGroupById, groupFieldId]);
 
   // groupField, subGroupFieldSlug, subGroupById
 
@@ -426,15 +436,25 @@ export const useBoardViewProps = ({
   }, 1000);
 
   useEffect(() => {
-    if (!subGroupById) {
+    if (!subGroupById && boardStructureMutation.isSuccess) {
       mutateBoardData();
     }
-  }, [offset, groupField, subGroupField, subGroupFieldSlug]);
+  }, [
+    offset,
+    groupField,
+    subGroupField,
+    subGroupFieldSlug,
+    boardStructureMutation.isSuccess,
+  ]);
 
   const isFirstGet = useRef(true);
 
   useEffect(() => {
-    if (subGroupById && !isFirstGet.current) {
+    if (
+      subGroupById &&
+      !isFirstGet.current &&
+      boardStructureMutation.isSuccess
+    ) {
       mutateBoardData();
     } else {
       isFirstGet.current = false;
@@ -469,9 +489,9 @@ export const useBoardViewProps = ({
     };
   }, [boardRef.current, fixedElement.current, boardData]);
 
-  useEffect(() => {
-    setOffset(0);
-  }, [subGroupById]);
+  // useEffect(() => {
+  //   setOffset(0);
+  // }, [subGroupById, groupFieldId]);
 
   return {
     loader,
@@ -513,6 +533,7 @@ export const useBoardViewProps = ({
     isOnTop,
     subGroups,
     boardData,
+    refetchAfterChangeBoard,
   };
 };
 

@@ -103,6 +103,7 @@ import {TimelineSettings} from "./components/TimelineSettings";
 import TableView from "./table-view";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -173,6 +174,8 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+  const parentView = useSelector((state) => state?.groupField?.view);
+
   const groupTable = view?.attributes.group_by_columns;
 
   const settingsForm = useForm({
@@ -341,7 +344,10 @@ export const NewUiViewsWithGroups = ({
     });
   }
 
-  const tableRelations = getTableRelations(relationFields, tableSlug);
+  const tableRelations = getTableRelations(
+    relationFields,
+    parentView?.table_slug
+  );
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
     const db = await openDB();
@@ -408,6 +414,9 @@ export const NewUiViewsWithGroups = ({
 
   useEffect(() => {
     setSelectedView(view);
+    if (view?.type !== "SECTION" && !view?.is_relation_view) {
+      dispatch(groupFieldActions.setView(view));
+    }
   }, []);
 
   if (view?.type === "WEBSITE") {
@@ -589,6 +598,10 @@ export const NewUiViewsWithGroups = ({
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
                   setSelectedTabIndex(index);
+                  if (view?.type !== "SECTION" && !view?.is_relation_view) {
+                    console.log("entereddddddd!!!!!!!!");
+                    dispatch(groupFieldActions.setView(view));
+                  }
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||

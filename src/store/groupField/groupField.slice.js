@@ -1,19 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit"
+import {createSlice} from "@reduxjs/toolkit";
 
-export const { actions: groupFieldActions, reducer: groupFieldReducer } =
+export const {actions: groupFieldActions, reducer: groupFieldReducer} =
   createSlice({
     name: "groupField",
     initialState: {
-      list: {},
+      view: {},
     },
     reducers: {
-      setList: (state, { payload: { tableSlug, field } }) => {
-        
+      setView: (state, {payload}) => {
+        state.view = payload;
       },
     },
-    // extraReducers: {
-    //   [fetchConstructorTableListAction.fulfilled]: (state, { payload }) => {
-    //     state.list = payload ?? []
-    //   }
-    // }
-  })
+  });

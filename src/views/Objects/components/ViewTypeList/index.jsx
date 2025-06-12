@@ -15,6 +15,7 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import constructorTableService from "../../../../services/constructorTableService";
 import listToOptions from "../../../../utils/listToOptions";
 import LinkIcon from "@mui/icons-material/Link";
+import {useSelector} from "react-redux";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -45,9 +46,10 @@ export default function ViewTypeList({
     : view?.table_slug;
 
   const queryClient = useQueryClient();
+  const parentView = useSelector((state) => state?.groupField?.view);
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
-
+  console.log("parentViewparentView", parentView);
   const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
 
   const detectImageView = useMemo(() => {
@@ -218,14 +220,14 @@ export default function ViewTypeList({
   };
 
   const {data} = useQuery(
-    ["GET_TABLE_INFO", {tableSlug}],
+    ["GET_TABLE_INFO", {parentView}],
     () => {
-      return constructorTableService.getTableInfo(tableSlug, {
+      return constructorTableService.getTableInfo(parentView?.table_slug, {
         data: {},
       });
     },
     {
-      enabled: Boolean(tableSlug),
+      enabled: Boolean(parentView?.table_slug),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];

@@ -28,6 +28,8 @@ import NewSubMenu from "./NewSubMenu";
 import {useMenuListQuery} from "../../services/menuService";
 import {Skeleton, Tooltip} from "@mui/material";
 import {menuAccordionActions} from "../../store/menus/menus.slice";
+import oldClickHandler from "./oldClickHandler";
+import newClickHandler from "./newClickHandler";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -77,67 +79,30 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = (el) => {
-    if (element?.id === USERS_MENU_ITEM_ID) {
-      return navigate("/client-types");
-    }
-    dispatch(menuActions.setMenuItem(element));
-    dispatch(relationTabActions.clear());
+    const handler =
+      !localStorage.getItem("new_router") === "true"
+        ? newClickHandler
+        : oldClickHandler;
 
-    setSelectedApp(element);
-    if (element.type === "FOLDER") {
-      setFolderItem(el);
-      const isOpen = menuChilds[element.id]?.open;
-      if (isOpen) {
-        closeMenu(element.id);
-        return;
-      } else {
-        coontrolAccordionAction(element);
-        setElement(element);
-        setSubMenuIsOpen(true);
-      }
-
-      return;
-    } else if (element.type === "TABLE") {
-      setSubMenuIsOpen(false);
-      navigate(`/${element?.id}`);
-    } else if (element.type === "LINK") {
-      const website_link = element?.attributes?.website_link;
-      if (element?.attributes?.website_link) {
-        navigate(`/${element?.id}/website`, {
-          state: {
-            url: website_link,
-          },
-        });
-      } else if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
-        navigate(
-          replaceValues(
-            element?.attributes?.link,
-            auth?.loginTableSlug,
-            auth?.userId
-          )
-        );
-      } else {
-        navigate(element?.attributes?.link);
-      }
-      setSubMenuIsOpen(false);
-    } else if (element.type === "MICROFRONTEND") {
-      setSubMenuIsOpen(false);
-      let obj = {};
-      element?.attributes?.params.forEach((el) => {
-        obj[el.key] = el.value;
-      });
-      const searchParams = new URLSearchParams(obj || {});
-      return navigate({
-        pathname: `/${element.id}/page/${element?.data?.microfrontend?.id}`,
-        search: `?menuId=${element?.id}&${searchParams.toString()}`,
-      });
-    } else if (element.type === "WEBPAGE") {
-      navigate(
-        `/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`
-      );
-      setSubMenuIsOpen(false);
-    }
+    handler({
+      el,
+      element,
+      menuActions,
+      relationTabActions,
+      setSelectedApp,
+      setMenuDraggable,
+      menuChilds,
+      setFolderItem,
+      closeMenu,
+      navigate,
+      dispatch,
+      coontrolAccordionAction,
+      setElement,
+      setSubMenuIsOpen,
+      auth,
+    });
   };
+
   const menuStyle = {
     ...menuTemplate?.menu_template,
     text:

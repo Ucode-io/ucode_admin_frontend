@@ -28,6 +28,7 @@ const MainLayout = ({setFavicon, favicon}) => {
     queryParams: {
       onSuccess: (data) => {
         localStorage.setItem("project_status", data?.status);
+        localStorage.setItem("new_router", data?.new_router);
       },
     },
   });
@@ -35,7 +36,7 @@ const MainLayout = ({setFavicon, favicon}) => {
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
   );
-
+  console.log("projectInfoprojectInfo", projectInfo);
   useEffect(() => {
     setFavicon(projectInfo?.logo);
     document.title = projectInfo?.title;

@@ -77,6 +77,7 @@ import LanguageControl from "../components/LayoutSidebar/Components/LanguageCont
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
+import NewObjectsPage from "../views/Objects/NewObjectsPage";
 
 const AuthLayoutDesign = lazy(
   () => import("../layouts/AuthLayout/AuthLayoutDesign")
@@ -378,7 +379,7 @@ const NewRouter = () => {
 
           <Route
             path=":menuId"
-            element={<ReloadWrapper component={ObjectsPage} />}
+            element={<ReloadWrapper component={NewObjectsPage} />}
           />
 
           <Route path=":menuId/templates" element={<DocumentTemplates />} />

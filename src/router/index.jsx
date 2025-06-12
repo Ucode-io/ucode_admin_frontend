@@ -3,7 +3,9 @@ import NewRouter from "./NewRouter";
 import OldRouter from "./OldRouter";
 
 function Router() {
-  return <>{true ? <NewRouter /> : <OldRouter />}</>;
+  const routerSwitch = localStorage.getItem("new_router") || "";
+
+  return <>{Boolean(routerSwitch) ? <NewRouter /> : <OldRouter />}</>;
 }
 
 export default Router;

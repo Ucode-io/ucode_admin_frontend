@@ -74,10 +74,18 @@ const MainLayout = ({setFavicon, favicon}) => {
   };
 
   const handleOpenUserInvite = () => {
-    updateSearchParam("activeTab", TAB_COMPONENTS.USERS, {
-      key: "defaultOpenModal",
-      value: true,
-    });
+    updateSearchParam(
+      "activeTab",
+      TAB_COMPONENTS.USERS,
+      {
+        key: "defaultOpenModal",
+        value: true,
+      },
+      {
+        key: "invite",
+        value: true,
+      }
+    );
     handleOpenProfileModal();
   };
 

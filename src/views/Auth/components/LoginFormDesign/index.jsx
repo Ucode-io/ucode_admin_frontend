@@ -188,6 +188,10 @@ const LoginFormDesign = ({
     companyService
       .getCompanyList(data)
       .then((res) => {
+        console.log(
+          "res?.companies?.[0]?.projects?.[0]?.new_router",
+          res?.companies?.[0]?.projects?.[0]
+        );
         if (res?.companies) {
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});

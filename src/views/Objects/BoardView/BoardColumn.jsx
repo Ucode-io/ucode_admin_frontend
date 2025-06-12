@@ -2,7 +2,6 @@ import {Add} from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useEffect, useMemo, useRef } from "react";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
@@ -11,35 +10,26 @@ import { applyDrag } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import useDebounce from "../../../hooks/useDebounce";
-import { viewSearch } from "../../../utils/viewSearch";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const BoardColumn = ({
-  tab,
   group,
-  data = [],
   boardData = [],
   fieldsMap,
   view = {},
   computedColumnsFor,
-  menuItem,
-  layoutType,
-  setLayoutType,
   boardRef,
   index: columnIndex,
   subGroupById,
-  subGroupData = [],
   subItem,
   subGroupFieldSlug,
   setOpenDrawerModal,
   setSelectedRow,
   setDateInfo,
   setDefaultValue,
-  // setGroupCounts,
   searchText,
   columnsForSearch,
   groupSlug,
-  // mutateBoardData,
   getGroupCounts,
   setBoardData,
   groupItem,
@@ -51,166 +41,90 @@ const BoardColumn = ({
 
   const isStatusType = selectedGroupField?.type === "STATUS";
 
-  const { tableSlug, appId } = useParams();
-  const queryClient = useQueryClient();
+  const { tableSlug } = useParams();
 
   const [index, setIndex] = useState();
 
-  // const [computedData, setComputedData] = useState(
-  //   (subGroupById ? subGroupData : data).filter((el) => {
-  //     if (isStatusType) {
-  //       return el?.[selectedGroupField?.slug];
-  //     } else {
-  //       if (Array.isArray(el[tab.slug]))
-  //         return el[tab.slug].includes(tab.value);
-  //       return el[tab.slug] === tab.value;
-  //     }
-  //   })
-  // );
-
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
-  );
-
-  const { mutate } = useMutation(
-    ({ data, index }) => {
-      const mutateData = {
-        ...data,
-        board_order: index + 1,
-      };
-      if (isStatusType) {
-        mutateData[selectedGroupField?.slug] = tab.value;
-      } else {
-        mutateData[tab.slug] = tab.value;
-      }
-
-      return constructorObjectService.update(tableSlug, {
-        data: mutateData,
-      });
-    },
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-      },
-    }
-  );
-
   const mutateDrop = useDebounce((mutateData) => {
-    // console.log({ selectedGroupField });
-    // if (isStatusType) {
-    //   mutateData[groupSlug] = [group?.name];
-    // } else {
-    // }
-
     constructorObjectService
       .update(tableSlug, {
         data: mutateData,
       })
       .then(() => {
         getGroupCounts();
-        // queryClient.refetchListQueriesQueries(["GET_OBJECT_LIST_ALL"]);
-        // refetchListQueries();
       });
   }, 0);
 
-const onDrop = (dropResult) => {
-  let dropResultTemp = { ...dropResult };
+  const onDrop = (dropResult) => {
+    let dropResultTemp = { ...dropResult };
 
-  const payload = dropResultTemp.payload;
+    const payload = dropResultTemp.payload;
 
-  if (dropResult?.addedIndex !== null && subGroupById) {
-    payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
-  }
-
-  // if (isStatusType) {
-  //   payload[selectedGroupField?.slug] = tab?.name;
-  // } else {
-  // if (Array.isArray(payload[subGroupFieldSlug]))
-  //   payload[subGroupFieldSlug].includes(tab.value);
-  // payload[subGroupFieldSlug] = tab.value;
-  // }
-
-  payload["color"] = tab?.color || color;
-
-  if (subGroupById && payload[subGroupFieldSlug] !== subItem) {
-    payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
-  }
-
-  if (
-    groupField?.type === FIELD_TYPES.LOOKUP ||
-    groupField?.type === FIELD_TYPES.LOOKUPS
-  ) {
-    payload[groupField?.slug] =
-      group?.name === "Unassigned" ? null : group?.name;
-
-    // if (subGroupById) {
-    //   payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
-    // }
-  } else if (groupField?.type === FIELD_TYPES.MULTISELECT) {
-    payload[groupSlug] = group?.name === "Unassigned" ? null : [group?.name];
-  } else {
-    payload[groupSlug] = group?.name === "Unassigned" ? null : group?.name;
-  }
-
-  const result = applyDrag(boardData, dropResultTemp);
-
-  setIndex(dropResult?.addedIndex);
-
-  if (result) {
-    setComputedBoardData(result);
-
-    if (subGroupById) {
-      setBoardData((prev) => {
-        return {
-          ...prev,
-          [subItem]: {
-            ...prev[subItem],
-            [groupItem]: result,
-          },
-        };
-      });
-    } else {
-      setBoardData((prev) => {
-        return {
-          ...prev,
-          [groupItem]: result,
-        };
-      });
+    if (dropResult?.addedIndex !== null && subGroupById) {
+      payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
     }
-  }
 
-  if (
-    result?.length >= boardData?.length &&
-    dropResult?.addedIndex !== dropResult?.removedIndex
-  ) {
-    const mutateData = {
-      ...dropResult.payload,
-      board_order: dropResult.addedIndex + 1,
-    };
+    payload["color"] = color;
 
-    mutateDrop(mutateData);
-  }
-};
+    if (subGroupById && payload[subGroupFieldSlug] !== subItem) {
+      payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
+    }
+
+    if (
+      groupField?.type === FIELD_TYPES.LOOKUP ||
+      groupField?.type === FIELD_TYPES.LOOKUPS
+    ) {
+      payload[groupField?.slug] =
+        group?.name === "Unassigned" ? null : group?.name;
+    } else if (groupField?.type === FIELD_TYPES.MULTISELECT) {
+      payload[groupSlug] = group?.name === "Unassigned" ? null : [group?.name];
+    } else {
+      payload[groupSlug] = group?.name === "Unassigned" ? null : group?.name;
+    }
+
+    const result = applyDrag(boardData, dropResultTemp);
+
+    setIndex(dropResult?.addedIndex);
+
+    if (result) {
+      setComputedBoardData(result);
+
+      if (subGroupById) {
+        setBoardData((prev) => {
+          return {
+            ...prev,
+            [subItem]: {
+              ...prev[subItem],
+              [groupItem]: result,
+            },
+          };
+        });
+      } else {
+        setBoardData((prev) => {
+          return {
+            ...prev,
+            [groupItem]: result,
+          };
+        });
+      }
+    }
+
+    if (
+      result?.length >= boardData?.length &&
+      dropResult?.addedIndex !== dropResult?.removedIndex
+    ) {
+      const mutateData = {
+        ...dropResult.payload,
+        board_order: dropResult.addedIndex + 1,
+      };
+
+      mutateDrop(mutateData);
+    }
+  };
 
   const viewFields = useMemo(() => {
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
-  }, [view, fieldsMap, data]);
-
-  // useEffect(() => {
-  //   setComputedData(
-  //     (subGroupById ? subGroupData : data).filter((el) => {
-  //       if (isStatusType) {
-  //         return el?.[selectedGroupField?.slug] === tab?.label;
-  //       } else {
-  //         if (Array.isArray(el[tab.slug]))
-  //           return el[tab.slug].includes(tab.value);
-  //         return el[tab.slug] === tab.value;
-  //       }
-  //     })
-  //   );
-  // }, [data, subGroupById, subGroupData]);
+  }, [view, fieldsMap]);
 
   const navigateToEditPage = (el) => {
     setOpenDrawerModal(true);
@@ -224,12 +138,12 @@ const onDrop = (dropResult) => {
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
-        value: [tab?.label],
+        value: [group?.label],
       });
     } else {
       setDefaultValue({
-        field: tab.slug,
-        value: [tab.value],
+        field: group.slug,
+        value: [group.value],
       });
     }
 
@@ -243,17 +157,14 @@ const onDrop = (dropResult) => {
       ]);
     }
   };
-  const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
+  const field = computedColumnsFor?.find(
+    (field) => field?.slug === group?.slug
+  );
 
   const color =
-    tab?.color ||
-    field?.attributes?.options?.find((item) => item?.value === tab?.value)
+    group?.color ||
+    field?.attributes?.options?.find((item) => item?.value === group?.value)
       ?.color;
-
-  // const refetch = () => {
-  //   queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-  //   queryClient.refetchQueries(["GET_TABLE_INFO"]);
-  // };
 
   const fixedElement = useRef(null);
 
@@ -325,19 +236,6 @@ const onDrop = (dropResult) => {
                   key={el.guid}
                   onClick={() => navigateToEditPage(el)}
                   data-guid={el.guid}
-                  // ref={
-                  //   subGroupById
-                  //     ? computedBoardData[computedBoardData?.length - 1]?.[
-                  //         subGroupFieldSlug
-                  //       ] === lastSubGroup?.name &&
-                  //       group?.name === largestGroup?.name
-                  //       ? lastElementRef
-                  //       : null
-                  //     : boardDataIndex === computedBoardData?.length - 1 &&
-                  //         el?.[groupSlug] === largestGroup?.name
-                  //       ? lastElementRef
-                  //       : null
-                  // }
                 >
                   {photoViewFields.map((field) => (
                     <BoardPhotoGenerator

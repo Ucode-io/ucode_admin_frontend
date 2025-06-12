@@ -48,7 +48,7 @@ export const ColumnHeaderBlock = ({
           color="inherit"
           onClick={(e) => {
             e.stopPropagation();
-            navigateToCreatePage({ tab: group?.name });
+            navigateToCreatePage({ group });
           }}
         >
           <Add />

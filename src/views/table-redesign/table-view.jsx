@@ -24,10 +24,10 @@ import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import NewModalDetailPage from "../../components/NewModalDetailPage";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import menuService from "../../services/menuService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableView = ({
   selectedRow,
@@ -79,6 +79,7 @@ const TableView = ({
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
   const {id, menuId} = useParams();
+  const new_router = localStorage.getItem("new_router");
   const tableSlug = view?.table_slug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
@@ -613,25 +614,45 @@ const TableView = ({
 
         {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
-          <DrawerDetailPage
-            view={view}
-            projectInfo={projectInfo}
-            open={open}
-            setFormValue={setFormValue}
-            setOpen={setOpen}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            layoutType={layoutType}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
+          Boolean(new_router === "true") ? (
+            <DrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              setOpen={setOpen}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          ) : (
+            <OldDrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              setOpen={setOpen}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          )
         ) : selectedViewType === "CenterPeek" ? (
-          <NewModalDetailPage
+          <ModalDetailPage
             view={view}
             projectInfo={projectInfo}
             open={open}

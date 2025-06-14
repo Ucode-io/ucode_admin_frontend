@@ -847,7 +847,8 @@ export const NewUiViewsWithGroups = ({
                   </div>
                 </div>
               )}
-            {view?.type === "SECTION" ? (
+            {Boolean(localStorage.getItem("new_router") === "true") &&
+            view?.type === "SECTION" ? (
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
                   <DrawerFormDetailPage

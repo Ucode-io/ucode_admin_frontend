@@ -203,6 +203,10 @@ const LoginFormDesign = ({
             "newLayout",
             res?.companies?.[0]?.projects?.[0]?.new_layout
           );
+          localStorage.setItem(
+            "new_router",
+            res?.companies?.[0]?.projects?.[0]?.new_router || "false"
+          );
         } else {
           dispatch(showAlert("The company does not exist", "error"));
         }

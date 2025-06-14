@@ -1,92 +1,121 @@
-import {useEffect, useState} from "react";
+import chakraUITheme from "@/theme/chakraUITheme";
+import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
-import FiltersBlock from "../../components/FiltersBlock";
-import menuService from "../../services/menuService";
+import constructorTableService from "../../services/constructorTableService";
+import {useMenuGetByIdQuery} from "../../services/menuService";
+import {store} from "../../store";
 import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import CalendarHourView from "./CalendarHourView";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
 import ViewsWithGroups from "./ViewsWithGroups";
-import ViewTabSelector from "./components/ViewTypeSelector";
+
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
-import {Box, Skeleton} from "@mui/material";
-import constructorViewService from "../../services/constructorViewService";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
+import {Box, Popover, Skeleton} from "@mui/material";
+import NoDataPng from "../../assets/images/no-data.png";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import {viewTypes} from "../../utils/constants/viewTypes";
 import {DynamicTable} from "../table-redesign";
+import ViewTypeList from "./components/ViewTypeList";
 
 const ObjectsPage = () => {
-  const {state, pathname} = useLocation();
-  const {menuId} = useParams();
+  const {tableSlug} = useParams();
+  const {state} = useLocation();
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
-  const [selectedView, setSelectedView] = useState(null);
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const {appId} = useParams();
+  const [searchParams] = useSearchParams();
+  const queryTab = searchParams.get("view");
+  const menuId = searchParams.get("menuId");
 
-  const {data: views, refetch} = useQuery(
-    ["GET_VIEWS_LIST", menuId],
-    () => {
-      return constructorViewService.getViewListMenuId(menuId);
-    },
-    {
-      enabled: Boolean(menuId),
-      select: (res) => {
-        return (
-          res?.views?.filter(
-            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view)
-          ) ?? []
-        );
-      },
-      onSuccess: (data) => {
-        setSelectedView(data?.[selectedTabIndex]);
-        if (!pathname.includes("/login")) {
-          updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
-        }
-        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
-      },
-    }
+  const {i18n, t} = useTranslation();
+  const viewSelectedIndex = useSelector(
+    (state) =>
+      state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
+        ?.tabIndex
   );
+
+  const [selectedTabIndex, setSelectedTabIndex] = useState(
+    viewSelectedIndex?.tabIndex || 1
+  );
+  const [menuItem, setMenuItem] = useState(null);
+  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
+  const projectId = store.getState().company.projectId;
+  const auth = useSelector((state) => state.auth);
+  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
+
+  const parts = auth?.clientType?.default_page
+    ? auth?.clientType?.default_page?.split("/")
+    : companyDefaultLink.split("/");
+
+  const resultDefaultLink =
+    parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
+
+  const [isViewCreateModalOpen, setIsViewCreateModalOpen] = useState(false);
+  const addViewRef = useRef(null);
+  const handleAddViewClick = () => {
+    setIsViewCreateModalOpen(true);
+  };
+
+  const handleCloseViewCreateModal = () => {
+    setIsViewCreateModalOpen(false);
+  };
+
+  const params = {
+    language_setting: i18n?.language,
+  };
 
   const {
     data: {
+      views,
       fieldsMap,
       fieldsMapRel,
       visibleColumns,
       visibleRelationColumns,
-      tableInfo,
     } = {
+      views: [],
       fieldsMap: {},
       fieldsMapRel: {},
-      tableInfo: {},
       visibleColumns: [],
       visibleRelationColumns: [],
     },
     isLoading,
+    refetch,
   } = useQuery(
-    [
-      "GET_VIEWS_AND_FIELDS",
-      selectedView?.table_slug,
-      i18n?.language,
-      selectedTabIndex,
-    ],
+    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language, selectedTabIndex],
     () => {
-      if (Boolean(!selectedView?.table_slug)) return [];
-      return menuService.getFieldsListMenu(
-        menuId,
-        selectedView?.id,
-        selectedView?.table_slug
+      if (Boolean(!tableSlug)) return [];
+      return constructorTableService.getTableInfo(
+        tableSlug,
+        {
+          data: {},
+        },
+        params
       );
     },
     {
-      enabled: Boolean(selectedView?.table_slug),
+      enabled: Boolean(tableSlug),
+
       select: ({data}) => {
         return {
+          views:
+            data?.views?.filter(
+              (view) =>
+                view?.attributes?.view_permission?.view === true &&
+                view?.type !== "SECTION"
+            ) ?? [],
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
-          tableInfo: data?.table_info || {},
           visibleRelationColumns:
             data?.relation_fields?.map((el) => ({
               ...el,
@@ -94,14 +123,27 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
+      onSuccess: ({views}) => {
+        if (state?.toDocsTab) setSelectedTabIndex(views?.length);
+      },
     }
   );
 
   useEffect(() => {
-    if (pathname.includes("/login")) {
-      navigate("/", {replace: false});
-    }
-  }, []);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab - 1))
+      : setSelectedTabIndex(viewSelectedIndex || 0);
+  }, [queryTab]);
+
+  const {loader: menuLoader} = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
+    },
+  });
 
   const setViews = () => {};
 
@@ -131,10 +173,9 @@ const ObjectsPage = () => {
     setViews: setViews,
     selectedTabIndex: selectedTabIndex,
     setSelectedTabIndex: setSelectedTabIndex,
-    setSelectedView: setSelectedView,
-    selectedView: selectedView,
     views: views,
     fieldsMap: fieldsMap,
+    menuItem,
     fieldsMapRel,
   };
 
@@ -145,9 +186,9 @@ const ObjectsPage = () => {
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
-        tableInfo={tableInfo}
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
+        menuItem={menuItem}
         refetchViews={refetch}
         {...defaultProps}
         {...props}
@@ -156,6 +197,8 @@ const ObjectsPage = () => {
   };
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
+
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
 
   return (
     <>
@@ -179,15 +222,78 @@ const ObjectsPage = () => {
         </div>
       </Tabs>
 
-      {!views?.length && (
-        <FiltersBlock>
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-          />
-        </FiltersBlock>
-      )}
+      <ChakraProvider theme={chakraUITheme}>
+        {!views?.length && (
+          <Box height="100%">
+            <Box
+              height="40px"
+              width="100%"
+              bgcolor="#fff"
+              borderBottom="1px solid #EAECF0"
+              padding="0 16px"
+              display="flex"
+              alignItems="center">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
+                <Button
+                  leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  color="#475467"
+                  ref={addViewRef}
+                  onClick={handleAddViewClick}>
+                  {t("add")}
+                </Button>
+                {/* <div
+                // className={style.element}
+                variant="contained"
+                onClick={handleAddViewClick}
+                ref={addViewRef}
+              >
+                <AddIcon style={{ color: "#000" }} />
+                <strong style={{ color: "#000" }}>{t("add")}</strong>
+              </div> */}
+              </PermissionWrapperV2>
+            </Box>
+            <Box
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+              height="100%"
+              gap="16px">
+              <img src={NoDataPng} alt="No data" width={250} />
+              <Text fontSize="16px" fontWeight="500" color="#475467">
+                No data found
+              </Text>
+            </Box>
+          </Box>
+          // <FiltersBlock>
+          //   <ViewTabSelector
+          //     selectedTabIndex={selectedTabIndex}
+          //     setSelectedTabIndex={setSelectedTabIndex}
+          //     views={views}
+          //     menuItem={menuItem}
+          //   />
+          // </FiltersBlock>
+        )}
+      </ChakraProvider>
+      <Popover
+        id={"add-view-popover"}
+        open={isViewCreateModalOpen}
+        anchorEl={addViewRef.current}
+        onClose={handleCloseViewCreateModal}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}>
+        <ViewTypeList
+          views={views}
+          computedViewTypes={computedViewTypes}
+          fieldsMap={fieldsMap}
+          handleClose={handleCloseViewCreateModal}
+        />
+      </Popover>
     </>
   );
 };

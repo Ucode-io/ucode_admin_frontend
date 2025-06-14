@@ -1,5 +1,7 @@
 import "./style.scss";
 
+import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import {mainActions} from "@/store/main/main.slice";
 import {
   Accordion,
   AccordionButton,
@@ -9,27 +11,25 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useEffect, useMemo, useState} from "react";
-import {BsThreeDots} from "react-icons/bs";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Draggable} from "react-smooth-dnd";
 import AddIcon from "@mui/icons-material/Add";
-import IconGenerator from "../IconPicker/IconGenerator";
-import {useDispatch, useSelector} from "react-redux";
-import {menuActions} from "../../store/menuItem/menuItem.slice";
-import MenuIcon from "./MenuIcon";
-import {useTranslation} from "react-i18next";
-import {store} from "../../store";
-import {relationTabActions} from "../../store/relationTab/relationTab.slice";
-import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
-import {mainActions} from "@/store/main/main.slice";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import NewSubMenu from "./NewSubMenu";
-import {useMenuListQuery} from "../../services/menuService";
 import {Skeleton, Tooltip} from "@mui/material";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
+import {useMenuListQuery} from "../../services/menuService";
+import {store} from "../../store";
+import {menuActions} from "../../store/menuItem/menuItem.slice";
 import {menuAccordionActions} from "../../store/menus/menus.slice";
-import oldClickHandler from "./oldClickHandler";
+import {relationTabActions} from "../../store/relationTab/relationTab.slice";
+import IconGenerator from "../IconPicker/IconGenerator";
+import MenuIcon from "./MenuIcon";
+import NewSubMenu from "./NewSubMenu";
 import newClickHandler from "./newClickHandler";
+import oldClickHandler from "./oldClickHandler";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -80,7 +80,7 @@ const AppSidebar = ({
 
   const clickHandler = (el) => {
     const handler =
-      !localStorage.getItem("new_router") === "true"
+      localStorage.getItem("new_router") === "true"
         ? newClickHandler
         : oldClickHandler;
 

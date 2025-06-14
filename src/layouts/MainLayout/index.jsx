@@ -28,7 +28,7 @@ const MainLayout = ({setFavicon, favicon}) => {
     queryParams: {
       onSuccess: (data) => {
         localStorage.setItem("project_status", data?.status);
-        localStorage.setItem("new_router", data?.new_router);
+        localStorage.setItem("new_router", data?.new_router ?? "false");
       },
     },
   });

@@ -184,6 +184,41 @@ export const ProjectSettings = () => {
               />
             }
           />
+
+          <FormControlLabel
+            style={{marginLeft: "0", columnGap: "5px"}}
+            labelPlacement="start"
+            label={<span style={{fontWeight: "bold"}}>New Router: </span>}
+            control={
+              <Checkbox
+                icon={
+                  <img
+                    src="/img/checbkox.svg"
+                    alt="checkbox"
+                    style={{width: 20}}
+                  />
+                }
+                checkedIcon={
+                  <img
+                    src="/img/checkbox-checked.svg"
+                    alt="checked"
+                    style={{width: 20}}
+                  />
+                }
+                style={{
+                  transform: "translate(-1px)",
+                  marginRight: "8px",
+                  padding: "4px",
+                }}
+                checked={watch("new_router")}
+                onChange={() => {
+                  setValue("new_router", !watch("new_router"));
+                }}
+                {...register("new_router")}
+                color="primary"
+              />
+            }
+          />
         </FormGroup>
       </form>
 

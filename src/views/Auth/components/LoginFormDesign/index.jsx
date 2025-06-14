@@ -188,10 +188,6 @@ const LoginFormDesign = ({
     companyService
       .getCompanyList(data)
       .then((res) => {
-        console.log(
-          "res?.companies?.[0]?.projects?.[0]?.new_router",
-          res?.companies?.[0]?.projects?.[0]
-        );
         if (res?.companies) {
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});
@@ -206,6 +202,10 @@ const LoginFormDesign = ({
           localStorage.setItem(
             "newLayout",
             res?.companies?.[0]?.projects?.[0]?.new_layout
+          );
+          localStorage.setItem(
+            "new_router",
+            res?.companies?.[0]?.projects?.[0]?.new_router || "false"
           );
         } else {
           dispatch(showAlert("The company does not exist", "error"));

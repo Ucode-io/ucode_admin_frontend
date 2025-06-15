@@ -8,7 +8,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
-import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorViewService from "../../../services/constructorViewService";
 import {applyDrag} from "../../../utils/applyDrag";
@@ -46,10 +45,12 @@ const BoardView = ({
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const {menuId} = useParams();
+  const {menuId, appId} = useParams();
   const tableSlug = view?.table_slug;
+
   const {new_list} = useSelector((state) => state.filter);
   const id = useId();
+
   const {t, i18n} = useTranslation();
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
@@ -84,6 +85,7 @@ const BoardView = ({
     queryFn: () => {
       return layoutService.getLayout(tableSlug, appId);
     },
+    enabled: Boolean(tableSlug),
     select: (data) => {
       return {
         layout: data ?? {},

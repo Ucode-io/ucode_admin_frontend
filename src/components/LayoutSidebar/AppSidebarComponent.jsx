@@ -79,6 +79,7 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = (el) => {
+    console.log("elelelelelelelelelel", el, element);
     const handler =
       localStorage.getItem("new_router") === "true"
         ? newClickHandler

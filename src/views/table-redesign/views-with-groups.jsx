@@ -3,7 +3,6 @@ import useTabRouter from "@/hooks/useTabRouter";
 import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
 import constructorObjectService from "@/services/constructorObjectService";
 import constructorViewService from "@/services/constructorViewService";
-import layoutService from "@/services/layoutService";
 import {filterActions} from "@/store/filter/filter.slice";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
 import {mainActions} from "@/store/main/main.slice";
@@ -146,8 +145,8 @@ export const NewUiViewsWithGroups = ({
   setSelectedViewType = () => {},
 }) => {
   const location = useLocation();
-  const {id, menuId} = useParams();
-  const tableSlug = view?.table_slug;
+  const {id, menuId, tableSlug: tableSlugFromProps} = useParams();
+  const tableSlug = tableSlugFromProps || view?.table_slug;
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
@@ -474,7 +473,7 @@ export const NewUiViewsWithGroups = ({
 
   const viewName =
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
-
+  console.log("viewsviewsviewsviewsviewsviews", views);
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>
@@ -1545,11 +1544,6 @@ const ViewOptions = ({
       ref.current.focus();
     }
   }, [openedMenu]);
-
-  const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", {tableSlug}],
-    queryFn: () => layoutService.getLayout(tableSlug, menuId),
-  });
 
   useEffect(() => {
     settingsForm.setValue(

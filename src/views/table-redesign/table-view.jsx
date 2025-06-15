@@ -78,9 +78,9 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, menuId} = useParams();
+  const {id, menuId, tableSlug: tableSlugFromParams} = useParams();
   const new_router = localStorage.getItem("new_router");
-  const tableSlug = view?.table_slug;
+  const tableSlug = tableSlugFromParams || view?.table_slug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();

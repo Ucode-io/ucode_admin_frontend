@@ -111,7 +111,8 @@ const ObjectsPage = () => {
             data?.views?.filter(
               (view) =>
                 view?.attributes?.view_permission?.view === true &&
-                view?.type !== "SECTION"
+                view?.type !== "SECTION" &&
+                Boolean(!view?.is_relation_view)
             ) ?? [],
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),

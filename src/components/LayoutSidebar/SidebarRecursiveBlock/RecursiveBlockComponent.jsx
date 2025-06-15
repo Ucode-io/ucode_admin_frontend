@@ -20,6 +20,7 @@ import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
 import FileUploadMenu from "../Components/Functions/FileUploadMenu";
+import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -57,6 +58,7 @@ const RecursiveBlock = ({
   const [child, setChild] = useState();
   const [id, setId] = useState();
   const [searchParams] = useSearchParams();
+  const newRouter = localStorage.getItem("new_router");
 
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const activeRequest =
@@ -99,7 +101,11 @@ const RecursiveBlock = ({
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({element, menuId: element?.id, navigate});
+
+    if (Boolean(newRouter === "true"))
+      NavigateByType({element, menuId: element?.id, navigate});
+    else NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
+    // NavigateByType({element, menuId: element?.id, navigate});
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);

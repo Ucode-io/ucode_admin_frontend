@@ -1,34 +1,9 @@
-import {
-  SidebarActionTooltip,
-  SidebarAppTooltip,
-} from "@/components/LayoutSidebar/sidebar-app-tooltip";
-import authService from "@/services/auth/authService";
-import {useCompanyListQuery} from "@/services/companyService";
-import {useEnvironmentListQuery} from "@/services/environmentService";
-import {authActions} from "@/store/auth/auth.slice";
-import {companyActions} from "@/store/company/company.slice";
-import {AccordionButton, AccordionIcon, SettingsIcon} from "@chakra-ui/icons";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Flex,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  useDisclosure,
-} from "@chakra-ui/react";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import "./style.scss";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {differenceInCalendarDays, parseISO} from "date-fns";
-import {forwardRef, useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import InlineSVG from "react-inlinesvg";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Container} from "react-smooth-dnd";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
@@ -36,10 +11,11 @@ import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import TemplateModal from "../../layouts/MainLayout/TemplateModal";
-import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
-import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
+import menuService, {
+  useMenuGetByIdQuery,
+  useMenuListQuery,
+} from "../../services/menuService";
 import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import {
@@ -49,25 +25,72 @@ import {
 import {store} from "../../store";
 import {mainActions} from "../../store/main/main.slice";
 import {applyDrag} from "../../utils/applyDrag";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {getAllFromDB} from "../../utils/languageDB";
-import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
-import {useChatwoot} from "../ProfilePanel/Chatwoot";
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import AppSidebar from "./AppSidebarComponent";
-import DocsChatwootModal from "./DocsChatwootModal";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
-import ProfileBottom from "./ProfileBottom";
-import "./style.scss";
+import SubMenu from "./SubMenu";
+import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
+import {useChatwoot} from "../ProfilePanel/Chatwoot";
+import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Button,
+  Flex,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  useDisclosure,
+  useOutsideClick,
+} from "@chakra-ui/react";
+import {
+  SidebarActionTooltip,
+  SidebarAppTooltip,
+} from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import {useCompanyListQuery} from "@/services/companyService";
+import {
+  AccordionButton,
+  AccordionIcon,
+  SearchIcon,
+  SettingsIcon,
+} from "@chakra-ui/icons";
+import {useEnvironmentListQuery} from "@/services/environmentService";
+import {companyActions} from "@/store/company/company.slice";
+import authService from "@/services/auth/authService";
+import {authActions} from "@/store/auth/auth.slice";
+import InlineSVG from "react-inlinesvg";
+import {Logout} from "@mui/icons-material";
+import {useTranslation} from "react-i18next";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {Modal, Skeleton} from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import {clearDB, getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {GreyLoader} from "../Loaders/GreyLoader";
+import {differenceInCalendarDays, parseISO} from "date-fns";
+import DocsChatwootModal from "./DocsChatwootModal";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
+import UserIcon from "@/assets/icons/profile.svg";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
   darkMode,
   handleOpenProfileModal = () => {},
+  handleOpenUserInvite = () => {},
 }) => {
+  const DEFAULT_ADMIN = "DEFAULT ADMIN";
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const {menuId} = useParams();
+  const {appId} = useParams();
 
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
@@ -90,7 +113,7 @@ const LayoutSidebar = ({
   const [templateModal, setTemplateModalOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState();
   const [child, setChild] = useState();
-  const [element, setElement] = useState(null);
+  const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [menu, setMenu] = useState({event: "", type: "", root: false});
   const openSidebarMenu = Boolean(menu?.event);
@@ -122,6 +145,7 @@ const LayoutSidebar = ({
 
   const menuStyle = menuTemplate?.menu_template;
   const permissions = useSelector((state) => state.auth.globalPermissions);
+  const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
   const handleOpenNotify = (event, type, root) => {
     setMenu({event: event?.currentTarget, type: type, root: root});
@@ -226,45 +250,13 @@ const LayoutSidebar = ({
       });
   };
 
-  const {menuLoader} = useQuery(
-    ["GET_UPDATED_MENU_LIST", menuId],
-    () => {
-      return menuSettingsService.getList({
-        parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
-      });
-    },
-    {
-      enabled: false,
-      onSuccess: (res) => {
-        const computedMenus = res?.menus?.filter((el) => {
-          const id = el?.id;
-          const permission = el?.data?.permission?.read;
-
-          if (id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
-            return true;
-          }
-
-          const excludedIds = [
-            "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
-            "9e988322-cffd-484c-9ed6-460d8701551b",
-          ];
-
-          return !excludedIds.includes(id) && permission;
-        });
-
-        setMenuList(computedMenus);
-        setIsMenuListLoading(false);
-      },
-    }
-  );
-
   const {isLoadingUser} = useQuery(
-    ["GET_CLIENT_TYPE_LIST", menuId],
+    ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
     },
     {
-      enabled: Boolean(menuId === "9e988322-cffd-484c-9ed6-460d8701551b"),
+      enabled: Boolean(appId === "9e988322-cffd-484c-9ed6-460d8701551b"),
       onSuccess: (res) => {
         setChild(
           res.data.response?.map((row) => ({
@@ -310,12 +302,12 @@ const LayoutSidebar = ({
   }, []);
 
   useEffect(() => {
-    setSelectedApp(menuList?.find((item) => item?.id === menuId));
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
   }, [menuList]);
 
   useEffect(() => {
-    setSelectedApp(menuList?.find((item) => item?.id === menuId));
-  }, [menuId]);
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
+  }, [appId]);
 
   useEffect(() => {
     if (
@@ -325,15 +317,15 @@ const LayoutSidebar = ({
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  // const {loader: menuLoader} = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: Boolean(searchParams.get("menuId")),
-  //     onSuccess: (res) => {
-  //       // setMenuItem(res);
-  //     },
-  //   },
-  // });
+  const {loader: menuLoader} = useMenuGetByIdQuery({
+    menuId: searchParams.get("menuId"),
+    queryParams: {
+      enabled: Boolean(searchParams.get("menuId")),
+      onSuccess: (res) => {
+        // setMenuItem(res);
+      },
+    },
+  });
 
   const itemConditionalProps = {};
   if (!sidebarIsOpen) {
@@ -347,6 +339,8 @@ const LayoutSidebar = ({
       : {
           onMouseEnter: () =>
             dispatch(mainActions.setSidebarHighlightedAction(id)),
+          onMouseLeave: () =>
+            dispatch(mainActions.setSidebarHighlightedAction(null)),
         };
 
   useEffect(() => {
@@ -497,60 +491,240 @@ const LayoutSidebar = ({
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
-                    {sidebarIsOpen && (
-                      <Box
-                        whiteSpace="nowrap"
-                        color={
-                          (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
-                          "#475467"
-                        }
-                        pl={35}
-                        fontSize={14}>
-                        {generateLangaugeText(
-                          menuLanguages,
-                          i18n?.language,
-                          "Create"
-                        ) || "Create"}
-                      </Box>
-                    )}
+                    <Box
+                      whiteSpace="nowrap"
+                      color={
+                        (menuStyle?.text === "#A8A8A8" ? null : "#475467") ??
+                        "#475467"
+                      }
+                      pl={35}
+                      fontSize={14}>
+                      {generateLangaugeText(
+                        menuLanguages,
+                        i18n?.language,
+                        "Create"
+                      ) || "Create"}
+                    </Box>
                   </Flex>
                 </SidebarAppTooltip>
               )}
+
+              <Box mt={46}>
+                {Boolean(
+                  permissions?.chat && userRoleName === DEFAULT_ADMIN
+                ) && (
+                  <Flex
+                    position="relative"
+                    h={30}
+                    mx={8}
+                    mb={4}
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    borderRadius={6}
+                    color="#475467"
+                    fontSize={14}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    _hover={{
+                      bg: "#EAECF0",
+                      ".accordionFolderIcon": {
+                        display: "none",
+                      },
+                      ".accordionIcon": {
+                        display: "block",
+                      },
+                    }}
+                    cursor="pointer"
+                    onMouseLeave={
+                      sidebarIsOpen
+                        ? undefined
+                        : () =>
+                            dispatch(
+                              mainActions.setSidebarHighlightedAction(null)
+                            )
+                    }>
+                    <SidebarActionTooltip id="ai-chat" title="AI Chat">
+                      <AIChat
+                        sidebarOpen={sidebarIsOpen}
+                        {...getActionProps("ai-chat")}>
+                        <Flex w="100%" alignItems="center" gap={8}>
+                          <Box pl="6px">
+                            <SearchIcon color="#475467" fontSize={20} />
+                          </Box>
+                          <span>Search</span>
+                        </Flex>
+                      </AIChat>
+                    </SidebarActionTooltip>
+                  </Flex>
+                )}
+                {userRoleName === DEFAULT_ADMIN && (
+                  <Flex
+                    position="relative"
+                    h={30}
+                    mx={8}
+                    mb={4}
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    borderRadius={6}
+                    color="#475467"
+                    fontSize={14}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    _hover={{
+                      bg: "#EAECF0",
+                      ".accordionFolderIcon": {
+                        display: "none",
+                      },
+                      ".accordionIcon": {
+                        display: "block",
+                      },
+                    }}
+                    cursor="pointer"
+                    onMouseLeave={
+                      sidebarIsOpen
+                        ? undefined
+                        : () =>
+                            dispatch(
+                              mainActions.setSidebarHighlightedAction(null)
+                            )
+                    }>
+                    <SidebarActionTooltip id="settings" title="Settings">
+                      <Flex
+                        w={sidebarIsOpen ? "100%" : 36}
+                        alignItems="center"
+                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
+                        gap={8}
+                        onClick={handleOpenProfileModal}
+                        {...getActionProps("settings")}>
+                        <Box
+                          pl={sidebarIsOpen ? "5px" : 0}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center">
+                          {/* <SettingsIcon color="#475467" fontSize={16} /> */}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="20"
+                            height="20"
+                            viewBox="0,0,256,256">
+                            <g
+                              fill="rgba(55, 53, 47, 0.85)"
+                              fillRule="nonzero"
+                              stroke="none"
+                              strokeWidth="1"
+                              strokeLinecap="butt"
+                              strokeLinejoin="miter"
+                              strokeMiterlimit="10"
+                              strokeDasharray=""
+                              strokeDashoffset="0"
+                              fontFamily="none"
+                              fontWeight="none"
+                              fontSize="none"
+                              textAnchor="none"
+                              style={{mixBlendMode: "normal"}}>
+                              <g transform="scale(10.66667,10.66667)">
+                                <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
+                              </g>
+                            </g>
+                          </svg>
+                        </Box>
+                        {sidebarIsOpen ? <span>Settings</span> : null}
+                      </Flex>
+                    </SidebarActionTooltip>
+                  </Flex>
+                )}
+              </Box>
             </div>
           )}
         </Box>
 
-        <Flex
-          display={sidebarIsOpen ? "flex" : "block"}
-          mt="auto"
-          py={8}
-          alignItems="center"
-          justifyContent={"space-between"}
-          columnGap={16}
-          px={8}
-          borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
-          onMouseLeave={
-            sidebarIsOpen
-              ? undefined
-              : () => dispatch(mainActions.setSidebarHighlightedAction(null))
-          }>
-          {Boolean(permissions?.chat) && (
+        {userRoleName === DEFAULT_ADMIN && (
+          <Flex
+            display={sidebarIsOpen ? "flex" : "block"}
+            mt="auto"
+            py={8}
+            alignItems="center"
+            justifyContent={"space-between"}
+            columnGap={16}
+            px={8}
+            borderTop={sidebarIsOpen ? "1px solid #EAECF0" : "none"}
+            onMouseLeave={
+              sidebarIsOpen
+                ? undefined
+                : () => dispatch(mainActions.setSidebarHighlightedAction(null))
+            }
+            onClick={
+              sidebarIsOpen
+                ? undefined
+                : () => dispatch(mainActions.setSidebarHighlightedAction(null))
+            }>
+            {/* {Boolean(permissions?.settings) && ( */}
             <>
-              <SidebarActionTooltip id="ai-chat" title="AI Chat">
-                <AIChat
+              <SidebarActionTooltip id="user-invite" title="User Invite">
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "0 8px",
+                    height: "28px",
+                    background: "#fff",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    "&:hover": {
+                      background: "#F3F3F3",
+                    },
+                  }}
+                  onClick={handleOpenUserInvite}>
+                  {/* color: rgb(161, 160, 156) */}
+                  {/* <img src={UserIcon} alt="user" /> */}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M7.63314 9.68341C7.60814 9.68341 7.59147 9.68341 7.56647 9.68341C7.5248 9.67508 7.46647 9.67508 7.41647 9.68341C4.9998 9.60841 3.1748 7.70841 3.1748 5.36675C3.1748 2.98341 5.11647 1.04175 7.4998 1.04175C9.88314 1.04175 11.8248 2.98341 11.8248 5.36675C11.8165 7.70841 9.98314 9.60841 7.65814 9.68341C7.6498 9.68341 7.64147 9.68341 7.63314 9.68341ZM7.4998 2.29175C5.80814 2.29175 4.4248 3.67508 4.4248 5.36675C4.4248 7.03341 5.7248 8.37508 7.38314 8.43341C7.43314 8.42508 7.54147 8.42508 7.64981 8.43341C9.28314 8.35841 10.5665 7.01675 10.5748 5.36675C10.5748 3.67508 9.19147 2.29175 7.4998 2.29175Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                    <path
+                      d="M13.783 9.79159C13.758 9.79159 13.733 9.79159 13.708 9.78325C13.3663 9.81659 13.0163 9.57492 12.983 9.23325C12.9496 8.89159 13.158 8.58325 13.4996 8.54159C13.5996 8.53325 13.708 8.53325 13.7996 8.53325C15.0163 8.46659 15.9663 7.46659 15.9663 6.24159C15.9663 4.97492 14.9413 3.94992 13.6746 3.94992C13.333 3.95825 13.0496 3.67492 13.0496 3.33325C13.0496 2.99159 13.333 2.70825 13.6746 2.70825C15.6246 2.70825 17.2163 4.29992 17.2163 6.24992C17.2163 8.16659 15.7163 9.71659 13.808 9.79159C13.7996 9.79159 13.7913 9.79159 13.783 9.79159Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                    <path
+                      d="M7.64134 18.7916C6.00801 18.7916 4.36634 18.3749 3.12467 17.5416C1.96634 16.7749 1.33301 15.7249 1.33301 14.5833C1.33301 13.4416 1.96634 12.3833 3.12467 11.6083C5.62467 9.94992 9.67467 9.94992 12.158 11.6083C13.308 12.3749 13.9497 13.4249 13.9497 14.5666C13.9497 15.7083 13.3163 16.7666 12.158 17.5416C10.908 18.3749 9.27467 18.7916 7.64134 18.7916ZM3.81634 12.6583C3.01634 13.1916 2.58301 13.8749 2.58301 14.5916C2.58301 15.2999 3.02467 15.9833 3.81634 16.5083C5.89134 17.8999 9.39134 17.8999 11.4663 16.5083C12.2663 15.9749 12.6997 15.2916 12.6997 14.5749C12.6997 13.8666 12.258 13.1833 11.4663 12.6583C9.39134 11.2749 5.89134 11.2749 3.81634 12.6583Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                    <path
+                      d="M15.283 17.2917C14.9913 17.2917 14.733 17.0917 14.6746 16.7917C14.608 16.45 14.8246 16.125 15.158 16.05C15.683 15.9417 16.1663 15.7333 16.5413 15.4417C17.0163 15.0833 17.2746 14.6333 17.2746 14.1583C17.2746 13.6833 17.0163 13.2333 16.5496 12.8833C16.183 12.6 15.7246 12.4 15.183 12.275C14.8496 12.2 14.633 11.8667 14.708 11.525C14.783 11.1917 15.1163 10.975 15.458 11.05C16.1746 11.2083 16.7996 11.4917 17.308 11.8833C18.083 12.4667 18.5246 13.2917 18.5246 14.1583C18.5246 15.025 18.0746 15.85 17.2996 16.4417C16.783 16.8417 16.133 17.1333 15.4163 17.275C15.3663 17.2917 15.3246 17.2917 15.283 17.2917Z"
+                      fill="rgb(161, 160, 156)"
+                    />
+                  </svg>
+                  {sidebarIsOpen ? (
+                    <span style={{color: "rgb(161, 160, 156)"}}>
+                      User Invite
+                    </span>
+                  ) : null}
+                </Box>
+
+                {/* <AIChat
                   sidebarOpen={sidebarIsOpen}
                   {...getActionProps("ai-chat")}
-                />
+                /> */}
               </SidebarActionTooltip>
             </>
-          )}
+            {/* )} */}
 
-          <DocsChatwootModal
-            sidebarIsOpen={sidebarIsOpen}
-            getActionProps={getActionProps}
-            permissions={permissions}
-          />
-        </Flex>
+            <DocsChatwootModal
+              sidebarIsOpen={sidebarIsOpen}
+              getActionProps={getActionProps}
+              permissions={permissions}
+            />
+          </Flex>
+        )}
 
         {(modalType === "create" ||
           modalType === "parent" ||
@@ -559,7 +733,7 @@ const LayoutSidebar = ({
             closeModal={closeModal}
             selectedFolder={selectedFolder}
             modalType={modalType}
-            appId={menuId}
+            appId={appId}
             getMenuList={getMenuList}
           />
         )}
@@ -568,7 +742,7 @@ const LayoutSidebar = ({
             closeModal={closeModal}
             selectedFolder={selectedFolder}
             modalType={modalType}
-            appId={menuId}
+            appId={appId}
             getMenuList={getMenuList}
           />
         ) : null}
@@ -642,7 +816,7 @@ const LayoutSidebar = ({
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}
           setFolderModalType={setFolderModalType}
-          menuId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : menuId}
+          appId={menu?.root ? "c57eedc3-a954-4262-a0af-376c65b5a284" : appId}
           setTableModal={setTableModal}
           setLinkedTableModal={setLinkedTableModal}
           setMicrofrontendModal={setMicrofrontendModal}
@@ -680,7 +854,7 @@ const Chatwoot = forwardRef(({open, ...props}, ref) => {
   );
 });
 
-const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
+const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -699,20 +873,22 @@ const AIChat = forwardRef(({sidebarOpen, ...props}, ref) => {
   return (
     <>
       <Flex
-        w={sidebarOpen ? "30px" : 36}
-        alignItems="center"
-        justifyContent="center"
+        w={sidebarOpen ? "100%" : 36}
         borderRadius={6}
-        _hover={{
-          background: "#37352F0F",
-        }}
+        // _hover={{
+        //   background: "#37352F0F",
+        // }}
         h={"25px"}
+        // pl={sidebarOpen ? "35px" : 0}
         cursor="pointer"
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
-        onClick={handleClick}>
-        <img src="/img/magic-wand.svg" alt="magic" />
+        onClick={handleClick}
+        justifyContent="center"
+        alignItems="center">
+        {sidebarOpen ? children : <SearchIcon color="#475467" fontSize={16} />}
+        {/* <img src="/img/magic-wand.svg" alt="magic" /> */}
       </Flex>
 
       <AIMenu
@@ -863,7 +1039,6 @@ const ProfilePanel = ({
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
   const {i18n} = useTranslation();
-
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
       <Flex gap={10} alignItems={"center"}>
@@ -912,6 +1087,244 @@ const ProfilePanel = ({
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
         </Box>
       </Flex>
+    </Box>
+  );
+};
+
+const ProfileBottom = ({projectInfo, menuLanguages}) => {
+  const dispatch = useDispatch();
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const projectId = useSelector((state) => state.company.projectId);
+  const accessToken = useSelector((state) => state.auth?.token);
+
+  const popoverRef = useRef();
+  const {i18n} = useTranslation();
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
+  );
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const onCloseModal = () => setIsOpenModal(false);
+  const onOpenModal = () => setIsOpenModal(true);
+
+  useOutsideClick({
+    ref: popoverRef,
+    handler: () => onClose(),
+  });
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
+  const getDefaultLanguage = () => {
+    const isLanguageExist = languages?.some(
+      (item) => defaultLanguage === item?.slug
+    );
+
+    if (languages?.length) {
+      if (languages?.length === 1) {
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+        localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
+        i18n.changeLanguage(languages?.[0]?.slug);
+      } else if (languages?.length > 1) {
+        if (!defaultLanguage) {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
+          i18n.changeLanguage(languages?.[0]?.slug);
+        } else if (defaultLanguage && isLanguageExist) {
+          dispatch(languagesActions.setDefaultLanguage(defaultLanguage));
+          localStorage.setItem("defaultLanguage", defaultLanguage);
+          i18n.changeLanguage(defaultLanguage);
+        } else {
+          dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+          localStorage.setItem("defaultLanguage", languages?.[0]?.slug);
+          i18n.changeLanguage(languages?.[0]?.slug);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    getDefaultLanguage();
+  }, [languages?.length]);
+
+  const logoutClickHandler = () => {
+    authService.sendAccessToken({access_token: accessToken}).then((res) => {
+      indexedDB.deleteDatabase("SearchTextDB");
+      indexedDB.deleteDatabase("ChartDB");
+      dispatch(menuAccordionActions.toggleMenuChilds({}));
+      store.dispatch(authActions.logout());
+      dispatch(companyActions.logout());
+    });
+  };
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    localStorage.setItem("defaultLanguage", lang);
+    onClose();
+  };
+
+  useEffect(() => {
+    if (projectInfo?.project_id) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectInfo?.project_id, dispatch]);
+
+  return (
+    <Box p={8} ref={popoverRef}>
+      <Popover
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="right-start"
+        closeOnBlur={false}>
+        <PopoverTrigger>
+          <Box
+            sx={{
+              borderRadius: "5px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              paddingLeft: "8px",
+              height: "32px",
+              cursor: "pointer",
+              color: "#475467",
+            }}
+            _hover={{background: "#eeee"}}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}>
+            <GTranslateIcon style={{color: "#475467"}} />
+            <span>
+              {" "}
+              {generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Languages"
+              ) || "Languages"}
+            </span>
+          </Box>
+        </PopoverTrigger>
+
+        <PopoverContent w="250px">
+          <Box
+            minH={50}
+            maxH={250}
+            bg={"white"}
+            p={4}
+            borderRadius={5}
+            boxShadow="0 0 5px rgba(145, 158, 171, 0.3)">
+            <PopoverBody>
+              {languages?.map((item) => (
+                <Box
+                  key={item.slug}
+                  p={4}
+                  borderRadius="6px"
+                  cursor="pointer"
+                  color={item.slug === defaultLanguage ? "#000" : "#333"}
+                  bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
+                  _hover={{bg: "#F0F0F0"}}
+                  onClick={() => changeLanguage(item.slug)}>
+                  {item.title}
+                </Box>
+              ))}
+            </PopoverBody>
+          </Box>
+        </PopoverContent>
+      </Popover>
+
+      <Box
+        sx={{
+          borderRadius: "5px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          paddingLeft: "8px",
+          height: "32px",
+          cursor: "pointer",
+          color: "#475467",
+        }}
+        _hover={{background: "#eeee"}}
+        onClick={onOpenModal}>
+        <Logout style={{color: "#475467"}} />
+        <span>
+          {generateLangaugeText(menuLanguages, i18n?.language, "Log out") ||
+            "Log out"}
+        </span>
+      </Box>
+
+      <Modal open={isOpenModal} onClose={onCloseModal}>
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            outline: "none",
+            width: 400,
+            padding: "20px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}>
+          <Box display="flex" justifyContent="center" mb={2}>
+            <LogoutIcon style={{width: "48", height: "28px"}} />
+          </Box>
+
+          <Box fontWeight={700} fontSize={"18px"}>
+            {generateLangaugeText(
+              menuLanguages,
+              i18n?.language,
+              "Log out of your account"
+            ) || "Log out of your account"}
+          </Box>
+
+          <Box mt={5} fontWeight={400} fontSize={"12px"}>
+            {generateLangaugeText(
+              menuLanguages,
+              i18n?.language,
+              "You will need to log back in to access your workspace."
+            )}
+          </Box>
+
+          <Box mt={20} display="flex" flexDirection="column" gap={1}>
+            <Button
+              cursor={"pointer"}
+              borderRadius={8}
+              border="none"
+              fontSize={14}
+              fullWidth
+              bg={"#a63431"}
+              color="#fff"
+              _hover={{bg: "#a63400"}}
+              style={{height: "40px"}}
+              onClick={logoutClickHandler}>
+              {generateLangaugeText(menuLanguages, i18n?.language, "Logout") ||
+                "Logout"}
+            </Button>
+            <Button
+              mt={5}
+              cursor={"pointer"}
+              borderRadius={8}
+              fontSize={14}
+              fullWidth
+              bg={"#fff"}
+              _hover={{bg: "#eee"}}
+              border="2px solid #eee"
+              style={{height: "40px"}}
+              onClick={onCloseModal}>
+              {generateLangaugeText(menuLanguages, i18n?.language, "Cancel") ||
+                "Cancel"}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

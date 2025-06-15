@@ -138,12 +138,12 @@ const BoardColumn = ({
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
-        value: [group?.label],
+        value: group?.name,
       });
     } else {
       setDefaultValue({
-        field: group.slug,
-        value: [group.value],
+        field: group.name,
+        value: group.name,
       });
     }
 
@@ -157,13 +157,11 @@ const BoardColumn = ({
       ]);
     }
   };
-  const field = computedColumnsFor?.find(
-    (field) => field?.slug === group?.slug
-  );
+  const field = computedColumnsFor?.find((field) => field?.slug === groupSlug);
 
   const color =
     group?.color ||
-    field?.attributes?.options?.find((item) => item?.value === group?.value)
+    field?.attributes?.options?.find((item) => item?.slug === group?.slug)
       ?.color;
 
   const fixedElement = useRef(null);

@@ -251,8 +251,8 @@ export default function ViewTypeList({
     const filteredFields = tableRelations
       ?.filter((el) => el?.type === "Many2One" || el?.type === "Many2Many")
       .map((item) => ({
-        label: item?.table_to?.label,
-        value: item?.table_to?.slug,
+        label: item?.table_from?.label,
+        value: item?.table_from?.slug,
       }));
     return filteredFields;
   }, [tableRelations]);

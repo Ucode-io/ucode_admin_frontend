@@ -3,6 +3,7 @@ import useTabRouter from "@/hooks/useTabRouter";
 import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
 import constructorObjectService from "@/services/constructorObjectService";
 import constructorViewService from "@/services/constructorViewService";
+import layoutService from "@/services/layoutService";
 import {filterActions} from "@/store/filter/filter.slice";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
 import {mainActions} from "@/store/main/main.slice";
@@ -133,9 +134,7 @@ export const NewUiViewsWithGroups = ({
   fullScreen,
   tableInfo,
   selectedViewType,
-  open = false,
   relationFields = [],
-  setOpen = () => {},
   onSubmit = () => {},
   setViews = () => {},
   refetchViews = () => {},
@@ -161,23 +160,22 @@ export const NewUiViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
-  const new_router = localStorage.getItem("new_router");
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
   const [inputKey, setInputKey] = useState(0);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
-
+  const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
-  const [searchParams] = useSearchParams();
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const parentView = useSelector((state) => state?.groupField?.view);
+  const new_router = Boolean(localStorage.getItem("new_router"));
 
   const groupTable = view?.attributes.group_by_columns;
 
@@ -502,7 +500,20 @@ export const NewUiViewsWithGroups = ({
             bg="#fff"
             borderBottom="1px solid #EAECF0"
             columnGap="8px">
-            <IconButton
+            {relationView && (
+              <IconButton
+                aria-label="back"
+                icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+                variant="ghost"
+                colorScheme="gray"
+                onClick={() => {
+                  setOpen(false);
+                  updateQueryWithoutRerender("p", undefined);
+                }}
+                size="sm"
+              />
+            )}
+            {/* <IconButton
               aria-label="back"
               icon={<ArrowBackIcon fontSize={20} color="#344054" />}
               variant="ghost"
@@ -514,7 +525,7 @@ export const NewUiViewsWithGroups = ({
                 } else navigate(-1);
               }}
               size="sm"
-            />
+            /> */}
             <IconButton
               aria-label="home"
               icon={<img src="/img/home.svg" alt="home" />}
@@ -600,7 +611,7 @@ export const NewUiViewsWithGroups = ({
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
-                  Boolean(new_router === "true") && viewHandler(view);
+                  viewHandler(view);
                   setSelectedView(view);
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
@@ -1533,6 +1544,7 @@ const ViewOptions = ({
   const {menuId} = useParams();
   const tableSlug = view?.table_slug;
   const {i18n, t} = useTranslation();
+  const [searchParams] = useSearchParams();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -1551,6 +1563,11 @@ const ViewOptions = ({
       ref.current.focus();
     }
   }, [openedMenu]);
+
+  const layoutQuery = useQuery({
+    queryKey: ["GET_LAYOUT", {tableSlug}],
+    queryFn: () => layoutService.getLayout(tableSlug, menuId),
+  });
 
   useEffect(() => {
     settingsForm.setValue(

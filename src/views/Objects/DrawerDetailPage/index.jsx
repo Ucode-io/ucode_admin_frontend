@@ -141,9 +141,7 @@ function DrawerDetailPage({
         }))
       );
 
-      // if (!selectedTab?.relation_id) {
       rootForm.reset(data?.response ?? {});
-      // }
       setSelectTab(relations[selectedTabIndex]);
 
       setLoader(false);

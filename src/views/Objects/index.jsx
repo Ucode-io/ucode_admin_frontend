@@ -31,8 +31,8 @@ import ViewTypeList from "./components/ViewTypeList";
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
-  const navigate = useNavigate();
   const {appId} = useParams();
+  const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
@@ -191,6 +191,8 @@ const ObjectsPage = () => {
         visibleRelationColumns={visibleRelationColumns}
         menuItem={menuItem}
         refetchViews={refetch}
+        setOpen={setOpen}
+        open={open}
         {...defaultProps}
         {...props}
       />

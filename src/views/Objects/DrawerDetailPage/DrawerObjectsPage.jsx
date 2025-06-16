@@ -12,6 +12,7 @@ import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
 
 function DrawerObjectsPage({
+  open,
   projectInfo,
   layout,
   selectedTab,
@@ -23,6 +24,7 @@ function DrawerObjectsPage({
   fullScreen,
   rootForm,
   selectedView,
+  setOpen = () => {},
   onSubmit = () => {},
   setSelectedView = () => {},
   setViews = () => {},
@@ -137,6 +139,8 @@ function DrawerObjectsPage({
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  open={open}
+                  setOpen={setOpen}
                   relationFields={relations}
                   selectedViewType={selectedViewType}
                   setSelectedViewType={setSelectedViewType}

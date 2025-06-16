@@ -133,7 +133,9 @@ export const NewUiViewsWithGroups = ({
   fullScreen,
   tableInfo,
   selectedViewType,
+  open = false,
   relationFields = [],
+  setOpen = () => {},
   onSubmit = () => {},
   setViews = () => {},
   refetchViews = () => {},
@@ -166,13 +168,14 @@ export const NewUiViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const [inputKey, setInputKey] = useState(0);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
-  const [open, setOpen] = useState(false);
+
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
+  const [searchParams] = useSearchParams();
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const parentView = useSelector((state) => state?.groupField?.view);
 
@@ -474,7 +477,7 @@ export const NewUiViewsWithGroups = ({
 
   const viewName =
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
-  console.log("viewsviewsviewsviewsviewsviews", views);
+
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>
@@ -504,7 +507,12 @@ export const NewUiViewsWithGroups = ({
               icon={<ArrowBackIcon fontSize={20} color="#344054" />}
               variant="ghost"
               colorScheme="gray"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                if (Boolean(new_router === "true" && Boolean(relationView))) {
+                  setOpen(false);
+                  updateQueryWithoutRerender("p", undefined);
+                } else navigate(-1);
+              }}
               size="sm"
             />
             <IconButton
@@ -1525,7 +1533,6 @@ const ViewOptions = ({
   const {menuId} = useParams();
   const tableSlug = view?.table_slug;
   const {i18n, t} = useTranslation();
-  const [searchParams] = useSearchParams();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );

@@ -388,6 +388,8 @@ function DrawerDetailPage({
         position={"relative"}>
         <Box>
           <DrawerObjectsPage
+            open={open}
+            setOpen={setOpen}
             onSubmit={onSubmit}
             selectedView={selectedView}
             setSelectedView={setSelectedView}

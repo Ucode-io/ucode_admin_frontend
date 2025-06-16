@@ -35,6 +35,7 @@ function DrawerObjectsPage({
   const {state} = useLocation();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
+  const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const roleId = useSelector((state) => state.auth?.roleInfo?.id);
@@ -151,6 +152,8 @@ function DrawerObjectsPage({
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  open={open}
+                  setOpen={setOpen}
                   modal={true}
                   refetchViews={refetchViews}
                   selectedViewType={selectedViewType}

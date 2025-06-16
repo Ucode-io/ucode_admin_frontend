@@ -88,7 +88,6 @@ const TableView = ({
     (state) => state?.pagination?.paginationInfo
   );
   const [limit, setLimit] = useState(20);
-
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);

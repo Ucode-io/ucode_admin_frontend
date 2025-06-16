@@ -1,13 +1,16 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import NewRouter from "./NewRouter";
 import OldRouter from "./OldRouter";
 
 function Router() {
-  const routerSwitch = localStorage.getItem("new_router") || "";
+  const [routerSwitch, setRouterSwitch] = useState(false);
 
-  return (
-    <>{Boolean(routerSwitch === "true") ? <NewRouter /> : <OldRouter />}</>
-  );
+  useEffect(() => {
+    const stored = localStorage.getItem("new_router");
+    setRouterSwitch(stored === "true");
+  }, []);
+
+  return <>{routerSwitch ? <NewRouter /> : <OldRouter />}</>;
 }
 
 export default Router;

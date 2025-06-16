@@ -24,6 +24,7 @@ const NewObjectsPage = () => {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
+  const [open, setOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const {data: views, refetch} = useQuery(
@@ -150,6 +151,8 @@ const NewObjectsPage = () => {
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
         refetchViews={refetch}
+        setOpen={setOpen}
+        open={open}
         {...defaultProps}
         {...props}
       />

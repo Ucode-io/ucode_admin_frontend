@@ -78,7 +78,7 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, menuId, tableSlug: tableSlugFromParams} = useParams();
+  const {id, menuId, tableSlug: tableSlugFromParams, appId} = useParams();
   const new_router = localStorage.getItem("new_router");
   const tableSlug = tableSlugFromParams || view?.table_slug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
@@ -440,19 +440,35 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    updateQueryWithoutRerender("p", row?.guid);
-    if (view?.attributes?.url_object) {
-      navigateToDetailPage(row);
-    } else if (projectInfo?.new_layout) {
-      setSelectedRow(row);
-      setOpen(true);
-    } else {
-      if (layoutType === "PopupLayout") {
+    if (Boolean(new_router === "true")) {
+      updateQueryWithoutRerender("p", row?.guid);
+      if (view?.attributes?.url_object) {
+        navigateToDetailPage(row);
+      } else if (projectInfo?.new_layout) {
         setSelectedRow(row);
         setOpen(true);
       } else {
-        // navigate(`/${menuId}/${row?.guid}`);
+        if (layoutType === "PopupLayout") {
+          setSelectedRow(row);
+          setOpen(true);
+        } else {
+          // navigate(`/${menuId}/${row?.guid}`);
+          navigateToDetailPage(row);
+        }
+      }
+    } else {
+      if (view?.attributes?.url_object) {
         navigateToDetailPage(row);
+      } else if (projectInfo?.new_layout) {
+        setSelectedRow(row);
+        setOpen(true);
+      } else {
+        if (layoutType === "PopupLayout") {
+          setSelectedRow(row);
+          setOpen(true);
+        } else {
+          navigateToDetailPage(row);
+        }
       }
     }
   };
@@ -501,13 +517,14 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigate(`/${menuId}/detail?p=${row?.guid}`, {
-        state: {
-          viewId,
-          tableSlug,
-        },
-      });
-      // navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id);
+      if (Boolean(new_router === "true"))
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
   };
 

@@ -159,6 +159,7 @@ export const NewUiViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
+  const new_router = localStorage.getItem("new_router");
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -591,14 +592,13 @@ export const NewUiViewsWithGroups = ({
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
-                  viewHandler(view);
+                  Boolean(new_router === "true") && viewHandler(view);
                   setSelectedView(view);
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
                   setSelectedTabIndex(index);
                   if (view?.type !== "SECTION" && !view?.is_relation_view) {
-                    console.log("entereddddddd!!!!!!!!");
                     dispatch(groupFieldActions.setView(view));
                   }
                 }}>

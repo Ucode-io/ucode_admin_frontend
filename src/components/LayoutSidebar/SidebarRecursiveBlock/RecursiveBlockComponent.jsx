@@ -105,7 +105,6 @@ const RecursiveBlock = ({
     if (Boolean(newRouter === "true"))
       NavigateByType({element, menuId: element?.id, navigate});
     else NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
-    // NavigateByType({element, menuId: element?.id, navigate});
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);

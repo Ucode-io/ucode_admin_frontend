@@ -158,7 +158,13 @@ function InviteModal({
 
   return (
     <>
-      <Modal finalFocusRef={finalRef} isOpen={isOpen} onClose={handleClose}>
+      <Modal
+        variant=""
+        finalFocusRef={finalRef}
+        isOpen={isOpen}
+        onClose={handleClose}
+        isCentered
+      >
         <ModalOverlay />
 
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>

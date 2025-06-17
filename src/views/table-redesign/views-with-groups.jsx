@@ -174,8 +174,8 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-  const viewsPath = useSelector((state) => state.groupField.views);
-  console.log("viewsPathviewsPath", viewsPath);
+  const viewsPath = useSelector((state) => state.groupField.viewsList);
+
   const groupTable = view?.attributes.group_by_columns;
 
   const settingsForm = useForm({
@@ -348,6 +348,8 @@ export const NewUiViewsWithGroups = ({
     relationFields,
     viewsPath?.[0]?.table_slug
   );
+
+  console.log("viewsPathviewsPath", relationFields, viewsPath);
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
     const db = await openDB();
@@ -552,8 +554,8 @@ export const NewUiViewsWithGroups = ({
                       alignItems="center"
                       columnGap="8px"
                       onClick={() => {
-                        if (index === 0) {
-                          dispatch(groupFieldActions.clearViews());
+                        if (index === 0 && viewsPath?.[0]) {
+                          dispatch(groupFieldActions.clearViews(item));
                           setSelectedTabIndex(0);
                         }
                       }}>
@@ -716,12 +718,12 @@ export const NewUiViewsWithGroups = ({
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
                 onClick={() => {
-                  setSelectedTabIndex(index);
                   viewHandler(view);
                   setSelectedView(view);
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
+                  setSelectedTabIndex(index);
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||

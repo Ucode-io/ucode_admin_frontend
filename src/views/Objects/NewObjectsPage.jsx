@@ -84,7 +84,9 @@ const NewObjectsPage = () => {
       );
     },
     {
-      enabled: Boolean(selectedView?.table_slug),
+      enabled: Boolean(
+        selectedView?.table_slug && selectedView?.type !== "SECTION"
+      ),
       select: ({data}) => {
         dispatch(groupFieldActions.addView(data?.table_info));
         return {

@@ -4,26 +4,21 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
   createSlice({
     name: "groupField",
     initialState: {
-      views: [],
+      viewsList: [],
     },
     reducers: {
       addView: (state, {payload}) => {
-        const exists = state.views.some((v) => v.id === payload.id);
+        const exists = state.viewsList.some((v) => v.id === payload.id);
         if (!exists) {
-          state.views.push(payload);
+          state.viewsList.push(payload);
         }
-      },
-      cutViewsToFirst: (state, {payload}) => {
-        if (state.views.length > 0) {
-          state.views = [payload];
-        }
-      },
-      setViews: (state, {payload}) => {
-        state.views = payload;
       },
 
+      setParentView: (state, {payload}) => {
+        state.viewsList = state.viewsList.filter((v) => v.id === payload.id);
+      },
       clearViews: (state) => {
-        state.views = [];
+        state.viewsList = [];
       },
     },
   });

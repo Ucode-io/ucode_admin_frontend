@@ -174,8 +174,7 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-  const parentView = useSelector((state) => state?.groupField?.view);
-  const new_router = Boolean(localStorage.getItem("new_router"));
+  const viewsPath = useSelector((state) => state?.groupField?.views);
 
   const groupTable = view?.attributes.group_by_columns;
 
@@ -347,7 +346,7 @@ export const NewUiViewsWithGroups = ({
 
   const tableRelations = getTableRelations(
     relationFields,
-    parentView?.table_slug
+    viewsPath?.[0]?.table_slug
   );
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
@@ -408,17 +407,17 @@ export const NewUiViewsWithGroups = ({
   useEffect(() => {
     initDB();
   }, [tableSlug]);
-
+  console.log("viewsPathviewsPath", viewsPath);
   useEffect(() => {
     selectAll();
   }, [view, fieldsMap]);
 
-  useEffect(() => {
-    setSelectedView(view);
-    if (view?.type !== "SECTION" && !view?.is_relation_view) {
-      dispatch(groupFieldActions.setView(view));
-    }
-  }, []);
+  // useEffect(() => {
+  //   setSelectedView(view);
+  //   if (view?.type !== "SECTION" && !view?.is_relation_view) {
+  //     dispatch(groupFieldActions.addView(view));
+  //   }
+  // }, []);
 
   if (view?.type === "WEBSITE") {
     return (
@@ -491,95 +490,203 @@ export const NewUiViewsWithGroups = ({
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
+          {viewsPath?.length && selectedView?.is_relation_view ? (
+            <Flex
+              minH="45px"
+              h="36px"
+              px="16px"
+              alignItems="center"
+              bg="#fff"
+              borderBottom="1px solid #EAECF0"
+              columnGap="8px">
+              {relationView && (
+                <IconButton
+                  aria-label="back"
+                  icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  onClick={() => {
+                    setOpen(false);
+                    updateQueryWithoutRerender("p", undefined);
+                  }}
+                  size="sm"
+                />
+              )}
 
-          <Flex
-            minH="45px"
-            h="36px"
-            px="16px"
-            alignItems="center"
-            bg="#fff"
-            borderBottom="1px solid #EAECF0"
-            columnGap="8px">
-            {relationView && (
+              {!relationView && (
+                <IconButton
+                  aria-label="back"
+                  icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  onClick={() => {
+                    navigate(-1);
+                  }}
+                  size="sm"
+                />
+              )}
+
               <IconButton
-                aria-label="back"
-                icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+                aria-label="home"
+                icon={<img src="/img/home.svg" alt="home" />}
                 variant="ghost"
                 colorScheme="gray"
-                onClick={() => {
-                  setOpen(false);
-                  updateQueryWithoutRerender("p", undefined);
-                }}
+                onClick={() => navigate("/")}
+                ml="8px"
                 size="sm"
               />
-            )}
-            {/* <IconButton
-              aria-label="back"
-              icon={<ArrowBackIcon fontSize={20} color="#344054" />}
-              variant="ghost"
-              colorScheme="gray"
-              onClick={() => {
-                if (Boolean(new_router === "true" && Boolean(relationView))) {
-                  setOpen(false);
-                  updateQueryWithoutRerender("p", undefined);
-                } else navigate(-1);
-              }}
-              size="sm"
-            /> */}
-            <IconButton
-              aria-label="home"
-              icon={<img src="/img/home.svg" alt="home" />}
-              variant="ghost"
-              colorScheme="gray"
-              onClick={() => navigate("/")}
-              ml="8px"
-              size="sm"
-            />
-            <ChevronRightIcon fontSize={20} color="#344054" />
-            <Flex
-              py="4px"
-              px="8px"
-              bg="#EAECF0"
-              borderRadius={6}
-              color="#344054"
-              fontWeight={500}
-              alignItems="center"
-              columnGap="8px">
-              <Flex
-                w="16px"
-                h="16px"
-                bg="#EE46BC"
-                borderRadius={4}
-                columnGap={8}
-                color="#fff"
-                fontWeight={500}
-                fontSize={11}
-                justifyContent="center"
-                alignItems="center">
-                {tableName?.[0]}
-              </Flex>
-              {tableName}
-            </Flex>
+              {viewsPath?.length &&
+                selectedView?.is_relation_view &&
+                viewsPath?.map((item, index) => (
+                  <>
+                    {" "}
+                    <ChevronRightIcon fontSize={20} color="#344054" />
+                    <Flex
+                      py="4px"
+                      px="8px"
+                      bg="#EAECF0"
+                      borderRadius={6}
+                      color="#344054"
+                      cursor={"pointer"}
+                      fontWeight={500}
+                      alignItems="center"
+                      columnGap="8px"
+                      onClick={() => {
+                        if (index === 0) {
+                          dispatch(
+                            groupFieldActions.setViews([viewsPath?.[0]])
+                          );
+                          setSelectedTabIndex(0);
+                        }
+                      }}>
+                      <Flex
+                        w="16px"
+                        h="16px"
+                        bg="#EE46BC"
+                        borderRadius={4}
+                        columnGap={8}
+                        color="#fff"
+                        fontWeight={500}
+                        fontSize={11}
+                        justifyContent="center"
+                        alignItems="center">
+                        {item?.label?.[0]}
+                      </Flex>
+                      {item?.label}
+                    </Flex>
+                  </>
+                ))}
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button
-                h="30px"
-                ml="auto"
-                onClick={navigateToSettingsPage}
-                variant="outline"
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <Button
+                  h="30px"
+                  ml="auto"
+                  onClick={navigateToSettingsPage}
+                  variant="outline"
+                  colorScheme="gray"
+                  borderColor="#D0D5DD"
+                  color="#344054"
+                  leftIcon={<Image src="/img/settings.svg" alt="settings" />}
+                  borderRadius="8px">
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Table Settings"
+                  ) || "Table Settings"}
+                </Button>
+              </PermissionWrapperV2>
+            </Flex>
+          ) : (
+            <Flex
+              minH="45px"
+              h="36px"
+              px="16px"
+              alignItems="center"
+              bg="#fff"
+              borderBottom="1px solid #EAECF0"
+              columnGap="8px">
+              {relationView && (
+                <IconButton
+                  aria-label="back"
+                  icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  onClick={() => {
+                    setOpen(false);
+                    updateQueryWithoutRerender("p", undefined);
+                  }}
+                  size="sm"
+                />
+              )}
+
+              {!relationView && (
+                <IconButton
+                  aria-label="back"
+                  icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  onClick={() => {
+                    navigate(-1);
+                  }}
+                  size="sm"
+                />
+              )}
+
+              <IconButton
+                aria-label="home"
+                icon={<img src="/img/home.svg" alt="home" />}
+                variant="ghost"
                 colorScheme="gray"
-                borderColor="#D0D5DD"
+                onClick={() => navigate("/")}
+                ml="8px"
+                size="sm"
+              />
+              <ChevronRightIcon fontSize={20} color="#344054" />
+              <Flex
+                py="4px"
+                px="8px"
+                bg="#EAECF0"
+                borderRadius={6}
                 color="#344054"
-                leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                borderRadius="8px">
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Table Settings"
-                ) || "Table Settings"}
-              </Button>
-            </PermissionWrapperV2>
-          </Flex>
+                fontWeight={500}
+                alignItems="center"
+                columnGap="8px">
+                <Flex
+                  w="16px"
+                  h="16px"
+                  bg="#EE46BC"
+                  borderRadius={4}
+                  columnGap={8}
+                  color="#fff"
+                  fontWeight={500}
+                  fontSize={11}
+                  justifyContent="center"
+                  alignItems="center">
+                  {tableName?.[0]}
+                </Flex>
+                {tableName}
+              </Flex>
+
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <Button
+                  h="30px"
+                  ml="auto"
+                  onClick={navigateToSettingsPage}
+                  variant="outline"
+                  colorScheme="gray"
+                  borderColor="#D0D5DD"
+                  color="#344054"
+                  leftIcon={<Image src="/img/settings.svg" alt="settings" />}
+                  borderRadius="8px">
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Table Settings"
+                  ) || "Table Settings"}
+                </Button>
+              </PermissionWrapperV2>
+            </Flex>
+          )}
 
           <Flex
             minH="40px"
@@ -617,9 +724,6 @@ export const NewUiViewsWithGroups = ({
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
                   setSelectedTabIndex(index);
-                  if (view?.type !== "SECTION" && !view?.is_relation_view) {
-                    dispatch(groupFieldActions.setView(view));
-                  }
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||
@@ -1036,6 +1140,8 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableView
+                          setSelectedView={setSelectedView}
+                          relationView={relationView}
                           selectedRow={selectedRow}
                           setSelectedRow={setSelectedRow}
                           open={open}
@@ -1120,6 +1226,8 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableView
+                        setSelectedView={setSelectedView}
+                        relationView={relationView}
                         selectedRow={selectedRow}
                         setSelectedRow={setSelectedRow}
                         open={open}

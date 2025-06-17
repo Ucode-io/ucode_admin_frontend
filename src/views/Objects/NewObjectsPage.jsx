@@ -16,15 +16,17 @@ import {Box, Skeleton} from "@mui/material";
 import constructorViewService from "../../services/constructorViewService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import {DynamicTable} from "../table-redesign";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {useDispatch} from "react-redux";
 
 const NewObjectsPage = () => {
   const {state, pathname} = useLocation();
   const {menuId} = useParams();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
-  const [open, setOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const {data: views, refetch} = useQuery(
@@ -84,6 +86,7 @@ const NewObjectsPage = () => {
     {
       enabled: Boolean(selectedView?.table_slug),
       select: ({data}) => {
+        dispatch(groupFieldActions.addView(data?.table_info));
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -104,7 +107,7 @@ const NewObjectsPage = () => {
       navigate("/", {replace: false});
     }
   }, []);
-
+  console.log("tableInfotableInfotableInfo", tableInfo);
   const setViews = () => {};
 
   const storageItem = localStorage.getItem("newUi");
@@ -151,8 +154,7 @@ const NewObjectsPage = () => {
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
         refetchViews={refetch}
-        setOpen={setOpen}
-        open={open}
+        setSelectedView={setSelectedView}
         {...defaultProps}
         {...props}
       />

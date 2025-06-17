@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useLocation, useParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import constructorRelationService from "../../../services/constructorRelationService";
@@ -10,6 +10,7 @@ import menuService from "../../../services/menuService";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 
 function DrawerObjectsPage({
   open,
@@ -35,6 +36,7 @@ function DrawerObjectsPage({
   setSelectedViewType = () => {},
 }) {
   const {state} = useLocation();
+  const dispatch = useDispatch();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
   const auth = useSelector((state) => state.auth);
@@ -99,6 +101,7 @@ function DrawerObjectsPage({
     {
       enabled: Boolean(selectedView?.table_slug),
       select: ({data}) => {
+        dispatch(groupFieldActions.addView(data?.table_info));
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),

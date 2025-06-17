@@ -6,8 +6,16 @@ function Router() {
   const [routerSwitch, setRouterSwitch] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("new_router");
-    setRouterSwitch(stored === "true");
+    const checkRouter = () => {
+      const stored = localStorage.getItem("new_router");
+      setRouterSwitch(stored === "true");
+    };
+
+    checkRouter();
+
+    window.addEventListener("storageUpdate", checkRouter);
+
+    return () => window.removeEventListener("storageUpdate", checkRouter);
   }, []);
 
   return <>{routerSwitch ? <NewRouter /> : <OldRouter />}</>;

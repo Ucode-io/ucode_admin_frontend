@@ -55,7 +55,7 @@ export const SubGroup = ({
             ?.filter((item) => fieldsMap[item])
             .map((item) => {
               return (
-                <div>
+                <div key={item}>
                   <div className={cls.label}>
                     <span className={cls.text}>
                       {fieldsMap[item]?.type &&

@@ -2655,6 +2655,7 @@ const Group = ({ view, fieldsMap, refetchViews, onBackClick, tableLan }) => {
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
+              // disabled={}
               onChange={(ev) => onChange(column, ev.target.checked)}
               isChecked={view?.attributes?.group_by_columns?.includes(
                 column?.type === "LOOKUP" || column?.type === "LOOKUPS"
@@ -2789,11 +2790,15 @@ const TabGroup = ({
                 onChange={(ev) => onChange(column, ev.target.checked)}
                 disabled={
                   isBoardView
-                    ? view?.attributes?.sub_group_by_id === column?.id
+                    ? (column?.type === FIELD_TYPES.LOOKUP ||
+                      column?.type === FIELD_TYPES.LOOKUPS
+                        ? column?.relation_id
+                        : column?.id) === view?.attributes?.sub_group_by_id
                     : false
                 }
                 isChecked={(view?.group_fields ?? []).includes(
-                  column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                  column?.type === FIELD_TYPES.LOOKUP ||
+                    column?.type === FIELD_TYPES.LOOKUPS
                     ? column?.relation_id
                     : column?.id
                 )}

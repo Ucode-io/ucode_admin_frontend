@@ -17,6 +17,7 @@ import {applyDrag} from "../../../utils/applyDrag";
 import "./style.scss";
 import {store} from "../../../store";
 import {useSelector} from "react-redux";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 function DrawerFormDetailPage({
   control,
@@ -123,6 +124,10 @@ function DrawerFormDetailPage({
   }, [data, watch("attributes.layout_heading")]);
 
   const getFieldLanguageLabel = (el) => {
+    console.log({ el });
+    if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
+      return el?.attributes?.[`label_${i18n?.language}`];
+    }
     if (el?.enable_multilanguage) {
       return el?.attributes?.show_label
         ? `${el?.label} (${activeLang ?? slugSplit(el?.slug)})`
@@ -274,6 +279,9 @@ function DrawerFormDetailPage({
                           color="#787774"
                           fontWeight="500"
                           width="100%"
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
                         >
                           {getFieldLanguageLabel(field)}
                         </Box>

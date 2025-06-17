@@ -13,13 +13,15 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
           state.views.push(payload);
         }
       },
-      cutViewsExceptFirst: (state, {payload}) => {
-        state.views.push(payload);
+      cutViewsToFirst: (state, {payload}) => {
+        if (state.views.length > 0) {
+          state.views = [payload];
+        }
       },
       setViews: (state, {payload}) => {
-        state.views = [];
         state.views = payload;
       },
+
       clearViews: (state) => {
         state.views = [];
       },

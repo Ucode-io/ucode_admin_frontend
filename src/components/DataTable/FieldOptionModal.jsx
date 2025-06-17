@@ -13,6 +13,7 @@ import {
 import chakraUITheme from "@/theme/chakraUITheme";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { iconsComponents } from "../../views/table-redesign/icons";
 
 export default function FieldOptionModal({
   tableLan,
@@ -22,7 +23,7 @@ export default function FieldOptionModal({
   setValue,
   target,
 }) {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const open = Boolean(anchorEl);
   const [searchValue, setSearchValue] = useState();
 
@@ -56,6 +57,12 @@ export default function FieldOptionModal({
     }
     setFieldCreateAnchor(target);
   };
+
+  const filteredTypes = newFieldTypes?.filter((el) =>
+    searchValue
+      ? el?.label.toLowerCase().includes(searchValue.toLowerCase())
+      : true
+  );
 
   return (
     <ChakraProvider theme={chakraUITheme}>
@@ -96,7 +103,8 @@ export default function FieldOptionModal({
               zIndex: 0,
             },
           },
-        }}>
+        }}
+      >
         <div className={`${style.field}`}>
           <Typography variant="h6" className={style.title}>
             {generateLangaugeText(
@@ -123,31 +131,34 @@ export default function FieldOptionModal({
           </InputGroup>
           <Box
             className="scrollbarNone"
-            sx={{overflow: "auto", height: "400px"}}>
-            {newFieldTypes
-              ?.filter((el) =>
-                searchValue
-                  ? el?.label.toLowerCase().includes(searchValue.toLowerCase())
-                  : true
-              )
-              ?.map((field) => (
-                <Button
-                  key={field?.value}
-                  fullWidth
-                  className={style.button}
-                  onClick={(e) => {
-                    handleChange(e, field?.value);
-                  }}>
-                  {field?.value &&
-                    getColumnIcon({
-                      column: {
-                        type: field?.value,
-                        table_slug: field?.table_slug,
-                      },
-                    })}
-                  <p>{field?.[`label_${i18n?.language}`] || field?.label}</p>
-                </Button>
-              ))}
+            display="grid"
+            gridTemplateColumns="1fr 1fr"
+            gridTemplateRows={`repeat(${filteredTypes?.length / 2}, 32px)`}
+            alignItems="center"
+            paddingBottom="8px"
+            sx={{ overflow: "auto", maxHeight: "400px", minWidth: "400px" }}
+          >
+            {filteredTypes?.map((field) => (
+              <Button
+                key={field?.value}
+                fullWidth
+                className={style.button}
+                onClick={(e) => {
+                  handleChange(e, field?.value);
+                }}
+              >
+                {
+                  field?.value && iconsComponents[field?.value]
+                  // getColumnIcon({
+                  //   column: {
+                  //     type: field?.value,
+                  //     table_slug: field?.table_slug,
+                  //   },
+                  // })
+                }
+                <p>{field?.[`label_${i18n?.language}`] || field?.label}</p>
+              </Button>
+            ))}
           </Box>
         </div>
       </Menu>

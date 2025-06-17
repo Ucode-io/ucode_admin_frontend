@@ -40,6 +40,12 @@ import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attribute
 import constructorRelationService from "../../services/constructorRelationService";
 import {listToMap} from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
+import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import Dropdown from "../NewFormElements/Dropdown/Dropdown";
+import FormElementButton from "../NewFormElements/FormElementButton";
+import MultiselectSettings from "./MultiselectSettings";
+import SVG from "react-inlinesvg";
+import { FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon } from "../icons";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -356,6 +362,7 @@ export default function FieldCreateModal({
     handleClose();
     if (!fieldData) {
       setValue("type", "");
+      setValue("attributes.options", []);
       setFieldOptionAnchor(target);
     }
   };
@@ -441,12 +448,18 @@ export default function FieldCreateModal({
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{ top: 450, left: 900 }}
+      anchorPosition={{ top: 240, left: 950 }}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
       anchorEl={anchorEl}
       background="red"
+      PaperProps={{
+        style: {
+          overflowY: "visible",
+          overflowX: "visible",
+        },
+      }}
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "center",
@@ -457,14 +470,14 @@ export default function FieldCreateModal({
       }}
     >
       <div className={style.field}>
-        <Typography
+        {/* <Typography
           variant="h6"
           textTransform="uppercase"
           className={style.title}
         >
           {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
             "ADD COLUMN"}
-        </Typography>
+        </Typography> */}
 
         <form
           onSubmit={handleSubmit(
@@ -483,32 +496,123 @@ export default function FieldCreateModal({
               <Box
                 sx={{
                   width: "100%",
+                  marginBottom: "10px",
                 }}
               >
                 {!ValueTypes(values?.type) && !FormatTypes(format) ? (
-                  <FRow
-                    label={
-                      generateLangaugeText(tableLan, i18n?.language, "Label") ||
-                      "Label"
-                    }
-                    classname={style.custom_label}
-                    required
-                  >
-                    <Box style={{ display: "flex", gap: "6px" }}>
-                      <HFTextFieldWithMultiLanguage
-                        control={control}
-                        name="attributes.label"
-                        fullWidth
-                        placeholder="Name"
-                        defaultValue={tableName}
-                        languages={languages}
-                        id={"text_field_label"}
-                      />
-                    </Box>
-                  </FRow>
-                ) : null}
+                  <TextFieldWithMultiLanguage
+                    control={control}
+                    name="attributes.label"
+                    fullWidth
+                    placeholder="Name"
+                    defaultValue={tableName}
+                    languages={languages}
+                    id={"text_field_label"}
+                  />
+                ) : // <FRow
+                //   label={
+                //     generateLangaugeText(tableLan, i18n?.language, "Label") ||
+                //     "Label"
+                //   }
+                //   classname={style.custom_label}
+                //   required
+                // >
+                //   <Box style={{ display: "flex", gap: "6px" }}>
+                //     <HFTextFieldWithMultiLanguage
+                //       control={control}
+                //       name="attributes.label"
+                //       fullWidth
+                //       placeholder="Name"
+                //       defaultValue={tableName}
+                //       languages={languages}
+                //       id={"text_field_label"}
+                //     />
+                //   </Box>
+                // </FRow>
+                null}
               </Box>
-              <FRow
+              <Box width={"100%"}>
+                <Dropdown
+                  options={fieldData ? fieldFormats : newFieldTypes}
+                  selectedValue={watch("attributes.format")}
+                  onClick={(option) => {
+                    setValue("attributes.format", option?.value);
+                    if (option?.value === "NUMBER") {
+                      setValue("type", "NUMBER");
+                    } else if (option?.value === "DATE") {
+                      setValue("type", "DATE");
+                    } else if (option?.value === "INCREMENT") {
+                      setValue("type", "INCREMENT_ID");
+                    } else if (option?.value === "SINGLE_LINE") {
+                      setValue("type", "SINGLE_LINE");
+                    } else {
+                      setValue("type", option?.value);
+                    }
+                  }}
+                  label={
+                    generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Change Type"
+                    ) || "Change type"
+                  }
+                  icon={<FieldTypeIcon />}
+                />
+              </Box>
+              {formatIncludes?.includes(format) && (
+                <Box width={"100%"}>
+                  <Dropdown
+                    options={FormatOptionType(format)}
+                    selectedValue={watch("type")}
+                    onClick={(option) => {
+                      setValue("type", option?.value);
+                    }}
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Change format"
+                      ) || "Change format"
+                    }
+                    icon={<FieldFormatIcon />}
+                  />
+                </Box>
+              )}
+              {format === "MULTISELECT" && (
+                <Box width={"100%"}>
+                  <Dropdown
+                    content={
+                      <MultiselectSettings
+                        dropdownFields={dropdownFields}
+                        onDrop={onDrop}
+                        watch={watch}
+                        control={control}
+                        setValue={setValue}
+                        handleOpenColor={handleOpenColor}
+                        dropdownRemove={dropdownRemove}
+                        tableLan={tableLan}
+                        i18n={i18n}
+                        openColor={openColor}
+                        colorEl={colorEl}
+                        handleCloseColor={handleCloseColor}
+                        colorList={colorList}
+                        idx={idx}
+                        dropdownAppend={dropdownAppend}
+                      />
+                    }
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Edit property"
+                      ) || "Edit property"
+                    }
+                    optionsClassname={style.editProperty}
+                    icon={<FieldPropertyIcon />}
+                  />
+                </Box>
+              )}
+              {/* <FRow
                 label={
                   generateLangaugeText(tableLan, i18n?.language, "Type") ||
                   "Type"
@@ -541,9 +645,9 @@ export default function FieldCreateModal({
                   }}
                   placeholder="Select type"
                 />
-              </FRow>
+              </FRow> */}
             </Box>
-            <Box sx={{ padding: "0 5px" }}>
+            {/* <Box sx={{ padding: "0 5px" }}>
               {formatIncludes?.includes(format) ? (
                 <FRow
                   label={
@@ -590,9 +694,9 @@ export default function FieldCreateModal({
                   ) || "Advanced settings"}
                 </Button>
               )}
-            </Box>
+            </Box> */}
           </MaterialUIProvider>
-          <div>
+          {/* <div>
             {format === "MULTISELECT" && (
               <Box className={style.dropdown}>
                 <Container
@@ -605,11 +709,6 @@ export default function FieldCreateModal({
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
                         <Box
-                        // sx={{
-                        //   display: "flex",
-                        //   alignItems: "center",
-                        //   justifyContent: "space-around",
-                        // }}
                         >
                           <FRow
                             label={`Option ${index + 1}`}
@@ -654,27 +753,6 @@ export default function FieldCreateModal({
                               }
                             />
                           </FRow>
-                          {/* <FRow
-                            label={`Value ${index + 1}`}
-                            className={style.option}
-                          >
-                            <HFTextField
-                              disabledHelperText
-                              name={`attributes.options.${index}.value`}
-                              control={control}
-                              fullWidth
-                              required
-                              placeholder="Type..."
-                              className={style.input}
-                              endAdornment={
-                                <Box className={style.adornment}>
-                                  <CloseIcon
-                                    onClick={() => dropdownRemove(index)}
-                                  />
-                                </Box>
-                              }
-                            />
-                          </FRow> */}
                         </Box>
                       </Box>
                       <Popover
@@ -734,7 +812,7 @@ export default function FieldCreateModal({
                 )}
               </Box>
             )}
-          </div>
+          </div> */}
           {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
             <Box padding="5px">
               <FRow label="Formula format">
@@ -958,11 +1036,15 @@ export default function FieldCreateModal({
             />
           ) : null}
           <Box className={style.button_group} sx={{ padding: "0 5px" }}>
-            <Button variant="contained" color="error" onClick={handleClick}>
+            <FormElementButton onClick={handleClick}>
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}
-            </Button>
-            <Button variant="contained" type="submit">
+            </FormElementButton>
+            {/* <Button variant="contained" color="error" onClick={handleClick}>
+              {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
+                "Cancel"}
+            </Button> */}
+            <FormElementButton primary type="submit">
               {fieldData
                 ? generateLangaugeText(
                     tableLan,
@@ -974,7 +1056,7 @@ export default function FieldCreateModal({
                     i18n?.language,
                     "Add column"
                   ) || "Add column"}
-            </Button>
+            </FormElementButton>
           </Box>
         </form>
       </div>

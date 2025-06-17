@@ -27,8 +27,8 @@ import { useClientTypesQuery } from "../../client-types/utils";
 import { CreateDrawer, EditDrawer } from "../../client-types/actions";
 import { generateLangaugeText } from "../../../utils/generateLanguageText";
 import styles from "./style.module.scss";
-import InviteModal from "./InviteModal";
 import useSearchParams from "../../../hooks/useSearchParams";
+import InviteModal from "@/components/InviteModal/InviteModal";
 
 const templateColumns =
   "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
@@ -43,7 +43,7 @@ const limitOptions = [
 export const UserClientTypes = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [editUserGuid, setEditUserGuid] = useState("");
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const isDefaultOpen = Boolean(searchParams.get("defaultOpenModal"));
 
@@ -116,6 +116,21 @@ export const UserClientTypes = () => {
               </Flex>
             </TabList>
           </Tabs>
+          <Box w={"100%"} display={"flex"} justifyContent={"flex-end"}>
+            <Button
+              ml="auto"
+              fontSize={13}
+              // rightIcon={<ChevronDownIcon fontSize={20} />}
+              borderRadius={8}
+              onClick={() => {
+                onOpen();
+                setSearchParams({ invite: true });
+              }}
+            >
+              {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
+                "Invite"}
+            </Button>
+          </Box>
           <InviteModal
             selectedClientType={selectedClientType}
             isOpen={isDefaultOpen || isOpen}

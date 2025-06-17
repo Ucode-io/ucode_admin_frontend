@@ -30,6 +30,8 @@ import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableView = ({
+  setSelectedView = () => {},
+  relationView = false,
   selectedRow,
   setSelectedRow = () => {},
   open,
@@ -75,6 +77,7 @@ const TableView = ({
   tableSlugProp = "",
   ...props
 }) => {
+  console.log("relationViewrelationView", relationView);
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
@@ -439,34 +442,40 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (Boolean(new_router === "true")) {
+    console.log("selectedViewselectedViewselectedView", selectedView);
+    if (Boolean(selectedView?.is_relation_view)) {
+      setSelectedView(view);
       updateQueryWithoutRerender("p", row?.guid);
-      if (view?.attributes?.url_object) {
-        navigateToDetailPage(row);
-      } else if (projectInfo?.new_layout) {
-        setSelectedRow(row);
-        setOpen(true);
-      } else {
-        if (layoutType === "PopupLayout") {
-          setSelectedRow(row);
-          setOpen(true);
-        } else {
-          // navigate(`/${menuId}/${row?.guid}`);
-          navigateToDetailPage(row);
-        }
-      }
     } else {
-      if (view?.attributes?.url_object) {
-        navigateToDetailPage(row);
-      } else if (projectInfo?.new_layout) {
-        setSelectedRow(row);
-        setOpen(true);
-      } else {
-        if (layoutType === "PopupLayout") {
+      if (Boolean(new_router === "true")) {
+        updateQueryWithoutRerender("p", row?.guid);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
           setSelectedRow(row);
           setOpen(true);
         } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            setOpen(true);
+          } else {
+            // navigate(`/${menuId}/${row?.guid}`);
+            navigateToDetailPage(row);
+          }
+        }
+      } else {
+        if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          setOpen(true);
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            setOpen(true);
+          } else {
+            navigateToDetailPage(row);
+          }
         }
       }
     }

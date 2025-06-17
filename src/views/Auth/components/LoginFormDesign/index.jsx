@@ -193,6 +193,10 @@ const LoginFormDesign = ({
           setCompanies(res?.companies ?? {});
           computeCompanyElement(res?.companies ?? "");
           localStorage.setItem(
+            "new_router",
+            res?.companies?.[0]?.projects?.[0]?.new_router || "false"
+          );
+          localStorage.setItem(
             "newUi",
             res?.companies?.[0]?.projects?.[0]?.new_design
           );
@@ -202,10 +206,6 @@ const LoginFormDesign = ({
           localStorage.setItem(
             "newLayout",
             res?.companies?.[0]?.projects?.[0]?.new_layout
-          );
-          localStorage.setItem(
-            "new_router",
-            res?.companies?.[0]?.projects?.[0]?.new_router || "false"
           );
         } else {
           dispatch(showAlert("The company does not exist", "error"));

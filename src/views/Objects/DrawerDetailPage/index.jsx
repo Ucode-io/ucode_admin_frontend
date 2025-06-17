@@ -14,6 +14,7 @@ import {showAlert} from "../../../store/alert/alert.thunk";
 import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "./DrawerObjectsPage";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 
 function DrawerDetailPage({
   view,
@@ -39,6 +40,7 @@ function DrawerDetailPage({
   const handleClose = () => {
     updateQueryWithoutRerender("p", null);
     setOpen(false);
+    dispatch(groupFieldActions.clearViews());
   };
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);

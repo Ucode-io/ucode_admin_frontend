@@ -1,0 +1,89 @@
+.dropdown {
+  position: relative;
+  width: 100%;
+
+  &:hover .options {
+    display: flex;
+  }
+}
+
+.dropdownBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  line-height: 120%;
+  gap: 8px;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background 20ms ease-in;
+  cursor: pointer;
+  padding: 3px 6px;
+  
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.label {
+  font-size: 14px;
+  line-height: 1.2;
+  color: rgb(50, 48, 44);
+}
+
+.arrow {
+  margin-left: auto;
+}
+
+.options {
+  max-height: 400px;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px;
+  border-radius: 10px;
+  overflow: auto;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 120%;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: background 20ms ease-in;
+  cursor: pointer;
+  
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.optionIcon {
+  visibility: hidden;
+  margin-left: auto;
+}
+
+.option.selected .optionIcon {
+  visibility: visible;
+}
+
+.optionLabel {
+
+}

@@ -16,7 +16,7 @@
   width: 100%;
   min-width: 240px;
   max-height: 500px;
-  overflow: auto;
+  // overflow: auto;
   position: relative;
 
   .advanced {
@@ -65,19 +65,24 @@
     padding: 11px 15px;
     height: 32px;
     column-gap: 7px;
+    border-radius: 6px;
+
+    &:hover {
+      background: rgba(55, 53, 47, 0.06);
+    }
 
     svg {
       font-size: 14.5px;
       line-height: 24px;
       font-weight: 500;
-      color: #111;
+      color: #55534E;
     }
 
     p {
       font-size: 14px;
       line-height: 24px;
       font-weight: 500;
-      color: #111;
+      color: rgb(50, 48, 44);
     }
   }
 
@@ -96,7 +101,7 @@
   }
 
   .dropdown {
-    height: 150px;
+    height: 100%;
     overflow: auto;
     .option {
       display: flex;
@@ -157,8 +162,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 500px;
-      width: 300px;
+      // min-width: 500px;
+      // width: 300px;
       column-gap: 10px;
     }
   }
@@ -166,5 +171,198 @@
 
 .field {
   width: 100%;
-  padding: 5px;
+  // padding: 5px;
+}
+
+.dropdown {
+  min-width: 250px;
+  position: relative;
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  color: rgb(115, 114, 110);
+  fill: rgba(71, 70, 68, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 120%;
+  user-select: none;
+  height: 20px;
+}
+
+.appendBtn {
+  user-select: none;
+  transition: background 20ms ease-in;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 6px;
+  height: 20px;
+  width: 20px;
+  padding: 0px;
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+
+.fieldItemWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 120%;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  padding-left: 8px;
+  padding-right: 8px;
+  cursor: pointer;
+}
+
+.fieldItem {
+  color: #4f5762;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 1;
+  min-width: 0px;
+  max-width: 100%;
+  height: 20px;
+  margin: 0px;
+  border-radius: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+  line-height: 120%;
+  font-size: 14px;
+  color: rgb(68, 42, 30);
+  background: rgba(210, 162, 141, 0.35);
+}
+
+.appendOption {
+  // position: absolute;
+  // top: 0;
+  // left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.appendInput {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  width: 100%;
+  font-size: 14px;
+  line-height: 20px;
+  border-radius: 6px;
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px;
+  background: rgba(242, 241, 238, 0.6);
+  cursor: text;
+  padding: 3px 8px;
+  height: 28px;
+}
+
+.editOptionMenu {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  width: 80%;
+  min-height: 90px;
+  background-color: #fff;
+  padding: 6px;
+  border-radius: 10px;
+  backdrop-filter: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  overflow: hidden;
+}
+
+.deleteOptionBtn {
+  user-select: none;
+  transition: background 20ms ease-in;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 6px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 120%;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  padding-left: 8px;
+  padding-right: 8px;
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+
+.editProperty {
+  min-height: 400px;
+  height: 100%;
+}
+
+.line {
+  display: block;
+  height: 1px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
+  background: rgba(55, 53, 47, 0.09);
+}
+
+.colors {
+  display: flex;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  color: rgb(115, 114, 110);
+  fill: rgba(71, 70, 68, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 120%;
+  user-select: none;
+}
+
+.colorWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 120%;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  padding-left: 8px;
+  padding-right: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.color {
+  width: 18px;
+  height: 18px;
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px inset;
+  border-radius: 4px;
+  cursor: pointer;
 }

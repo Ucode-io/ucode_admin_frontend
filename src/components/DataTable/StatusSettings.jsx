@@ -1,10 +1,11 @@
 import React from "react";
-import { Controller, useFieldArray } from "react-hook-form";
-import { Box, Button } from "@mui/material";
+import { useFieldArray } from "react-hook-form";
+import { Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HFColorPicker from "@/components/FormElements/HFColorPicker";
 import TextField from "../NewFormElements/TextField/TextField";
+import FormElementButton from "../NewFormElements/FormElementButton";
 
 function StatusSettings({ control }) {
   const toDoFieldArray = useFieldArray({
@@ -66,7 +67,6 @@ function StatusSettings({ control }) {
             name={`attributes.${name}.options[${index}].color`}
             control={control}
           />
-          <Controller />
           <TextField
             name={`attributes.${name}.options[${index}].label`}
             control={control}
@@ -74,14 +74,14 @@ function StatusSettings({ control }) {
             defaultValue={field.key}
           />
 
-          <Button
-            variant="outlined"
-            color="error"
+          <FormElementButton
             type="button"
             onClick={() => fieldArray.remove(index)}
           >
-            <DeleteIcon />
-          </Button>
+            <Box display="flex" alignItems="center">
+              <DeleteIcon htmlColor="#212b36" />
+            </Box>
+          </FormElementButton>
         </div>
       ))}
     </div>

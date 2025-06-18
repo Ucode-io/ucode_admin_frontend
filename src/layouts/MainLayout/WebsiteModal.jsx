@@ -33,7 +33,7 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   });
 
   const onSubmit = (data) => {
-    if (selectedFolder.type === "MICROFRONTEND") {
+    if (selectedFolder?.type === "MICROFRONTEND") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -71,9 +71,9 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   };
 
   useEffect(() => {
-    if (selectedFolder.type === "MICROFRONTEND")
+    if (selectedFolder?.type === "MICROFRONTEND")
       menuSettingsService
-        .getById(selectedFolder.id, company.projectId)
+        .getById(selectedFolder?.id, company.projectId)
         .then((res) => {
           reset(res);
         })

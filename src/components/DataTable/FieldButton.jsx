@@ -19,6 +19,7 @@ import {
   useRelationsCreateMutation,
 } from "../../services/relationService";
 import {transliterate} from "../../utils/textTranslater";
+import { useGetLang } from "../../hooks/useGetLang";
 
 export default function FieldButton({
   openFieldSettings,
@@ -32,13 +33,17 @@ export default function FieldButton({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  setSortedDatas,
+  sortedDatas,
+  visibleColumns,
 }) {
+  const tableLan = useGetLang("Table");
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [searchParams, setSearchParams] = useSearchParams();
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const dispatch = useDispatch();
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const { control, watch, setValue, reset, handleSubmit } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
@@ -78,7 +83,7 @@ export default function FieldButton({
       });
   };
 
-  const {mutate: createField, isLoading: createLoading} =
+  const { mutate: createField, isLoading: createLoading } =
     useFieldCreateMutation({
       onSuccess: (res) => {
         reset({});
@@ -89,7 +94,7 @@ export default function FieldButton({
       },
     });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldUpdateMutation({
       onSuccess: (res) => {
         reset({});
@@ -100,7 +105,7 @@ export default function FieldButton({
       },
     });
 
-  const {mutate: createRelation, isLoading: realationLoading} =
+  const { mutate: createRelation, isLoading: realationLoading } =
     useRelationsCreateMutation({
       onSuccess: (res) => {
         reset({});
@@ -111,7 +116,7 @@ export default function FieldButton({
       },
     });
 
-  const {mutate: updateRelation, isLoading: realationUpdateLoading} =
+  const { mutate: updateRelation, isLoading: realationUpdateLoading } =
     useRelationFieldUpdateMutation({
       onSuccess: (res) => {
         reset({});
@@ -154,17 +159,17 @@ export default function FieldButton({
     };
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
+        createField({ data, tableSlug });
       }
       if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
+        createRelation({ data: relationData, tableSlug });
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
+        updateRelation({ data: values, tableSlug });
       } else {
-        updateField({data, tableSlug});
+        updateField({ data, tableSlug });
       }
     }
   };
@@ -181,7 +186,7 @@ export default function FieldButton({
     } else {
       reset({
         attributes: {
-          math: {label: "plus", value: "+"},
+          math: { label: "plus", value: "+" },
         },
       });
     }
@@ -240,6 +245,13 @@ export default function FieldButton({
           menuItem={menuItem}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
+          mainForm={mainForm}
+          setFieldData={setFieldData}
+          view={view}
+          setSortedDatas={setSortedDatas}
+          sortedDatas={sortedDatas}
+          tableLan={tableLan}
+          visibleColumns={visibleColumns}
         />
       )}
     </>

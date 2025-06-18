@@ -1,17 +1,21 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
+import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
 
-import {useRelationGetByIdQuery} from "../../services/relationService";
-import {applyDrag} from "../../utils/applyDrag";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
   FormatOptionType,
   FormatTypes,
@@ -21,7 +25,7 @@ import {
   math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import {colorList} from "../ColorPicker/colorList";
+import { colorList } from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -35,10 +39,10 @@ import constructorFieldService, {
   useFieldsListQuery,
 } from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
 import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attributes/FormulaFilters";
 import constructorRelationService from "../../services/constructorRelationService";
-import {listToMap} from "../../utils/listToMap";
+import { listToMap } from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import Dropdown from "../NewFormElements/Dropdown/Dropdown";
@@ -46,6 +50,10 @@ import FormElementButton from "../NewFormElements/FormElementButton";
 import MultiselectSettings from "./MultiselectSettings";
 import SVG from "react-inlinesvg";
 import { FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon } from "../icons";
+import { paginationActions } from "../../store/pagination/pagination.slice";
+import constructorViewService from "../../services/constructorViewService";
+import DropdownSelect from "../NewFormElements/DropdownSelect";
+import TextField from "../NewFormElements/TextField/TextField";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -90,12 +98,19 @@ export default function FieldCreateModal({
   menuItem,
   mainForm,
   view,
+  sortedDatas,
+  setSortedDatas,
+  setFieldData,
 }) {
   const { tableSlug, id } = useParams();
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
   });
+
+  const queryClient = useQueryClient();
+
+  const dispatch = useDispatch();
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -238,7 +253,11 @@ export default function FieldCreateModal({
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
 
-  const { control: formulaControl, watch: formulaWatch } = useForm({
+  const {
+    control: formulaControl,
+    watch: formulaWatch,
+    setValue: formulaSetValue,
+  } = useForm({
     defaultValues: {
       formulaFormat: "FORMULA_FRONTEND",
     },
@@ -347,6 +366,7 @@ export default function FieldCreateModal({
 
     setAnchorEl(null);
     !fieldData && setValue("type", "");
+    setFieldData(null);
   };
 
   const handleCloseColor = () => {
@@ -445,10 +465,107 @@ export default function FieldCreateModal({
     onSubmit(innerData);
   };
 
+  const popoverAnchorProps = {};
+  if (!fieldData) {
+    popoverAnchorProps.anchorReference = "anchorPosition";
+    popoverAnchorProps.anchorPosition = {
+      top: 270,
+      left: window.innerWidth - 300,
+    };
+    popoverAnchorProps.anchorOrigin = {
+      vertical: "bottom",
+      horizontal: "center",
+    };
+    popoverAnchorProps.transformOrigin = {
+      vertical: "bottom",
+      horizontal: "left",
+    };
+  } else {
+    popoverAnchorProps.anchorOrigin = {
+      vertical: "bottom",
+      horizontal: "left",
+    };
+  }
+
+  const handleSortField = () => {
+    const field = fieldData.id;
+    const order =
+      sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
+        ? "DESC"
+        : "ASC";
+    dispatch(
+      paginationActions.setSortValues({
+        tableSlug,
+        field,
+        order,
+      })
+    );
+    setSortedDatas((prev) => {
+      const newSortedDatas = [...prev];
+      const index = newSortedDatas.findIndex(
+        (item) => item.field === fieldData.id
+      );
+      if (index !== -1) {
+        newSortedDatas[index].order =
+          newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+      } else {
+        newSortedDatas.push({
+          field: fieldData.id,
+          order: "ASC",
+        });
+      }
+      return newSortedDatas;
+    });
+    setAnchorEl(null);
+  };
+
+  const fixColumnChangeHandler = (column, e) => {
+    const computedData = {
+      ...view,
+      attributes: {
+        ...view?.attributes,
+        fixedColumns: {
+          ...view?.attributes?.fixedColumns,
+          [column.id]: e,
+        },
+      },
+    };
+
+    constructorViewService.update(tableSlug, computedData).then((res) => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    });
+  };
+
+  const updateView = (column) => {
+    constructorViewService
+      .update(tableSlug, {
+        ...view,
+        columns: view?.columns?.filter((item) => item !== column),
+      })
+      .then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        setAnchorEl(null);
+      });
+  };
+
+  const deleteField = (column) => {
+    constructorFieldService.delete(column, tableSlug).then((res) => {
+      constructorViewService
+        .update(tableSlug, {
+          ...view,
+          columns: view?.columns?.filter((item) => item !== column),
+        })
+        .then(() => {
+          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        });
+    });
+  };
+
   return (
     <Popover
-      anchorReference="anchorPosition"
-      anchorPosition={{ top: 240, left: 950 }}
+      {...popoverAnchorProps}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -459,14 +576,6 @@ export default function FieldCreateModal({
           overflowY: "visible",
           overflowX: "visible",
         },
-      }}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "center",
-      }}
-      transformOrigin={{
-        vertical: "bottom",
-        horizontal: "left",
       }}
     >
       <div className={style.field}>
@@ -531,7 +640,74 @@ export default function FieldCreateModal({
                 // </FRow>
                 null}
               </Box>
-              <Box width={"100%"}>
+              {fieldData && (
+                <Box width={"100%"}>
+                  <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
+                    <Box>
+                      <button
+                        className={style.btn}
+                        type="button"
+                        onClick={handleSortField}
+                      >
+                        <SortByAlphaOutlinedIcon />
+                        <span>
+                          Sort{" "}
+                          {sortedDatas?.find(
+                            (item) => item.field === fieldData.id
+                          )?.order === "ASC"
+                            ? "Z -> A"
+                            : "A -> Z"}
+                        </span>
+                      </button>
+                    </Box>
+                    <Box width={"100%"}>
+                      <button
+                        className={style.btn}
+                        type="button"
+                        onClick={() =>
+                          fixColumnChangeHandler(
+                            fieldData,
+                            !view?.attributes?.fixedColumns?.[fieldData?.id]
+                              ? true
+                              : false
+                          )
+                        }
+                      >
+                        <ViewWeekOutlinedIcon />
+                        <span>
+                          {view?.attributes?.fixedColumns?.[fieldData?.id]
+                            ? "Unfix"
+                            : "Fix"}{" "}
+                          column
+                        </span>
+                      </button>
+                    </Box>
+                  </Box>
+                  <Box paddingY="6px" borderBottom="1px solid #e5e9eb">
+                    <Box width={"100%"}>
+                      <button
+                        className={style.btn}
+                        type="button"
+                        onClick={() => updateView(fieldData.id)}
+                      >
+                        <VisibilityOffOutlinedIcon />
+                        <span>Hide field</span>
+                      </button>
+                    </Box>
+                    <Box width={"100%"} color="red">
+                      <button
+                        className={style.btn}
+                        type="button"
+                        onClick={() => deleteField(fieldData.id)}
+                      >
+                        <DeleteOutlinedIcon />
+                        <span>Delete field</span>
+                      </button>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+              <Box width={"100%"} paddingY={"6px"}>
                 <Dropdown
                   options={fieldData ? fieldFormats : newFieldTypes}
                   selectedValue={watch("attributes.format")}
@@ -563,9 +739,17 @@ export default function FieldCreateModal({
                 <Box width={"100%"}>
                   <Dropdown
                     options={FormatOptionType(format)}
-                    selectedValue={watch("type")}
+                    selectedValue={
+                      format?.startsWith("FORMULA")
+                        ? formulaWatch("formulaFormat")
+                        : watch("type")
+                    }
                     onClick={(option) => {
-                      setValue("type", option?.value);
+                      if (format?.startsWith("FORMULA")) {
+                        formulaSetValue("formulaFormat", option?.value);
+                      } else {
+                        setValue("type", option?.value);
+                      }
                     }}
                     label={
                       generateLangaugeText(
@@ -814,17 +998,17 @@ export default function FieldCreateModal({
             )}
           </div> */}
           {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
-            <Box padding="5px">
-              <FRow label="Formula format">
+            <Box padding="5px" overflow="auto" maxHeight="300px">
+              {/* <FRow label="Formula format">
                 <HFSelect
                   name="formulaFormat"
                   control={formulaControl}
                   options={formulaFormatOptions}
                   isClearable={false}
                 />
-              </FRow>
+              </FRow> */}
               <FRow label="Formula type">
-                <HFSelect
+                <DropdownSelect
                   name="attributes.type"
                   control={control}
                   options={formulaTypes}
@@ -833,7 +1017,7 @@ export default function FieldCreateModal({
               {(type === "SUMM" || type === "MAX" || type === "AVG") && (
                 <>
                   <FRow label="Table from">
-                    <HFSelect
+                    <DropdownSelect
                       name="attributes.table_from"
                       control={control}
                       options={computedTables}
@@ -841,7 +1025,7 @@ export default function FieldCreateModal({
                   </FRow>
 
                   <FRow label="Field from">
-                    <HFSelect
+                    <DropdownSelect
                       name="attributes.sum_field"
                       control={control}
                       options={fields}
@@ -849,7 +1033,7 @@ export default function FieldCreateModal({
                   </FRow>
 
                   <FRow label="Rounds">
-                    <HFTextField
+                    <TextField
                       name="attributes.number_of_rounds"
                       type="number"
                       fullWidth
@@ -884,15 +1068,15 @@ export default function FieldCreateModal({
           )}
           {formulaFormat === "FORMULA_FRONTEND" &&
             format?.startsWith("FORMULA") && (
-              <Box padding="5px">
-                <FRow label="Formula format">
+              <Box overflow="auto" maxHeight={"200px"} padding="5px">
+                {/* <FRow label="Formula format">
                   <HFSelect
                     name="formulaFormat"
                     control={formulaControl}
                     options={formulaFormatOptions}
                     isClearable={false}
                   />
-                </FRow>
+                </FRow> */}
                 {watch("attributes.advanced_type") ? (
                   <>
                     <Box className={style.formula}>
@@ -913,7 +1097,7 @@ export default function FieldCreateModal({
                         }
                       />
                     </Box>
-                    <h2>
+                    <h2 className={style.fieldHeading}>
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
@@ -922,14 +1106,16 @@ export default function FieldCreateModal({
                       :
                     </h2>
                     {fields.map((field) => (
-                      <div>
-                        {field.label} - <strong>{field.value}</strong>{" "}
+                      <div className={style.fieldsList} key={field.id}>
+                        <span className={style.fieldTitle}>{field.label}</span>{" "}
+                        <span className={style.dot}></span>{" "}
+                        <span className={style.fieldValue}>{field.value}</span>
                       </div>
                     ))}
                   </>
                 ) : (
                   <Box className={style.formula}>
-                    <HFSelect
+                    <DropdownSelect
                       className={style.input}
                       disabledHelperText
                       options={fields}
@@ -954,7 +1140,7 @@ export default function FieldCreateModal({
                     >
                       {mathType?.value}
                     </span>
-                    <HFSelect
+                    <DropdownSelect
                       className={style.input}
                       disabledHelperText
                       options={fields}
@@ -1035,6 +1221,22 @@ export default function FieldCreateModal({
               relatedTableSlug={relatedTableSlug}
             />
           ) : null}
+          {fieldData && (
+            <button
+              className={style.btn}
+              onClick={() => {
+                handleOpenFieldDrawer(fieldData);
+                closeAllDrawer();
+              }}
+            >
+              <SettingsIcon htmlColor="#32302c" width="18px" height="18px" />
+              {generateLangaugeText(
+                tableLan,
+                i18n?.language,
+                "Advanced settings"
+              ) || "Advanced settings"}
+            </button>
+          )}
           <Box className={style.button_group} sx={{ padding: "0 5px" }}>
             <FormElementButton onClick={handleClick}>
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||

@@ -41,7 +41,7 @@
   max-height: 400px;
   position: absolute;
   top: 0;
-  left: 100%;
+  right: 100%;
   z-index: 10;
   display: none;
   flex-direction: column;
@@ -76,12 +76,17 @@
 }
 
 .optionIcon {
-  visibility: hidden;
+  width: 19px;
+  height: 19px;
+}
+
+.optionIcon span {
+  display: none;
   margin-left: auto;
 }
 
-.option.selected .optionIcon {
-  visibility: visible;
+.option.selected .optionIcon span {
+  display: block;
 }
 
 .optionLabel {

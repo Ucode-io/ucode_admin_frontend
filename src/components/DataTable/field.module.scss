@@ -102,7 +102,7 @@
 
   .dropdown {
     height: 100%;
-    overflow: auto;
+    // overflow: auto;
     .option {
       display: flex;
       flex-direction: column;
@@ -255,6 +255,7 @@
   height: 40px;
   background-color: #fff;
   box-sizing: border-box;
+  padding: 0 6px;
 }
 
 .appendInput {
@@ -274,9 +275,9 @@
 
 .editOptionMenu {
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   top: 0;
-  right: 0;
+  right: -10px;
   width: 80%;
   min-height: 90px;
   background-color: #fff;
@@ -284,7 +285,11 @@
   border-radius: 10px;
   backdrop-filter: none;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
-  overflow: hidden;
+}
+
+.colorsWrapper {
+  overflow: auto;
+  max-height: 300px;
 }
 
 .deleteOptionBtn {
@@ -308,12 +313,6 @@
   &:hover {
     background: rgba(55, 53, 47, 0.06);
   }
-}
-
-
-.editProperty {
-  min-height: 400px;
-  height: 100%;
 }
 
 .line {
@@ -365,4 +364,69 @@
   box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px inset;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 120%;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  padding-left: 6px;
+  padding-right: 6px;
+  cursor: pointer;
+  border-radius: 6px;
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.btnWrapper {
+  // margin-top: 40px;
+}
+
+.editProperty {
+  min-height: 102px;
+  overflow: visible !important;
+  max-height: 500px;
+}
+
+.fieldHeading {
+  margin-bottom: 12px;
+  color: rgb(115, 114, 110);
+  fill: rgba(71, 70, 68, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 120%;
+  user-select: none;
+}
+
+.fieldsList {
+  display: flex;
+  align-items: baseline;
+
+  .dot {
+    flex-grow: 1;
+    height: 1px;
+    background: rgba(55, 53, 47, 0.09);
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
+  .fieldTitle {
+    max-width: 120px;
+  }
+
+  .fieldValue {
+    // flex-grow: 1;
+    text-align: right;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
 }

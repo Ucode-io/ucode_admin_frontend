@@ -1,8 +1,8 @@
 import cls from "./styles.module.scss";
 import { Check, KeyboardArrowRight } from "@mui/icons-material";
-import { columnIcons } from "../../../utils/constants/columnIcons";
 import clsx from "clsx";
 import { useRef, useState } from "react";
+import { iconsComponents } from "../../../views/table-redesign/icons";
 
 const Dropdown = ({
   label,
@@ -14,19 +14,30 @@ const Dropdown = ({
   icon,
 }) => {
   const [isLeft, setIsLeft] = useState(true);
+  const [open, setOpen] = useState(false);
   const optionsRef = useRef(null);
 
   const handleMouseEnter = () => {
-    if (optionsRef.current) {
-      const rect = optionsRef.current.getBoundingClientRect();
-      if (rect.right > window.innerWidth) {
-        setIsLeft(false);
-      }
-    }
+    // setOpen(true);
+    // if (optionsRef.current) {
+    //   const rect = optionsRef.current.getBoundingClientRect();
+    //   console.log(optionsRef.current, rect.right);
+    //   if (rect.right > window.innerWidth) {
+    //     optionsRef.current.style.left = "auto";
+    //     optionsRef.current.style.right = "100%";
+    //   } else {
+    //     optionsRef.current.style.left = "100%";
+    //     optionsRef.current.style.right = "auto";
+    //   }
+    // }
   };
 
   return (
-    <div className={cls.dropdown} onMouseEnter={handleMouseEnter}>
+    <div
+      className={cls.dropdown}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setOpen(false)}
+    >
       <div className={cls.dropdownBtn}>
         {icon && <span className={cls.icon}>{icon}</span>}
         <span className={cls.label}>{label}</span>
@@ -38,32 +49,35 @@ const Dropdown = ({
           />
         </span>
       </div>
-      <div
-        className={clsx(cls.options, optionsClassname)}
-        style={{
-          left: isLeft ? "100%" : "auto",
-          right: !isLeft ? "100%" : "auto",
-        }}
-        ref={optionsRef}
-      >
-        {content
-          ? content
-          : options.map((option) => (
-              <div
-                className={clsx(cls.option, {
-                  [cls.selected]: option.value === selectedValue,
-                })}
-                key={option.value}
-                onClick={() => onClick(option)}
-              >
-                {columnIcons(option?.value)}
-                <span className={cls.optionLabel}>{option.label}</span>
-                <span className={cls.optionIcon}>
-                  <Check htmlColor="rgb(50, 48, 44)" />
-                </span>
-              </div>
-            ))}
-      </div>
+      {
+        <div
+          className={clsx(cls.options, optionsClassname)}
+          // style={{
+          //   visibility: open ? "visible" : "hidden",
+          // }}
+          ref={optionsRef}
+        >
+          {content
+            ? content
+            : options.map((option) => (
+                <div
+                  className={clsx(cls.option, {
+                    [cls.selected]: option.value === selectedValue,
+                  })}
+                  key={option.value}
+                  onClick={() => onClick(option)}
+                >
+                  {iconsComponents[option?.value]}
+                  <span className={cls.optionLabel}>{option.label}</span>
+                  <span className={cls.optionIcon}>
+                    <span>
+                      <Check htmlColor="rgb(50, 48, 44)" />
+                    </span>
+                  </span>
+                </div>
+              ))}
+        </div>
+      }
     </div>
   );
 };

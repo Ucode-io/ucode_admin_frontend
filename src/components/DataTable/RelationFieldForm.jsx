@@ -15,6 +15,7 @@ import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { useGetLang } from "../../hooks/useGetLang";
 import { useTranslation } from "react-i18next";
 import { relationTyes } from "../../utils/constants/relationTypes";
+import DropdownSelect from "../NewFormElements/DropdownSelect";
 
 export default function RelationFieldForm({
   control,
@@ -93,7 +94,7 @@ export default function RelationFieldForm({
       /> */}
       {/* {fieldWatch.relation_type !== "Recursive" && ( */}
       <>
-        <HFSelect
+        {/* <HFSelect
           disabledHelperText
           options={relationTyes
             .slice(0, 3)
@@ -115,9 +116,9 @@ export default function RelationFieldForm({
             "Relation type"
           }
           className={style.input}
-        />
+        /> */}
         {fieldWatch.relation_type !== "Recursive" && (
-          <HFSelect
+          <DropdownSelect
             disabledHelperText
             options={tables}
             name="table_to"

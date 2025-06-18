@@ -931,6 +931,26 @@ export const relationFieldButtons = [
   },
 ];
 
+
+const formulaFormats = [
+  {
+    label: "Formula frontend",
+    label_ru: "Формула frontend",
+    label_en: "Formula frontend",
+    label_uz: "Formula frontend",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    label_ru: "Формула backend",
+    label_en: "Formula backend",
+    label_uz: "Formula backend",
+    value: "FORMULA",
+    icon: "plus-minus.svg",
+  },
+];
+
 export const fieldButtons = [
   {
     label: "Schema",
@@ -976,6 +996,8 @@ export const formatIncludes = [
   "PRIMARY_KEY",
   "SWITCH",
   "MULTISELECT",
+  "FORMULA_FRONTEND",
+  "FORMULA",
 ];
 
 export const FormatOptionType = (item) => {
@@ -1014,6 +1036,10 @@ export const FormatOptionType = (item) => {
       return toggleButtonFormats;
     case "MULTISELECT":
       return dropDownFormats;
+    case "FORMULA_FRONTEND":
+      return formulaFormats;
+    case "FORMULA":
+      return formulaFormats;
 
     default:
       return null;

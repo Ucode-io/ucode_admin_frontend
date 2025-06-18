@@ -10,13 +10,14 @@ import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/Stat
 import { AddIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
 import TextField from "../NewFormElements/TextField/TextField";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   DeleteOutline,
   DragIndicator,
   KeyboardArrowRight,
 } from "@mui/icons-material";
 import StatusSettings from "./StatusSettings";
+import { PlusIcon } from "../../assets/icons/icon";
 
 const MultiselectSettings = ({
   dropdownFields,
@@ -39,6 +40,29 @@ const MultiselectSettings = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [editingField, setEditingField] = useState(null);
 
+  const isStatusFormat = watch("type") === "STATUS";
+
+  const toDoFieldArray = useFieldArray({
+    control,
+    name: "attributes.todo.options",
+  });
+
+  const inProgressFieldArray = useFieldArray({
+    control,
+    name: "attributes.progress.options",
+  });
+
+  const completeFieldArray = useFieldArray({
+    control,
+    name: "attributes.complete.options",
+  });
+
+  const statusFields = {
+    todo: toDoFieldArray,
+    progress: inProgressFieldArray,
+    complete: completeFieldArray,
+  };
+
   const handleCloseAddPopup = (e) => {
     if (isOpen && !e.target.closest(`.${style.appendInput}`)) {
       setIsOpen(false);
@@ -56,13 +80,13 @@ const MultiselectSettings = ({
     }
   };
 
-  const handleOpenEdit = (field, e) => {
+  const handleOpenEdit = (field, e, index) => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
     } else {
       e.stopPropagation();
       setIsMenuOpen(true);
-      setEditingField(field);
+      setEditingField({ ...field, index });
     }
   };
 
@@ -73,11 +97,13 @@ const MultiselectSettings = ({
     };
   }, []);
 
+  console.log({ editingField });
+
   return (
     <Box className={style.dropdown}>
       <div className={style.dropdownHeader}>
         <p>Options</p>
-        {watch("type") === "MULTISELECT" && (
+        {watch("type") === "MULTISELECT" && dropdownFields?.length > 0 && (
           <button
             className={style.appendBtn}
             onClick={handleOpenAddPopup}
@@ -87,6 +113,20 @@ const MultiselectSettings = ({
           </button>
         )}
       </div>
+      {dropdownFields?.length === 0 &&
+        !isOpen &&
+        watch("type") !== "STATUS" && (
+          <div className={style.btnWrapper}>
+            <button
+              className={style.btn}
+              type="button"
+              onClick={handleOpenAddPopup}
+            >
+              <AddIcon />
+              <span>Add an option</span>
+            </button>
+          </div>
+        )}
       {isOpen && watch("type") !== "STATUS" && (
         <div className={style.appendOption}>
           <input
@@ -147,7 +187,7 @@ const MultiselectSettings = ({
                   style={{ marginLeft: "auto" }}
                 />
               </Box>
-              {isMenuOpen && editingField?.id === item.id && (
+              {/* {isMenuOpen && editingField?.id === item.id && (
                 <div className={style.editOptionMenu}>
                   <input
                     className={style.appendInput}
@@ -184,7 +224,7 @@ const MultiselectSettings = ({
                   </button>
                   <span className={style.line} />
                   <span className={style.colors}>Colors</span>
-                  <div>
+                  <div className={style.colorsWrapper}>
                     {colorList.map((color, colorIndex) => (
                       <div
                         className={style.colorWrapper}
@@ -206,7 +246,7 @@ const MultiselectSettings = ({
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
             </Box>
             {/* <Popover
               open={openColor}
@@ -239,7 +279,89 @@ const MultiselectSettings = ({
           </Draggable>
         ))}
       </Container>
-      {watch("type") === "STATUS" && <StatusSettings control={control} />}
+
+      {isMenuOpen && (
+        <div className={style.editOptionMenu}>
+          <input
+            className={style.appendInput}
+            placeholder="..."
+            name="option"
+            type="text"
+            value={watch(
+              isStatusFormat
+                ? `attributes.${editingField.name}.options.${editingField.index}.label`
+                : `attributes.options.${editingField.index}.label`
+            )}
+            onChange={(e) => {
+              setValue(
+                isStatusFormat
+                  ? `attributes.${editingField.name}.options.${editingField.index}.label`
+                  : `attributes.options.${editingField.index}.label`,
+                e.target.value
+              );
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+              }
+            }}
+          />
+          <button
+            className={style.deleteOptionBtn}
+            type="button"
+            onClick={() => {
+              if (isStatusFormat) {
+                statusFields[editingField.name].remove(editingField.index);
+              } else {
+                dropdownRemove(editingField.index);
+              }
+              setIsMenuOpen(false);
+            }}
+          >
+            <DeleteOutline htmlColor="rgb(50, 48, 44)" width={20} height={20} />
+            <span>Delete</span>
+          </button>
+          <span className={style.line} />
+          <span className={style.colors}>Colors</span>
+          <div className={style.colorsWrapper}>
+            {colorList.map((color, colorIndex) => (
+              <div
+                className={style.colorWrapper}
+                onClick={() => {
+                  setValue(
+                    isStatusFormat
+                      ? `attributes.${editingField.name}.options.${editingField.index}.color`
+                      : `attributes.options.${editingField.index}.color`,
+                    color
+                  );
+                  setValue(`attributes.has_color`, true);
+                  setIsMenuOpen(false);
+                }}
+                key={colorIndex}
+              >
+                <div
+                  className={style.color}
+                  style={{ backgroundColor: color }}
+                />
+                <span className={style.colorName} style={{ color }}>
+                  {color}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isStatusFormat && (
+        <StatusSettings
+          handleOpenEdit={handleOpenEdit}
+          watch={watch}
+          control={control}
+          toDoFieldArray={toDoFieldArray}
+          inProgressFieldArray={inProgressFieldArray}
+          completeFieldArray={completeFieldArray}
+        />
+      )}
     </Box>
   );
 };

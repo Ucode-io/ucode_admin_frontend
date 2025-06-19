@@ -12,6 +12,7 @@ import { Controller } from "react-hook-form";
 import ClearIcon from "@mui/icons-material/Clear";
 import { columnIcons } from "@/utils/constants/columnIcons";
 import IconGenerator from "../../IconPicker/IconGenerator";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const DropdownSelect = ({
   control,
@@ -106,15 +107,10 @@ const DropdownSelect = ({
                   );
                 } else {
                   return (
-                    <svg
-                      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-jfl0wa-MuiSvgIcon-root-MuiSelect-icon"
-                      focusable="false"
-                      aria-hidden="true"
-                      viewBox="0 0 24 24"
-                      data-testid="ExpandMoreRoundedIcon"
-                    >
-                      <path d="M15.88 9.29 12 13.17 8.12 9.29a.9959.9959 0 0 0-1.41 0c-.39.39-.39 1.02 0 1.41l4.59 4.59c.39.39 1.02.39 1.41 0l4.59-4.59c.39-.39.39-1.02 0-1.41-.39-.38-1.03-.39-1.42 0"></path>
-                    </svg>
+                    <KeyboardArrowDownIcon
+                      style={{ marginRight: "5px" }}
+                      htmlColor="#637381"
+                    />
                   );
                 }
               }}

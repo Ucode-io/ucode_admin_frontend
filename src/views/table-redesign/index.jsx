@@ -55,8 +55,9 @@ import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import { FIELD_TYPES } from "../../utils/constants/fieldTypes";
 
-const mockColumns = Array.from({length: 5}, (_, index) => ({
+const mockColumns = Array.from({ length: 5 }, (_, index) => ({
   attributes: {
     field_permission: {
       edit_permission: true,
@@ -860,6 +861,9 @@ const FieldButton = ({
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        ),
       },
     };
 

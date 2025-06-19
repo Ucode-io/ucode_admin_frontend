@@ -112,9 +112,7 @@ const BoardView = ({
                 <Draggable
                   key={tabIndex}
                   style={{
-                    borderBottom: isOnTop
-                      ? "1px solid rgba(0, 0, 0, 0.1)"
-                      : "none",
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                     padding: "0 16px",
                     paddingLeft: tabIndex === 0 ? "16px" : "8px",
                     paddingRight:
@@ -141,12 +139,11 @@ const BoardView = ({
           </div>
           <div
             className={styles.board}
-            style={{
-              height: isFilterOpen
-                ? "calc(100vh - 121px)"
-                : "calc(100vh - 91px)",
-              paddingTop: "50px",
-            }}
+            // style={{
+            //   height: isFilterOpen
+            //     ? "calc(100vh - 121px)"
+            //     : "calc(100vh - 91px)",
+            // }}
           >
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>

@@ -108,6 +108,9 @@ function NewObjectsFormPage() {
             })) ?? [],
         };
       },
+      onSuccess: (data) => {
+        console.log("dataaaaaaaaaaaaaaa New ObjectsFormPage", data);
+      },
     }
   );
 

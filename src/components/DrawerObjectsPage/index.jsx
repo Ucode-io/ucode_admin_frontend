@@ -4,6 +4,7 @@ import {useSelector} from "react-redux";
 import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {TabPanel, Tabs} from "react-tabs";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
 
 function DrawerObjectsPage({
   projectInfo,
@@ -133,6 +134,11 @@ function DrawerObjectsPage({
               label: `${el.label} (${el.table_label})`,
             })) ?? [],
         };
+      },
+      onSuccess: (data) => {
+        // if (selectedView?.type !== "SECTION") {
+        //   dispatch(groupFieldActions.addView(data?.tableInfo));
+        // }
       },
     }
   );

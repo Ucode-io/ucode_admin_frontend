@@ -34,9 +34,9 @@ const menuService = {
       params: {"project-id": projectId},
     }),
 
-  getFieldsListMenu: (menuId, viewId, tableSlug) =>
+  getFieldsListMenu: (menuId, viewId, tableSlug, data) =>
     requestV3.post(`/menus/${menuId}/views/${viewId}/tables/${tableSlug}`, {
-      data: {},
+      data,
     }),
   getFieldsTableData: (menuId, viewId, tableSlug, data) =>
     requestV3.post(

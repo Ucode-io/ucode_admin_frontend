@@ -30,7 +30,7 @@ import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 
-const TableView = ({
+const DrawerTableView = ({
   relationView = false,
   selectedRow,
   layoutType,
@@ -647,7 +647,7 @@ const TableView = ({
           {...props}
         />
 
-        {Boolean(open && projectInfo?.new_layout) &&
+        {Boolean(open && projectInfo?.new_layout && !relationView) &&
         selectedViewType === "SidePeek" ? (
           Boolean(new_router === "true") ? (
             <DrawerDetailPage
@@ -755,4 +755,4 @@ const TableView = ({
   );
 };
 
-export default TableView;
+export default DrawerTableView;

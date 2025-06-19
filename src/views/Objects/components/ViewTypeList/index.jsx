@@ -41,9 +41,9 @@ export default function ViewTypeList({
   const [relationField, setRelationField] = useState(null);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
+  const viewsPath = useSelector((state) => state.groupField.viewsList);
 
   const queryClient = useQueryClient();
-  const parentView = useSelector((state) => state?.groupField?.view);
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
 
@@ -179,7 +179,8 @@ export default function ViewTypeList({
         constructorViewService
           .create(tableSlug, {
             ...newViewJSON,
-            table_slug: tableSlug,
+            table_slug: viewsPath?.[0]?.table_slug,
+            relation_table_slug: watch("table_slug"),
             attributes: {
               ...newViewJSON?.attributes,
               web_link: watch("web_link"),
@@ -208,7 +209,8 @@ export default function ViewTypeList({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
-          table_slug: watch("table_slug") || tableSlug,
+          table_slug: viewsPath?.[0]?.table_slug,
+          relation_table_slug: watch("table_slug"),
         })
         .then((res) => {
           queryClient.refetchQueries(["GET_VIEWS_LIST"]);
@@ -221,14 +223,14 @@ export default function ViewTypeList({
   };
 
   const {data} = useQuery(
-    ["GET_TABLE_INFO", {parentView}],
+    ["GET_TABLE_INFO", {viewsPath}],
     () => {
-      return constructorTableService.getTableInfo(parentView?.table_slug, {
+      return constructorTableService.getTableInfo(viewsPath?.[0]?.table_slug, {
         data: {},
       });
     },
     {
-      enabled: Boolean(parentView?.table_slug),
+      enabled: Boolean(viewsPath?.[0]?.table_slug),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];

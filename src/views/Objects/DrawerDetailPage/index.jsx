@@ -15,12 +15,11 @@ import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "./DrawerObjectsPage";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 function DrawerDetailPage({
   view,
-  open,
   layout,
-  setOpen = () => {},
   menuItem,
   selectedRow,
   dateInfo = {},
@@ -37,11 +36,16 @@ function DrawerDetailPage({
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
+  const viewsPath = useSelector((state) => state.groupField.viewsList);
+  const open = useSelector((state) => state?.drawer?.openDrawer);
+  const selectedV =
+    viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
   const handleClose = () => {
     updateQueryWithoutRerender("p", null);
-    setOpen(false);
-    dispatch(groupFieldActions.clearViews());
+    dispatch(detailDrawerActions.closeDrawer());
+    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
   };
+
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -54,7 +58,8 @@ function DrawerDetailPage({
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
-  const tableSlug = view?.table_slug || view?.relation?.table_to?.slug;
+
+  const tableSlug = selectedV?.relation_table_slug || view?.table_slug;
   const [selectedView, setSelectedView] = useState(null);
 
   const query = new URLSearchParams(window.location.search);
@@ -258,7 +263,7 @@ function DrawerDetailPage({
       .create(tableSlug, {data})
       .then((res) => {
         updateLayout();
-        setOpen(false);
+        dispatch(detailDrawerActions.closeDrawer());
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -327,7 +332,7 @@ function DrawerDetailPage({
   useEffect(() => {
     if (itemId && selectedView?.type === "SECTION") getAllData();
     else getFields();
-  }, [itemId, selectedView]);
+  }, [itemId, selectedView, viewsPath?.length]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -371,6 +376,7 @@ function DrawerDetailPage({
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
+
   const setViews = () => {};
 
   return (
@@ -389,7 +395,6 @@ function DrawerDetailPage({
         <Box>
           <DrawerObjectsPage
             open={open}
-            setOpen={setOpen}
             onSubmit={onSubmit}
             selectedView={selectedView}
             setSelectedView={setSelectedView}

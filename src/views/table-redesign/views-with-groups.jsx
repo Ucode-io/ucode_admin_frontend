@@ -104,6 +104,8 @@ import TableView from "./table-view";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import DrawerTableView from "./drawer-table-view";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -116,7 +118,6 @@ const viewIcons = {
 export const NewUiViewsWithGroups = ({
   modal = false,
   views,
-  selectedTabIndex,
   view,
   fieldsMap,
   menuItem,
@@ -134,7 +135,9 @@ export const NewUiViewsWithGroups = ({
   fullScreen,
   tableInfo,
   selectedViewType,
+  selectedTabIndex,
   relationFields = [],
+  setSelectedTabIndex = () => {},
   onSubmit = () => {},
   setViews = () => {},
   refetchViews = () => {},
@@ -142,11 +145,11 @@ export const NewUiViewsWithGroups = ({
   handleClose = () => {},
   setFullScreen = () => {},
   handleMouseDown = () => {},
-  setSelectedTabIndex = () => {},
   setSelectedViewType = () => {},
 }) => {
   const location = useLocation();
   const {id, menuId, tableSlug: tableSlugFromProps} = useParams();
+
   const tableSlug = tableSlugFromProps || view?.table_slug;
   const queryClient = useQueryClient();
   const visibleForm = useForm();
@@ -166,7 +169,6 @@ export const NewUiViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const [inputKey, setInputKey] = useState(0);
   const [layoutType, setLayoutType] = useState("SimpleLayout");
-  const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
@@ -175,6 +177,7 @@ export const NewUiViewsWithGroups = ({
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsPath = useSelector((state) => state.groupField.viewsList);
+  const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
 
   const groupTable = view?.attributes.group_by_columns;
 
@@ -349,8 +352,6 @@ export const NewUiViewsWithGroups = ({
     viewsPath?.[0]?.table_slug
   );
 
-  console.log("viewsPathviewsPath", relationFields, viewsPath);
-
   const saveSearchTextToDB = async (tableSlug, searchText) => {
     const db = await openDB();
     await saveOrUpdateSearchText(db, tableSlug, searchText);
@@ -378,11 +379,11 @@ export const NewUiViewsWithGroups = ({
       if (view?.attributes?.url_object) {
         navigate(view?.attributes?.url_object);
       }
-      setOpen(true);
+      dispatch(detailDrawerActions.openDrawer());
       setSelectedRow(null);
     } else {
       if (layoutType === "PopupLayout") {
-        setOpen(true);
+        dispatch(detailDrawerActions.openDrawer());
         setSelectedRow(null);
       } else {
         navigateToForm(tableSlug, "CREATE", {}, {id}, menuId);
@@ -396,7 +397,7 @@ export const NewUiViewsWithGroups = ({
     }
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
-      setOpen(true);
+      dispatch(detailDrawerActions.openDrawer());
     }
   };
 
@@ -414,12 +415,7 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
-  // useEffect(() => {
-  //   setSelectedView(view);
-  //   if (view?.type !== "SECTION" && !view?.is_relation_view) {
-  //     dispatch(groupFieldActions.addView(view));
-  //   }
-  // }, []);
+  const TableComponent = relationView ? DrawerTableView : TableView;
 
   if (view?.type === "WEBSITE") {
     return (
@@ -452,8 +448,8 @@ export const NewUiViewsWithGroups = ({
             </>
           }>
           <ViewTabSelector
+            relationView={relationView}
             selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
             views={views}
             settingsModalVisible={settingsModalVisible}
             setSettingsModalVisible={setSettingsModalVisible}
@@ -492,7 +488,7 @@ export const NewUiViewsWithGroups = ({
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
-          {viewsPath?.length && selectedView?.is_relation_view ? (
+          {viewsPath?.length && relationView ? (
             <Flex
               minH="45px"
               h="36px"
@@ -508,7 +504,7 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   onClick={() => {
-                    setOpen(false);
+                    dispatch(detailDrawerActions.closeDrawer());
                     updateQueryWithoutRerender("p", undefined);
                   }}
                   size="sm"
@@ -538,7 +534,6 @@ export const NewUiViewsWithGroups = ({
                 size="sm"
               />
               {viewsPath?.length &&
-                selectedView?.is_relation_view &&
                 viewsPath?.map((item, index) => (
                   <>
                     {" "}
@@ -555,8 +550,10 @@ export const NewUiViewsWithGroups = ({
                       columnGap="8px"
                       onClick={() => {
                         if (index === 0 && viewsPath?.[0]) {
-                          dispatch(groupFieldActions.clearViews(item));
-                          setSelectedTabIndex(0);
+                          dispatch(
+                            groupFieldActions.trimViewsUntil(viewsPath?.[0])
+                          );
+                          dispatch(detailDrawerActions.setDrawerTabIndex(0));
                         }
                       }}>
                       <Flex
@@ -570,9 +567,13 @@ export const NewUiViewsWithGroups = ({
                         fontSize={11}
                         justifyContent="center"
                         alignItems="center">
-                        {item?.label?.[0]}
+                        {index === 0
+                          ? initialTableInfo?.label?.[0]
+                          : item?.label?.[0] || item?.table_label?.[0]}
                       </Flex>
-                      {item?.label}
+                      {index === 0
+                        ? initialTableInfo?.label
+                        : item?.label || item?.table_label}
                     </Flex>
                   </>
                 ))}
@@ -612,7 +613,7 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   onClick={() => {
-                    setOpen(false);
+                    dispatch(detailDrawerActions.closeDrawer());
                     updateQueryWithoutRerender("p", undefined);
                   }}
                   size="sm"
@@ -723,7 +724,14 @@ export const NewUiViewsWithGroups = ({
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
-                  setSelectedTabIndex(index);
+                  if (view?.type !== "SECTION" && view?.is_relation_view) {
+                    dispatch(groupFieldActions.addView(view));
+                  } else if (view?.type === "SECTION")
+                    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
+
+                  if (relationView) {
+                    dispatch(detailDrawerActions.setDrawerTabIndex(index));
+                  } else dispatch(detailDrawerActions.setMainTabIndex(index));
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||
@@ -919,9 +927,12 @@ export const NewUiViewsWithGroups = ({
                   viewName={viewName}
                   fieldsMap={fieldsMap}
                   visibleRelationColumns={visibleRelationColumns}
-                  setSelectedTabIndex={setSelectedTabIndex}
                   checkedColumns={checkedColumns}
-                  onDocsClick={() => setSelectedTabIndex(views.length)}
+                  onDocsClick={() =>
+                    dispatch(
+                      detailDrawerActions.setDrawerTabIndex(views?.length)
+                    )
+                  }
                   searchText={searchText}
                   computedVisibleFields={computedVisibleFields}
                   handleOpenPopup={handleOpenPopup}
@@ -1009,8 +1020,6 @@ export const NewUiViewsWithGroups = ({
                         {" "}
                         <AgGridTableView
                           searchText={searchText}
-                          open={open}
-                          setOpen={setOpen}
                           selectedRow={selectedRow}
                           projectInfo={projectInfo}
                           setLayoutType={setLayoutType}
@@ -1109,8 +1118,6 @@ export const NewUiViewsWithGroups = ({
                         <MaterialUIProvider>
                           <AgGridTableView
                             searchText={searchText}
-                            open={open}
-                            setOpen={setOpen}
                             selectedRow={selectedRow}
                             projectInfo={projectInfo}
                             setLayoutType={setLayoutType}
@@ -1139,13 +1146,11 @@ export const NewUiViewsWithGroups = ({
                           tab={tab}
                         />
                       ) : (
-                        <TableView
+                        <TableComponent
                           setSelectedView={setSelectedView}
                           relationView={relationView}
                           selectedRow={selectedRow}
                           setSelectedRow={setSelectedRow}
-                          open={open}
-                          setOpen={setOpen}
                           setLayoutType={setLayoutType}
                           layoutType={layoutType}
                           projectInfo={projectInfo}
@@ -1196,8 +1201,6 @@ export const NewUiViewsWithGroups = ({
                         <AgGridTableView
                           tableSlug={tableSlug}
                           searchText={searchText}
-                          open={open}
-                          setOpen={setOpen}
                           selectedRow={selectedRow}
                           projectInfo={projectInfo}
                           setLayoutType={setLayoutType}
@@ -1225,13 +1228,11 @@ export const NewUiViewsWithGroups = ({
                         fieldsMap={fieldsMap}
                       />
                     ) : (
-                      <TableView
+                      <TableComponent
                         setSelectedView={setSelectedView}
                         relationView={relationView}
                         selectedRow={selectedRow}
                         setSelectedRow={setSelectedRow}
-                        open={open}
-                        setOpen={setOpen}
                         setLayoutType={setLayoutType}
                         layoutType={layoutType}
                         projectInfo={projectInfo}
@@ -1644,7 +1645,6 @@ const ViewOptions = ({
   isChanged,
   selectedTabIndex,
   setIsChanged = () => {},
-  setSelectedTabIndex,
   settingsForm,
   views,
 }) => {
@@ -1672,10 +1672,10 @@ const ViewOptions = ({
     }
   }, [openedMenu]);
 
-  const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", {tableSlug}],
-    queryFn: () => layoutService.getLayout(tableSlug, menuId),
-  });
+  // const layoutQuery = useQuery({
+  //   queryKey: ["GET_LAYOUT", {tableSlug}],
+  //   queryFn: () => layoutService.getLayout(tableSlug, menuId),
+  // });
 
   useEffect(() => {
     settingsForm.setValue(
@@ -2140,7 +2140,6 @@ const ViewOptions = ({
                 view={view}
                 refetchViews={refetchViews}
                 tableLan={tableLan}
-                setSelectedTabIndex={setSelectedTabIndex}
               />
             </Box>
           </>
@@ -2905,20 +2904,17 @@ const ExcelImportButton = ({
   );
 };
 
-const DeleteViewButton = ({
-  relationView,
-  view,
-  refetchViews,
-  tableLan,
-  setSelectedTabIndex,
-}) => {
+const DeleteViewButton = ({relationView, view, refetchViews, tableLan}) => {
+  const dispatch = useDispatch();
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
     onSuccess: () => {
-      setSelectedTabIndex(0);
+      relationView
+        ? dispatch(detailDrawerActions.setDrawerTabIndex(0))
+        : dispatch(detailDrawerActions.setMainTabIndex(0));
 
       relationView
         ? queryClient.refetchQueries(["GET_VIEWS_LIST"])

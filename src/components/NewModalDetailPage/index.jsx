@@ -15,6 +15,7 @@ import {showAlert} from "../../store/alert/alert.thunk";
 import {sortSections} from "../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "../../views/Objects/DrawerDetailPage/DrawerObjectsPage";
+import DrawerObjectsPageModal from "./DrawerObjectsPage";
 
 function NewModalDetailPage({
   view,
@@ -388,7 +389,7 @@ function NewModalDetailPage({
       onClose={handleClose}>
       <Box w={"950px"} borderRadius={"8px"} border={"none"}>
         <Box bg={"red"}>
-          <DrawerObjectsPage
+          <DrawerObjectsPageModal
             onSubmit={onSubmit}
             selectedView={selectedView}
             setSelectedView={setSelectedView}

@@ -10,10 +10,9 @@ import menuService from "../../../services/menuService";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 function DrawerObjectsPage({
-  open,
   projectInfo,
   layout,
   selectedTab,
@@ -24,10 +23,7 @@ function DrawerObjectsPage({
   handleClose,
   fullScreen,
   rootForm,
-  selectedView,
-  setOpen = () => {},
   onSubmit = () => {},
-  setSelectedView = () => {},
   setViews = () => {},
   setFullScreen = () => {},
   handleMouseDown = () => {},
@@ -39,12 +35,13 @@ function DrawerObjectsPage({
   const dispatch = useDispatch();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
-  const auth = useSelector((state) => state.auth);
-  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
-  const tableSlug = selectedView?.table_slug;
-  const parentView = useSelector((state) => state?.groupField?.view);
+  const [selectedView, setSelectedView] = useState(null);
+  const viewsPath = useSelector((state) => state.groupField.viewsList);
+  const selectedTabIndex = useSelector(
+    (state) => state?.drawer?.drawerTabIndex
+  );
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const selectedV = viewsPath?.[viewsPath?.length - 1];
 
   const {data: views, refetch} = useQuery(
     ["GET_VIEWS_LIST", menuId],
@@ -63,7 +60,8 @@ function DrawerObjectsPage({
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
         updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
-        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+        if (state?.toDocsTab)
+          dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
       },
     }
   );
@@ -75,36 +73,37 @@ function DrawerObjectsPage({
       visibleColumns,
       visibleRelationColumns,
       tableInfo,
+      viewsList,
     } = {
       fieldsMap: {},
       fieldsMapRel: {},
       tableInfo: {},
       visibleColumns: [],
+      viewsList: [],
       visibleRelationColumns: [],
     },
     isLoading,
   } = useQuery(
-    [
-      "GET_VIEWS_AND_FIELDS",
-      selectedView?.table_slug,
-      i18n?.language,
-      selectedTabIndex,
-    ],
+    ["GET_VIEWS_AND_FIELDS", selectedV, i18n?.language, selectedTabIndex],
     () => {
-      if (Boolean(!selectedView?.table_slug)) return [];
+      if (Boolean(!selectedV?.relation_table_slug)) return [];
       return menuService.getFieldsListMenu(
         menuId,
-        selectedView?.id,
-        selectedView?.table_slug
+        selectedV?.id,
+        selectedV?.relation_table_slug,
+        {
+          main_table: viewsPath?.length < 2 ? true : undefined,
+        }
       );
     },
     {
-      enabled: Boolean(
-        selectedView?.table_slug && selectedView?.type !== "SECTION"
-      ),
+      enabled: Boolean(selectedV?.table_slug && selectedV?.is_relation_view),
       select: ({data}) => {
-        dispatch(groupFieldActions.addView(data?.table_info));
         return {
+          viewsList:
+            data?.views?.filter(
+              (item) => item?.type === "SECTION" || item?.is_relation_view
+            ) ?? [],
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
@@ -120,18 +119,18 @@ function DrawerObjectsPage({
   );
 
   const {data: {relations} = {relations: []}} = useQuery(
-    ["GET_VIEWS_AND_FIELDS", parentView?.table_slug],
+    ["GET_VIEWS_AND_FIELDS", viewsPath],
     () => {
       return constructorRelationService.getList(
         {
-          table_slug: parentView?.table_slug,
-          relation_table_slug: parentView?.table_slug,
+          table_slug: viewsPath?.[0]?.table_slug,
+          relation_table_slug: viewsPath?.[0]?.relation_table_slug,
         },
-        parentView?.table_slug
+        viewsPath?.[0]?.table_slug
       );
     },
     {
-      enabled: Boolean(parentView?.table_slug),
+      enabled: Boolean(viewsPath?.[0]?.table_slug),
       onSuccess: (res) => res?.relations ?? [],
     }
   );
@@ -144,8 +143,6 @@ function DrawerObjectsPage({
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
-                  open={open}
-                  setOpen={setOpen}
                   relationFields={relations}
                   selectedViewType={selectedViewType}
                   setSelectedViewType={setSelectedViewType}
@@ -156,7 +153,6 @@ function DrawerObjectsPage({
                   views={views}
                   view={view}
                   selectedTabIndex={selectedTabIndex}
-                  setSelectedTabIndex={setSelectedTabIndex}
                   fieldsMap={fieldsMap}
                   menuItem={menuItem}
                   visibleRelationColumns={visibleRelationColumns}

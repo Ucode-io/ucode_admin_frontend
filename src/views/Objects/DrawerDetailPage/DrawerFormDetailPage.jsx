@@ -11,13 +11,14 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {isEqual} from "lodash";
 import {Controller} from "react-hook-form";
-import {useParams} from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import layoutService from "../../../services/layoutService";
-import {applyDrag} from "../../../utils/applyDrag";
+import { applyDrag } from "../../../utils/applyDrag";
 import "./style.scss";
-import {store} from "../../../store";
-import {useSelector} from "react-redux";
+import { store } from "../../../store";
+import { useSelector } from "react-redux";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
 
 function DrawerFormDetailPage({
   control,
@@ -34,6 +35,7 @@ function DrawerFormDetailPage({
   reset = () => {},
   errors,
 }) {
+  console.log({ data, selectedRow, projectInfo, layout });
   const { i18n } = useTranslation();
   const { tableSlug } = useParams();
   const [dragAction, setDragAction] = useState(false);
@@ -172,6 +174,8 @@ function DrawerFormDetailPage({
     return lastPart === lang;
   };
 
+  const getAllData = () => {};
+
   return (
     <>
       <Box
@@ -179,6 +183,8 @@ function DrawerFormDetailPage({
         sx={{ height: "calc(100vh - 44px)" }}
         pb={"10px"}
         overflow={"auto"}
+        display="flex"
+        flexDirection="column"
       >
         {isMultiLanguage && (
           <div className={"language"}>
@@ -308,6 +314,19 @@ function DrawerFormDetailPage({
             </Container>
           </Box>
         ))}
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          marginTop="auto"
+          marginBottom="12px"
+        >
+          <FormCustomActionButton
+            control={control?._formValues}
+            tableSlug={tableSlug}
+            id={selectedRow?.guid}
+            getAllData={getAllData}
+          />
+        </Box>
       </Box>
 
       <Box

@@ -111,9 +111,11 @@ const ActionButton = ({event, id, control, disable, getAllData}) => {
   // }
   return (
     <PrimaryButton
+      type="button"
       disabled={disabled}
       loader={btnLoader}
-      onClick={invokeFunction}>
+      onClick={invokeFunction}
+    >
       <IconGenerator icon={event.icon} /> {event.label}
     </PrimaryButton>
   );

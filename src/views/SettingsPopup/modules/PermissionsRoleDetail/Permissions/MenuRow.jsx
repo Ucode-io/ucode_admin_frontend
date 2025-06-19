@@ -99,6 +99,7 @@ const MenuRow = ({
         setChangedData={setChangedData}
         changedData={changedData}
         setValue={setValue}
+        watch={watch}
       />
     ));
   };

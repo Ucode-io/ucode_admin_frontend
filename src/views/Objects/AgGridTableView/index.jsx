@@ -76,6 +76,7 @@ import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import {transliterate} from "../../../utils/textTranslater";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -675,6 +676,9 @@ function AgGridTableView(props) {
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        ),
       },
     };
 

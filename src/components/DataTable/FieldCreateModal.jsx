@@ -17,6 +17,7 @@ import constructorTableService from "../../services/constructorTableService";
 import { useRelationGetByIdQuery } from "../../services/relationService";
 import { applyDrag } from "../../utils/applyDrag";
 import {
+  FIELD_TYPES,
   FormatOptionType,
   FormatTypes,
   ValueTypes,
@@ -83,24 +84,24 @@ const formulaFormatOptions = [
 export default function FieldCreateModal({
   tableLan,
   anchorEl,
-  setAnchorEl,
-  watch,
+  setAnchorEl = () => {},
+  watch = () => {},
   control,
-  setValue,
-  handleSubmit,
-  onSubmit,
-  setFieldOptionAnchor,
+  setValue = () => {},
+  handleSubmit = () => {},
+  onSubmit = () => {},
+  setFieldOptionAnchor = () => {},
   target,
-  reset,
+  reset = () => {},
   fieldData,
-  handleOpenFieldDrawer,
+  handleOpenFieldDrawer = () => {},
   visibleColumns,
   menuItem,
   mainForm,
   view,
   sortedDatas,
-  setSortedDatas,
-  setFieldData,
+  setSortedDatas = () => {},
+  setFieldData = () => {},
 }) {
   const { tableSlug, id } = useParams();
   const tableRelations = useWatch({
@@ -210,6 +211,8 @@ export default function FieldCreateModal({
   const mathType = watch("attributes.math");
   const values = watch();
   const { i18n } = useTranslation();
+
+  const [openedDropdown, setOpenedDropdown] = useState(null);
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
@@ -563,6 +566,12 @@ export default function FieldCreateModal({
     });
   };
 
+  const dropdownTypes = {
+    editProperty: "editProperty",
+    changeFormat: "changeFormat",
+    changeType: "changeType",
+  };
+
   return (
     <Popover
       {...popoverAnchorProps}
@@ -617,6 +626,14 @@ export default function FieldCreateModal({
                     defaultValue={tableName}
                     languages={languages}
                     id={"text_field_label"}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSubmit(
+                          format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+                        )();
+                      }
+                    }}
                   />
                 ) : // <FRow
                 //   label={
@@ -707,8 +724,16 @@ export default function FieldCreateModal({
                   </Box>
                 </Box>
               )}
-              <Box width={"100%"} paddingY={"6px"}>
+              <Box
+                width={"100%"}
+                paddingY={"6px"}
+                onMouseEnter={() => {
+                  setOpenedDropdown(dropdownTypes.changeType);
+                }}
+              >
                 <Dropdown
+                  openedDropdown={openedDropdown}
+                  name={dropdownTypes.changeType}
                   options={fieldData ? fieldFormats : newFieldTypes}
                   selectedValue={watch("attributes.format")}
                   onClick={(option) => {
@@ -736,8 +761,15 @@ export default function FieldCreateModal({
                 />
               </Box>
               {formatIncludes?.includes(format) && (
-                <Box width={"100%"}>
+                <Box
+                  width={"100%"}
+                  onMouseEnter={() => {
+                    setOpenedDropdown(dropdownTypes.changeFormat);
+                  }}
+                >
                   <Dropdown
+                    openedDropdown={openedDropdown}
+                    name={dropdownTypes.changeFormat}
                     options={FormatOptionType(format)}
                     selectedValue={
                       format?.startsWith("FORMULA")
@@ -762,9 +794,16 @@ export default function FieldCreateModal({
                   />
                 </Box>
               )}
-              {format === "MULTISELECT" && (
-                <Box width={"100%"}>
+              {format === FIELD_TYPES.MULTISELECT && (
+                <Box
+                  width={"100%"}
+                  onMouseEnter={() => {
+                    setOpenedDropdown(dropdownTypes.editProperty);
+                  }}
+                >
                   <Dropdown
+                    openedDropdown={openedDropdown}
+                    name={dropdownTypes.editProperty}
                     content={
                       <MultiselectSettings
                         dropdownFields={dropdownFields}

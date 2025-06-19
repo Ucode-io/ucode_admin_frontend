@@ -16,6 +16,7 @@ function StatusSettings({
   toDoFieldArray,
   inProgressFieldArray,
   completeFieldArray,
+  colorList,
 }) {
   const renderOptions = (fieldArray, name, blockName, isLast) => (
     <Box borderBottom={!isLast ? "1px solid #eee" : "none"}>
@@ -35,7 +36,11 @@ function StatusSettings({
         <button
           type="button"
           onClick={() =>
-            fieldArray.append({ label: "", color: "#fff", value: "" })
+            fieldArray.append({
+              label: "",
+              color: colorList[Math.floor(Math.random() * colorList.length)],
+              value: "",
+            })
           }
           style={{
             background: "none",

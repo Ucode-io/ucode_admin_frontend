@@ -378,8 +378,6 @@ export const DynamicTable = ({
 
   const showSkeleton = loader;
 
-  console.log({ mainForm });
-
   return (
     <div
       className="CTableContainer"
@@ -808,7 +806,6 @@ const FieldButton = ({
       setFieldOptionAnchor(null);
       setFieldCreateAnchor(null);
       dispatch(showAlert("Successful created", "success"));
-      console.log("resssss person field", res);
       if (res?.type === "LOOKUP") {
         updateView(res?.relation_id);
       } else updateView(res?.id);

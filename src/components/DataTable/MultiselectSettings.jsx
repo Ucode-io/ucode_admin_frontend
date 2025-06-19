@@ -1,4 +1,12 @@
-import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Menu,
+  Popover,
+  Portal,
+  Typography,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Container, Draggable } from "react-smooth-dnd";
 import style from "./field.module.scss";
@@ -8,7 +16,7 @@ import HFTextField from "../FormElements/HFTextField";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 import { AddIcon } from "@chakra-ui/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TextField from "../NewFormElements/TextField/TextField";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
@@ -18,6 +26,7 @@ import {
 } from "@mui/icons-material";
 import StatusSettings from "./StatusSettings";
 import { PlusIcon } from "../../assets/icons/icon";
+import EditOptionsMenu from "./EditOptionMenu";
 
 const MultiselectSettings = ({
   dropdownFields,
@@ -38,7 +47,9 @@ const MultiselectSettings = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [editingField, setEditingField] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const isStatusFormat = watch("type") === "STATUS";
 
@@ -68,25 +79,31 @@ const MultiselectSettings = ({
       setIsOpen(false);
     } else if (!e.target.closest(`.${style.editOptionMenu}`)) {
       setIsMenuOpen(false);
+      setAnchorEl(null);
     }
   };
 
   const handleOpenAddPopup = (e) => {
     if (isOpen) {
       setIsOpen(false);
+      setAnchorEl(null);
     } else {
       e.stopPropagation();
       setIsOpen(true);
+      setAnchorEl(dropdownRef.current);
     }
   };
 
   const handleOpenEdit = (field, e, index) => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
+      setEditingField(null);
+      setAnchorEl(null);
     } else {
       e.stopPropagation();
       setIsMenuOpen(true);
       setEditingField({ ...field, index });
+      setAnchorEl(dropdownRef.current);
     }
   };
 
@@ -97,10 +114,10 @@ const MultiselectSettings = ({
     };
   }, []);
 
-  console.log({ editingField });
+  const dropdownRef = useRef(null);
 
   return (
-    <Box className={style.dropdown}>
+    <Box className={style.dropdown} ref={dropdownRef}>
       <div className={style.dropdownHeader}>
         <p>Options</p>
         {watch("type") === "MULTISELECT" && dropdownFields?.length > 0 && (
@@ -164,7 +181,7 @@ const MultiselectSettings = ({
             >
               <Box
                 className={style.fieldItemWrapper}
-                onClick={(e) => handleOpenEdit(item, e)}
+                onClick={(e) => handleOpenEdit(item, e, index)}
               >
                 <DragIndicator
                   htmlColor="rgba(71, 70, 68, 0.6)"
@@ -281,75 +298,19 @@ const MultiselectSettings = ({
       </Container>
 
       {isMenuOpen && (
-        <div className={style.editOptionMenu}>
-          <input
-            className={style.appendInput}
-            placeholder="..."
-            name="option"
-            type="text"
-            value={watch(
-              isStatusFormat
-                ? `attributes.${editingField.name}.options.${editingField.index}.label`
-                : `attributes.options.${editingField.index}.label`
-            )}
-            onChange={(e) => {
-              setValue(
-                isStatusFormat
-                  ? `attributes.${editingField.name}.options.${editingField.index}.label`
-                  : `attributes.options.${editingField.index}.label`,
-                e.target.value
-              );
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-              }
-            }}
-          />
-          <button
-            className={style.deleteOptionBtn}
-            type="button"
-            onClick={() => {
-              if (isStatusFormat) {
-                statusFields[editingField.name].remove(editingField.index);
-              } else {
-                dropdownRemove(editingField.index);
-              }
-              setIsMenuOpen(false);
-            }}
-          >
-            <DeleteOutline htmlColor="rgb(50, 48, 44)" width={20} height={20} />
-            <span>Delete</span>
-          </button>
-          <span className={style.line} />
-          <span className={style.colors}>Colors</span>
-          <div className={style.colorsWrapper}>
-            {colorList.map((color, colorIndex) => (
-              <div
-                className={style.colorWrapper}
-                onClick={() => {
-                  setValue(
-                    isStatusFormat
-                      ? `attributes.${editingField.name}.options.${editingField.index}.color`
-                      : `attributes.options.${editingField.index}.color`,
-                    color
-                  );
-                  setValue(`attributes.has_color`, true);
-                  setIsMenuOpen(false);
-                }}
-                key={colorIndex}
-              >
-                <div
-                  className={style.color}
-                  style={{ backgroundColor: color }}
-                />
-                <span className={style.colorName} style={{ color }}>
-                  {color}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <EditOptionsMenu
+          editingField={editingField}
+          isStatusFormat={isStatusFormat}
+          statusFields={statusFields}
+          colorList={colorList}
+          dropdownAppend={dropdownAppend}
+          dropdownRemove={dropdownRemove}
+          setIsMenuOpen={setIsMenuOpen}
+          isMenuOpen={isMenuOpen}
+          setValue={setValue}
+          watch={watch}
+          anchorEl={anchorEl}
+        />
       )}
 
       {isStatusFormat && (
@@ -360,6 +321,7 @@ const MultiselectSettings = ({
           toDoFieldArray={toDoFieldArray}
           inProgressFieldArray={inProgressFieldArray}
           completeFieldArray={completeFieldArray}
+          colorList={colorList}
         />
       )}
     </Box>

@@ -297,18 +297,18 @@ const ObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({view})}
+                {getViewComponent([view?.type])({ view })}
               </TabPanel>
             );
           })}
-          <TabPanel>
+          {/* <TabPanel>
             <DocView
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
             />
-          </TabPanel>
+          </TabPanel> */}
         </div>
       </Tabs>
 
@@ -322,7 +322,8 @@ const ObjectsPage = () => {
               borderBottom="1px solid #EAECF0"
               padding="0 16px"
               display="flex"
-              alignItems="center">
+              alignItems="center"
+            >
               <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
                 <Button
                   leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
@@ -330,7 +331,8 @@ const ObjectsPage = () => {
                   colorScheme="gray"
                   color="#475467"
                   ref={addViewRef}
-                  onClick={handleAddViewClick}>
+                  onClick={handleAddViewClick}
+                >
                   {t("add")}
                 </Button>
                 {/* <div
@@ -351,7 +353,8 @@ const ObjectsPage = () => {
               alignItems="center"
               flexDirection="column"
               height="100%"
-              gap="16px">
+              gap="16px"
+            >
               <img src={NoDataPng} alt="No data" width={250} />
               <Text fontSize="16px" fontWeight="500" color="#475467">
                 No data found
@@ -376,7 +379,8 @@ const ObjectsPage = () => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <ViewTypeList
           views={views}
           computedViewTypes={computedViewTypes}

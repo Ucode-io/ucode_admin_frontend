@@ -80,6 +80,12 @@ const TableView = ({
   const tableSlug = tableSlugProp || paramsTableSlug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
+  const permissions = useSelector(
+    (state) => state.auth.permissions?.[tableSlug]
+  );
+
+  console.log({ permissions });
+
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo

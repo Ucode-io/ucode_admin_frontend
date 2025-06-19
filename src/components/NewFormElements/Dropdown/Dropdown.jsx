@@ -12,33 +12,17 @@ const Dropdown = ({
   content,
   optionsClassname,
   icon,
+  openedDropdown,
+  name,
 }) => {
-  const [isLeft, setIsLeft] = useState(true);
-  const [open, setOpen] = useState(false);
   const optionsRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    // setOpen(true);
-    // if (optionsRef.current) {
-    //   const rect = optionsRef.current.getBoundingClientRect();
-    //   console.log(optionsRef.current, rect.right);
-    //   if (rect.right > window.innerWidth) {
-    //     optionsRef.current.style.left = "auto";
-    //     optionsRef.current.style.right = "100%";
-    //   } else {
-    //     optionsRef.current.style.left = "100%";
-    //     optionsRef.current.style.right = "auto";
-    //   }
-    // }
-  };
-
   return (
-    <div
-      className={cls.dropdown}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <div className={cls.dropdownBtn}>
+    <div className={cls.dropdown}>
+      <div
+        className={clsx(cls.dropdownBtn, {
+          [cls.active]: openedDropdown === name,
+        })}
+      >
         {icon && <span className={cls.icon}>{icon}</span>}
         <span className={cls.label}>{label}</span>
         <span className={cls.arrow}>
@@ -52,9 +36,9 @@ const Dropdown = ({
       {
         <div
           className={clsx(cls.options, optionsClassname)}
-          // style={{
-          //   visibility: open ? "visible" : "hidden",
-          // }}
+          style={{
+            display: openedDropdown === name ? "flex" : "none",
+          }}
           ref={optionsRef}
         >
           {content

@@ -2,9 +2,9 @@
   position: relative;
   width: 100%;
 
-  &:hover .options {
-    display: flex;
-  }
+  // &:hover .options {
+  //   display: flex;
+  // }
 }
 
 .dropdownBtn {
@@ -22,7 +22,7 @@
   cursor: pointer;
   padding: 3px 6px;
   
-  &:hover {
+  &:hover, &.active {
     background: rgba(55, 53, 47, 0.06);
   }
 }

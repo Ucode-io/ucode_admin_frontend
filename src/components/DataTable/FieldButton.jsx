@@ -20,6 +20,7 @@ import {
 } from "../../services/relationService";
 import {transliterate} from "../../utils/textTranslater";
 import { useGetLang } from "../../hooks/useGetLang";
+import { FIELD_TYPES } from "../../utils/constants/fieldTypes";
 
 export default function FieldButton({
   openFieldSettings,
@@ -145,6 +146,11 @@ export default function FieldButton({
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        )
+          ? true
+          : false,
       },
     };
 

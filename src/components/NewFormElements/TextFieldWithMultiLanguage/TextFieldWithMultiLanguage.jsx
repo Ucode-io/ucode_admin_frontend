@@ -75,6 +75,7 @@ export default function TextFieldWithMultiLanguage({
         placeholder={fieldPlaceholder}
         defaultValue={defaultValue}
         id={id}
+        {...props}
       />
 
       {languages?.length > 1 && (

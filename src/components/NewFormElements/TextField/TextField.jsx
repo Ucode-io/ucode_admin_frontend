@@ -96,6 +96,7 @@ const TextField = ({
             id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
             placeholder={placeholder}
             disabled={disabled}
+            {...props}
           />
           // <MuiTextField
           //   size="small"

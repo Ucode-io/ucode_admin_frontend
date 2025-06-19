@@ -294,7 +294,11 @@ function DrawerFormDetailPage({
                           control={control}
                           field={field}
                           watch={watch}
-                          isDisabled={field?.attributes?.disabled}
+                          isDisabled={
+                            field?.attributes?.disabled ||
+                            !field?.attributes?.field_permission
+                              ?.edit_permission
+                          }
                           setFormValue={setFormValue}
                           errors={errors}
                         />

@@ -75,6 +75,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -649,6 +650,9 @@ function AggridTreeView(props) {
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        ),
       },
     };
 

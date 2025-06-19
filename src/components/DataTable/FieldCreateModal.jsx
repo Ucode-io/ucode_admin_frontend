@@ -55,6 +55,8 @@ import { paginationActions } from "../../store/pagination/pagination.slice";
 import constructorViewService from "../../services/constructorViewService";
 import DropdownSelect from "../NewFormElements/DropdownSelect";
 import TextField from "../NewFormElements/TextField/TextField";
+import { Image } from "@chakra-ui/react";
+import clsx from "clsx";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -385,7 +387,16 @@ export default function FieldCreateModal({
     handleClose();
     if (!fieldData) {
       setValue("type", "");
+
       setValue("attributes.options", []);
+      setValue("attributes.todo.options", []);
+      setValue("attributes.complete.options", []);
+      setValue("attributes.progress.options", []);
+
+      languages?.forEach((lang) => {
+        setValue(`attributes.label_${lang}`, "");
+      });
+
       setFieldOptionAnchor(target);
     }
   };
@@ -700,67 +711,47 @@ export default function FieldCreateModal({
                       </button>
                     </Box>
                   </Box>
-                  <Box paddingY="6px" borderBottom="1px solid #e5e9eb">
-                    <Box width={"100%"}>
-                      <button
-                        className={style.btn}
-                        type="button"
-                        onClick={() => updateView(fieldData.id)}
-                      >
-                        <VisibilityOffOutlinedIcon />
-                        <span>Hide field</span>
-                      </button>
-                    </Box>
-                    <Box width={"100%"} color="red">
-                      <button
-                        className={style.btn}
-                        type="button"
-                        onClick={() => deleteField(fieldData.id)}
-                      >
-                        <DeleteOutlinedIcon />
-                        <span>Delete field</span>
-                      </button>
-                    </Box>
-                  </Box>
                 </Box>
               )}
-              <Box
-                width={"100%"}
-                paddingY={"6px"}
-                onMouseEnter={() => {
-                  setOpenedDropdown(dropdownTypes.changeType);
-                }}
-              >
-                <Dropdown
-                  openedDropdown={openedDropdown}
-                  name={dropdownTypes.changeType}
-                  options={fieldData ? fieldFormats : newFieldTypes}
-                  selectedValue={watch("attributes.format")}
-                  onClick={(option) => {
-                    setValue("attributes.format", option?.value);
-                    if (option?.value === "NUMBER") {
-                      setValue("type", "NUMBER");
-                    } else if (option?.value === "DATE") {
-                      setValue("type", "DATE");
-                    } else if (option?.value === "INCREMENT") {
-                      setValue("type", "INCREMENT_ID");
-                    } else if (option?.value === "SINGLE_LINE") {
-                      setValue("type", "SINGLE_LINE");
-                    } else {
-                      setValue("type", option?.value);
-                    }
+              {!fieldData && (
+                <Box
+                  width={"100%"}
+                  paddingY={"6px"}
+                  onMouseEnter={() => {
+                    setOpenedDropdown(dropdownTypes.changeType);
                   }}
-                  label={
-                    generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Change Type"
-                    ) || "Change type"
-                  }
-                  icon={<FieldTypeIcon />}
-                />
-              </Box>
-              {formatIncludes?.includes(format) && (
+                >
+                  <Dropdown
+                    openedDropdown={openedDropdown}
+                    name={dropdownTypes.changeType}
+                    options={fieldData ? fieldFormats : newFieldTypes}
+                    selectedValue={watch("attributes.format")}
+                    onClick={(option) => {
+                      setValue("attributes.format", option?.value);
+                      if (option?.value === "NUMBER") {
+                        setValue("type", "NUMBER");
+                      } else if (option?.value === "DATE") {
+                        setValue("type", "DATE");
+                      } else if (option?.value === "INCREMENT") {
+                        setValue("type", "INCREMENT_ID");
+                      } else if (option?.value === "SINGLE_LINE") {
+                        setValue("type", "SINGLE_LINE");
+                      } else {
+                        setValue("type", option?.value);
+                      }
+                    }}
+                    label={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Change Type"
+                      ) || "Change type"
+                    }
+                    icon={<FieldTypeIcon />}
+                  />
+                </Box>
+              )}
+              {formatIncludes?.includes(format) && !fieldData && (
                 <Box
                   width={"100%"}
                   onMouseEnter={() => {
@@ -835,6 +826,39 @@ export default function FieldCreateModal({
                   />
                 </Box>
               )}
+              <Box
+                width="100%"
+                marginTop="6px"
+                paddingTop="6px"
+                borderTop="1px solid #e5e9eb"
+              >
+                <Box width={"100%"}>
+                  <button
+                    className={style.btn}
+                    type="button"
+                    onClick={() => updateView(fieldData.id)}
+                    onMouseEnter={() => {
+                      setOpenedDropdown(null);
+                    }}
+                  >
+                    <VisibilityOffOutlinedIcon />
+                    <span>Hide field</span>
+                  </button>
+                </Box>
+                <Box width={"100%"} color="red">
+                  <button
+                    className={style.btn}
+                    type="button"
+                    onClick={() => deleteField(fieldData.id)}
+                    onMouseEnter={() => {
+                      setOpenedDropdown(null);
+                    }}
+                  >
+                    <DeleteOutlinedIcon />
+                    <span>Delete field</span>
+                  </button>
+                </Box>
+              </Box>
               {/* <FRow
                 label={
                   generateLangaugeText(tableLan, i18n?.language, "Type") ||
@@ -1262,13 +1286,17 @@ export default function FieldCreateModal({
           ) : null}
           {fieldData && (
             <button
-              className={style.btn}
+              className={clsx(style.btn, style.settings)}
               onClick={() => {
                 handleOpenFieldDrawer(fieldData);
                 closeAllDrawer();
               }}
+              onMouseEnter={() => {
+                setOpenedDropdown(null);
+              }}
             >
-              <SettingsIcon htmlColor="#32302c" width="18px" height="18px" />
+              <Image src="/img/settings.svg" alt="settings" />
+              {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
               {generateLangaugeText(
                 tableLan,
                 i18n?.language,

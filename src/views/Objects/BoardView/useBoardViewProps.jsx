@@ -126,7 +126,7 @@ export const useBoardViewProps = ({
   const navigateToCreatePage = ({ group }) => {
     setOpenDrawerModal(true);
     setSelectedRow(null);
-    console.log({ selectedGroupField, group });
+
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
@@ -467,13 +467,13 @@ export const useBoardViewProps = ({
     if (!board || !el) return;
 
     const onScroll = () => {
-      if (board.scrollTop > 0) {
-        setIsOnTop(true);
-        el.style.transform = `translateY(${board.scrollTop}px)`;
-      } else {
-        setIsOnTop(false);
-        el.style.transform = "none";
-      }
+      // if (board.scrollTop > 0) {
+      //   setIsOnTop(true);
+      //   el.style.transform = `translateY(${board.scrollTop}px)`;
+      // } else {
+      //   setIsOnTop(false);
+      //   el.style.transform = "none";
+      // }
 
       if (subGroupById) {
         handleSetOffsetOnScroll();

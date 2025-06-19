@@ -360,7 +360,6 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    console.log({ id });
     if (id) getAllData();
     else getFields();
   }, [id]);

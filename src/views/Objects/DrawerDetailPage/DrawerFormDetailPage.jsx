@@ -124,7 +124,6 @@ function DrawerFormDetailPage({
   }, [data, watch("attributes.layout_heading")]);
 
   const getFieldLanguageLabel = (el) => {
-    console.log({ el });
     if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
       return el?.attributes?.[`label_${i18n?.language}`];
     }

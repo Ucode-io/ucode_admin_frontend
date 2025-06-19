@@ -11,7 +11,7 @@ import {NewUiViewsWithGroups} from "../../views/table-redesign/views-with-groups
 import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import {Box} from "@chakra-ui/react";
 
-function DrawerObjectsPage({
+function DrawerObjectsPageModal({
   projectInfo,
   layout,
   selectedTab,
@@ -95,7 +95,7 @@ function DrawerObjectsPage({
       },
     }
   );
-
+  console.log("selectedViewwwwwwwwww", selectedView);
   const {
     data: {
       fieldsMap,
@@ -129,6 +129,7 @@ function DrawerObjectsPage({
     {
       enabled: Boolean(selectedView?.table_slug),
       select: ({data}) => {
+        console.log("dataaaaa=========>", data);
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -140,6 +141,9 @@ function DrawerObjectsPage({
               label: `${el.label} (${el.table_label})`,
             })) ?? [],
         };
+      },
+      onSuccess: (data) => {
+        console.log("dataaaaaaaaaaaaaaa DrawerObjectsData", data);
       },
     }
   );
@@ -194,4 +198,4 @@ function DrawerObjectsPage({
   );
 }
 
-export default DrawerObjectsPage;
+export default DrawerObjectsPageModal;

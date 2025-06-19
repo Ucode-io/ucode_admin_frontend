@@ -111,7 +111,7 @@ function DrawerFormDetailPage({
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
     );
-  }, [selectedTab, selectedRow]);
+  }, [selectedRow]);
 
   useEffect(() => {
     if (!data?.tabs?.[0]?.sections) return;

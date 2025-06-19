@@ -17,7 +17,8 @@ import constructorViewService from "../../services/constructorViewService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import {DynamicTable} from "../table-redesign";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 
 const NewObjectsPage = () => {
   const {state, pathname} = useLocation();
@@ -27,7 +28,9 @@ const NewObjectsPage = () => {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+
+  const viewsPath = useSelector((state) => state.groupField.viewsList);
 
   const {data: views, refetch} = useQuery(
     ["GET_VIEWS_LIST", menuId],
@@ -45,10 +48,17 @@ const NewObjectsPage = () => {
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
+        if (
+          data?.[selectedTabIndex]?.type !== "SECTION" &&
+          !data?.[selectedTabIndex]?.is_relation_view
+        ) {
+          dispatch(groupFieldActions.addView(data?.[selectedTabIndex]));
+        }
         if (!pathname.includes("/login")) {
           updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
         }
-        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+        if (state?.toDocsTab)
+          dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
       },
     }
   );
@@ -69,24 +79,21 @@ const NewObjectsPage = () => {
     },
     isLoading,
   } = useQuery(
-    [
-      "GET_VIEWS_AND_FIELDS",
-      selectedView?.table_slug,
-      i18n?.language,
-      selectedTabIndex,
-    ],
+    ["GET_VIEWS_AND_FIELDS", selectedView, i18n?.language, selectedTabIndex],
     () => {
       if (Boolean(!selectedView?.table_slug)) return [];
       return menuService.getFieldsListMenu(
         menuId,
         selectedView?.id,
-        selectedView?.table_slug
+        selectedView?.table_slug,
+        {}
       );
     },
     {
-      enabled: Boolean(selectedView?.table_slug),
+      enabled: Boolean(
+        selectedView?.table_slug && selectedView?.type !== "SECTION"
+      ),
       select: ({data}) => {
-        dispatch(groupFieldActions.addView(data?.table_info));
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -99,6 +106,9 @@ const NewObjectsPage = () => {
             })) ?? [],
         };
       },
+      onSuccess: (data) => {
+        dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
+      },
     }
   );
 
@@ -107,7 +117,7 @@ const NewObjectsPage = () => {
       navigate("/", {replace: false});
     }
   }, []);
-  console.log("tableInfotableInfotableInfo", tableInfo);
+
   const setViews = () => {};
 
   const storageItem = localStorage.getItem("newUi");
@@ -135,7 +145,6 @@ const NewObjectsPage = () => {
   const defaultProps = {
     setViews: setViews,
     selectedTabIndex: selectedTabIndex,
-    setSelectedTabIndex: setSelectedTabIndex,
     setSelectedView: setSelectedView,
     selectedView: selectedView,
     views: views,
@@ -150,6 +159,7 @@ const NewObjectsPage = () => {
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
+        selectedTabIndex={selectedTabIndex}
         tableInfo={tableInfo}
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
@@ -179,7 +189,6 @@ const NewObjectsPage = () => {
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
-              setSelectedTabIndex={setSelectedTabIndex}
             />
           </TabPanel>
         </div>
@@ -187,11 +196,7 @@ const NewObjectsPage = () => {
 
       {!views?.length && (
         <FiltersBlock>
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-          />
+          <ViewTabSelector selectedTabIndex={selectedTabIndex} views={views} />
         </FiltersBlock>
       )}
     </>

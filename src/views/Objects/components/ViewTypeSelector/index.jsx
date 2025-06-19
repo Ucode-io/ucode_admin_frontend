@@ -22,10 +22,11 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 import {viewsActions} from "../../../../store/views/view.slice";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
+import {detailDrawerActions} from "../../../../store/detailDrawer/detailDrawer.slice";
 
 const ViewTabSelector = ({
+  relationView,
   selectedTabIndex,
-  setSelectedTabIndex,
   settingsModalVisible,
   setSettingsModalVisible,
   isChanged,
@@ -130,7 +131,9 @@ const ViewTabSelector = ({
                       })
                     );
 
-                    setSelectedTabIndex(index);
+                    relationView
+                      ? dispatch(detailDrawerActions.setDrawerTabIndex(index))
+                      : dispatch(detailDrawerActions.setMainTabIndex(index));
                   }}
                   className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
                   {view.type === "TABLE" && (

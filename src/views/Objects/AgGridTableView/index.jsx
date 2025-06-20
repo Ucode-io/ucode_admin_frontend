@@ -225,13 +225,13 @@ function AgGridTableView(props) {
               ? [`${groupTab?.value}`]
               : groupTab?.value
             : "",
-          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
+          offset: Boolean(limitPage < 0) ? 0 : limitPage,
         },
       }),
     {
       enabled: false,
       onSuccess: (data) => {
-        // setCount(data?.data?.count);
+        setCount(data?.data?.count);
         // setRowData([...(data?.data?.response ?? [])] ?? []);
         setLoading(false);
       },
@@ -241,13 +241,13 @@ function AgGridTableView(props) {
     }
   );
 
-  const createServerSideDatasource = (updatedFilters, searchText) => {
+  const createServerSideDatasource = (updatedFilters) => {
     return {
       getRows: async (params) => {
-        const { startRow, endRow } = params.request;
+        // const { startRow, endRow } = params.request;
 
-        const limit = endRow - startRow;
-        const offset = startRow;
+        // const limit = endRow - startRow;
+        // const offset = startRow;
 
         try {
           const resp = await constructorObjectService.getListV2(tableSlug, {
@@ -263,13 +263,15 @@ function AgGridTableView(props) {
                   ? [`${groupTab?.value}`]
                   : groupTab?.value
                 : "",
-              // offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
-              offset,
+              offset:
+                Boolean(tableSearch) || Boolean(limitPage < 0) ? 0 : limitPage,
+              // offset,
               ...updatedFilters,
             },
           });
 
           const items = resp?.data?.response || [];
+          setCount(resp?.data?.count);
 
           const rowData = items.map((item) => ({
             ...item,
@@ -787,7 +789,6 @@ function AgGridTableView(props) {
 
   const onGridReady = useCallback(
     (params) => {
-      console.log("READY");
       const datasource = createServerSideDatasource(filters, searchText);
       params?.api?.setGridOption("serverSideDatasource", datasource);
     },
@@ -802,10 +803,14 @@ function AgGridTableView(props) {
         newDatasource
       );
     }
-  }, [filters]);
+  }, [filters, tableSearch, limit, offset]);
 
   const getServerSideGroupKey = (dataItem) => {
     return dataItem.guid;
+  };
+
+  const isServerSideGroup = (dataItem) => {
+    return dataItem.has_child;
   };
 
   return (
@@ -867,47 +872,33 @@ function AgGridTableView(props) {
                 <>
                   <AgGridReact
                     ref={gridApi}
-                    // rowBuffer={15}
                     theme={myTheme}
-                    // gridOptions={{
-                    //   rowBuffer: 10,
-                    //   cacheBlockSize: 10,
-                    //   maxBlocksInCache: 10,
-                    // }}
                     gridOptions={{
                       rowBuffer: 10,
                       cacheBlockSize: 100,
-                      maxBlocksInCache: 100,
+                      maxBlocksInCache: 10,
                     }}
                     serverSideStoreType="serverSide"
                     serverSideTransaction={true}
-                    rowModelType={"serverSide"}
                     onColumnMoved={getColumnsUpdated}
-                    onGridReady={onGridReady}
                     columnDefs={columns}
                     enableClipboard={true}
-                    // rowData={rowData}
                     groupDisplayType="single"
-                    paginationPageSize={limit}
+                    // paginationPageSize={limit}
                     undoRedoCellEditing={true}
                     rowSelection={rowSelection}
-                    isServerSideGroup={true}
+                    isServerSideGroup={isServerSideGroup}
                     getServerSideGroupKey={getServerSideGroupKey}
+                    rowModelType={"serverSide"}
                     undoRedoCellEditingLimit={5}
-                    pagination={true}
-                    loading={loading}
-                    suppressRefresh={true}
-                    // rowModelType={"serverSide"}
                     defaultColDef={defaultColDef}
                     cellSelection={cellSelection}
                     onColumnPinned={onColumnPinned}
                     getMainMenuItems={getMainMenuItems}
-                    suppressColumnVirtualisation={true}
-                    suppressColumnMoveAnimation={true}
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}
-                    onRowGroupOpened={(e) => console.log("sssssssssssssss", e)}
+                    onGridReady={onGridReady}
                     getDataPath={getDataPath}
                     onCellValueChanged={(e) => {
                       updateObject(e.data);
@@ -924,7 +915,7 @@ function AgGridTableView(props) {
         </div>
       </div>
 
-      {/* <AggridFooter
+      <AggridFooter
         view={view}
         limit={limit}
         count={count}
@@ -935,7 +926,7 @@ function AgGridTableView(props) {
         setLoading={setLoading}
         createChild={createChild}
         selectedRows={selectedRows}
-      /> */}
+      />
 
       <DeleteColumnModal
         view={view}

@@ -44,18 +44,18 @@ import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
 import NoDataPng from "../../assets/images/no-data.png";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ViewTypeList from "./components/ViewTypeList";
-import {viewTypes} from "../../utils/constants/viewTypes";
+import { viewTypes, viewTypesMap } from "../../utils/constants/viewTypes";
 
 const ObjectsPage = () => {
-  const {tableSlug} = useParams();
-  const {state} = useLocation();
+  const { tableSlug } = useParams();
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -88,25 +88,27 @@ const ObjectsPage = () => {
     setIsViewCreateModalOpen(false);
   };
 
-  const {isLoading: permissionGetByIdLoading} = useMenuPermissionGetByIdQuery({
-    projectId: projectId,
-    roleId: roleId,
-    parentId: appId,
-    queryParams: {
-      enabled: Boolean(menuId),
-      onSuccess: (res) => {
-        if (
-          !res?.menus
-            ?.filter((item) => item?.permission?.read)
-            ?.some((el) => el?.id === menuId)
-        ) {
-          console.log("object");
-          navigate(resultDefaultLink);
-        }
+  const { isLoading: permissionGetByIdLoading } = useMenuPermissionGetByIdQuery(
+    {
+      projectId: projectId,
+      roleId: roleId,
+      parentId: appId,
+      queryParams: {
+        enabled: Boolean(menuId),
+        onSuccess: (res) => {
+          if (
+            !res?.menus
+              ?.filter((item) => item?.permission?.read)
+              ?.some((el) => el?.id === menuId)
+          ) {
+            console.log("object");
+            navigate(resultDefaultLink);
+          }
+        },
+        cacheTime: false,
       },
-      cacheTime: false,
-    },
-  });
+    }
+  );
 
   const params = {
     language_setting: i18n?.language,
@@ -143,7 +145,7 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
@@ -159,7 +161,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -171,7 +173,7 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -191,8 +193,14 @@ const ObjectsPage = () => {
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
+  const view = views[selectedTabIndex];
+
   // if (isLoading) return <PageFallback />;
   if (isLoading) {
+    if (view?.type === viewTypesMap.BOARD) {
+      return null;
+    }
+
     return (
       <Box bgcolor="#fff" height="100%">
         <Box paddingX={"16px"} borderBottom="1px solid #EAECF0">
@@ -288,7 +296,7 @@ const ObjectsPage = () => {
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
-  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   console.log("viewsviewsviews", views);
   return (
     <>
@@ -297,7 +305,7 @@ const ObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({view})}
+                {getViewComponent([view?.type])({ view })}
               </TabPanel>
             );
           })}
@@ -322,7 +330,8 @@ const ObjectsPage = () => {
               borderBottom="1px solid #EAECF0"
               padding="0 16px"
               display="flex"
-              alignItems="center">
+              alignItems="center"
+            >
               <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
                 <Button
                   leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
@@ -330,7 +339,8 @@ const ObjectsPage = () => {
                   colorScheme="gray"
                   color="#475467"
                   ref={addViewRef}
-                  onClick={handleAddViewClick}>
+                  onClick={handleAddViewClick}
+                >
                   {t("add")}
                 </Button>
                 {/* <div
@@ -351,7 +361,8 @@ const ObjectsPage = () => {
               alignItems="center"
               flexDirection="column"
               height="100%"
-              gap="16px">
+              gap="16px"
+            >
               <img src={NoDataPng} alt="No data" width={250} />
               <Text fontSize="16px" fontWeight="500" color="#475467">
                 No data found
@@ -376,7 +387,8 @@ const ObjectsPage = () => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <ViewTypeList
           views={views}
           computedViewTypes={computedViewTypes}

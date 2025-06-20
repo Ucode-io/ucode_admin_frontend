@@ -298,7 +298,7 @@ export const useBoardViewProps = ({
     tableSlug
   );
 
-  const loader = boardStructureMutation.isLoading;
+  const isLoading = boardStructureMutation.isLoading;
 
   const groupMutationForCounts = useGetBoardStructureMutation(
     {
@@ -494,7 +494,7 @@ export const useBoardViewProps = ({
   // }, [subGroupById, groupFieldId]);
 
   return {
-    loader,
+    isLoading,
     new_list,
     tableSlug,
     onDrop,

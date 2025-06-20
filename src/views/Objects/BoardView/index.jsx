@@ -11,6 +11,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 import { useBoardViewProps } from "./useBoardViewProps";
+import { BoardSkeleton } from "./components/BoardSkeleton";
 
 const BoardView = ({
   view,
@@ -24,7 +25,7 @@ const BoardView = ({
   columnsForSearch,
 }) => {
   const {
-    loader,
+    isLoading,
     new_list,
     tableSlug,
     onDrop,
@@ -75,8 +76,8 @@ const BoardView = ({
 
   return (
     <div className={styles.container} ref={boardRef}>
-      {loader ? (
-        <PageFallback />
+      {isLoading ? (
+        <BoardSkeleton />
       ) : (
         <div className={styles.wrapper}>
           {(view?.quick_filters?.length > 0 ||
@@ -132,6 +133,8 @@ const BoardView = ({
                     groupField={groupField}
                     navigateToCreatePage={navigateToCreatePage}
                     counts={groupsCounts}
+                    computedColumnsFor={computedColumnsFor}
+                    groupSlug={groupField?.slug}
                   />
                 </Draggable>
               ))}

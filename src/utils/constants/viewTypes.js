@@ -8,4 +8,14 @@ export const viewTypes = [
   "GRID",
 ];
 
+export const viewTypesMap = {
+  TABLE: "TABLE",
+  CALENDAR: "CALENDAR",
+  TIMELINE: "TIMELINE",
+  TREE: "TREE",
+  WEBSITE: "WEBSITE",
+  GRID: "GRID",
+  BOARD: "BOARD",
+};
+
 export const computedViewTypes = viewTypes.map((el) => ({value: el, label: el}))

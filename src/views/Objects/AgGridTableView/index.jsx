@@ -83,6 +83,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import {transliterate} from "../../../utils/textTranslater";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import { paginationActions } from "../../../store/pagination/pagination.slice";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -165,6 +166,14 @@ function AgGridTableView(props) {
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
+  const pagination = useSelector((state) => state.pagination);
+
+  const { pageLimit, pageOffset } = pagination?.paginationInfo?.find(
+    (item) => item?.tableSlug === tableSlug
+  );
+
+  console.log({ pageLimit, pageOffset });
+
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
     AggridDefaultComponents({
@@ -189,7 +198,14 @@ function AgGridTableView(props) {
     }
   };
 
-  const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
+  const limitPage = useMemo(
+    () =>
+      pageToOffset(
+        pageOffset ? pageOffset : offset,
+        pageLimit ? pageLimit : limit
+      ),
+    [limit, pageOffset, offset, pageLimit]
+  );
   const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const visibleFields = useMemo(() => {
@@ -216,7 +232,7 @@ function AgGridTableView(props) {
       constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
-          limit,
+          limit: pageLimit ? pageLimit : limit,
           search: tableSearch,
           view_fields: checkedColumns,
           [groupTab?.slug]: groupTab
@@ -253,7 +269,7 @@ function AgGridTableView(props) {
           const resp = await constructorObjectService.getListV2(tableSlug, {
             data: {
               ...filters,
-              limit,
+              limit: pageLimit ? pageLimit : limit,
               search: tableSearch,
               view_fields: checkedColumns,
               [groupTab?.slug]: groupTab
@@ -813,6 +829,16 @@ function AgGridTableView(props) {
     return dataItem.has_child;
   };
 
+  const onPaginationChange = ({ limit, offset }) => {
+    dispatch(
+      paginationActions.setTablePages({
+        tableSlug: tableSlug,
+        pageLimit: limit,
+        pageOffset: offset,
+      })
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -917,7 +943,7 @@ function AgGridTableView(props) {
 
       <AggridFooter
         view={view}
-        limit={limit}
+        limit={pageLimit ? pageLimit : limit}
         count={count}
         rowData={rowData}
         refetch={refetch}
@@ -926,6 +952,8 @@ function AgGridTableView(props) {
         setLoading={setLoading}
         createChild={createChild}
         selectedRows={selectedRows}
+        onChange={onPaginationChange}
+        page={pageOffset}
       />
 
       <DeleteColumnModal

@@ -10,15 +10,16 @@ export const {actions: paginationActions, reducer: paginationReducer} =
     },
     reducers: {
       setTablePages: (state, {payload}) => {
-        const {pageLimit, tableSlug} = payload;
+        const {pageLimit, tableSlug, pageOffset} = payload;
         const existingEntryIndex = state.paginationInfo.findIndex(
           (entry) => entry.tableSlug === tableSlug
         );
 
         if (existingEntryIndex !== -1) {
           state.paginationInfo[existingEntryIndex].pageLimit = pageLimit;
+          state.paginationInfo[existingEntryIndex].pageOffset = pageOffset;
         } else {
-          state.paginationInfo.push({tableSlug, pageLimit});
+          state.paginationInfo.push({tableSlug, pageLimit, pageOffset});
         }
       },
       setTablePageCount: (state, {payload}) => {

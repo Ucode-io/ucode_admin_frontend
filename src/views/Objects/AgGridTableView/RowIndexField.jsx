@@ -22,7 +22,7 @@ function RowIndexField(props) {
         {view?.attributes?.treeData ? (
           <Button
             onClick={() => {
-              colDef?.createChildTree(node);
+              colDef?.createChildTree(props);
             }}
             className="editButton"
             style={{minWidth: "max-content"}}>
@@ -44,11 +44,9 @@ function RowIndexField(props) {
         !isSelected && (
           <Box
             onClick={() => {
-              treeData
-                ? column?.colDef?.addRow({
-                    guid: generateGUID(),
-                  })
-                : column?.colDef?.appendNewRow();
+              column?.colDef?.addRow({
+                guid: generateGUID(),
+              });
             }}
             className="add_row_btn">
             <AddRoundedIcon style={{color: "#007AFE"}} />

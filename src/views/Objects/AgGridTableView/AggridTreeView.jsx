@@ -128,9 +128,9 @@ function AggridTreeView(props) {
   const dispatch = useDispatch();
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
-  const { navigateToForm } = useTabRouter();
-  const { tableSlug, appId } = useParams();
-  const { i18n, t } = useTranslation();
+  const addClickedRef = useRef(false);
+  const {tableSlug, appId} = useParams();
+  const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -150,7 +150,7 @@ function AggridTreeView(props) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const languages = useSelector((state) => state.languages.list);
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
-  const { control, watch, setValue, reset, handleSubmit } = useForm();
+  const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
 
   const groupFieldId = view?.group_fields?.[0];
@@ -159,8 +159,8 @@ function AggridTreeView(props) {
     (el) => el?.table_slug === tableSlug
   );
 
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
-  const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents({
       customAutoGroupColumnDef: {
         suppressCount: true,
@@ -184,7 +184,7 @@ function AggridTreeView(props) {
   };
 
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const visibleFields = useMemo(() => {
     return visibleColumns
@@ -192,13 +192,8 @@ function AggridTreeView(props) {
       .map((item) => item?.slug);
   }, [visibleColumns, computedVisibleFields]);
 
-  const { isLoading: isLoadingTree, refetch } = useQuery(
-    [
-      "GET_OBJECTS_TREEDATA",
-      filters,
-      { [groupTab?.slug]: groupTab },
-      searchText,
-    ],
+  const {isLoading: isLoadingTree, refetch} = useQuery(
+    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
     () =>
       constructorObjectService.getListTreeData(tableSlug, {
         fields: [...visibleFields, "guid"],
@@ -207,7 +202,6 @@ function AggridTreeView(props) {
         ...filters,
       }),
     {
-      enabled: false,
       onSuccess: (data) => {
         const computedRow = data?.data?.response?.map((item) => ({
           ...item,
@@ -222,15 +216,14 @@ function AggridTreeView(props) {
   );
 
   const {
-    data: { fiedlsarray } = {
+    data: {fiedlsarray} = {
       pageCount: 1,
       fiedlsarray: [],
       custom_events: [],
     },
   } = useQuery({
     queryKey: ["GET_TABLE_INFO", tableSlug, view],
-    queryFn: () =>
-      constructorTableService.getTableInfo(tableSlug, { data: {} }),
+    queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
@@ -270,7 +263,7 @@ function AggridTreeView(props) {
   });
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -369,45 +362,66 @@ function AggridTreeView(props) {
       .catch(() => setLoading(false));
   }
 
-  function addRowTree(data) {
-    setLoading(true);
-
+  function addRowTree(data, params) {
     constructorObjectService
       .create(tableSlug, {
         data: data,
       })
       .then((res) => {
-        delete data?.new_field;
-        refetch();
-        setLoading(false);
+        const node = params?.node;
+
+        if (!node || !node.data) return;
+
+        const updatedData = {
+          ...data,
+          ...res?.data,
+          new_field: false,
+        };
+
+        node.setData(updatedData);
+        params.api.refreshCells({rowNodes: [node]});
+
+        if (!node.expanded) {
+          node.setExpanded(true);
+        }
       })
       .catch(() => setLoading(false));
   }
 
   function appendNewRow() {
-    const newRow = { new_field: true, guid: generateGUID() };
+    const newRow = {new_field: true, guid: generateGUID()};
     gridApi.current.api.applyTransaction({
       add: [newRow],
       addIndex: 0,
     });
   }
 
-  function removeRow(guid) {
-    const allRows = [];
-    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-    const rowToRemove = allRows.find((row) => row.guid === guid);
+  function removeRow(params, guid) {
+    const node = params.node;
+    if (!node || !node.data) return;
 
-    if (rowToRemove) {
-      gridApi.current.api.applyTransaction({
-        remove: [rowToRemove],
+    if (node.data?.new_field && node.data?.guid === guid) {
+      const parentNode = node.parent;
+
+      if (!parentNode || !parentNode.data) {
+        params.api.applyServerSideTransaction({
+          route: [],
+          remove: [node.data],
+        });
+        return;
+      }
+
+      const parentRoute = parentNode.data.path || [];
+
+      params?.api?.applyServerSideTransaction({
+        route: parentRoute,
+        remove: [node.data],
       });
-    } else {
-      console.error("Row not found for removal");
     }
   }
 
   const updateView = (pinnedField, updatedColumns = []) => {
-    pinFieldsRef.current = { ...pinFieldsRef.current, ...pinnedField };
+    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -422,69 +436,78 @@ function AggridTreeView(props) {
 
   const updateObject = (data) => {
     if (!data?.new_field) {
-      constructorObjectService.update(tableSlug, { data: { ...data } });
+      constructorObjectService.update(tableSlug, {data: {...data}});
     }
   };
 
-  function deleteHandler(rowToDelete) {
-    const allRows = [];
-    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-    const rowToRemove = allRows.find((row) => row.guid === rowToDelete?.guid);
+  function deleteHandler(rowToDelete, params) {
+    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
+      const node = params.node;
+      if (!node || !node.data) return;
 
-    gridApi.current.api.applyTransaction({
-      remove: [rowToRemove],
+      const parentNode = node.parent;
+
+      if (!parentNode || !parentNode.data) {
+        params.api.applyServerSideTransaction({
+          route: [],
+          remove: [node.data],
+        });
+        return;
+      }
+      const parentRoute = parentNode.data.path || [];
+
+      params?.api?.applyServerSideTransaction({
+        route: parentRoute,
+        remove: [node.data],
+      });
     });
-
-    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {});
   }
 
   const onColumnPinned = (event) => {
-    const { column, pinned } = event;
+    const {column, pinned} = event;
     const fieldId = column?.colDef?.columnID;
     updateView({
-      [fieldId]: { pinned },
+      [fieldId]: {pinned},
     });
   };
 
-  const sanitizeRowForGrid = (d) => {
-    return {
-      has_child: true,
-      guid: d?.guid,
-      path: d?.path,
-      ...d,
+  const waitUntilStoreReady = (parentNode) => {
+    const parentData = parentNode?.node?.data;
+    const route = parentData?.path || [];
+
+    const newChildGUID = generateGUID();
+
+    const child = {
+      guid: newChildGUID,
+      [`${tableSlug}_id`]: parentData?.guid,
+      path: [...route, newChildGUID],
+      has_child: false,
+      group: false,
+      new_field: true,
+      ...visibleFields.reduce((acc, slug) => {
+        acc[slug] = null;
+        return acc;
+      }, {}),
     };
+
+    parentNode?.api?.applyServerSideTransaction({
+      route: route,
+      add: [child],
+    });
+
+    addClickedRef.current = false;
   };
 
   function createChildTree(parentNode) {
-    const parentData = parentNode.data;
-
-    const newChildGUID = generateGUID();
-    const newChildPath = [...parentData.path, newChildGUID];
-
-    const newChild = sanitizeRowForGrid({
-      guid: newChildGUID,
-      [`${tableSlug}_id`]: parentData.guid,
-      path: newChildPath,
-      new_field: true,
-      has_child: false,
-    });
-
-    const updatedParent = sanitizeRowForGrid({
-      ...parentData,
-      has_child: true,
-    });
-
-    parentNode.setExpanded(true);
-
-    const route = parentData.path;
-
-    const txResult = gridApi.current.api.applyServerSideTransaction({
-      route,
-      add: [newChild],
-      update: [updatedParent],
-    });
-
-    console.log("Check aggrid store for child", txResult);
+    addClickedRef.current = true;
+    if (parentNode?.node?.expanded && addClickedRef.current === true) {
+      waitUntilStoreReady(parentNode);
+    }
+    if (!parentNode?.node?.data) {
+      console.warn("Invalid parent node or missing data.");
+      return;
+    }
+    parentNode.node.setExpanded(true);
   }
 
   const getDataPath = useCallback((data) => data.path, []);
@@ -587,7 +610,7 @@ function AggridTreeView(props) {
     } else {
       reset({
         attributes: {
-          math: { label: "plus", value: "+" },
+          math: {label: "plus", value: "+"},
         },
       });
     }
@@ -857,6 +880,14 @@ function AggridTreeView(props) {
                     onColumnPinned={onColumnPinned}
                     getMainMenuItems={getMainMenuItems}
                     treeData={true}
+                    onRowGroupOpened={(params) => {
+                      addClickedRef.current === true &&
+                        setTimeout(() => {
+                          waitUntilStoreReady(params);
+                          addClickedRef.current = false;
+                        }, 1000);
+                    }}
+                    getRowId={(params) => params?.data?.guid}
                     autoGroupColumnDef={autoGroupColumnDef}
                     suppressServerSideFullWidthLoadingRow={true}
                     loadingOverlayComponent={CustomLoadingOverlay}

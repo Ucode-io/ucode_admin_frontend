@@ -6,18 +6,18 @@ import UserChat from "./UserChat";
 import ChatInput from "./ChatInput";
 
 export const AIMenu = ({
-                         open,
-                         anchorEl,
-                         loader,
-                         setLoader,
-                         inputValue,
-                         setInputValue,
-                         messages,
-                         messagesEndRef,
-                         handleClose,
-                         handleKeyDown,
-                         handleSendClick
-                       }) => (
+  open,
+  anchorEl,
+  loader,
+  setLoader,
+  inputValue,
+  setInputValue,
+  messages,
+  messagesEndRef,
+  handleClose,
+  handleKeyDown,
+  handleSendClick,
+}) => (
   <Menu
     anchorEl={anchorEl}
     id="account-menu"
@@ -39,8 +39,9 @@ export const AIMenu = ({
         },
       },
     }}
-    transformOrigin={{horizontal: "left", vertical: "bottom"}}
-    anchorOrigin={{horizontal: "left", vertical: "top"}}>
+    transformOrigin={{ horizontal: "left", vertical: "bottom" }}
+    anchorOrigin={{ horizontal: "left", vertical: "top" }}
+  >
     <Box
       sx={{
         height: "600px",
@@ -50,7 +51,8 @@ export const AIMenu = ({
         border: "1px solid #ccc",
         borderRadius: "10px",
         overflow: "hidden",
-      }}>
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -60,8 +62,9 @@ export const AIMenu = ({
           color: "#000",
           padding: "10px",
           borderBottom: "1px solid #ccc",
-        }}>
-        <Typography sx={{marginLeft: "10px"}} variant="h4">
+        }}
+      >
+        <Typography sx={{ marginLeft: "10px" }} variant="h4">
           Chat
         </Typography>
       </Box>
@@ -72,13 +75,14 @@ export const AIMenu = ({
           padding: "10px",
           overflowY: "auto",
           backgroundColor: "#ffff",
-        }}>
+        }}
+      >
         {messages.length > 0 ? (
           messages.map((msg, index) =>
             msg.sender === "user" ? (
-              <UserChat index={index} msg={msg}/>
+              <UserChat index={index} msg={msg} />
             ) : (
-              <GptChat index={index} msg={msg}/>
+              <GptChat index={index} msg={msg} />
             )
           )
         ) : (
@@ -92,12 +96,13 @@ export const AIMenu = ({
               flexDirection: "column",
               gap: "15px",
               fontSize: "16px",
-            }}>
-            <img width={30} height={30} src="/img/chat-gpt.png" alt=""/>
+            }}
+          >
+            <img width={30} height={30} src="/img/chat-gpt.png" alt="" />
             <p>How can I help you today...?</p>
           </Box>
         )}
-        <div ref={messagesEndRef}/>
+        <div ref={messagesEndRef} />
       </Box>
 
       <Box
@@ -107,7 +112,8 @@ export const AIMenu = ({
           padding: "10px",
           borderTop: "1px solid #ccc",
           backgroundColor: "#fff",
-        }}>
+        }}
+      >
         <ChatInput
           setLoader={setLoader}
           loader={loader}
@@ -119,7 +125,7 @@ export const AIMenu = ({
       </Box>
     </Box>
   </Menu>
-)
+);
 
 export const useAIChat = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -144,12 +150,12 @@ export const useAIChat = () => {
     if (userMessage) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        {text: userMessage, sender: "user"},
-        {type: "loader", sender: "chat"},
+        { text: userMessage, sender: "user" },
+        { type: "loader", sender: "chat" },
       ]);
       setInputValue("");
       sendToGptService
-        .sendText({promt: userMessage})
+        .sendText({ promt: userMessage })
         .then((res) => {
           updateChatMessage(res);
           setInputValue("");
@@ -157,7 +163,7 @@ export const useAIChat = () => {
         .catch((err) => {
           setMessages((prevMessages) => [
             ...prevMessages.slice(0, -1),
-            {errorText: err?.data?.data, sender: "chat"},
+            { errorText: err?.data?.data, sender: "chat" },
           ]);
           setLoader(false);
         });
@@ -204,7 +210,7 @@ export const useAIChat = () => {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({behavior: "smooth"});
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [inputValue]);
 
@@ -220,7 +226,8 @@ export const useAIChat = () => {
     handleClick,
     handleClose,
     handleKeyDown,
-    handleSendClick
-  }
-}
+    handleSendClick,
+    setAnchorEl,
+  };
+};
 

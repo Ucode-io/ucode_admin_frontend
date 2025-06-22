@@ -131,6 +131,7 @@ function AggridTreeView(props) {
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
   const {navigateToForm} = useTabRouter();
+  const addClickedRef = useRef(false);
   const {tableSlug, appId} = useParams();
   const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();
@@ -204,7 +205,6 @@ function AggridTreeView(props) {
         ...filters,
       }),
     {
-      enabled: false,
       onSuccess: (data) => {
         const computedRow = data?.data?.response?.map((item) => ({
           ...item,
@@ -365,17 +365,28 @@ function AggridTreeView(props) {
       .catch(() => setLoading(false));
   }
 
-  function addRowTree(data) {
-    setLoading(true);
-
+  function addRowTree(data, params) {
     constructorObjectService
       .create(tableSlug, {
         data: data,
       })
       .then((res) => {
-        delete data?.new_field;
-        refetch();
-        setLoading(false);
+        const node = params?.node;
+
+        if (!node || !node.data) return;
+
+        const updatedData = {
+          ...data,
+          ...res?.data,
+          new_field: false,
+        };
+
+        node.setData(updatedData);
+        params.api.refreshCells({rowNodes: [node]});
+
+        if (!node.expanded) {
+          node.setExpanded(true);
+        }
       })
       .catch(() => setLoading(false));
   }
@@ -388,17 +399,27 @@ function AggridTreeView(props) {
     });
   }
 
-  function removeRow(guid) {
-    const allRows = [];
-    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-    const rowToRemove = allRows.find((row) => row.guid === guid);
+  function removeRow(params, guid) {
+    const node = params.node;
+    if (!node || !node.data) return;
 
-    if (rowToRemove) {
-      gridApi.current.api.applyTransaction({
-        remove: [rowToRemove],
+    if (node.data?.new_field && node.data?.guid === guid) {
+      const parentNode = node.parent;
+
+      if (!parentNode || !parentNode.data) {
+        params.api.applyServerSideTransaction({
+          route: [],
+          remove: [node.data],
+        });
+        return;
+      }
+
+      const parentRoute = parentNode.data.path || [];
+
+      params?.api?.applyServerSideTransaction({
+        route: parentRoute,
+        remove: [node.data],
       });
-    } else {
-      console.error("Row not found for removal");
     }
   }
 
@@ -422,16 +443,27 @@ function AggridTreeView(props) {
     }
   };
 
-  function deleteHandler(rowToDelete) {
-    const allRows = [];
-    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-    const rowToRemove = allRows.find((row) => row.guid === rowToDelete?.guid);
+  function deleteHandler(rowToDelete, params) {
+    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
+      const node = params.node;
+      if (!node || !node.data) return;
 
-    gridApi.current.api.applyTransaction({
-      remove: [rowToRemove],
+      const parentNode = node.parent;
+
+      if (!parentNode || !parentNode.data) {
+        params.api.applyServerSideTransaction({
+          route: [],
+          remove: [node.data],
+        });
+        return;
+      }
+      const parentRoute = parentNode.data.path || [];
+
+      params?.api?.applyServerSideTransaction({
+        route: parentRoute,
+        remove: [node.data],
+      });
     });
-
-    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {});
   }
 
   const onColumnPinned = (event) => {
@@ -442,45 +474,43 @@ function AggridTreeView(props) {
     });
   };
 
-  const sanitizeRowForGrid = (d) => {
-    return {
-      has_child: true,
-      guid: d?.guid,
-      path: d?.path,
-      ...d,
+  const waitUntilStoreReady = (parentNode) => {
+    const parentData = parentNode?.node?.data;
+    const route = parentData?.path || [];
+
+    const newChildGUID = generateGUID();
+
+    const child = {
+      guid: newChildGUID,
+      [`${tableSlug}_id`]: parentData?.guid,
+      path: [...route, newChildGUID],
+      has_child: false,
+      group: false,
+      new_field: true,
+      ...visibleFields.reduce((acc, slug) => {
+        acc[slug] = null;
+        return acc;
+      }, {}),
     };
+
+    parentNode?.api?.applyServerSideTransaction({
+      route: route,
+      add: [child],
+    });
+
+    addClickedRef.current = false;
   };
 
   function createChildTree(parentNode) {
-    const parentData = parentNode.data;
-
-    const newChildGUID = generateGUID();
-    const newChildPath = [...parentData.path, newChildGUID];
-
-    const newChild = sanitizeRowForGrid({
-      guid: newChildGUID,
-      [`${tableSlug}_id`]: parentData.guid,
-      path: newChildPath,
-      new_field: true,
-      has_child: false,
-    });
-
-    const updatedParent = sanitizeRowForGrid({
-      ...parentData,
-      has_child: true,
-    });
-
-    parentNode.setExpanded(true);
-
-    const route = parentData.path;
-
-    const txResult = gridApi.current.api.applyServerSideTransaction({
-      route,
-      add: [newChild],
-      update: [updatedParent],
-    });
-
-    console.log("Check aggrid store for child", txResult);
+    addClickedRef.current = true;
+    if (parentNode?.node?.expanded && addClickedRef.current === true) {
+      waitUntilStoreReady(parentNode);
+    }
+    if (!parentNode?.node?.data) {
+      console.warn("Invalid parent node or missing data.");
+      return;
+    }
+    parentNode.node.setExpanded(true);
   }
 
   const getDataPath = useCallback((data) => data.path, []);

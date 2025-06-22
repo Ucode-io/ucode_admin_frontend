@@ -471,6 +471,14 @@ function AggridTreeView(props) {
     });
   };
 
+  const sanitizeRowForGrid = (d) => {
+    return {
+      ...d,
+      has_child: true,
+      group: true,
+    };
+  };
+
   const waitUntilStoreReady = (parentNode) => {
     const parentData = parentNode?.node?.data;
     const route = parentData?.path || [];
@@ -490,12 +498,26 @@ function AggridTreeView(props) {
       }, {}),
     };
 
-    parentNode?.api?.applyServerSideTransaction({
-      route: route,
-      add: [child],
-    });
+    if (!parentData.has_child) {
+      parentNode.node.data.has_child = true;
 
-    addClickedRef.current = false;
+      parentNode.api.applyServerSideTransaction({
+        route: route.slice(0, -1),
+        update: [sanitizeRowForGrid(parentNode.node.data)],
+      });
+
+      setTimeout(() => {
+        waitUntilStoreReady(parentNode);
+      }, 500);
+
+      return;
+    } else {
+      parentNode?.api?.applyServerSideTransaction({
+        route: route,
+        add: [child],
+      });
+      addClickedRef.current = false;
+    }
   };
 
   function createChildTree(parentNode) {
@@ -511,7 +533,6 @@ function AggridTreeView(props) {
   }
 
   const getDataPath = useCallback((data) => data.path, []);
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []

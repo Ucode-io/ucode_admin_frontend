@@ -501,14 +501,16 @@ function AggridTreeView(props) {
     if (!parentData.has_child) {
       parentNode.node.data.has_child = true;
 
-      parentNode.api.applyServerSideTransaction({
-        route: route.slice(0, -1),
-        update: [sanitizeRowForGrid(parentNode.node.data)],
-      });
+      if (parentNode?.node?.expanded) {
+        parentNode.api.applyServerSideTransaction({
+          route: route.slice(0, -1),
+          update: [sanitizeRowForGrid(parentNode.node.data)],
+        });
+      }
 
-      setTimeout(() => {
-        waitUntilStoreReady(parentNode);
-      }, 500);
+      // setTimeout(() => {
+      //   waitUntilStoreReady(parentNode);
+      // }, 800);
 
       return;
     } else {
@@ -521,6 +523,7 @@ function AggridTreeView(props) {
   };
 
   function createChildTree(parentNode) {
+    !parentNode?.data?.group && parentNode.node.setExpanded(true);
     addClickedRef.current = true;
     if (parentNode?.node?.expanded && addClickedRef.current === true) {
       waitUntilStoreReady(parentNode);
@@ -529,7 +532,8 @@ function AggridTreeView(props) {
       console.warn("Invalid parent node or missing data.");
       return;
     }
-    parentNode.node.setExpanded(true);
+
+    parentNode?.data?.group && parentNode.node.setExpanded(true);
   }
 
   const getDataPath = useCallback((data) => data.path, []);
@@ -906,7 +910,7 @@ function AggridTreeView(props) {
                         setTimeout(() => {
                           waitUntilStoreReady(params);
                           addClickedRef.current = false;
-                        }, 1000);
+                        }, 1100);
                     }}
                     getRowId={(params) => params?.data?.guid}
                     autoGroupColumnDef={autoGroupColumnDef}

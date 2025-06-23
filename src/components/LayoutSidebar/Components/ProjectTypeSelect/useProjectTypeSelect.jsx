@@ -40,7 +40,7 @@ export const useProjectTypeSelect = ({
       handleSuccess(data);
     },
     onError: (error) => {
-      handleError(error);
+      handleError(error?.data?.message || error?.data);
     },
   });
 

@@ -43,7 +43,7 @@ export const ProjectTypeSelect = ({
           sx={{
             display: "flex",
             flexDirection: "column",
-            rowGap: "20px",
+            rowGap: "10px",
           }}
         >
           <HFSelect

@@ -421,7 +421,7 @@ export const NewUiViewsWithGroups = ({
   const TableComponent =
     !relationView && localStorage.getItem("new_router") !== "true"
       ? TableViewOld
-      : relationView
+      : Boolean(relationView)
         ? DrawerTableView
         : TableView;
 

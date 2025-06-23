@@ -423,7 +423,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout("users", menuId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {

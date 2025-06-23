@@ -418,7 +418,7 @@ const DrawerTableView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout("users", menuId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {
@@ -448,7 +448,6 @@ const DrawerTableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    console.log("selectedViewselectedView", selectedView);
     if (Boolean(selectedView?.is_relation_view)) {
       dispatch(
         groupFieldActions.addView({

@@ -167,11 +167,9 @@ function AgGridTableView(props) {
 
   const pagination = useSelector((state) => state.pagination);
 
-  const { pageLimit, pageOffset } = pagination?.paginationInfo?.find(
-    (item) => item?.tableSlug === tableSlug
-  );
-
-  console.log({ pageLimit, pageOffset });
+  const { pageLimit, pageOffset } =
+    pagination?.paginationInfo?.find((item) => item?.tableSlug === tableSlug) ||
+    {};
 
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =

@@ -19,3 +19,17 @@
 .animated_text {
   animation: colorChange 2s linear infinite;
 }
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #3f3d3d;
+  border: 1px solid #d1d1d1;
+  font-size: 14px;
+  font-weight: 500;
+}

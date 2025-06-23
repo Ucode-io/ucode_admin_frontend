@@ -16,7 +16,12 @@ import {
 } from "./constants";
 import { useMcpCellMutation } from "@/services/mcp";
 
-export const useProjectTypePopupProps = ({ handleClose, handleSuccess }) => {
+export const useProjectTypeSelect = ({
+  handleSuccess,
+  handleError,
+  handleClose,
+  appendMessage,
+}) => {
   const {
     control,
     formState: { errors },
@@ -27,9 +32,15 @@ export const useProjectTypePopupProps = ({ handleClose, handleSuccess }) => {
   } = useForm();
 
   const cellMcpMutation = useMcpCellMutation({
-    onSuccess: () => {
-      handleClose();
-      handleSuccess();
+    onSuccess: (data) => {
+      appendMessage({
+        text: `Project Type: ${watch("project_type")}\nManagement System: ${watch("management_system")}
+        `,
+      });
+      handleSuccess(data);
+    },
+    onError: (error) => {
+      handleError(error);
     },
   });
 

@@ -29,6 +29,7 @@ import menuService from "../../services/menuService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
 
 const DrawerTableView = ({
   relationView = false,
@@ -63,6 +64,7 @@ const DrawerTableView = ({
   watch,
   tableLan,
   tableSlugProp = "",
+  refetchMenuViews = () => {},
   setSortedDatas = () => {},
   setSelectedObjects = () => {},
   setFormVisible = () => {},
@@ -446,12 +448,23 @@ const DrawerTableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    console.log("selectedViewselectedView", selectedView);
     if (Boolean(selectedView?.is_relation_view)) {
-      dispatch(groupFieldActions.addViewPath(view?.table_label));
+      dispatch(
+        groupFieldActions.addView({
+          id: view?.id,
+          label: view?.table_label,
+          table_slug: view?.table_slug,
+          relation_table_slug: view.relation_table_slug ?? null,
+          is_relation_view: view?.is_relation_view,
+        })
+      );
       setSelectedView(view);
       setSelectedRow(row);
-      dispatch(detailDrawerActions.openDrawer());
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
       updateQueryWithoutRerender("p", row?.guid);
+
+      queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
     } else {
       if (Boolean(new_router === "true")) {
         updateQueryWithoutRerender("p", row?.guid);

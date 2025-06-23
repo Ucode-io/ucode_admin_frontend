@@ -80,7 +80,7 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = (el) => {
-    dispatch(groupFieldActions.clearViewsPath());
+    dispatch(groupFieldActions.clearViews());
     const handler =
       localStorage.getItem("new_router") === "true"
         ? newClickHandler

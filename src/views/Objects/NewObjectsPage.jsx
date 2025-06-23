@@ -46,12 +46,7 @@ const NewObjectsPage = () => {
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
-        if (
-          data?.[selectedTabIndex]?.type !== "SECTION" &&
-          !data?.[selectedTabIndex]?.is_relation_view
-        ) {
-          dispatch(groupFieldActions.addView(data?.[selectedTabIndex]));
-        }
+
         if (!pathname.includes("/login")) {
           updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
         }
@@ -105,7 +100,24 @@ const NewObjectsPage = () => {
         };
       },
       onSuccess: (data) => {
-        dispatch(groupFieldActions.addViewPath(data?.tableInfo?.label));
+        dispatch(
+          groupFieldActions.addView({
+            id: data?.tableInfo.id,
+            label: data?.tableInfo.label,
+            table_slug: data?.tableInfo.slug,
+            relation_table_slug: data?.tableInfo.relation_table_slug,
+            is_relation_view: data?.tableInfo?.is_relation_view ?? false,
+          })
+        );
+        dispatch(
+          groupFieldActions.addViewPath({
+            id: data?.tableInfo.id,
+            label: data?.tableInfo.label,
+            table_slug: data?.tableInfo.slug,
+            relation_table_slug: data?.tableInfo.relation_table_slug,
+            is_relation_view: data?.tableInfo?.is_relation_view ?? false,
+          })
+        );
         dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
       },
     }

@@ -137,6 +137,7 @@ export const NewUiViewsWithGroups = ({
   selectedViewType,
   selectedTabIndex,
   relationFields = [],
+  refetchMenuViews = () => {},
   setSelectedTabIndex = () => {},
   onSubmit = () => {},
   setViews = () => {},
@@ -176,7 +177,7 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-  const viewsPath = useSelector((state) => state.groupField.viewsList);
+  const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
 
   const groupTable = view?.attributes.group_by_columns;
@@ -567,13 +568,9 @@ export const NewUiViewsWithGroups = ({
                         fontSize={11}
                         justifyContent="center"
                         alignItems="center">
-                        {index === 0
-                          ? initialTableInfo?.label?.[0]
-                          : item?.label?.[0] || item?.table_label?.[0]}
+                        {item?.label?.[0]}
                       </Flex>
-                      {index === 0
-                        ? initialTableInfo?.label
-                        : item?.label || item?.table_label}
+                      {item?.label}
                     </Flex>
                   </>
                 ))}
@@ -725,10 +722,20 @@ export const NewUiViewsWithGroups = ({
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
                   if (view?.type === "SECTION")
-                    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
+                    dispatch(groupFieldActions.trimViewsUntil(view));
+                  dispatch(groupFieldActions.trimViewsDataUntil(view));
+                  dispatch(detailDrawerActions.setDrawerTabIndex(index));
 
-                  if (relationView) {
-                    dispatch(groupFieldActions.addView(view));
+                  if (relationView && view?.type !== "SECTION") {
+                    dispatch(
+                      groupFieldActions.addViewPath({
+                        id: view?.id,
+                        label: view?.table_label,
+                        table_slug: view?.table_slug,
+                        relation_table_slug: view.relation_table_slug ?? null,
+                        is_relation_view: view?.is_relation_view,
+                      })
+                    );
                     dispatch(detailDrawerActions.setDrawerTabIndex(index));
                   } else dispatch(detailDrawerActions.setMainTabIndex(index));
                 }}>
@@ -1146,6 +1153,7 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableComponent
+                          refetchMenuViews={refetchMenuViews}
                           setSelectedView={setSelectedView}
                           relationView={relationView}
                           selectedRow={selectedRow}
@@ -1228,6 +1236,7 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableComponent
+                        refetchMenuViews={refetchMenuViews}
                         setSelectedView={setSelectedView}
                         relationView={relationView}
                         selectedRow={selectedRow}

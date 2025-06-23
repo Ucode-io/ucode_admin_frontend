@@ -35,6 +35,7 @@ export const ProjectTypeSelect = ({
         borderRadius: "10px",
         overflow: "hidden",
         padding: "10px",
+        paddingBottom: 0,
       }}
     >
       <form className={cls.form} onSubmit={handleSubmit(onSubmit)}>
@@ -43,7 +44,7 @@ export const ProjectTypeSelect = ({
           sx={{
             display: "flex",
             flexDirection: "column",
-            rowGap: "10px",
+            rowGap: "8px",
           }}
         >
           <HFSelect

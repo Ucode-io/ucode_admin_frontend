@@ -89,7 +89,7 @@ function DrawerObjectsPage({
       },
     }
   );
-
+  console.log("selectedViewwww======> DrawerObjectPage", selectedView);
   const {
     data: {
       fieldsMap,

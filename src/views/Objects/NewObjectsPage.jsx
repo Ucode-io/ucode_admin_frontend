@@ -56,6 +56,7 @@ const NewObjectsPage = () => {
     }
   );
 
+  console.log("selectedViewwww======> new ObjectsPage", selectedView);
   const {
     data: {
       fieldsMap,

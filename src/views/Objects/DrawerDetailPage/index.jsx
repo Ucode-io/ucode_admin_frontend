@@ -51,7 +51,7 @@ function DrawerDetailPage({
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const {menuId} = useParams();
+  const {menuId, tableSlug: tableFromParams} = useParams();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
@@ -61,7 +61,8 @@ function DrawerDetailPage({
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
 
-  const tableSlug = selectedV?.relation_table_slug || view?.table_slug;
+  const tableSlug =
+    tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
   const [selectedView, setSelectedView] = useState(null);
 
   const query = new URLSearchParams(window.location.search);

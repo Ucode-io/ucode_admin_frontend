@@ -32,9 +32,9 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import OldDrawerFormDetailPage from "./OldDrawerFormDetailPage";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 function OldDrawerDetailPage({
-  open,
   layout,
   refetch = () => {},
   setOpen = () => {},
@@ -58,7 +58,9 @@ function OldDrawerDetailPage({
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    dispatch(detailDrawerActions.closeDrawer());
+  };
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);

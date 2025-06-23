@@ -166,6 +166,7 @@ function AgGridTableView(props) {
   const groupField = fieldsMap[groupFieldId];
 
   const pagination = useSelector((state) => state.pagination);
+  const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
 
   const { pageLimit, pageOffset } =
     pagination?.paginationInfo?.find((item) => item?.tableSlug === tableSlug) ||
@@ -840,7 +841,10 @@ function AgGridTableView(props) {
         overflow: "scroll",
       }}
     >
-      <div className={style.gridTable}>
+      <div
+        className={style.gridTable}
+        style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
+      >
         <div
           className="ag-theme-quartz"
           style={{

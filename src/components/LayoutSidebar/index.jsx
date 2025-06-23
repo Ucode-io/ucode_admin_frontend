@@ -85,7 +85,6 @@ import UserIcon from "@/assets/icons/profile.svg";
 import { useRoleListQuery } from "../../services/roleServiceV2";
 import { useClientTypesQuery } from "../../views/client-types/utils";
 import useSearchParams from "../../hooks/useSearchParams";
-import { ProjectTypePopup } from "./Components/ProjectTypePopup";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -920,14 +919,12 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
     handleClose,
     handleKeyDown,
     handleSendClick,
-    setAnchorEl,
+    showInput,
+    handleSuccess,
+    handleError,
+    onExited,
+    appendMessage,
   } = useAIChat();
-
-  const [projectTypeAnchorEl, setProjectTypeAnchorEl] = useState(null);
-
-  const handleProjectTypeClose = () => {
-    setProjectTypeAnchorEl(null);
-  };
 
   return (
     <>
@@ -943,25 +940,13 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
         mb={sidebarOpen ? 0 : 4}
         ref={ref}
         {...props}
-        // onClick={handleClick}
-        onClick={(e) => {
-          setProjectTypeAnchorEl(e.currentTarget);
-        }}
+        onClick={handleClick}
         justifyContent="center"
         alignItems="center"
       >
         {sidebarOpen ? children : <SearchIcon color="#475467" fontSize={16} />}
         {/* <img src="/img/magic-wand.svg" alt="magic" /> */}
       </Flex>
-
-      <ProjectTypePopup
-        handleSuccess={() => {
-          setAnchorEl(projectTypeAnchorEl);
-          setProjectTypeAnchorEl(null);
-        }}
-        anchorEl={projectTypeAnchorEl}
-        handleClose={handleProjectTypeClose}
-      />
 
       <AIMenu
         open={open}
@@ -975,6 +960,11 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
         handleClose={handleClose}
         handleKeyDown={handleKeyDown}
         handleSendClick={handleSendClick}
+        showInput={showInput}
+        handleSuccess={handleSuccess}
+        handleError={handleError}
+        onExited={onExited}
+        appendMessage={appendMessage}
       />
     </>
   );

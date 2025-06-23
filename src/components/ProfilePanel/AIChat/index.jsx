@@ -4,6 +4,7 @@ import sendToGptService from "../../../services/sendToGptService";
 import GptChat from "./GptChat";
 import UserChat from "./UserChat";
 import ChatInput from "./ChatInput";
+import { ProjectTypeSelect } from "../../LayoutSidebar/Components/ProjectTypeSelect";
 
 export const AIMenu = ({
   open,
@@ -17,115 +18,138 @@ export const AIMenu = ({
   handleClose,
   handleKeyDown,
   handleSendClick,
-}) => (
-  <Menu
-    anchorEl={anchorEl}
-    id="account-menu"
-    open={open}
-    onClose={handleClose}
-    PaperProps={{
-      elevation: 0,
-      sx: {
-        padding: 0,
-        overflow: "visible",
-        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-        mt: 1.5,
-        "& .MuiAvatar-root": {
-          width: 52,
-          height: 32,
-          ml: -0.5,
-          mr: 1,
-          bottom: 4,
-        },
-      },
-    }}
-    transformOrigin={{ horizontal: "left", vertical: "bottom" }}
-    anchorOrigin={{ horizontal: "left", vertical: "top" }}
-  >
-    <Box
-      sx={{
-        height: "600px",
-        width: "400px",
-        display: "flex",
-        flexDirection: "column",
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        overflow: "hidden",
+  showInput,
+  handleSuccess = () => {},
+  handleError = () => {},
+  onExited = () => {},
+  appendMessage = () => {},
+}) => {
+  return (
+    <Menu
+      TransitionProps={{
+        onExited,
       }}
+      anchorEl={anchorEl}
+      id="account-menu"
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        elevation: 0,
+        sx: {
+          padding: 0,
+          overflow: "visible",
+          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+          mt: 1.5,
+          "& .MuiAvatar-root": {
+            width: 52,
+            height: 32,
+            ml: -0.5,
+            mr: 1,
+            bottom: 4,
+          },
+        },
+      }}
+      transformOrigin={{ horizontal: "left", vertical: "bottom" }}
+      anchorOrigin={{ horizontal: "left", vertical: "top" }}
     >
       <Box
         sx={{
+          height: "600px",
+          width: "400px",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ffff",
-          color: "#000",
-          padding: "10px",
-          borderBottom: "1px solid #ccc",
+          flexDirection: "column",
+          border: "1px solid #ccc",
+          borderRadius: "10px",
+          overflow: "hidden",
         }}
       >
-        <Typography sx={{ marginLeft: "10px" }} variant="h4">
-          Chat
-        </Typography>
-      </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#ffff",
+            color: "#000",
+            padding: "10px",
+            borderBottom: "1px solid #ccc",
+          }}
+        >
+          <Typography sx={{ marginLeft: "10px" }} variant="h4">
+            Chat
+          </Typography>
+        </Box>
 
-      <Box
-        sx={{
-          flexGrow: 1,
-          padding: "10px",
-          overflowY: "auto",
-          backgroundColor: "#ffff",
-        }}
-      >
-        {messages.length > 0 ? (
-          messages.map((msg, index) =>
-            msg.sender === "user" ? (
-              <UserChat index={index} msg={msg} />
-            ) : (
-              <GptChat index={index} msg={msg} />
+        <Box
+          sx={{
+            flexGrow: 1,
+            padding: "10px",
+            overflowY: "auto",
+            backgroundColor: "#ffff",
+          }}
+        >
+          {messages.length > 0 ? (
+            messages.map((msg, index) =>
+              msg.sender === "user" ? (
+                <UserChat index={index} msg={msg} />
+              ) : (
+                <GptChat index={index} msg={msg} />
+              )
             )
-          )
-        ) : (
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              gap: "15px",
-              fontSize: "16px",
-            }}
-          >
-            <img width={30} height={30} src="/img/chat-gpt.png" alt="" />
-            <p>How can I help you today...?</p>
-          </Box>
-        )}
-        <div ref={messagesEndRef} />
-      </Box>
+          ) : (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                gap: "15px",
+                fontSize: "16px",
+              }}
+            >
+              <img width={30} height={30} src="/img/chat-gpt.png" alt="" />
+              <p>
+                {showInput
+                  ? "How can I help you today...?"
+                  : "Please select the type of project"}
+              </p>
+            </Box>
+          )}
+          <div ref={messagesEndRef} />
+        </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          padding: "10px",
-          borderTop: "1px solid #ccc",
-          backgroundColor: "#fff",
-        }}
-      >
-        <ChatInput
-          setLoader={setLoader}
-          loader={loader}
-          setInputValue={setInputValue}
-          handleSendClick={handleSendClick}
-          inputValue={inputValue}
-          handleKeyDown={handleKeyDown}
-        />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            padding: "10px",
+            borderTop: "1px solid #ccc",
+            backgroundColor: "#fff",
+          }}
+        >
+          {showInput ? (
+            <ChatInput
+              setLoader={setLoader}
+              loader={loader}
+              setInputValue={setInputValue}
+              handleSendClick={handleSendClick}
+              inputValue={inputValue}
+              handleKeyDown={handleKeyDown}
+            />
+          ) : (
+            <ProjectTypeSelect
+              handleClose={handleClose}
+              handleError={(error) => handleError(error)}
+              handleSuccess={(data) => handleSuccess(data)}
+              appendMessage={appendMessage}
+            />
+          )}
+        </Box>
       </Box>
-    </Box>
-  </Menu>
-);
+    </Menu>
+  );
+};
 
 export const useAIChat = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -134,13 +158,36 @@ export const useAIChat = () => {
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef(null);
   const [loader, setLoader] = useState(false);
+  const [showInput, setShowInput] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleSuccess = (data) => {
+    setShowInput(true);
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { text: data, sender: "chat" },
+    ]);
+  };
+
+  const handleError = (error) => {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { errorText: error, sender: "chat" },
+    ]);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const onExited = () => {
+    setShowInput(false);
+    setMessages([]);
+    setInputValue("");
+    setLoader(false);
   };
 
   const handleSendClick = () => {
@@ -168,6 +215,15 @@ export const useAIChat = () => {
           setLoader(false);
         });
     }
+  };
+
+  const appendMessage = (message, sender = "user") => {
+    const newMessage = {
+      ...message,
+      sender,
+    };
+
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
   const updateChatMessage = (chatMessage) => {
@@ -228,6 +284,11 @@ export const useAIChat = () => {
     handleKeyDown,
     handleSendClick,
     setAnchorEl,
+    showInput,
+    handleSuccess,
+    handleError,
+    onExited,
+    appendMessage,
   };
 };
 

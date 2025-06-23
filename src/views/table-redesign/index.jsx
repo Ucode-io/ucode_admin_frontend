@@ -168,7 +168,7 @@ export const DynamicTable = ({
   relationAction,
   onChecked,
   view,
-  refetch,
+  refetch = () => {},
   menuItem,
   loader,
   height,

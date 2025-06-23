@@ -449,7 +449,7 @@ const TableView = ({
     if (Boolean(selectedView?.is_relation_view)) {
       setSelectedView(view);
       setSelectedRow(row);
-      dispatch(detailDrawerActions.openDrawer());
+      // dispatch(detailDrawerActions.openDrawer());
       updateQueryWithoutRerender("p", row?.guid);
     } else {
       if (Boolean(new_router === "true")) {

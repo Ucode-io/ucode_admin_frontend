@@ -42,8 +42,10 @@ function DrawerDetailPage({
     viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
   const handleClose = () => {
     updateQueryWithoutRerender("p", null);
-    dispatch(detailDrawerActions.closeDrawer());
     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
+    dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
+    dispatch(detailDrawerActions.setDrawerTabIndex(0));
+    dispatch(detailDrawerActions.closeDrawer());
   };
 
   const {navigateToForm} = useTabRouter();

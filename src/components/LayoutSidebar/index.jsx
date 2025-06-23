@@ -920,6 +920,7 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
     handleKeyDown,
     handleSendClick,
     showInput,
+    setShowInput,
     handleSuccess,
     handleError,
     onExited,
@@ -961,6 +962,7 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
         handleKeyDown={handleKeyDown}
         handleSendClick={handleSendClick}
         showInput={showInput}
+        setShowInput={setShowInput}
         handleSuccess={handleSuccess}
         handleError={handleError}
         onExited={onExited}

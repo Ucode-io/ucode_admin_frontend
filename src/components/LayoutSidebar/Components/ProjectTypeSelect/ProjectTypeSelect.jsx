@@ -9,23 +9,23 @@ export const ProjectTypeSelect = ({
   handleError = () => {},
   handleClose = () => {},
   appendMessage = () => {},
+  setShowInput = () => {},
 }) => {
   const {
     control,
     errors,
     onSubmit,
-    onCancel,
     handleSubmit,
     projectTypeOptions,
     getManagementOptions,
     watch,
     setValue,
-    isLoading,
   } = useProjectTypeSelect({
     handleSuccess,
     handleError,
     handleClose,
     appendMessage,
+    setShowInput,
   });
 
   return (
@@ -59,33 +59,30 @@ export const ProjectTypeSelect = ({
             isClearable={false}
             displayEmpty={false}
             isSearchable
+            autoFocus
           />
-          {watch("project_type") && (
-            <HFSelect
-              control={control}
-              name="management_system"
-              label="Management System"
-              options={getManagementOptions(watch("project_type"))}
-              error={errors.type}
-              helperText={errors.type?.message}
-              isClearable={false}
-              displayEmpty={false}
-              isSearchable
-            />
-          )}
+          <HFSelect
+            control={control}
+            name="management_system"
+            label="Management System"
+            options={getManagementOptions(watch("project_type")) || []}
+            error={errors.type}
+            helperText={errors.type?.message}
+            isClearable={false}
+            displayEmpty={false}
+            isSearchable
+          />
         </Box>
         <Box className={cls.buttonBox}>
-          <button type="button" className={cls.button} onClick={onCancel}>
+          {/* <button type="button" className={cls.button} onClick={onCancel}>
             Cancel
-          </button>
+          </button> */}
           <button
             type="submit"
             className={clsx(cls.save, cls.button)}
-            disabled={
-              !watch("project_type") || !watch("management_system") || isLoading
-            }
+            disabled={!watch("project_type") || !watch("management_system")}
           >
-            Select
+            Send
           </button>
         </Box>
       </form>

@@ -19,6 +19,7 @@ export const AIMenu = ({
   handleKeyDown,
   handleSendClick,
   showInput,
+  setShowInput,
   handleSuccess = () => {},
   handleError = () => {},
   onExited = () => {},
@@ -58,7 +59,6 @@ export const AIMenu = ({
           width: "400px",
           display: "flex",
           flexDirection: "column",
-          border: "1px solid #ccc",
           borderRadius: "10px",
           overflow: "hidden",
         }}
@@ -143,6 +143,7 @@ export const AIMenu = ({
               handleError={(error) => handleError(error)}
               handleSuccess={(data) => handleSuccess(data)}
               appendMessage={appendMessage}
+              setShowInput={setShowInput}
             />
           )}
         </Box>
@@ -165,11 +166,12 @@ export const useAIChat = () => {
   };
 
   const handleSuccess = (data) => {
-    setShowInput(true);
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: data, sender: "chat" },
-    ]);
+    setMessages((prevMessages) => {
+      return [
+        ...prevMessages?.filter((item) => !item?.isProjectType),
+        { text: data, sender: "chat" },
+      ];
+    });
   };
 
   const handleError = (error) => {
@@ -217,13 +219,13 @@ export const useAIChat = () => {
     }
   };
 
-  const appendMessage = (message, sender = "user") => {
-    const newMessage = {
-      ...message,
-      sender,
-    };
-
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  const appendMessage = (message) => {
+    if (Array.isArray(message)) {
+      setMessages((prev) => [...prev, ...message]);
+      return;
+    } else {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    }
   };
 
   const updateChatMessage = (chatMessage) => {
@@ -285,6 +287,7 @@ export const useAIChat = () => {
     handleSendClick,
     setAnchorEl,
     showInput,
+    setShowInput,
     handleSuccess,
     handleError,
     onExited,

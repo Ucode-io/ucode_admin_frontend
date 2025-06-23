@@ -44,9 +44,11 @@ function DrawerObjectsPage({
   const selectedV = viewsPath?.[viewsPath?.length - 1];
 
   const {data: views, refetch} = useQuery(
-    ["GET_VIEWS_LIST", menuId],
+    ["GET_VIEWS_LIST", menuId, selectedV?.relation_table_slug],
     () => {
-      return constructorViewService.getViewListMenuId(menuId);
+      return constructorViewService.getViewListMenuId(
+        selectedV?.relation_table_slug || menuId
+      );
     },
     {
       enabled: Boolean(menuId),
@@ -73,18 +75,16 @@ function DrawerObjectsPage({
       visibleColumns,
       visibleRelationColumns,
       tableInfo,
-      viewsList,
     } = {
       fieldsMap: {},
       fieldsMapRel: {},
       tableInfo: {},
       visibleColumns: [],
-      viewsList: [],
       visibleRelationColumns: [],
     },
     isLoading,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", selectedV, i18n?.language, selectedTabIndex],
+    ["GET_VIEWS_AND_FIELDS", i18n?.language, selectedTabIndex],
     () => {
       if (Boolean(!selectedV?.relation_table_slug)) return [];
       return menuService.getFieldsListMenu(
@@ -97,13 +97,9 @@ function DrawerObjectsPage({
       );
     },
     {
-      enabled: Boolean(selectedV?.table_slug && selectedV?.is_relation_view),
+      enabled: Boolean(selectedV?.table_slug),
       select: ({data}) => {
         return {
-          viewsList:
-            data?.views?.filter(
-              (item) => item?.type === "SECTION" || item?.is_relation_view
-            ) ?? [],
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],

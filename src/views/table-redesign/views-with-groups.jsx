@@ -724,12 +724,11 @@ export const NewUiViewsWithGroups = ({
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
-                  if (view?.type !== "SECTION" && view?.is_relation_view) {
-                    dispatch(groupFieldActions.addView(view));
-                  } else if (view?.type === "SECTION")
+                  if (view?.type === "SECTION")
                     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
 
                   if (relationView) {
+                    dispatch(groupFieldActions.addView(view));
                     dispatch(detailDrawerActions.setDrawerTabIndex(index));
                   } else dispatch(detailDrawerActions.setMainTabIndex(index));
                 }}>

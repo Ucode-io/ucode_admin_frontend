@@ -447,6 +447,7 @@ const DrawerTableView = ({
 
   const navigateToEditPage = (row) => {
     if (Boolean(selectedView?.is_relation_view)) {
+      dispatch(groupFieldActions.addViewPath(view?.table_label));
       setSelectedView(view);
       setSelectedRow(row);
       dispatch(detailDrawerActions.openDrawer());

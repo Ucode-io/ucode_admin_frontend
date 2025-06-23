@@ -5,8 +5,15 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
     name: "groupField",
     initialState: {
       viewsList: [],
+      viewsPath: [],
     },
     reducers: {
+      addViewPath: (state, {payload}) => {
+        const exists = state.viewsPath.some((v) => v === payload);
+        if (!exists) {
+          state.viewsPath.push(payload);
+        }
+      },
       addView: (state, {payload}) => {
         const exists = state.viewsList.some(
           (v) => v?.relation_table_slug === payload?.relation_table_slug

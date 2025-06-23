@@ -611,7 +611,7 @@ const BoardView = ({
         </div>
       )}
       <MaterialUIProvider>
-        <DrawerDetailPage
+        {/* <DrawerDetailPage
           view={view}
           projectInfo={projectInfo}
           open={openDrawerModal}
@@ -627,7 +627,7 @@ const BoardView = ({
           navigateToEditPage={navigateToEditPage}
           dateInfo={dateInfo}
           defaultValue={defaultValue}
-        />
+        /> */}
       </MaterialUIProvider>
     </div>
   );

@@ -30,8 +30,6 @@ const NewObjectsPage = () => {
   const [selectedView, setSelectedView] = useState(null);
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
 
-  const viewsPath = useSelector((state) => state.groupField.viewsList);
-
   const {data: views, refetch} = useQuery(
     ["GET_VIEWS_LIST", menuId],
     () => {
@@ -107,6 +105,7 @@ const NewObjectsPage = () => {
         };
       },
       onSuccess: (data) => {
+        dispatch(groupFieldActions.addViewPath(data?.tableInfo?.label));
         dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
       },
     }

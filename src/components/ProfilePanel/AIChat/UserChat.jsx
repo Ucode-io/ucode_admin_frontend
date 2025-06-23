@@ -24,7 +24,6 @@ function UserChat({ msg, index }) {
           alignSelf: "flex-end",
           maxWidth: "70%",
           color: "#000",
-          wordBreak: "break-all",
           borderRadius: "20px",
           padding: "10px 10px 10px 10px",
           minHeight: "40px",
@@ -32,7 +31,7 @@ function UserChat({ msg, index }) {
         }}
       >
         <Typography
-          sx={{ fontSize: "14px", padding: "5px 10px", whiteSpace: "pre-wrap" }}
+          sx={{ fontSize: "14px", padding: "5px 10px", whiteSpace: "pre-line" }}
         >
           {msg.text}
         </Typography>

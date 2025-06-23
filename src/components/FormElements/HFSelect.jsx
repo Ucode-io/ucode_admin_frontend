@@ -35,6 +35,7 @@ const HFSelect = ({
   disabled = false,
   displayEmpty = true,
   isSearchable = false,
+  autoFocus = false,
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
@@ -87,7 +88,7 @@ const HFSelect = ({
                     size="small"
                     error={!!error}
                     helperText={!disabledHelperText && error?.message}
-                    autoFocus
+                    autoFocus={autoFocus}
                   />
                 )}
                 disableClearable={!isClearable}

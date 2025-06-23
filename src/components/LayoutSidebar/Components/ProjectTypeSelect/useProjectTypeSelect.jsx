@@ -21,6 +21,7 @@ export const useProjectTypeSelect = ({
   handleError,
   handleClose,
   appendMessage,
+  setShowInput,
 }) => {
   const {
     control,
@@ -33,10 +34,6 @@ export const useProjectTypeSelect = ({
 
   const cellMcpMutation = useMcpCellMutation({
     onSuccess: (data) => {
-      appendMessage({
-        text: `Project Type: ${watch("project_type")}\nManagement System: ${watch("management_system")}
-        `,
-      });
       handleSuccess(data);
     },
     onError: (error) => {
@@ -45,6 +42,18 @@ export const useProjectTypeSelect = ({
   });
 
   const onSubmit = (data) => {
+    appendMessage([
+      {
+        text: `Project Type: ${watch("project_type")}\nManagement System: ${watch("management_system")}`,
+        sender: "user",
+      },
+      {
+        type: "loader",
+        sender: "chat",
+        isProjectType: true,
+      },
+    ]);
+    setShowInput(true);
     cellMcpMutation.mutate(data);
   };
 

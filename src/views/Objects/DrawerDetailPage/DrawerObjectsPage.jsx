@@ -95,7 +95,7 @@ function DrawerObjectsPage({
   );
 
   const views = isRelationView ? relationViews : menuViews;
-
+  console.log("selectedViewwww======> new ObjectsFormPage", selectedView);
   const {
     data: {
       fieldsMap,

@@ -24,18 +24,21 @@ import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import NewModalDetailPage from "../../components/NewModalDetailPage";
 import {useProjectGetByIdQuery} from "../../services/projectService";
-import menuService from "../../services/menuService";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
-const TableView = ({
-  relationView = false,
+const TableViewOld = ({
   selectedRow,
+  setSelectedRow = () => {},
+  setOpen = () => {},
+  setLayoutType = () => {},
   layoutType,
   filterVisible,
+  setCurrentPage,
   currentPage,
+  setFilterVisible,
   handleClickFilter,
   handleCloseFilter,
   visibleColumns,
@@ -48,53 +51,41 @@ const TableView = ({
   shouldGet,
   isTableView = false,
   selectedView,
+  reset = () => {},
   fieldsMap,
   isDocView,
   sortedDatas = [],
+  setSortedDatas,
   formVisible,
+  setFormVisible,
   selectedObjects,
   checkedColumns,
   getValues,
   searchText,
+  setSelectedObjects,
   selectedLinkedObject,
+  selectedTabIndex,
   selectedLinkedTableSlug,
   menuItem,
+  setFormValue,
   currentView,
   watch,
   tableLan,
   tableSlugProp = "",
-  setSortedDatas = () => {},
-  setSelectedObjects = () => {},
-  setFormVisible = () => {},
-  setCurrentPage = () => {},
-  setFilterVisible = () => {},
-  reset = () => {},
-  setFormValue = () => {},
-  setSelectedRow = () => {},
-  setLayoutType = () => {},
-  setSelectedView = () => {},
   ...props
 }) => {
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const open = useSelector((state) => state?.drawer?.openDrawer);
-  const {
-    id,
-    menuId: menuid,
-    tableSlug: tableSlugFromParams,
-    appId,
-  } = useParams();
-  const new_router = localStorage.getItem("new_router");
-  const tableSlug =
-    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
-
+  const {id, slug, tableSlug: paramsTableSlug, appId} = useParams();
+  const tableSlug = tableSlugProp || paramsTableSlug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
   );
+  const open = useSelector((state) => state?.drawer?.openDrawer);
   const [limit, setLimit] = useState(20);
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
@@ -104,15 +95,9 @@ const TableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
-  const viewId = searchParams.get("v") ?? view?.id;
-  const menuId = menuid ?? searchParams.get("menuId");
-
-  const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
-  const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
-
-  const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
-
+  const menuId = searchParams.get("menuId");
   const projectId = useSelector((state) => state.auth.projectId);
+  const new_router = localStorage.getItem("new_router");
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -124,7 +109,7 @@ const TableView = ({
     defaultValues: {
       show_in_menu: true,
       fields: [],
-      app_id: menuId,
+      app_id: appId,
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -360,7 +345,7 @@ const TableView = ({
       "GET_OBJECTS_LIST",
       {
         tableSlug,
-        searchText,
+        tableSearch,
         sortedDatas,
         currentPage,
         limit,
@@ -370,9 +355,8 @@ const TableView = ({
         // currentView,
       },
     ],
-
     queryFn: () => {
-      return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
+      return constructorObjectService.getListV2(tableSlug, {
         data: {
           row_view_id: view?.id,
           offset: pageToOffset(currentPage, paginiation),
@@ -390,7 +374,7 @@ const TableView = ({
         },
       });
     },
-    enabled: Boolean(tableSlug),
+    enabled: !!tableSlug,
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -423,7 +407,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout("users", menuId);
+      return layoutService.getLayout(tableSlug, appId);
     },
     select: (data) => {
       return {
@@ -453,41 +437,17 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (Boolean(selectedView?.is_relation_view)) {
-      setSelectedView(view);
+    if (view?.attributes?.url_object) {
+      navigateToDetailPage(row);
+    } else if (projectInfo?.new_layout) {
       setSelectedRow(row);
       dispatch(detailDrawerActions.openDrawer());
-      updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (Boolean(new_router === "true")) {
-        updateQueryWithoutRerender("p", row?.guid);
-        if (view?.attributes?.url_object) {
-          navigateToDetailPage(row);
-        } else if (projectInfo?.new_layout) {
-          setSelectedRow(row);
-          dispatch(detailDrawerActions.openDrawer());
-        } else {
-          if (layoutType === "PopupLayout") {
-            setSelectedRow(row);
-            dispatch(detailDrawerActions.openDrawer());
-          } else {
-            navigateToDetailPage(row);
-          }
-        }
+      if (layoutType === "PopupLayout") {
+        setSelectedRow(row);
+        dispatch(detailDrawerActions.openDrawer());
       } else {
-        if (view?.attributes?.url_object) {
-          navigateToDetailPage(row);
-        } else if (projectInfo?.new_layout) {
-          setSelectedRow(row);
-          dispatch(detailDrawerActions.openDrawer());
-        } else {
-          if (layoutType === "PopupLayout") {
-            setSelectedRow(row);
-            dispatch(detailDrawerActions.openDrawer());
-          } else {
-            navigateToDetailPage(row);
-          }
-        }
+        navigateToDetailPage(row);
       }
     }
   };
@@ -501,7 +461,7 @@ const TableView = ({
         setSelectedRow(row);
         dispatch(detailDrawerActions.openDrawer());
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, {}, menuId);
+        navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
       }
     }
   };
@@ -536,14 +496,7 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      if (Boolean(new_router === "true"))
-        navigate(`/${menuId}/detail?p=${row?.guid}`, {
-          state: {
-            viewId,
-            tableSlug,
-          },
-        });
-      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
   };
 
@@ -574,7 +527,7 @@ const TableView = ({
         multi: tableData.map((i) => i),
       });
     }
-  }, [reset]);
+  }, [tableData, reset]);
 
   useEffect(() => {
     refetch();
@@ -584,12 +537,6 @@ const TableView = ({
       )
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
-
-  useEffect(() => {
-    if (localStorage.getItem("detailPage") === "undefined")
-      setSelectedViewType("SidePeek");
-    localStorage.setItem("detailPage", "SidePeek");
-  }, [localStorage.getItem("detailPage")]);
 
   return (
     <MaterialUIProvider>
@@ -650,6 +597,7 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
+          tableSlugProp={tableSlug}
           {...props}
         />
 
@@ -761,4 +709,4 @@ const TableView = ({
   );
 };
 
-export default TableView;
+export default TableViewOld;

@@ -62,7 +62,7 @@ function NewObjectsFormPage() {
       },
     }
   );
-
+  console.log("selectedViewwww======> new ObjectsFormPage", selectedView);
   const {
     data: {
       fieldsMap,
@@ -107,9 +107,6 @@ function NewObjectsFormPage() {
               label: `${el.label} (${el.table_label})`,
             })) ?? [],
         };
-      },
-      onSuccess: (data) => {
-        console.log("dataaaaaaaaaaaaaaa New ObjectsFormPage", data);
       },
     }
   );

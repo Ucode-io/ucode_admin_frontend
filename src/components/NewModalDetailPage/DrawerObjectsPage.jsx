@@ -95,7 +95,7 @@ function DrawerObjectsPageModal({
       },
     }
   );
-  console.log("selectedViewwwwwwwwww", selectedView);
+  console.log("selectedViewwww======> DrawerObjectPage", selectedView);
   const {
     data: {
       fieldsMap,

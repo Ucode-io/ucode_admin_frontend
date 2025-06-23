@@ -18,7 +18,7 @@ function Router() {
     return () => window.removeEventListener("storageUpdate", checkRouter);
   }, []);
 
-  return <>{routerSwitch ? <NewRouter /> : <OldRouter />}</>;
+  return <>{!!routerSwitch ? <NewRouter /> : <OldRouter />}</>;
 }
 
 export default Router;

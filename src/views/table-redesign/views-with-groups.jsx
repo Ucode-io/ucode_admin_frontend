@@ -106,6 +106,7 @@ import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPa
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import DrawerTableView from "./drawer-table-view";
+import TableViewOld from "./table-view-old";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -152,6 +153,7 @@ export const NewUiViewsWithGroups = ({
   const {id, menuId, tableSlug: tableSlugFromProps} = useParams();
 
   const tableSlug = tableSlugFromProps || view?.table_slug;
+
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
@@ -416,7 +418,12 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
-  const TableComponent = relationView ? DrawerTableView : TableView;
+  const TableComponent =
+    !relationView && localStorage.getItem("new_router") !== "true"
+      ? TableViewOld
+      : relationView
+        ? DrawerTableView
+        : TableView;
 
   if (view?.type === "WEBSITE") {
     return (
@@ -737,7 +744,9 @@ export const NewUiViewsWithGroups = ({
                       })
                     );
                     dispatch(detailDrawerActions.setDrawerTabIndex(index));
-                  } else dispatch(detailDrawerActions.setMainTabIndex(index));
+                  } else
+                    relation &&
+                      dispatch(detailDrawerActions.setMainTabIndex(index));
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||

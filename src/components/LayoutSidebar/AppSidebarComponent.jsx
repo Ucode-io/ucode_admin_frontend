@@ -30,6 +30,7 @@ import MenuIcon from "./MenuIcon";
 import NewSubMenu from "./NewSubMenu";
 import newClickHandler from "./newClickHandler";
 import oldClickHandler from "./oldClickHandler";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -79,7 +80,7 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = (el) => {
-    console.log("elelelelelelelelelel", el, element);
+    dispatch(groupFieldActions.clearViewsPath());
     const handler =
       localStorage.getItem("new_router") === "true"
         ? newClickHandler

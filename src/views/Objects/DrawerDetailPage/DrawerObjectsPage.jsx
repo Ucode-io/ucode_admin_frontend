@@ -44,11 +44,9 @@ function DrawerObjectsPage({
   const selectedV = viewsPath?.[viewsPath?.length - 1];
 
   const {data: views, refetch} = useQuery(
-    ["GET_VIEWS_LIST", menuId, selectedV?.relation_table_slug],
+    ["GET_VIEWS_LIST", menuId],
     () => {
-      return constructorViewService.getViewListMenuId(
-        selectedV?.relation_table_slug || menuId
-      );
+      return constructorViewService.getViewListMenuId(menuId);
     },
     {
       enabled: Boolean(menuId),

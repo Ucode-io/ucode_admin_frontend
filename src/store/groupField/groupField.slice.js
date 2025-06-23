@@ -16,15 +16,22 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
       },
       addView: (state, {payload}) => {
         const exists = state.viewsList.some(
-          (v) => v?.relation_table_slug === payload?.relation_table_slug
+          (v) => v?.table_slug === payload?.table_slug
         );
         if (!exists) {
           state.viewsList.push(payload);
+        } else {
+          state.viewsList = state.viewsList.map((v) =>
+            v?.table_slug === payload?.table_slug ? payload : v
+          );
         }
       },
 
       clearViews: (state) => {
         state.viewsList = [];
+      },
+      clearViewsPath: (state) => {
+        state.viewsPath = [];
       },
       trimViewsUntil: (state, {payload}) => {
         if (!payload) return;

@@ -348,10 +348,13 @@ export const DynamicTable = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : isWarning <= 7;
+    const isWarningActive =
+      projectInfo?.subscription_type === "free_trial"
+        ? isWarning <= 16
+        : projectInfo?.status === "insufficient_funds" &&
+            projectInfo?.subscription_type === "paid"
+          ? isWarning <= 5
+          : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -375,6 +378,8 @@ export const DynamicTable = ({
     projectInfo,
     isWarningActive,
   ]);
+
+  console.log({ calculatedHeight });
 
   const showSkeleton = loader;
 

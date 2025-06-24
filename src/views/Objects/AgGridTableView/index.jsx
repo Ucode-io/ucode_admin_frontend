@@ -622,7 +622,10 @@ function AgGridTableView(props) {
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : isWarning <= 7;
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -837,7 +840,7 @@ function AgGridTableView(props) {
   return (
     <Box
       sx={{
-        height: `calc(100vh - ${calculatedHeight + 85}px)`,
+        height: `calc(100vh - ${calculatedHeight + 130}px)`,
         overflow: "scroll",
       }}
     >

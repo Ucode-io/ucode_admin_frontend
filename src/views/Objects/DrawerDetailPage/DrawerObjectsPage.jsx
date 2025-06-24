@@ -94,10 +94,7 @@ function DrawerObjectsPage({
       },
     }
   );
-  console.log(
-    "viewsPathviewsPath",
-    isRelationView && lastPath?.relation_table_slug
-  );
+
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const views =
     !isRelationView && !lastPath?.relation_table_slug

@@ -745,7 +745,7 @@ export const NewUiViewsWithGroups = ({
                     );
                     dispatch(detailDrawerActions.setDrawerTabIndex(index));
                   } else
-                    relation &&
+                    relationView &&
                       dispatch(detailDrawerActions.setMainTabIndex(index));
                 }}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
@@ -2164,6 +2164,7 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
+            relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
@@ -2259,6 +2260,7 @@ const ViewOptions = ({
 };
 
 const ColumnsVisibility = ({
+  relationView = false,
   view,
   fieldsMap,
   refetchViews,
@@ -2266,13 +2268,19 @@ const ColumnsVisibility = ({
   tableLan,
   tableSlug,
 }) => {
+  const queryClient = useQueryClient();
   const {i18n, t} = useTranslation();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
-      return await refetchViews();
+
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
   });
 
@@ -2934,7 +2942,7 @@ const DeleteViewButton = ({relationView, view, refetchViews, tableLan}) => {
         : dispatch(detailDrawerActions.setMainTabIndex(0));
 
       relationView
-        ? queryClient.refetchQueries(["GET_VIEWS_LIST"])
+        ? queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"])
         : refetchViews();
     },
   });

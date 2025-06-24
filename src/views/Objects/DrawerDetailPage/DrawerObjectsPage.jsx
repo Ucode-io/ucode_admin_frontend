@@ -29,6 +29,8 @@ function DrawerObjectsPage({
   handleMouseDown = () => {},
   setFormValue = () => {},
   selectedViewType,
+  selectedView,
+  setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
   const {state} = useLocation();
@@ -36,7 +38,6 @@ function DrawerObjectsPage({
   const queryClient = useQueryClient();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
-  const [selectedView, setSelectedView] = useState(null);
   const viewsPath = useSelector((state) => state.groupField.viewsList);
   const viewsList = useSelector((state) => state.groupField.viewsPath);
 
@@ -93,9 +94,16 @@ function DrawerObjectsPage({
       },
     }
   );
+  console.log(
+    "viewsPathviewsPath",
+    isRelationView && lastPath?.relation_table_slug
+  );
+  const lastPath = viewsPath?.[viewsPath.length - 1];
+  const views =
+    !isRelationView && !lastPath?.relation_table_slug
+      ? menuViews
+      : relationViews;
 
-  const views = isRelationView ? relationViews : menuViews;
-  console.log("selectedViewwww======> new ObjectsFormPage", selectedView);
   const {
     data: {
       fieldsMap,

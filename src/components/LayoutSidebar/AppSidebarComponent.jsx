@@ -81,6 +81,7 @@ const AppSidebar = ({
 
   const clickHandler = (el) => {
     dispatch(groupFieldActions.clearViews());
+    dispatch(groupFieldActions.clearViewsPath());
     const handler =
       localStorage.getItem("new_router") === "true"
         ? newClickHandler

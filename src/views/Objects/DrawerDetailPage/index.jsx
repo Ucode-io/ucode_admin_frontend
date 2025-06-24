@@ -52,10 +52,11 @@ function DrawerDetailPage({
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const {menuId, tableSlug: tableFromParams} = useParams();
+  const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
-  const [tableRelations, setTableRelations] = useState([]);
+
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const {i18n} = useTranslation();
@@ -333,8 +334,11 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    if (itemId && selectedView?.type === "SECTION") getAllData();
-    else getFields();
+    console.log("entereddddd before", view);
+    if (Boolean(itemId) && selectedView?.type === "SECTION") {
+      console.log("entereddddd here");
+      getAllData();
+    } else getFields();
   }, [itemId, selectedView, viewsPath?.length]);
 
   const handleMouseDown = (e) => {

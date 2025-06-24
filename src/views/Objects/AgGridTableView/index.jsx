@@ -843,7 +843,8 @@ function AgGridTableView(props) {
     >
       <div
         className={style.gridTable}
-        style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
+        // style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
+        style={{ height: `100%` }}
       >
         <div
           className="ag-theme-quartz"

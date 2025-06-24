@@ -20,11 +20,13 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
   if (projectStatus === "inactive")
     return <SubscribeExpired onClick={handleOpenBilling} />;
   else if (projectStatus === "active" && daysLeft <= 7) {
-    <WarningBanner
-      onClick={handleOpenBilling}
-      message={t("subscribtion_expire_soon")}
-      daysLeft={daysLeft}
-    />;
+    return (
+      <WarningBanner
+        onClick={handleOpenBilling}
+        message={t("subscribtion_expire_soon")}
+        daysLeft={daysLeft}
+      />
+    );
   } else if (
     projectStatus === "insufficient_funds" &&
     subscriptionType === "free_trial" &&
@@ -81,12 +83,15 @@ const WarningBanner = ({
         zIndex: 9,
         cursor: "pointer",
         justifyContent: "center",
-      }}>
-      <Box sx={{display: "flex", alignItems: "center"}}>
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <WarningAmberIcon
-          sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
+          sx={{ color: "#000", fontSize: 20, marginRight: "10px" }}
         />
-        <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
+        <Typography
+          sx={{ fontSize: "12px", fontWeight: "bold", color: "#000" }}
+        >
           {message}{" "}
           {daysLeft !== null && (
             <strong>
@@ -96,8 +101,8 @@ const WarningBanner = ({
           )}
         </Typography>
       </Box>
-      <Typography sx={{fontSize: "12px", color: "#000"}}>
-        <strong style={{textDecoration: "underline"}}>
+      <Typography sx={{ fontSize: "12px", color: "#000" }}>
+        <strong style={{ textDecoration: "underline" }}>
           {t("click_here_upgrade")}
         </strong>
       </Typography>

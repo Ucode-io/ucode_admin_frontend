@@ -180,7 +180,7 @@ export const NewUiViewsWithGroups = ({
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
-  const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
+  const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const groupTable = view?.attributes.group_by_columns;
 
@@ -728,10 +728,19 @@ export const NewUiViewsWithGroups = ({
                   dispatch(
                     viewsActions.setViewTab({tableSlug, tabIndex: index})
                   );
-                  if (view?.type === "SECTION")
-                    dispatch(groupFieldActions.trimViewsUntil(view));
-                  dispatch(groupFieldActions.trimViewsDataUntil(view));
-                  dispatch(detailDrawerActions.setDrawerTabIndex(index));
+                  if (view?.type === "SECTION") {
+                    dispatch(
+                      groupFieldActions.trimViewsUntil(
+                        viewsList?.[viewsList?.length - 1]
+                      )
+                    );
+                    dispatch(
+                      groupFieldActions.trimViewsPathUntil(
+                        viewsList?.[viewsList?.length - 1]
+                      )
+                    );
+                    dispatch(detailDrawerActions.setDrawerTabIndex(index));
+                  }
 
                   if (relationView && view?.type !== "SECTION") {
                     dispatch(

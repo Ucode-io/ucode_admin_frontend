@@ -1528,7 +1528,14 @@ const FiltersList = ({
   );
 };
 
-const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
+const FiltersSwitch = ({
+  view,
+  visibleColumns,
+  refetchViews,
+  search,
+  relationView = false,
+}) => {
+  const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
   const tableSlug = view?.table_slug;
   const {i18n} = useTranslation();
@@ -1566,7 +1573,11 @@ const FiltersSwitch = ({view, visibleColumns, refetchViews, search}) => {
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
-      return await refetchViews();
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
     onSettled: (data) => {
       dispatch(quickFiltersActions.setQuickFiltersCount(data?.length));
@@ -1714,7 +1725,11 @@ const ViewOptions = ({
         columns: view.columns,
         attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
       });
-      return await refetchViews();
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
   });
 
@@ -1795,7 +1810,11 @@ const ViewOptions = ({
         ...computedData,
       })
       .then(() => {
-        refetchViews();
+        if (relationView) {
+          return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+        } else {
+          return refetchViews();
+        }
         queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
@@ -2204,6 +2223,7 @@ const ViewOptions = ({
 
         {openedMenu === "tab-group" && (
           <TabGroup
+            relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
@@ -2219,6 +2239,7 @@ const ViewOptions = ({
 
         {openedMenu === "fix-column" && (
           <FixColumns
+            relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}
             view={view}
@@ -2229,6 +2250,7 @@ const ViewOptions = ({
         )}
         {openedMenu === "timeline-settings" && (
           <TimelineSettings
+            relationView={relationView}
             tableSlug={tableSlug}
             control={settingsForm.control}
             computedColumns={computedColumns}
@@ -2472,6 +2494,7 @@ const ColumnsVisibility = ({
 };
 
 const Group = ({
+  relationView = false,
   view,
   fieldsMap,
   refetchViews,
@@ -2479,13 +2502,18 @@ const Group = ({
   tableLan,
   tableSlug,
 }) => {
+  const queryClient = useQueryClient();
   const {i18n} = useTranslation();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
-      return await refetchViews();
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
   });
 
@@ -2588,6 +2616,7 @@ const Group = ({
 };
 
 const TabGroup = ({
+  relationView = false,
   view,
   fieldsMap,
   refetchViews,
@@ -2599,13 +2628,18 @@ const TabGroup = ({
   isBoardView,
   tableSlug,
 }) => {
+  const queryClient = useQueryClient();
   const {i18n} = useTranslation();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
-      return await refetchViews();
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
   });
 
@@ -2733,6 +2767,7 @@ const TabGroup = ({
 };
 
 const FixColumns = ({
+  relationView = false,
   view,
   fieldsMap,
   refetchViews,
@@ -2740,13 +2775,19 @@ const FixColumns = ({
   tableLan,
   tableSlug,
 }) => {
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const {i18n} = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
-      return await refetchViews();
+
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
   });
 
@@ -2941,9 +2982,11 @@ const DeleteViewButton = ({relationView, view, refetchViews, tableLan}) => {
         ? dispatch(detailDrawerActions.setDrawerTabIndex(0))
         : dispatch(detailDrawerActions.setMainTabIndex(0));
 
-      relationView
-        ? queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"])
-        : refetchViews();
+      if (relationView) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      } else {
+        return refetchViews();
+      }
     },
   });
 

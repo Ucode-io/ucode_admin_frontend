@@ -10,6 +10,7 @@ export const ProjectTypeSelect = ({
   handleClose = () => {},
   appendMessage = () => {},
   setShowInput = () => {},
+  handleChangeEntityType = () => {},
 }) => {
   const {
     control,
@@ -26,6 +27,7 @@ export const ProjectTypeSelect = ({
     handleClose,
     appendMessage,
     setShowInput,
+    handleChangeEntityType,
   });
 
   return (

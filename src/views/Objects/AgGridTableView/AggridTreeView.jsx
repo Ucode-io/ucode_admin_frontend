@@ -474,6 +474,14 @@ function AggridTreeView(props) {
     });
   };
 
+  const sanitizeRowForGrid = (d) => {
+    return {
+      ...d,
+      has_child: true,
+      group: true,
+    };
+  };
+
   const waitUntilStoreReady = (parentNode) => {
     const parentData = parentNode?.node?.data;
     const route = parentData?.path || [];
@@ -493,15 +501,32 @@ function AggridTreeView(props) {
       }, {}),
     };
 
-    parentNode?.api?.applyServerSideTransaction({
-      route: route,
-      add: [child],
-    });
+    if (!parentData.has_child) {
+      parentNode.node.data.has_child = true;
 
-    addClickedRef.current = false;
+      if (parentNode?.node?.expanded) {
+        parentNode.api.applyServerSideTransaction({
+          route: route.slice(0, -1),
+          update: [sanitizeRowForGrid(parentNode.node.data)],
+        });
+      }
+
+      // setTimeout(() => {
+      //   waitUntilStoreReady(parentNode);
+      // }, 800);
+
+      return;
+    } else {
+      parentNode?.api?.applyServerSideTransaction({
+        route: route,
+        add: [child],
+      });
+      addClickedRef.current = false;
+    }
   };
 
   function createChildTree(parentNode) {
+    !parentNode?.data?.group && parentNode.node.setExpanded(true);
     addClickedRef.current = true;
     if (parentNode?.node?.expanded && addClickedRef.current === true) {
       waitUntilStoreReady(parentNode);
@@ -510,11 +535,11 @@ function AggridTreeView(props) {
       console.warn("Invalid parent node or missing data.");
       return;
     }
-    parentNode.node.setExpanded(true);
+
+    parentNode?.data?.group && parentNode.node.setExpanded(true);
   }
 
   const getDataPath = useCallback((data) => data.path, []);
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -552,10 +577,13 @@ function AggridTreeView(props) {
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : isWarning <= 7;
+    const isWarningActive =
+      projectInfo?.subscription_type === "free_trial"
+        ? isWarning <= 16
+        : projectInfo?.status === "insufficient_funds" &&
+            projectInfo?.subscription_type === "paid"
+          ? isWarning <= 5
+          : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -825,31 +853,61 @@ function AggridTreeView(props) {
             }}>
             <Box
               className="scrollbarNone"
-              sx={{width: "100%", background: "#fff"}}>
-              {Boolean(tabs?.length) && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    padding: "10px 0 0 20px",
-                    borderBottom: "1px solid #eee",
-                  }}>
-                  {tabs?.map((item) => (
-                    <Button
-                      key={item.value}
-                      onClick={() => {
-                        setLoading(true);
-                        setGroupTab(item);
-                      }}
-                      variant="outlined"
-                      className={
-                        groupTab?.value === item?.value
-                          ? style.tabGroupBtnActive
-                          : style.tabGroupBtn
-                      }>
-                      {item?.label}
-                    </Button>
-                  ))}
-                </Box>
+              sx={{
+                height: "100%",
+              }}>
+              {!columns?.length ? (
+                <NoFieldsComponent />
+              ) : (
+                <>
+                  <AgGridReact
+                    ref={gridApi}
+                    theme={myTheme}
+                    gridOptions={{
+                      rowBuffer: 10,
+                      cacheBlockSize: 100,
+                      maxBlocksInCache: 10,
+                    }}
+                    serverSideStoreType="serverSide"
+                    serverSideTransaction={true}
+                    onColumnMoved={getColumnsUpdated}
+                    columnDefs={columns}
+                    enableClipboard={true}
+                    groupDisplayType="single"
+                    paginationPageSize={limit}
+                    undoRedoCellEditing={true}
+                    rowSelection={rowSelection}
+                    isServerSideGroup={isServerSideGroup}
+                    getServerSideGroupKey={getServerSideGroupKey}
+                    rowModelType={"serverSide"}
+                    undoRedoCellEditingLimit={5}
+                    defaultColDef={defaultColDef}
+                    cellSelection={cellSelection}
+                    onColumnPinned={onColumnPinned}
+                    getMainMenuItems={getMainMenuItems}
+                    treeData={true}
+                    onRowGroupOpened={(params) => {
+                      addClickedRef.current === true &&
+                        setTimeout(() => {
+                          waitUntilStoreReady(params);
+                          addClickedRef.current = false;
+                        }, 1100);
+                    }}
+                    getRowId={(params) => params?.data?.guid}
+                    autoGroupColumnDef={autoGroupColumnDef}
+                    suppressServerSideFullWidthLoadingRow={true}
+                    loadingOverlayComponent={CustomLoadingOverlay}
+                    onGridReady={onGridReady}
+                    getDataPath={getDataPath}
+                    onCellValueChanged={(e) => {
+                      updateObject(e.data);
+                    }}
+                    onSelectionChanged={(e) => {
+                      setSelectedRows(e.api.getSelectedRows());
+                    }}
+                    onCellDoubleClicked={(params) => params.api.stopEditing()}
+                  />
+                </>
               )}
 
               <Box

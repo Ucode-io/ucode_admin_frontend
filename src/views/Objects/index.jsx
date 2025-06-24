@@ -149,7 +149,9 @@ const ObjectsPage = () => {
         return {
           views:
             data?.views?.filter(
-              (view) => view?.attributes?.view_permission?.view === true
+              (view) =>
+                view?.attributes?.view_permission?.view === true &&
+                view?.type !== "SECTION"
             ) ?? [],
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -296,8 +298,8 @@ const ObjectsPage = () => {
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
-  console.log("viewsviewsviews", views);
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>

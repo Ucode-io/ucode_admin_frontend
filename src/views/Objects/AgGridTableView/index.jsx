@@ -167,6 +167,7 @@ function AgGridTableView(props) {
   const groupField = fieldsMap[groupFieldId];
 
   const pagination = useSelector((state) => state.pagination);
+  const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
 
   const { pageLimit, pageOffset } =
     pagination?.paginationInfo?.find((item) => item?.tableSlug === tableSlug) ||
@@ -622,7 +623,10 @@ function AgGridTableView(props) {
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : isWarning <= 7;
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -840,11 +844,15 @@ function AgGridTableView(props) {
   return (
     <Box
       sx={{
-        height: `calc(100vh - ${calculatedHeight + 85}px)`,
+        height: `calc(100vh - ${calculatedHeight + 130}px)`,
         overflow: "scroll",
       }}
     >
-      <div className={style.gridTable}>
+      <div
+        className={style.gridTable}
+        // style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
+        style={{ height: `100%` }}
+      >
         <div
           className="ag-theme-quartz"
           style={{

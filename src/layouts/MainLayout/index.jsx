@@ -73,6 +73,8 @@ const MainLayout = ({setFavicon, favicon}) => {
     handleOpenProfileModal();
   };
 
+  const projectStatus = localStorage.getItem("project_status");
+
   const handleOpenUserInvite = () => {
     updateSearchParam(
       "activeTab",
@@ -96,7 +98,10 @@ const MainLayout = ({setFavicon, favicon}) => {
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : isWarning <= 7;
+      : projectStatus === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   return (
     <>

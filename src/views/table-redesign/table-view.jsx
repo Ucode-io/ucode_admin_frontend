@@ -569,12 +569,13 @@ const TableView = ({
   }, [view?.default_limit]);
 
   useEffect(() => {
+    console.log("tableDatatableDatatableData", tableData);
     if (tableData?.length > 0) {
       reset({
         multi: tableData.map((i) => i),
       });
     }
-  }, [reset]);
+  }, [reset, tableData]);
 
   useEffect(() => {
     refetch();

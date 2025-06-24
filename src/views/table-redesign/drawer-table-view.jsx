@@ -580,7 +580,7 @@ const DrawerTableView = ({
         multi: tableData.map((i) => i),
       });
     }
-  }, [reset]);
+  }, [reset, tableData]);
 
   useEffect(() => {
     refetch();
@@ -660,7 +660,7 @@ const DrawerTableView = ({
           {...props}
         />
 
-        {Boolean(open && projectInfo?.new_layout && !relationView) &&
+        {/* {Boolean(open && projectInfo?.new_layout && !relationView) &&
         selectedViewType === "SidePeek" ? (
           Boolean(new_router === "true") ? (
             <DrawerDetailPage
@@ -714,7 +714,7 @@ const DrawerTableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
           />
-        ) : null}
+        ) : null} */}
 
         {Boolean(open && !projectInfo?.new_layout) && (
           <ModalDetailPage

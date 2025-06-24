@@ -1,44 +1,39 @@
-.moveable2 .moveable-line {
+.moveable1 .moveable-line {
   display: none;
 }
 
-.moveable2 .moveable-control-box {
+.moveable1 .moveable-control-box {
   z-index: 0 !important;
 }
 
-.moveable2 .moveable-control {
-  min-width: 100px !important;
-  height: 3px !important;
+.moveable1 .moveable-control {
+  width: 15px !important;
+  min-width: 15px !important;
+  height: 49px !important;
+  left: 0px !important;
+  margin-top: -25px !important;
   border: none !important;
-  background-color: #999999 !important;
+  background-color: #cfd2cf !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
-  left: 30px !important;
 }
-.moveable2 .moveable-control.moveable-n {
-  border-radius: 10px 10px 0 0 !important;
-  margin-left: -80px !important;
-  margin-top: 2px !important;
+.moveable1 .moveable-control:hover {
+  background-color: #7f8487 !important;
 }
-.moveable2 .moveable-control.moveable-s {
-  border-radius: 0 0 10px 10px !important;
-  margin-left: -80px !important;
+.moveable1 .moveable-control::after {
+  content: url("../../../assets/icons/drag-indicator.svg");
+  transform: translateY(2px);
+  fill: #fff;
+}
+.moveable1 .moveable-control.moveable-w {
+  border-radius: 5px 0 0 5px !important;
+  margin-left: 0 !important;
   z-index: 1;
 }
-
-.moveable_horizantal .moveable-line {
-  display: none;
-}
-
-.moveable_horizantal .moveable-control-box {
-  z-index: 0 !important;
-}
-
-.moveable_horizantal .moveable-control {
-  border: none !important;
-  background-color: #999999 !important;
-  display: flex !important;
+.moveable1 .moveable-control.moveable-e {
+  border-radius: 0 5px 5px 0 !important;
+}/*# sourceMappingURL=moveable.css.map */y: flex !important;
   align-items: center;
   justify-content: center;
 }

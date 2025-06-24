@@ -925,6 +925,9 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
     handleError,
     onExited,
     appendMessage,
+    selectedEntityType,
+    handleChangeEntityType,
+    ENTITY_TYPES,
   } = useAIChat();
 
   return (
@@ -967,6 +970,9 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
         handleError={handleError}
         onExited={onExited}
         appendMessage={appendMessage}
+        selectedEntityType={selectedEntityType}
+        handleChangeEntityType={handleChangeEntityType}
+        ENTITY_TYPES={ENTITY_TYPES}
       />
     </>
   );

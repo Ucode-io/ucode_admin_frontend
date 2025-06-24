@@ -22,6 +22,7 @@ export const useProjectTypeSelect = ({
   handleClose,
   appendMessage,
   setShowInput,
+  handleChangeEntityType,
 }) => {
   const {
     control,
@@ -53,6 +54,7 @@ export const useProjectTypeSelect = ({
         isProjectType: true,
       },
     ]);
+    handleChangeEntityType(null);
     setShowInput(true);
     cellMcpMutation.mutate(data);
   };

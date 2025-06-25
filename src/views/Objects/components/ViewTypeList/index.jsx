@@ -46,7 +46,7 @@ export default function ViewTypeList({
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
-  console.log("viewviewviewviewviewviewview", view);
+
   const tableSlug = Boolean(relationView)
     ? watch("table_slug")
     : view?.table_slug;
@@ -209,7 +209,7 @@ export default function ViewTypeList({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
-          table_slug: viewsList?.[0]?.table_slug,
+          table_slug: viewsList?.[viewsList?.length - 1]?.relation_table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {

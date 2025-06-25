@@ -71,12 +71,6 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
           }
         }
       },
-      clearViews: (state) => {
-        state.viewsList = [];
-      },
-      clearViewsPath: (state) => {
-        state.viewsPath = [];
-      },
       trimViewsUntil: (state, {payload}) => {
         if (!payload) return;
 
@@ -104,18 +98,11 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
           state.viewsList = state.viewsList.slice(0, index + 1);
         }
       },
-      trimViewsPathUntil: (state, {payload}) => {
-        if (!payload) return;
-
-        if (state.viewsPath.length === 0) {
-          state.viewsPath = [payload];
-          return;
-        }
-
-        const index = state.viewsPath.findIndex((v) => v?.id === payload?.id);
-        if (index !== -1) {
-          state.viewsPath = state.viewsPath.slice(0, index + 1);
-        }
+      clearViews: (state) => {
+        state.viewsList = [];
+      },
+      clearViewsPath: (state) => {
+        state.viewsPath = [];
       },
     },
   });

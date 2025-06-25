@@ -2,7 +2,7 @@ import React, {useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorViewService from "../../../services/constructorViewService";
@@ -40,9 +40,9 @@ function DrawerObjectsPage({
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
+  const test = useLocation();
   const {state} = useLocation();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
 
@@ -56,7 +56,6 @@ function DrawerObjectsPage({
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
-  // 🔍 Main menu views
   const {data: menuViews} = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
@@ -81,7 +80,6 @@ function DrawerObjectsPage({
     }
   );
 
-  // 🔍 Relation views based on selectedView
   const {data: relationViews, refetch: refetchRelationViews} = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION"],
     () =>
@@ -156,7 +154,6 @@ function DrawerObjectsPage({
     }
   );
 
-  // 🔍 Relations
   const {data: {relations} = {relations: []}} = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],
     () =>

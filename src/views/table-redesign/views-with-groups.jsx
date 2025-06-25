@@ -410,7 +410,6 @@ export const NewUiViewsWithGroups = ({
   const handleViewClick = (view, index) => {
     viewHandler(view);
     setSelectedView(view);
-
     dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
 
     const isSection = view?.type === "SECTION";
@@ -418,8 +417,8 @@ export const NewUiViewsWithGroups = ({
     if (isSection) {
       const lastView = viewsList?.[viewsList.length - 1];
 
-      dispatch(groupFieldActions.trimViewsUntil(lastView));
-      dispatch(groupFieldActions.trimViewsPathUntil(lastView));
+      dispatch(groupFieldActions.trimViewsDataUntil(view));
+      dispatch(groupFieldActions.trimViewsUntil(view));
       dispatch(detailDrawerActions.setDrawerTabIndex(index));
       return;
     }
@@ -437,6 +436,25 @@ export const NewUiViewsWithGroups = ({
       dispatch(detailDrawerActions.setDrawerTabIndex(index));
     } else if (relationView) {
       dispatch(detailDrawerActions.setMainTabIndex(index));
+    }
+  };
+
+  const handleBreadCrumb = (item, index) => {
+    if (index === 0 && viewsList?.[0]) {
+      dispatch(groupFieldActions.trimViewsUntil(viewsList?.[0]));
+      dispatch(groupFieldActions.trimViewsDataUntil(viewsList?.[0]));
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      updateQueryWithoutRerender("p", viewsList?.[0]?.detailId);
+    } else if (index === viewsList?.length - 1) {
+      return;
+    } else {
+      dispatch(groupFieldActions.trimViewsDataUntil(item));
+      dispatch(groupFieldActions.trimViewsUntil(item));
+      dispatch(detailDrawerActions.setDrawerTabIndex(index));
+      updateQueryWithoutRerender(
+        "p",
+        viewsList?.[viewsList?.length - 1]?.detailId
+      );
     }
   };
 
@@ -587,12 +605,7 @@ export const NewUiViewsWithGroups = ({
                       alignItems="center"
                       columnGap="8px"
                       onClick={() => {
-                        if (index === 0 && viewsList?.[0]) {
-                          dispatch(
-                            groupFieldActions.trimViewsUntil(viewsList?.[0])
-                          );
-                          dispatch(detailDrawerActions.setDrawerTabIndex(0));
-                        }
+                        handleBreadCrumb(item, index);
                       }}>
                       <Flex
                         w="16px"

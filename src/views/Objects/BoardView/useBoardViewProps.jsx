@@ -129,7 +129,6 @@ export const useBoardViewProps = ({
   const navigateToCreatePage = ({ group }) => {
     setOpenDrawerModal(true);
     setSelectedRow(null);
-    console.log({ selectedGroupField, group });
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,

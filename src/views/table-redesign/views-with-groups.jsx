@@ -1128,6 +1128,8 @@ export const NewUiViewsWithGroups = ({
                     searchText={searchText}
                     columnsForSearch={columnsForSearch}
                     checkedColumns={checkedColumns}
+                    open={open}
+                    setOpen={setOpen}
                   />
                 )}
                 {view.type === "CALENDAR" && (

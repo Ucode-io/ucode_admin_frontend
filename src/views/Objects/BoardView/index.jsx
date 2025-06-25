@@ -23,6 +23,7 @@ const BoardView = ({
   setLayoutType,
   searchText,
   columnsForSearch,
+  checkedColumns,
 }) => {
   const {
     isLoading,
@@ -72,6 +73,8 @@ const BoardView = ({
     visibleColumns,
     visibleRelationColumns,
     menuItem,
+    searchText,
+    checkedColumns,
   });
 
   return (

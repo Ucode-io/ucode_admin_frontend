@@ -24,6 +24,8 @@ const BoardView = ({
   searchText,
   columnsForSearch,
   checkedColumns,
+  open,
+  setOpen = () => {},
 }) => {
   const {
     isLoading,
@@ -264,8 +266,8 @@ const BoardView = ({
       <MaterialUIProvider>
         <DrawerDetailPage
           projectInfo={projectInfo}
-          open={openDrawerModal}
-          setOpen={setOpenDrawerModal}
+          open={open ? open : openDrawerModal}
+          setOpen={open ? setOpen : setOpenDrawerModal}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}

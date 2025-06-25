@@ -221,7 +221,8 @@ const DrawerObjectDataTable = ({
           backgroundColor: "#fff",
           borderTop: "1px solid #E5E9EB",
           height: `calc(100vh - ${0 + tabHeight + 140}px)`,
-        }}>
+        }}
+      >
         <table id="resizeMe">
           <thead
             style={{
@@ -229,7 +230,8 @@ const DrawerObjectDataTable = ({
               position: "sticky",
               top: 0,
               zIndex: 2,
-            }}>
+            }}
+          >
             <tr>
               <IndexTh
                 items={isRelationTable ? columns : data}
@@ -259,12 +261,14 @@ const DrawerObjectDataTable = ({
                   setFieldData={setFieldData}
                   getAllData={getAllData}
                   setCurrentColumnWidth={setCurrentColumnWidth}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
                 />
               ))}
               <PermissionWrapperV2
                 tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
                 type="add_field"
-                id="addField">
+                id="addField"
+              >
                 <FieldButton
                   // tableLan={tableLan}
                   openFieldSettings={openFieldSettings}
@@ -365,7 +369,8 @@ const DrawerObjectDataTable = ({
                     zIndex: "1",
                     width: "45px",
                     color: "#007aff",
-                  }}>
+                  }}
+                >
                   <Flex
                     id="addRowBtn"
                     h="30px"
@@ -373,8 +378,9 @@ const DrawerObjectDataTable = ({
                     justifyContent="center"
                     transition="background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
                     cursor="pointer"
-                    _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
-                    onClick={() => setAddNewRow(true)}>
+                    _hover={{ bg: "rgba(0, 122, 255, 0.08)" }}
+                    onClick={() => setAddNewRow(true)}
+                  >
                     <AddRoundedIcon fill="#007aff" />
                   </Flex>
                 </td>

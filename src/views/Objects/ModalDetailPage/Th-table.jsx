@@ -28,6 +28,7 @@ import {
 } from "@chakra-ui/react";
 import {getColumnIcon} from "../../table-redesign/icons";
 import {Menu} from "@mui/material";
+import relationService from "../../../services/relationService";
 
 const Th = ({
   tableSlug,
@@ -46,13 +47,14 @@ const Th = ({
   setFieldCreateAnchor,
   setFieldData,
   setCurrentColumnWidth,
+  calculateWidthFixedColumn,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const permissions = useSelector(
     (state) => state.auth.permissions?.[tableSlug]
@@ -115,7 +117,7 @@ const Th = ({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
       });
   };
 
@@ -135,7 +137,7 @@ const Th = ({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -164,7 +166,7 @@ const Th = ({
             if (column?.attributes?.relation_data?.id) {
               queryClient.refetchQueries([
                 "RELATION_GET_BY_ID",
-                {tableSlug, id: column?.attributes?.relation_data?.id},
+                { tableSlug, id: column?.attributes?.relation_data?.id },
               ]);
             }
           },
@@ -191,7 +193,7 @@ const Th = ({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({tableSlug, field, order})
+              paginationActions.setSortValues({ tableSlug, field, order })
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -350,7 +352,7 @@ const Th = ({
       updateRelationView(computedValuesForRelationView);
     } else {
       constructorViewService.update(tableSlug, computedValues).then(() => {
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
         handleSummaryClose();
       });
     }
@@ -362,7 +364,7 @@ const Th = ({
       ? "sticky"
       : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({columns, column}) + 45}px`
+    ? `${calculateWidthFixedColumn({ columns, column }) + 45}px`
     : "0";
   const bg =
     tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
@@ -404,13 +406,15 @@ const Th = ({
       left={left}
       bg={bg}
       zIndex={zIndex}
-      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}>
+      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}
+    >
       <Flex
         alignItems="center"
         columnGap="8px"
         whiteSpace="nowrap"
-        minW="max-content">
-        {getColumnIcon({column})}
+        minW="max-content"
+      >
+        {getColumnIcon({ column })}
         {label}
 
         {permissions?.field_filter && (
@@ -423,7 +427,7 @@ const Th = ({
                     <Image
                       src="/img/chevron-down.svg"
                       alt="more"
-                      style={{minWidth: 20}}
+                      style={{ minWidth: 20 }}
                     />
                   }
                   variant="ghost"
@@ -439,7 +443,8 @@ const Th = ({
                   bg="#fff"
                   py="4px"
                   borderRadius={6}
-                  boxShadow="0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)">
+                  boxShadow="0 0 2px 0 rgba(145, 158, 171, 0.24),0 12px 24px 0 rgba(145, 158, 171, 0.24)"
+                >
                   {menu.map((item, index) => (
                     <Flex flexDirection="column">
                       {item.children
@@ -459,8 +464,9 @@ const Th = ({
                             fontWeight={500}
                             p="5px"
                             borderRadius="6px"
-                            _hover={{bg: "#919eab14"}}
-                            onClick={(e) => child.onClickAction(e)}>
+                            _hover={{ bg: "#919eab14" }}
+                            onClick={(e) => child.onClickAction(e)}
+                          >
                             <Flex justifyContent="center" alignItems="center">
                               {child.icon}
                             </Flex>
@@ -482,7 +488,7 @@ const Th = ({
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{horizontal: "right"}}
+        anchorOrigin={{ horizontal: "right" }}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -496,13 +502,15 @@ const Th = ({
               mr: 1,
             },
           },
-        }}>
+        }}
+      >
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-          }}>
+          }}
+        >
           {formulaTypes?.map((item) => (
             <div
               style={{
@@ -513,7 +521,8 @@ const Th = ({
               }}
               onClick={() => {
                 handleAddSummary(item, "add");
-              }}>
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -521,13 +530,15 @@ const Th = ({
                   justifyContent: "space-between",
                   width: "100%",
                 }}
-                className="subMenuItem">
+                className="subMenuItem"
+              >
                 <span
                   style={{
                     marginRight: "5px",
                     width: "20px",
                     height: "20px",
-                  }}>
+                  }}
+                >
                   {item.icon}
                 </span>
                 {item?.label}

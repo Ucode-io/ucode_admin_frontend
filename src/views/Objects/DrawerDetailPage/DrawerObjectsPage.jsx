@@ -84,7 +84,8 @@ function DrawerObjectsPage({
     ["GET_TABLE_VIEWS_LIST_RELATION"],
     () =>
       constructorViewService.getViewListMenuId(
-        selectedView?.relation_table_slug
+        selectedView?.relation_table_slug ||
+          viewsList?.[viewsList?.length - 1]?.relation_table_slug
       ),
     {
       enabled: false,

@@ -285,8 +285,8 @@ export const useBoardViewProps = ({
         limit,
         offset: offsetProp ?? offset,
         fields: fields,
-        // search: boardSearch,
-        // view_fields: checkedColumns ?? [],
+        search: boardSearch,
+        view_fields: checkedColumns ?? [],
         ...list?.[tableSlug]?.[view?.id],
       },
     });

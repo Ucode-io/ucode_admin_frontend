@@ -56,7 +56,6 @@ const NewObjectsPage = () => {
     }
   );
 
-  console.log("selectedViewwww======> new ObjectsPage", selectedView);
   const {
     data: {
       fieldsMap,
@@ -101,15 +100,15 @@ const NewObjectsPage = () => {
         };
       },
       onSuccess: (data) => {
-        dispatch(
-          groupFieldActions.addView({
-            id: data?.tableInfo.id,
-            label: data?.tableInfo.label,
-            table_slug: data?.tableInfo.slug,
-            relation_table_slug: data?.tableInfo.relation_table_slug,
-            is_relation_view: data?.tableInfo?.is_relation_view ?? false,
-          })
-        );
+        // dispatch(
+        //   groupFieldActions.addView({
+        //     id: data?.tableInfo.id,
+        //     label: data?.tableInfo.label,
+        //     table_slug: data?.tableInfo.slug,
+        //     relation_table_slug: data?.tableInfo.relation_table_slug,
+        //     is_relation_view: data?.tableInfo?.is_relation_view ?? false,
+        //   })
+        // );
         dispatch(
           groupFieldActions.addViewPath({
             id: data?.tableInfo.id,

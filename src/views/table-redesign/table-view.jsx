@@ -29,6 +29,7 @@ import menuService from "../../services/menuService";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
 
 const TableView = ({
   relationView = false,
@@ -106,10 +107,9 @@ const TableView = ({
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") ?? view?.id;
   const menuId = menuid ?? searchParams.get("menuId");
-
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
-
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
 
   const projectId = useSelector((state) => state.auth.projectId);
@@ -453,6 +453,16 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInf?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: row?.guid,
+      })
+    );
     if (Boolean(selectedView?.is_relation_view)) {
       setSelectedView(view);
       setSelectedRow(row);
@@ -569,7 +579,6 @@ const TableView = ({
   }, [view?.default_limit]);
 
   useEffect(() => {
-    console.log("tableDatatableDatatableData", tableData);
     if (tableData?.length > 0) {
       reset({
         multi: tableData.map((i) => i),

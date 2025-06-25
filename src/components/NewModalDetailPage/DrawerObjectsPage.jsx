@@ -95,7 +95,7 @@ function DrawerObjectsPageModal({
       },
     }
   );
-  console.log("selectedViewwww======> DrawerObjectPage", selectedView);
+
   const {
     data: {
       fieldsMap,
@@ -129,7 +129,6 @@ function DrawerObjectsPageModal({
     {
       enabled: Boolean(selectedView?.table_slug),
       select: ({data}) => {
-        console.log("dataaaaa=========>", data);
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),

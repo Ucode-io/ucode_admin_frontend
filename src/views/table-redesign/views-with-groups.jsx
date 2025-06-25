@@ -151,7 +151,6 @@ export const NewUiViewsWithGroups = ({
 }) => {
   const location = useLocation();
   const {id, menuId, tableSlug: tableSlugFromProps} = useParams();
-
   const tableSlug = tableSlugFromProps || view?.table_slug;
 
   const queryClient = useQueryClient();
@@ -166,7 +165,6 @@ export const NewUiViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
-
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
   const [filterVisible, setFilterVisible] = useState(false);
@@ -179,10 +177,9 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-  const viewsPath = useSelector((state) => state.groupField.viewsPath);
-  const viewsList = useSelector((state) => state.groupField.viewsList);
 
-  const groupTable = view?.attributes.group_by_columns;
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+  const groupTable = view?.attributes?.group_by_columns;
 
   const settingsForm = useForm({
     defaultValues: {
@@ -352,7 +349,7 @@ export const NewUiViewsWithGroups = ({
 
   const tableRelations = getTableRelations(
     relationFields,
-    viewsPath?.[0]?.table_slug
+    viewsList?.[0]?.table_slug
   );
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
@@ -407,6 +404,57 @@ export const NewUiViewsWithGroups = ({
   const viewHandler = (viewEl) => {
     if (Boolean(!location?.pathname?.includes("login"))) {
       updateQueryWithoutRerender("v", viewEl?.id);
+    }
+  };
+
+  const handleViewClick = (view, index) => {
+    viewHandler(view);
+    setSelectedView(view);
+    dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
+
+    const isSection = view?.type === "SECTION";
+
+    if (isSection) {
+      const lastView = viewsList?.[viewsList.length - 1];
+
+      dispatch(groupFieldActions.trimViewsDataUntil(view));
+      dispatch(groupFieldActions.trimViewsUntil(view));
+      dispatch(detailDrawerActions.setDrawerTabIndex(index));
+      return;
+    }
+
+    if (relationView && !isSection) {
+      dispatch(
+        groupFieldActions.addViewPath({
+          id: view?.id,
+          label: view?.table_label,
+          table_slug: view?.table_slug,
+          relation_table_slug: view?.relation_table_slug ?? null,
+          is_relation_view: view?.is_relation_view,
+        })
+      );
+      dispatch(detailDrawerActions.setDrawerTabIndex(index));
+    } else if (relationView) {
+      dispatch(detailDrawerActions.setMainTabIndex(index));
+    }
+  };
+
+  const handleBreadCrumb = (item, index) => {
+    if (index === 0 && viewsList?.[0]) {
+      dispatch(groupFieldActions.trimViewsUntil(viewsList?.[0]));
+      dispatch(groupFieldActions.trimViewsDataUntil(viewsList?.[0]));
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      updateQueryWithoutRerender("p", viewsList?.[0]?.detailId);
+    } else if (index === viewsList?.length - 1) {
+      return;
+    } else {
+      dispatch(groupFieldActions.trimViewsDataUntil(item));
+      dispatch(groupFieldActions.trimViewsUntil(item));
+      dispatch(detailDrawerActions.setDrawerTabIndex(index));
+      updateQueryWithoutRerender(
+        "p",
+        viewsList?.[viewsList?.length - 1]?.detailId
+      );
     }
   };
 
@@ -496,7 +544,7 @@ export const NewUiViewsWithGroups = ({
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
-          {viewsPath?.length && relationView ? (
+          {viewsList?.length && relationView ? (
             <Flex
               minH="45px"
               h="36px"
@@ -541,8 +589,8 @@ export const NewUiViewsWithGroups = ({
                 ml="8px"
                 size="sm"
               />
-              {viewsPath?.length &&
-                viewsPath?.map((item, index) => (
+              {viewsList?.length &&
+                viewsList?.map((item, index) => (
                   <>
                     {" "}
                     <ChevronRightIcon fontSize={20} color="#344054" />
@@ -557,12 +605,7 @@ export const NewUiViewsWithGroups = ({
                       alignItems="center"
                       columnGap="8px"
                       onClick={() => {
-                        if (index === 0 && viewsPath?.[0]) {
-                          dispatch(
-                            groupFieldActions.trimViewsUntil(viewsPath?.[0])
-                          );
-                          dispatch(detailDrawerActions.setDrawerTabIndex(0));
-                        }
+                        handleBreadCrumb(item, index);
                       }}>
                       <Flex
                         w="16px"
@@ -722,41 +765,7 @@ export const NewUiViewsWithGroups = ({
                 _hover={
                   selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                 }
-                onClick={() => {
-                  viewHandler(view);
-                  setSelectedView(view);
-                  dispatch(
-                    viewsActions.setViewTab({tableSlug, tabIndex: index})
-                  );
-                  if (view?.type === "SECTION") {
-                    dispatch(
-                      groupFieldActions.trimViewsUntil(
-                        viewsList?.[viewsList?.length - 1]
-                      )
-                    );
-                    dispatch(
-                      groupFieldActions.trimViewsPathUntil(
-                        viewsList?.[viewsList?.length - 1]
-                      )
-                    );
-                    dispatch(detailDrawerActions.setDrawerTabIndex(index));
-                  }
-
-                  if (relationView && view?.type !== "SECTION") {
-                    dispatch(
-                      groupFieldActions.addViewPath({
-                        id: view?.id,
-                        label: view?.table_label,
-                        table_slug: view?.table_slug,
-                        relation_table_slug: view.relation_table_slug ?? null,
-                        is_relation_view: view?.is_relation_view,
-                      })
-                    );
-                    dispatch(detailDrawerActions.setDrawerTabIndex(index));
-                  } else
-                    relationView &&
-                      dispatch(detailDrawerActions.setMainTabIndex(index));
-                }}>
+                onClick={() => handleViewClick(view, index)}>
                 {view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||
                   view.type}

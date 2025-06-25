@@ -1,16 +1,23 @@
-import React, {useState} from "react";
+import React, {useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorViewService from "../../../services/constructorViewService";
 import menuService from "../../../services/menuService";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
+import {NewUiViewsWithGroups as RawNewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+
+const NewUiViewsWithGroups = React.memo(RawNewUiViewsWithGroups);
+
+const sortViews = (views = []) => [
+  ...views.filter((v) => v.type === "SECTION"),
+  ...views.filter((v) => v.type !== "SECTION"),
+];
 
 function DrawerObjectsPage({
   projectInfo,
@@ -33,19 +40,20 @@ function DrawerObjectsPage({
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
+  const test = useLocation();
   const {state} = useLocation();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
-  const viewsPath = useSelector((state) => state.groupField.viewsList);
-  const viewsList = useSelector((state) => state.groupField.viewsPath);
 
+  const viewsPath = useSelector((state) => state.groupField.viewsPath);
+  const viewsList = useSelector((state) => state.groupField.viewsList);
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
-  const selectedV = viewsPath?.[viewsPath?.length - 1];
 
+  const selectedV = viewsList?.[viewsList.length - 1];
+  const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
   const {data: menuViews} = useQuery(
@@ -54,9 +62,11 @@ function DrawerObjectsPage({
     {
       enabled: !isRelationView && Boolean(menuId),
       select: (res) =>
-        res?.views?.filter(
-          (item) => item?.type === "SECTION" || item?.is_relation_view
-        ) ?? [],
+        sortViews(
+          res?.views?.filter(
+            (item) => item?.type === "SECTION" || item?.is_relation_view
+          ) ?? []
+        ),
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
           dispatch(detailDrawerActions.setDrawerTabIndex(0));
@@ -71,17 +81,19 @@ function DrawerObjectsPage({
   );
 
   const {data: relationViews, refetch: refetchRelationViews} = useQuery(
-    ["GET_TABLE_VIEWS_LIST_RELATION", selectedView?.relation_table_slug],
+    ["GET_TABLE_VIEWS_LIST_RELATION"],
     () =>
       constructorViewService.getViewListMenuId(
         selectedView?.relation_table_slug
       ),
     {
-      enabled: false,
+      enabled: Boolean(selectedView?.relation_table_slug),
       select: (res) =>
-        res?.views?.filter(
-          (item) => item?.type === "SECTION" || item?.is_relation_view
-        ) ?? [],
+        sortViews(
+          res?.views?.filter(
+            (item) => item?.type === "SECTION" || item?.is_relation_view
+          ) ?? []
+        ),
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
           dispatch(detailDrawerActions.setDrawerTabIndex(0));
@@ -95,11 +107,11 @@ function DrawerObjectsPage({
     }
   );
 
-  const lastPath = viewsPath?.[viewsPath.length - 1];
-  const views =
-    !isRelationView && !lastPath?.relation_table_slug
+  const views = useMemo(() => {
+    return !isRelationView && !lastPath?.relation_table_slug
       ? menuViews
       : relationViews;
+  }, [menuViews, relationViews, isRelationView, lastPath]);
 
   const {
     data: {
@@ -117,18 +129,17 @@ function DrawerObjectsPage({
     },
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", i18n?.language, selectedTabIndex],
-    () => {
-      return menuService.getFieldsListMenu(
+    () =>
+      menuService.getFieldsListMenu(
         menuId,
         selectedV?.id,
-        viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+        lastPath?.relation_table_slug,
         {
-          main_table: viewsList?.length < 2 ? true : undefined,
+          main_table: viewsPath?.length < 2 ? true : undefined,
         }
-      );
-    },
+      ),
     {
-      enabled: Boolean(viewsList?.[viewsList?.length - 1]?.relation_table_slug),
+      enabled: Boolean(lastPath?.relation_table_slug),
       select: ({data}) => ({
         fieldsMap: listToMap(data?.fields),
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -144,18 +155,17 @@ function DrawerObjectsPage({
   );
 
   const {data: {relations} = {relations: []}} = useQuery(
-    ["GET_VIEWS_AND_FIELDS", viewsPath?.length],
+    ["GET_VIEWS_AND_FIELDS", viewsList?.length],
     () =>
       constructorRelationService.getList(
         {
-          table_slug: viewsPath?.[0]?.table_slug,
-          relation_table_slug: viewsPath?.[0]?.relation_table_slug,
+          table_slug: viewsList?.[0]?.table_slug,
+          relation_table_slug: viewsList?.[0]?.relation_table_slug,
         },
-        viewsPath?.[viewsPath?.length - 1 || 0]?.relation_table_slug ||
-          viewsPath?.[viewsPath?.length - 1 || 0]?.table_slug
+        viewsList?.at(-1)?.relation_table_slug || viewsList?.at(-1)?.table_slug
       ),
     {
-      enabled: Boolean(viewsPath?.[0]?.table_slug),
+      enabled: Boolean(viewsList?.[0]?.table_slug),
     }
   );
 

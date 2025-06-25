@@ -100,13 +100,12 @@ const DrawerTableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
+
   const viewId = searchParams.get("v");
 
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
-
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
-
   const projectId = useSelector((state) => state.auth.projectId);
 
   const [selectedViewType, setSelectedViewType] = useState(
@@ -448,7 +447,7 @@ const DrawerTableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (Boolean(selectedView?.is_relation_view)) {
+    if (Boolean(relationView)) {
       dispatch(
         groupFieldActions.addView({
           id: view?.id,
@@ -456,6 +455,7 @@ const DrawerTableView = ({
           table_slug: view?.table_slug,
           relation_table_slug: view.relation_table_slug ?? null,
           is_relation_view: view?.is_relation_view,
+          detailId: row?.guid,
         })
       );
       setSelectedView(view);

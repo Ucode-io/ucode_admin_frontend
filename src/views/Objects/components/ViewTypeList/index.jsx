@@ -209,7 +209,9 @@ export default function ViewTypeList({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
-          table_slug: viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+          table_slug:
+            viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+            viewsList?.[viewsList?.length - 1]?.table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {

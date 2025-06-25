@@ -78,7 +78,14 @@ const TableRow = ({
             table.label}
         </CTableCell>
         <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box
+            sx={{
+              justifyContent: "center",
+              display: "flex",
+              gap: "6px",
+              alignItems: "center",
+            }}
+          >
             <label>
               <PermissionCheckbox
                 className={clsx(styles.visuallyHidden)}
@@ -93,14 +100,15 @@ const TableRow = ({
                 Read
               </span>
             </label>
-            {/* <RectangleIconButton
+            <RectangleIconButton
               size="small"
               onClick={() => {
                 setType("read");
                 openAutoFiltersModal();
-              }}>
-              <Icon as={FiFilter} w={"18px"} h={"18px"} />
-            </RectangleIconButton> */}
+              }}
+            >
+              <FiFilter color="#475467" width="16px" height="16px" />
+            </RectangleIconButton>
           </Box>
         </CTableCell>
         <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
@@ -122,7 +130,14 @@ const TableRow = ({
           </Box>
         </CTableCell>
         <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box
+            sx={{
+              justifyContent: "center",
+              display: "flex",
+              gap: "6px",
+              alignItems: "center",
+            }}
+          >
             <label>
               <PermissionCheckbox
                 className={clsx(styles.visuallyHidden)}
@@ -139,16 +154,25 @@ const TableRow = ({
               </span>
             </label>
             {/* <RectangleIconButton
+              size="small"
               onClick={() => {
                 setType("update");
                 openAutoFiltersModal();
-              }}>
-              <Icon as={FiFilter} w={"18px"} h={"18px"} />
+              }}
+            >
+              <FiFilter color="#475467" width="16px" height="16px" />
             </RectangleIconButton> */}
           </Box>
         </CTableCell>
         <CTableCell className={clsx(styles.tbCell, styles.tbBadgeCell)}>
-          <Box sx={{ justifyContent: "center", display: "flex" }}>
+          <Box
+            sx={{
+              justifyContent: "center",
+              display: "flex",
+              gap: "6px",
+              alignItems: "center",
+            }}
+          >
             <label>
               <PermissionCheckbox
                 className={clsx(styles.visuallyHidden)}
@@ -164,11 +188,13 @@ const TableRow = ({
               </span>
             </label>
             {/* <RectangleIconButton
+              size="small"
               onClick={() => {
                 setType("delete");
                 openAutoFiltersModal();
-              }}>
-              <Icon as={FiFilter} w={"18px"} h={"18px"} />
+              }}
+            >
+              <FiFilter color="#475467" width="16px" height="16px" />
             </RectangleIconButton> */}
           </Box>
         </CTableCell>

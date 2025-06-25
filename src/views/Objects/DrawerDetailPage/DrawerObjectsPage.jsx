@@ -108,10 +108,11 @@ function DrawerObjectsPage({
   );
 
   const views = useMemo(() => {
-    return !isRelationView && !lastPath?.relation_table_slug
+    return !isRelationView &&
+      !viewsList?.[viewsList?.length - 1]?.relation_table_slug
       ? menuViews
       : relationViews;
-  }, [menuViews, relationViews, isRelationView, lastPath]);
+  }, [menuViews, relationViews, isRelationView, selectedV]);
 
   const {
     data: {
@@ -159,10 +160,13 @@ function DrawerObjectsPage({
     () =>
       constructorRelationService.getList(
         {
-          table_slug: viewsList?.[0]?.table_slug,
-          relation_table_slug: viewsList?.[0]?.relation_table_slug,
+          table_slug: viewsList?.[viewsList?.length - 1]?.table_slug,
+          relation_table_slug:
+            viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+          disable_table_to: true,
         },
-        viewsList?.at(-1)?.relation_table_slug || viewsList?.at(-1)?.table_slug
+        viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+          viewsList?.[viewsList?.length - 1]?.table_slug
       ),
     {
       enabled: Boolean(viewsList?.[0]?.table_slug),
@@ -175,7 +179,6 @@ function DrawerObjectsPage({
         {views?.map((view) => (
           <TabPanel key={view.id}>
             <NewUiViewsWithGroups
-              refetchMenuViews={refetchRelationViews}
               relationFields={relations}
               selectedViewType={selectedViewType}
               setSelectedViewType={setSelectedViewType}

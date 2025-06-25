@@ -87,7 +87,7 @@ function DrawerObjectsPage({
         selectedView?.relation_table_slug
       ),
     {
-      enabled: Boolean(selectedView?.relation_table_slug),
+      enabled: false,
       select: (res) =>
         sortViews(
           res?.views?.filter(

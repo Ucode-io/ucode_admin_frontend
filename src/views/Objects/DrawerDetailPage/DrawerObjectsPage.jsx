@@ -69,7 +69,7 @@ function DrawerObjectsPage({
         ),
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
-          dispatch(detailDrawerActions.setDrawerTabIndex(0));
+          // dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);
@@ -96,7 +96,7 @@ function DrawerObjectsPage({
         ),
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
-          dispatch(detailDrawerActions.setDrawerTabIndex(0));
+          // dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);

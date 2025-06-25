@@ -408,6 +408,7 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleViewClick = (view, index) => {
+    console.log("indexxxxxxxxxxx", index, view);
     viewHandler(view);
     setSelectedView(view);
     dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
@@ -417,13 +418,14 @@ export const NewUiViewsWithGroups = ({
     if (isSection) {
       const lastView = viewsList?.[viewsList.length - 1];
 
+      dispatch(detailDrawerActions.setDrawerTabIndex(index));
       dispatch(groupFieldActions.trimViewsDataUntil(view));
       dispatch(groupFieldActions.trimViewsUntil(view));
-      dispatch(detailDrawerActions.setDrawerTabIndex(index));
       return;
     }
 
     if (relationView && !isSection) {
+      dispatch(detailDrawerActions.setDrawerTabIndex(index));
       dispatch(
         groupFieldActions.addViewPath({
           id: view?.id,
@@ -433,8 +435,7 @@ export const NewUiViewsWithGroups = ({
           is_relation_view: view?.is_relation_view,
         })
       );
-      dispatch(detailDrawerActions.setDrawerTabIndex(index));
-    } else if (relationView) {
+    } else {
       dispatch(detailDrawerActions.setMainTabIndex(index));
     }
   };

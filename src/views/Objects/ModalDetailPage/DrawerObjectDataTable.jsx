@@ -57,6 +57,7 @@ const DrawerObjectDataTable = ({
   pageCount,
   tableLan = {},
   layoutData,
+  selectedTab,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -112,7 +113,7 @@ const DrawerObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -138,7 +139,9 @@ const DrawerObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -326,6 +329,7 @@ const DrawerObjectDataTable = ({
                   data={data}
                   view={view}
                   firstRowWidth={45}
+                  selectedTab={selectedTab}
                 />
               )
             )}

@@ -352,6 +352,7 @@ function DrawerDetailPage({
   }
 
   const onSubmit = (data) => {
+    console.log({ data });
     if (id) {
       update(data);
     } else {
@@ -549,20 +550,20 @@ function DrawerDetailPage({
                   )}
                 </Flex>
 
-                {/* {selectedTabIndex === 0 && ( */}
-                <Button
-                  isLoading={btnLoader}
-                  disabled={btnLoader}
-                  type="submit"
-                  rounded={4}
-                  bg={"#007aff"}
-                  color={"#fff"}
-                  w={100}
-                  h={10}
-                >
-                  Save
-                </Button>
-                {/* )} */}
+                {selectedTabIndex === 0 && (
+                  <Button
+                    isLoading={btnLoader}
+                    disabled={btnLoader}
+                    type="submit"
+                    rounded={4}
+                    bg={"#007aff"}
+                    color={"#fff"}
+                    w={100}
+                    h={10}
+                  >
+                    Save
+                  </Button>
+                )}
               </DrawerHeader>
 
               <TabPanel>

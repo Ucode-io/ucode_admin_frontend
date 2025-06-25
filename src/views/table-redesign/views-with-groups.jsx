@@ -408,7 +408,6 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleViewClick = (view, index) => {
-    console.log("indexxxxxxxxxxx", index, view);
     viewHandler(view);
     setSelectedView(view);
     dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
@@ -1963,44 +1962,41 @@ const ViewOptions = ({
               />
             </Box>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
-              {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && (
-                <Flex
-                  p="8px"
-                  h="32px"
-                  columnGap="8px"
-                  alignItems="center"
-                  borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
-                  cursor="pointer"
-                  onClick={() => setOpenedMenu("columns-visibility")}>
-                  <Image src="/img/eye.svg" alt="Visibility" />
-                  <ViewOptionTitle>
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Columns"
-                    ) || "Columns"}
-                  </ViewOptionTitle>
-                  <Flex ml="auto" alignItems="center" columnGap="8px">
-                    {Boolean(
-                      isTimelineView
-                        ? visibleColumnsCountForTimeline
-                        : visibleColumnsCount
-                    ) &&
-                      (isTimelineView
-                        ? visibleColumnsCountForTimeline
-                        : visibleColumnsCount) > 0 && (
-                        <ViewOptionSubtitle>
-                          {isTimelineView
-                            ? visibleColumnsCountForTimeline
-                            : visibleColumnsCount}{" "}
-                          {t("shown")}
-                        </ViewOptionSubtitle>
-                      )}
-                    <ChevronRightIcon fontSize={22} />
-                  </Flex>
+              {/* {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && ( */}
+              <Flex
+                p="8px"
+                h="32px"
+                columnGap="8px"
+                alignItems="center"
+                borderRadius={6}
+                _hover={{bg: "#EAECF0"}}
+                cursor="pointer"
+                onClick={() => setOpenedMenu("columns-visibility")}>
+                <Image src="/img/eye.svg" alt="Visibility" />
+                <ViewOptionTitle>
+                  {generateLangaugeText(tableLan, i18n?.language, "Columns") ||
+                    "Columns"}
+                </ViewOptionTitle>
+                <Flex ml="auto" alignItems="center" columnGap="8px">
+                  {Boolean(
+                    isTimelineView
+                      ? visibleColumnsCountForTimeline
+                      : visibleColumnsCount
+                  ) &&
+                    (isTimelineView
+                      ? visibleColumnsCountForTimeline
+                      : visibleColumnsCount) > 0 && (
+                      <ViewOptionSubtitle>
+                        {isTimelineView
+                          ? visibleColumnsCountForTimeline
+                          : visibleColumnsCount}{" "}
+                        {t("shown")}
+                      </ViewOptionSubtitle>
+                    )}
+                  <ChevronRightIcon fontSize={22} />
                 </Flex>
-              )}
+              </Flex>
+              {/* )} */}
 
               {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
                 view.type !== "BOARD" && (

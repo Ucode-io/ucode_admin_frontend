@@ -81,26 +81,26 @@ function DrawerObjectsPage({
   );
 
   const {data: relationViews, refetch: refetchRelationViews} = useQuery(
-    ["GET_TABLE_VIEWS_LIST_RELATION"],
+    ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
-      constructorViewService.getViewListMenuId(
-        selectedView?.relation_table_slug ||
-          viewsList?.[viewsList?.length - 1]?.relation_table_slug
-      ),
+      constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
     {
       enabled: false,
+
       select: (res) =>
         sortViews(
           res?.views?.filter(
             (item) => item?.type === "SECTION" || item?.is_relation_view
           ) ?? []
         ),
+
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
           // dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);
+
         if (state?.toDocsTab) {
           dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
         }
@@ -109,10 +109,7 @@ function DrawerObjectsPage({
   );
 
   const views = useMemo(() => {
-    return !isRelationView &&
-      !viewsList?.[viewsList?.length - 1]?.relation_table_slug
-      ? menuViews
-      : relationViews;
+    return !isRelationView ? menuViews : relationViews;
   }, [menuViews, relationViews, isRelationView, selectedV]);
 
   const {

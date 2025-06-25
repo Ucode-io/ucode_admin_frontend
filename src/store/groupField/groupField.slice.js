@@ -105,7 +105,6 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
         }
       },
       trimViewsPathUntil: (state, {payload}) => {
-        console.log("payload enteredddddd", payload);
         if (!payload) return;
 
         if (state.viewsPath.length === 0) {

@@ -31,6 +31,7 @@ import NewSubMenu from "./NewSubMenu";
 import newClickHandler from "./newClickHandler";
 import oldClickHandler from "./oldClickHandler";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -81,7 +82,7 @@ const AppSidebar = ({
 
   const clickHandler = (el) => {
     dispatch(groupFieldActions.clearViews());
-    dispatch(groupFieldActions.clearViewsPath());
+    dispatch(detailDrawerActions.setMainTabIndex(0));
     const handler =
       localStorage.getItem("new_router") === "true"
         ? newClickHandler

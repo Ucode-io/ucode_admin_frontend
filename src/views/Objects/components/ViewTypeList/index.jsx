@@ -41,12 +41,12 @@ export default function ViewTypeList({
   const [relationField, setRelationField] = useState(null);
   const {i18n} = useTranslation();
   const {menuId} = useParams();
-  const viewsPath = useSelector((state) => state.groupField.viewsList);
+  const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
   const [error] = useState(false);
-
+  console.log("viewviewviewviewviewviewview", view);
   const tableSlug = Boolean(relationView)
     ? watch("table_slug")
     : view?.table_slug;
@@ -179,7 +179,7 @@ export default function ViewTypeList({
         constructorViewService
           .create(tableSlug, {
             ...newViewJSON,
-            table_slug: viewsPath?.[0]?.table_slug,
+            table_slug: viewsList?.[0]?.table_slug,
             relation_table_slug: watch("table_slug"),
             attributes: {
               ...newViewJSON?.attributes,
@@ -209,11 +209,13 @@ export default function ViewTypeList({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
-          table_slug: viewsPath?.[0]?.table_slug,
+          table_slug: viewsList?.[0]?.table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {
-          queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+          relationView
+            ? queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"])
+            : queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })
         .finally(() => {
           setBtnLoader(false);
@@ -223,14 +225,14 @@ export default function ViewTypeList({
   };
 
   const {data} = useQuery(
-    ["GET_TABLE_INFO", {viewsPath}],
+    ["GET_TABLE_INFO", {viewsList}],
     () => {
-      return constructorTableService.getTableInfo(viewsPath?.[0]?.table_slug, {
+      return constructorTableService.getTableInfo(viewsList?.[0]?.table_slug, {
         data: {},
       });
     },
     {
-      enabled: Boolean(viewsPath?.[0]?.table_slug),
+      enabled: Boolean(viewsList?.[0]?.table_slug),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];

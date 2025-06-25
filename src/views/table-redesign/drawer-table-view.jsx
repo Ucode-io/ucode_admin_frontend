@@ -100,6 +100,8 @@ const DrawerTableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
+  const viewsPath = useSelector((state) => state.groupField.viewsPath);
+
   const viewId = searchParams.get("v");
 
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);

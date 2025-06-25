@@ -1016,7 +1016,7 @@ const Th = ({
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
+    (state) => state.permissions?.permissions?.[tableSlug]
   );
 
   const handleClick = (event) => {
@@ -1374,7 +1374,6 @@ const Th = ({
       >
         {getColumnIcon({ column })}
         {label}
-
         {permissions?.field_filter && (
           <IconButton
             aria-label="more"

@@ -1127,6 +1127,7 @@ export const NewUiViewsWithGroups = ({
                     setLayoutType={setLayoutType}
                     searchText={searchText}
                     columnsForSearch={columnsForSearch}
+                    checkedColumns={checkedColumns}
                   />
                 )}
                 {view.type === "CALENDAR" && (

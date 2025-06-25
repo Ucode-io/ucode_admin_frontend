@@ -22,6 +22,7 @@ const BoardView = ({
   setLayoutType,
   searchText,
   columnsForSearch,
+  checkedColumns,
 }) => {
   const {
     loader,
@@ -71,6 +72,8 @@ const BoardView = ({
     visibleColumns,
     visibleRelationColumns,
     menuItem,
+    searchText,
+    checkedColumns,
   });
 
   return (

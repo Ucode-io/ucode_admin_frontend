@@ -35,7 +35,7 @@ function DrawerFormDetailPage({
   reset = () => {},
   errors,
 }) {
-  console.log({ data, selectedRow, projectInfo, layout });
+
   const { i18n } = useTranslation();
   const { tableSlug } = useParams();
   const [dragAction, setDragAction] = useState(false);

@@ -51,7 +51,7 @@ const RelationField = ({
         rules={{
           required: required ? "This field is required!" : "",
         }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
             value={Array.isArray(value) ? value[0] : value}
             setValue={onChange}
@@ -97,13 +97,13 @@ const AutoCompleteElement = ({
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const {i18n} = useTranslation();
-  const {state} = useLocation();
+  const { i18n } = useTranslation();
+  const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();

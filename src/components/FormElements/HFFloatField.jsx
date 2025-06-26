@@ -3,7 +3,7 @@ import {NumericFormat} from "react-number-format";
 import styles from "./style.module.scss";
 
 const HFFloatField = ({
-  control,
+  control = {},
   name = "",
   disabledHelperText = false,
   isBlackBg = false,
@@ -25,13 +25,13 @@ const HFFloatField = ({
   ...props
 }) => {
   const style = isTransparent
-    ? {background: "transparent", border: "none"}
+    ? { background: "transparent", border: "none" }
     : disabled
-      ? {background: "#c0c0c039"}
+      ? { background: "#c0c0c039" }
       : {
-        background: isBlackBg ? "#2A2D34" : "",
-        color: isBlackBg ? "#fff" : "",
-      };
+          background: isBlackBg ? "#2A2D34" : "",
+          color: isBlackBg ? "#fff" : "",
+        };
 
   return (
     <Controller
@@ -42,7 +42,7 @@ const HFFloatField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         const decimalSeparator = isFloat ? "." : undefined;
         return (
           <NumericFormat
@@ -78,11 +78,12 @@ const HFFloatField = ({
             }`}
             name={name}
             readOnly={disabled}
-            style={{...style, padding: newUi ? "4px" : ""}}
+            style={{ ...style, padding: newUi ? "4px" : "" }}
             {...props}
           />
         );
-      }}></Controller>
+      }}
+    ></Controller>
   );
 };
 

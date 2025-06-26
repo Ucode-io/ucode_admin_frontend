@@ -110,7 +110,7 @@ function DrawerObjectsPage({
   const views = useMemo(() => {
     return !isRelationView ? menuViews : relationViews;
   }, [menuViews, relationViews, isRelationView, viewsList?.length]);
-
+  console.log("viewsviewsviewsviewsview=======>", views);
   const {
     data: {
       fieldsMap,

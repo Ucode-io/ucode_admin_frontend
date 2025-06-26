@@ -445,14 +445,14 @@ export const NewUiViewsWithGroups = ({
     if (index === viewsList.length - 1) return;
 
     if (index === 0) {
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
       dispatch(groupFieldActions.trimViewsUntil(viewsList[0]));
       dispatch(groupFieldActions.trimViewsDataUntil(viewsList[0]));
-      dispatch(detailDrawerActions.setDrawerTabIndex(0));
       updateQueryWithoutRerender("p", viewsList[0]?.detailId);
     } else {
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
       dispatch(groupFieldActions.trimViewsUntil(item));
       dispatch(groupFieldActions.trimViewsDataUntil(item));
-      dispatch(detailDrawerActions.setDrawerTabIndex(index));
       updateQueryWithoutRerender("p", item?.detailId);
     }
   };

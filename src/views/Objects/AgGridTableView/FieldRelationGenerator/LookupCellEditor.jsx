@@ -11,6 +11,7 @@ import {useParams, useSearchParams} from "react-router-dom";
 import RowClickButton from "../RowClickButton";
 import {pageToOffset} from "../../../../utils/pageToOffset";
 import useDebounce from "../../../../hooks/useDebounce";
+import { useTranslation } from "react-i18next";
 
 const customStyles = {
   control: (provided) => ({
@@ -48,8 +49,10 @@ const customStyles = {
 };
 
 const LookupCellEditor = (props) => {
+  const { i18n } = useTranslation();
+
   const [options, setOptions] = useState([]);
-  const {field, setValue, data, value} = props;
+  const { field, setValue, data, value } = props;
   const [page, setPage] = useState(1);
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
@@ -59,8 +62,8 @@ const LookupCellEditor = (props) => {
     !field?.attributes?.field_permission?.edit_permission;
   const autoFilters = field?.attributes?.auto_filters;
 
-  const {tableSlug} = useParams();
-  const {navigateToForm} = useTabRouter();
+  const { tableSlug } = useParams();
+  const { navigateToForm } = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const [inputValue, setInputValue] = useState(null);
@@ -75,7 +78,7 @@ const LookupCellEditor = (props) => {
     }
   }
 
-  const {refetch} = useQuery(
+  const { refetch } = useQuery(
     ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue, page, searchText],
     () => {
       if (!field?.table_slug) return null;
@@ -159,14 +162,15 @@ const LookupCellEditor = (props) => {
     <components.SingleValue {...props}>
       <div
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}
+        style={{ display: "flex", alignItems: "center" }}
         onClick={() => {
           refetch();
-        }}>
+        }}
+      >
         {props.children}
         {!disabled && (
           <Box
-            sx={{position: "relative", zIndex: 99999, height: "22px"}}
+            sx={{ position: "relative", zIndex: 99999, height: "22px" }}
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -174,7 +178,8 @@ const LookupCellEditor = (props) => {
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
-            }}>
+            }}
+          >
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -199,7 +204,8 @@ const LookupCellEditor = (props) => {
           // height: "100%",
           width: "100%",
           overflow: "hidden",
-        }}>
+        }}
+      >
         <Select
           onInputChange={inputChangeHandler}
           onMenuScrollToBottom={loadMoreItems}
@@ -212,7 +218,7 @@ const LookupCellEditor = (props) => {
           options={computedOptions}
           getOptionValue={(option) => option?.guid === value}
           getOptionLabel={(option) =>
-            `${getRelationFieldTabsLabel(field, option)}`
+            `${getRelationFieldTabsLabel(field, option, i18n.language)}`
           }
           components={{
             SingleValue: CustomSingleValue,

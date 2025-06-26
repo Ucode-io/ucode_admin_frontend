@@ -26,9 +26,9 @@ export const useBoardViewProps = ({
   columnsForSearch,
 }) => {
   const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
-  const checkedColumns = columnsForSearch?.filter(
-    (item) => item?.is_search && searchableTypes?.includes(item?.type)
-  );
+  const checkedColumns = columnsForSearch
+    ?.filter((item) => item?.is_search && searchableTypes?.includes(item?.type))
+    ?.map((item) => item?.slug);
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 

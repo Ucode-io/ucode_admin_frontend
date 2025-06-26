@@ -14,7 +14,6 @@ const useSearchParams = () => {
     // Добавляем остальные
     if(rest.length) {
       rest.forEach((el) => {
-        console.log({el})
         newSearchParams.set(el.key, el.value);
       })
     }

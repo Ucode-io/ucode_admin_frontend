@@ -352,7 +352,6 @@ function DrawerDetailPage({
   }
 
   const onSubmit = (data) => {
-    console.log({ data });
     if (id) {
       update(data);
     } else {

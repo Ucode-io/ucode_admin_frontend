@@ -216,7 +216,7 @@ export default function ViewTypeList({
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {
-          relationView
+          relationView && viewsList?.length > 1
             ? queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"])
             : queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })

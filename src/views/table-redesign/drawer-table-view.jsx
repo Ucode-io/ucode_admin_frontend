@@ -447,7 +447,11 @@ const DrawerTableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (Boolean(relationView)) {
+    if (Boolean(view?.relation_table_slug)) {
+      queryClient.refetchQueries([
+        "GET_TABLE_VIEWS_LIST_RELATION",
+        view?.relation_table_slug,
+      ]);
       dispatch(
         groupFieldActions.addView({
           id: view?.id,
@@ -462,8 +466,6 @@ const DrawerTableView = ({
       setSelectedRow(row);
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       updateQueryWithoutRerender("p", row?.guid);
-
-      queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
     } else {
       if (Boolean(new_router === "true")) {
         updateQueryWithoutRerender("p", row?.guid);

@@ -440,21 +440,20 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleBreadCrumb = (item, index) => {
-    if (index === 0 && viewsList?.[0]) {
-      dispatch(groupFieldActions.trimViewsUntil(viewsList?.[0]));
-      dispatch(groupFieldActions.trimViewsDataUntil(viewsList?.[0]));
+    if (!viewsList?.length) return;
+
+    if (index === viewsList.length - 1) return;
+
+    if (index === 0) {
+      dispatch(groupFieldActions.trimViewsUntil(viewsList[0]));
+      dispatch(groupFieldActions.trimViewsDataUntil(viewsList[0]));
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
-      updateQueryWithoutRerender("p", viewsList?.[0]?.detailId);
-    } else if (index === viewsList?.length - 1) {
-      return;
+      updateQueryWithoutRerender("p", viewsList[0]?.detailId);
     } else {
-      dispatch(groupFieldActions.trimViewsDataUntil(item));
       dispatch(groupFieldActions.trimViewsUntil(item));
+      dispatch(groupFieldActions.trimViewsDataUntil(item));
       dispatch(detailDrawerActions.setDrawerTabIndex(index));
-      updateQueryWithoutRerender(
-        "p",
-        viewsList?.[viewsList?.length - 1]?.detailId
-      );
+      updateQueryWithoutRerender("p", item?.detailId);
     }
   };
 
@@ -1704,6 +1703,7 @@ const ViewOptions = ({
   );
 
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
+  const viewsList = useSelector((state) => state.groupField.viewsList);
   const ref = useRef();
 
   const [openedMenu, setOpenedMenu] = useState(null);
@@ -1743,10 +1743,10 @@ const ViewOptions = ({
         columns: view.columns,
         attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
       });
-      if (relationView) {
-        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      if (relationView && viewsList?.length > 1) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else {
-        return refetchViews();
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
     },
   });
@@ -1828,12 +1828,11 @@ const ViewOptions = ({
         ...computedData,
       })
       .then(() => {
-        if (relationView) {
-          return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+        if (relationView && viewsList?.length > 1) {
+          return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
         } else {
-          return refetchViews();
+          return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
         }
-        queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
       });
   };
 
@@ -2308,15 +2307,16 @@ const ColumnsVisibility = ({
   const queryClient = useQueryClient();
   const {i18n, t} = useTranslation();
   const [search, setSearch] = useState("");
+  const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const mutation = useMutation({
     mutationFn: async (data) => {
       await constructorViewService.update(tableSlug, data);
 
-      if (relationView) {
-        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      if (relationView && viewsList?.length > 1) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else {
-        return refetchViews();
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
     },
   });
@@ -2990,6 +2990,7 @@ const DeleteViewButton = ({relationView, view, refetchViews, tableLan}) => {
   const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const queryClient = useQueryClient();
+  const viewsList = useSelector((state) => state.groupField.viewsList);
   const mutation = useMutation({
     mutationFn: () => constructorViewService.delete(view.id, tableSlug),
     onSuccess: () => {
@@ -2997,10 +2998,10 @@ const DeleteViewButton = ({relationView, view, refetchViews, tableLan}) => {
         ? dispatch(detailDrawerActions.setDrawerTabIndex(0))
         : dispatch(detailDrawerActions.setMainTabIndex(0));
 
-      if (relationView) {
-        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      if (relationView && viewsList?.length > 1) {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else {
-        return refetchViews();
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
     },
   });

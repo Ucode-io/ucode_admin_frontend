@@ -9,10 +9,10 @@ import constructorViewService from "../../../services/constructorViewService";
 import menuService from "../../../services/menuService";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-import {NewUiViewsWithGroups as RawNewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
+import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
-const NewUiViewsWithGroups = React.memo(RawNewUiViewsWithGroups);
+// const NewUiViewsWithGroups = React.memo(RawNewUiViewsWithGroups);
 
 const sortViews = (views = []) => [
   ...views.filter((v) => v.type === "SECTION"),
@@ -69,7 +69,7 @@ function DrawerObjectsPage({
         ),
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
-          // dispatch(detailDrawerActions.setDrawerTabIndex(0));
+          dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);
@@ -85,7 +85,7 @@ function DrawerObjectsPage({
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
     {
-      enabled: false,
+      enabled: Boolean(viewsList?.[viewsList?.length - 1]?.relation_table_slug),
 
       select: (res) =>
         sortViews(
@@ -96,7 +96,6 @@ function DrawerObjectsPage({
 
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
-          // dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);
@@ -110,7 +109,7 @@ function DrawerObjectsPage({
 
   const views = useMemo(() => {
     return !isRelationView ? menuViews : relationViews;
-  }, [menuViews, relationViews, isRelationView, selectedV]);
+  }, [menuViews, relationViews, isRelationView, viewsList?.length]);
 
   const {
     data: {
@@ -127,14 +126,14 @@ function DrawerObjectsPage({
       visibleRelationColumns: [],
     },
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", i18n?.language, selectedTabIndex],
+    ["GET_VIEWS_AND_FIELDS", i18n?.language, selectedTabIndex, lastPath],
     () =>
       menuService.getFieldsListMenu(
         menuId,
         selectedV?.id,
         lastPath?.relation_table_slug,
         {
-          main_table: viewsPath?.length < 2 ? true : undefined,
+          // main_table: viewsPath?.length < 2 ? true : undefined,
         }
       ),
     {

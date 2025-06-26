@@ -77,6 +77,7 @@ const BoardView = ({
     menuItem,
     searchText,
     checkedColumns,
+    columnsForSearch,
   });
 
   return (

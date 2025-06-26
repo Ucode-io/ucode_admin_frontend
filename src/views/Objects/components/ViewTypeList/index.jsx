@@ -108,6 +108,7 @@ export default function ViewTypeList({
   }, [selectedViewTab]);
 
   const newViewJSON = useMemo(() => {
+    const menuID = viewsList?.length > 1 ? undefined : menuId;
     return {
       type: selectedViewTab,
       users: [],
@@ -152,7 +153,7 @@ export default function ViewTypeList({
       },
       filters: [],
       number_field: "",
-      menu_id: menuId,
+      menu_id: menuID,
       order: views.length + 1,
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
@@ -216,7 +217,7 @@ export default function ViewTypeList({
         })
         .then((res) => {
           relationView
-            ? queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"])
+            ? queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"])
             : queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })
         .finally(() => {

@@ -17,6 +17,7 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
+import {useMenuGetByIdQuery} from "../../services/menuService";
 import {store} from "../../store";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {sortSections} from "../../utils/sectionsOrderNumber";
@@ -26,12 +27,9 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
-import {useMenuGetByIdQuery} from "../../services/menuService";
-import {generateID} from "../../utils/generateID";
 import DividentWayll from "./DividentWayll";
 import {useGetLang} from "../../hooks/useGetLang";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
-import constructorViewService from "../../services/constructorViewService";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,

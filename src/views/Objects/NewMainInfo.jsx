@@ -26,7 +26,6 @@ const MainInfo = ({
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
-
   const fieldsList = useMemo(() => {
     const fields = [];
 

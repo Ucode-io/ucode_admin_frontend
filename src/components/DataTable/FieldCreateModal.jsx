@@ -1,7 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
-import React, {useMemo, useState} from "react";
 import {useFieldArray, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -34,6 +33,7 @@ import "./style.scss";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {useMemo, useState} from "react";
 
 export default function FieldCreateModal({
   tableLan,

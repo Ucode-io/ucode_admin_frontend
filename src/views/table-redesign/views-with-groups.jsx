@@ -1705,7 +1705,7 @@ const ViewOptions = ({
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const ref = useRef();
-
+  console.log("viewviewviewviewviewview", view);
   const [openedMenu, setOpenedMenu] = useState(null);
 
   const isTimelineView = view?.type === "TIMELINE";
@@ -2322,6 +2322,7 @@ const ColumnsVisibility = ({
   });
 
   const allFields = Object.values(fieldsMap);
+  console.log("allFieldsallFieldsallFields", allFields, view);
   const visibleFields =
     view?.columns
       ?.map((id) => fieldsMap[id])

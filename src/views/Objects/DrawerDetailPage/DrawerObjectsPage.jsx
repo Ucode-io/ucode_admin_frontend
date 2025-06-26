@@ -110,7 +110,7 @@ function DrawerObjectsPage({
   const views = useMemo(() => {
     return !isRelationView ? menuViews : relationViews;
   }, [menuViews, relationViews, isRelationView, viewsList?.length]);
-  console.log("viewsviewsviewsviewsview=======>", views);
+
   const {
     data: {
       fieldsMap,
@@ -151,6 +151,8 @@ function DrawerObjectsPage({
       }),
     }
   );
+
+  console.log("lastPathlastPath", lastPath, fieldsMap);
 
   const {data: {relations} = {relations: []}} = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],

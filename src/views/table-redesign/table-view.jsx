@@ -458,6 +458,7 @@ const TableView = ({
         id: view?.id,
         label: view?.table_label || initialTableInf?.label,
         table_slug: view?.table_slug,
+        columns: view?.columns || [],
         relation_table_slug: view.relation_table_slug ?? null,
         is_relation_view: view?.is_relation_view,
         detailId: row?.guid,

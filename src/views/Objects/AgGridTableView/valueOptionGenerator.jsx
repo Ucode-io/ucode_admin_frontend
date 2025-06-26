@@ -194,7 +194,8 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     // WITH OPTIONS RELATION & MULTISELECT:
-    case "LOOKUP":
+    case "LOOKUP": {
+      // console.log("LOOKUP")
       columnDef.cellRenderer = LookupCellEditor;
       columnDef.cellRendererParams = {
         field: item,
@@ -202,11 +203,13 @@ const getColumnEditorParams = (item, columnDef) => {
 
       columnDef.filterValueGetter = (params) => {
         const slugData = params?.data?.[`${item?.slug}_data`];
+        // console.log({ slugData });
         if (!slugData) return "";
         return getRelationFieldTabsLabel(item, slugData);
       };
 
       break;
+    }
 
     case "MULTISELECT":
       columnDef.cellRenderer = HFAggridMultiselect;

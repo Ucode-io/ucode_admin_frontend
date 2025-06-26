@@ -379,8 +379,6 @@ export const DynamicTable = ({
     isWarningActive,
   ]);
 
-  console.log({ calculatedHeight });
-
   const showSkeleton = loader;
 
   return (

@@ -11,7 +11,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {isEqual} from "lodash";
 import {Controller} from "react-hook-form";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import { applyDrag } from "../../../utils/applyDrag";
 import "./style.scss";
@@ -19,6 +19,8 @@ import { store } from "../../../store";
 import { useSelector } from "react-redux";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
+import { MicroFrontendPopup } from "../../../components/MicroFrontendPopup";
+import useSearchParams from "../../../hooks/useSearchParams";
 
 function DrawerFormDetailPage({
   control,
@@ -35,9 +37,9 @@ function DrawerFormDetailPage({
   reset = () => {},
   errors,
 }) {
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const { i18n } = useTranslation();
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
@@ -45,6 +47,8 @@ function DrawerFormDetailPage({
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
+
+  console.log(appId);
 
   const slugSplit = (slug) => {
     const parts = slug.split("_");
@@ -175,6 +179,24 @@ function DrawerFormDetailPage({
   };
 
   const getAllData = () => {};
+
+  const [microFrontendId, setMicroFrontendId] = useState("");
+  const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleNavigateToMicroFrontend = (id) => {
+    navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
+  };
+
+  const handleCloseMicroFrontendModal = () => {
+    setIsMicroFrontendOpen(false);
+    setMicroFrontendId("");
+  };
+
+  const microFrontendCallback = (id) => {
+    setMicroFrontendId(id);
+  };
 
   return (
     <>
@@ -325,6 +347,7 @@ function DrawerFormDetailPage({
             tableSlug={tableSlug}
             id={selectedRow?.guid}
             getAllData={getAllData}
+            microFrontendCallback={handleNavigateToMicroFrontend}
           />
         </Box>
       </Box>
@@ -340,6 +363,12 @@ function DrawerFormDetailPage({
           cursor: "col-resize",
         }}
       />
+      {/* <MicroFrontendPopup
+        open={isMicroFrontendOpen}
+        handleClose={handleCloseMicroFrontendModal}
+        itemId={selectedRow?.guid}
+        microFrontendId={microFrontendId}
+      /> */}
     </>
   );
 }

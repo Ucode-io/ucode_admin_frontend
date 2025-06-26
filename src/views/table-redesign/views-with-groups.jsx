@@ -164,7 +164,7 @@ export const NewUiViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);

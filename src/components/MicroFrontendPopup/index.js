@@ -1,0 +1,1 @@
+export { MicroFrontendPopup } from "./MicroFrontendPopup";

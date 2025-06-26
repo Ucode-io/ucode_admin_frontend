@@ -22,8 +22,13 @@ export const useBoardViewProps = ({
   visibleRelationColumns,
   menuItem,
   searchText,
-  checkedColumns,
+  // checkedColumns,
+  columnsForSearch,
 }) => {
+  const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
+  const checkedColumns = columnsForSearch?.filter(
+    (item) => item?.is_search && searchableTypes?.includes(item?.type)
+  );
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 
@@ -284,8 +289,8 @@ export const useBoardViewProps = ({
         limit,
         offset: offsetProp ?? offset,
         fields: fields,
-        // search: boardSearch,
-        // view_fields: checkedColumns ?? [],
+        search: boardSearch,
+        view_fields: checkedColumns ?? [],
         ...list?.[tableSlug]?.[view?.id],
       },
     });

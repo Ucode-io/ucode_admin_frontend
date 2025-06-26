@@ -31,8 +31,10 @@ import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
 import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
 import HFButtonFieldEditor from "./FieldRelationGenerator/HFButtonFieldEditor";
 import HFMultiFileCellEditor from "./FieldRelationGenerator/HFMultiFileCellEditor";
+import HFFloatField from "../../../components/FormElements/HFFloatField";
 
 const getColumnEditorParams = (item, columnDef) => {
+  console.log(item?.type);
   switch (item?.type) {
     case "SINGLE_LINE":
       columnDef.cellRenderer = HFTextInputField;
@@ -44,6 +46,11 @@ const getColumnEditorParams = (item, columnDef) => {
       break;
 
     case "NUMBER":
+      columnDef.cellRenderer = HFFloatField;
+
+      break;
+
+    case "FLOAT":
       columnDef.cellRenderer = HFNumberFieldCell;
 
       break;
@@ -195,7 +202,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     // WITH OPTIONS RELATION & MULTISELECT:
     case "LOOKUP": {
-      // console.log("LOOKUP")
       columnDef.cellRenderer = LookupCellEditor;
       columnDef.cellRendererParams = {
         field: item,
@@ -203,7 +209,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
       columnDef.filterValueGetter = (params) => {
         const slugData = params?.data?.[`${item?.slug}_data`];
-        // console.log({ slugData });
         if (!slugData) return "";
         return getRelationFieldTabsLabel(item, slugData);
       };

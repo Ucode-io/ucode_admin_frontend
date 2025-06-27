@@ -444,6 +444,8 @@ const DrawerTableView = ({
   };
 
   const navigateToEditPage = (row) => {
+    console.log("entered for Loading");
+    setLoading(true);
     if (Boolean(view?.relation_table_slug)) {
       queryClient.refetchQueries([
         "GET_TABLE_VIEWS_LIST_RELATION",
@@ -459,7 +461,6 @@ const DrawerTableView = ({
           detailId: row?.guid,
         })
       );
-      setLoading(true);
       setSelectedView(view);
       setSelectedRow(row);
       dispatch(detailDrawerActions.setDrawerTabIndex(0));

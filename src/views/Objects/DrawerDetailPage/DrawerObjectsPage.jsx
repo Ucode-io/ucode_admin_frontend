@@ -13,10 +13,11 @@ import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
 import {Box, Flex, Spinner} from "@chakra-ui/react";
 
-const sortViews = (views = []) => [
-  ...views.filter((v) => v.type === "SECTION"),
-  ...views.filter((v) => v.type !== "SECTION"),
-];
+const sortViews = (views = []) => {
+  const firstSection = views.find((v) => v.type === "SECTION");
+  const others = views.filter((v) => v.type !== "SECTION");
+  return firstSection ? [firstSection, ...others] : others;
+};
 
 function DrawerObjectsPage({
   projectInfo,
@@ -64,7 +65,6 @@ function DrawerObjectsPage({
           ) ?? []
         ),
       onSuccess: (data) => {
-        setLoading(false);
         if (selectedTabIndex >= data.length) {
           dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
@@ -73,6 +73,9 @@ function DrawerObjectsPage({
         if (state?.toDocsTab) {
           dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
         }
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       },
     }
   );
@@ -92,7 +95,6 @@ function DrawerObjectsPage({
         ),
 
       onSuccess: (data) => {
-        setLoading(false);
         if (selectedTabIndex >= data.length) {
         }
         setSelectedView(data?.[0]);
@@ -101,6 +103,9 @@ function DrawerObjectsPage({
         if (state?.toDocsTab) {
           dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
         }
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       },
     }
   );

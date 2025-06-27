@@ -15,6 +15,7 @@ import useDebounce from "../../../../hooks/useDebounce";
 import Select from "react-select";
 import {Box} from "@mui/material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel";
 
 const RelationField = ({
   control,
@@ -29,6 +30,7 @@ const RelationField = ({
   checkRequiredField,
   errors,
   isLayout = false,
+  isMulti,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -53,7 +55,7 @@ const RelationField = ({
         }}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
-            value={Array.isArray(value) ? value[0] : value}
+            value={isMulti ? value : Array.isArray(value) ? value[0] : value}
             setValue={onChange}
             field={field}
             disabled={disabled}
@@ -63,6 +65,7 @@ const RelationField = ({
             control={control}
             name={name}
             //   errors={errors}
+            isMulti={isMulti}
             required={required}
             activeLang={activeLang}
           />
@@ -88,6 +91,7 @@ const AutoCompleteElement = ({
   errors,
   required = false,
   activeLang,
+  isMulti,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -318,8 +322,8 @@ const AutoCompleteElement = ({
     } else {
       const val = value;
 
-      setValue(val?.guid ?? null);
-      setLocalValue(val?.guid ? [val] : null);
+      setValue(isMulti ? val?.map((el) => el.guid) : (val?.guid ?? null));
+      setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
@@ -346,6 +350,37 @@ const AutoCompleteElement = ({
     return findedOption ? findedOption : [];
   }, [options, value, state?.id]);
 
+  const computedValueMulti = useMemo(() => {
+    if (!value) return [];
+
+    if (Array.isArray(value)) {
+      return value
+        ?.map((id) => {
+          const option = optionsFromLocale?.options?.find(
+            (el) => el?.guid === id
+          );
+
+          if (!option) return null;
+          return {
+            ...option,
+          };
+        })
+        .filter((el) => el !== null);
+    } else {
+      const option = optionsFromLocale?.options?.find(
+        (el) => el?.guid === value
+      );
+
+      if (!option) return [];
+
+      return [
+        {
+          ...option,
+        },
+      ];
+    }
+  }, [optionsFromLocale?.options, value]);
+
   useEffect(() => {
     let val;
 
@@ -370,11 +405,16 @@ const AutoCompleteElement = ({
         }, 1);
       }
     });
-  }, [computedValue, field, value]);
+  }, [computedValue, field, value, computedValueMulti]);
 
   useEffect(() => {
-    if (Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) getValueData();
+    if ((Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) && !isMulti)
+      getValueData();
   }, [value]);
+
+  useEffect(() => {
+    setLocalValue(computedValueMulti);
+  }, []);
 
   useEffect(() => {
     setClientTypeValue();
@@ -449,6 +489,7 @@ const AutoCompleteElement = ({
         required={required}
         defaultValue={value ?? ""}
         className=""
+        isMulti={isMulti}
         onChange={(e) => {
           changeHandler(e);
         }}
@@ -472,18 +513,39 @@ const AutoCompleteElement = ({
         }
         components={{
           DropdownIndicator: () => null,
-          MultiValue: ({ data }) => (
-            <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
-              size={15}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                navigateToForm(tableSlug, "EDIT", value);
-              }}
-            />
-          ),
+          MultiValue: (option) => {
+            return (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span>
+                  {computedViewFields?.map((el, index) => {
+                    if (field?.attributes?.enable_multi_language) {
+                      return getRelationFieldTabsLabel(
+                        field,
+                        option.data,
+                        activeLang ?? i18n?.language
+                      );
+                      // return (
+                      //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
+                      //   option?.[`${el}`]
+                      // );
+                    } else {
+                      return isMulti ? el : option?.[el];
+                    }
+                  })}
+                </span>
+                <IconGenerator
+                  icon="arrow-up-right-from-square.svg"
+                  style={{ marginLeft: "10px", cursor: "pointer" }}
+                  size={15}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    navigateToForm(tableSlug, "EDIT", option.data);
+                  }}
+                />
+              </div>
+            );
+          },
         }}
       />
       {errors?.[field?.slug] && (

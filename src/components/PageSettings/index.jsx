@@ -158,15 +158,17 @@ const SettingFields = ({
         onDrop={onDrop}
         onDragStart={() => setDragAction(true)}
         onDragEnd={() => setDragAction(false)}
-        dragClass="field-drag">
-        {selectedSection?.fields
+        dragClass="field-drag"
+      >
+        {sectionFields
           ?.filter((el) => getFieldLabel(el))
           ?.map((item) => (
             <Draggable>
               <Flex
                 cursor={"pointer"}
                 alignItems={"center"}
-                justifyContent={"space-between"}>
+                justifyContent={"space-between"}
+              >
                 <Flex
                   className={dragAction ? "fieldRowDrag" : "fieldRow"}
                   _hover={{
@@ -178,7 +180,8 @@ const SettingFields = ({
                   px={"6px"}
                   h={"33px"}
                   alignItems={"center"}
-                  borderRadius={"4px"}>
+                  borderRadius={"4px"}
+                >
                   <Flex className={"fieldIcon"}>
                     {getColumnIcon({
                       column: {
@@ -191,9 +194,10 @@ const SettingFields = ({
                     className="fieldDragIcon"
                     w={"20px"}
                     h={"20px"}
-                    alignItems={"center"}>
+                    alignItems={"center"}
+                  >
                     <DragIndicatorIcon
-                      style={{fontSize: "16px", color: "#9A9A96"}}
+                      style={{ fontSize: "16px", color: "#9A9A96" }}
                     />
                   </Flex>
                   <Text color={"#1b1d16"} fontSize={14}>
@@ -223,9 +227,10 @@ const SettingFields = ({
           fontSize={"14px"}
           _hover={{
             background: "rgba(55, 53, 47, 0.09)",
-          }}>
+          }}
+        >
           <AddIcon
-            style={{width: "20px", height: "20px", marginRight: "4px"}}
+            style={{ width: "20px", height: "20px", marginRight: "4px" }}
           />
           <Text fontWeight={400}>Add Field</Text>
         </Button>

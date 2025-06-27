@@ -22,6 +22,7 @@ const constructorObjectService = {
     request.post(`/object-upsert/${tableSlug}`, data),
   create: (tableSlug, data) => requestV2.post(`/items/${tableSlug}`, data),
   getById: (tableSlug, id) => requestV2.get(`/items/${tableSlug}/${id}`),
+  getItems: (tableSlug, id) => requestV2.get(`/items/${tableSlug}`),
   getObjectByID: ({tableSlug, resourceId, id, envId, projectId}) =>
     request.get(`/object/${tableSlug}/${id}`, {
       headers: {

@@ -54,7 +54,7 @@ function GptChat({index, msg}) {
               borderRadius: "10px",
             }}
           >
-            <Typewriter text={msg.text} />
+            <Typewriter text={msg?.text} />
             {msg.content}
           </Typography>
         ) : (

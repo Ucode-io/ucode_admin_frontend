@@ -22,7 +22,8 @@ function GptChat({index, msg}) {
         alignItems: "center",
         margin: "10px",
         justifyContent: "flex-start",
-      }}>
+      }}
+    >
       <img width={24} height={24} src="/img/chat.png" alt="" />
       <Paper
         sx={{
@@ -35,15 +36,29 @@ function GptChat({index, msg}) {
           borderRadius: "20px",
           padding: "10px 15px 10px 10px",
           minHeight: "40px",
-        }}>
+          flexGrow: 1,
+        }}
+      >
         {msg.errorText ? (
-          <Typography sx={{fontSize: "14px", color: "red"}}>
+          <Typography sx={{ fontSize: "14px", color: "red" }}>
             {msg.errorText}
           </Typography>
         ) : msg.type === "loader" ? (
           <Loader />
+        ) : msg.content ? (
+          <Typography
+            sx={{
+              fontSize: "14px",
+              padding: "5px 10px",
+              backgroundColor: "#F5F6FA",
+              borderRadius: "10px",
+            }}
+          >
+            <Typewriter text={msg.text} />
+            {msg.content}
+          </Typography>
         ) : (
-          <Typography sx={{fontSize: "14px"}}>
+          <Typography sx={{ fontSize: "14px" }}>
             <Typewriter text={msg.text} delay={69} />
           </Typography>
         )}

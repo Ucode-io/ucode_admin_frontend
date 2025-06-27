@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   PMSManagementOptions,
   HRManagementOptions,
@@ -15,6 +15,7 @@ import {
   ConstructionProjectOptions,
 } from "./constants";
 import { useMcpCellMutation } from "@/services/mcp";
+import { useState } from "react";
 
 export const useProjectTypeSelect = ({
   handleSuccess,
@@ -24,6 +25,8 @@ export const useProjectTypeSelect = ({
   setShowInput,
   handleChangeEntityType,
 }) => {
+  const [disabled, setDisabled] = useState(false);
+
   const {
     control,
     formState: { errors },
@@ -32,6 +35,11 @@ export const useProjectTypeSelect = ({
     watch,
     setValue,
   } = useForm();
+
+  const { fields } = useFieldArray({
+    control,
+    name: "management_system",
+  });
 
   const cellMcpMutation = useMcpCellMutation({
     onSuccess: (data) => {
@@ -43,6 +51,12 @@ export const useProjectTypeSelect = ({
   });
 
   const onSubmit = (data) => {
+    const requestData = {
+      ...data,
+      management_system: data?.management_system
+        ?.filter((item) => item?.is_checked)
+        ?.map((item) => item?.label),
+    };
     appendMessage([
       {
         text: `Project Type: ${watch("project_type")}\nManagement System: ${watch("management_system")}`,
@@ -54,9 +68,10 @@ export const useProjectTypeSelect = ({
         isProjectType: true,
       },
     ]);
+    setDisabled(true);
     handleChangeEntityType(null);
-    setShowInput(true);
-    cellMcpMutation.mutate(data);
+    // setShowInput(true);
+    cellMcpMutation.mutate(requestData);
   };
 
   const onCancel = () => {
@@ -147,5 +162,7 @@ export const useProjectTypeSelect = ({
     watch,
     setValue,
     isLoading: cellMcpMutation.isLoading,
+    fields,
+    disabled,
   };
 };

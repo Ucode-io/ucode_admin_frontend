@@ -158,7 +158,7 @@ export const AIMenu = ({
                   </svg>
                 }
               />
-              <EntityCard
+              {/* <EntityCard
                 onClick={() => handleChangeEntityType(ENTITY_TYPES.TABLES)}
                 bgcolor="rgb(254, 242, 255)"
                 heading="Tables"
@@ -226,7 +226,7 @@ export const AIMenu = ({
                   //   />
                   // </svg>
                 }
-              />
+              /> */}
               {/* <img width={30} height={30} src="/img/chat-gpt.png" alt="" />
               <p>
                 {showInput
@@ -247,17 +247,17 @@ export const AIMenu = ({
             backgroundColor: "#fff",
           }}
         >
-          {selectedEntityType !== ENTITY_TYPES.TEMPLATES && (
-            <ChatInput
-              setLoader={setLoader}
-              loader={loader}
-              setInputValue={setInputValue}
-              handleSendClick={handleSendClick}
-              inputValue={inputValue}
-              handleKeyDown={handleKeyDown}
-            />
-          )}
-          {selectedEntityType === ENTITY_TYPES.TEMPLATES && (
+          {/* {selectedEntityType !== ENTITY_TYPES.TEMPLATES && ( */}
+          <ChatInput
+            setLoader={setLoader}
+            loader={loader}
+            setInputValue={setInputValue}
+            handleSendClick={handleSendClick}
+            inputValue={inputValue}
+            handleKeyDown={handleKeyDown}
+          />
+          {/* )} */}
+          {/* {selectedEntityType === ENTITY_TYPES.TEMPLATES && (
             <ProjectTypeSelect
               handleClose={handleClose}
               handleError={(error) => handleError(error)}
@@ -266,7 +266,7 @@ export const AIMenu = ({
               setShowInput={setShowInput}
               handleChangeEntityType={handleChangeEntityType}
             />
-          )}
+          )} */}
         </Box>
       </Box>
     </Menu>
@@ -291,6 +291,21 @@ export const useAIChat = () => {
 
   const handleChangeEntityType = (type) => {
     setSelectedEntityType(type);
+    setMessages([
+      {
+        text: "Choose the type of project",
+        sender: "chat",
+        content: (
+          <ProjectTypeSelect
+            appendMessage={appendMessage}
+            handleChangeEntityType={handleChangeEntityType}
+            handleClose={handleClose}
+            handleError={handleError}
+            handleSuccess={handleSuccess}
+          />
+        ),
+      },
+    ]);
   };
 
   const handleClick = (event) => {

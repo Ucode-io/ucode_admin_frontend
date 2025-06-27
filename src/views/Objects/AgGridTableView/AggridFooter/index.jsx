@@ -13,27 +13,29 @@ function AggridFooter({
   count,
   limit = 10,
   selectedRows = [],
+  page = 1,
   refetch = () => {},
   setOffset = () => {},
   setLimit = () => {},
   setLoading = () => {},
   createChild = () => {},
   updateTreeData = () => {},
+  onChange = () => {},
 }) {
-  const {tableSlug, appId} = useParams();
-  const {navigateToForm} = useTabRouter();
+  const { tableSlug, appId } = useParams();
+  const { navigateToForm } = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const options = [
-    {value: 10, label: `10 ${t("row")}`},
-    {value: 15, label: `15 ${t("row")}`},
-    {value: 20, label: `20 ${t("row")}`},
-    {value: 25, label: `25 ${t("row")}`},
-    {value: 30, label: `30 ${t("row")}`},
-    {value: 35, label: `35 ${t("row")}`},
-    {value: 40, label: `40 ${t("row")}`},
+    { value: 10, label: `10 ${t("row")}` },
+    { value: 15, label: `15 ${t("row")}` },
+    { value: 20, label: `20 ${t("row")}` },
+    { value: 25, label: `25 ${t("row")}` },
+    { value: 30, label: `30 ${t("row")}` },
+    { value: 35, label: `35 ${t("row")}` },
+    { value: 40, label: `40 ${t("row")}` },
   ];
 
   const multipleDelete = () => {
@@ -65,10 +67,14 @@ function AggridFooter({
                 setOffset(0);
                 setLoading(true);
                 setLimit(e.target.value);
+                onChange({
+                  limit: e.target.value,
+                  offset: 0,
+                });
               }}
-              inputProps={{style: {borderRadius: 50}}}
-              style={{fontWeight: "600", color: "#344054"}}
-              menuStyle={{fontWeight: "600", color: "#344054"}}
+              inputProps={{ style: { borderRadius: 50 } }}
+              style={{ fontWeight: "600", color: "#344054" }}
+              menuStyle={{ fontWeight: "600", color: "#344054" }}
             />
           </div>
         )}
@@ -84,9 +90,14 @@ function AggridFooter({
           onChange={(e, val) => {
             setLoading(true);
             setOffset(val);
+            onChange({
+              limit,
+              offset: val,
+            });
           }}
           count={Math.ceil(count / limit)}
           color="primary"
+          defaultPage={page || 1}
         />
       </div>
 

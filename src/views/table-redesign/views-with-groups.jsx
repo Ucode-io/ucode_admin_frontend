@@ -165,7 +165,7 @@ export const NewUiViewsWithGroups = ({
   const [searchText, setSearchText] = useState("");
   const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -1127,6 +1127,9 @@ export const NewUiViewsWithGroups = ({
                     setLayoutType={setLayoutType}
                     searchText={searchText}
                     columnsForSearch={columnsForSearch}
+                    checkedColumns={checkedColumns}
+                    open={open}
+                    setOpen={setOpen}
                   />
                 )}
                 {view.type === "CALENDAR" && (

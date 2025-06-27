@@ -22,6 +22,9 @@ const BoardView = ({
   setLayoutType,
   searchText,
   columnsForSearch,
+  checkedColumns,
+  open,
+  setOpen = () => {},
 }) => {
   const {
     loader,
@@ -71,8 +74,11 @@ const BoardView = ({
     visibleColumns,
     visibleRelationColumns,
     menuItem,
+    searchText,
+    checkedColumns,
+    columnsForSearch,
   });
-
+console.log({ groups });
   return (
     <div className={styles.container} ref={boardRef}>
       {loader ? (
@@ -261,8 +267,8 @@ const BoardView = ({
       <MaterialUIProvider>
         <DrawerDetailPage
           projectInfo={projectInfo}
-          open={openDrawerModal}
-          setOpen={setOpenDrawerModal}
+          open={open ? open : openDrawerModal}
+          setOpen={open ? setOpen : setOpenDrawerModal}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}

@@ -10,6 +10,7 @@ const CAutoCompleteSelect = ({
   multiple = false,
   onChange = () => {},
   onFieldChange = () => {},
+  ...props
 }) => {
   const computedValue = useMemo(() => {
     return options?.find((option) => option?.value === value) ?? null;
@@ -31,6 +32,7 @@ const CAutoCompleteSelect = ({
         // onSelect={(e, val) => console.log("VAL ==>", e.target.value)}
         isOptionEqualToValue={(option, value) => option.value === value.value}
         // sx={{ width: 300 }}
+        {...props}
         renderInput={(params) => (
           <TextField
             {...params}

@@ -190,8 +190,13 @@ const Router = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+      >
         <Route path="client-types" element={<ClientTypes />} />
+        <Route
+          path="microfrontend/:microfrontendId"
+          element={<Microfrontend />}
+        />
 
         <Route path="main">
           <Route

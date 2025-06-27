@@ -471,6 +471,14 @@ function AggridTreeView(props) {
     });
   };
 
+  const sanitizeRowForGrid = (d) => {
+    return {
+      ...d,
+      has_child: true,
+      group: true,
+    };
+  };
+
   const waitUntilStoreReady = (parentNode) => {
     const parentData = parentNode?.node?.data;
     const route = parentData?.path || [];
@@ -490,15 +498,32 @@ function AggridTreeView(props) {
       }, {}),
     };
 
-    parentNode?.api?.applyServerSideTransaction({
-      route: route,
-      add: [child],
-    });
+    if (!parentData.has_child) {
+      parentNode.node.data.has_child = true;
 
-    addClickedRef.current = false;
+      if (parentNode?.node?.expanded) {
+        parentNode.api.applyServerSideTransaction({
+          route: route.slice(0, -1),
+          update: [sanitizeRowForGrid(parentNode.node.data)],
+        });
+      }
+
+      // setTimeout(() => {
+      //   waitUntilStoreReady(parentNode);
+      // }, 800);
+
+      return;
+    } else {
+      parentNode?.api?.applyServerSideTransaction({
+        route: route,
+        add: [child],
+      });
+      addClickedRef.current = false;
+    }
   };
 
   function createChildTree(parentNode) {
+    !parentNode?.data?.group && parentNode.node.setExpanded(true);
     addClickedRef.current = true;
     if (parentNode?.node?.expanded && addClickedRef.current === true) {
       waitUntilStoreReady(parentNode);
@@ -507,11 +532,11 @@ function AggridTreeView(props) {
       console.warn("Invalid parent node or missing data.");
       return;
     }
-    parentNode.node.setExpanded(true);
+
+    parentNode?.data?.group && parentNode.node.setExpanded(true);
   }
 
   const getDataPath = useCallback((data) => data.path, []);
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -549,10 +574,13 @@ function AggridTreeView(props) {
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : isWarning <= 7;
+    const isWarningActive =
+      projectInfo?.subscription_type === "free_trial"
+        ? isWarning <= 16
+        : projectInfo?.status === "insufficient_funds" &&
+            projectInfo?.subscription_type === "paid"
+          ? isWarning <= 5
+          : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -885,7 +913,7 @@ function AggridTreeView(props) {
                         setTimeout(() => {
                           waitUntilStoreReady(params);
                           addClickedRef.current = false;
-                        }, 1000);
+                        }, 1100);
                     }}
                     getRowId={(params) => params?.data?.guid}
                     autoGroupColumnDef={autoGroupColumnDef}

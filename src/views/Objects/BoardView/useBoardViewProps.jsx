@@ -21,14 +21,22 @@ export const useBoardViewProps = ({
   visibleColumns,
   visibleRelationColumns,
   menuItem,
+  searchText,
+  // checkedColumns,
+  columnsForSearch,
 }) => {
+  const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
+  const checkedColumns = columnsForSearch
+    ?.filter((item) => item?.is_search && searchableTypes?.includes(item?.type))
+    ?.map((item) => item?.slug);
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const { tableSlug, appId } = useParams();
 
-  const { new_list } = useSelector((state) => state.filter);
+  const { new_list, list } = useSelector((state) => state.filter);
+
   const { t } = useTranslation();
 
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
@@ -126,7 +134,6 @@ export const useBoardViewProps = ({
   const navigateToCreatePage = ({ group }) => {
     setOpenDrawerModal(true);
     setSelectedRow(null);
-    console.log({ selectedGroupField, group });
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
@@ -194,6 +201,19 @@ export const useBoardViewProps = ({
       ?.color ?? "";
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const detectStringType = (inputString) => {
+    if (/^\d+$/.test(inputString)) {
+      return "number";
+    } else {
+      return "string";
+    }
+  };
+
+  const boardSearch =
+    detectStringType(searchText) === "number"
+      ? parseInt(searchText)
+      : searchText;
 
   const {
     data: { layout } = {
@@ -269,6 +289,9 @@ export const useBoardViewProps = ({
         limit,
         offset: offsetProp ?? offset,
         fields: fields,
+        // search: boardSearch,
+        // view_fields: checkedColumns ?? [],
+        ...list?.[tableSlug]?.[view?.id],
       },
     });
   };
@@ -460,6 +483,21 @@ export const useBoardViewProps = ({
       isFirstGet.current = false;
     }
   }, [offset, groupField, subGroupField, subGroupFieldSlug, subgroupsQueue]);
+
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (offset === 0) {
+      mutateBoardData();
+    } else {
+      setOffset(0);
+    }
+  }, [list, searchText]);
 
   useEffect(() => {
     const board = boardRef.current;

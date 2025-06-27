@@ -1,12 +1,14 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Button, Card, Modal, Typography} from "@mui/material";
+import { Box, Card, Modal, Typography } from "@mui/material";
 import AutoFilterRow from "../AutoFilterRow";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {store} from "../../../../../../../store";
-import {useRelationsListQuery} from "../../../../../../../services/relationService";
-import {useObjectsListQuery} from "../../../../../../../services/constructorObjectService";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { store } from "@/store";
+import { useRelationsListQuery } from "@/services/relationService";
+import { useObjectsListQuery } from "@/services/constructorObjectService";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
+import { Button } from "../../../../../components/Button/Button";
+import cls from "./styles.module.scss";
 
 const AutoFilterModal = ({
   control,
@@ -48,7 +50,7 @@ const AutoFilterModal = ({
       object_field: "",
     });
 
-  const {data: relations} = useRelationsListQuery({
+  const { data: relations } = useRelationsListQuery({
     params: {
       table_slug: tableSlug,
       "project-id": projectId,
@@ -75,7 +77,7 @@ const AutoFilterModal = ({
     },
   });
 
-  const {data: connections} = useObjectsListQuery({
+  const { data: connections } = useObjectsListQuery({
     params: {
       envId: envId,
       "project-id": projectId,
@@ -87,7 +89,7 @@ const AutoFilterModal = ({
     queryParams: {
       select: (res) => {
         return [
-          {value: "user_id", label: "user"},
+          { value: "user_id", label: "user" },
           ...(res.data?.response?.map((connection) => ({
             value: `${connection.table_slug}_id`,
             label: connection.table_slug,
@@ -118,27 +120,36 @@ const AutoFilterModal = ({
             />
           </div>
           <Box>
-            {filters?.map((filter, index) => (
-              <AutoFilterRow
-                key={filter.key}
-                control={control}
-                basePath={basePath}
-                index={index}
-                relations={relations}
-                connections={connections}
-                remove={remove}
-                setValue={setValue}
-                watch={watch}
-              />
-            ))}
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap="10px"
+              pt={1}
+              maxHeight="360px"
+              overflow="auto"
+            >
+              {filters?.map((filter, index) => (
+                <AutoFilterRow
+                  key={filter.key}
+                  control={control}
+                  basePath={basePath}
+                  index={index}
+                  relations={relations}
+                  connections={connections}
+                  remove={remove}
+                  setValue={setValue}
+                  watch={watch}
+                />
+              ))}
+            </Box>
             <Box p={1}>
-              <Button onClick={addFilter} variant="contained" fullWidth>
+              <Button onClick={addFilter} className={cls.addFilterBtn} primary>
                 {t("add_filter")}
               </Button>
             </Box>
             <div className="modal-header silver-bottom-border">
               <div></div>
-              <Button variant="contained" onClick={closeModal}>
+              <Button variant="contained" onClick={closeModal} primary>
                 {generateLangaugeText(permissionLan, i18n?.language, "Save") ??
                   "Save"}
               </Button>

@@ -1,9 +1,10 @@
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
-import {Box, Switch, Tooltip} from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import RectangleIconButton from "../../../../../../components/Buttons/RectangleIconButton";
-import {Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import FRow from "../../../../../../components/FormElements/FRow";
-import {useWatch} from "react-hook-form";
+import { useWatch } from "react-hook-form";
+import { ChakraProvider, Switch } from "@chakra-ui/react";
 
 const AutoFilterRow = ({
   control,
@@ -22,7 +23,7 @@ const AutoFilterRow = ({
         display: "flex",
         columnGap: "5px",
         alignItems: "center",
-        padding: "16px",
+        paddingX: "16px",
       }}
     >
       <Box flex={1}>
@@ -49,12 +50,14 @@ const AutoFilterRow = ({
         }}
       >
         <Tooltip title="Not use in tab">
-          <Switch
-            checked={watch(`${filterBasePath}.not_use_in_tab`)}
-            onChange={(e) => {
-              setValue(`${filterBasePath}.not_use_in_tab`, e.target.checked);
-            }}
-          />
+          <ChakraProvider>
+            <Switch
+              isChecked={watch(`${filterBasePath}.not_use_in_tab`)}
+              onChange={(e) => {
+                setValue(`${filterBasePath}.not_use_in_tab`, e.target.checked);
+              }}
+            />
+          </ChakraProvider>
         </Tooltip>
       </Box>
       <RectangleIconButton

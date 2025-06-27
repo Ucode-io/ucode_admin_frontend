@@ -138,7 +138,7 @@ export const AIMenu = ({
               <EntityCard
                 onClick={() => handleChangeEntityType(ENTITY_TYPES.TEMPLATES)}
                 bgcolor="rgb(229, 240, 255)"
-                heading="Templates"
+                heading="Project Templates"
                 description="Start fast with pre-built project templates tailored to your needs. Select a project type, then customize features to fit your workflow."
                 icon={
                   <svg
@@ -158,7 +158,7 @@ export const AIMenu = ({
                   </svg>
                 }
               />
-              {/* <EntityCard
+              <EntityCard
                 onClick={() => handleChangeEntityType(ENTITY_TYPES.TABLES)}
                 bgcolor="rgb(254, 242, 255)"
                 heading="Tables"
@@ -181,7 +181,7 @@ export const AIMenu = ({
                   </svg>
                 }
               />
-              <EntityCard
+              {/* <EntityCard
                 onClick={() => handleChangeEntityType(ENTITY_TYPES.FUNCTIONS)}
                 bgcolor="rgb(239, 237, 253)"
                 heading="Functions"
@@ -293,16 +293,19 @@ export const useAIChat = () => {
     setSelectedEntityType(type);
     setMessages([
       {
-        text: "Choose the type of project",
+        text: "",
         sender: "chat",
         content: (
-          <ProjectTypeSelect
-            appendMessage={appendMessage}
-            handleChangeEntityType={handleChangeEntityType}
-            handleClose={handleClose}
-            handleError={handleError}
-            handleSuccess={handleSuccess}
-          />
+          <Box>
+            <p className={cls.title}>Choose the type of project</p>
+            <ProjectTypeSelect
+              appendMessage={appendMessage}
+              handleChangeEntityType={handleChangeEntityType}
+              handleClose={handleClose}
+              handleError={handleError}
+              handleSuccess={handleSuccess}
+            />
+          </Box>
         ),
       },
     ]);

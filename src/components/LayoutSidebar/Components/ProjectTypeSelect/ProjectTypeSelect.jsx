@@ -48,13 +48,14 @@ export const ProjectTypeSelect = ({
           sx={{
             display: "flex",
             flexDirection: "column",
-            rowGap: "8px",
+            rowGap: "6px",
           }}
         >
           <HFSelect
             control={control}
             name="project_type"
             // label="Project Type"
+            placeholder="Select project type"
             options={projectTypeOptions}
             error={errors.type}
             helperText={errors.type?.message}

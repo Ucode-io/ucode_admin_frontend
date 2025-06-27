@@ -52,6 +52,7 @@ import listToOptions from "../../../../utils/listToOptions";
 import HFCodeField from "../../../../components/FormElements/HFCodeField";
 import JSONInput from "react-json-editor-ajrm";
 import { isJSONParsable } from "../../../../utils/isJsonValid";
+import CellManyToManyRelationElement from "../../../../components/ElementGenerators/CellManyToManyRelationElement";
 
 function DrawerFieldGenerator({
   field,
@@ -116,7 +117,8 @@ function DrawerFieldGenerator({
 
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
-    case "PERSON":
+    case "Many2Many":
+    case "PERSON": {
       return (
         <RelationField
           disabled={isDisabled}
@@ -124,8 +126,10 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           setFormValue={setFormValue}
+          isMulti={field?.relation_type === "Many2Many"}
         />
       );
+    }
     case "MULTI_LINE":
       return (
         <MultiLineInput

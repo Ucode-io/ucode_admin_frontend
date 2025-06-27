@@ -37,9 +37,8 @@ function DrawerFormDetailPage({
   reset = () => {},
   errors,
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
   const { i18n } = useTranslation();
-  const { tableSlug, appId } = useParams();
+  const { tableSlug } = useParams();
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
@@ -47,8 +46,6 @@ function DrawerFormDetailPage({
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
-
-  console.log(appId);
 
   const slugSplit = (slug) => {
     const parts = slug.split("_");

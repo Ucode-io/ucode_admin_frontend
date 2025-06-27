@@ -74,7 +74,7 @@ const iconsPaths = {
 export const getColumnIcon = ({column}) => {
   if (column?.table_slug === "person") {
     return <img src="/table-icons/person.svg" alt="Person" />;
-  } else if (column?.type === "Many2One") {
+  } else if (column?.type === "Many2One" || column?.type === "LOOKUPS") {
     return <img src="/table-icons/lookup.svg" alt="Person" />;
   }
   return icons[column.type];

@@ -401,7 +401,8 @@ export const DynamicTable = ({
               borderBottom: "1px solid #EAECF0",
               position: "sticky",
               top: 0,
-              zIndex: 2,
+              zIndex: 0,
+              background: "red",
             }}>
             <tr>
               <IndexTh

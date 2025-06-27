@@ -1,18 +1,17 @@
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams, useSearchParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorViewService from "../../../services/constructorViewService";
 import menuService from "../../../services/menuService";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
-
-// const NewUiViewsWithGroups = React.memo(RawNewUiViewsWithGroups);
+import {Box, Flex, Spinner} from "@chakra-ui/react";
 
 const sortViews = (views = []) => [
   ...views.filter((v) => v.type === "SECTION"),
@@ -22,7 +21,6 @@ const sortViews = (views = []) => [
 function DrawerObjectsPage({
   projectInfo,
   layout,
-  selectedTab,
   menuItem,
   data,
   dateInfo,
@@ -34,24 +32,22 @@ function DrawerObjectsPage({
   setViews = () => {},
   setFullScreen = () => {},
   handleMouseDown = () => {},
-  setFormValue = () => {},
   selectedViewType,
   selectedView,
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
-  const test = useLocation();
   const {state} = useLocation();
   const dispatch = useDispatch();
   const {menuId} = useParams();
   const {i18n} = useTranslation();
+  const [loading, setLoading] = useState(false);
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
-
   const selectedV = viewsList?.[viewsList.length - 1];
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
@@ -68,6 +64,7 @@ function DrawerObjectsPage({
           ) ?? []
         ),
       onSuccess: (data) => {
+        setLoading(false);
         if (selectedTabIndex >= data.length) {
           dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
@@ -80,7 +77,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const {data: relationViews, refetch: refetchRelationViews} = useQuery(
+  const {data: relationViews} = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
@@ -95,6 +92,7 @@ function DrawerObjectsPage({
         ),
 
       onSuccess: (data) => {
+        setLoading(false);
         if (selectedTabIndex >= data.length) {
         }
         setSelectedView(data?.[0]);
@@ -125,6 +123,7 @@ function DrawerObjectsPage({
       visibleColumns: [],
       visibleRelationColumns: [],
     },
+    isLoading,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", i18n?.language, selectedTabIndex, lastPath],
     () =>
@@ -132,9 +131,7 @@ function DrawerObjectsPage({
         menuId,
         selectedV?.id,
         lastPath?.relation_table_slug,
-        {
-          // main_table: viewsPath?.length < 2 ? true : undefined,
-        }
+        {}
       ),
     {
       enabled: Boolean(lastPath?.relation_table_slug),
@@ -151,8 +148,6 @@ function DrawerObjectsPage({
       }),
     }
   );
-
-  console.log("lastPathlastPath", lastPath, fieldsMap);
 
   const {data: {relations} = {relations: []}} = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],
@@ -177,37 +172,47 @@ function DrawerObjectsPage({
       <div>
         {views?.map((view) => (
           <TabPanel key={view.id}>
-            <NewUiViewsWithGroups
-              relationFields={relations}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              tableInfo={tableInfo}
-              onSubmit={onSubmit}
-              rootForm={rootForm}
-              relationView={true}
-              views={views}
-              view={view}
-              selectedTabIndex={selectedTabIndex}
-              fieldsMap={fieldsMap}
-              menuItem={menuItem}
-              visibleRelationColumns={visibleRelationColumns}
-              visibleColumns={visibleColumns}
-              fieldsMapRel={fieldsMapRel}
-              setViews={setViews}
-              setSelectedView={setSelectedView}
-              selectedView={selectedView}
-              projectInfo={projectInfo}
-              handleMouseDown={handleMouseDown}
-              layout={layout}
-              selectedTab={layout?.tabs?.[0]}
-              data={data}
-              selectedRow={selectedRow}
-              handleClose={handleClose}
-              modal={true}
-              dateInfo={dateInfo}
-              setFullScreen={setFullScreen}
-              fullScreen={fullScreen}
-            />
+            {loading ? (
+              <Flex alignItems={"center"} justifyContent={"center"} h={"100vh"}>
+                <Spinner
+                  style={{width: "50px", height: "50px", color: "#007aff"}}
+                  size={"lg"}
+                />
+              </Flex>
+            ) : (
+              <NewUiViewsWithGroups
+                setLoading={setLoading}
+                relationFields={relations}
+                selectedViewType={selectedViewType}
+                setSelectedViewType={setSelectedViewType}
+                tableInfo={tableInfo}
+                onSubmit={onSubmit}
+                rootForm={rootForm}
+                relationView={true}
+                views={views}
+                view={view}
+                selectedTabIndex={selectedTabIndex}
+                fieldsMap={fieldsMap}
+                menuItem={menuItem}
+                visibleRelationColumns={visibleRelationColumns}
+                visibleColumns={visibleColumns}
+                fieldsMapRel={fieldsMapRel}
+                setViews={setViews}
+                setSelectedView={setSelectedView}
+                selectedView={selectedView}
+                projectInfo={projectInfo}
+                handleMouseDown={handleMouseDown}
+                layout={layout}
+                selectedTab={layout?.tabs?.[0]}
+                data={data}
+                selectedRow={selectedRow}
+                handleClose={handleClose}
+                modal={true}
+                dateInfo={dateInfo}
+                setFullScreen={setFullScreen}
+                fullScreen={fullScreen}
+              />
+            )}
           </TabPanel>
         ))}
       </div>

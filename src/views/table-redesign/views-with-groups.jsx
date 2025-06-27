@@ -137,6 +137,7 @@ export const NewUiViewsWithGroups = ({
   selectedViewType,
   selectedTabIndex,
   relationFields = [],
+  setLoading = () => {},
   refetchMenuViews = () => {},
   setSelectedTabIndex = () => {},
   onSubmit = () => {},
@@ -444,11 +445,13 @@ export const NewUiViewsWithGroups = ({
     if (index === viewsList.length - 1) return;
 
     if (index === 0) {
+      setLoading(true);
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       dispatch(groupFieldActions.trimViewsUntil(viewsList[0]));
       dispatch(groupFieldActions.trimViewsDataUntil(viewsList[0]));
       updateQueryWithoutRerender("p", viewsList[0]?.detailId);
     } else {
+      setLoading(true);
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       dispatch(groupFieldActions.trimViewsUntil(item));
       dispatch(groupFieldActions.trimViewsDataUntil(item));
@@ -558,8 +561,7 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   onClick={() => {
-                    dispatch(detailDrawerActions.closeDrawer());
-                    updateQueryWithoutRerender("p", undefined);
+                    handleClose();
                   }}
                   size="sm"
                 />
@@ -658,8 +660,7 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   onClick={() => {
-                    dispatch(detailDrawerActions.closeDrawer());
-                    updateQueryWithoutRerender("p", undefined);
+                    handleClose();
                   }}
                   size="sm"
                 />
@@ -1178,6 +1179,7 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableComponent
+                          setLoading={setLoading}
                           refetchMenuViews={refetchMenuViews}
                           setSelectedView={setSelectedView}
                           relationView={relationView}
@@ -1261,6 +1263,7 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableComponent
+                        setLoading={setLoading}
                         refetchMenuViews={refetchMenuViews}
                         setSelectedView={setSelectedView}
                         relationView={relationView}

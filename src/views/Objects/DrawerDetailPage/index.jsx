@@ -1,4 +1,4 @@
-import {Box, Drawer, DrawerContent} from "@chakra-ui/react";
+import {Box, Drawer, DrawerContent, Spinner} from "@chakra-ui/react";
 import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -41,11 +41,11 @@ function DrawerDetailPage({
   const selectedV =
     viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
   const handleClose = () => {
-    updateQueryWithoutRerender("p", null);
     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
     dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
+    updateQueryWithoutRerender("p", null);
   };
 
   const {navigateToForm} = useTabRouter();
@@ -334,9 +334,7 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    console.log("entereddddd before", view);
     if (Boolean(itemId) && selectedView?.type === "SECTION") {
-      console.log("entereddddd here");
       getAllData();
     } else getFields();
   }, [itemId, selectedView, viewsPath?.length]);
@@ -387,19 +385,25 @@ function DrawerDetailPage({
   const setViews = () => {};
 
   return (
-    <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
+    <Drawer isOpen={open} placement="right" onClose={handleClose}>
       <DrawerContent
-        boxShadow="
-        rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
-        rgba(15, 15, 15, 0.03) 0px 3px 6px,
-        rgba(15, 15, 15, 0.06) 0px 9px 24px
-      "
-        zIndex={9}
         ref={drawerRef}
-        bg={"white"}
-        resize={"both"}
-        position={"relative"}>
-        <Box>
+        bg="white"
+        position="relative"
+        overflow={"hidden"}
+        boxShadow="
+    rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
+    rgba(15, 15, 15, 0.03) 0px 3px 6px,
+    rgba(15, 15, 15, 0.06) 0px 9px 24px
+  "
+        style={{
+          width: `${drawerWidth}px`,
+          maxWidth: "90vw",
+          transition: "width 0.4s ease",
+          overflow: "hidden",
+          background: "#fff",
+        }}>
+        <Box zIndex={9}>
           <DrawerObjectsPage
             open={open}
             onSubmit={onSubmit}

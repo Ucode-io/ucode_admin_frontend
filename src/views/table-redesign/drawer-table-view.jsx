@@ -13,7 +13,6 @@ import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
 import {Drawer} from "@mui/material";
@@ -23,13 +22,11 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import {useProjectGetByIdQuery} from "../../services/projectService";
 import menuService from "../../services/menuService";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 
 const DrawerTableView = ({
   relationView = false,
@@ -80,7 +77,6 @@ const DrawerTableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const open = useSelector((state) => state?.drawer?.openDrawer);
   const {id, menuId, tableSlug: tableSlugFromParams, appId} = useParams();
   const new_router = localStorage.getItem("new_router");
   const tableSlug =
@@ -107,6 +103,8 @@ const DrawerTableView = ({
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
   const projectId = useSelector((state) => state.auth.projectId);
+
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -141,8 +139,6 @@ const DrawerTableView = ({
     name: "fields",
     keyName: "key",
   });
-
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
@@ -210,8 +206,8 @@ const DrawerTableView = ({
       mainForm.setValue("relationsMap", listToMap(relations));
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
-      resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      resolve();
     });
   };
 
@@ -537,10 +533,6 @@ const DrawerTableView = ({
         .join("&");
 
       const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
-
       const matches = replaceUrlVariables(urlTemplate, row);
 
       navigate(`${matches}${params ? "?" + params : ""}`);
@@ -662,77 +654,6 @@ const DrawerTableView = ({
           tableSlugProp={tableSlug}
           {...props}
         />
-
-        {/* {Boolean(open && projectInfo?.new_layout && !relationView) &&
-        selectedViewType === "SidePeek" ? (
-          Boolean(new_router === "true") ? (
-            <DrawerDetailPage
-              view={view}
-              projectInfo={projectInfo}
-              open={open}
-              setFormValue={setFormValue}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              layoutType={layoutType}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-            />
-          ) : (
-            <OldDrawerDetailPage
-              view={view}
-              projectInfo={projectInfo}
-              open={open}
-              setFormValue={setFormValue}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              layoutType={layoutType}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-            />
-          )
-        ) : selectedViewType === "CenterPeek" ? (
-          <ModalDetailPage
-            view={view}
-            projectInfo={projectInfo}
-            open={open}
-            setFormValue={setFormValue}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            layoutType={layoutType}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
-        ) : null} */}
-
-        {Boolean(open && !projectInfo?.new_layout) && (
-          <ModalDetailPage
-            open={open}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
-        )}
 
         <Drawer
           open={drawerState}

@@ -36,7 +36,6 @@ export default function ViewTypeList({
   fieldsMap = {},
   relationView = false,
 }) {
-  console.log("relationViewrelationView", relationView);
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const [relationField, setRelationField] = useState(null);
@@ -221,9 +220,9 @@ export default function ViewTypeList({
             return queryClient.refetchQueries([
               "GET_TABLE_VIEWS_LIST_RELATION",
             ]);
-          } else {
+          } else if (relationView && viewsList?.length <= 1) {
             return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-          }
+          } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })
         .finally(() => {
           setBtnLoader(false);

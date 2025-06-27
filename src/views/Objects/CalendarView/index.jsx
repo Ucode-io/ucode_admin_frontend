@@ -68,15 +68,15 @@ const CalendarView = ({
 }) => {
   const queryClient = useQueryClient();
   const visibleForm = useForm();
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const navigate = useNavigate();
-  const { tableSlug, appId } = useParams();
+  const {tableSlug, appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [dateFilters, setDateFilters] = useState([
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
-    endOfWeek(new Date(), { weekStartsOn: 1 }),
+    startOfWeek(new Date(), {weekStartsOn: 1}),
+    endOfWeek(new Date(), {weekStartsOn: 1}),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
   const [date, setDate] = useState(
@@ -141,21 +141,21 @@ const CalendarView = ({
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], { days: i }));
+      result.push(add(dateFilters[0], {days: i}));
     }
     return result;
   }, [dateFilters]);
 
-  const { filters, dataFilters } = useFilters(tableSlug, view.id);
-  const groupFieldIds = view.group_fields;
+  const {filters, dataFilters} = useFilters(tableSlug, view.id);
+  const groupFieldIds = view?.group_fields || [];
   const groupFields = groupFieldIds
-    .map((id) => fieldsMap[id])
+    ?.map((id) => fieldsMap?.[id])
     .filter((el) => el);
 
-  const { data: { data } = { data: [] }, isLoading } = useQuery(
+  const {data: {data} = {data: []}, isLoading} = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date },
+      {tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date},
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
@@ -208,7 +208,7 @@ const CalendarView = ({
     }
   );
 
-  const { data: workingDays } = useQuery(
+  const {data: workingDays} = useQuery(
     [
       "GET_OBJECTS_LIST",
       view?.disable_dates?.table_slug,
@@ -264,7 +264,7 @@ const CalendarView = ({
   );
 
   const {
-    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
+    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
       visibleViews: [],
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -272,14 +272,14 @@ const CalendarView = ({
     isVisibleLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0 },
+        data: {limit: 10, offset: 0},
       });
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           visibleViews: data?.views ?? [],
           visibleColumns: data?.fields ?? [],
@@ -303,7 +303,7 @@ const CalendarView = ({
         },
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", { tableSlug }]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", {tableSlug}]);
       });
   };
 

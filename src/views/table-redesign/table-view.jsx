@@ -23,13 +23,12 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import {useProjectGetByIdQuery} from "../../services/projectService";
 import menuService from "../../services/menuService";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableView = ({
   relationView = false,
@@ -64,6 +63,7 @@ const TableView = ({
   watch,
   tableLan,
   tableSlugProp = "",
+  projectInfo,
   setSortedDatas = () => {},
   setSelectedObjects = () => {},
   setFormVisible = () => {},
@@ -86,7 +86,7 @@ const TableView = ({
     tableSlug: tableSlugFromParams,
     appId,
   } = useParams();
-  const new_router = localStorage.getItem("new_router");
+  const new_router = localStorage.getItem("new_router") === "true";
   const tableSlug =
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
@@ -111,8 +111,6 @@ const TableView = ({
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
-
-  const projectId = useSelector((state) => state.auth.projectId);
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -147,8 +145,6 @@ const TableView = ({
     name: "fields",
     keyName: "key",
   });
-
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
@@ -469,7 +465,7 @@ const TableView = ({
       dispatch(detailDrawerActions.openDrawer());
       updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (Boolean(new_router === "true")) {
+      if (new_router) {
         updateQueryWithoutRerender("p", row?.guid);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
@@ -546,7 +542,7 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      if (Boolean(new_router === "true"))
+      if (new_router)
         navigate(`/${menuId}/detail?p=${row?.guid}`, {
           state: {
             viewId,
@@ -665,7 +661,7 @@ const TableView = ({
 
         {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
-          Boolean(new_router === "true") ? (
+          new_router ? (
             <DrawerDetailPage
               view={view}
               projectInfo={projectInfo}

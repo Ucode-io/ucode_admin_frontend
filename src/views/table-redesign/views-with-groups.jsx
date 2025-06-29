@@ -106,6 +106,7 @@ import {
 import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -126,7 +127,6 @@ export const NewUiViewsWithGroups = ({
   fieldsMapRel,
   selectedView,
   relationView = false,
-  projectInfo,
   layout,
   rootForm,
   selectedRow: row,
@@ -149,10 +149,13 @@ export const NewUiViewsWithGroups = ({
   handleMouseDown = () => {},
   setSelectedViewType = () => {},
 }) => {
+  console.log("menuItemmenuItemmenuItem", menuItem);
   const location = useLocation();
-  const {id, menuId, tableSlug: tableSlugFromProps} = useParams();
+  const {id, menuId: menuid, tableSlug: tableSlugFromProps} = useParams();
   const tableSlug = tableSlugFromProps || view?.table_slug;
-
+  const new_router = Boolean(localStorage.getItem("new_router") === "true");
+  const [searchParams] = useSearchParams();
+  const menuId = menuid ?? searchParams.get("menuId");
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
@@ -180,6 +183,9 @@ export const NewUiViewsWithGroups = ({
 
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const groupTable = view?.attributes?.group_by_columns;
+  console.log("viewsListviewsListviewsListviewsList", viewsList);
+  const projectId = useSelector((state) => state.auth.projectId);
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const settingsForm = useForm({
     defaultValues: {
@@ -271,13 +277,19 @@ export const NewUiViewsWithGroups = ({
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${menuId}/objects/${tableSlug}?menuId=${menuId}`;
-    navigate(url, {
-      state: {
-        tableInfo: tableInfo,
-      },
-    });
+    if (new_router) {
+      const url = `/settings/constructor/apps/${menuId}/objects/${tableSlug}?menuId=${menuId}`;
+      navigate(url, {
+        state: {
+          tableInfo: tableInfo,
+        },
+      });
+    } else {
+      const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
+      navigate(url);
+    }
   };
+
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -406,36 +418,39 @@ export const NewUiViewsWithGroups = ({
       updateQueryWithoutRerender("v", viewEl?.id);
     }
   };
-
+  console.log("viewsviewsviewsviews", views);
   const handleViewClick = (view, index) => {
     viewHandler(view);
     setSelectedView(view);
-    dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
 
     const isSection = view?.type === "SECTION";
-
-    if (isSection) {
-      const lastView = viewsList?.[viewsList.length - 1];
-
-      dispatch(detailDrawerActions.setDrawerTabIndex(index));
-      dispatch(groupFieldActions.trimViewsDataUntil(view));
-      dispatch(groupFieldActions.trimViewsUntil(view));
-      return;
-    }
-
-    if (relationView && !isSection) {
-      dispatch(detailDrawerActions.setDrawerTabIndex(index));
-      dispatch(
-        groupFieldActions.addViewPath({
-          id: view?.id,
-          label: view?.table_label,
-          table_slug: view?.table_slug,
-          relation_table_slug: view?.relation_table_slug ?? null,
-          is_relation_view: view?.is_relation_view,
-        })
-      );
+    if (!new_router) {
+      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
+      setSelectedTabIndex(index);
     } else {
-      dispatch(detailDrawerActions.setMainTabIndex(index));
+      if (isSection) {
+        const lastView = viewsList?.[viewsList.length - 1];
+
+        dispatch(detailDrawerActions.setDrawerTabIndex(index));
+        dispatch(groupFieldActions.trimViewsDataUntil(view));
+        dispatch(groupFieldActions.trimViewsUntil(view));
+        return;
+      }
+
+      if (relationView && !isSection) {
+        dispatch(detailDrawerActions.setDrawerTabIndex(index));
+        dispatch(
+          groupFieldActions.addViewPath({
+            id: view?.id,
+            label: view?.table_label,
+            table_slug: view?.table_slug,
+            relation_table_slug: view?.relation_table_slug ?? null,
+            is_relation_view: view?.is_relation_view,
+          })
+        );
+      } else {
+        dispatch(detailDrawerActions.setMainTabIndex(index));
+      }
     }
   };
 
@@ -468,7 +483,7 @@ export const NewUiViewsWithGroups = ({
   }, [view, fieldsMap]);
 
   const TableComponent =
-    !relationView && localStorage.getItem("new_router") !== "true"
+    !relationView && !new_router
       ? TableViewOld
       : Boolean(relationView)
         ? DrawerTableView
@@ -1012,8 +1027,7 @@ export const NewUiViewsWithGroups = ({
                   </div>
                 </div>
               )}
-            {Boolean(localStorage.getItem("new_router") === "true") &&
-            view?.type === "SECTION" ? (
+            {new_router && view?.type === "SECTION" ? (
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
                   <DrawerFormDetailPage
@@ -1027,7 +1041,6 @@ export const NewUiViewsWithGroups = ({
                     setSelectedViewType={setSelectedViewType}
                     onSubmit={onSubmit}
                     rootForm={rootForm}
-                    projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}
                     layout={layout}
                     selectedTab={layout?.tabs?.[0]}
@@ -1051,9 +1064,11 @@ export const NewUiViewsWithGroups = ({
                       <MaterialUIProvider>
                         {" "}
                         <AgGridTableView
+                          setLoading={setLoading}
+                          relationView={relationView}
+                          projectInfo={projectInfo}
                           searchText={searchText}
                           selectedRow={selectedRow}
-                          projectInfo={projectInfo}
                           setLayoutType={setLayoutType}
                           navigateToEditPage={navigateToEditPage}
                           selectedTabIndex={selectedTabIndex}
@@ -1069,6 +1084,7 @@ export const NewUiViewsWithGroups = ({
                           visibleRelationColumns={visibleRelationColumns}
                           visibleForm={visibleForm}
                           menuItem={menuItem}
+                          setFormValue={setFormValue}
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TABLE" && groupTable?.length ? (
@@ -1115,6 +1131,11 @@ export const NewUiViewsWithGroups = ({
                 )}
                 {view.type === "BOARD" && (
                   <BoardView
+                    setLoadings={setLoadings}
+                    setLayoutType={setLayoutType}
+                    selectedView={selectedView}
+                    setSelectedView={setSelectedView}
+                    projectInfo={projectInfo}
                     menuItem={menuItem}
                     fieldsMapRel={fieldsMapRel}
                     setViews={setViews}
@@ -1126,7 +1147,7 @@ export const NewUiViewsWithGroups = ({
                     fieldsMap={fieldsMap}
                     view={view}
                     layoutType={layoutType}
-                    setLayoutType={setLayoutType}
+                    setFormValue={setFormValue}
                   />
                 )}
                 {view.type === "CALENDAR" && (
@@ -1149,9 +1170,11 @@ export const NewUiViewsWithGroups = ({
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
                           <AgGridTableView
+                            setLoading={setLoading}
+                            relationView={relationView}
+                            projectInfo={projectInfo}
                             searchText={searchText}
                             selectedRow={selectedRow}
-                            projectInfo={projectInfo}
                             setLayoutType={setLayoutType}
                             navigateToEditPage={navigateToEditPage}
                             selectedTabIndex={selectedTabIndex}
@@ -1167,6 +1190,7 @@ export const NewUiViewsWithGroups = ({
                             visibleRelationColumns={visibleRelationColumns}
                             visibleForm={visibleForm}
                             menuItem={menuItem}
+                            setFormValue={setFormValue}
                           />
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
@@ -1179,6 +1203,7 @@ export const NewUiViewsWithGroups = ({
                         />
                       ) : (
                         <TableComponent
+                          projectInfo={projectInfo}
                           setLoading={setLoading}
                           refetchMenuViews={refetchMenuViews}
                           setSelectedView={setSelectedView}
@@ -1187,7 +1212,6 @@ export const NewUiViewsWithGroups = ({
                           setSelectedRow={setSelectedRow}
                           setLayoutType={setLayoutType}
                           layoutType={layoutType}
-                          projectInfo={projectInfo}
                           tableLan={tableLan}
                           isVertical
                           setCurrentPage={setCurrentPage}
@@ -1233,10 +1257,12 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          setLoading={setLoading}
+                          relationView={relationView}
+                          projectInfo={projectInfo}
                           tableSlug={tableSlug}
                           searchText={searchText}
                           selectedRow={selectedRow}
-                          projectInfo={projectInfo}
                           setLayoutType={setLayoutType}
                           navigateToEditPage={navigateToEditPage}
                           selectedTabIndex={selectedTabIndex}
@@ -1252,6 +1278,7 @@ export const NewUiViewsWithGroups = ({
                           visibleRelationColumns={visibleRelationColumns}
                           visibleForm={visibleForm}
                           menuItem={menuItem}
+                          setFormValue={setFormValue}
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TREE" ? (
@@ -1263,6 +1290,7 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : (
                       <TableComponent
+                        projectInfo={projectInfo}
                         setLoading={setLoading}
                         refetchMenuViews={refetchMenuViews}
                         setSelectedView={setSelectedView}
@@ -1271,7 +1299,6 @@ export const NewUiViewsWithGroups = ({
                         setSelectedRow={setSelectedRow}
                         setLayoutType={setLayoutType}
                         layoutType={layoutType}
-                        projectInfo={projectInfo}
                         tableLan={tableLan}
                         visibleColumns={visibleColumns}
                         setCurrentPage={setCurrentPage}

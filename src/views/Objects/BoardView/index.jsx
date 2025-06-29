@@ -1,29 +1,28 @@
-import {Box, IconButton} from "@mui/material";
-import {useEffect, useId, useMemo, useRef, useState} from "react";
-import {useForm} from "react-hook-form";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import {Box} from "@mui/material";
+import clsx from "clsx";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorViewService from "../../../services/constructorViewService";
+import layoutService from "../../../services/layoutService";
 import {applyDrag} from "../../../utils/applyDrag";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
 import FastFilter from "../components/FastFilter";
 import BoardColumn from "./BoardColumn";
-import styles from "./style.module.scss";
 import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
-import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import clsx from "clsx";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import styles from "./style.module.scss";
 import DrawerDetailPage from "../DrawerDetailPage";
-import {useProjectGetByIdQuery} from "../../../services/projectService";
-import layoutService from "../../../services/layoutService";
-import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
-import {Add} from "@mui/icons-material";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 const BoardView = ({
   view,
@@ -38,30 +37,38 @@ const BoardView = ({
   visibleColumns,
   visibleRelationColumns,
   layoutType,
-  setLayoutType,
   searchText,
   columnsForSearch,
+  projectInfo,
+  selectedView,
+  setLoadings = () => {},
+  setFormValue = () => {},
+  setLayoutType = () => {},
+  setSelectedView = () => {},
 }) => {
   const navigate = useNavigate();
-  const projectId = useSelector((state) => state.company?.projectId);
-  const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const {menuId, appId} = useParams();
-  const tableSlug = view?.table_slug;
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromParams,
+    appId,
+  } = useParams();
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
-  const {new_list} = useSelector((state) => state.filter);
-  const id = useId();
-
+  const [searchParams] = useSearchParams();
+  const boardRef = useRef(null);
+  const fixedElement = useRef(null);
   const {t, i18n} = useTranslation();
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterTab, setFilterTab] = useState(null);
   const [boardTab, setBoardTab] = useState(view?.attributes?.tabs ?? null);
-
-  const [selectedView, setSelectedView] = useState(null);
   const {filters} = useFilters(tableSlug, view.id);
-
-  const boardRef = useRef(null);
-  const fixedElement = useRef(null);
+  const new_router = localStorage.getItem("new_router") === "true";
+  const open = useSelector((state) => state?.drawer?.openDrawer);
+  const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
   const subGroupById = view?.attributes?.sub_group_by_id;
+  const menuId = menuid ?? searchParams.get("menuId");
 
   const [dateInfo, setDateInfo] = useState({});
   const [selectedRow, setSelectedRow] = useState({});
@@ -69,7 +76,7 @@ const BoardView = ({
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const {new_list} = useSelector((state) => state.filter);
 
   const {
     data: {layout} = {
@@ -83,7 +90,7 @@ const BoardView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     enabled: Boolean(tableSlug),
     select: (data) => {
@@ -96,12 +103,12 @@ const BoardView = ({
     },
   });
 
-  const navigateToEditPage = (el) => {
-    setOpenDrawerModal(true);
-    setSelectedRow(el);
-    setDateInfo({});
-    setDefaultValue({});
-  };
+  // const navigateToEditPage = (el) => {
+  //   setOpenDrawerModal(true);
+  //   setSelectedRow(el);
+  //   setDateInfo({});
+  //   setDefaultValue({});
+  // };
 
   // const navigateToCreatePage = ({ tab }) => {
   //   setOpenDrawerModal(true);
@@ -526,6 +533,10 @@ const BoardView = ({
                           //   className={styles.draggable}
                           // >
                           <BoardColumn
+                            setLoadings={setLoadings}
+                            selectedView={selectedView}
+                            setSelectedView={setSelectedView}
+                            projectInfo={projectInfo}
                             tableSlug={tableSlug}
                             computedColumnsFor={computedColumnsFor}
                             key={tab.value}
@@ -578,6 +589,9 @@ const BoardView = ({
                   // <Draggable key={tab.value} className={styles.draggable}>
                   <div key={tab.value} className={styles.draggable}>
                     <BoardColumn
+                      selectedView={selectedView}
+                      setSelectedView={setSelectedView}
+                      projectInfo={projectInfo}
                       tableSlug={tableSlug}
                       computedColumnsFor={computedColumnsFor}
                       key={tab.value}
@@ -611,23 +625,72 @@ const BoardView = ({
         </div>
       )}
       <MaterialUIProvider>
-        {/* <DrawerDetailPage
-          view={view}
-          projectInfo={projectInfo}
-          open={openDrawerModal}
-          setOpen={setOpenDrawerModal}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToEditPage}
-          dateInfo={dateInfo}
-          defaultValue={defaultValue}
-        /> */}
+        {Boolean(open && projectInfo?.new_layout) &&
+        selectedViewType === "SidePeek" ? (
+          new_router ? (
+            <DrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+            />
+          ) : (
+            <OldDrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+            />
+          )
+        ) : selectedViewType === "CenterPeek" ? (
+          <ModalDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        ) : null}
+
+        {Boolean(open && !projectInfo?.new_layout) && (
+          <ModalDetailPage
+            open={open}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        )}
       </MaterialUIProvider>
     </div>
   );

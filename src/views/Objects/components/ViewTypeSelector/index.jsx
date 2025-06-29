@@ -37,6 +37,7 @@ const ViewTabSelector = ({
   views = [],
   setTab,
   menuItem,
+  setSelectedTabIndex = () => {},
 }) => {
   const {t} = useTranslation();
   const {tableSlug, appId} = useParams();
@@ -47,6 +48,7 @@ const ViewTabSelector = ({
   const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
   const [typeNewView, setTypeNewView] = useState(null);
   const open = Boolean(anchorEl);
+  const new_router = localStorage.getItem("new_router") === "true";
   const id = open ? "simple-popover" : undefined;
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
@@ -130,10 +132,13 @@ const ViewTabSelector = ({
                         tabIndex: index,
                       })
                     );
-
-                    relationView
-                      ? dispatch(detailDrawerActions.setDrawerTabIndex(index))
-                      : dispatch(detailDrawerActions.setMainTabIndex(index));
+                    if (new_router) {
+                      relationView
+                        ? dispatch(detailDrawerActions.setDrawerTabIndex(index))
+                        : dispatch(detailDrawerActions.setMainTabIndex(index));
+                    } else {
+                      setSelectedTabIndex(index);
+                    }
                   }}
                   className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
                   {view.type === "TABLE" && (

@@ -1,25 +1,19 @@
 import {Add} from "@mui/icons-material";
-import {Button, IconButton} from "@mui/material";
-import {useEffect, useMemo, useRef} from "react";
-import {useState} from "react";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
+import {Button} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useMutation, useQueryClient} from "react-query";
+import {useParams, useSearchParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
-import constructorObjectService from "../../../services/constructorObjectService";
-import {applyDrag, applyDragIndex} from "../../../utils/applyDrag";
-import styles from "./style.module.scss";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
-import BoardModalDetailPage from "./components/BoardModaleDetailPage";
-import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement";
-import DrawerDetailPage from "../DrawerDetailPage";
-import {useProjectGetByIdQuery} from "../../../services/projectService";
-import {useSelector} from "react-redux";
-import layoutService from "../../../services/layoutService";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import useDebounce from "../../../hooks/useDebounce";
-import {getColumnIcon} from "../../table-redesign/icons";
-import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
+import constructorObjectService from "../../../services/constructorObjectService";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {applyDrag} from "../../../utils/applyDrag";
+import styles from "./style.module.scss";
+import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
+import {useDispatch, useSelector} from "react-redux";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 const BoardColumn = ({
   tab,
@@ -42,15 +36,21 @@ const BoardColumn = ({
   setDateInfo,
   setDefaultValue,
   tableSlug,
+  selectedView,
+  projectInfo,
+  setLoadings = () => {},
+  setSelectedView = () => {},
 }) => {
-  const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
-
-  const isStatusType = selectedGroupField?.type === "STATUS";
-
+  const dispatch = useDispatch();
   const {menuId} = useParams();
   const queryClient = useQueryClient();
-
   const [index, setIndex] = useState();
+  const [searchParams] = useSearchParams();
+  const viewId = searchParams.get("v") ?? view?.id;
+  const new_router = localStorage.getItem("new_router") === "true";
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+  const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
+  const isStatusType = selectedGroupField?.type === "STATUS";
 
   const [computedData, setComputedData] = useState(
     (subGroupById ? subGroupData : data).filter((el) => {
@@ -213,12 +213,6 @@ const BoardColumn = ({
     );
   }, [data, subGroupById, subGroupData]);
 
-  const navigateToEditPage = (el) => {
-    setOpenDrawerModal(true);
-    setSelectedRow(el);
-    setDateInfo({});
-    setDefaultValue({});
-  };
   const navigateToCreatePage = (slug) => {
     setOpenDrawerModal(true);
     setSelectedRow(null);
@@ -244,36 +238,120 @@ const BoardColumn = ({
       ]);
     }
   };
-  const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
-  // const hasColor = tab?.color || field?.attributes?.has_color;
-  // const color =
-  //   tab?.color ||
-  //   field?.attributes?.options?.find((item) => item?.value === tab?.value)
-  //     ?.color;
+  const navigateToEditPage = (row) => {
+    setLoadings(true);
+    setDateInfo({});
+    setDefaultValue({});
+    if (Boolean(view?.relation_table_slug)) {
+      queryClient.refetchQueries([
+        "GET_TABLE_VIEWS_LIST_RELATION",
+        view?.relation_table_slug,
+      ]);
+      dispatch(
+        groupFieldActions.addView({
+          id: view?.id,
+          label: view?.table_label,
+          table_slug: view?.table_slug,
+          relation_table_slug: view.relation_table_slug ?? null,
+          is_relation_view: view?.is_relation_view,
+          detailId: row?.guid,
+        })
+      );
+      setSelectedView(view);
+      setSelectedRow(row);
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      updateQueryWithoutRerender("p", row?.guid);
+    } else {
+      if (Boolean(new_router === "true")) {
+        updateQueryWithoutRerender("p", row?.guid);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
+      } else {
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
+      }
+    }
+  };
 
-  // const refetch = () => {
-  //   queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
-  //   queryClient.refetchQueries(["GET_TABLE_INFO"]);
+  // const navigateCreatePage = (row) => {
+  //   if (projectInfo?.new_layout) {
+  //     setSelectedRow(row);
+  //     dispatch(detailDrawerActions.openDrawer());
+  //   } else {
+  //     if (layoutType === "PopupLayout") {
+  //       setSelectedRow(row);
+  //       dispatch(detailDrawerActions.openDrawer());
+  //     } else {
+  //       navigateToForm(tableSlug, "CREATE", {}, {}, menuId);
+  //     }
+  //   }
   // };
 
-  // const fixedElement = useRef(null);
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
 
-  // useEffect(() => {
-  //   const board = boardRef.current;
-  //   const el = fixedElement.current;
-  //   if (!board || !el) return;
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
 
-  //   const onScroll = () => {
-  //     el.style.top = `${board.scrollTop}px`;
-  //   };
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
 
-  //   board.addEventListener("scroll", onScroll);
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
-  //   return () => {
-  //     board.removeEventListener("scroll", onScroll);
-  //   };
-  // }, []);
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      if (Boolean(new_router === "true"))
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
+  const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
 
   const color =
     tab?.color ||
@@ -362,12 +440,6 @@ const BoardColumn = ({
           </Button>
         </div>
       </div>
-      {/* <BoardModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        dateInfo={dateInfo}
-        selectedRow={selectedRow}
-      /> */}
     </>
   );
 };

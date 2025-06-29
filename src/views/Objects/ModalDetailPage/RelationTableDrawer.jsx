@@ -56,6 +56,7 @@ const RelationTableDrawer = forwardRef(
       limit,
       setLimit,
       fieldsMap,
+      getRelatedTabeSlug,
     },
     ref
   ) => {
@@ -170,10 +171,6 @@ const RelationTableDrawer = forwardRef(
         resolve();
       });
     };
-
-    const getRelatedTabeSlug = useMemo(() => {
-      return relation?.find((el) => el?.id === selectedTab?.relation_id);
-    }, [relation, selectedTab?.relation_id]);
 
     useEffect(() => {
       if (getRelatedTabeSlug?.default_editable) {

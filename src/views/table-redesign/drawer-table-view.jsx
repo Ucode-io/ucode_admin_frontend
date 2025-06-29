@@ -444,7 +444,6 @@ const DrawerTableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    console.log("entered for Loading");
     setLoading(true);
     if (Boolean(view?.relation_table_slug)) {
       queryClient.refetchQueries([

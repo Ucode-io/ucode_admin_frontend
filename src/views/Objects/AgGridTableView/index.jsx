@@ -1,63 +1,64 @@
-import {useQuery} from "react-query";
-import style from "./style.module.scss";
+import {mergeStringAndState} from "@/utils/jsonPath";
+import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button} from "@mui/material";
-import {AgGridReact} from "ag-grid-react";
-import AggridFooter from "./AggridFooter";
-import {useParams} from "react-router-dom";
-import {useTranslation} from "react-i18next";
 import {
   CellStyleModule,
   CheckboxEditorModule,
+  ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
+  ModuleRegistry,
   NumberEditorModule,
+  RowSelectionModule,
   TextEditorModule,
   UndoRedoEditModule,
   ValidationModule,
   themeQuartz,
 } from "ag-grid-community";
-import useFilters from "../../../hooks/useFilters";
-import {generateGUID} from "../../../utils/generateID";
-import {pageToOffset} from "../../../utils/pageToOffset";
-import CustomLoadingOverlay from "./CustomLoadingOverlay";
-import getColumnEditorParams from "./valueOptionGenerator";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
-import constructorViewService from "../../../services/constructorViewService";
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import constructorTableService from "../../../services/constructorTableService";
-import constructorObjectService from "../../../services/constructorObjectService";
 import {
-  ClientSideRowModelModule,
-  ModuleRegistry,
-  RowSelectionModule,
-} from "ag-grid-community";
-import {
-  MenuModule,
-  ColumnsToolPanelModule,
-  ServerSideRowModelModule,
-  RowGroupingModule,
-  TreeDataModule,
   CellSelectionModule,
   ClipboardModule,
+  ColumnsToolPanelModule,
+  MenuModule,
+  RowGroupingModule,
+  ServerSideRowModelModule,
+  TreeDataModule,
 } from "ag-grid-enterprise";
-import AggridDefaultComponents, {
-  IndexColumn,
-  ActionsColumn,
-} from "./Functions/AggridDefaultComponents";
-import {mergeStringAndState} from "@/utils/jsonPath";
-import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
-import {Flex, Text} from "@chakra-ui/react";
-import {getColumnIcon} from "../../table-redesign/icons";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {Button as ChakraButton} from "@chakra-ui/react";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import NewModalDetailPage from "../../../components/NewModalDetailPage";
-import DrawerDetailPage from "../DrawerDetailPage";
-import layoutService from "../../../services/layoutService";
+import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import {useSelector} from "react-redux";
-import useTabRouter from "../../../hooks/useTabRouter";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
+import useFilters from "../../../hooks/useFilters";
+import useTabRouter from "../../../hooks/useTabRouter";
+import constructorObjectService from "../../../services/constructorObjectService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorViewService from "../../../services/constructorViewService";
+import layoutService from "../../../services/layoutService";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {generateGUID} from "../../../utils/generateID";
+import {pageToOffset} from "../../../utils/pageToOffset";
+import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
+import {getColumnIcon} from "../../table-redesign/icons";
+import DrawerDetailPage from "../DrawerDetailPage";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import AggridFooter from "./AggridFooter";
+import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
+import CustomLoadingOverlay from "./CustomLoadingOverlay";
+import AggridDefaultComponents, {
+  ActionsColumn,
+  IndexColumn,
+} from "./Functions/AggridDefaultComponents";
+import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import style from "./style.module.scss";
+import getColumnEditorParams from "./valueOptionGenerator";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -86,31 +87,44 @@ const myTheme = themeQuartz.withParams({
 
 function AgGridTableView(props) {
   const {
-    open,
     view,
     menuItem,
     fieldsMap,
     searchText,
     selectedRow,
-    projectInfo,
+    relationView = false,
     visibleColumns,
     checkedColumns,
+    selectedView,
     selectedTabIndex,
     computedVisibleFields,
+    layoutType,
+    projectInfo,
+    setSelectedView = () => {},
+    setSelectedRow = () => {},
     setOpen = () => {},
+    setLoading = () => {},
+    setFormValue = () => {},
     setLayoutType = () => {},
-    navigateToEditPage = () => {},
   } = props;
-  const tableSlug = view?.table_slug;
+  const open = useSelector((state) => state?.drawer?.openDrawer);
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const gridApi = useRef(null);
+  const queryClient = useQueryClient();
   const pinFieldsRef = useRef({});
-  const {menuId} = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {menuId, tableSlug: tableSlugFromParams} = useParams();
+
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromParams ?? view?.table_slug);
   const {i18n, t} = useTranslation();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [rowData, setRowData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadings, setLoadings] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedViewType, setSelectedViewType] = useState(
@@ -118,11 +132,15 @@ function AgGridTableView(props) {
       ? "SidePeek"
       : localStorage?.getItem("detailPage")
   );
+
+  const new_router = localStorage.getItem("new_router") === "true";
   const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+  const viewId = searchParams.get("v") || view?.id;
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents({
       customAutoGroupColumnDef: {
@@ -182,10 +200,10 @@ function AgGridTableView(props) {
       onSuccess: (data) => {
         setCount(data?.data?.count);
         setRowData([...(data?.data?.response ?? [])] ?? []);
-        setLoading(false);
+        setLoadings(false);
       },
       onError: () => {
-        setLoading(false);
+        setLoadings(false);
       },
     }
   );
@@ -202,10 +220,10 @@ function AgGridTableView(props) {
       enabled: Boolean(tableSlug && view?.attributes?.treeData),
       onSuccess: (data) => {
         setRowData([...(data?.data?.response ?? [])]);
-        setLoading(false);
+        setLoadings(false);
       },
       onError: () => {
-        setLoading(false);
+        setLoadings(false);
       },
     }
   );
@@ -284,8 +302,102 @@ function AgGridTableView(props) {
     },
   });
 
+  const navigateToEditPage = (row) => {
+    setLoadings(true);
+    if (Boolean(view?.relation_table_slug)) {
+      queryClient.refetchQueries([
+        "GET_TABLE_VIEWS_LIST_RELATION",
+        view?.relation_table_slug,
+      ]);
+      dispatch(
+        groupFieldActions.addView({
+          id: view?.id,
+          label: view?.table_label,
+          table_slug: view?.table_slug,
+          relation_table_slug: view.relation_table_slug ?? null,
+          is_relation_view: view?.is_relation_view,
+          detailId: row?.guid,
+        })
+      );
+      setSelectedView(view);
+      setSelectedRow(row);
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      updateQueryWithoutRerender("p", row?.guid);
+    } else {
+      if (Boolean(new_router === "true")) {
+        updateQueryWithoutRerender("p", row?.guid);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
+      } else {
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
+      }
+    }
+  };
+  function navigateToDetailPage(row) {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      if (new_router) {
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      } else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  }
+
   const columns = useMemo(() => {
-    if (fiedlsarray?.length) {
+    if (
+      Array.isArray(fiedlsarray) &&
+      Array.isArray(
+        view?.columns?.length ? view?.columns : view?.attributes?.columns
+      )
+    ) {
       return [
         {
           ...IndexColumn,
@@ -302,9 +414,9 @@ function AgGridTableView(props) {
             );
           },
         },
-        ...view?.columns
-          ?.map((columnID, index) => {
-            const field = fiedlsarray?.find(
+        ...(view?.columns)
+          .map((columnID, index) => {
+            const field = fiedlsarray.find(
               (item) => item.columnID === columnID
             );
             if (field) {
@@ -326,16 +438,15 @@ function AgGridTableView(props) {
           addRow,
           deleteFunction: deleteHandler,
           updateTreeData: updateTreeData,
-          cellClass: Boolean(view?.columns?.length)
-            ? "actionBtn"
-            : "actionBtnNoBorder",
+          cellClass: view.columns.length ? "actionBtn" : "actionBtnNoBorder",
         },
       ];
     }
+    return [];
   }, [fiedlsarray, view?.columns]);
 
   function addRow(data) {
-    setLoading(true);
+    setLoadings(true);
     constructorObjectService
       .create(tableSlug, {
         data: data,
@@ -343,9 +454,9 @@ function AgGridTableView(props) {
       .then((res) => {
         delete data?.new_field;
         view?.attributes?.treeData ? updateTreeData() : refetch();
-        setLoading(false);
+        setLoadings(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => setLoadings(false));
   }
 
   function appendNewRow() {
@@ -381,7 +492,7 @@ function AgGridTableView(props) {
           pinnedFields: pinFieldsRef.current,
         },
       })
-      .catch((err) => setLoading(true));
+      .catch((err) => setLoadings(true));
   };
 
   const updateObject = (data) => {
@@ -449,40 +560,6 @@ function AgGridTableView(props) {
 
   const getDataPath = useCallback((data) => data.path, []);
 
-  const replaceUrlVariables = (urlTemplate, data) => {
-    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-      return data[variable] || "";
-    });
-  };
-
-  const navigateToDetailPage = (row) => {
-    if (
-      view?.attributes?.navigate?.params?.length ||
-      view?.attributes?.navigate?.url
-    ) {
-      const params = view?.attributes?.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&");
-
-      const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
-
-      const matches = replaceUrlVariables(urlTemplate, row);
-
-      navigate(`${matches}${params ? "?" + params : ""}`);
-    } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuId);
-    }
-  };
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -544,7 +621,7 @@ function AgGridTableView(props) {
     projectInfo,
     isWarningActive,
   ]);
-
+  console.log("columns", columns, rowData);
   return (
     <Box
       sx={{
@@ -570,7 +647,7 @@ function AgGridTableView(props) {
                   <Button
                     key={item.value}
                     onClick={() => {
-                      setLoading(true);
+                      setLoadings(true);
                       setGroupTab(item);
                     }}
                     variant="outlined"
@@ -600,7 +677,7 @@ function AgGridTableView(props) {
                   }}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
-                  loading={loading}
+                  loading={loadings}
                   columnDefs={columns}
                   suppressRefresh={true}
                   enableClipboard={true}
@@ -644,41 +721,61 @@ function AgGridTableView(props) {
         refetch={refetch}
         setLimit={setLimit}
         setOffset={setOffset}
-        setLoading={setLoading}
+        setLoading={setLoadings}
         createChild={createChild}
         selectedRows={selectedRows}
         updateTreeData={updateTreeData}
       />
 
-      {Boolean(open && projectInfo?.new_layout) &&
+      {Boolean(!relationView && open && projectInfo?.new_layout) &&
       selectedViewType === "SidePeek" ? (
-        <DrawerDetailPage
-          view={view}
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-        />
+        Boolean(new_router) ? (
+          <DrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        ) : (
+          <OldDrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        )
       ) : selectedViewType === "CenterPeek" ? (
-        <NewModalDetailPage
+        <ModalDetailPage
           view={view}
-          modal={true}
           projectInfo={projectInfo}
           open={open}
-          setOpen={setOpen}
+          setFormValue={setFormValue}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
           refetch={refetch}
+          layoutType={layoutType}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}

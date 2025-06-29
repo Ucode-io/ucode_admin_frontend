@@ -66,10 +66,12 @@ function OldDrawerDetailPage({
   const isUserId = useSelector((state) => state?.auth?.userId);
 
   const {id: idFromParam, tableSlug, appId} = useParams();
-
+  console.log("appIdappIdappIdappIdappId", appId);
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
   }, [idFromParam, selectedRow]);
+
+  console.log("ididid", id);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
@@ -84,6 +86,7 @@ function OldDrawerDetailPage({
   const permissions = useSelector(
     (state) => state?.permissions?.permissions?.[tableSlug]
   );
+  console.log("selectedTabselectedTab", selectedTab);
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -94,12 +97,15 @@ function OldDrawerDetailPage({
   });
 
   const getAllData = async () => {
+    const relSlug = selectedTab?.relation_table_slug
+      ? selectedTab?.relation_table_slug
+      : tableSlug;
     setLoader(true);
-    const getLayout = layoutService.getLayout(tableSlug, menuId, {
-      "table-slug": tableSlug,
+    const getLayout = layoutService.getLayout(relSlug, menuId, {
+      "table-slug": relSlug,
       language_setting: i18n?.language,
     });
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getFormData = constructorObjectService.getById(relSlug, id);
 
     try {
       const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
@@ -158,7 +164,7 @@ function OldDrawerDetailPage({
       if (!selectedTab?.relation_id) {
         reset(data?.response ?? {});
       }
-      setSelectTab(relations[selectedTabIndex]);
+      // setSelectTab(relations[selectedTabIndex]);
 
       setLoader(false);
     } catch (error) {
@@ -227,7 +233,7 @@ function OldDrawerDetailPage({
       if (!id) {
         setLoader(false);
       }
-      setSelectTab(relations[selectedTabIndex]);
+      // setSelectTab(relations[selectedTabIndex]);
     } catch (error) {
       console.error(error);
     }
@@ -591,6 +597,7 @@ function OldDrawerDetailPage({
                   <TabPanel>
                     <DrawerBody p="0px 0px" overflow={"auto"}>
                       <DrawerRelationTable
+                        layoutTabs={data?.tabs}
                         selectedTab={selectedTab}
                         getValues={getValues}
                         handleMouseDown={handleMouseDown}

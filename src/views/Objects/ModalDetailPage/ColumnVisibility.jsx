@@ -23,8 +23,6 @@ const ColumnsVisibility = ({
   data,
   fieldsMap,
   tableSlug,
-  layoutTabs,
-  onBackClick,
   tableLan,
   selectedTabIndex,
   getAllData = () => {},
@@ -34,7 +32,7 @@ const ColumnsVisibility = ({
   const {i18n} = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [computedColumns, setComputedColumns] = useState(
-    layoutTabs?.[selectedTabIndex]?.attributes?.columns || []
+    data?.tabs?.[selectedTabIndex]?.attributes?.columns || []
   );
 
   const allFields = useMemo(() => {
@@ -46,7 +44,7 @@ const ColumnsVisibility = ({
       await layoutService.update(
         {
           ...data,
-          tabs: layoutTabs?.map((item, index) =>
+          tabs: data?.tabs?.map((item, index) =>
             index === selectedTabIndex
               ? {
                   ...item,

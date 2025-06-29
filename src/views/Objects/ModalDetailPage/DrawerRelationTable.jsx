@@ -313,7 +313,6 @@ const DrawerRelationTable = ({
 
             <ViewOptions
               tableSlug={tableSlug}
-              layoutTabs={layoutTabs}
               selectedTab={selectedTab}
               data={data}
               selectedTabIndex={selectedTabIndex}

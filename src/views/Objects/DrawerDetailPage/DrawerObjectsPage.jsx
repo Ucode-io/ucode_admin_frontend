@@ -49,6 +49,7 @@ function DrawerObjectsPage({
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
+
   const selectedV = viewsList?.[viewsList.length - 1];
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);

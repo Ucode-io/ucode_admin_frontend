@@ -23,10 +23,8 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import NewModalDetailPage from "../../components/NewModalDetailPage";
-import {useProjectGetByIdQuery} from "../../services/projectService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableViewOld = ({
@@ -68,6 +66,7 @@ const TableViewOld = ({
   selectedLinkedTableSlug,
   menuItem,
   setFormValue,
+  projectInfo,
   currentView,
   watch,
   tableLan,
@@ -96,7 +95,6 @@ const TableViewOld = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const projectId = useSelector((state) => state.auth.projectId);
   const new_router = localStorage.getItem("new_router");
 
   const [selectedViewType, setSelectedViewType] = useState(
@@ -132,8 +130,6 @@ const TableViewOld = ({
     name: "fields",
     keyName: "key",
   });
-
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);

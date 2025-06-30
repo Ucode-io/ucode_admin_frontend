@@ -9,6 +9,8 @@ import DrawerDetailPage from "../DrawerDetailPage";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import {useBoardViewProps} from "./useBoardViewProps";
 import {BoardSkeleton} from "./components/BoardSkeleton";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
 
 const BoardView = ({
   view,

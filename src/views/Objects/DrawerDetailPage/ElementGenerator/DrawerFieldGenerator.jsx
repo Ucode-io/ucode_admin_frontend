@@ -428,6 +428,7 @@ const InputField = ({
   watch = () => {},
   errors,
   functions,
+  field,
 }) => {
   const inputValue =
     watch(name) ||

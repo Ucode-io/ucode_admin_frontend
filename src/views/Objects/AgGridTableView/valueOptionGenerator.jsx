@@ -29,8 +29,6 @@ import {
 import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
 import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
 import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
-import HFButtonFieldEditor from "./FieldRelationGenerator/HFButtonFieldEditor";
-import HFMultiFileCellEditor from "./FieldRelationGenerator/HFMultiFileCellEditor";
 import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
 
 const getColumnEditorParams = (item, columnDef) => {

@@ -4,13 +4,7 @@ import RowClickButton from "../RowClickButton";
 
 const HFSwitchCellEditor = (props) => {
   const id = useId();
-  const {setValue, value, colDef, data} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {field, setValue, value, colDef, data} = props;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -20,7 +14,6 @@ const HFSwitchCellEditor = (props) => {
       <ChakraProvider>
         <Box pl={"10px"}>
           <Switch
-            disabled={disabled}
             isChecked={value || false}
             onChange={(e, val) => {
               setValue(e.target.checked);

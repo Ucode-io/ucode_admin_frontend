@@ -153,7 +153,7 @@ function NewModalFormPage({
           setFormValue={setFormValue}
         />
 
-        {sections?.length &&
+        {Boolean(sections?.length) &&
           sections?.map((section, secIndex) => (
             <Container
               key={section?.id}
@@ -301,10 +301,7 @@ const HeadingOptions = ({
           }>
           <CHTextField
             placeholder={
-              Boolean(watch("attributes.layout_heading")) ||
-              !Boolean(watch(selectedField?.slug))
-                ? "Enter value"
-                : "Select field"
+              Boolean(watch("attributes.layout_heading")) ? "" : "Select field"
             }
             control={control}
             name={selectedField?.slug || ""}

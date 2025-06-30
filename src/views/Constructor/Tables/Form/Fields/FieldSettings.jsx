@@ -71,18 +71,10 @@ const FieldSettings = ({
   const [drawerType, setDrawerType] = useState("SCHEMA");
   const [selectedField, setSelectedField] = useState(null);
 
-  const detectorID = useMemo(() => {
-    if (id) {
-      return id;
-    } else {
-      return menuItem?.table_id;
-    }
-  }, [id, slug]);
-
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
+    const index = fields.findIndex((el) => el.id === field.id);
 
-    const index = fields?.findIndex((el) => el.id === field.id);
     mainForm.setValue(`fields[${index}]`, field);
     onSubmit(index, field);
   };
@@ -164,7 +156,7 @@ const FieldSettings = ({
       label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
       show_label: true,
     };
-    if (id || menuItem?.table_id) {
+    if (tableSlug) {
       createNewField({data, tableSlug: slug || tableSlug});
     } else {
       prepandFieldInForm(data);
@@ -206,11 +198,11 @@ const FieldSettings = ({
   };
 
   const submitHandler = (values) => {
+    console.log("formTypeformTypeformType", formType, values);
     const data = {
       ...values,
       attributes: {
         ...values?.attributes,
-        enable_multilanguage: values?.enable_multilanguage,
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
@@ -282,7 +274,7 @@ const FieldSettings = ({
       label: "",
       required: false,
       slug: "",
-      table_id: detectorID,
+      table_id: tableSlug,
       type: "",
       relation_field: selectedAutofillFieldSlug,
     };
@@ -295,7 +287,7 @@ const FieldSettings = ({
     } else {
       reset(values);
     }
-  }, [field, formType, id, menuItem?.table_id, reset]);
+  }, [field, formType, menuItem?.table_id, reset]);
 
   const getOnchangeField = (element) => {
     setSelectedField(element);

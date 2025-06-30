@@ -246,13 +246,6 @@ const getColumnEditorParams = (item, columnDef) => {
       };
       break;
 
-    case "MULTI_FILE":
-      columnDef.cellRenderer = HFMultiFileCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
     case "FILE":
       columnDef.cellRenderer = HFFileUploadCellEditor;
       columnDef.cellRendererParams = {
@@ -297,13 +290,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     case "QR":
       columnDef.cellRenderer = HFQrFieldComponentCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "BUTTON":
-      columnDef.cellRenderer = HFButtonFieldEditor;
       columnDef.cellRendererParams = {
         field: item,
       };

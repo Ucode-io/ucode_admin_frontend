@@ -107,22 +107,18 @@ export const usePermissionsRoleDetail = () => {
   );
 
   const onSubmit = (values) => {
-
-    if (activeTab === "menu") {
-      updatePermissionMutate({
-        menus: values?.menus,
-        project_id: values?.project_id,
-        role_id: roleId,
-      });
-    } else {
-      updateRolePermissionMutate({
-        data: {
-          ...values?.data,
-        },
-        project_id: values?.project_id,
-        role_id: roleId,
-      });
-    }
+    updateRolePermissionMutate({
+      data: {
+        ...values?.data,
+      },
+      project_id: values?.project_id,
+      role_id: roleId,
+    });
+    updatePermissionMutate({
+      menus: [...changedData],
+      project_id: values?.project_id,
+      role_id: roleId,
+    });
 
     queryClient.refetchQueries([
       "rolePermissionGetById",

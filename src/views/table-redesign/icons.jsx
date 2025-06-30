@@ -17,11 +17,10 @@ const icons = {
   SWITCH: <img src="/table-icons/switch.svg" alt="Switch" />,
   CHECKBOX: <img src="/table-icons/checkbox.svg" alt="Checkbox" />,
   FORMULA_FRONTEND: <img src="/table-icons/formula.svg" alt="Formula" />,
-  FORMULA: <img src="/table-icons/formula.svg" alt="Formula" />,
   LOOKUP: <img src="/table-icons/lookup.svg" alt="Lookup" />,
   RELATION: <img src="/table-icons/lookup.svg" alt="Lookup" />,
   FILE: <img src="/table-icons/file.svg" alt="File" />,
-  PHOTO: <img src="/table-icons/photo.svg" alt="Gallery icon" />,
+  PHOTO: <img src="/table-icons/photo.svg" alt="Photo" />,
   VIDEO: <img src="/table-icons/video.svg" alt="Video" />,
   MULTI_IMAGE: <img src="/table-icons/multi-image.svg" alt="Multi image" />,
   MAP: <img src="/table-icons/map.svg" alt="Map" />,
@@ -36,7 +35,6 @@ const icons = {
   ICON: <img src="/table-icons/plus-square.svg" alt="Password" />,
   BARCODE: <img src="/table-icons/scan.svg" alt="Password" />,
   COLOR: <img src="/table-icons/palette.svg" alt="Password" />,
-  MULTI_FILE: <img src="/table-icons/file.svg" alt="Multi file" />,
 };
 
 const iconsPaths = {

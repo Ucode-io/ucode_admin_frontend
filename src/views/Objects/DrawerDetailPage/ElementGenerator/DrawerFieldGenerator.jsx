@@ -24,7 +24,7 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import { NumericFormat } from "react-number-format";
+import {NumericFormat} from "react-number-format";
 import {
   Box,
   IconButton,
@@ -33,25 +33,26 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
+import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
 import HFModalMap from "../../../../components/FormElements/HFModalMap";
 import PolygonFieldTable from "../../../../components/ElementGenerators/PolygonFieldTable";
 import HFIconPicker from "./hf-iconPicker";
 import HFColorPicker from "./hf-colorPicker";
-import { Parser } from "hot-formula-parser";
+import {Parser} from "hot-formula-parser";
 import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import { Lock } from "@mui/icons-material";
+import {Lock} from "@mui/icons-material";
 import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
-import { numberWithSpaces } from "../../../../utils/formatNumbers";
+import {numberWithSpaces} from "../../../../utils/formatNumbers";
 import MultiLineInput from "./MultiLineInput";
 import HFInternationalPhone from "./hf-internationalPhone";
 import HFSelect from "../../../../components/FormElements/HFSelect";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
 import constructorFunctionService from "../../../../services/constructorFunctionService";
 import listToOptions from "../../../../utils/listToOptions";
 import HFCodeField from "../../../../components/FormElements/HFCodeField";
 import JSONInput from "react-json-editor-ajrm";
-import { isJSONParsable } from "../../../../utils/isJsonValid";
+import {isJSONParsable} from "../../../../utils/isJsonValid";
 import CellManyToManyRelationElement from "../../../../components/ElementGenerators/CellManyToManyRelationElement";
 
 function DrawerFieldGenerator({
@@ -101,7 +102,7 @@ function DrawerFieldGenerator({
     }
   }, [field.type, field.id, field.relation_type]);
 
-  const { data: functions = [] } = useQuery(
+  const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -147,7 +148,6 @@ function DrawerFieldGenerator({
     case "DATE":
       return (
         <HFDatePickerField
-          defaultValue={defaultValue}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -160,7 +160,6 @@ function DrawerFieldGenerator({
     case "DATE_TIME":
       return (
         <HFDateTimePickerField
-          defaultValue={defaultValue}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -171,7 +170,6 @@ function DrawerFieldGenerator({
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return (
         <HFDateDatePickerWithoutTimeZoneTableField
-          defaultValue={defaultValue}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -423,7 +421,6 @@ function DrawerFieldGenerator({
 }
 
 const InputField = ({
-  field,
   control,
   name = "",
   type = "text",
@@ -452,7 +449,7 @@ const InputField = ({
             field?.type === "EMAIL" ? "Incorrect email format" : undefined,
         },
       }}
-      render={({ field: { onChange, value } }) => {
+      render={({field: {onChange, value}}) => {
         return (
           <ChakraProvider>
             <ChakraBox position="relative">
@@ -485,7 +482,7 @@ const InputField = ({
                 />
                 {isDisabled && (
                   <InputRightElement pointerEvents="none">
-                    <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+                    <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
                   </InputRightElement>
                 )}
               </InputGroup>
@@ -498,8 +495,7 @@ const InputField = ({
                     bottom: "-5px",
                     left: "0",
                     paddingLeft: "9.6px",
-                  }}
-                >
+                  }}>
                   {errors?.[name]?.message}
                 </span>
               )}
@@ -533,7 +529,7 @@ const NumberField = ({
       <Controller
         control={control}
         name={name}
-        render={({ field: { onChange, value } }) => {
+        render={({field: {onChange, value}}) => {
           return (
             <NumericFormat
               maxLength={19}
@@ -577,9 +573,8 @@ const NumberField = ({
             right: 0,
             top: "50%",
             transform: "translateY(-50%)",
-          }}
-        >
-          <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+          }}>
+          <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
         </Box>
       )}
     </Box>
@@ -624,7 +619,7 @@ const FormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 
-    const { error, result } = parser.parse(computedFormula);
+    const {error, result} = parser.parse(computedFormula);
 
     let newValue = error ?? result;
     const prevValue = values[name];
@@ -646,7 +641,7 @@ const FormulaField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
           className="formulaField"
           placeholder="Empty"
@@ -677,29 +672,26 @@ const FormulaField = ({
           autoFocus={tabIndex === 1}
           helperText={!disabledHelperText && error?.message}
           InputProps={{
-            inputProps: { tabIndex },
+            inputProps: {tabIndex},
             readOnly: disabled,
 
             endAdornment: (
               <InputAdornment position="end">
                 <Box
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
+                  style={{display: "flex", alignItems: "center", gap: "10px"}}>
                   <Tooltip
-                    title={formulaIsVisible ? "Hide formula" : "Show formula"}
-                  >
+                    title={formulaIsVisible ? "Hide formula" : "Show formula"}>
                     <IconButton
                       edge="end"
                       color={formulaIsVisible ? "primary" : "default"}
-                      onClick={() => setFormulaIsVisible((prev) => !prev)}
-                    >
+                      onClick={() => setFormulaIsVisible((prev) => !prev)}>
                       <FunctionsIcon />
                     </IconButton>
                   </Tooltip>
                   {disabled && (
                     <Tooltip title="This field is disabled for this role!">
                       <InputAdornment position="start">
-                        <Lock style={{ fontSize: "20px" }} />
+                        <Lock style={{fontSize: "20px"}} />
                       </InputAdornment>
                     </Tooltip>
                   )}
@@ -709,8 +701,7 @@ const FormulaField = ({
           }}
           {...props}
         />
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 
@@ -761,9 +752,8 @@ const JSONField = ({
               right: 0,
               top: "50%",
               transform: "translateY(-50%)",
-            }}
-          >
-            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+            }}>
+            <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
           </Box>
         )}
       </Box>
@@ -778,8 +768,7 @@ const JSONField = ({
         transformOrigin={{
           vertical: "top",
           horizontal: "left",
-        }}
-      >
+        }}>
         <HFCodeField
           control={control}
           field={field}

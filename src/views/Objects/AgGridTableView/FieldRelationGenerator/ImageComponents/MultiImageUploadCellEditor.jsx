@@ -1,13 +1,10 @@
 import {Box, Button, Modal} from "@mui/material";
 import React, {useRef, useState} from "react";
-import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "../style.module.scss";
 import UploadIcon from "@mui/icons-material/Upload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import {useTranslation} from "react-i18next";
 import fileService from "../../../../../services/fileService";
 
 const style = {
@@ -24,72 +21,44 @@ const style = {
   boxShadow: 24,
 };
 
-function MultiImageUpload({
+function MultiImageUploadCellEditor({
   value = [],
-  field,
-  tabIndex,
+  field = {},
+  tabIndex = 0,
   onChange = () => {},
-  isTableView,
-  updateObject,
-  newUi,
-  disabled,
-  drawerDetail = false,
+  disabled = false,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
-  const [fullScreen, setFullScreen] = useState("");
-  const {i18n, t} = useTranslation();
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
 
-  const handleClick = () => setUploadImg(true);
-  const handleClose = () => setUploadImg(false);
-
-  const handleFullScreen = (imgSrc) => {
-    handleClick();
-    setFullScreen(imgSrc);
+  const handleClick = () => {
+    setUploadImg(true);
   };
 
-  const handleCloseFullScreen = () => setFullScreen(null);
+  const handleClose = () => {
+    setUploadImg(false);
+  };
+
   const inputChangeHandler = (e) => {
     setLoading(true);
-    const files = [...e.target.files];
+    const file = e.target.files[0];
 
-    files.forEach((file) => {
-      console.log(file);
-    });
-
-    Promise.all(
-      files.map((file) => {
-        const data = new FormData();
-        data.append("file", file);
-        return fileService.folderUpload(data, {
-          folder_name: "media",
-        });
+    const data = new FormData();
+    data.append("file", file);
+    fileService
+      .folderUpload(data, {
+        folder_name: "media",
       })
-    )
       .then((res) => {
-        onChange([
-          ...(value ?? []),
-          ...res.map((file) => import.meta.env.VITE_CDN_BASE_URL + file?.link),
+        onChange([...value, import.meta.env.VITE_CDN_BASE_URL + res?.link]);
+        setImageList([
+          ...imageList,
+          import.meta.env.VITE_CDN_BASE_URL + res?.link,
         ]);
       })
       .finally(() => setLoading(false));
-    // fileService
-    //   .folderUpload(data, {
-    //     folder_name: "media",
-    //   })
-    //   .then((res) => {
-    //     onChange([
-    //       ...(value ?? []),
-    //       import.meta.env.VITE_CDN_BASE_URL + res?.link,
-    //     ]);
-    //     setImageList([
-    //       ...imageList,
-    //       import.meta.env.VITE_CDN_BASE_URL + res?.link,
-    //     ]);
-    //   })
-    //   .finally(() => setLoading(false));
   };
 
   const removeImage = (imgLink) => {
@@ -108,165 +77,108 @@ function MultiImageUpload({
     <>
       {value && value?.length > 0 ? (
         <>
-          {isTableView ? (
-            <Box
-              onClick={() => {
-                !disabled && handleClick();
-              }}
-              id="multi_image"
-              sx={{
-                width: "100%",
-                height: newUi ? "25px" : "30px",
-                display: "flex",
-                alignItems: "center",
-                gap: "3px",
-                padding: drawerDetail ? "0 9.6px" : "0",
-              }}>
-              {value?.length &&
-                value?.map((img, index) => (
-                  <>
-                    <Box
-                      key={index}
-                      sx={{
-                        height: "25px",
-                        width: "27px",
-                        borderRadius: "4px",
-                        overflow: "hidden",
-                        padding: "0 0 0 0",
-                      }}
-                      title={parseImgPhoto(img)}>
-                      <img
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                        src={img}
-                        alt="img"
-                      />
-                    </Box>
-                    {/* <Box sx={{ fontSize: "10px", wordBreak: "keep-all" }}> */}
-                    {/* {parseImgPhoto(value?.[0])} */}
-                    {/* </Box> */}
-                  </>
-                ))}
-            </Box>
-          ) : (
+          <Box
+            onClick={() => !disabled && handleClick()}
+            sx={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "0 0 0 13px",
+            }}>
             <Box
               sx={{
-                border: "1px dashed #ddd",
-                borderRadius: "5px",
-                width: "100px",
-                height: "120px",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-                justifyContent: "center",
-                cursor: "pointer",
-                position: "relative",
+                height: "25px",
+                width: "27px",
+                borderRadius: "4px",
+                overflow: "hidden",
+                padding: "0 0 0 0",
               }}>
               <img
-                style={{width: "100%", height: "100%", border: "none"}}
+                style={{width: "100%", height: "100%", objectFit: "cover"}}
                 src={value?.[0]}
-                type="text"
               />
+            </Box>
+            <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
+              {parseImgPhoto(value?.[0])}
+            </Box>
 
+            {disabled && (
               <Box
-                id="multi_image_2"
-                onClick={() => {
-                  !disabled && handleClick();
-                }}
                 sx={{
                   position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  background: "rgba(0, 0, 0, 0.3)",
-                  right: "0",
-                  top: "0",
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  fontSize: "16px",
-                  color: "#fff",
+                  right: "14px",
+                  height: "20px",
+                  width: "20px",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                  padding: "0 0 0 0",
+                  background: "transparent",
                 }}>
-                {value?.length > 1 ? `${value?.length}+` : value?.length}
+                <img
+                  src="/table-icons/lock.svg"
+                  style={{width: "20px", height: "20px"}}
+                  alt="lock"
+                />
               </Box>
-            </Box>
-          )}
+            )}
+          </Box>
         </>
       ) : (
         <>
-          {isTableView ? (
+          <Box
+            onClick={() => !disabled && handleClick()}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: disabled ? "space-between" : "",
+              cursor: "pointer",
+              paddingLeft: "10px",
+            }}>
             <Box
-              id="multi_images"
-              onClick={() => {
-                !disabled && handleClick();
-              }}
               sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                cursor: "pointer",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  color: "#777",
-                  fontSize: "10px",
-                  gap: "5px",
-                  padding: "0 8px",
-                }}>
-                <img
-                  src="/img/newUpload.svg"
-                  alt="Upload"
-                  style={{width: 22, height: 22}}
-                />
-                {/* <UploadFileIcon
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    color: "rgb(116, 116, 116)",
-                  }}
-                /> */}
-              </Box>
-            </Box>
-          ) : (
-            <Box
-              id="multi_images_2"
-              onClick={() => {
-                !disabled && handleClick();
-              }}
-              sx={{
-                border: "1px dashed #ddd",
-                borderRadius: "5px",
-                width: "100px",
-                height: "120px",
                 display: "flex",
                 alignItems: "center",
                 flexDirection: "column",
-                justifyContent: "center",
-                cursor: "pointer",
+                color: "#777",
+                fontSize: "10px",
+                gap: "5px",
               }}>
+              <img
+                src="/img/newUpload.svg"
+                alt="Upload"
+                style={{width: 22, height: 22}}
+              />
+            </Box>
+            {disabled && (
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "column",
+                  alignContent: "flex-end",
                   color: "#777",
                   fontSize: "10px",
                   gap: "5px",
+                  marginRight: "14px",
                 }}>
-                <AddIcon style={{width: "24px", height: "24px"}} />
-
-                <span>{t("add_photo")}</span>
+                <img
+                  src="/table-icons/lock.svg"
+                  style={{width: "20px", height: "20px"}}
+                  alt="lock"
+                />
               </Box>
-            </Box>
-          )}
+            )}
+          </Box>
         </>
       )}
 
@@ -284,27 +196,20 @@ function MultiImageUpload({
               zIndex: "999",
               background: "white",
             }}>
+            <Box></Box>
             <Button onClick={handleClose}>
               <CloseIcon style={{width: "24", height: "24px"}} />
             </Button>
           </Box>
 
           <div className={styles.imageContainer}>
-            {Array.isArray(value) &&
+            {value &&
               value?.map((item) => (
-                <div
-                  key={item}
-                  className={styles.ImageItem}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFullScreen(item);
-                  }}>
+                <div key={item} className={styles.ImageItem}>
                   <img src={item} alt="photo" />
 
                   <button
-                    variant="outlined"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={() => {
                       removeImage(item);
                     }}
                     className={styles.clearBtn}>
@@ -313,7 +218,6 @@ function MultiImageUpload({
                 </div>
               ))}
             <Box
-              id="uploadImageField"
               sx={{
                 border: "1px dashed #ddd",
                 borderRadius: "5px",
@@ -335,15 +239,20 @@ function MultiImageUpload({
                 style={{
                   display: "none",
                 }}
-                accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras"
+                accept=".jpg, .jpeg, .png, .gif"
                 className="hidden"
                 ref={inputRef}
                 tabIndex={tabIndex}
                 autoFocus={tabIndex === 1}
                 onChange={inputChangeHandler}
-                multiple
+                disabled={disabled}
               />
-              <UploadIcon style={{width: "32px", height: "32px"}} />
+              <img
+                src="/img/newUpload.svg"
+                alt="Upload"
+                style={{width: 22, height: 22}}
+              />
+              {/* <UploadIcon style={{width: "32px", height: "32px"}} /> */}
             </Box>
           </div>
 
@@ -366,42 +275,13 @@ function MultiImageUpload({
               onClick={() => {
                 handleClose();
               }}>
-              {t("save_btn")}
+              Save
             </Button>
           </Box>
-        </Box>
-      </Modal>
-
-      <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCloseFullScreen();
-            }}
-            sx={{position: "absolute", top: 10, right: 10, color: "white"}}>
-            <CloseIcon />
-          </Button>
-          <img
-            src={fullScreen}
-            alt="Fullscreen"
-            style={{maxWidth: "100%", maxHeight: "100%"}}
-          />
         </Box>
       </Modal>
     </>
   );
 }
 
-export default MultiImageUpload;
+export default MultiImageUploadCellEditor;

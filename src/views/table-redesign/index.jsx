@@ -55,9 +55,9 @@ import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import { FIELD_TYPES } from "../../utils/constants/fieldTypes";
+import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 
-const mockColumns = Array.from({ length: 5 }, (_, index) => ({
+const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
     field_permission: {
       edit_permission: true,
@@ -169,7 +169,7 @@ export const DynamicTable = ({
   relationAction,
   onChecked,
   view,
-  refetch,
+  refetch = () => {},
   menuItem,
   loader,
   height,
@@ -177,7 +177,7 @@ export const DynamicTable = ({
   getAllData = () => {},
   tableSlugProp = "",
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -253,7 +253,7 @@ export const DynamicTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -349,13 +349,13 @@ export const DynamicTable = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -387,10 +387,9 @@ export const DynamicTable = ({
       className="CTableContainer"
       style={
         isPaginationPositionSticky
-          ? { display: "flex", flexDirection: "column", height: "100%" }
+          ? {display: "flex", flexDirection: "column", height: "100%"}
           : {}
-      }
-    >
+      }>
       <div
         className="table"
         style={{
@@ -399,17 +398,16 @@ export const DynamicTable = ({
           flexGrow: 1,
           backgroundColor: "#fff",
           height: `calc(100vh - ${calculatedHeight + 130}px)`,
-        }}
-      >
+        }}>
         <table id="resizeMe">
           <thead
             style={{
               borderBottom: "1px solid #EAECF0",
               position: "sticky",
               top: 0,
-              zIndex: 2,
-            }}
-          >
+              zIndex: 0,
+              background: "red",
+            }}>
             <tr>
               <IndexTh
                 items={isRelationTable ? fields : data}
@@ -473,9 +471,9 @@ export const DynamicTable = ({
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
                   type="add_field"
-                  id="addField"
-                >
+                  id="addField">
                   <FieldButton
+                    tableSlug={tableSlug}
                     tableLan={tableLan}
                     openFieldSettings={openFieldSettings}
                     view={view}
@@ -584,8 +582,7 @@ export const DynamicTable = ({
                     zIndex: "1",
                     width: "45px",
                     color: "#007aff",
-                  }}
-                >
+                  }}>
                   <Flex
                     id="addRowBtn"
                     h="30px"
@@ -593,9 +590,8 @@ export const DynamicTable = ({
                     justifyContent="center"
                     transition="background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
                     cursor="pointer"
-                    _hover={{ bg: "rgba(0, 122, 255, 0.08)" }}
-                    onClick={() => setAddNewRow(true)}
-                  >
+                    _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
+                    onClick={() => setAddNewRow(true)}>
                     <AddRoundedIcon fill="#007aff" />
                   </Flex>
                 </td>
@@ -615,15 +611,13 @@ export const DynamicTable = ({
         py="6px"
         borderTop="1px solid #EAECF0"
         justifyContent="space-between"
-        bg="#fff"
-      >
+        bg="#fff">
         <Flex
           columnGap="16px"
           alignItems="center"
           fontSize={14}
           fontWeight={600}
-          color="#344054"
-        >
+          color="#344054">
           {generateLangaugeText(tableLan, i18n?.language, "Show") || "Show"}
           <ChakraProvider>
             <CreatableSelect
@@ -645,7 +639,7 @@ export const DynamicTable = ({
                 label: `${option.value} ${generateLangaugeText(tableLan, i18n?.language, "rows") || "rows"}`,
               }))}
               menuPlacement="top"
-              onChange={({ value }) => getLimitValue(value)}
+              onChange={({value}) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
@@ -668,10 +662,9 @@ export const DynamicTable = ({
 
         {selectedObjectsForDelete?.length > 0 && (
           <RectangleIconButton
-            style={{ minWidth: "160px", border: "none" }}
+            style={{minWidth: "160px", border: "none"}}
             color="error"
-            onClick={multipleDelete}
-          >
+            onClick={multipleDelete}>
             <Button variant="outlined" color="error">
               {generateLangaugeText(
                 tableLan,
@@ -686,11 +679,13 @@ export const DynamicTable = ({
   );
 };
 
-const IndexTh = ({ items, selectedItems, onSelectAll }) => {
-  const { tableSlug } = useParams();
+const IndexTh = ({items, selectedItems, onSelectAll}) => {
+  const {tableSlug} = useParams();
+  const permissions = useSelector((state) => state?.permissions?.permissions);
+  const hasPermission = permissions?.[tableSlug]?.delete_all;
   const [hover, setHover] = useState(false);
 
-  const showCheckbox = hover;
+  const showCheckbox = hover || selectedItems?.length > 0;
 
   return (
     <Box
@@ -704,13 +699,12 @@ const IndexTh = ({ items, selectedItems, onSelectAll }) => {
       position="sticky"
       left={0}
       zIndex={1}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
+      onMouseEnter={hasPermission ? () => setHover(true) : null}
+      onMouseLeave={hasPermission ? () => setHover(false) : null}>
       {!showCheckbox && <Image src="/img/hash.svg" alt="index" mx="auto" />}
       {showCheckbox && (
         <Checkbox
-          style={{ width: 10, height: 10 }}
+          style={{width: 10, height: 10}}
           checked={items?.length === selectedItems?.length}
           indeterminate={
             selectedItems?.length > 0 && items?.length !== selectedItems?.length
@@ -735,49 +729,12 @@ const FieldButton = ({
   mainForm,
   sortedDatas,
   setSortedDatas,
+  tableSlug,
 }) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
-  const { tableSlug } = useParams();
   const dispatch = useDispatch();
-  const { control, watch, setValue, reset, handleSubmit } = useForm({
-    defaultValues: {
-      attributes: {
-        todo: {
-          options: [
-            {
-              label: "To Do",
-              value: "to-do",
-              color: "#8b96a0",
-            },
-          ],
-        },
-        progress: {
-          options: [
-            {
-              label: "In Progress",
-              value: "in-progress",
-              color: "#ff8600",
-            },
-          ],
-        },
-        complete: {
-          options: [
-            {
-              label: "Excluded",
-              value: "excluded",
-              color: "#f31d2f",
-            },
-            {
-              label: "Complete",
-              value: "complete",
-              color: "#00d717",
-            },
-          ],
-        },
-      },
-    },
-  });
+  const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
@@ -804,9 +761,10 @@ const FieldButton = ({
       });
   };
 
-  const { mutate: createField } = useFieldCreateMutation({
+  const {mutate: createField} = useFieldCreateMutation({
     onSuccess: (res) => {
       reset({});
+      queryClient.refetchQueries(["GET_VIEWS_LIST"]);
       setFieldOptionAnchor(null);
       setFieldCreateAnchor(null);
       dispatch(showAlert("Successful created", "success"));
@@ -816,7 +774,7 @@ const FieldButton = ({
     },
   });
 
-  const { mutate: updateField } = useFieldUpdateMutation({
+  const {mutate: updateField} = useFieldUpdateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -826,7 +784,7 @@ const FieldButton = ({
     },
   });
 
-  const { mutate: createRelation } = useRelationsCreateMutation({
+  const {mutate: createRelation} = useRelationsCreateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -836,7 +794,7 @@ const FieldButton = ({
     },
   });
 
-  const { mutate: updateRelation } = useRelationFieldUpdateMutation({
+  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
     onSuccess: (res) => {
       reset({});
       setFieldOptionAnchor(null);
@@ -849,7 +807,7 @@ const FieldButton = ({
     const data = {
       ...values,
       slug: slug,
-      table_id: menuItem?.table_id,
+      table_id: tableSlug,
       label: slug,
       index: "string",
       required: false,
@@ -897,17 +855,17 @@ const FieldButton = ({
 
     if (!fieldData) {
       if (values?.type !== "RELATION") {
-        createField({ data, tableSlug });
+        createField({data, tableSlug});
       }
       if (values?.type === "RELATION") {
-        createRelation({ data: relationData, tableSlug });
+        createRelation({data: relationData, tableSlug});
       }
     }
     if (fieldData) {
       if (values?.view_fields) {
-        updateRelation({ data: values, tableSlug });
+        updateRelation({data: values, tableSlug});
       } else {
-        updateField({ data, tableSlug });
+        updateField({data, tableSlug});
       }
     }
   };
@@ -924,8 +882,7 @@ const FieldButton = ({
     } else {
       reset({
         attributes: {
-          ...watch("attributes"),
-          math: { label: "plus", value: "+" },
+          math: {label: "plus", value: "+"},
         },
       });
     }
@@ -948,9 +905,8 @@ const FieldButton = ({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}
-      >
-        <AddRoundedIcon style={{ marginTop: "3px" }} />
+        }}>
+        <AddRoundedIcon style={{marginTop: "3px"}} />
       </Box>
       <FieldOptionModal
         tableLan={tableLan}
@@ -974,7 +930,6 @@ const FieldButton = ({
           setFieldOptionAnchor={setFieldOptionAnchor}
           reset={reset}
           menuItem={menuItem}
-          mainForm={mainForm}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
           view={view}
@@ -1011,7 +966,7 @@ const Th = ({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const permissions = useSelector(
     (state) => state.permissions?.permissions?.[tableSlug]
@@ -1074,7 +1029,7 @@ const Th = ({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
       });
   };
 
@@ -1094,7 +1049,7 @@ const Th = ({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
   };
@@ -1123,7 +1078,7 @@ const Th = ({
             if (column?.attributes?.relation_data?.id) {
               queryClient.refetchQueries([
                 "RELATION_GET_BY_ID",
-                { tableSlug, id: column?.attributes?.relation_data?.id },
+                {tableSlug, id: column?.attributes?.relation_data?.id},
               ]);
             }
           },
@@ -1150,7 +1105,7 @@ const Th = ({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({ tableSlug, field, order })
+              paginationActions.setSortValues({tableSlug, field, order})
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -1309,7 +1264,7 @@ const Th = ({
       updateRelationView(computedValuesForRelationView);
     } else {
       constructorViewService.update(tableSlug, computedValues).then(() => {
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
         handleSummaryClose();
       });
     }
@@ -1321,7 +1276,7 @@ const Th = ({
       ? "sticky"
       : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({ columns, column }) + 45}px`
+    ? `${calculateWidthFixedColumn({columns, column}) + 45}px`
     : "0";
   const bg =
     tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
@@ -1362,15 +1317,13 @@ const Th = ({
       left={left}
       bg={bg}
       zIndex={zIndex}
-      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}
-    >
+      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}>
       <Flex
         alignItems="center"
         columnGap="8px"
         whiteSpace="nowrap"
-        minW="max-content"
-      >
-        {getColumnIcon({ column })}
+        minW="max-content">
+        {getColumnIcon({column})}
         {label}
         {permissions?.field_filter && (
           <IconButton
@@ -1379,7 +1332,7 @@ const Th = ({
               <Image
                 src="/img/chevron-down.svg"
                 alt="more"
-                style={{ minWidth: 20 }}
+                style={{minWidth: 20}}
               />
             }
             variant="ghost"
@@ -1391,7 +1344,7 @@ const Th = ({
               if (column?.attributes?.relation_data?.id) {
                 queryClient.refetchQueries([
                   "RELATION_GET_BY_ID",
-                  { tableSlug, id: column?.attributes?.relation_data?.id },
+                  {tableSlug, id: column?.attributes?.relation_data?.id},
                 ]);
               }
             }}
@@ -1505,7 +1458,7 @@ const Th = ({
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{ horizontal: "right" }}
+        anchorOrigin={{horizontal: "right"}}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -1519,15 +1472,13 @@ const Th = ({
               mr: 1,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-          }}
-        >
+          }}>
           {formulaTypes?.map((item) => (
             <div
               style={{
@@ -1538,8 +1489,7 @@ const Th = ({
               }}
               onClick={() => {
                 handleAddSummary(item, "add");
-              }}
-            >
+              }}>
               <div
                 style={{
                   display: "flex",
@@ -1547,15 +1497,13 @@ const Th = ({
                   justifyContent: "space-between",
                   width: "100%",
                 }}
-                className="subMenuItem"
-              >
+                className="subMenuItem">
                 <span
                   style={{
                     marginRight: "5px",
                     width: "20px",
                     height: "20px",
-                  }}
-                >
+                  }}>
                   {item.icon}
                 </span>
                 {item?.label}

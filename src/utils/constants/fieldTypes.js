@@ -27,7 +27,7 @@ export const FIELD_TYPES = {
   FORMULA_FRONTEND: "FORMULA_FRONTEND",
   TEXT: "TEXT",
   INCREMENT_ID: "INCREMENT_ID",
-}
+};
 
 export const fieldTypes = [
   "SINGLE_LINE",

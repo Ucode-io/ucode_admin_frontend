@@ -11,10 +11,6 @@ export const HFDatePicker = (props) => {
     props?.colDef?.onRowClick(data);
   };
 
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   return (
     <Box
       sx={{
@@ -31,7 +27,7 @@ export const HFDatePicker = (props) => {
         value={getValue(value)}
         valueFormat="DD.MM.YYYY"
         rightSection={
-          disabled ? (
+          field?.attributes?.disabled ? (
             <img src="/table-icons/lock.svg" alt="lock" />
           ) : (
             <img src="/table-icons/date.svg" alt="" />
@@ -49,7 +45,7 @@ export const HFDatePicker = (props) => {
         }}
         styles={{input: {background: "inherit", border: "none"}}}
         highlightToday
-        disabled={disabled}
+        disabled={field?.attributes?.disabled}
       />
 
       {/* {props?.colDef?.colIndex === 0 && ( */}
@@ -62,10 +58,6 @@ export const HFDatePicker = (props) => {
 export const HFDateTimePicker = (props) => {
   const {setValue, value, data, colDef} = props;
   const field = colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -86,7 +78,7 @@ export const HFDateTimePicker = (props) => {
         value={getValue(value)}
         valueFormat="DD.MM.YYYY HH:mm"
         rightSection={
-          disabled ? (
+          field?.attributes?.disabled ? (
             <img src="/table-icons/lock.svg" alt="lock" />
           ) : (
             <img src="/table-icons/date.svg" alt="" />
@@ -104,7 +96,7 @@ export const HFDateTimePicker = (props) => {
         }}
         styles={{input: {background: "inherit", border: "none"}}}
         highlightToday
-        disabled={disabled}
+        disabled={field?.attributes?.disabled}
       />
       {/* {props?.colDef?.colIndex === 0 && ( */}
       <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
@@ -114,13 +106,7 @@ export const HFDateTimePicker = (props) => {
 };
 
 export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
-  const {setValue, value, data, colDef} = props;
-
-  const field = colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {field, setValue, value, data} = props;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -145,7 +131,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
         }}
         styles={{input: {background: "inherit", border: "none"}}}
         highlightToday
-        disabled={disabled}
+        disabled={field?.attributes?.disabled}
       />
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} right="30px" />
@@ -155,13 +141,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
 };
 
 export const HFTimePicker = (props) => {
-  const {setValue, value, data, colDef} = props;
-
-  const field = colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {field, setValue, value, data} = props;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -192,7 +172,7 @@ export const HFTimePicker = (props) => {
           }
         }}
         styles={{input: {background: "inherit", border: "none"}}}
-        disabled={disabled}
+        disabled={field?.disabled}
       />
       {/* {props?.colDef?.colIndex === 0 && ( */}
       <RowClickButton onRowClick={onNavigateToDetail} right="30px" />

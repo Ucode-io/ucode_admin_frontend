@@ -1,49 +1,45 @@
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import styles from "./index.module.scss";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {Button, IconButton} from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import Editor from "../components/Editor";
 import useId from "../../../hooks/useId";
-import {useState} from "react";
-import {LoadingButton} from "@mui/lab";
+import { useState } from "react";
+import { LoadingButton } from "@mui/lab";
 import {
   useDocxTemplateByIdQuery,
   useDocxTemplateCreateMutation,
   useDocxTemplateUpdateMutation,
 } from "../../../services/docxTemplateService";
-import {useQueryClient} from "react-query";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import {useForm} from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { showAlert } from "../../../store/alert/alert.thunk";
+import { useForm } from "react-hook-form";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import Variables from "../components/Variables";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {useGetLang} from "../../../hooks/useGetLang";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import { useGetLang } from "../../../hooks/useGetLang";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
+
 
 const breadCrumbItems = [
-  {label: "ЭДО", link: ""},
-  {label: "Список шаблонов", link: ""},
-  {label: "Новый шаблон", link: ""},
+  { label: "ЭДО", link: "" },
+  { label: "Список шаблонов", link: "" },
+  { label: "Новый шаблон", link: "" },
 ];
 
 const DocumentTemplateDetail = () => {
   const editorId = useId();
-  const {appId, tableSlug, templateId} = useParams();
-  const {pathname} = useLocation();
+  const { appId, tableSlug, templateId } = useParams();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [fileUrl, setFileUrl] = useState();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const [btnIsLoading, setBtnIsLoading] = useState(false);
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const lang = useGetLang("Table");
 
   const onSaveClick = () => {
@@ -52,26 +48,26 @@ const DocumentTemplateDetail = () => {
     editorInstance?.downloadAs("docx");
   };
 
-  const {register, getValues, reset} = useForm();
+  const { register, getValues, reset } = useForm();
 
-  const {isLoading} = useDocxTemplateByIdQuery({
+  const { isLoading } = useDocxTemplateByIdQuery({
     id: templateId,
     querySettings: {
       enabled: Boolean(templateId),
       cacheTime: false,
       onSuccess: (res) => {
-        reset({title: res?.title});
+        reset({ title: res?.title });
         setFileUrl(res.file_url);
       },
     },
   });
 
-  const {mutate: createTemplate} = useDocxTemplateCreateMutation({
+  const { mutate: createTemplate } = useDocxTemplateCreateMutation({
     onSuccess: (res) => {
       queryClient.removeQueries("DOCX_TEMPLATES");
       navigate(
-        `/main/${appId}/object/${tableSlug}/templates?templateId=${res?.id}&menuId=${searchParams.get("menuId")}&id=${searchParams.get("id")}`,
-        {replace: true}
+        `/main/${appId}/object/${tableSlug}/templates?templateId=${res?.id}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
+        { replace: true }
       );
       showAlert("Successfully created", "success");
     },
@@ -80,12 +76,12 @@ const DocumentTemplateDetail = () => {
     },
   });
 
-  const {mutate: updateTemplate} = useDocxTemplateUpdateMutation({
+  const { mutate: updateTemplate } = useDocxTemplateUpdateMutation({
     onSuccess: () => {
       queryClient.removeQueries("DOCX_TEMPLATES");
       navigate(
-        `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get("menuId")}&id=${searchParams.get("id")}`,
-        {replace: true}
+        `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get('menuId')}&id=${searchParams.get('id')}`,
+        { replace: true }
       );
       showAlert("Successfully updated", "success");
     },
@@ -108,7 +104,7 @@ const DocumentTemplateDetail = () => {
     else createTemplate(data);
   };
 
-  if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
+  if (isLoading) return <RingLoaderWithWrapper style={{ height: "100vh" }} />;
 
   return (
     <div>
@@ -120,10 +116,13 @@ const DocumentTemplateDetail = () => {
         {breadCrumbItems?.map((item, index) => (
           <>
             <div className={styles.arrowIcon}>
-              <KeyboardArrowRightIcon sx={{color: "#D0D5DD", height: "19px"}} />
+              <KeyboardArrowRightIcon
+                sx={{ color: "#D0D5DD", height: "19px" }}
+              />
             </div>
             <div
-              className={`${styles.item} ${index === breadCrumbItems?.length - 1 ? styles.active : ""}`}>
+              className={`${styles.item} ${index === breadCrumbItems?.length - 1 ? styles.active : ""}`}
+            >
               {item.label}
             </div>
           </>
@@ -136,10 +135,11 @@ const DocumentTemplateDetail = () => {
             onClick={() =>
               navigate(
                 `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get("menuId")}&id=${searchParams.get("id")}`,
-                {replace: true}
+                { replace: true }
               )
             }
-            className={styles.backButton}>
+            className={styles.backButton}
+          >
             <ArrowBackIcon />
           </IconButton>
           <input
@@ -154,7 +154,8 @@ const DocumentTemplateDetail = () => {
             onClick={onSaveClick}
             variant="contained"
             loading={btnIsLoading}
-            className={styles.primaryButton}>
+            className={styles.primaryButton}
+          >
             {generateLangaugeText(lang, i18n.lang, "Save") || "Save"}
           </LoadingButton>
           <Button
@@ -163,9 +164,10 @@ const DocumentTemplateDetail = () => {
             onClick={() =>
               navigate(
                 `/main/${appId}/object/${tableSlug}/templates?templateId=${templateId}&menuId=${searchParams.get("menuId")}&id=${searchParams.get("id")}`,
-                {replace: true}
+                { replace: true }
               )
-            }>
+            }
+          >
             {generateLangaugeText(lang, i18n.lang, "Cancel") || "Cancel"}
           </Button>
         </div>

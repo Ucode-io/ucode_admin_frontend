@@ -1,86 +1,75 @@
-import {
-  Box,
-  Button,
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  Flex,
-} from "@chakra-ui/react";
-import {store} from "../../../store";
+import {Box, Drawer, DrawerContent, Spinner} from "@chakra-ui/react";
+import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
-import {Check} from "@mui/icons-material";
-import {useQueryClient} from "react-query";
-import {Menu, MenuItem} from "@mui/material";
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import useTabRouter from "../../../hooks/useTabRouter";
-import DrawerFormDetailPage from "./DrawerFormDetailPage";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
-import constructorObjectService from "../../../services/constructorObjectService";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import layoutService from "../../../services/layoutService";
-import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {useTranslation} from "react-i18next";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import DrawerRelationTable from "../ModalDetailPage/DrawerRelationTable";
-import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import useTabRouter from "../../../hooks/useTabRouter";
+import constructorObjectService from "../../../services/constructorObjectService";
+import layoutService from "../../../services/layoutService";
+import menuService from "../../../services/menuService";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {sortSections} from "../../../utils/sectionsOrderNumber";
+import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
+import DrawerObjectsPage from "./DrawerObjectsPage";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 function DrawerDetailPage({
-  open,
+  view,
   layout,
-  refetch = () => {},
-  setOpen = () => {},
   menuItem,
-  fieldsMap,
   selectedRow,
   dateInfo = {},
-  selectedViewType,
   fullScreen = false,
   projectInfo,
   defaultValue,
-  setLayoutType = () => {},
+  selectedViewType,
   setFullScreen = () => {},
-  navigateToEditPage = () => {},
   setSelectedViewType = () => {},
   modal,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { state = {} } = useLocation();
+  const {state = {}} = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
-  const handleClose = () => setOpen(false);
-  const { navigateToForm } = useTabRouter();
+  const viewsPath = useSelector((state) => state.groupField.viewsList);
+  const open = useSelector((state) => state?.drawer?.openDrawer);
+  const selectedV =
+    viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
+  const handleClose = () => {
+    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
+    dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
+    dispatch(detailDrawerActions.setDrawerTabIndex(0));
+    dispatch(detailDrawerActions.closeDrawer());
+    updateQueryWithoutRerender("p", null);
+  };
+
+  const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
-
-  const { id: idFromParam, tableSlug, appId } = useParams();
-
-  const id = useMemo(() => {
-    return idFromParam ?? selectedRow?.guid;
-  }, [idFromParam, selectedRow]);
-
+  const {menuId, tableSlug: tableFromParams} = useParams();
+  const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
-  const [tableRelations, setTableRelations] = useState([]);
+
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [data, setData] = useState({});
-  const [searchParams, setSearchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
-  const permissions = useSelector(
-    (state) => state?.permissions?.permissions?.[tableSlug]
-  );
+
+  const tableSlug =
+    tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
+  const [selectedView, setSelectedView] = useState(null);
+
+  const query = new URLSearchParams(window.location.search);
+  const viewId = query.get("v");
+  const itemId = query.get("p");
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -90,19 +79,28 @@ function DrawerDetailPage({
     return savedWidth ? parseInt(savedWidth, 10) : 650;
   });
 
+  const rootForm = useForm({
+    ...state,
+    ...dateInfo,
+    invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
+  });
+
   const getAllData = async () => {
     setLoader(true);
     const getLayout = layoutService.getLayout(tableSlug, menuId, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+
+    const getFormData = menuService.getFieldsTableDataById(
+      menuId,
+      viewId,
+      tableSlug,
+      itemId
+    );
 
     try {
-      const [{ data = {} }, layout] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
 
       const layout1 = {
         ...layout,
@@ -155,9 +153,7 @@ function DrawerDetailPage({
         }))
       );
 
-      if (!selectedTab?.relation_id) {
-        reset(data?.response ?? {});
-      }
+      rootForm.reset(data?.response ?? {});
       setSelectTab(relations[selectedTabIndex]);
 
       setLoader(false);
@@ -224,7 +220,7 @@ function DrawerDetailPage({
               : relation.table_from?.slug,
         }))
       );
-      if (!id) {
+      if (!menuId) {
         setLoader(false);
       }
       setSelectTab(relations[selectedTabIndex]);
@@ -238,7 +234,7 @@ function DrawerDetailPage({
     watch,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
     setValue: setFormValue,
     getValues,
   } = useForm({
@@ -253,11 +249,11 @@ function DrawerDetailPage({
     if (defaultValue) {
       if (Array.isArray(defaultValue)) {
         defaultValue.forEach((item) => {
-          setFormValue(item?.field, item?.value);
+          rootForm.setValue(item?.field, item?.value);
         });
       } else {
         if (defaultValue?.field && defaultValue?.value) {
-          setFormValue(defaultValue?.field, defaultValue?.value);
+          rootForm.setValue(defaultValue?.field, defaultValue?.value);
         }
       }
     }
@@ -267,33 +263,28 @@ function DrawerDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
         handleClose();
-        queryClient.refetchQueries(
-          "GET_OBJECTS_LIST_WITH_RELATIONS",
-          tableSlug,
-          {
-            table_slug: tableSlug,
-          }
-        );
+        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
+          table_slug: tableSlug,
+        });
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
         setBtnLoader(false);
-        refetch();
       });
   };
   const create = (data) => {
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, { data })
+      .create(tableSlug, {data})
       .then((res) => {
         updateLayout();
-        setOpen(false);
+        dispatch(detailDrawerActions.closeDrawer());
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
@@ -326,7 +317,7 @@ function DrawerDetailPage({
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
         setBtnLoader(false);
-        refetch();
+        rootForm.refetch();
       });
   };
 
@@ -337,7 +328,7 @@ function DrawerDetailPage({
             ...tab,
             attributes: {
               ...tab?.attributes,
-              layout_heading: watch("attributes.layout_heading"),
+              layout_heading: rootForm.watch("attributes.layout_heading"),
             },
           }
         : tab
@@ -352,7 +343,7 @@ function DrawerDetailPage({
   }
 
   const onSubmit = (data) => {
-    if (id) {
+    if (itemId) {
       update(data);
     } else {
       create(data);
@@ -360,9 +351,10 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    if (id) getAllData();
-    else getFields();
-  }, [id]);
+    if (Boolean(itemId) && selectedView?.type === "SECTION") {
+      getAllData();
+    } else getFields();
+  }, [itemId, selectedView, viewsPath?.length]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -407,337 +399,66 @@ function DrawerDetailPage({
     }
   }, [drawerRef.current]);
 
+  const setViews = () => {};
+
   return (
-    <Drawer isOpen={open} placement="right" onClose={handleClose} size="md">
-      <Tabs selectedIndex={selectedTabIndex}>
-        <Box position={"relative"} zIndex={9}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <DrawerContent
-              boxShadow="
-        rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
-        rgba(15, 15, 15, 0.03) 0px 3px 6px,
-        rgba(15, 15, 15, 0.06) 0px 9px 24px
-      "
-              zIndex={9}
-              ref={drawerRef}
-              bg={"white"}
-              resize={"both"}
-              position={"relative"}
-            >
-              <DrawerHeader
-                px="12px"
-                bg="white"
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                pr={6}
-              >
-                <Flex h={"44px"} w={"88%"} align="center">
-                  <Flex alignItems={"center"}>
-                    <Box
-                      onClick={handleClose}
-                      cursor="pointer"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      width="24px"
-                      height="24px"
-                    >
-                      <KeyboardDoubleArrowRightIcon
-                        style={{ color: "rgba(55, 53, 47, 0.45)" }}
-                        w={6}
-                        h={6}
-                      />
-                    </Box>
-                    {!layout?.is_visible_section && (
-                      <>
-                        {" "}
-                        <Box
-                          sx={{
-                            width: "1px",
-                            height: "14px",
-                            margin: "0 6px",
-                            background: "rgba(55, 53, 47, 0.16)",
-                          }}
-                        />
-                        <Box>
-                          <ScreenOptions
-                            selectedViewType={selectedViewType}
-                            setSelectedViewType={setSelectedViewType}
-                            setLayoutType={setLayoutType}
-                            selectedRow={selectedRow}
-                            navigateToEditPage={navigateToEditPage}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            width: "1px",
-                            height: "14px",
-                            margin: "0 6px",
-                            background: "rgba(55, 53, 47, 0.16)",
-                          }}
-                        />
-                        {Boolean(permissions?.settings) && (
-                          <>
-                            <Button
-                              onClick={() =>
-                                navigate(
-                                  `/main/${appId}/layout-settings/${tableSlug}/${id}`,
-                                  {
-                                    state: {
-                                      ...selectedRow,
-                                    },
-                                  }
-                                )
-                              }
-                              w={18}
-                              h={18}
-                              display={"flex"}
-                              alignItems={"center"}
-                              variant="outlined"
-                            >
-                              <SpaceDashboardIcon
-                                style={{ color: "#808080" }}
-                              />
-                            </Button>
-                            <Box
-                              sx={{
-                                width: "1px",
-                                height: "14px",
-                                margin: "0 6px",
-                                background: "rgba(55, 53, 47, 0.16)",
-                              }}
-                            />
-                          </>
-                        )}
-                      </>
-                    )}
-                  </Flex>
-
-                  {!layout?.is_visible_section && (
-                    <TabList
-                      className={"scrollbarNone"}
-                      style={{
-                        borderBottom: "none",
-                        overflowX: "auto",
-                        display: "flex",
-                        width: "80%",
-                      }}
-                    >
-                      {data?.tabs?.map((el, index) => (
-                        <Tab
-                          onClick={(e) => {
-                            setSelectTab(el);
-                            setSelectedTabIndex(index);
-                          }}
-                          key={index}
-                          style={{
-                            whiteSpace: "nowrap",
-                            height: "24px",
-                            padding: "0 10px",
-                            fontSize: "11px",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {el?.type === "relation"
-                            ? el?.relation?.table_from?.label
-                            : el?.attributes?.[`label_to_${i18n?.language}`] ||
-                              el?.label}
-                        </Tab>
-                      ))}
-                    </TabList>
-                  )}
-                </Flex>
-
-                {selectedTabIndex === 0 && (
-                  <Button
-                    isLoading={btnLoader}
-                    disabled={btnLoader}
-                    type="submit"
-                    rounded={4}
-                    bg={"#007aff"}
-                    color={"#fff"}
-                    w={100}
-                    h={10}
-                  >
-                    Save
-                  </Button>
-                )}
-              </DrawerHeader>
-
-              <TabPanel>
-                <DrawerBody
-                  position={"relative"}
-                  p="0px 50px"
-                  overflow={"auto"}
-                >
-                  <DrawerFormDetailPage
-                    projectInfo={projectInfo}
-                    handleMouseDown={handleMouseDown}
-                    getValues={getValues}
-                    setFormValue={setFormValue}
-                    layout={layout}
-                    selectedTab={selectedTab}
-                    selectedTabIndex={selectedTabIndex}
-                    menuItem={menuItem}
-                    data={data}
-                    selectedRow={selectedRow}
-                    handleClose={handleClose}
-                    modal={true}
-                    dateInfo={dateInfo}
-                    setFullScreen={setFullScreen}
-                    fullScreen={fullScreen}
-                    fieldsMap={fieldsMap}
-                    control={control}
-                    watch={watch}
-                    getAllData={getAllData}
-                    errors={errors}
-                  />
-                </DrawerBody>
-              </TabPanel>
-              {data?.tabs
-                ?.filter((tab) => tab?.type !== "section")
-                .map(() => (
-                  <TabPanel>
-                    <DrawerBody p="0px 0px" overflow={"auto"}>
-                      <DrawerRelationTable
-                        selectedTab={selectedTab}
-                        getValues={getValues}
-                        handleMouseDown={handleMouseDown}
-                        getAllData={getAllData}
-                        selectedTabIndex={selectedTabIndex}
-                        setSelectedTabIndex={setSelectedTabIndex}
-                        relations={tableRelations}
-                        control={control}
-                        handleSubmit={handleSubmit}
-                        onSubmit={onSubmit}
-                        reset={reset}
-                        setFormValue={setFormValue}
-                        tableSlug={tableSlug}
-                        watch={watch}
-                        loader={loader}
-                        setSelectTab={setSelectTab}
-                        errors={errors}
-                        relatedTable={
-                          tableRelations[selectedTabIndex]?.relatedTable
-                        }
-                        id={id}
-                        fieldsMap={fieldsMap}
-                        data={data}
-                        setData={setData}
-                      />
-                    </DrawerBody>
-                  </TabPanel>
-                ))}
-            </DrawerContent>
-          </form>
+    <Drawer isOpen={open} placement="right" onClose={handleClose}>
+      <DrawerContent
+        ref={drawerRef}
+        bg="white"
+        position="relative"
+        overflow={"hidden"}
+        boxShadow="
+    rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
+    rgba(15, 15, 15, 0.03) 0px 3px 6px,
+    rgba(15, 15, 15, 0.06) 0px 9px 24px
+  "
+        style={{
+          width: `${drawerWidth}px`,
+          maxWidth: "90vw",
+          transition: "width 0.4s ease",
+          overflow: "hidden",
+          background: "#fff",
+        }}>
+        <Box zIndex={9}>
+          <DrawerObjectsPage
+            open={open}
+            onSubmit={onSubmit}
+            selectedView={selectedView}
+            setSelectedView={setSelectedView}
+            projectInfo={projectInfo}
+            handleMouseDown={handleMouseDown}
+            layout={layout}
+            selectedTab={layout?.tabs?.[0]}
+            menuItem={menuItem}
+            data={data}
+            selectedRow={selectedRow}
+            handleClose={handleClose}
+            modal={true}
+            dateInfo={dateInfo}
+            setFullScreen={setFullScreen}
+            fullScreen={fullScreen}
+            view={view}
+            setViews={setViews}
+            rootForm={rootForm}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
         </Box>
-      </Tabs>
+        <Box
+          onMouseDown={handleMouseDown}
+          sx={{
+            position: "absolute",
+            height: "calc(100vh - 50px)",
+            width: "3px",
+            left: 0,
+            top: 0,
+            cursor: "col-resize",
+          }}
+        />
+      </DrawerContent>
     </Drawer>
   );
 }
-
-const ScreenOptions = ({
-  selectedViewType,
-  selectedRow,
-  setSelectedViewType = () => {},
-  setLayoutType = () => {},
-  navigateToEditPage = () => {},
-}) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const {tableSlug, id} = useParams();
-  const {navigateToForm} = useTabRouter();
-  const [searchParams] = useSearchParams();
-
-  const options = [
-    {label: "Side peek", icon: "SidePeek"},
-    {label: "Center peek", icon: "CenterPeek"},
-    {label: "Full page", icon: "FullPage"},
-  ];
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = (option) => {
-    localStorage.setItem("detailPage", option?.icon);
-    if (option?.icon === "FullPage") {
-      setLayoutType("SimpleLayout");
-      if (selectedRow?.guid) {
-        navigateToEditPage(selectedRow);
-      } else
-        navigateToForm(tableSlug, "CREATE", {}, {}, searchParams.get("menuId"));
-    }
-
-    if (option) setSelectedViewType(option?.icon);
-    setAnchorEl(null);
-  };
-
-  return (
-    <Box>
-      <Button onClick={handleClick} variant="outlined">
-        <span>{getColumnFieldIcon(selectedViewType)}</span>
-      </Button>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "220px", padding: "4px 0"}}>
-          {options.map((option) => (
-            <MenuItem
-              style={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: "6px",
-                color: "#37352f",
-              }}
-              key={option.label}
-              onClick={() => handleClose(option)}>
-              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
-                <span>{getColumnFieldIcon(option)}</span>
-                {option.label}
-              </Box>
-
-              <Box>{option.icon === selectedViewType ? <Check /> : ""}</Box>
-            </MenuItem>
-          ))}
-        </Box>
-      </Menu>
-    </Box>
-  );
-};
-
-export const getColumnFieldIcon = (column) => {
-  if (column === "SidePeek") {
-    return (
-      <img
-        src="/img/drawerPeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-  } else if (column === "CenterPeek") {
-    return (
-      <img
-        src="/img/centerPeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-  } else
-    return (
-      <img
-        src="/img/fullpagePeek.svg"
-        width={"18px"}
-        height={"18px"}
-        alt="drawer svg"
-      />
-    );
-};
 
 export default DrawerDetailPage;

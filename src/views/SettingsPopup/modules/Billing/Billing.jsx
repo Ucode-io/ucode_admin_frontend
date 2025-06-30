@@ -1,3 +1,8 @@
+import {
+  AccountBalance,
+  AttachMoney,
+  HourglassBottom,
+} from "@mui/icons-material";
 import {Box, Card, CardContent, Grid, Modal, Typography} from "@mui/material";
 import {useBillingProps} from "./useBillingProps";
 import {numberWithSpaces} from "@/utils/formatNumbers";
@@ -43,8 +48,9 @@ export const Billing = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                  {/* <AccountBalance color="primary" fontSize="large" /> */}
                   <img
-                    src="/img/bank.svg"
+                    src="/public/img/bank.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""
@@ -80,8 +86,16 @@ export const Billing = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                  {/* <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: "700",
+                      color: "#18c19d",
+                    }}>
+                    UZS
+                  </Typography> */}
                   <img
-                    src="/img/cash.svg"
+                    src="/public/img/cash.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""
@@ -123,8 +137,9 @@ export const Billing = () => {
                   paddingBottom: "16px !important",
                 }}>
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                  {/* <HourglassBottom color="warning" fontSize="large" /> */}
                   <img
-                    src="/img/time.svg"
+                    src="/public/img/time.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""

@@ -3,13 +3,7 @@ import RowClickButton from "../RowClickButton";
 import MultiImageUploadCellEditor from "./ImageComponents/MultiImageUploadCellEditor";
 
 const HFMultiImageCellEditor = (props) => {
-  const {setValue, value, data, colDef} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {field, setValue, value, data, colDef} = props;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -27,11 +21,10 @@ const HFMultiImageCellEditor = (props) => {
         },
       }}>
       <MultiImageUploadCellEditor
-        isTableView={true}
         value={value ?? []}
         onChange={setValue}
         field={field}
-        disabled={disabled}
+        disabled={field?.attributes?.disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>

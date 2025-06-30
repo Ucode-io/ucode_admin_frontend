@@ -139,7 +139,7 @@ export const useMicroFrontendDetailProps = () => {
       .getById(microfrontendId)
       .then((res) => {
         mainForm.reset(res);
-        mainForm.setValue("resource_id", res?.resource || "ucode_gitlab");
+        mainForm.setValue("resource_id", res?.resource);
       })
       .finally(() => setLoader(false));
   };

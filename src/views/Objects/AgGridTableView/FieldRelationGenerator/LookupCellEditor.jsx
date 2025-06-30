@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useQuery} from "react-query";
 import Select from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
@@ -12,7 +12,7 @@ import RowClickButton from "../RowClickButton";
 import {pageToOffset} from "../../../../utils/pageToOffset";
 import useDebounce from "../../../../hooks/useDebounce";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const customStyles = {
   control: (provided) => ({
@@ -38,7 +38,7 @@ const customStyles = {
     ...provided,
     margin: 0,
     padding: 0,
-    height: "30px",
+    height: "100%",
     outline: "none",
   }),
   placeholder: (provided) => ({
@@ -50,10 +50,10 @@ const customStyles = {
 };
 
 const LookupCellEditor = (props) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const [options, setOptions] = useState([]);
-  const { field, setValue, data, value } = props;
+  const {field, setValue, data, value} = props;
   const [page, setPage] = useState(1);
   const [localValue, setLocalValue] = useState(
     data?.[`${field?.slug}_data`] ?? null
@@ -63,50 +63,33 @@ const LookupCellEditor = (props) => {
     !field?.attributes?.field_permission?.edit_permission;
   const autoFilters = field?.attributes?.auto_filters;
 
-  const { tableSlug } = useParams();
-  const { navigateToForm } = useTabRouter();
+  const {tableSlug} = useParams();
+  const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const [inputValue, setInputValue] = useState(null);
-  const [autoFiltersValue, setAutoFiltersValue] = useState(null);
-  const [searchText, setSearchText] = useState("");
 
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
-  const { refetch } = useQuery(
+  const {refetch} = useQuery(
     ["GET_OBJECT_LIST", field?.table_slug, autoFiltersValue, page, searchText],
     () => {
       if (!field?.table_slug) return null;
       return constructorObjectService.getListV2(field?.table_slug, {
         data: {
-          view_fields: field?.view_fields?.map((f) => f?.slug),
+          view_fields: field?.view_fields?.map((f) => f.slug),
           limit: 10,
-          search: searchText,
-          offset: pageToOffset(page, 10),
+          offset: 0,
           with_relations: false,
-          ...autoFiltersValue,
         },
       });
     },
     {
-      enabled: Boolean(page > 1) || Boolean(searchText),
+      enabled: false,
       select: (res) => res?.data?.response ?? [],
       onSuccess: (fetchedOptions) => {
-        if (Boolean(searchText)) {
-          setOptions(fetchedOptions);
-        } else if (Boolean(field?.attributes?.auto_filters?.[0]?.field_from)) {
-          setOptions(fetchedOptions);
-        } else
-          setOptions((prevOptions) => [
-            ...(prevOptions ?? []),
-            ...(fetchedOptions ?? []),
-          ]);
+        setOptions((prevOptions) => [
+          ...(prevOptions ?? []),
+          ...(fetchedOptions ?? []),
+        ]);
       },
     }
   );
@@ -124,54 +107,23 @@ const LookupCellEditor = (props) => {
 
   const handleChange = (selectedOption) => {
     setInputValue(selectedOption);
+    setValue(selectedOption?.guid);
     setLocalValue(selectedOption);
     setValue(selectedOption?.guid || null);
   };
-
-  const calculateAutoFilter = (dataVal) => {
-    const result = {};
-    autoFilters?.forEach((filter) => {
-      const fromValue = dataVal?.[filter.field_from];
-      if (filter.field_to && fromValue !== undefined) {
-        result[filter.field_to] = fromValue;
-      }
-    });
-
-    setOptions([]);
-    setAutoFiltersValue(result);
-  };
-
-  const onMenuOpen = () => {
-    if (Boolean(autoFilters?.[0]?.field_from)) {
-      calculateAutoFilter(props?.node?.data);
-    } else {
-      refetch();
-    }
-  };
-
-  useEffect(() => {
-    if (
-      autoFilters?.length >= 1 &&
-      autoFiltersValue &&
-      Object.keys(autoFiltersValue).length > 0
-    ) {
-      refetch();
-    }
-  }, [autoFiltersValue]);
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
         className="select_icon"
-        style={{ display: "flex", alignItems: "center" }}
+        style={{display: "flex", alignItems: "center"}}
         onClick={() => {
           refetch();
-        }}
-      >
+        }}>
         {props.children}
-        {!disabled && (
+        {!field?.attributes?.disabled && (
           <Box
-            sx={{ position: "relative", zIndex: 99999, height: "22px" }}
+            sx={{position: "relative", zIndex: 99999, height: "22px"}}
             onMouseDown={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -179,14 +131,14 @@ const LookupCellEditor = (props) => {
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
-            }}
-          >
+            }}>
             <LaunchIcon
               style={{
                 fontSize: "18px",
                 marginLeft: "5px",
                 fontWeight: "700",
                 cursor: "pointer",
+                marginTop: "6px",
               }}
             />
           </Box>
@@ -194,8 +146,6 @@ const LookupCellEditor = (props) => {
       </div>
     </components.SingleValue>
   );
-
-  const inputChangeHandler = useDebounce((val) => setSearchText(val), 500);
 
   return (
     <MaterialUIProvider>
@@ -205,12 +155,9 @@ const LookupCellEditor = (props) => {
           // height: "100%",
           width: "100%",
           overflow: "hidden",
-        }}
-      >
+        }}>
         <Select
-          onInputChange={inputChangeHandler}
-          onMenuScrollToBottom={loadMoreItems}
-          disabled={disabled}
+          disabled={field?.attributes?.disabled}
           isClearable={true}
           placeholder="Select..."
           menuPortalTarget={document.body}
@@ -225,7 +172,9 @@ const LookupCellEditor = (props) => {
             SingleValue: CustomSingleValue,
           }}
           onChange={handleChange}
-          onMenuOpen={onMenuOpen}
+          onMenuOpen={() => {
+            refetch();
+          }}
         />
       </Box>
       {props?.colDef?.colIndex === 0 && (

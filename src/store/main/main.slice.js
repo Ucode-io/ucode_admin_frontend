@@ -9,7 +9,6 @@ export const {actions: mainActions, reducer: mainReducer} = createSlice({
     sidebarHighlightedMenu: null,
     sidebarHighlightedAction: null,
     tableViewFiltersOpen: true,
-    timelineSidebarWidth: 200,
   },
   reducers: {
     setSettingsSidebarIsOpen: (state, {payload}) => {
@@ -29,9 +28,6 @@ export const {actions: mainActions, reducer: mainReducer} = createSlice({
     },
     setTableViewFiltersOpen: (state, {payload}) => {
       state.tableViewFiltersOpen = payload;
-    },
-    setTimelineSidebarWidth: (state, {payload}) => {
-      state.timelineSidebarWidth = payload;
     }
   },
 });

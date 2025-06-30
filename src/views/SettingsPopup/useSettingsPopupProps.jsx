@@ -66,22 +66,8 @@ const permissionFolder = {
   },
 };
 
-const profileSearchParamsList = [
-  "tab",
-  "profileMenuId",
-  "activeTab",
-  "permissionId",
-  "envId",
-  "invite",
-  "roleId",
-  "apiKeyId",
-  "view",
-  "functionId",
-  "microfrontendId",
-];
-
-export const useSettingsPopupProps = ({ onClose }) => {
-  const { t, i18n } = useTranslation();
+export const useSettingsPopupProps = ({onClose}) => {
+  const {t, i18n} = useTranslation();
 
   const userInfo = useSelector((state) => state?.auth?.userInfo);
   const globalPermissions = useSelector(
@@ -140,7 +126,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
     }
   );
 
-  const { isLoading: loading } = useMenuListQuery({
+  const {isLoading: loading} = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
@@ -290,36 +276,27 @@ export const useSettingsPopupProps = ({ onClose }) => {
     tabs.splice(1);
   }
 
-  const clearProfileSearchParams = () => {
-    profileSearchParamsList.forEach((param) => {
-      searchParams.delete(param);
-      setSearchParams(searchParams);
-    });
-  };
-
   const handleClose = () => {
-    clearProfileSearchParams();
-    setActiveTab("profile");
     onClose();
+    setSearchParams({});
+    setActiveTab("profile");
   };
 
   const handleChangeTab = (key) => {
-    clearProfileSearchParams();
+    setSearchParams({});
     if (key !== activeTab) {
       setActiveTab(key);
     }
   };
 
   const handlePermissionClick = (element) => {
-    clearProfileSearchParams();
     setActiveTab(TAB_COMPONENTS?.PERMISSIONS.PERMISSIONS);
     updateSearchParam("permissionId", element?.guid);
   };
 
   const handleFilesClick = (element) => {
-    clearProfileSearchParams();
     setActiveTab(TAB_COMPONENTS?.FILES?.FILES);
-    updateSearchParam("profileMenuId", element?.id);
+    updateSearchParam("menuId", element?.id);
   };
 
   const handleOpenClientTypeModal = () => {
@@ -373,7 +350,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
       activityLogsDetail: <ActivityLogsDetail />,
     },
     models: {
-      models: <Models onClose={onClose} />,
+      models: <Models />,
       connectionDetail: <AddConnectionDetail />,
     },
     functions: {

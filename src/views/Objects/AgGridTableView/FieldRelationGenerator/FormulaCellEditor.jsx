@@ -15,15 +15,8 @@ import RowClickButton from "../RowClickButton";
 const parser = new Parser();
 
 const FormulaCellEditor = (props) => {
-  let {setValue, value, data} = props;
+  let {field, setValue, value, data} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   const formula = field?.attributes?.formula ?? "";
 
   const updateValue = () => {
@@ -76,7 +69,7 @@ const FormulaCellEditor = (props) => {
           isNewTableView && updateObject();
         }}
         fullWidth
-        disabled={disabled}
+        disabled={field?.disabled}
         sx={{
           backgroundColor: "transparent",
           "& .MuiInputBase-root": {
@@ -91,8 +84,8 @@ const FormulaCellEditor = (props) => {
         }}
         InputProps={{
           // inputProps: {tabIndex},
-          readOnly: disabled,
-          style: disabled
+          readOnly: field?.disabled,
+          style: field?.disabled
             ? {
                 background: "inherit",
                 paddingRight: "0",
@@ -117,7 +110,7 @@ const FormulaCellEditor = (props) => {
                     <FunctionsIcon />
                   </IconButton>
                 </Tooltip>
-                {disabled && (
+                {field?.disabled && (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
                       <Lock style={{fontSize: "20px"}} />

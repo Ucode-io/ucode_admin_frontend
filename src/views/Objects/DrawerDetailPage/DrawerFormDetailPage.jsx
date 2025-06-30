@@ -11,20 +11,22 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {isEqual} from "lodash";
 import {Controller} from "react-hook-form";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import layoutService from "../../../services/layoutService";
-import { applyDrag } from "../../../utils/applyDrag";
+import {applyDrag} from "../../../utils/applyDrag";
 import "./style.scss";
-import { store } from "../../../store";
-import { useSelector } from "react-redux";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {store} from "../../../store";
+import {useSelector} from "react-redux";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
-import { MicroFrontendPopup } from "../../../components/MicroFrontendPopup";
+import {MicroFrontendPopup} from "../../../components/MicroFrontendPopup";
 import useSearchParams from "../../../hooks/useSearchParams";
 
 function DrawerFormDetailPage({
-  control,
-  watch,
+  view,
+  modal,
   data,
   layout,
   fieldsMap,
@@ -33,12 +35,16 @@ function DrawerFormDetailPage({
   selectedTabIndex = 0,
   handleMouseDown,
   projectInfo,
-  setFormValue = () => {},
-  reset = () => {},
-  errors,
+  rootForm,
+  tableInfo,
+  selectedViewType,
+  setLayoutType = () => {},
+  navigateToEditPage = () => {},
+  setSelectedViewType = () => {},
 }) {
-  const { i18n } = useTranslation();
-  const { tableSlug } = useParams();
+  const navigate = useNavigate();
+  const {i18n} = useTranslation();
+  const {tableSlug, menuId} = useParams();
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
@@ -96,20 +102,20 @@ function DrawerFormDetailPage({
 
   useEffect(() => {
     if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
-      setFormValue(
+      rootForm.setValue(
         selectedRow?.FROM_DATE_SLUG,
         selectedRow?.[selectedRow?.FROM_DATE_SLUG]
       );
-      setFormValue(
+      rootForm.setValue(
         selectedRow?.TO_DATE_SLUG,
         selectedRow?.[selectedRow?.TO_DATE_SLUG]
       );
     }
-    setFormValue(
+    rootForm.setValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
     );
-  }, [selectedTab, selectedRow]);
+  }, [selectedRow]);
 
   useEffect(() => {
     if (!data?.tabs?.[0]?.sections) return;
@@ -117,14 +123,15 @@ function DrawerFormDetailPage({
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
       fields: section?.fields?.filter(
-        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
+        (el) =>
+          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id
       ),
     }));
 
     setSections((prevSections) =>
       isEqual(prevSections, updatedSections) ? prevSections : updatedSections
     );
-  }, [data, watch("attributes.layout_heading")]);
+  }, [data, rootForm.watch("attributes.layout_heading")]);
 
   const getFieldLanguageLabel = (el) => {
     if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
@@ -148,11 +155,7 @@ function DrawerFormDetailPage({
         return allFields.push(field);
       });
     });
-    return !!allFields.find((field) =>
-      field?.enable_multilanguage
-        ? field?.enable_multilanguage
-        : field?.attributes?.enable_multilanguage === true
-    );
+    return !!allFields.find((field) => field?.enable_multilanguage === true);
   }, [selectedTab]);
 
   useEffect(() => {
@@ -180,8 +183,6 @@ function DrawerFormDetailPage({
   const [microFrontendId, setMicroFrontendId] = useState("");
   const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
 
-  const navigate = useNavigate();
-
   const handleNavigateToMicroFrontend = (id) => {
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
@@ -196,35 +197,77 @@ function DrawerFormDetailPage({
   };
 
   return (
-    <>
+    <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{ height: "calc(100vh - 44px)" }}
+        sx={{height: "calc(100vh - 44px)"}}
         pb={"10px"}
         overflow={"auto"}
         display="flex"
-        flexDirection="column"
-      >
+        flexDirection="column">
         {isMultiLanguage && (
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
                 className={activeLang === lang?.short_name && "active"}
-                onClick={() => setActiveLang(lang?.short_name)}
-              >
+                onClick={() => setActiveLang(lang?.short_name)}>
                 {lang?.name}
               </Button>
             ))}
           </div>
         )}
 
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "10px",
+          }}>
+          <ScreenOptions
+            projectInfo={projectInfo}
+            view={view}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            setLayoutType={setLayoutType}
+            selectedRow={selectedRow}
+            navigateToEditPage={navigateToEditPage}
+          />
+          <Box
+            sx={{
+              marginLeft: "10px",
+              height: "18px",
+            }}>
+            <Box
+              onClick={() =>
+                navigate(`/${menuId}/customize/${tableInfo?.id}`, {
+                  state: {
+                    ...data,
+                    tableSlug,
+                  },
+                })
+              }
+              sx={{
+                cursor: "pointer",
+                alignItems: "center",
+                gap: "5px",
+                color: "rgba(55, 53, 47, 0.5)",
+                "&:hover": {
+                  background: "rgba(55, 53, 47, 0.06)",
+                },
+              }}>
+              <SpaceDashboardIcon />
+              {/* Customize layout */}
+            </Box>
+          </Box>
+        </Box>
+
         <HeadingOptions
           selectedRow={selectedRow}
-          watch={watch}
-          control={control}
+          watch={rootForm.watch}
+          control={rootForm.control}
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
-          setFormValue={setFormValue}
+          setFormValue={rootForm.setValue}
         />
 
         {sections?.map((section, secIndex) => (
@@ -232,8 +275,7 @@ function DrawerFormDetailPage({
             sx={{
               margin: "8px 0 0 0",
             }}
-            key={secIndex}
-          >
+            key={secIndex}>
             <Container
               behaviour="contain"
               style={{
@@ -244,24 +286,21 @@ function DrawerFormDetailPage({
               dragHandleSelector=".drag-handle"
               dragClass="drag-item"
               lockAxis="y"
-              onDrop={(dropResult) => onDrop(secIndex, dropResult)}
-            >
+              onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
               {section?.fields
                 ?.filter((el) => filterFields(el))
                 .map((field, fieldIndex) => (
                   <Draggable
                     className={Boolean(defaultAdmin) ? "drag-handle" : ""}
-                    key={field?.id ?? fieldIndex}
-                  >
+                    key={field?.id ?? fieldIndex}>
                     <Box
                       className={dragAction ? "rowColumnDrag" : "rowColumn"}
                       display="flex"
                       alignItems="center"
                       {...(Boolean(field?.type === "MULTISELECT")
-                        ? { minHeight: "30px" }
-                        : { height: "34px" })}
-                      py="8px"
-                    >
+                        ? {minHeight: "30px"}
+                        : {height: "34px"})}
+                      py="8px">
                       <Box
                         display="flex"
                         alignItems="center"
@@ -273,8 +312,7 @@ function DrawerFormDetailPage({
                           "&:hover": {
                             backgroundColor: "#F7F7F7",
                           },
-                        }}
-                      >
+                        }}>
                         <Box
                           width="18px"
                           height="16px"
@@ -282,14 +320,13 @@ function DrawerFormDetailPage({
                           display="flex"
                           alignItems="center"
                           justifyContent="center"
-                          sx={{ color: "#787774" }}
-                        >
+                          sx={{color: "#787774"}}>
                           <span className="drag">
                             <DragIndicatorIcon
-                              style={{ width: "16px", height: "16px" }}
+                              style={{width: "16px", height: "16px"}}
                             />
                           </span>
-                          <span style={{ color: "#787774" }} className="icon">
+                          <span style={{color: "#787774"}} className="icon">
                             {getColumnIcon({
                               column: {
                                 type: field?.type ?? field?.relation_type,
@@ -305,17 +342,15 @@ function DrawerFormDetailPage({
                           width="100%"
                           overflow="hidden"
                           textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                        >
+                          whiteSpace="nowrap">
                           {getFieldLanguageLabel(field)}
                         </Box>
                       </Box>
-                      <Box sx={{ width: "60%" }}>
+                      <Box sx={{width: "60%"}}>
                         <DrawerFieldGenerator
-                          reset={reset}
                           activeLang={activeLang}
                           drawerDetail={true}
-                          control={control}
+                          control={rootForm.control}
                           field={field}
                           watch={watch}
                           isRequired={field?.attributes?.required}
@@ -338,8 +373,7 @@ function DrawerFormDetailPage({
           display="flex"
           justifyContent="flex-end"
           marginTop="auto"
-          marginBottom="12px"
-        >
+          marginBottom="12px">
           <FormCustomActionButton
             control={control?._formValues}
             tableSlug={tableSlug}
@@ -367,7 +401,7 @@ function DrawerFormDetailPage({
         itemId={selectedRow?.guid}
         microFrontendId={microFrontendId}
       /> */}
-    </>
+    </MaterialUIProvider>
   );
 }
 
@@ -422,21 +456,16 @@ const HeadingOptions = ({
           justifyContent: "space-between",
           paddingLeft: "3px",
           gap: "10px",
-        }}
-      >
+        }}>
         <Flex
           onClick={(e) =>
             !Boolean(watch("attributes.layout_heading")) && handleClick(e)
           }
           flexDirection={"column"}
-          justifyContent={"flex-start"}
-        >
+          justifyContent={"flex-start"}>
           <CHTextField
             placeholder={
-              Boolean(watch("attributes.layout_heading")) ||
-              !Boolean(watch(selectedField?.slug))
-                ? "Enter value"
-                : "Select field"
+              Boolean(watch("attributes.layout_heading")) ? "" : "Select field"
             }
             control={control}
             name={selectedField?.slug || ""}
@@ -445,14 +474,13 @@ const HeadingOptions = ({
           />
         </Flex>
 
-        <Box sx={{ cursor: "pointer" }}>
+        <Box sx={{cursor: "pointer"}}>
           <Flex
             p={"5px"}
             borderRadius={6}
             onClick={handleClick}
             gap={2}
-            alignItems={"center"}
-          >
+            alignItems={"center"}>
             <Text>
               {
                 fieldsList?.find(
@@ -463,14 +491,16 @@ const HeadingOptions = ({
             {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </Flex>
         </Box>
+        <Button variant="contained" type="submit">
+          Save
+        </Button>
       </Box>
 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}
-      >
-        <Box sx={{ width: "180px", padding: "4px 0" }}>
+        onClose={() => handleClose(null)}>
+        <Box sx={{width: "180px", padding: "4px 0"}}>
           {fieldsList
             .filter(
               (field) =>
@@ -490,15 +520,13 @@ const HeadingOptions = ({
                   height: "32px",
                 }}
                 key={option.label}
-                onClick={() => handleClose(option)}
-              >
+                onClick={() => handleClose(option)}>
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: "5px",
-                  }}
-                >
+                  }}>
                   {option.label}
                 </Box>
 
@@ -534,6 +562,114 @@ const CHTextField = ({
       )}
     />
   );
+};
+
+const ScreenOptions = ({
+  projectInfo,
+  view,
+  selectedViewType,
+  selectedRow,
+  setSelectedViewType = () => {},
+  setLayoutType = () => {},
+  navigateToEditPage = () => {},
+}) => {
+  const navigate = useNavigate();
+  const {menuId} = useParams();
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const options = [
+    {label: "Side peek", icon: "SidePeek"},
+    {label: "Center peek", icon: "CenterPeek"},
+    {label: "Full page", icon: "FullPage"},
+  ];
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (option) => {
+    localStorage.setItem("detailPage", option?.icon);
+    if (option?.icon === "FullPage") {
+      setLayoutType("SimpleLayout");
+      navigate(`/${menuId}/detail?p=${selectedRow?.guid}`, {
+        state: {
+          viewId: view?.id,
+          table_slug: view?.table_slug,
+          projectInfo: projectInfo,
+          selectedRow: selectedRow,
+        },
+      });
+    }
+
+    if (option) setSelectedViewType(option?.icon);
+    setAnchorEl(null);
+  };
+
+  return (
+    <Box>
+      <Box onClick={handleClick}>
+        <span>{getColumnFieldIcon(selectedViewType)}</span>
+      </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => handleClose(null)}>
+        <Box sx={{width: "220px", padding: "4px 0"}}>
+          {options.map((option) => (
+            <MenuItem
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: "6px",
+                color: "#37352f",
+              }}
+              key={option.label}
+              onClick={() => handleClose(option)}>
+              <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+                <span>{getColumnFieldIcon(option)}</span>
+                {option.label}
+              </Box>
+
+              <Box>{option?.icon === selectedViewType ? <Check /> : ""}</Box>
+            </MenuItem>
+          ))}
+        </Box>
+      </Menu>
+    </Box>
+  );
+};
+
+export const getColumnFieldIcon = (column) => {
+  if (column === "SidePeek") {
+    return (
+      <img
+        src="/img/drawerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else if (column === "CenterPeek") {
+    return (
+      <img
+        src="/img/centerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else
+    return (
+      <img
+        src="/img/fullpagePeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
 };
 
 export default DrawerFormDetailPage;

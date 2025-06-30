@@ -1,15 +1,15 @@
-import {useParams, useSearchParams} from "react-router-dom";
-import {store} from "../../../../../store";
-import {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useProjectGetByIdQuery} from "../../../../../services/projectService";
+import { useParams, useSearchParams } from "react-router-dom";
+import { store } from "../../../../../store";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useProjectGetByIdQuery } from "../../../../../services/projectService";
 import menuService from "../../../../../services/menuService";
 import PageFallback from "../../../../../components/PageFallback";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import styles from "./index.module.scss";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
-import {IconButton} from "@mui/material";
+import { IconButton } from "@mui/material";
 
 const Sections = ({
   relation,
@@ -23,18 +23,16 @@ const Sections = ({
   errors,
   relatedTable,
   onBackButtonClick,
-  relData,
-  setRelData = () => {},
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedTable, setSelectedTable] = useState(null);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
-  const {i18n} = useTranslation();
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const { i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -98,7 +96,8 @@ const Sections = ({
                 <div className={styles.section}>
                   <div
                     className={styles.sectinoHeader}
-                    style={{borderTop: index === 0 && "none"}}>
+                    style={{ borderTop: index === 0 && "none" }}
+                  >
                     Section #{index + 1}
                     {/* {section?.attributes?.[`label_${i18n.language}`] ??
                       section.label} */}
@@ -107,8 +106,6 @@ const Sections = ({
                   <div className={styles.sectionBody}>
                     {section.fields?.map((field, fieldIndex) => (
                       <FormElementGenerator
-                        relData={relData}
-                        setRelData={setRelData}
                         key={field.id}
                         isMultiLanguage={isMultiLanguage}
                         field={field}

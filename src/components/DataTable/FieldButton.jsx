@@ -213,8 +213,7 @@ export default function FieldButton({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}
-      >
+        }}>
         <span
           style={{
             whiteSpace: "nowrap",
@@ -224,9 +223,8 @@ export default function FieldButton({
             fontWeight: 500,
             lineHeight: "normal",
             backgroundColor: "#fff",
-          }}
-        >
-          <AddRoundedIcon style={{ marginTop: "3px" }} />
+          }}>
+          <AddRoundedIcon style={{marginTop: "3px"}} />
         </span>
       </CTableHeadCell>
       <FieldOptionModal

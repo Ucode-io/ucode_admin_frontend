@@ -40,22 +40,21 @@ export const ApiKeys = () => {
         >
           <span>Api keys</span>
           <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            {/* <Box onClick={() => downloadUrl(URLFILE)}> */}
-            <a
-              target="_blank"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                fontSize: "14px",
-              }}
-              href="https://ucode.gitbook.io/ucode-docs/developer-guide/getting-started"
-              rel="noreferrer"
-              // download
-            >
-              {/* <DownloadIcon style={{ background: "#007af" }} /> */}
-              API reference
-            </a>
-            {/* </Box> */}
+            <Box onClick={() => downloadUrl(URLFILE)}>
+              <a
+                target="_blank"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  fontSize: "14px",
+                }}
+                href="apikeys.zip"
+                download
+              >
+                <DownloadIcon style={{ background: "#007af" }} />
+                Download api documentation
+              </a>
+            </Box>
             <PermissionWrapperV2 tableSlug="app" type="write">
               <Button primary onClick={navigateToCreateForm}>
                 Add API key

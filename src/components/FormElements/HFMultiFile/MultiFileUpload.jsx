@@ -47,26 +47,22 @@ function MultiFileUpload({
 
   const inputChangeHandler = (e) => {
     setLoading(true);
-    const files = [...e.target.files];
-    // const file = e.target.files[0];
+    const file = e.target.files[0];
 
-    Promise.all(
-      files.map((file) => {
-        const data = new FormData();
-        data.append("file", file);
-        return fileService.folderUpload(data, {
-          folder_name: "media",
-        });
+    const data = new FormData();
+    data.append("file", file);
+    fileService
+      .folderUpload(data, {
+        folder_name: "media",
       })
-    )
       .then((res) => {
         onChange([
           ...(value ?? []),
-          ...res?.map((item) => import.meta.env.VITE_CDN_BASE_URL + item?.link),
+          import.meta.env.VITE_CDN_BASE_URL + res?.link,
         ]);
         setImageList([
           ...imageList,
-          ...res?.map((item) => import.meta.env.VITE_CDN_BASE_URL + item?.link),
+          import.meta.env.VITE_CDN_BASE_URL + res?.link,
         ]);
       })
       .finally(() => setLoading(false));
@@ -217,8 +213,7 @@ function MultiFileUpload({
                 flexDirection: "column",
                 justifyContent: "center",
                 cursor: disabled ? "not-allowed" : "pointer",
-              }}
-            >
+              }}>
               <Box
                 sx={{
                   display: "flex",
@@ -320,7 +315,6 @@ function MultiFileUpload({
                 ref={inputRef}
                 tabIndex={tabIndex}
                 autoFocus={tabIndex === 1}
-                multiple
                 onChange={inputChangeHandler}
               />
               <UploadIcon style={{width: "32px", height: "32px"}} />

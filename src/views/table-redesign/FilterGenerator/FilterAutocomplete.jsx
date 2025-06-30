@@ -5,7 +5,6 @@ import {Chip} from "./chip";
 import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
 import {useTranslation} from "react-i18next";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const FilterAutoComplete = ({
   options = [],
@@ -15,11 +14,10 @@ const FilterAutoComplete = ({
   label,
   field,
   setChosenField = () => {},
-  ...props
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const computedValue = useMemo(() => {
     return value
       ?.map((el) => options?.find((option) => option.value === el))
@@ -32,16 +30,7 @@ const FilterAutoComplete = ({
   };
 
   const inputChangeHandler = useDebounce((val) => {
-    if (field.type === FIELD_TYPES.NUMBER) {
-      if (val === "-") {
-        setSearchText("");
-        return;
-      } else {
-        setSearchText(Number(val));
-      }
-    } else {
-      setSearchText(val);
-    }
+    setSearchText(val);
   }, 300);
 
   const closeMenu = () => {
@@ -68,13 +57,11 @@ const FilterAutoComplete = ({
         field={field}
         onClick={openMenu}
         onClearButtonClick={onClearButtonClick}
-        showCloseIcon={value?.length ?? 0}
-        {...props}
-      >
+        showCloseIcon={value?.length ?? 0}>
         {computedValue?.[0]?.label ??
           (field?.attributes?.[`label_${i18n?.language}`] || value[0])}
         {(value?.length ?? 0) > 1 && (
-          <span style={{ color: "#6d757e" }}>{` +${value.length - 1}`}</span>
+          <span style={{color: "#6d757e"}}>{` +${value.length - 1}`}</span>
         )}
       </Chip>
 
@@ -83,38 +70,33 @@ const FilterAutoComplete = ({
         open={menuVisible}
         TransitionComponent={Fade}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
-      >
+        classes={{list: styles.menu, paper: styles.paper}}>
         <SearchInput
           id="filter_search_input"
           fullWidth
           onChange={inputChangeHandler}
           placeholder={label}
-          style={{ paddingTop: 8 }}
+          style={{paddingTop: 8}}
         />
 
         <div className={styles.scrollBlock}>
           <Divider />
 
           {options?.map((option) => (
-            <label key={option.value} className={styles.option}>
+            <div
+              onClick={() => rowClickHandler(option)}
+              key={option.value}
+              className={styles.option}>
               {computedValue
                 .map((item) => item.value)
                 .includes(option.value) ? (
-                <Checkbox
-                  id="filter_checkbox"
-                  onClick={() => rowClickHandler(option)}
-                  checked
-                />
+                <Checkbox id="filter_checkbox" checked />
               ) : (
-                <Checkbox
-                  id="filter_checkbox"
-                  onClick={() => rowClickHandler(option)}
-                />
+                <Checkbox id="filter_checkbox" />
               )}
 
               <p className={styles.label}>{option.label}</p>
-            </label>
+            </div>
           ))}
         </div>
       </Menu>

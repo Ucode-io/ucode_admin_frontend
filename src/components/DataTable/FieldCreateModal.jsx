@@ -1,23 +1,18 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SettingsIcon from "@mui/icons-material/Settings";
-import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
-import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
+import React, {useEffect, useMemo, useState} from "react";
+import {useFieldArray, useForm, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
 
-import { useRelationGetByIdQuery } from "../../services/relationService";
-import { applyDrag } from "../../utils/applyDrag";
+import {useRelationGetByIdQuery} from "../../services/relationService";
+import {applyDrag} from "../../utils/applyDrag";
 import {
-  FIELD_TYPES,
   FormatOptionType,
   FormatTypes,
   ValueTypes,
@@ -26,7 +21,7 @@ import {
   math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import { colorList } from "../ColorPicker/colorList";
+import {colorList} from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -40,28 +35,16 @@ import constructorFieldService, {
   useFieldsListQuery,
 } from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attributes/FormulaFilters";
 import constructorRelationService from "../../services/constructorRelationService";
-import { listToMap } from "../../utils/listToMap";
+import {listToMap} from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
-import Dropdown from "../NewFormElements/Dropdown/Dropdown";
-import FormElementButton from "../NewFormElements/FormElementButton";
-import MultiselectSettings from "./MultiselectSettings";
-import SVG from "react-inlinesvg";
-import { FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon } from "../icons";
-import { paginationActions } from "../../store/pagination/pagination.slice";
-import constructorViewService from "../../services/constructorViewService";
-import DropdownSelect from "../NewFormElements/DropdownSelect";
-import TextField from "../NewFormElements/TextField/TextField";
-import { Image } from "@chakra-ui/react";
-import clsx from "clsx";
 
 const formulaTypes = [
-  { label: "Сумма", value: "SUMM" },
-  { label: "Максимум", value: "MAX" },
-  { label: "Среднее", value: "AVG" },
+  {label: "Сумма", value: "SUMM"},
+  {label: "Максимум", value: "MAX"},
+  {label: "Среднее", value: "AVG"},
 ];
 
 const formulaFormatOptions = [
@@ -86,34 +69,27 @@ const formulaFormatOptions = [
 export default function FieldCreateModal({
   tableLan,
   anchorEl,
-  setAnchorEl = () => {},
-  watch = () => {},
+  setAnchorEl,
+  watch,
   control,
-  setValue = () => {},
-  handleSubmit = () => {},
-  onSubmit = () => {},
-  setFieldOptionAnchor = () => {},
+  setValue,
+  handleSubmit,
+  onSubmit,
+  setFieldOptionAnchor,
   target,
-  reset = () => {},
+  reset,
   fieldData,
-  handleOpenFieldDrawer = () => {},
+  handleOpenFieldDrawer,
   visibleColumns,
   menuItem,
   mainForm,
   view,
-  sortedDatas,
-  setSortedDatas = () => {},
-  setFieldData = () => {},
 }) {
-  const { tableSlug, id } = useParams();
+  const {tableSlug, id} = useParams();
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
   });
-
-  const queryClient = useQueryClient();
-
-  const dispatch = useDispatch();
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
@@ -131,7 +107,7 @@ export default function FieldCreateModal({
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -212,11 +188,9 @@ export default function FieldCreateModal({
   const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
-  const [openedDropdown, setOpenedDropdown] = useState(null);
-
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+  const {isLoading: relationLoading} = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
@@ -258,11 +232,7 @@ export default function FieldCreateModal({
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
 
-  const {
-    control: formulaControl,
-    watch: formulaWatch,
-    setValue: formulaSetValue,
-  } = useForm({
+  const {control: formulaControl, watch: formulaWatch} = useForm({
     defaultValues: {
       formulaFormat: "FORMULA_FRONTEND",
     },
@@ -280,7 +250,7 @@ export default function FieldCreateModal({
     }
   };
 
-  const { isLoading: fieldLoading } = useFieldsListQuery({
+  const {isLoading: fieldLoading} = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
       tableSlug: tableSlug,
@@ -290,7 +260,7 @@ export default function FieldCreateModal({
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {
-            return { value: item.slug, label: item.label };
+            return {value: item.slug, label: item.label};
           })
         );
       },
@@ -301,14 +271,14 @@ export default function FieldCreateModal({
     language_setting: i18n?.language,
   };
 
-  const { isLoading: fieldsLoading } = useQuery(
+  const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: { limit: 0, offset: 0 },
+          data: {limit: 0, offset: 0},
         },
         params
       );
@@ -371,7 +341,6 @@ export default function FieldCreateModal({
 
     setAnchorEl(null);
     !fieldData && setValue("type", "");
-    setFieldData(null);
   };
 
   const handleCloseColor = () => {
@@ -387,16 +356,6 @@ export default function FieldCreateModal({
     handleClose();
     if (!fieldData) {
       setValue("type", "");
-
-      setValue("attributes.options", []);
-      setValue("attributes.todo.options", []);
-      setValue("attributes.complete.options", []);
-      setValue("attributes.progress.options", []);
-
-      languages?.forEach((lang) => {
-        setValue(`attributes.label_${lang}`, "");
-      });
-
       setFieldOptionAnchor(target);
     }
   };
@@ -479,395 +438,78 @@ export default function FieldCreateModal({
     onSubmit(innerData);
   };
 
-  const popoverAnchorProps = {};
-  if (!fieldData) {
-    popoverAnchorProps.anchorReference = "anchorPosition";
-    popoverAnchorProps.anchorPosition = {
-      top: 270,
-      left: window.innerWidth - 300,
-    };
-    popoverAnchorProps.anchorOrigin = {
-      vertical: "bottom",
-      horizontal: "center",
-    };
-    popoverAnchorProps.transformOrigin = {
-      vertical: "bottom",
-      horizontal: "left",
-    };
-  } else {
-    popoverAnchorProps.anchorOrigin = {
-      vertical: "bottom",
-      horizontal: "left",
-    };
-  }
-
-  const handleSortField = () => {
-    const field = fieldData.id;
-    const order =
-      sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
-        ? "DESC"
-        : "ASC";
-    dispatch(
-      paginationActions.setSortValues({
-        tableSlug,
-        field,
-        order,
-      })
-    );
-    setSortedDatas((prev) => {
-      const newSortedDatas = [...prev];
-      const index = newSortedDatas.findIndex(
-        (item) => item.field === fieldData.id
-      );
-      if (index !== -1) {
-        newSortedDatas[index].order =
-          newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
-      } else {
-        newSortedDatas.push({
-          field: fieldData.id,
-          order: "ASC",
-        });
-      }
-      return newSortedDatas;
-    });
-    setAnchorEl(null);
-  };
-
-  const fixColumnChangeHandler = (column, e) => {
-    const computedData = {
-      ...view,
-      attributes: {
-        ...view?.attributes,
-        fixedColumns: {
-          ...view?.attributes?.fixedColumns,
-          [column.id]: e,
-        },
-      },
-    };
-
-    constructorViewService.update(tableSlug, computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-    });
-  };
-
-  const updateView = (column) => {
-    constructorViewService
-      .update(tableSlug, {
-        ...view,
-        columns: view?.columns?.filter((item) => item !== column),
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
-        setAnchorEl(null);
-      });
-  };
-
-  const deleteField = (column) => {
-    constructorFieldService.delete(column, tableSlug).then((res) => {
-      constructorViewService
-        .update(tableSlug, {
-          ...view,
-          columns: view?.columns?.filter((item) => item !== column),
-        })
-        .then(() => {
-          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
-        });
-    });
-  };
-
-  const dropdownTypes = {
-    editProperty: "editProperty",
-    changeFormat: "changeFormat",
-    changeType: "changeType",
-  };
-
   return (
     <Popover
-      {...popoverAnchorProps}
+      anchorReference="anchorPosition"
+      anchorPosition={{top: 450, left: 900}}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
       anchorEl={anchorEl}
       background="red"
-      PaperProps={{
-        style: {
-          overflowY: "visible",
-          overflowX: "visible",
-        },
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
       }}
-    >
+      transformOrigin={{
+        vertical: "bottom",
+        horizontal: "left",
+      }}>
       <div className={style.field}>
-        {/* <Typography
+        <Typography
           variant="h6"
           textTransform="uppercase"
-          className={style.title}
-        >
+          className={style.title}>
           {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
             "ADD COLUMN"}
-        </Typography> */}
+        </Typography>
 
         <form
           onSubmit={handleSubmit(
             format?.includes("FORMULA") ? innerOnsubmit : onSubmit
           )}
-          className={style.form}
-        >
+          className={style.form}>
           <MaterialUIProvider>
             <Box
               className={style.field}
               style={{
                 display: "flex",
                 flexDirection: "column",
-              }}
-            >
+              }}>
               <Box
                 sx={{
                   width: "100%",
-                  marginBottom: "10px",
-                }}
-              >
+                }}>
                 {!ValueTypes(values?.type) && !FormatTypes(format) ? (
-                  <TextFieldWithMultiLanguage
-                    control={control}
-                    name="attributes.label"
-                    fullWidth
-                    placeholder="Name"
-                    defaultValue={tableName}
-                    languages={languages}
-                    id={"text_field_label"}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleSubmit(
-                          format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-                        )();
-                      }
-                    }}
-                  />
-                ) : // <FRow
-                //   label={
-                //     generateLangaugeText(tableLan, i18n?.language, "Label") ||
-                //     "Label"
-                //   }
-                //   classname={style.custom_label}
-                //   required
-                // >
-                //   <Box style={{ display: "flex", gap: "6px" }}>
-                //     <HFTextFieldWithMultiLanguage
-                //       control={control}
-                //       name="attributes.label"
-                //       fullWidth
-                //       placeholder="Name"
-                //       defaultValue={tableName}
-                //       languages={languages}
-                //       id={"text_field_label"}
-                //     />
-                //   </Box>
-                // </FRow>
-                null}
-              </Box>
-              {fieldData && (
-                <Box width={"100%"}>
-                  <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
-                    <Box>
-                      <button
-                        className={style.btn}
-                        type="button"
-                        onClick={handleSortField}
-                      >
-                        <SortByAlphaOutlinedIcon />
-                        <span>
-                          Sort{" "}
-                          {sortedDatas?.find(
-                            (item) => item.field === fieldData.id
-                          )?.order === "ASC"
-                            ? "Z -> A"
-                            : "A -> Z"}
-                        </span>
-                      </button>
-                    </Box>
-                    <Box width={"100%"}>
-                      <button
-                        className={style.btn}
-                        type="button"
-                        onClick={() =>
-                          fixColumnChangeHandler(
-                            fieldData,
-                            !view?.attributes?.fixedColumns?.[fieldData?.id]
-                              ? true
-                              : false
-                          )
-                        }
-                      >
-                        <ViewWeekOutlinedIcon />
-                        <span>
-                          {view?.attributes?.fixedColumns?.[fieldData?.id]
-                            ? "Unfix"
-                            : "Fix"}{" "}
-                          column
-                        </span>
-                      </button>
-                    </Box>
-                  </Box>
-                </Box>
-              )}
-              {!fieldData && (
-                <Box
-                  width={"100%"}
-                  paddingY={"6px"}
-                  onMouseEnter={() => {
-                    setOpenedDropdown(dropdownTypes.changeType);
-                  }}
-                >
-                  <Dropdown
-                    openedDropdown={openedDropdown}
-                    name={dropdownTypes.changeType}
-                    options={fieldData ? fieldFormats : newFieldTypes}
-                    selectedValue={watch("attributes.format")}
-                    onClick={(option) => {
-                      setValue("attributes.format", option?.value);
-                      if (option?.value === "NUMBER") {
-                        setValue("type", "NUMBER");
-                      } else if (option?.value === "DATE") {
-                        setValue("type", "DATE");
-                      } else if (option?.value === "INCREMENT") {
-                        setValue("type", "INCREMENT_ID");
-                      } else if (option?.value === "SINGLE_LINE") {
-                        setValue("type", "SINGLE_LINE");
-                      } else {
-                        setValue("type", option?.value);
-                      }
-                    }}
+                  <FRow
                     label={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Change Type"
-                      ) || "Change type"
+                      generateLangaugeText(tableLan, i18n?.language, "Label") ||
+                      "Label"
                     }
-                    icon={<FieldTypeIcon />}
-                  />
-                </Box>
-              )}
-              {formatIncludes?.includes(format) && !fieldData && (
-                <Box
-                  width={"100%"}
-                  onMouseEnter={() => {
-                    setOpenedDropdown(dropdownTypes.changeFormat);
-                  }}
-                >
-                  <Dropdown
-                    openedDropdown={openedDropdown}
-                    name={dropdownTypes.changeFormat}
-                    options={FormatOptionType(format)}
-                    selectedValue={
-                      format?.startsWith("FORMULA")
-                        ? formulaWatch("formulaFormat")
-                        : watch("type")
-                    }
-                    onClick={(option) => {
-                      if (format?.startsWith("FORMULA")) {
-                        formulaSetValue("formulaFormat", option?.value);
-                      } else {
-                        setValue("type", option?.value);
-                      }
-                    }}
-                    label={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Change format"
-                      ) || "Change format"
-                    }
-                    icon={<FieldFormatIcon />}
-                  />
-                </Box>
-              )}
-              {format === FIELD_TYPES.MULTISELECT && (
-                <Box
-                  width={"100%"}
-                  onMouseEnter={() => {
-                    setOpenedDropdown(dropdownTypes.editProperty);
-                  }}
-                >
-                  <Dropdown
-                    openedDropdown={openedDropdown}
-                    name={dropdownTypes.editProperty}
-                    content={
-                      <MultiselectSettings
-                        dropdownFields={dropdownFields}
-                        onDrop={onDrop}
-                        watch={watch}
+                    classname={style.custom_label}
+                    required>
+                    <Box style={{display: "flex", gap: "6px"}}>
+                      <HFTextFieldWithMultiLanguage
                         control={control}
-                        setValue={setValue}
-                        handleOpenColor={handleOpenColor}
-                        dropdownRemove={dropdownRemove}
-                        tableLan={tableLan}
-                        i18n={i18n}
-                        openColor={openColor}
-                        colorEl={colorEl}
-                        handleCloseColor={handleCloseColor}
-                        colorList={colorList}
-                        idx={idx}
-                        dropdownAppend={dropdownAppend}
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
+                        id={"text_field_label"}
                       />
-                    }
-                    label={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Edit property"
-                      ) || "Edit property"
-                    }
-                    optionsClassname={style.editProperty}
-                    icon={<FieldPropertyIcon />}
-                  />
-                </Box>
-              )}
-              <Box
-                width="100%"
-                marginTop="6px"
-                paddingTop="6px"
-                borderTop="1px solid #e5e9eb"
-              >
-                <Box width={"100%"}>
-                  <button
-                    className={style.btn}
-                    type="button"
-                    onClick={() => updateView(fieldData.id)}
-                    onMouseEnter={() => {
-                      setOpenedDropdown(null);
-                    }}
-                  >
-                    <VisibilityOffOutlinedIcon />
-                    <span>Hide field</span>
-                  </button>
-                </Box>
-                <Box width={"100%"} color="red">
-                  <button
-                    className={style.btn}
-                    type="button"
-                    onClick={() => deleteField(fieldData.id)}
-                    onMouseEnter={() => {
-                      setOpenedDropdown(null);
-                    }}
-                  >
-                    <DeleteOutlinedIcon />
-                    <span>Delete field</span>
-                  </button>
-                </Box>
+                    </Box>
+                  </FRow>
+                ) : null}
               </Box>
-              {/* <FRow
+              <FRow
                 label={
                   generateLangaugeText(tableLan, i18n?.language, "Type") ||
                   "Type"
                 }
                 componentClassName="flex gap-2 align-center"
                 required
-                classname={style.custom_label}
-              >
+                classname={style.custom_label}>
                 <HFSelect
                   className={style.input}
                   disabledHelperText
@@ -892,9 +534,9 @@ export default function FieldCreateModal({
                   }}
                   placeholder="Select type"
                 />
-              </FRow> */}
+              </FRow>
             </Box>
-            {/* <Box sx={{ padding: "0 5px" }}>
+            <Box sx={{padding: "0 5px"}}>
               {formatIncludes?.includes(format) ? (
                 <FRow
                   label={
@@ -903,8 +545,7 @@ export default function FieldCreateModal({
                   }
                   componentClassName="flex gap-2 align-center"
                   required
-                  classname={style.custom_label}
-                >
+                  classname={style.custom_label}>
                   <HFSelect
                     className={style.input}
                     disabledHelperText
@@ -931,8 +572,7 @@ export default function FieldCreateModal({
                   onClick={() => {
                     handleOpenFieldDrawer(fieldData);
                     closeAllDrawer();
-                  }}
-                >
+                  }}>
                   <SettingsIcon />
                   {generateLangaugeText(
                     tableLan,
@@ -941,34 +581,36 @@ export default function FieldCreateModal({
                   ) || "Advanced settings"}
                 </Button>
               )}
-            </Box> */}
+            </Box>
           </MaterialUIProvider>
-          {/* <div>
+          <div>
             {format === "MULTISELECT" && (
               <Box className={style.dropdown}>
                 <Container
                   lockAxis="y"
                   orientation="vertical"
                   onDrop={onDrop}
-                  dragHandleSelector=".column-drag-handle"
-                >
+                  dragHandleSelector=".column-drag-handle">
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
                         <Box
+                        // sx={{
+                        //   display: "flex",
+                        //   alignItems: "center",
+                        //   justifyContent: "space-around",
+                        // }}
                         >
                           <FRow
                             label={`Option ${index + 1}`}
-                            className={style.option}
-                          >
+                            className={style.option}>
                             <span
                               className={style.startAdornment}
                               style={{
                                 background: watch(
                                   `attributes.options.${index}.color`
                                 ),
-                              }}
-                            ></span>
+                              }}></span>
 
                             <HFTextField
                               disabledHelperText
@@ -1000,6 +642,27 @@ export default function FieldCreateModal({
                               }
                             />
                           </FRow>
+                          {/* <FRow
+                            label={`Value ${index + 1}`}
+                            className={style.option}
+                          >
+                            <HFTextField
+                              disabledHelperText
+                              name={`attributes.options.${index}.value`}
+                              control={control}
+                              fullWidth
+                              required
+                              placeholder="Type..."
+                              className={style.input}
+                              endAdornment={
+                                <Box className={style.adornment}>
+                                  <CloseIcon
+                                    onClick={() => dropdownRemove(index)}
+                                  />
+                                </Box>
+                              }
+                            />
+                          </FRow> */}
                         </Box>
                       </Box>
                       <Popover
@@ -1013,14 +676,13 @@ export default function FieldCreateModal({
                         transformOrigin={{
                           vertical: "top",
                           horizontal: "left",
-                        }}
-                      >
+                        }}>
                         <Card elevation={12} className="ColorPickerPopup">
                           {colorList.map((color, colorIndex) => (
                             <div
                               className="round"
                               key={colorIndex}
-                              style={{ backgroundColor: color }}
+                              style={{backgroundColor: color}}
                               onClick={() => {
                                 setValue(
                                   `attributes.options.${idx}.color`,
@@ -1043,8 +705,7 @@ export default function FieldCreateModal({
                         label: "",
                         value: "",
                       });
-                    }}
-                  >
+                    }}>
                     +
                     {generateLangaugeText(
                       tableLan,
@@ -1059,19 +720,19 @@ export default function FieldCreateModal({
                 )}
               </Box>
             )}
-          </div> */}
+          </div>
           {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
-            <Box padding="5px" overflow="auto" maxHeight="300px">
-              {/* <FRow label="Formula format">
+            <Box padding="5px">
+              <FRow label="Formula format">
                 <HFSelect
                   name="formulaFormat"
                   control={formulaControl}
                   options={formulaFormatOptions}
                   isClearable={false}
                 />
-              </FRow> */}
+              </FRow>
               <FRow label="Formula type">
-                <DropdownSelect
+                <HFSelect
                   name="attributes.type"
                   control={control}
                   options={formulaTypes}
@@ -1080,7 +741,7 @@ export default function FieldCreateModal({
               {(type === "SUMM" || type === "MAX" || type === "AVG") && (
                 <>
                   <FRow label="Table from">
-                    <DropdownSelect
+                    <HFSelect
                       name="attributes.table_from"
                       control={control}
                       options={computedTables}
@@ -1088,7 +749,7 @@ export default function FieldCreateModal({
                   </FRow>
 
                   <FRow label="Field from">
-                    <DropdownSelect
+                    <HFSelect
                       name="attributes.sum_field"
                       control={control}
                       options={fields}
@@ -1096,7 +757,7 @@ export default function FieldCreateModal({
                   </FRow>
 
                   <FRow label="Rounds">
-                    <TextField
+                    <HFTextField
                       name="attributes.number_of_rounds"
                       type="number"
                       fullWidth
@@ -1119,8 +780,7 @@ export default function FieldCreateModal({
                     ))}
                     <div
                       className={style.summaryButton}
-                      onClick={addNewSummary}
-                    >
+                      onClick={addNewSummary}>
                       <button type="button">+ Create new</button>
                     </div>
                   </div>
@@ -1131,15 +791,15 @@ export default function FieldCreateModal({
           )}
           {formulaFormat === "FORMULA_FRONTEND" &&
             format?.startsWith("FORMULA") && (
-              <Box overflow="auto" maxHeight={"200px"} padding="5px">
-                {/* <FRow label="Formula format">
+              <Box padding="5px">
+                <FRow label="Formula format">
                   <HFSelect
                     name="formulaFormat"
                     control={formulaControl}
                     options={formulaFormatOptions}
                     isClearable={false}
                   />
-                </FRow> */}
+                </FRow>
                 {watch("attributes.advanced_type") ? (
                   <>
                     <Box className={style.formula}>
@@ -1160,7 +820,7 @@ export default function FieldCreateModal({
                         }
                       />
                     </Box>
-                    <h2 className={style.fieldHeading}>
+                    <h2>
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
@@ -1169,16 +829,14 @@ export default function FieldCreateModal({
                       :
                     </h2>
                     {fields.map((field) => (
-                      <div className={style.fieldsList} key={field.id}>
-                        <span className={style.fieldTitle}>{field.label}</span>{" "}
-                        <span className={style.dot}></span>{" "}
-                        <span className={style.fieldValue}>{field.value}</span>
+                      <div>
+                        {field.label} - <strong>{field.value}</strong>{" "}
                       </div>
                     ))}
                   </>
                 ) : (
                   <Box className={style.formula}>
-                    <DropdownSelect
+                    <HFSelect
                       className={style.input}
                       disabledHelperText
                       options={fields}
@@ -1199,11 +857,10 @@ export default function FieldCreateModal({
                     <span
                       id={`math_plus`}
                       className={`math_${mathType?.label}`}
-                      onClick={(e) => setMathEl(e.currentTarget)}
-                    >
+                      onClick={(e) => setMathEl(e.currentTarget)}>
                       {mathType?.value}
                     </span>
-                    <DropdownSelect
+                    <HFSelect
                       className={style.input}
                       disabledHelperText
                       options={fields}
@@ -1232,8 +889,7 @@ export default function FieldCreateModal({
                       transformOrigin={{
                         vertical: "top",
                         horizontal: "right",
-                      }}
-                    >
+                      }}>
                       <Box className="math">
                         {math.map((item) => {
                           return (
@@ -1243,8 +899,7 @@ export default function FieldCreateModal({
                               onClick={() => {
                                 setValue("attributes.math", item);
                                 setMathEl(null);
-                              }}
-                            >
+                              }}>
                               {item?.value}
                             </span>
                           );
@@ -1260,8 +915,7 @@ export default function FieldCreateModal({
                     display: "flex",
                     alignItems: "baseline",
                     columnGap: "5px",
-                  }}
-                >
+                  }}>
                   <HFSwitch
                     id="advanced_switch"
                     control={control}
@@ -1284,36 +938,12 @@ export default function FieldCreateModal({
               relatedTableSlug={relatedTableSlug}
             />
           ) : null}
-          {fieldData && (
-            <button
-              className={clsx(style.btn, style.settings)}
-              onClick={() => {
-                handleOpenFieldDrawer(fieldData);
-                closeAllDrawer();
-              }}
-              onMouseEnter={() => {
-                setOpenedDropdown(null);
-              }}
-            >
-              <Image src="/img/settings.svg" alt="settings" />
-              {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
-              {generateLangaugeText(
-                tableLan,
-                i18n?.language,
-                "Advanced settings"
-              ) || "Advanced settings"}
-            </button>
-          )}
-          <Box className={style.button_group} sx={{ padding: "0 5px" }}>
-            <FormElementButton onClick={handleClick}>
+          <Box className={style.button_group} sx={{padding: "0 5px"}}>
+            <Button variant="contained" color="error" onClick={handleClick}>
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}
-            </FormElementButton>
-            {/* <Button variant="contained" color="error" onClick={handleClick}>
-              {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
-                "Cancel"}
-            </Button> */}
-            <FormElementButton primary type="submit">
+            </Button>
+            <Button variant="contained" type="submit">
               {fieldData
                 ? generateLangaugeText(
                     tableLan,
@@ -1325,7 +955,7 @@ export default function FieldCreateModal({
                     i18n?.language,
                     "Add column"
                   ) || "Add column"}
-            </FormElementButton>
+            </Button>
           </Box>
         </form>
       </div>

@@ -1,8 +1,8 @@
 import cls from "./styles.module.scss";
-import { IconButton } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import { useRef } from "react";
-import { FIELD_TYPES } from "../../../../../utils/constants/fieldTypes";
+import {IconButton} from "@mui/material";
+import {Add} from "@mui/icons-material";
+import {useRef} from "react";
+import {FIELD_TYPES} from "../../../../../utils/constants/fieldTypes";
 
 export const ColumnHeaderBlock = ({
   group,
@@ -35,8 +35,7 @@ export const ColumnHeaderBlock = ({
   return (
     <div
       ref={fixedElement}
-      className={`${cls.columnHeaderBlock} column-header`}
-    >
+      className={`${cls.columnHeaderBlock} column-header`}>
       <div className={cls.leftSide}>
         <div className={cls.title}>
           <span
@@ -44,11 +43,10 @@ export const ColumnHeaderBlock = ({
               background: color ? color + 33 : "rgb(139, 150, 160)",
               color: color ? color : "#fff",
             }}
-            className={cls.tabBlockStatus}
-          >
+            className={cls.tabBlockStatus}>
             <span
               className={cls.dot}
-              style={{ background: color ? color : "rgb(78, 84, 90)" }}
+              style={{background: color ? color : "rgb(78, 84, 90)"}}
             />
             <span className={cls.label}>{field}</span>
           </span>
@@ -63,9 +61,8 @@ export const ColumnHeaderBlock = ({
           color="inherit"
           onClick={(e) => {
             e.stopPropagation();
-            navigateToCreatePage({ group });
-          }}
-        >
+            navigateToCreatePage({group});
+          }}>
           <Add />
         </IconButton>
       </div>

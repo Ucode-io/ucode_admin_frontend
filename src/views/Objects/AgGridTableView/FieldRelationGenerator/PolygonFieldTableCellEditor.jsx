@@ -19,14 +19,7 @@ const style = {
 };
 function PolygonFieldTableCellEditor(props) {
   const [open, setOpen] = useState(false);
-  const {value, setValue, data, colDef} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
+  const {field, value, setValue, data, colDef} = props;
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -57,7 +50,7 @@ function PolygonFieldTableCellEditor(props) {
             justifyContent: "space-between",
             padding: "0  14px 0 13px",
           }}
-          onClick={() => !disabled && handleOpen()}>
+          onClick={() => !field?.attributes?.disabled && handleOpen()}>
           <Box>
             <span>Polygon</span>
             <Button>
@@ -65,7 +58,7 @@ function PolygonFieldTableCellEditor(props) {
             </Button>
           </Box>
 
-          {disabled && (
+          {field?.attributes?.disabled && (
             <Box>
               <img src="/table-icons/lock.svg" alt="lock" />
             </Box>

@@ -1,17 +1,14 @@
-import { Box } from "@mui/material";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box} from "@mui/material";
+import {Container, Draggable} from "react-smooth-dnd";
 import PageFallback from "../../../components/PageFallback";
 import FastFilter from "../components/FastFilter";
 import BoardColumn from "./BoardColumn";
+import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
 import styles from "./style.module.scss";
-import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
-import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import clsx from "clsx";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
-import { useBoardViewProps } from "./useBoardViewProps";
-import { BoardSkeleton } from "./components/BoardSkeleton";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import {useBoardViewProps} from "./useBoardViewProps";
+import {BoardSkeleton} from "./components/BoardSkeleton";
 
 const BoardView = ({
   view,
@@ -79,7 +76,7 @@ const BoardView = ({
     checkedColumns,
     columnsForSearch,
   });
-console.log({ groups });
+  console.log({groups});
   return (
     <div className={styles.container} ref={boardRef}>
       {isLoading ? (
@@ -92,7 +89,12 @@ console.log({ groups });
             <div className={styles.filtersVisiblitiy}>
               <Box className={styles.block}>
                 <p>{t("filters")}</p>
-                <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+                <FastFilter
+                  tableSlug={tableSlug}
+                  view={view}
+                  fieldsMap={fieldsMap}
+                  isVertical
+                />
               </Box>
             </div>
           )}
@@ -113,8 +115,7 @@ console.log({ groups });
               }}
               style={{
                 display: "flex",
-              }}
-            >
+              }}>
               {groups?.map((group, tabIndex) => (
                 <Draggable
                   key={tabIndex}
@@ -124,8 +125,7 @@ console.log({ groups });
                     paddingLeft: tabIndex === 0 ? "16px" : "8px",
                     paddingRight:
                       tabIndex === groups?.length - 1 ? "16px" : "0",
-                  }}
-                >
+                  }}>
                   <ColumnHeaderBlock
                     field={
                       group?.name === "Unassigned"
@@ -148,27 +148,31 @@ console.log({ groups });
           </div>
           <div
             className={styles.board}
-            // style={{
-            //   height: isFilterOpen
-            //     ? "calc(100vh - 121px)"
-            //     : "calc(100vh - 91px)",
-            // }}
-          >
+            style={{
+              height: isFilterOpen
+                ? "calc(100vh - 121px)"
+                : "calc(100vh - 91px)",
+              paddingTop: "50px",
+              // ? subGroupById
+              //   ? "calc(100vh - 171px)"
+              //   : "calc(100vh - 121px)"
+              // : subGroupById
+              //   ? "calc(100vh - 133px)"
+              //   : "calc(100vh - 83px)",
+            }}>
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>
                 {subGroups?.map((subGroup, subGroupIndex) => (
                   <div key={subGroup?.name} data-sub-group={subGroup?.name}>
                     <button
                       className={styles.boardSubGroupBtn}
-                      onClick={() => handleToggle(subGroup?.name)}
-                    >
+                      onClick={() => handleToggle(subGroup?.name)}>
                       <span
                         className={clsx(styles.boardSubGroupBtnInner, {
                           [styles.selected]: openedGroups.includes(
                             subGroup?.name
                           ),
-                        })}
-                      >
+                        })}>
                         <span className={styles.iconWrapper}>
                           <span className={styles.icon}>
                             <PlayArrowRoundedIcon fontSize="small" />
@@ -179,8 +183,7 @@ console.log({ groups });
                           style={{
                             color: getColor(subGroup?.name),
                             background: getColor(subGroup?.name) + 33,
-                          }}
-                        >
+                          }}>
                           {subGroup?.name === "Unassigned"
                             ? "Unassigned"
                             : subGroupField?.type === FIELD_TYPES.LOOKUP ||
@@ -196,8 +199,7 @@ console.log({ groups });
                           display: "flex",
                           gap: 8,
                           alignItems: "flex-start",
-                        }}
-                      >
+                        }}>
                         {groups?.map((group, index) => (
                           <BoardColumn
                             key={group.value}
@@ -233,7 +235,7 @@ console.log({ groups });
                 ))}
               </div>
             ) : (
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{display: "flex", gap: 8}}>
                 {groups?.map((group, index) => (
                   <div key={group.value} className={styles.draggable}>
                     <BoardColumn
@@ -265,23 +267,72 @@ console.log({ groups });
         </div>
       )}
       <MaterialUIProvider>
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={open ? open : openDrawerModal}
-          setOpen={open ? setOpen : setOpenDrawerModal}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetchAfterChangeBoard}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToEditPage}
-          dateInfo={dateInfo}
-          defaultValue={defaultValue}
-          modal
-        />
+        {Boolean(open && projectInfo?.new_layout) &&
+        selectedViewType === "SidePeek" ? (
+          new_router ? (
+            <DrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+            />
+          ) : (
+            <OldDrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+            />
+          )
+        ) : selectedViewType === "CenterPeek" ? (
+          <ModalDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        ) : null}
+
+        {Boolean(open && !projectInfo?.new_layout) && (
+          <ModalDetailPage
+            open={open}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        )}
       </MaterialUIProvider>
     </div>
   );

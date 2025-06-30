@@ -1,11 +1,7 @@
 import {useState} from "react";
 import {FiFilter} from "react-icons/fi";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import {
-  CTableCell,
-  CTableHeadRow,
-  CTableRow,
-} from "../../../../../components/CTable";
+import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
 import PermissionCheckbox from "./Components/PermissionCheckbox";
 import FormCheckbox from "./Components/Checkbox/FormCheckbox";
 import useBooleanState from "../../../../../hooks/useBooleanState";
@@ -15,9 +11,9 @@ import ActionPermissionModal from "./Components/Modals/ActionPermissionModal";
 import TableViewPermission from "./Components/Modals/TableViewPermission";
 import RelationPermissionModal from "./Components/Modals/RelationPermissionModal";
 import CustomPermissionModal from "./Components/Modals/CustomPermissionModal";
-import { Box, Icon } from "@mui/material";
-import { MdDashboardCustomize } from "react-icons/md";
-import { BiTable } from "react-icons/bi";
+import {Box, Icon} from "@mui/material";
+import {MdDashboardCustomize} from "react-icons/md";
+import {BiTable} from "react-icons/bi";
 import {
   RouteIcon,
   LinkIcon,
@@ -71,7 +67,7 @@ const TableRow = ({
 
   return (
     <>
-      <CTableRow className={styles.head_row}>
+      <CTableHeadRow className={styles.head_row}>
         <CTableCell className={styles.sticky_header}>
           {table?.attributes?.[`label_${i18n?.language}`] ??
             table?.attributes?.[`title${i18n?.language}`] ??
@@ -274,7 +270,7 @@ const TableRow = ({
             </RectangleIconButton>
           </Box>
         </CTableCell>
-      </CTableRow>
+      </CTableHeadRow>
 
       {autoFiltersModalIsOpen && (
         <AutoFilterModal

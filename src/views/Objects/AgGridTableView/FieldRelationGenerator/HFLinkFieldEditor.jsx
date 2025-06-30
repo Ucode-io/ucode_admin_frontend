@@ -20,10 +20,6 @@ const HFLinkFieldEditor = (props) => {
   const location = useLocation();
   const field = colDef?.fieldObj;
 
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   useEffect(() => {
     if (
       location.pathname?.includes("create") &&
@@ -72,14 +68,13 @@ const HFLinkFieldEditor = (props) => {
             borderColor: "transparent",
           },
         }}
-        disabled={disabled}
         InputProps={{
-          readOnly: disabled,
+          readOnly: field?.attributes?.disabled,
           inputProps: {style: {height: "32px"}},
 
           endAdornment: (
             <InputAdornment position="start">
-              {disabled ? (
+              {field?.attributes?.disabled ? (
                 <button style={{width: "20px", height: "20px"}}>
                   <img
                     src="/table-icons/lock.svg"

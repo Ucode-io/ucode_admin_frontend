@@ -7,19 +7,12 @@ import HFQrForTableViewCellEditor from "./BarcodeComponents/HFQrForTableViewCell
 import RowClickButton from "../RowClickButton";
 
 function HFQrFieldComponentCellEditor(props) {
-  const {setValue, value, isTableView = true, newColumn = false} = props;
+  const {field, setValue, value, isTableView = true, newColumn = false} = props;
   const [openMenu, setMenu] = useState(false);
   const qrRef = useRef(null);
   const [switchInput, setSwitchInput] = useState(
     isTableView ? true : newColumn ? false : true
   );
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   const open = Boolean(openMenu);
   const handClick = (event) => {
     setMenu(event.currentTarget);
@@ -40,7 +33,6 @@ function HFQrFieldComponentCellEditor(props) {
         <Box>
           {switchInput ? (
             <HFQrForTableViewCellEditor
-              disabled={disabled}
               defaultValue={"defaultValue"}
               field={field}
               required={field?.required}
@@ -54,7 +46,6 @@ function HFQrFieldComponentCellEditor(props) {
             />
           ) : (
             <HFQrFieldCellEditor
-              disabled={disabled}
               defaultValue={"defaultValue"}
               field={field}
               required={field?.required}

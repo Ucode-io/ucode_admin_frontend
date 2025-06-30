@@ -28,7 +28,7 @@ import styles from "./style.module.scss";
 const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   const redactorRef = useRef();
   const {state} = useLocation();
-  const {tableSlug} = useParams();
+  const tableSlug = views?.[selectedTabIndex]?.table_slug;
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -85,6 +85,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
       );
     },
     {
+      enabled: Boolean(selectedLinkedTableSlug),
       cacheTime: 10,
       select: (res) => {
         const fields = res.data?.fields ?? [];
@@ -126,6 +127,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
       });
     },
     {
+      enabled: Boolean(tableSlug),
       cacheTime: 10,
       select: ({data}) => {
         const templates = data?.response ?? [];

@@ -1,9 +1,12 @@
+
+
 .header {
   padding: 16px 18px;
   background-color: #fff;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #eaecf0;
+  border-bottom: 1px solid #EAECF0;
+
 
   .arrowIcon {
     margin: 0 8px;
@@ -18,20 +21,21 @@
 
     &.active {
       font-weight: 600;
-      color: #007afe;
+      color: #337E28;
     }
   }
+
 }
 
 .titleBlock {
   padding: 0 18px;
-  height: 44px;
+  height: 66px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   .title {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 30px;
     display: flex;
     align-items: center;
@@ -46,7 +50,9 @@
     align-items: center;
     grid-gap: 12px;
   }
+
 }
+
 
 .primaryButton {
   font-size: 14px;
@@ -54,12 +60,11 @@
   font-weight: 600;
   padding: 10px 18px;
   border-radius: 8px;
-  background-color: #007afe;
+  background-color: #449424;
   box-shadow: none;
-  height: 30px;
 
   &:hover {
-    background-color: #007afe;
+    background-color: #367a1c;
   }
 }
 
@@ -71,16 +76,15 @@
   border-radius: 8px;
   background-color: white;
   box-shadow: none;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #D0D5DD;
   color: #344054;
 
   &:hover {
-    background-color: #f5f6f7;
+    background-color: #F5F6F7;
   }
 }
 
 .addTemplateButton {
-  height: 34px;
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;
@@ -88,13 +92,13 @@
   border-radius: 8px;
   background-color: white;
   box-shadow: none;
-  border: 1px dashed #007afe;
-  color: #007afe;
+  border: 1px dashed #449424;
+  color: #449424;
   width: 100%;
 
   &:hover {
-    background-color: #f5f6f7;
-    border: 1px solid #007afe;
+    background-color: #F5F6F7;
+    border: 1px solid #449424;
   }
 }
 
@@ -109,7 +113,7 @@
   display: flex;
   align-items: center;
   grid-gap: 16px;
-  border-bottom: 1px solid #eaecf0;
+  border-bottom: 1px solid #EAECF0;
   width: max-content;
 
   .tab {
@@ -122,21 +126,21 @@
     cursor: pointer;
 
     &.active {
-      color: #007afe;
-      border-color: #007afe;
+      color: #337E28;
+      border-color: #337E28;
     }
   }
 }
 
 .content {
   background-color: white;
-  border-top: 1px solid #eaecf0;
+  border-top: 1px solid #EAECF0;
   display: flex;
 
   .templatesList {
     width: 360px;
     min-width: 360px;
-    border-right: 1px solid #eaecf0;
+    border-right: 1px solid #EAECF0;
     min-height: calc(100vh - 130px);
     height: calc(100vh - 130px);
     overflow: auto;
@@ -146,13 +150,14 @@
       font-size: 18px;
       font-weight: 500;
       padding: 20px;
-      border-bottom: 1px solid #eaecf0;
+      border-bottom: 1px solid #EAECF0;
     }
 
     .list {
+
       .row {
-        padding: 4px 12px;
-        font-size: 14px;
+        padding: 8px 12px;
+        font-size: 16px;
         line-height: 24px;
         display: flex;
         align-items: center;
@@ -162,11 +167,11 @@
           width: 24px;
           height: 24px;
           margin-right: 12px;
-          color: #007afe;
+          color: #449424;
         }
 
         &:hover {
-          background-color: rgba(#919eab, 0.08);
+          background-color: rgba(#919EAB, 0.08);
           cursor: pointer;
         }
       }
@@ -174,13 +179,15 @@
       .buttonWrapper {
         padding: 5px 0px 0 0px;
       }
+
     }
+
   }
 
   .form {
     width: 360px;
     min-width: 360px;
-    border-right: 1px solid #eaecf0;
+    border-right: 1px solid #EAECF0;
     min-height: calc(100vh - 130px);
     height: calc(100vh - 130px);
     overflow: auto;
@@ -188,7 +195,9 @@
 
   .viewer {
     flex: 1;
+    
   }
+
 }
 
 .noDataWrapper {

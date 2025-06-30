@@ -10,12 +10,6 @@ import RowClickButton from "../RowClickButton";
 const PhoneCellEditor = (props) => {
   const {setValue = () => {}, value = "", data} = props;
 
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
 
   const onNavigateToDetail = () => {
@@ -36,7 +30,7 @@ const PhoneCellEditor = (props) => {
       {" "}
       <Box sx={{padding: " 0 6px 0 13px"}}>
         <PhoneInput
-          disabled={disabled}
+          disabled={false}
           placeholder="Enter phone number"
           value={
             isString(value) ? (value?.includes("+") ? value : `${value}`) : ""

@@ -19,7 +19,7 @@ export default function LayoutsItem({
   mainForm,
   allMenus,
   tableLan,
-  menus,
+  menus = [],
   remove,
   setModal,
   setDefault,

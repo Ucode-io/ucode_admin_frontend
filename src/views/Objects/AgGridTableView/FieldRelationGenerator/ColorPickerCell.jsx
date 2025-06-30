@@ -4,14 +4,8 @@ import {colorList} from "../../../../components/ColorPicker/colorList";
 import RowClickButton from "../RowClickButton";
 
 const ColorPicker = (props) => {
-  const {setValue, value, colDef, data} = props;
+  const {setValue, value, field, colDef, data} = props;
   const [anchorEl, setAnchorEl] = useState(null);
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   const handleClick = (e) => {
     setAnchorEl(e.currentTarget);
@@ -48,7 +42,7 @@ const ColorPicker = (props) => {
         }}
         className="ColorPicker"
         onClick={(e) => e.stopPropagation()}>
-        {disabled ? (
+        {field?.attributes?.disabled ? (
           <img src="/table-icons/lock.svg" alt="lock" />
         ) : (
           <div
@@ -59,7 +53,9 @@ const ColorPicker = (props) => {
               width: "24px",
               height: "24px",
             }}
-            onClick={(e) => !disabled && handleClick(e)}></div>
+            onClick={(e) =>
+              !field?.attributes?.disabled && handleClick(e)
+            }></div>
         )}
 
         <Popover

@@ -120,7 +120,7 @@ export const ResourcesDetail = ({
       },
     },
   });
-  const { isLoading: isLoadingClickHouse } = useResourceGetByIdQueryV1({
+  const {isLoading: isLoadingClickHouse} = useResourceGetByIdQueryV1({
     id: resourceId,
     params: {
       type: resourceType,
@@ -540,17 +540,6 @@ export const ResourcesDetail = ({
     queryClient.refetchQueries(["RESOURCESV2"]);
   }
 
-  const [open, setOpen] = useState(false);
-
-  const handleClose = () => setOpen(false);
-
-  const handleDeleteResource = () => {
-    deleteResource.mutate({
-      id: resourceId,
-    });
-    setOpen(false);
-  };
-
   return (
     <Box className="scrollbarNone" sx={{height: "670px", overflow: "hidden"}}>
       <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
@@ -621,11 +610,7 @@ export const ResourcesDetail = ({
                       isLoading={createLoading}>
                       {loading ? (
                         <CircularProgress
-                          style={{
-                            color: "#fff",
-                            width: "20px",
-                            height: "20px",
-                          }}
+                          style={{color: "#fff", width: "20px", height: "20px"}}
                         />
                       ) : (
                         generateLangaugeText(
@@ -648,26 +633,25 @@ export const ResourcesDetail = ({
                   </Button>
                 )}
 
-                {/* {isEditPage && variables?.type !== "REST" && (
-                    <Button
-                      sx={{
-                        color: "#fff",
-                        background: "#38A169",
-                        marginRight: "10px",
-                      }}
-                      hidden={!isEditPage}
-                      color={"success"}
-                      variant="contained"
-                      onClick={() => reconnectResource({ id: resourceId })}
-                      isLoading={reconnectLoading}
-                    >
-                      {generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Reconnect"
-                      ) || "Reconnect"}
-                    </Button>
-                  )} */}
+                {isEditPage && variables?.type !== "REST" && (
+                  <Button
+                    sx={{
+                      color: "#fff",
+                      background: "#38A169",
+                      marginRight: "10px",
+                    }}
+                    hidden={!isEditPage}
+                    color={"success"}
+                    variant="contained"
+                    onClick={() => reconnectResource({id: resourceId})}
+                    isLoading={reconnectLoading}>
+                    {generateLangaugeText(
+                      settingLan,
+                      i18n?.language,
+                      "Reconnect"
+                    ) || "Reconnect"}
+                  </Button>
+                )}
               </Box>
             </Box>
           </ContentTitle>

@@ -11,11 +11,6 @@ const HFTextInputField = (props) => {
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   return (
     <Box
       sx={{
@@ -29,7 +24,7 @@ const HFTextInputField = (props) => {
       }}>
       <TextField
         size="small"
-        disabled={disabled}
+        disabled={field?.attributes?.disabled}
         value={value}
         fullWidth
         onChange={(e) => setValue(e.target.value)}
@@ -47,7 +42,7 @@ const HFTextInputField = (props) => {
         }}
         className="custom_textfield_new"
         InputProps={{
-          endAdornment: disabled ? (
+          endAdornment: field?.attributes?.disabled ? (
             <img src="/table-icons/lock.svg" alt="lock" />
           ) : (
             ""

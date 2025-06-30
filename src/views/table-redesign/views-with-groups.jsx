@@ -149,20 +149,20 @@ export const NewUiViewsWithGroups = ({
   fieldsMapRel,
   setViews,
 }) => {
-  const { tableSlug, id } = useParams();
+  const {tableSlug, id} = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(view);
   const [searchText, setSearchText] = useState("");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -171,7 +171,7 @@ export const NewUiViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
   const [inputKey, setInputKey] = useState(0);
-  const [layoutType, setLayoutType] = useState("SimpleLayout");
+  const [layoutType, setLayoutType] = useState("PopupLayout");
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -184,7 +184,7 @@ export const NewUiViewsWithGroups = ({
     });
   }, [view?.group_fields, fieldsMap]);
 
-  const { mutate: updateObject } = useMutation(
+  const {mutate: updateObject} = useMutation(
     (data) =>
       constructorObjectService.update(tableSlug, {
         data,
@@ -215,7 +215,7 @@ export const NewUiViewsWithGroups = ({
     });
   };
 
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -285,7 +285,7 @@ export const NewUiViewsWithGroups = ({
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -338,12 +338,12 @@ export const NewUiViewsWithGroups = ({
     });
   };
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "multi",
   });
 
-  const { mutate: updateField, isLoading: updateLoading } =
+  const {mutate: updateField, isLoading: updateLoading} =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -353,9 +353,9 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const projectId = useSelector((state) => state.company?.projectId);
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
-  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
@@ -423,7 +423,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const { isLoading } = useTableByIdQuery({
+  const {isLoading} = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -483,7 +483,7 @@ export const NewUiViewsWithGroups = ({
           tableSlug,
           "CREATE",
           {},
-          { id },
+          {id},
           searchParams.get("menuId")
         );
       }
@@ -1047,6 +1047,7 @@ export const NewUiViewsWithGroups = ({
                           visibleForm={visibleForm}
                           menuItem={menuItem}
                           navigateToDetailPage={navigateToDetailPage}
+                          layoutType={layoutType}
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TABLE" && groupTable?.length ? (
@@ -1157,6 +1158,9 @@ export const NewUiViewsWithGroups = ({
                             visibleRelationColumns={visibleRelationColumns}
                             visibleForm={visibleForm}
                             menuItem={menuItem}
+                            navigateToDetailPage={navigateToDetailPage}
+                            layoutType={layoutType}
+                            setSelectedRow={setSelectedRow}
                           />
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
@@ -1266,6 +1270,8 @@ export const NewUiViewsWithGroups = ({
                           visibleRelationColumns={visibleRelationColumns}
                           visibleForm={visibleForm}
                           menuItem={menuItem}
+                          layoutType={layoutType}
+                          setSelectedRow={setSelectedRow}
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TREE" ? (
@@ -1355,7 +1361,7 @@ export const NewUiViewsWithGroups = ({
   );
 };
 
-const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
+const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
   );
@@ -1397,8 +1403,7 @@ const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
           justifyContent="center"
           color="#fff"
           borderRadius="50%"
-          fontSize="10px"
-        >
+          fontSize="10px">
           {view?.attributes?.quick_filters?.length}
         </Flex>
       )}
@@ -1603,8 +1608,8 @@ const ViewOptions = ({
 }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { appId, tableSlug } = useParams();
-  const { i18n, t } = useTranslation();
+  const {appId, tableSlug} = useParams();
+  const {i18n, t} = useTranslation();
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const permissions = useSelector(
@@ -1630,7 +1635,7 @@ const ViewOptions = ({
   }, [openedMenu]);
 
   const layoutQuery = useQuery({
-    queryKey: ["GET_LAYOUT", { tableSlug }],
+    queryKey: ["GET_LAYOUT", {tableSlug}],
     queryFn: () => layoutService.getLayout(tableSlug, appId),
   });
 
@@ -1652,7 +1657,7 @@ const ViewOptions = ({
         ...view,
         id: view.id,
         columns: view.columns,
-        attributes: { ...view?.attributes, [`name_${i18n?.language}`]: value },
+        attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
       });
       return await refetchViews();
     },
@@ -1672,11 +1677,11 @@ const ViewOptions = ({
     view?.attributes?.visible_field?.split("/")?.length ?? 0;
 
   const {
-    data: { fields, visibleColumns } = { data: [] },
+    data: {fields, visibleColumns} = {data: []},
     isLoading: tableInfoLoading,
     refetch: refetchGetTableInfo,
   } = useQuery(
-    ["GET_TABLE_INFO", { tableSlug }],
+    ["GET_TABLE_INFO", {tableSlug}],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -1773,8 +1778,7 @@ const ViewOptions = ({
             adaptive: false,
           },
         },
-      ]}
-    >
+      ]}>
       <Box marginLeft={view?.type === "WEBSITE" ? "auto" : "0"}>
         <PopoverTrigger>
           <IconButton
@@ -1788,8 +1792,7 @@ const ViewOptions = ({
       <PopoverContent
         ref={ref}
         w="320px"
-        p={openedMenu === null ? "0px" : "8px"}
-      >
+        p={openedMenu === null ? "0px" : "8px"}>
         {openedMenu === null && (
           <>
             {view?.type !== "WEBSITE" && (
@@ -1805,8 +1808,7 @@ const ViewOptions = ({
                       borderRadius={6}
                       border="1px solid #D0D5DD"
                       alignItems="center"
-                      justifyContent="center"
-                    >
+                      justifyContent="center">
                       <SVG
                         src={`/img/${viewIcons[view.type]}`}
                         width={18}
@@ -1833,7 +1835,7 @@ const ViewOptions = ({
                     columnGap="4px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
+                    _hover={{bg: "#EAECF0"}}
                     as="span"
                     onClick={handleOpenPopup}
                     // to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}
@@ -1842,8 +1844,7 @@ const ViewOptions = ({
                       minW="36px"
                       h="28px"
                       alignItems="center"
-                      justifyContent="center"
-                    >
+                      justifyContent="center">
                       <SVG
                         src={`/img/${viewIcons[view.type]}`}
                         width={18}
@@ -1882,10 +1883,9 @@ const ViewOptions = ({
                       columnGap="8px"
                       alignItems="center"
                       borderRadius={6}
-                      _hover={{ bg: "#EAECF0" }}
+                      _hover={{bg: "#EAECF0"}}
                       cursor="pointer"
-                      onClick={() => setOpenedMenu("columns-visibility")}
-                    >
+                      onClick={() => setOpenedMenu("columns-visibility")}>
                       <Image src="/img/eye.svg" alt="Visibility" />
                       <ViewOptionTitle>
                         {generateLangaugeText(
@@ -1923,10 +1923,9 @@ const ViewOptions = ({
                         columnGap="8px"
                         alignItems="center"
                         borderRadius={6}
-                        _hover={{ bg: "#EAECF0" }}
+                        _hover={{bg: "#EAECF0"}}
                         cursor="pointer"
-                        onClick={() => setOpenedMenu("group")}
-                      >
+                        onClick={() => setOpenedMenu("group")}>
                         <Image src="/img/copy-01.svg" alt="Group by" />
                         <ViewOptionTitle>
                           {generateLangaugeText(
@@ -1958,10 +1957,9 @@ const ViewOptions = ({
                         columnGap="8px"
                         alignItems="center"
                         borderRadius={6}
-                        _hover={{ bg: "#EAECF0" }}
+                        _hover={{bg: "#EAECF0"}}
                         cursor="pointer"
-                        onClick={() => setOpenedMenu("tab-group")}
-                      >
+                        onClick={() => setOpenedMenu("tab-group")}>
                         <Image src="/img/browser.svg" alt="Group by" />
                         <ViewOptionTitle>
                           {generateLangaugeText(
@@ -1993,11 +1991,10 @@ const ViewOptions = ({
                         columnGap="8px"
                         alignItems="center"
                         borderRadius={6}
-                        _hover={{ bg: "#EAECF0" }}
+                        _hover={{bg: "#EAECF0"}}
                         cursor="pointer"
                         onClick={() => setOpenedMenu("sub-group")}
-                        color="#475467"
-                      >
+                        color="#475467">
                         <HorizontalSplitOutlinedIcon color="inherit" />
                         <ViewOptionTitle>
                           {generateLangaugeText(
@@ -2028,10 +2025,9 @@ const ViewOptions = ({
                         columnGap="8px"
                         alignItems="center"
                         borderRadius={6}
-                        _hover={{ bg: "#EAECF0" }}
+                        _hover={{bg: "#EAECF0"}}
                         cursor="pointer"
-                        onClick={() => setOpenedMenu("fix-column")}
-                      >
+                        onClick={() => setOpenedMenu("fix-column")}>
                         <Image src="/img/layout-left.svg" alt="Fix columns" />
                         <ViewOptionTitle>
                           {generateLangaugeText(
@@ -2062,7 +2058,7 @@ const ViewOptions = ({
                       columnGap="8px"
                       alignItems="center"
                       borderRadius={6}
-                      _hover={{ bg: "#EAECF0" }}
+                      _hover={{bg: "#EAECF0"}}
                       cursor="pointer"
                       onClick={() =>
                         setOpenedMenu(
@@ -2070,8 +2066,7 @@ const ViewOptions = ({
                             ? "timeline-settings"
                             : "calendar-settings"
                         )
-                      }
-                    >
+                      }>
                       <Image src="/img/settings.svg" alt="Settings" />
                       <ViewOptionTitle>
                         {generateLangaugeText(
@@ -2093,10 +2088,9 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
+                    _hover={{bg: "#EAECF0"}}
                     cursor="pointer"
-                    onClick={onDocsClick}
-                  >
+                    onClick={onDocsClick}>
                     <Image src="/img/file-docs.svg" alt="Docs" />
                     <ViewOptionTitle>
                       {generateLangaugeText(tableLan, i18n?.language, "Docs") ||

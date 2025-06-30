@@ -7,13 +7,7 @@ import RowClickButton from "../RowClickButton";
 
 function HFModalMapCellEditor(props) {
   const [open, setOpen] = useState(false);
-  const {value, setValue, isTransparent = false, data, colDef} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {value, setValue, field, isTransparent = false, data, colDef} = props;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -51,7 +45,7 @@ function HFModalMapCellEditor(props) {
           defaultValue={"defaultValue"}
           variant="standard"
           width="small"
-          onClick={() => !disabled && handleOpen()}
+          onClick={() => !field?.attributes?.disabled && handleOpen()}
           sx={{
             width: "100%",
             backgroundColor: "transparent",
@@ -66,7 +60,7 @@ function HFModalMapCellEditor(props) {
             },
           }}
           InputProps={{
-            endAdornment: disabled ? (
+            endAdornment: field?.attributes?.disabled ? (
               <img src="/table-icons/lock.svg" alt="lock" />
             ) : (
               ""

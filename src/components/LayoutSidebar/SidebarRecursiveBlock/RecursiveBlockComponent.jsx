@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {BsThreeDots} from "react-icons/bs";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import {useMenuListQuery} from "../../../services/menuService";
 import {store} from "../../../store";
@@ -20,6 +20,9 @@ import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
 import FileUploadMenu from "../Components/Functions/FileUploadMenu";
+import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -38,7 +41,7 @@ const RecursiveBlock = ({
   setSubMenuIsOpen,
   menuStyle,
   index,
-  menuItemId,
+
   selectedApp,
   userType = false,
   buttonProps,
@@ -48,7 +51,7 @@ const RecursiveBlock = ({
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const {appId} = useParams();
+  const {menuId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {i18n} = useTranslation();
@@ -56,6 +59,9 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [id, setId] = useState();
+  const [searchParams] = useSearchParams();
+  const newRouter = localStorage.getItem("new_router");
+
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const activeRequest =
     element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
@@ -96,8 +102,14 @@ const RecursiveBlock = ({
 
   const clickHandler = (e) => {
     e.stopPropagation();
+    dispatch(detailDrawerActions.setMainTabIndex(0));
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({element, appId, navigate});
+    dispatch(groupFieldActions.clearViews());
+    dispatch(groupFieldActions.clearViewsPath());
+
+    if (Boolean(newRouter === "true"))
+      NavigateByType({element, menuId: element?.id, navigate});
+    else NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);
@@ -128,7 +140,7 @@ const RecursiveBlock = ({
     dispatch(menuActions.setMenuItem(element));
     if (element?.type === "MINIO_FOLDER") {
       handleOpenNotify(e, "CREATE_TO_MINIO");
-    } else if (appId === folderIds.wiki_id) {
+    } else if (menuId === folderIds.wiki_id) {
       handleOpenNotify(e, "WIKI_FOLDER");
     } else {
       handleOpenNotify(e, "CREATE_TO_FOLDER");
@@ -177,8 +189,8 @@ const RecursiveBlock = ({
   };
 
   return (
-    <Draggable key={index}>
-      <Box sx={{padding: `0 0 0 ${level * 10}px`}} style={{marginBottom: 5}}>
+    <Draggable style={{height: "32px"}} key={index}>
+      <Box sx={{padding: "0 5px"}} style={{marginBottom: 5}}>
         <div
           className="parent-block column-drag-handle"
           key={element.id}
@@ -197,7 +209,7 @@ const RecursiveBlock = ({
                 background: activeMenu ? "#F0F0EF" : menuStyles?.background,
                 color: activeMenu ? "#32302B" : "#5F5E5A",
               }}
-              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
+              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : ""}`}
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
@@ -214,46 +226,12 @@ const RecursiveBlock = ({
                   />
                 )}
                 {element?.type === "FOLDER" && (
-                  <Box>
-                    <div className="childMenuFolderArrow">
-                      {MenuFolderArrows({element, childBlockVisible})}
-                    </div>
-
-                    <div className="childMenuIcon">
-                      {element?.icon ||
-                      element?.data?.microfrontend?.icon ||
-                      element?.data?.webpage?.icon ? (
-                        <IconGenerator
-                          icon={
-                            element?.icon ||
-                            element?.data?.microfrontend?.icon ||
-                            element?.data?.webpage?.icon
-                          }
-                          size={20}
-                        />
-                      ) : (
-                        <Box
-                          sx={{
-                            width: "20px",
-                            height: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}>
-                          <Box
-                            sx={{
-                              width: "5px",
-                              height: "5px",
-                              background: "#787774",
-                              borderRadius: "50%",
-                            }}></Box>
-                        </Box>
-                      )}
-                    </div>
-                  </Box>
+                  <div className="childMenuFolderArrowChild">
+                    {MenuFolderArrows({element, childBlockVisible})}
+                  </div>
                 )}
 
-                {(element?.type !== "FOLDER" && element?.icon) ||
+                {element?.icon ||
                 element?.data?.microfrontend?.icon ||
                 element?.data?.webpage?.icon ? (
                   <div
@@ -291,64 +269,52 @@ const RecursiveBlock = ({
                   ""
                 )}
 
-                <Tooltip
-                  title={
-                    Boolean(level > 2 && getMenuLabel(element)?.length > 14) &&
-                    getMenuLabel(element)
-                  }>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      width: "100%",
-                      position: "relative",
-                      color: "#465766",
-                    }}>
-                    <Box>
-                      <p>
-                        {level > 2
-                          ? getMenuLabel(element)?.length > 14
-                            ? `${getMenuLabel(element)?.slice(0, 12)}...`
-                            : getMenuLabel(element)
-                          : getMenuLabel(element)}
-                      </p>
-                    </Box>
-                    {settingsButtonPermission && !userType && (
-                      <Box
-                        id="moreicon"
-                        className="icon_group"
-                        style={{
-                          position: "absolute",
-                          right: 0,
-                          // backgroundColor: "#EAECF0",
-                          padding: "2px 4px",
-                          borderRadius: 4,
-                        }}>
-                        {(element?.data?.permission?.delete ||
-                          element?.data?.permission?.update ||
-                          element?.data?.permission?.write) && (
-                          <Tooltip title="Settings" placement="top">
-                            <Box className="extra_icon" data-cy={"three-dots"}>
-                              <BsThreeDots
-                                size={13}
-                                onClick={(e) => {
-                                  folderSettings(e);
-                                }}
-                                style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
-                                }}
-                              />
-                            </Box>
-                          </Tooltip>
-                        )}
-                      </Box>
-                    )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    position: "relative",
+                    color: "#465766",
+                  }}>
+                  <Box>
+                    <p>{getMenuLabel(element)}</p>
                   </Box>
-                </Tooltip>
+                  {settingsButtonPermission && !userType && (
+                    <Box
+                      id="moreicon"
+                      className="icon_group"
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                        // backgroundColor: "#EAECF0",
+                        padding: "2px 4px",
+                        borderRadius: 4,
+                      }}>
+                      {(element?.data?.permission?.delete ||
+                        element?.data?.permission?.update ||
+                        element?.data?.permission?.write) && (
+                        <Tooltip title="Settings" placement="top">
+                          <Box className="extra_icon" data-cy={"three-dots"}>
+                            <BsThreeDots
+                              size={13}
+                              onClick={(e) => {
+                                folderSettings(e);
+                              }}
+                              style={{
+                                color:
+                                  menuItem?.id === element?.id
+                                    ? menuStyle?.active_text
+                                    : menuStyle?.text || "",
+                              }}
+                            />
+                          </Box>
+                        </Tooltip>
+                      )}
+                    </Box>
+                  )}
+                </Box>
               </div>
               {addButtonPermission && element?.data?.permission?.write ? (
                 <Box className="icon_group">
@@ -393,7 +359,6 @@ const RecursiveBlock = ({
               buttonProps={buttonProps}
             />
           ))}
-
           {element.id === folderIds.data_base_folder_id && (
             <>
               <TableSettingSidebar
@@ -404,6 +369,7 @@ const RecursiveBlock = ({
               />
             </>
           )}
+
           {element.id === folderIds.code_folder_id && (
             <>
               <FunctionSidebar

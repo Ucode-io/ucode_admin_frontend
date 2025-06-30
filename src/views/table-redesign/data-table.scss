@@ -54,7 +54,7 @@
     }
   }
 
-  .newUIi_first_button {
+  .first_button {
     position: absolute;
     z-index: 10;
     top: 50%;
@@ -76,7 +76,7 @@
     }
   }
 
-  .newUIi_first_button,
+  .first_button,
   .table_multi_checkbox {
     display: none;
   }
@@ -94,7 +94,7 @@
       display: block;
     }
 
-    .newUIi_first_button {
+    .first_button {
       display: flex;
     }
 
@@ -115,7 +115,7 @@
 
 .smooth-dnd-container {
   min-height: auto !important;
-
+  
   &.vertical > .smooth-dnd-draggable-wrapper {
     overflow: visible !important;
   }

@@ -449,69 +449,67 @@ function DrawerDetailPage({
                         h={6}
                       />
                     </Box>
-                    {!layout?.is_visible_section && (
-                      <>
-                        {" "}
-                        <Box
-                          sx={{
-                            width: "1px",
-                            height: "14px",
-                            margin: "0 6px",
-                            background: "rgba(55, 53, 47, 0.16)",
-                          }}
+                    {/* {!layout?.is_visible_section && ( */}
+                    <>
+                      {" "}
+                      <Box
+                        sx={{
+                          width: "1px",
+                          height: "14px",
+                          margin: "0 6px",
+                          background: "rgba(55, 53, 47, 0.16)",
+                        }}
+                      />
+                      <Box>
+                        <ScreenOptions
+                          selectedViewType={selectedViewType}
+                          setSelectedViewType={setSelectedViewType}
+                          setLayoutType={setLayoutType}
+                          selectedRow={selectedRow}
+                          navigateToEditPage={navigateToEditPage}
                         />
-                        <Box>
-                          <ScreenOptions
-                            selectedViewType={selectedViewType}
-                            setSelectedViewType={setSelectedViewType}
-                            setLayoutType={setLayoutType}
-                            selectedRow={selectedRow}
-                            navigateToEditPage={navigateToEditPage}
+                      </Box>
+                      <Box
+                        sx={{
+                          width: "1px",
+                          height: "14px",
+                          margin: "0 6px",
+                          background: "rgba(55, 53, 47, 0.16)",
+                        }}
+                      />
+                      {Boolean(permissions?.settings) && (
+                        <>
+                          <Button
+                            onClick={() =>
+                              navigate(
+                                `/main/${appId}/layout-settings/${tableSlug}/${id}`,
+                                {
+                                  state: {
+                                    ...selectedRow,
+                                  },
+                                }
+                              )
+                            }
+                            w={18}
+                            h={18}
+                            display={"flex"}
+                            alignItems={"center"}
+                            variant="outlined"
+                          >
+                            <SpaceDashboardIcon style={{ color: "#808080" }} />
+                          </Button>
+                          <Box
+                            sx={{
+                              width: "1px",
+                              height: "14px",
+                              margin: "0 6px",
+                              background: "rgba(55, 53, 47, 0.16)",
+                            }}
                           />
-                        </Box>
-                        <Box
-                          sx={{
-                            width: "1px",
-                            height: "14px",
-                            margin: "0 6px",
-                            background: "rgba(55, 53, 47, 0.16)",
-                          }}
-                        />
-                        {Boolean(permissions?.settings) && (
-                          <>
-                            <Button
-                              onClick={() =>
-                                navigate(
-                                  `/main/${appId}/layout-settings/${tableSlug}/${id}`,
-                                  {
-                                    state: {
-                                      ...selectedRow,
-                                    },
-                                  }
-                                )
-                              }
-                              w={18}
-                              h={18}
-                              display={"flex"}
-                              alignItems={"center"}
-                              variant="outlined"
-                            >
-                              <SpaceDashboardIcon
-                                style={{ color: "#808080" }}
-                              />
-                            </Button>
-                            <Box
-                              sx={{
-                                width: "1px",
-                                height: "14px",
-                                margin: "0 6px",
-                                background: "rgba(55, 53, 47, 0.16)",
-                              }}
-                            />
-                          </>
-                        )}
-                      </>
-                    )}
+                        </>
+                      )}
+                    </>
+                    {/* )} */}
                   </Flex>
 
                   {!layout?.is_visible_section && (

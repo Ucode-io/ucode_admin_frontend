@@ -172,7 +172,7 @@ export const NewUiViewsWithGroups = ({
   const [filterVisible, setFilterVisible] = useState(false);
   const groupTable = view?.attributes.group_by_columns;
   const [inputKey, setInputKey] = useState(0);
-  const [layoutType, setLayoutType] = useState("SimpleLayout");
+  const [layoutType, setLayoutType] = useState("PopupLayout");
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -1066,6 +1066,7 @@ export const NewUiViewsWithGroups = ({
                           visibleForm={visibleForm}
                           menuItem={menuItem}
                           navigateToDetailPage={navigateToDetailPage}
+                          layoutType={layoutType}
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TABLE" && groupTable?.length ? (
@@ -1176,6 +1177,8 @@ export const NewUiViewsWithGroups = ({
                             visibleForm={visibleForm}
                             menuItem={menuItem}
                             navigateToDetailPage={navigateToDetailPage}
+                            layoutType={layoutType}
+                            setSelectedRow={setSelectedRow}
                           />
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
@@ -1284,6 +1287,8 @@ export const NewUiViewsWithGroups = ({
                           visibleRelationColumns={visibleRelationColumns}
                           visibleForm={visibleForm}
                           menuItem={menuItem}
+                          layoutType={layoutType}
+                          setSelectedRow={setSelectedRow}
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TREE" ? (

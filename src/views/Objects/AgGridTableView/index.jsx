@@ -127,9 +127,11 @@ function AgGridTableView(props) {
     computedVisibleFields,
     setOpen = () => {},
     setLayoutType = () => {},
-    navigateToEditPage = () => {},
+    // navigateToEditPage = () => {},
     getRelationFields = () => {},
     navigateCreatePage = () => {},
+    layoutType,
+    setSelectedRow,
   } = props;
   const navigate = useNavigate();
   const gridApi = useRef(null);
@@ -304,6 +306,22 @@ function AgGridTableView(props) {
     };
   };
 
+  const navigateToEditPage = (row) => {
+    if (view?.attributes?.url_object) {
+      navigateToDetailPage(row);
+    } else if (projectInfo?.new_layout) {
+      setSelectedRow(row);
+      setOpen(true);
+    } else {
+      if (layoutType === "PopupLayout") {
+        setSelectedRow(row);
+        setOpen(true);
+      } else {
+        navigateToDetailPage(row);
+      }
+    }
+  };
+
   const {
     data: { fiedlsarray } = {
       pageCount: 1,
@@ -410,7 +428,9 @@ function AgGridTableView(props) {
               return {
                 ...field,
                 colIndex: index,
-                onRowClick: navigateToEditPage,
+                onRowClick: (e) => {
+                  navigateToEditPage(e);
+                },
               };
             }
             return null;
@@ -985,8 +1005,7 @@ function AgGridTableView(props) {
         handleOpenFieldDrawer={handleOpenFieldDrawer}
       />
 
-      {Boolean(open && projectInfo?.new_layout) &&
-      selectedViewType === "SidePeek" ? (
+      {Boolean(projectInfo?.new_layout) && selectedViewType === "SidePeek" ? (
         <DrawerDetailPage
           projectInfo={projectInfo}
           open={open}

@@ -45,12 +45,12 @@ export const MicroFrontend = () => {
             gap={"16px"}
           >
             <SearchInput onChange={inputChangeHandler} />
-            <PermissionWrapperV2 tableSlug="app" type="write">
-              <Button primary onClick={navigateToCreateForm}>
-                Add
-              </Button>
-              {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
-            </PermissionWrapperV2>
+            {/* <PermissionWrapperV2 tableSlug="app" type="write"> */}
+            <Button primary onClick={navigateToCreateForm}>
+              Add
+            </Button>
+            {/*<TableRowButton colSpan={5} onClick={navigateToGithub} title="Подключить из GitHub" />*/}
+            {/* </PermissionWrapperV2> */}
           </Box>
         </Box>
       </ContentTitle>

@@ -1,3 +1,4 @@
+import cls from "./styles.module.scss";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
   PMSManagementOptions,
@@ -16,6 +17,12 @@ import {
 } from "./constants";
 import { useMcpCellMutation } from "@/services/mcp";
 import { useState } from "react";
+import { Box } from "@mui/material";
+import HFCheckbox from "../../../FormElements/HFCheckbox";
+import clsx from "clsx";
+import { store } from "../../../../store";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import { ProjectManagementFields } from "./ProjectManagementFields";
 
 export const useProjectTypeSelect = ({
   handleSuccess,
@@ -24,8 +31,10 @@ export const useProjectTypeSelect = ({
   appendMessage,
   setShowInput,
   handleChangeEntityType,
+  setMessages,
 }) => {
   const [disabled, setDisabled] = useState(false);
+  const [showConfirmButton, setShowConfirmButton] = useState(true);
 
   const {
     control,
@@ -39,6 +48,9 @@ export const useProjectTypeSelect = ({
   const { fields } = useFieldArray({
     control,
     name: "management_system",
+    rules: {
+      required: true,
+    },
   });
 
   const cellMcpMutation = useMcpCellMutation({
@@ -77,6 +89,29 @@ export const useProjectTypeSelect = ({
   const onCancel = () => {
     reset();
     handleClose();
+  };
+
+  const handleSelectProjectType = () => {
+    setShowConfirmButton(false);
+    setDisabled(true);
+    setMessages((prevMessages) => [
+      ...prevMessages?.filter((item) => !item?.isProjectType),
+      {
+        text: "",
+        sender: "chat",
+        content: (
+          <ProjectManagementFields
+            control={control}
+            disabled={disabled}
+            fields={fields}
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit}
+            setMessages={setMessages}
+            watch={watch}
+          />
+        ),
+      },
+    ]);
   };
 
   const projectTypeOptions = [
@@ -164,5 +199,7 @@ export const useProjectTypeSelect = ({
     isLoading: cellMcpMutation.isLoading,
     fields,
     disabled,
+    handleSelectProjectType,
+    showConfirmButton,
   };
 };

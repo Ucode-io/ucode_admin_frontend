@@ -12,6 +12,7 @@ export const ProjectTypeSelect = ({
   appendMessage = () => {},
   setShowInput = () => {},
   handleChangeEntityType = () => {},
+  setMessages = () => {},
 }) => {
   const {
     control,
@@ -24,6 +25,8 @@ export const ProjectTypeSelect = ({
     setValue,
     fields,
     disabled,
+    handleSelectProjectType,
+    showConfirmButton,
   } = useProjectTypeSelect({
     handleSuccess,
     handleError,
@@ -31,6 +34,7 @@ export const ProjectTypeSelect = ({
     appendMessage,
     setShowInput,
     handleChangeEntityType,
+    setMessages,
   });
 
   return (
@@ -95,37 +99,20 @@ export const ProjectTypeSelect = ({
             displayEmpty={false}
             isSearchable
           /> */}
-
-          <Box display="flex" flexDirection="column">
-            {fields?.map((el, index) => (
-              <HFCheckbox
-                control={control}
-                name={`management_system.${index}.is_checked`}
-                value={`management_system.${index}.is_checked`}
-                label={el.label}
-                key={el.value}
-                disabled={disabled}
-                style={{
-                  transform: "translateY(-1px)",
-                  margin: "3px 3px 3px -1px",
-                  padding: 0,
-                }}
-              />
-            ))}
-          </Box>
         </Box>
         <Box className={cls.buttonBox}>
           {/* <button type="button" className={cls.button} onClick={onCancel}>
             Cancel
           </button> */}
-          {!disabled && (
+          {!disabled && showConfirmButton && (
             <button
-              type="submit"
+              type="button"
               className={clsx(cls.save, cls.button)}
               disabled={
-                !watch("project_type") ||
-                !watch("management_system")?.some((item) => item?.is_checked)
+                !watch("project_type")
+                // !watch("management_system")?.some((item) => item?.is_checked)
               }
+              onClick={handleSelectProjectType}
             >
               Confirm
             </button>

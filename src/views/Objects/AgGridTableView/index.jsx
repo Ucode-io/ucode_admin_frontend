@@ -1,5 +1,6 @@
 import {mergeStringAndState} from "@/utils/jsonPath";
 import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button} from "@mui/material";
 import {
@@ -28,37 +29,31 @@ import {
 import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
-import DeleteIcon from "@mui/icons-material/Delete";
-import DeleteColumnModal from "./DeleteColumnModal";
-import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
-import {useFieldArray, useForm} from "react-hook-form";
+import useFilters from "../../../hooks/useFilters";
+import useTabRouter from "../../../hooks/useTabRouter";
 import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
 } from "../../../services/constructorFieldService";
-import {
-  useRelationFieldUpdateMutation,
-  useRelationsCreateMutation,
-} from "../../../services/relationService";
-import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
-import {transliterate} from "../../../utils/textTranslater";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
-import {paginationActions} from "../../../store/pagination/pagination.slice";
-import useFilters from "../../../hooks/useFilters";
-import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
 import layoutService from "../../../services/layoutService";
+import {
+  useRelationFieldUpdateMutation,
+  useRelationsCreateMutation,
+} from "../../../services/relationService";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {paginationActions} from "../../../store/pagination/pagination.slice";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
@@ -76,7 +71,6 @@ import AggridDefaultComponents, {
 import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
 import style from "./style.module.scss";
 import getColumnEditorParams from "./valueOptionGenerator";
-import {useProjectGetByIdQuery} from "../../../services/projectService";
 
 ModuleRegistry.registerModules([
   MenuModule,

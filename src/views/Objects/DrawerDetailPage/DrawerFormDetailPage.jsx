@@ -318,6 +318,7 @@ function DrawerFormDetailPage({
                           control={control}
                           field={field}
                           watch={watch}
+                          isRequired={field?.attributes?.required}
                           isDisabled={
                             field?.attributes?.disabled ||
                             !field?.attributes?.field_permission

@@ -17,8 +17,9 @@ export default function NewFileUpload({
   field,
   drawerDetail = false,
 }) {
+  console.log({ value });
   const inputRef = useRef("");
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -64,8 +65,12 @@ export default function NewFileUpload({
   };
 
   const valueGenerate = (value, separator = "_") => {
-    const splitted = value?.split(separator).slice(1, -1);
-    return splitted?.join(separator);
+    const splitted = value?.split(separator);
+    if (splitted?.length > 2) {
+      return splitted.slice(1, -1).join(separator);
+    } else {
+      return splitted?.[1];
+    }
   };
 
   const open = Boolean(anchorEl);

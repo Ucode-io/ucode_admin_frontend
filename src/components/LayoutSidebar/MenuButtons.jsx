@@ -187,7 +187,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              setMicrofrontendModal(element);
+              setWebsiteModalLink(element);
               handleCloseNotify();
             }}
           />

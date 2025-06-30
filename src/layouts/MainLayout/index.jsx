@@ -74,6 +74,24 @@ const MainLayout = ({setFavicon, favicon}) => {
     handleOpenProfileModal();
   };
 
+  const projectStatus = localStorage.getItem("project_status");
+
+  const handleOpenUserInvite = () => {
+    updateSearchParam(
+      "activeTab",
+      TAB_COMPONENTS.USERS,
+      {
+        key: "defaultOpenModal",
+        value: true,
+      },
+      {
+        key: "invite",
+        value: true,
+      }
+    );
+    handleOpenProfileModal();
+  };
+
   const isWarning =
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
@@ -81,8 +99,11 @@ const MainLayout = ({setFavicon, favicon}) => {
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : isWarning <= 7;
-  console.log("Rendered the page!");
+      : projectStatus === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -99,6 +120,7 @@ const MainLayout = ({setFavicon, favicon}) => {
             darkMode={darkMode}
             toggleDarkMode={toggleDarkMode}
             handleOpenProfileModal={handleOpenProfileModal}
+            handleOpenUserInvite={handleOpenUserInvite}
           />
           <div
             className={

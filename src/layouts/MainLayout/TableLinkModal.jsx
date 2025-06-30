@@ -34,7 +34,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   }, [tables]);
 
   const onSubmit = (data) => {
-    if (selectedFolder.type === "TABLE") {
+    if (selectedFolder?.type === "TABLE") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -88,7 +88,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   };
 
   useEffect(() => {
-    if (selectedFolder.type === "TABLE")
+    if (selectedFolder?.type === "TABLE")
       menuSettingsService
         .getById(selectedFolder.id, projectId)
         .then((res) => {
@@ -132,38 +132,48 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFIconPicker name="icon" control={control} />
+            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+              <Box
+                display={"flex"}
+                columnGap={"16px"}
+                className="form-elements"
+              >
+                <HFIconPicker name="icon" control={control} />
 
-              {languages?.map((language) => {
-                const languageFieldName = `attributes.label_${language?.slug}`;
-                const fieldValue = watch(languageFieldName);
+                {languages?.map((language) => {
+                  const languageFieldName = `attributes.label_${language?.slug}`;
+                  const fieldValue = watch(languageFieldName);
 
-                return (
-                  <HFTextField
-                    autoFocus
-                    fullWidth
-                    label={`Title (${language?.slug})`}
-                    control={control}
-                    required
-                    name={`attributes.label_${language?.slug}`}
-                    defaultValue={fieldValue || menuItem?.label}
-                  />
-                );
-              })}
-            </Box>
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFAutocomplete
-                name="table_id"
-                control={control}
-                placeholder="Tables"
-                fullWidth
-                required
-                options={tableOptions}
-                onFieldChange={(e) => {
-                  getTables(e.target.value);
-                }}
-              />
+                  return (
+                    <HFTextField
+                      autoFocus
+                      fullWidth
+                      label={`Title (${language?.slug})`}
+                      control={control}
+                      required
+                      name={`attributes.label_${language?.slug}`}
+                      defaultValue={fieldValue || menuItem?.label}
+                    />
+                  );
+                })}
+              </Box>
+              <Box
+                display={"flex"}
+                columnGap={"16px"}
+                className="form-elements"
+              >
+                <HFAutocomplete
+                  name="table_id"
+                  control={control}
+                  placeholder="Tables"
+                  fullWidth
+                  required
+                  options={tableOptions}
+                  onFieldChange={(e) => {
+                    getTables(e.target.value);
+                  }}
+                />
+              </Box>
             </Box>
 
             <div className="btns-row">

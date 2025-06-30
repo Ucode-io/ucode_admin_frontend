@@ -1,5 +1,5 @@
 import cls from "./styles.module.scss";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import {ChevronLeftIcon} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -9,8 +9,8 @@ import {
   InputLeftElement,
   Switch,
 } from "@chakra-ui/react";
-import { useBoardSubGroupProps } from "./useBoardSubGroupProps";
-import { getColumnIcon } from "../../icons";
+import {useBoardSubGroupProps} from "./useBoardSubGroupProps";
+import {getColumnIcon} from "../../icons";
 
 export const SubGroup = ({
   onBackClick,
@@ -19,7 +19,7 @@ export const SubGroup = ({
   fieldsMap,
   viewUpdateMutation,
 }) => {
-  const { handleUpdateSubGroup, search, setSearch, renderFields } =
+  const {handleUpdateSubGroup, search, setSearch, renderFields, i18n} =
     useBoardSubGroupProps({
       viewUpdateMutation,
       view,
@@ -34,8 +34,7 @@ export const SubGroup = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}
-        >
+          onClick={onBackClick}>
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {title}
           </Box>
@@ -51,30 +50,37 @@ export const SubGroup = ({
           />
         </InputGroup>
         <div className={cls.labels}>
-          {renderFields.map((item) => {
-            return (
-              <div>
-                <div className={cls.label}>
-                  <span className={cls.text}>
-                    {fieldsMap[item]?.type &&
-                      getColumnIcon({
-                        column: { type: fieldsMap[item]?.type },
-                      })}
-                    {fieldsMap[item]?.attributes?.field_permission?.label}
-                  </span>
-                  <Switch
-                    ml="auto"
-                    checked={view?.attributes?.sub_group_by_id === item}
-                    onChange={(ev) =>
-                      handleUpdateSubGroup(item, ev.target.checked)
-                    }
-                    disabled={view?.group_fields?.[0] === item}
-                    isChecked={view?.attributes?.sub_group_by_id === item}
-                  />
+          {renderFields
+            ?.filter((item) => fieldsMap[item])
+            .map((item) => {
+              return (
+                <div key={item}>
+                  <div className={cls.label}>
+                    <span className={cls.text}>
+                      {fieldsMap[item]?.type &&
+                        getColumnIcon({
+                          column: {type: fieldsMap[item]?.type},
+                        })}
+                      {fieldsMap[item]?.type === "LOOKUP" ||
+                      fieldsMap[item]?.type === "LOOKUPS"
+                        ? fieldsMap[item]?.attributes?.[
+                            `label_${i18n?.language}`
+                          ]
+                        : fieldsMap[item]?.attributes?.field_permission?.label}
+                    </span>
+                    <Switch
+                      ml="auto"
+                      checked={view?.attributes?.sub_group_by_id === item}
+                      onChange={(ev) =>
+                        handleUpdateSubGroup(item, ev.target.checked)
+                      }
+                      disabled={view?.group_fields?.[0] === item}
+                      isChecked={view?.attributes?.sub_group_by_id === item}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </Box>
     </div>

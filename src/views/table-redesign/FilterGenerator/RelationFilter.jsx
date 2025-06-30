@@ -41,7 +41,7 @@ const RelationFilter = ({field = {}, filters, name, onChange}) => {
       return {
         data:
           res.data?.response?.map((el) => ({
-            label: getRelationFieldTabsLabel(field, el),
+            label: getRelationFieldTabsLabel(field, el, i18n?.language),
             value: el.guid,
           })) ?? [],
       };

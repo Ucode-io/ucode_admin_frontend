@@ -24,6 +24,7 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
+import zIndex from "@mui/material/styles/zIndex";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -61,7 +62,7 @@ const CellRelationFormElementForNewColumn = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -146,7 +147,7 @@ const AutoCompleteElement = ({
   mainForm,
   setFormValue = () => {},
 }) => {
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -158,7 +159,7 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
@@ -197,6 +198,10 @@ const AutoCompleteElement = ({
       ...provided,
       zIndex: 9999,
     }),
+    menuPortal: (provided) => ({
+      ...provided,
+      zIndex: 100,
+    }),
   };
 
   const autoFiltersFieldFroms = useMemo(() => {
@@ -217,7 +222,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -263,7 +268,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const { data: optionsFromLocale } = useQuery(
     [
       "GET_OBJECT_LIST",
       debouncedValue,
@@ -359,7 +364,7 @@ const AutoCompleteElement = ({
 
     if (!field?.attributes?.autofill) return;
 
-    field.attributes.autofill.forEach(({field_from, field_to}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -409,7 +414,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -433,15 +438,17 @@ const AutoCompleteElement = ({
           e.preventDefault();
         }}
         className="select_icon"
-        style={{display: "flex", alignItems: "center"}}>
+        style={{ display: "flex", alignItems: "center" }}
+      >
         {props.children}
         {!disabled && (
           <Box
-            sx={{position: "relation", zIndex: 99}}
+            sx={{ position: "relation", zIndex: 99 }}
             onClick={(e) => {
               e.stopPropagation();
               navigateToForm(tableSlug, "EDIT", localValue?.[0]);
-            }}>
+            }}
+          >
             <LaunchIcon
               style={{
                 fontSize: "18px",
@@ -461,7 +468,8 @@ const AutoCompleteElement = ({
       {field.attributes.creatable && (
         <span
           onClick={() => openFormModal(tableSlug)}
-          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
+          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+        >
           <AddIcon
             aria-owns={openPopover ? "mouse-over-popover" : undefined}
             aria-haspopup="true"
@@ -484,8 +492,9 @@ const AutoCompleteElement = ({
               horizontal: "left",
             }}
             onClose={handlePopoverClose}
-            disableRestoreFocus>
-            <Typography sx={{p: 1}}>Create new object</Typography>
+            disableRestoreFocus
+          >
+            <Typography sx={{ p: 1 }}>Create new object</Typography>
           </Popover>
         </span>
       )}
@@ -502,7 +511,7 @@ const AutoCompleteElement = ({
         menuPortalTarget={document.body}
         id="relation-lookup"
         inputValue={inputValue}
-        onInputChange={(newInputValue, {action}) => {
+        onInputChange={(newInputValue, { action }) => {
           if (action !== "reset") {
             setInputValue(newInputValue);
             inputChangeHandler(newInputValue);
@@ -524,20 +533,22 @@ const AutoCompleteElement = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   setLocalValue([]);
-                }}>
+                }}
+              >
                 <ClearIcon />
               </div>
             ),
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
-        onChange={(newValue, {action}) => {
+        onChange={(newValue, { action }) => {
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+          >
             Create new
           </span>
         )}

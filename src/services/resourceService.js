@@ -5,6 +5,7 @@ import requestV2 from "../utils/requestV2";
 const resourceService = {
   getList: (params) => request.get(`/company/project/resource`, {params}),
   getListClickHouse: (data) => request.post(`/company/airbyte`, data),
+  getListClickHouseV2: (data) => requestV2.post(`/company/airbyte`, data),
   getListV2: (params) => requestV2.get(`/company/project/resource`, {params}),
   getVariableResources: (id) =>
     request.get(`/company/project/resource-variable/${id}`),
@@ -15,6 +16,8 @@ const resourceService = {
 
   getClickHouseByID: (id, params) =>
     request.get(`/company/airbyte/${id}`, {params}),
+  getClickHouseByIDV2: (id, params) =>
+    requestV2.get(`/company/airbyte/${id}`, {params}),
 
   getByIDV1: (id, params) =>
     request.get(`/company/project/resource/${id}`, {params}),
@@ -30,7 +33,9 @@ const resourceService = {
   createFromCluster: (data) =>
     request.post("/company/project/create-resource", data),
   getResourceEnvironment: (id) =>
-    request.get(`v1/company/project/resource-environment/${id}`),
+    request.get(`/company/project/resource-environment/${id}`),
+  deleteResourceEnvironment: (data) =>
+    request.delete(`v1/company/project/resource`, data),
   configureResource: (data) =>
     request.post("/v1/company/project/configure-resource", data),
   delete: (data) => request.delete(`/company/project/resource`, {data}),

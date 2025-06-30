@@ -34,6 +34,7 @@ function HFStatusField({
                   alignItems: "center",
                   padding: "8px",
                   borderRadius: "4px",
+                  cursor: disabled ? "not-allowed" : "pointer",
                 },
               }}
               value={value || ""}
@@ -44,14 +45,14 @@ function HFStatusField({
               renderValue={(selected) => {
                 const isArray = Array.isArray(selected);
                 const selectedOption =
-                  field?.attributes?.todo?.options?.find((el) =>
-                    el.label === isArray ? selected[0] : selected
+                  field?.attributes?.todo?.options?.find(
+                    (el) => el.label === (isArray ? selected[0] : selected)
                   ) ||
-                  field?.attributes?.progress?.options?.find((el) =>
-                    el.label === isArray ? selected[0] : selected
+                  field?.attributes?.progress?.options?.find(
+                    (el) => el.label === (isArray ? selected[0] : selected)
                   ) ||
-                  field?.attributes?.complete?.options?.find((el) =>
-                    el.label === isArray ? selected[0] : selected
+                  field?.attributes?.complete?.options?.find(
+                    (el) => el.label === (isArray ? selected[0] : selected)
                   );
 
                 return (
@@ -68,11 +69,13 @@ function HFStatusField({
                       padding: "4px 8px",
                       borderRadius: "4px",
                       fontSize: "11px",
-                    }}>
+                    }}
+                  >
                     {selected}
                   </Box>
                 );
-              }}>
+              }}
+            >
               <ListSubheader className={styles.selectGroup}>
                 To do
               </ListSubheader>
@@ -85,7 +88,8 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}>
+                  value={el?.label}
+                >
                   {el?.label}
                 </MenuItem>
               ))}
@@ -102,7 +106,8 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}>
+                  value={el?.label}
+                >
                   {el?.label}
                 </MenuItem>
               ))}
@@ -119,7 +124,8 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}>
+                  value={el?.label}
+                >
                   {el?.label}
                 </MenuItem>
               ))}

@@ -11,14 +11,18 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {isEqual} from "lodash";
 import {Controller} from "react-hook-form";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import {applyDrag} from "../../../utils/applyDrag";
 import "./style.scss";
-import {store} from "../../../store";
-import {useSelector} from "react-redux";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {store} from "../../../store";
+import {useSelector} from "react-redux";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
+import {MicroFrontendPopup} from "../../../components/MicroFrontendPopup";
+import useSearchParams from "../../../hooks/useSearchParams";
 
 function DrawerFormDetailPage({
   view,
@@ -130,6 +134,9 @@ function DrawerFormDetailPage({
   }, [data, rootForm.watch("attributes.layout_heading")]);
 
   const getFieldLanguageLabel = (el) => {
+    if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
+      return el?.attributes?.[`label_${i18n?.language}`];
+    }
     if (el?.enable_multilanguage) {
       return el?.attributes?.show_label
         ? `${el?.label} (${activeLang ?? slugSplit(el?.slug)})`
@@ -171,13 +178,33 @@ function DrawerFormDetailPage({
     return lastPart === lang;
   };
 
+  const getAllData = () => {};
+
+  const [microFrontendId, setMicroFrontendId] = useState("");
+  const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
+
+  const handleNavigateToMicroFrontend = (id) => {
+    navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
+  };
+
+  const handleCloseMicroFrontendModal = () => {
+    setIsMicroFrontendOpen(false);
+    setMicroFrontendId("");
+  };
+
+  const microFrontendCallback = (id) => {
+    setMicroFrontendId(id);
+  };
+
   return (
     <MaterialUIProvider>
       <Box
         mt="10px"
-        // sx={{height: modal ? "500px" : "calc(100vh - 44px)"}}
+        sx={{height: "calc(100vh - 44px)"}}
         pb={"10px"}
-        overflow={"auto"}>
+        overflow={"auto"}
+        display="flex"
+        flexDirection="column">
         {isMultiLanguage && (
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
@@ -312,7 +339,10 @@ function DrawerFormDetailPage({
                           fontSize="14px"
                           color="#787774"
                           fontWeight="500"
-                          width="100%">
+                          width="100%"
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap">
                           {getFieldLanguageLabel(field)}
                         </Box>
                       </Box>
@@ -322,8 +352,15 @@ function DrawerFormDetailPage({
                           drawerDetail={true}
                           control={rootForm.control}
                           field={field}
-                          watch={rootForm.watch}
-                          isDisabled={field?.attributes?.disabled}
+                          watch={watch}
+                          isRequired={field?.attributes?.required}
+                          isDisabled={
+                            field?.attributes?.disabled ||
+                            !field?.attributes?.field_permission
+                              ?.edit_permission
+                          }
+                          setFormValue={setFormValue}
+                          errors={errors}
                         />
                       </Box>
                     </Box>
@@ -332,6 +369,19 @@ function DrawerFormDetailPage({
             </Container>
           </Box>
         ))}
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          marginTop="auto"
+          marginBottom="12px">
+          <FormCustomActionButton
+            control={control?._formValues}
+            tableSlug={tableSlug}
+            id={selectedRow?.guid}
+            getAllData={getAllData}
+            microFrontendCallback={handleNavigateToMicroFrontend}
+          />
+        </Box>
       </Box>
 
       <Box
@@ -345,6 +395,12 @@ function DrawerFormDetailPage({
           cursor: "col-resize",
         }}
       />
+      {/* <MicroFrontendPopup
+        open={isMicroFrontendOpen}
+        handleClose={handleCloseMicroFrontendModal}
+        itemId={selectedRow?.guid}
+        microFrontendId={microFrontendId}
+      /> */}
     </MaterialUIProvider>
   );
 }
@@ -447,7 +503,10 @@ const HeadingOptions = ({
         <Box sx={{width: "180px", padding: "4px 0"}}>
           {fieldsList
             .filter(
-              (field) => field?.type === "SINGLE_LINE" || field?.type === "TEXT"
+              (field) =>
+                field?.type === FIELD_TYPES.SINGLE_LINE ||
+                field?.type === FIELD_TYPES.TEXT ||
+                field?.type === FIELD_TYPES.INCREMENT_ID
             )
             .map((option) => (
               <MenuItem

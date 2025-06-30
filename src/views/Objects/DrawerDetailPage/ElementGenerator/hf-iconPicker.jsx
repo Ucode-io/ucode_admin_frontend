@@ -1,6 +1,8 @@
 import {FormHelperText} from "@mui/material";
 import {Controller} from "react-hook-form";
 import IconPickerField from "./IconPickerField";
+import { Box } from "@chakra-ui/react";
+import { Lock } from "@mui/icons-material";
 
 const HFIconPicker = ({
   control,
@@ -26,8 +28,8 @@ const HFIconPicker = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
-        <>
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <Box>
           <IconPickerField
             drawerDetail={drawerDetail}
             id="icon_field"
@@ -45,8 +47,9 @@ const HFIconPicker = ({
           {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
-        </>
-      )}></Controller>
+        </Box>
+      )}
+    ></Controller>
   );
 };
 

@@ -33,7 +33,35 @@ import "./style.scss";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {useMemo, useState} from "react";
+import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attributes/FormulaFilters";
+import constructorRelationService from "../../services/constructorRelationService";
+import {listToMap} from "../../utils/listToMap";
+import MaterialUIProvider from "../../providers/MaterialUIProvider";
+
+const formulaTypes = [
+  {label: "Сумма", value: "SUMM"},
+  {label: "Максимум", value: "MAX"},
+  {label: "Среднее", value: "AVG"},
+];
+
+const formulaFormatOptions = [
+  {
+    label: "Formula frontend",
+    label_ru: "Формула frontend",
+    label_en: "Formula frontend",
+    label_uz: "Formula frontend",
+    value: "FORMULA_FRONTEND",
+    icon: "plus-minus.svg",
+  },
+  {
+    label: "Formula backend",
+    label_ru: "Формула backend",
+    label_en: "Formula backend",
+    label_uz: "Formula backend",
+    value: "FORMULA",
+    icon: "plus-minus.svg",
+  },
+];
 
 export default function FieldCreateModal({
   tableLan,
@@ -267,78 +295,48 @@ export default function FieldCreateModal({
             "ADD COLUMN"}
         </Typography>
 
-        <form onSubmit={handleSubmit(onSubmit)} className={style.form}>
-          <Box
-            className={style.field}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}>
+        <form
+          onSubmit={handleSubmit(
+            format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+          )}
+          className={style.form}>
+          <MaterialUIProvider>
             <Box
-              sx={{
-                width: "100%",
+              className={style.field}
+              style={{
+                display: "flex",
+                flexDirection: "column",
               }}>
-              {!ValueTypes(values?.type) && !FormatTypes(format) ? (
-                <FRow
-                  label={
-                    generateLangaugeText(tableLan, i18n?.language, "Label") ||
-                    "Label"
-                  }
-                  classname={style.custom_label}
-                  required>
-                  <Box style={{display: "flex", gap: "6px"}}>
-                    <HFTextFieldWithMultiLanguage
-                      control={control}
-                      name="attributes.label"
-                      fullWidth
-                      placeholder="Name"
-                      defaultValue={tableName}
-                      languages={languages}
-                      id={"text_field_label"}
-                    />
-                  </Box>
-                </FRow>
-              ) : null}
-            </Box>
-            <FRow
-              label={
-                generateLangaugeText(tableLan, i18n?.language, "Type") || "Type"
-              }
-              componentClassName="flex gap-2 align-center"
-              required
-              classname={style.custom_label}>
-              <HFSelect
-                className={style.input}
-                disabledHelperText
-                options={fieldData ? fieldFormats : newFieldTypes}
-                name="attributes.format"
-                control={control}
-                disabled={fieldData}
-                fullWidth
-                required
-                onChange={(e) => {
-                  if (e === "NUMBER") {
-                    setValue("type", "NUMBER");
-                  } else if (e === "DATE") {
-                    setValue("type", "DATE");
-                  } else if (e === "INCREMENT") {
-                    setValue("type", "INCREMENT_ID");
-                  } else if (e === "SINGLE_LINE") {
-                    setValue("type", "SINGLE_LINE");
-                  } else {
-                    setValue("type", e);
-                  }
-                }}
-                placeholder="Select type"
-              />
-            </FRow>
-          </Box>
-          <Box sx={{padding: "0 5px"}}>
-            {formatIncludes?.includes(format) ? (
+              <Box
+                sx={{
+                  width: "100%",
+                }}>
+                {!ValueTypes(values?.type) && !FormatTypes(format) ? (
+                  <FRow
+                    label={
+                      generateLangaugeText(tableLan, i18n?.language, "Label") ||
+                      "Label"
+                    }
+                    classname={style.custom_label}
+                    required>
+                    <Box style={{display: "flex", gap: "6px"}}>
+                      <HFTextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
+                        id={"text_field_label"}
+                      />
+                    </Box>
+                  </FRow>
+                ) : null}
+              </Box>
               <FRow
                 label={
-                  generateLangaugeText(tableLan, i18n?.language, "Format") ||
-                  "Format"
+                  generateLangaugeText(tableLan, i18n?.language, "Type") ||
+                  "Type"
                 }
                 componentClassName="flex gap-2 align-center"
                 required
@@ -346,39 +344,76 @@ export default function FieldCreateModal({
                 <HFSelect
                   className={style.input}
                   disabledHelperText
-                  options={FormatOptionType(format)}
-                  name="type"
+                  options={fieldData ? fieldFormats : newFieldTypes}
+                  name="attributes.format"
                   control={control}
                   disabled={fieldData}
                   fullWidth
                   required
-                  placeholder={
-                    generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Select type"
-                    ) || "Select type"
-                  }
+                  onChange={(e) => {
+                    if (e === "NUMBER") {
+                      setValue("type", "NUMBER");
+                    } else if (e === "DATE") {
+                      setValue("type", "DATE");
+                    } else if (e === "INCREMENT") {
+                      setValue("type", "INCREMENT_ID");
+                    } else if (e === "SINGLE_LINE") {
+                      setValue("type", "SINGLE_LINE");
+                    } else {
+                      setValue("type", e);
+                    }
+                  }}
+                  placeholder="Select type"
                 />
               </FRow>
-            ) : null}
-            {fieldData && (
-              <Button
-                fullWidth
-                className={style.advanced}
-                onClick={() => {
-                  handleOpenFieldDrawer(fieldData);
-                  closeAllDrawer();
-                }}>
-                <SettingsIcon />
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Advanced settings"
-                ) || "Advanced settings"}
-              </Button>
-            )}
-          </Box>
+            </Box>
+            <Box sx={{padding: "0 5px"}}>
+              {formatIncludes?.includes(format) ? (
+                <FRow
+                  label={
+                    generateLangaugeText(tableLan, i18n?.language, "Format") ||
+                    "Format"
+                  }
+                  componentClassName="flex gap-2 align-center"
+                  required
+                  classname={style.custom_label}>
+                  <HFSelect
+                    className={style.input}
+                    disabledHelperText
+                    options={FormatOptionType(format)}
+                    name="type"
+                    control={control}
+                    disabled={fieldData}
+                    fullWidth
+                    required
+                    placeholder={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Select type"
+                      ) || "Select type"
+                    }
+                  />
+                </FRow>
+              ) : null}
+              {fieldData && (
+                <Button
+                  fullWidth
+                  className={style.advanced}
+                  onClick={() => {
+                    handleOpenFieldDrawer(fieldData);
+                    closeAllDrawer();
+                  }}>
+                  <SettingsIcon />
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced settings"
+                  ) || "Advanced settings"}
+                </Button>
+              )}
+            </Box>
+          </MaterialUIProvider>
           <div>
             {format === "MULTISELECT" && (
               <Box className={style.dropdown}>

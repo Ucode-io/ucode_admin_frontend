@@ -17,7 +17,13 @@ import HFLinkField from "../../../../components/FormElements/HFLinkField";
 import HFFileUpload from "../../../../components/FormElements/HFFileUpload";
 import HFMoneyField from "./hf-moneyField";
 import {Controller, useWatch} from "react-hook-form";
-import {ChakraProvider, Input, InputGroup} from "@chakra-ui/react";
+import {
+  ChakraProvider,
+  Box as ChakraBox,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
 import {NumericFormat} from "react-number-format";
 import {
   Box,
@@ -40,6 +46,14 @@ import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
 import {numberWithSpaces} from "../../../../utils/formatNumbers";
 import MultiLineInput from "./MultiLineInput";
 import HFInternationalPhone from "./hf-internationalPhone";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import {useQuery} from "react-query";
+import constructorFunctionService from "../../../../services/constructorFunctionService";
+import listToOptions from "../../../../utils/listToOptions";
+import HFCodeField from "../../../../components/FormElements/HFCodeField";
+import JSONInput from "react-json-editor-ajrm";
+import {isJSONParsable} from "../../../../utils/isJsonValid";
+import CellManyToManyRelationElement from "../../../../components/ElementGenerators/CellManyToManyRelationElement";
 
 function DrawerFieldGenerator({
   field,
@@ -48,6 +62,9 @@ function DrawerFieldGenerator({
   drawerDetail,
   isDisabled,
   activeLang = "",
+  setFormValue = () => {},
+  errors,
+  isRequired,
 }) {
   const removeLangFromSlug = (slug) => {
     var lastIndex = slug.lastIndexOf("_");
@@ -75,16 +92,48 @@ function DrawerFieldGenerator({
     return field?.slug;
   }, [field?.slug, activeLang, field]);
 
+  const defaultValue = useMemo(() => {
+    if (
+      field?.type === "DATE" ||
+      field?.type === "DATE_TIME" ||
+      field?.type === "DATE_TIME_WITHOUT_TIME_ZONE"
+    ) {
+      return field?.attributes?.defaultValue === "now()" ? new Date() : null;
+    }
+  }, [field.type, field.id, field.relation_type]);
+
+  const {data: functions = []} = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return constructorFunctionService.getListV2({});
+    },
+    {
+      onError: (err) => {
+        console.log("ERR =>", err);
+      },
+      select: (res) => {
+        return listToOptions(res.functions, "name", "id");
+      },
+    }
+  );
+
   switch (field?.relation_type ?? field?.type) {
     case "Many2One":
+    case "Many2Many":
+    case "PERSON": {
       return (
         <RelationField
           disabled={isDisabled}
+          isRequired={isRequired}
           field={field}
+          errors={errors}
           control={control}
           name={computedSlug}
+          setFormValue={setFormValue}
+          isMulti={field?.relation_type === "Many2Many"}
         />
       );
+    }
     case "MULTI_LINE":
       return (
         <MultiLineInput
@@ -104,6 +153,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           drawerDetail={drawerDetail}
+          setFormValue={setFormValue}
         />
       );
 
@@ -125,6 +175,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           drawerDetail={true}
+          x
         />
       );
     case "TIME":
@@ -300,6 +351,7 @@ function DrawerFieldGenerator({
           control={control}
           computedSlug={computedSlug}
           field={field}
+          setValue={setFormValue}
         />
       );
 
@@ -335,7 +387,23 @@ function DrawerFieldGenerator({
       );
 
     case "INTERNATION_PHONE":
-      return <HFInternationalPhone control={control} name={computedSlug} />;
+      return (
+        <HFInternationalPhone
+          disabled={isDisabled}
+          control={control}
+          name={computedSlug}
+        />
+      );
+
+    case "JSON":
+      return (
+        <JSONField
+          disabled={isDisabled}
+          control={control}
+          name={computedSlug}
+          field={field}
+        />
+      );
 
     default:
       return (
@@ -344,6 +412,9 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           control={control}
           name={computedSlug}
+          field={field}
+          errors={errors}
+          functions={functions}
         />
       );
   }
@@ -355,37 +426,80 @@ const InputField = ({
   type = "text",
   disabled = false,
   watch = () => {},
+  errors,
+  functions,
 }) => {
-  const inputValue = watch(name);
+  const inputValue =
+    watch(name) ||
+    functions?.find((fn) => fn?.value === field?.attributes?.function)?.label;
+
+  const inputType = field?.type === "EMAIL" ? "email" : type;
+
+  const isDisabled =
+    disabled || field?.type === "BUTTON" || field?.type === "INCREMENT_ID";
 
   return (
     <Controller
       control={control}
       name={name}
+      rules={{
+        pattern: {
+          value: field?.type === "EMAIL" ? /\S+@\S+\.\S+/ : undefined,
+          message:
+            field?.type === "EMAIL" ? "Incorrect email format" : undefined,
+        },
+      }}
       render={({field: {onChange, value}}) => {
         return (
           <ChakraProvider>
-            <Input
-              disabled={disabled}
-              type={type}
-              value={inputValue ?? value}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="Empty"
-              height="30px"
-              fontSize="13px"
-              px={"9.6px"}
-              width="100%"
-              border="none"
-              borderRadius={"4px"}
-              _hover={{
-                bg: "#F7F7F7",
-              }}
-              _focus={{
-                backgroundColor: "#F7F7F7",
-                border: "none",
-                outline: "none",
-              }}
-            />
+            <ChakraBox position="relative">
+              <InputGroup>
+                <Input
+                  disabled={isDisabled}
+                  type={inputType}
+                  value={inputValue ?? value}
+                  onChange={(e) => onChange(e.target.value)}
+                  placeholder={
+                    field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
+                  }
+                  height="30px"
+                  fontSize="13px"
+                  px={"9.6px"}
+                  width="100%"
+                  border="none"
+                  borderRadius={"4px"}
+                  _hover={{
+                    bg: "#F7F7F7",
+                  }}
+                  _placeholder={{
+                    color: "#adb5bd",
+                  }}
+                  _focus={{
+                    backgroundColor: "#F7F7F7",
+                    border: "none",
+                    outline: "none",
+                  }}
+                />
+                {isDisabled && (
+                  <InputRightElement pointerEvents="none">
+                    <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+                  </InputRightElement>
+                )}
+              </InputGroup>
+              {errors?.[name] && (
+                <span
+                  style={{
+                    color: "#FF4842",
+                    fontSize: "10px",
+                    position: "absolute",
+                    bottom: "-5px",
+                    left: "0",
+                    paddingLeft: "9.6px",
+                  }}>
+                  {errors?.[name]?.message}
+                </span>
+              )}
+            </ChakraBox>
           </ChakraProvider>
         );
       }}
@@ -411,7 +525,7 @@ const NumberField = ({
     }
   };
   return (
-    <>
+    <Box position="relative">
       <Controller
         control={control}
         name={name}
@@ -436,6 +550,7 @@ const NumberField = ({
                 outline: "none",
                 color: "#212b36",
                 fontSize: "13px",
+                cursor: disabled ? "not-allowed" : "text",
               }}
               value={typeof value === "number" ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
@@ -446,7 +561,23 @@ const NumberField = ({
           );
         }}
       />
-    </>
+      {disabled && (
+        <Box
+          sx={{
+            width: "2.5rem",
+            height: "2.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            right: 0,
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}>
+          <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+        </Box>
+      )}
+    </Box>
   );
 };
 
@@ -571,6 +702,81 @@ const FormulaField = ({
           {...props}
         />
       )}></Controller>
+  );
+};
+
+const JSONField = ({
+  control,
+  name,
+  field,
+  disabled = false,
+  placeholder = "",
+}) => {
+  const value = useWatch({
+    control,
+    name,
+  });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return (
+    <div>
+      <Box position="relative">
+        <TextField
+          className="formulaField"
+          placeholder="Empty"
+          size="small"
+          value={value}
+          disabled={disabled}
+          onClick={handleClick}
+        />
+        {disabled && (
+          <Box
+            sx={{
+              width: "2.5rem",
+              height: "2.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "absolute",
+              right: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}>
+            <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+          </Box>
+        )}
+      </Box>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}>
+        <HFCodeField
+          control={control}
+          field={field}
+          name={name}
+          isDisabled={disabled}
+        />
+      </Popover>
+    </div>
   );
 };
 

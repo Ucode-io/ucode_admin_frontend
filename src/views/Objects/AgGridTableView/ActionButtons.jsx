@@ -72,7 +72,7 @@ function ActionButtons(props) {
                 id="cancel-row"
                 color="error"
                 style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
-                onClick={() => colDef.removeRow(data?.guid)}>
+                onClick={() => colDef.removeRow(props, data?.guid)}>
                 <ClearIcon color="error" />
               </RectangleIconButton>
               <RectangleIconButton
@@ -81,7 +81,7 @@ function ActionButtons(props) {
                 style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
                 onClick={(e) => {
                   e.stopPropagation();
-                  colDef.addRow(data);
+                  colDef?.addRowTree(data, props);
                 }}>
                 <DoneIcon color="success" />
               </RectangleIconButton>
@@ -102,7 +102,7 @@ function ActionButtons(props) {
           <RectangleIconButton
             color="error"
             style={{minWidth: 25, minHeight: 25, height: 25}}
-            onClick={() => colDef.deleteFunction(data)}>
+            onClick={() => colDef.deleteFunction(data, props)}>
             <Delete color="error" />
           </RectangleIconButton>
         </Box>

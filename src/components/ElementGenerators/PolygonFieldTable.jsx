@@ -24,12 +24,15 @@ function PolygonFieldTable({
   row,
   drawerDetail = false,
   disabled,
+  setValue = () => {},
 }) {
   const [open, setOpen] = useState(false);
+  const [polygonValue, setPolygonValue] = useState(null);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const updatePolygon = () => {
+    setValue(computedSlug, polygonValue);
     handleClose();
   };
 
@@ -50,10 +53,17 @@ function PolygonFieldTable({
             background: "#f7f7f7",
           },
         }}
-        onClick={handleOpen}
+        onClick={() => {
+          if (disabled) return;
+          handleOpen();
+        }}
       >
         <Box
-          sx={{ fontSize: drawerDetail ? "13px" : "11px", color: "#787774" }}
+          sx={{
+            fontSize: drawerDetail ? "13px" : "11px",
+            color: polygonValue ? "#212b36" : "#adb5bd",
+            cursor: disabled ? "not-allowed" : "pointer",
+          }}
         >
           Polygon
         </Box>
@@ -71,6 +81,8 @@ function PolygonFieldTable({
               updateObject={updateObject}
               name={computedSlug}
               isNewTableView={isNewTableView}
+              setValue={setPolygonValue}
+              polygonValue={polygonValue || []}
             />
           </Box>
 

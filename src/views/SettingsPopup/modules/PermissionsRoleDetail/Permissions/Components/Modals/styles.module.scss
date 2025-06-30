@@ -1,28 +1,35 @@
 .text {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
 
-    span {
-        font-weight: 600;
-    }
+  span {
+    font-weight: 600;
+  }
 
-    max-width: 600px;
-    max-height: 200px;
-    overflow: auto;
-    margin-top: 15px;
+  max-width: 600px;
+  max-height: 200px;
+  overflow: auto;
+  margin-top: 15px;
 }
 
 .headCellBox {
-    display: flex;
-    align-items: center;
-    column-gap: 4px;
-    color: #475467;
-    font-size:12px;
-    font-weight: 500;
-    line-height:18px;
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  color: #475467;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
 }
 
 .bodyCellBox {
-    color: #475467;
+  color: #475467;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+}
+
+.addFilterBtn {
+  width: 100%;
 }

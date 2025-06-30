@@ -66,7 +66,8 @@ function NewSubMenu({
   // };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(menuChilds?.[element?.id], dropResult);
+    console.log({ menuChilds, elementId: element?.id });
+    const result = applyDrag(menuChilds?.[element?.id]?.children, dropResult);
     if (result) {
       menuService
         .updateOrder({

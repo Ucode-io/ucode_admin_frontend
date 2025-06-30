@@ -131,7 +131,7 @@ function MultiFileUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
               }}>
               <img
@@ -176,7 +176,7 @@ function MultiFileUpload({
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 justifyContent: "flex-start",
                 alignItems: "center",
               }}>
@@ -212,7 +212,7 @@ function MultiFileUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}>
               <Box
                 sx={{
@@ -298,7 +298,7 @@ function MultiFileUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
               }}
               onClick={(e) => {
@@ -310,7 +310,7 @@ function MultiFileUpload({
                 style={{
                   display: "none",
                 }}
-                accept=".pdf, .doc, .docx, .xls, .xlsx, .csv, .ppt, .pptx, .txt, .rtf, .odt, .ods, .odp"
+                // accept=".pdf, .doc, .docx, .xls, .xlsx, .csv, .ppt, .pptx, .txt, .rtf, .odt, .ods, .odp"
                 className="hidden"
                 ref={inputRef}
                 tabIndex={tabIndex}

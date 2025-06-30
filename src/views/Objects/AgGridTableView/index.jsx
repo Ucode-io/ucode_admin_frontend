@@ -183,7 +183,7 @@ function AgGridTableView(props) {
       constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
-          limit,
+          limit: pageLimit ? pageLimit : limit,
           search: tableSearch,
           view_fields: checkedColumns,
           [groupTab?.slug]: groupTab
@@ -192,7 +192,7 @@ function AgGridTableView(props) {
               ? [`${groupTab?.value}`]
               : groupTab?.value
             : "",
-          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
+          offset: Boolean(limitPage < 0) ? 0 : limitPage,
         },
       }),
     {
@@ -227,6 +227,55 @@ function AgGridTableView(props) {
       },
     }
   );
+
+  const createServerSideDatasource = (updatedFilters) => {
+    return {
+      getRows: async (params) => {
+        // const { startRow, endRow } = params.request;
+
+        // const limit = endRow - startRow;
+        // const offset = startRow;
+
+        try {
+          const resp = await constructorObjectService.getListV2(tableSlug, {
+            data: {
+              ...filters,
+              limit: pageLimit ? pageLimit : limit,
+              search: tableSearch,
+              view_fields: checkedColumns,
+              [groupTab?.slug]: groupTab
+                ? Object.values(fieldsMap).find(
+                    (el) => el.slug === groupTab?.slug
+                  )?.type === "MULTISELECT"
+                  ? [`${groupTab?.value}`]
+                  : groupTab?.value
+                : "",
+              offset:
+                Boolean(tableSearch) || Boolean(limitPage < 0) ? 0 : limitPage,
+              // offset,
+              ...updatedFilters,
+            },
+          });
+
+          const items = resp?.data?.response || [];
+          setCount(resp?.data?.count);
+
+          const rowData = items.map((item) => ({
+            ...item,
+            group: item.has_child,
+          }));
+
+          params.success({
+            rowData,
+            rowCount: undefined,
+          });
+        } catch (error) {
+          console.error("Error loading tree data:", error);
+          params.fail();
+        }
+      },
+    };
+  };
 
   const {
     data: {fiedlsarray} = {
@@ -600,7 +649,10 @@ function AgGridTableView(props) {
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : isWarning <= 7;
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -625,10 +677,13 @@ function AgGridTableView(props) {
   return (
     <Box
       sx={{
-        height: `calc(100vh - ${calculatedHeight + 85}px)`,
+        height: `calc(100vh - ${calculatedHeight + 130}px)`,
         overflow: "scroll",
       }}>
-      <div className={style.gridTable}>
+      <div
+        className={style.gridTable}
+        // style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
+        style={{height: `100%`}}>
         <div
           className="ag-theme-quartz"
           style={{
@@ -715,7 +770,7 @@ function AgGridTableView(props) {
 
       <AggridFooter
         view={view}
-        limit={limit}
+        limit={pageLimit ? pageLimit : limit}
         count={count}
         rowData={rowData}
         refetch={refetch}

@@ -48,7 +48,7 @@ const HFAutocomplete = ({
         fieldState: {error},
       }) => {
         return (
-          <FormControl style={{width}}>
+          <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
             <CAutoCompleteSelect
               value={value}
@@ -63,6 +63,7 @@ const HFAutocomplete = ({
               }}
               onFieldChange={onFieldChange}
               options={computedOptions}
+              {...props}
             />
             {error?.message && (
               <FormHelperText error>{error?.message}</FormHelperText>

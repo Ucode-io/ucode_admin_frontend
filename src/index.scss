@@ -324,6 +324,14 @@ div {
 
   input {
     border: none !important;
+
+    &::placeholder {
+      color: #adb5bd;
+    }
+  }
+
+  &::placeholder {
+    color: #adb5bd;
   }
 
   div fieldset {
@@ -1160,7 +1168,7 @@ div:has(.chakra-tooltip) {
 .mapField {
   input {
     &::placeholder {
-      color: #787774;
+      color: #adb5bd;
       font-size: 14px;
     }
   }

@@ -53,15 +53,20 @@ function HFModalMap({
         defaultValue={defaultValue}
         variant="standard"
         width="small"
-        onClick={() => (disabled ? null : handleOpen())}
+        onClick={() => {
+          if (disabled) return;
+          handleOpen();
+        }}
         sx={{
           width: "330px",
           paddingLeft: "5px",
+          "& input": {
+            cursor: disabled ? "not-allowed" : "pointer",
+          },
         }}
         InputProps={{
           style: {
             background: isTransparent ? "transparent" : "",
-            height: "100%x",
             height: "100%",
             padding: "0 0",
           },

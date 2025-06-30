@@ -198,14 +198,14 @@ const LoginFormDesign = ({
           );
           localStorage.setItem(
             "newUi",
-            res?.companies?.[0]?.projects?.[0]?.new_design
+            res?.companies?.[0]?.projects?.[0]?.new_design || false
           );
           res?.companies?.[0]?.projects?.[0]?.new_layout
             ? localStorage.setItem("detailPage", "SidePeek")
             : localStorage.setItem("detailPage", "");
           localStorage.setItem(
             "newLayout",
-            res?.companies?.[0]?.projects?.[0]?.new_layout
+            res?.companies?.[0]?.projects?.[0]?.new_layout || false
           );
         } else {
           dispatch(showAlert("The company does not exist", "error"));
@@ -367,7 +367,7 @@ const LoginFormDesign = ({
   useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
-        if (connection.options.length === 1) {
+        if (connection?.options?.length === 1) {
           setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
           setSelectedCollection(connection.options[0]?.value);
           setValue(

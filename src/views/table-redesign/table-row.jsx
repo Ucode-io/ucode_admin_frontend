@@ -47,7 +47,7 @@ const TableRow = ({
 }) => {
   const navigate = useNavigate();
   const projectId = store.getState().auth?.projectId;
-  const hasPermission = usePermission({tableSlug, type: "delete_all"});
+  const hasPermission = usePermission({tableSlug, type: "delete"});
 
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
@@ -93,8 +93,7 @@ const TableRow = ({
                       : (currentPage - 1) * limit + rowIndex + 1}
                   </span>
                 )}
-
-                <PermissionWrapperV2 tableSlug={tableSlug} type={"delete_all"}>
+                <PermissionWrapperV2 tableSlug={tableSlug} type={"delete"}>
                   <Checkbox
                     size="small"
                     sx={{padding: "4px"}}
@@ -185,13 +184,13 @@ const TableRow = ({
                       <CellElementGenerator field={virtualColumn} row={row} />
                     )}
 
-                    {index === 0 && (
-                      <div
-                        onClick={() => onRowClick(row, rowIndex)}
-                        className="first_button">
-                        <OpenInFullIcon style={{width: 14}} fill="#007aff" />
-                      </div>
-                    )}
+                    {/* {index === 0 && ( */}
+                    <div
+                      onClick={() => onRowClick(row, rowIndex)}
+                      className="newUIi_first_button">
+                      <OpenInFullIcon style={{width: 14}} fill="#007aff" />
+                    </div>
+                    {/* )} */}
                     {(virtualColumn.attributes?.disabled ||
                       !virtualColumn.attributes?.field_permission
                         ?.edit_permission) && (

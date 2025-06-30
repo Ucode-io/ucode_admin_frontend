@@ -58,6 +58,7 @@ const MultiselectCellColoredElement = ({
     >
       {tags?.map((tag) => (
         <div
+          key={tag.value}
           className={cls.cellColoredElementLabel}
           style={{
             color: color || hasColor ? tag.color?.color || tag?.color : "#000",

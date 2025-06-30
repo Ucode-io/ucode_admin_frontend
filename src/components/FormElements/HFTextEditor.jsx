@@ -146,6 +146,8 @@ const HFTextEditor = ({
                   if (val !== "<p><br></p>") {
                     onChange(val);
                     isNewTableView && updateObject();
+                  } else {
+                    onChange("");
                   }
                 }}
                 tabIndex={tabIndex}

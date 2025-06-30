@@ -22,7 +22,10 @@ export const FIELD_TYPES = {
   PASSWORD: "PASSWORD",
   FORMULA: "FORMULA",
   LOOKUP: "LOOKUP",
+  LOOKUPS: "LOOKUPS",
   FILE: "FILE",
+  TEXT: "TEXT",
+  INCREMENT_ID: "INCREMENT_ID",
 };
 
 export const fieldTypes = [
@@ -371,11 +374,11 @@ export const numberFieldFormats = [
     value: "FLOAT",
     icon: "minus.svg",
   },
-  {
-    label: "Money",
-    value: "MONEY",
-    icon: "minus.svg",
-  },
+  // {
+  //   label: "Money",
+  //   value: "MONEY",
+  //   icon: "minus.svg",
+  // },
 ];
 
 // export const barcodeFieldFormats = [

@@ -1,7 +1,7 @@
 import {Add} from "@mui/icons-material";
 import {Button} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useMutation, useQueryClient} from "react-query";
+import {useEffect, useMemo, useRef} from "react";
+import {useState} from "react";
 import {useParams, useSearchParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
@@ -14,21 +14,18 @@ import styles from "./style.module.scss";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {useDispatch, useSelector} from "react-redux";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import {useQueryClient} from "react-query";
 
 const BoardColumn = ({
-  tab,
-  data = [],
+  group,
+  boardData = [],
   fieldsMap,
   view = {},
   computedColumnsFor,
-  menuItem,
-  layoutType,
-  setLayoutType,
-  refetch: refetchListQueries,
   boardRef,
   index: columnIndex,
   subGroupById,
-  subGroupData,
   subItem,
   subGroupFieldSlug,
   setOpenDrawerModal,
@@ -40,6 +37,13 @@ const BoardColumn = ({
   projectInfo,
   setLoadings = () => {},
   setSelectedView = () => {},
+  searchText,
+  columnsForSearch,
+  groupSlug,
+  getGroupCounts,
+  setBoardData,
+  groupItem,
+  groupField,
 }) => {
   const dispatch = useDispatch();
   const {menuId} = useParams();
@@ -52,93 +56,15 @@ const BoardColumn = ({
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
 
-  const [computedData, setComputedData] = useState(
-    (subGroupById ? subGroupData : data).filter((el) => {
-      if (isStatusType) {
-        return el?.[selectedGroupField?.slug];
-      } else {
-        if (Array.isArray(el[tab.slug]))
-          return el[tab.slug].includes(tab.value);
-        return el[tab.slug] === tab.value;
-      }
-    })
-  );
-
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
-  );
-
-  const {mutate} = useMutation(
-    ({data, index}) => {
-      const mutateData = {
-        ...data,
-        board_order: index + 1,
-      };
-
-      if (isStatusType) {
-        mutateData[selectedGroupField?.slug] = tab.value;
-      } else {
-        mutateData[tab.slug] = tab.value;
-      }
-
-      return constructorObjectService.update(tableSlug, {
-        data: mutateData,
-      });
-    },
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-      },
-    }
-  );
-
-  const mutateDrop = useDebounce(({data, index}) => {
-    const mutateData = {
-      ...data,
-      board_order: index + 1,
-    };
-
-    if (isStatusType) {
-      mutateData[selectedGroupField?.slug] = tab.value;
-    } else {
-      mutateData[tab.slug] = tab.value;
-    }
-
+  const mutateDrop = useDebounce((mutateData) => {
     constructorObjectService
       .update(tableSlug, {
         data: mutateData,
       })
       .then(() => {
-        // queryClient.refetchListQueriesQueries(["GET_OBJECT_LIST_ALL"]);
-        // refetchListQueries();
+        getGroupCounts();
       });
   }, 0);
-
-  // const {
-  //   data: { layout } = {
-  //     layout: [],
-  //   },
-  // } = useQuery({
-  //   queryKey: [
-  //     "GET_LAYOUT",
-  //     {
-  //       tableSlug,
-  //     },
-  //   ],
-  //   queryFn: () => {
-  //     return layoutService.getLayout(tableSlug, appId);
-  //   },
-  //   select: (data) => {
-  //     return {
-  //       layout: data ?? {},
-  //     };
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error", error);
-  //   },
-  // });
 
   const onDrop = (dropResult) => {
     let dropResultTemp = {...dropResult};
@@ -146,72 +72,70 @@ const BoardColumn = ({
     const payload = dropResultTemp.payload;
 
     if (dropResult?.addedIndex !== null && subGroupById) {
-      payload[subGroupFieldSlug] = subItem;
+      payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
     }
 
-    if (isStatusType) {
-      payload[selectedGroupField?.slug] = tab?.label;
+    payload["color"] = color;
+
+    if (subGroupById && payload[subGroupFieldSlug] !== subItem) {
+      payload[subGroupFieldSlug] = subItem === "Unassigned" ? null : subItem;
+    }
+
+    if (
+      groupField?.type === FIELD_TYPES.LOOKUP ||
+      groupField?.type === FIELD_TYPES.LOOKUPS
+    ) {
+      payload[groupField?.slug] =
+        group?.name === "Unassigned" ? null : group?.name;
+    } else if (groupField?.type === FIELD_TYPES.MULTISELECT) {
+      payload[groupSlug] = group?.name === "Unassigned" ? null : [group?.name];
     } else {
-      if (Array.isArray(payload[tab.slug]))
-        payload[tab.slug].includes(tab.value);
-      payload[tab.slug] = tab.value;
+      payload[groupSlug] = group?.name === "Unassigned" ? null : group?.name;
     }
 
-    payload["color"] = tab?.color || color;
+    const result = applyDrag(boardData, dropResultTemp);
 
-    const result = applyDrag(computedData, dropResultTemp);
-    if (result) setComputedData(result);
     setIndex(dropResult?.addedIndex);
-    if (result?.length >= computedData?.length) {
-      mutateDrop({data: dropResult.payload, index: dropResult.addedIndex});
+
+    if (result) {
+      setComputedBoardData(result);
+
+      if (subGroupById) {
+        setBoardData((prev) => {
+          return {
+            ...prev,
+            [subItem]: {
+              ...prev[subItem],
+              [groupItem]: result,
+            },
+          };
+        });
+      } else {
+        setBoardData((prev) => {
+          return {
+            ...prev,
+            [groupItem]: result,
+          };
+        });
+      }
+    }
+
+    if (
+      result?.length >= boardData?.length &&
+      dropResult?.addedIndex !== dropResult?.removedIndex
+    ) {
+      const mutateData = {
+        ...dropResult.payload,
+        board_order: dropResult.addedIndex + 1,
+      };
+
+      mutateDrop(mutateData);
     }
   };
 
-  // const timerRef = useRef(null);
-
-  // useEffect(() => {
-  //   if (timerRef.current) {
-  //     clearTimeout(timerRef.current);
-  //   }
-
-  //   if (onDropData) {
-  //     const { dropResult, result } = onDropData;
-
-  //     timerRef.current = setTimeout(() => {
-  //       if (result?.length >= computedData?.length) {
-  //         console.log("MUTATE");
-  //         mutateDrop({
-  //           data: dropResult.payload,
-  //           index: dropResult.addedIndex,
-  //         });
-  //       }
-  //     }, 2000);
-  //   }
-
-  //   return () => {
-  //     if (timerRef.current) {
-  //       clearTimeout(timerRef.current);
-  //     }
-  //   };
-  // }, [onDropData, computedData]);
-
   const viewFields = useMemo(() => {
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
-  }, [view, fieldsMap, data]);
-
-  useEffect(() => {
-    setComputedData(
-      (subGroupById ? subGroupData : data).filter((el) => {
-        if (isStatusType) {
-          return el?.[selectedGroupField?.slug] === tab?.label;
-        } else {
-          if (Array.isArray(el[tab.slug]))
-            return el[tab.slug].includes(tab.value);
-          return el[tab.slug] === tab.value;
-        }
-      })
-    );
-  }, [data, subGroupById, subGroupData]);
+  }, [view, fieldsMap]);
 
   const navigateToCreatePage = (slug) => {
     setOpenDrawerModal(true);
@@ -219,12 +143,12 @@ const BoardColumn = ({
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
-        value: [tab?.label],
+        value: group?.name,
       });
     } else {
       setDefaultValue({
-        field: tab.slug,
-        value: [tab.value],
+        field: group.name,
+        value: group.name,
       });
     }
 
@@ -351,12 +275,46 @@ const BoardColumn = ({
     }
   };
 
-  const field = computedColumnsFor?.find((field) => field?.slug === tab?.slug);
+  const field = computedColumnsFor?.find((field) => field?.slug === groupSlug);
 
   const color =
-    tab?.color ||
-    field?.attributes?.options?.find((item) => item?.value === tab?.value)
+    group?.color ||
+    field?.attributes?.options?.find((item) => item?.slug === group?.slug)
       ?.color;
+
+  const fixedElement = useRef(null);
+
+  useEffect(() => {
+    const board = boardRef.current;
+    const el = fixedElement.current;
+    if (!board || !el) return;
+
+    const onScroll = () => {
+      el.style.top = `${board.scrollTop}px`;
+    };
+
+    board.addEventListener("scroll", onScroll);
+
+    return () => {
+      board.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  // const filteredComputedData = viewSearch({
+  //   columnsForSearch,
+  //   computedData,
+  //   searchText,
+  // });
+
+  const photoViewFields = viewFields.filter(
+    (field) => field?.type === FIELD_TYPES.PHOTO
+  );
+
+  useEffect(() => {
+    if (boardData?.length !== computedBoardData?.length) {
+      setComputedBoardData(boardData);
+    }
+  }, [boardData]);
 
   return (
     <>
@@ -365,20 +323,9 @@ const BoardColumn = ({
         style={{
           backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
         }}>
-        {/* {!subGroupById && (
-          <ColumnHeaderBlock
-            field={field}
-            tab={tab}
-            computedData={computedData}
-            boardRef={boardRef}
-            navigateToCreatePage={navigateToCreatePage}
-            fixed
-          />
-        )} */}
-
         <Container
           groupName="subtask"
-          getChildPayload={(i) => computedData[i]}
+          getChildPayload={(i) => computedBoardData[i]}
           onDrop={(e) => {
             onDrop(e);
           }}
@@ -391,8 +338,8 @@ const BoardColumn = ({
             padding: "10px 8px 0 8px",
           }}
           animationDuration={300}>
-          {computedData?.length > 0 ? (
-            computedData.map((el) => (
+          {computedBoardData?.length > 0 ? (
+            computedBoardData.map((el, boardDataIndex) => (
               <Draggable
                 key={el.guid}
                 index={index}
@@ -400,20 +347,44 @@ const BoardColumn = ({
                 <div
                   className={styles.card}
                   key={el.guid}
-                  onClick={() => navigateToEditPage(el)}>
-                  {viewFields.map((field) => (
-                    <BoardPhotoGenerator key={field.id} field={field} el={el} />
-                  ))}
-                  {viewFields.map((field) => (
-                    <BoardCardRowGenerator
+                  onClick={() => navigateToEditPage(el)}
+                  data-guid={el.guid}>
+                  {photoViewFields.map((field) => (
+                    <BoardPhotoGenerator
                       key={field.id}
-                      isStatus={field?.type === "STATUS"}
                       field={field}
                       el={el}
-                      fieldsMap={fieldsMap}
-                      slug={selectedGroupField?.slug}
-                      columnIndex={columnIndex}
+                      imgProps={{
+                        style: {
+                          height: "200px",
+                          width: "100%",
+                          objectFit: "cover",
+                          pointerEvents: "none",
+                        },
+                        width: "260",
+                        height: "200",
+                      }}
+                      style={{
+                        overflow: "hidden",
+                        borderTopLeftRadius: "10px",
+                        borderTopRightRadius: "10px",
+                      }}
                     />
+                  ))}
+                  {viewFields.map((field) => (
+                    <>
+                      <BoardCardRowGenerator
+                        key={field.id}
+                        isStatus={field?.type === "STATUS"}
+                        field={field}
+                        el={el}
+                        fieldsMap={fieldsMap}
+                        slug={selectedGroupField?.slug}
+                        columnIndex={columnIndex}
+                        showFieldLabel
+                        hintPosition={columnIndex === 0 ? "top" : "left"}
+                      />
+                    </>
                   ))}
                 </div>
               </Draggable>

@@ -1,68 +1,59 @@
 import cls from "./styles.module.scss";
-import { IconButton } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import { useEffect, useRef } from "react";
+import {IconButton} from "@mui/material";
+import {Add} from "@mui/icons-material";
+import {useRef} from "react";
+import {FIELD_TYPES} from "../../../../../utils/constants/fieldTypes";
 
 export const ColumnHeaderBlock = ({
-  tab,
-  computedData,
+  group,
   navigateToCreatePage,
-  boardRef,
-  fixed,
-  field,
+  groupField,
+  boardTab,
   counts,
+  field,
+  computedColumnsFor,
+  groupSlug,
 }) => {
-  // const fixedElement = useRef(null);
+  const fixedElement = useRef(null);
 
-  const hasColor = tab?.color || field?.attributes?.has_color;
+  const item = computedColumnsFor?.find((field) => field?.slug === groupSlug);
 
   const color =
-    tab?.color ||
-    field?.attributes?.options?.find((item) => item?.value === tab?.value)
-      ?.color;
-
-  // useEffect(() => {
-  //   if (fixed) {
-  //     const board = boardRef.current;
-  //     const el = fixedElement.current;
-  //     if (!board || !el) return;
-
-  //     const onScroll = () => {
-  //       // el.style.top = `${board.scrollTop}px`;
-  //       el.style.transform = `translateY(${board.scrollTop}px)`;
-  //     };
-
-  //     board.addEventListener("scroll", onScroll);
-
-  //     return () => {
-  //       board.removeEventListener("scroll", onScroll);
-  //     };
-  //   }
-  // }, []);
+    item?.type === FIELD_TYPES.STATUS
+      ? item?.attributes?.todo?.options?.find(
+          (item) => item?.label === group?.name
+        )?.color ||
+        item?.attributes?.complete?.options?.find(
+          (item) => item?.label === group?.name
+        )?.color ||
+        item?.attributes?.progress?.options?.find(
+          (item) => item?.label === group?.name
+        )?.color
+      : item?.attributes?.options?.find((item) => item?.label === group?.name)
+          ?.color;
 
   return (
     <div
-      // ref={fixedElement}
-      className={`${cls.columnHeaderBlock} column-header`}
-      // style={{ position: fixed ? "absolute" : "static" }}
-    >
+      ref={fixedElement}
+      className={`${cls.columnHeaderBlock} column-header`}>
       <div className={cls.leftSide}>
         <div className={cls.title}>
           <span
             style={{
-              background: hasColor ? color + 33 : "rgb(139, 150, 160)",
-              color: hasColor ? color - 50 : "#fff",
+              background: color ? color + 33 : "rgb(139, 150, 160)",
+              color: color ? color : "#fff",
             }}
-            className={cls.tabBlockStatus}
-          >
+            className={cls.tabBlockStatus}>
             <span
               className={cls.dot}
-              style={{ background: color ? color : "rgb(78, 84, 90)" }}
+              style={{background: color ? color : "rgb(78, 84, 90)"}}
             />
-            {tab.label}
+            <span className={cls.label}>{field}</span>
           </span>
         </div>
-        <div className={cls.counter}>{counts[tab.value] ?? 0}</div>
+        <div className={cls.counter}>
+          {(counts?.[group?.name] || group?.count) ?? 0}
+        </div>
       </div>
       <div className={cls.rightSide}>
         <IconButton
@@ -70,9 +61,8 @@ export const ColumnHeaderBlock = ({
           color="inherit"
           onClick={(e) => {
             e.stopPropagation();
-            navigateToCreatePage({ tab });
-          }}
-        >
+            navigateToCreatePage({group});
+          }}>
           <Add />
         </IconButton>
       </div>

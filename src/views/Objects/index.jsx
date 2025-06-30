@@ -157,6 +157,10 @@ const ObjectsPage = () => {
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
   if (isLoading) {
+    if (view?.type === viewTypesMap.BOARD) {
+      return null;
+    }
+
     return (
       <Box bgcolor="#fff" height="100%">
         <Box paddingX={"16px"} borderBottom="1px solid #EAECF0">

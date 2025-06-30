@@ -2,6 +2,8 @@
 
 .container {
   overflow: auto;
+  position: relative;
+  height: 100%;
 }
 
 .header {
@@ -15,8 +17,16 @@
   background-color: #fff;
 }
 
-.wrapper {
+.boardHeader {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: #fff;
+}
 
+.wrapper {
   padding: 0 0px;
 
   .filters {
@@ -41,10 +51,9 @@
 
   .board {
     display: flex;
-    padding: 0px 16px 0 16px;
+    padding: 10px 16px 1px 16px;
     gap: 24px;
     width: 100%;
-    padding-bottom: 1px;
   }
 }
 
@@ -151,7 +160,9 @@
   flex-direction: column;
   gap: 10px;
   border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 4px 0px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  box-shadow:
+    rgba(0, 0, 0, 0.04) 0px 2px 4px 0px,
+    rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
   transition: background-color 0.3s ease;
   cursor: pointer;
 

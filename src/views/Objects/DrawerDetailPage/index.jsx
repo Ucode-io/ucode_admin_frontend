@@ -29,6 +29,7 @@ function DrawerDetailPage({
   selectedViewType,
   setFullScreen = () => {},
   setSelectedViewType = () => {},
+  modal,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -227,6 +228,22 @@ function DrawerDetailPage({
       console.error(error);
     }
   };
+
+  const {
+    reset,
+    watch,
+    control,
+    handleSubmit,
+    formState: {errors},
+    setValue: setFormValue,
+    getValues,
+  } = useForm({
+    defaultValues: {
+      ...state,
+      ...dateInfo,
+      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
+    },
+  });
 
   useEffect(() => {
     if (defaultValue) {

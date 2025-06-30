@@ -15,6 +15,7 @@ import useDebounce from "../../../../hooks/useDebounce";
 import Select from "react-select";
 import {Box} from "@mui/material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel";
 
 const RelationField = ({
   control,
@@ -29,6 +30,8 @@ const RelationField = ({
   checkRequiredField,
   errors,
   isLayout = false,
+  isMulti,
+  isRequired,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -49,11 +52,11 @@ const RelationField = ({
         name={(name || field.slug) ?? `${tableSlug}_id`}
         defaultValue={defaultValue}
         rules={{
-          required: required ? "This field is required!" : "",
+          required: required || isRequired ? "This field is required!" : "",
         }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
-            value={Array.isArray(value) ? value[0] : value}
+            value={isMulti ? value : Array.isArray(value) ? value[0] : value}
             setValue={onChange}
             field={field}
             disabled={disabled}
@@ -62,7 +65,8 @@ const RelationField = ({
             setFormValue={setFormValue}
             control={control}
             name={name}
-            //   errors={errors}
+            errors={errors}
+            isMulti={isMulti}
             required={required}
             activeLang={activeLang}
           />
@@ -88,6 +92,7 @@ const AutoCompleteElement = ({
   errors,
   required = false,
   activeLang,
+  isMulti,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -97,13 +102,13 @@ const AutoCompleteElement = ({
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const {i18n} = useTranslation();
-  const {state} = useLocation();
+  const { i18n } = useTranslation();
+  const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
@@ -138,7 +143,7 @@ const AutoCompleteElement = ({
     placeholder: (provided) => ({
       ...provided,
       fontSize: "13px",
-      color: "#787774",
+      color: "#adb5bd",
     }),
     indicatorSeparator: () => ({
       display: "none",
@@ -184,7 +189,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -228,7 +233,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -311,18 +316,18 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
     } else {
       const val = value;
 
-      setValue(val?.guid ?? null);
-      setLocalValue(val?.guid ? [val] : null);
+      setValue(isMulti ? val?.map((el) => el.guid) : (val?.guid ?? null));
+      setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -346,6 +351,37 @@ const AutoCompleteElement = ({
     return findedOption ? findedOption : [];
   }, [options, value, state?.id]);
 
+  const computedValueMulti = useMemo(() => {
+    if (!value) return [];
+
+    if (Array.isArray(value)) {
+      return value
+        ?.map((id) => {
+          const option = optionsFromLocale?.options?.find(
+            (el) => el?.guid === id
+          );
+
+          if (!option) return null;
+          return {
+            ...option,
+          };
+        })
+        .filter((el) => el !== null);
+    } else {
+      const option = optionsFromLocale?.options?.find(
+        (el) => el?.guid === value
+      );
+
+      if (!option) return [];
+
+      return [
+        {
+          ...option,
+        },
+      ];
+    }
+  }, [optionsFromLocale?.options, value]);
+
   useEffect(() => {
     let val;
 
@@ -359,7 +395,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -370,11 +406,16 @@ const AutoCompleteElement = ({
         }, 1);
       }
     });
-  }, [computedValue, field, value]);
+  }, [computedValue, field, value, computedValueMulti]);
 
   useEffect(() => {
-    if (Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) getValueData();
+    if ((Boolean(value) || Boolean(state?.[`${tableSlug}_id`])) && !isMulti)
+      getValueData();
   }, [value]);
+
+  useEffect(() => {
+    setLocalValue(computedValueMulti);
+  }, []);
 
   useEffect(() => {
     setClientTypeValue();
@@ -430,8 +471,21 @@ const AutoCompleteElement = ({
     }
   }, [state?.id, computedValue]);
 
+  const deleteHandler = async (row) => {
+    setLocalValue((prev) => prev.filter((el) => el.guid !== row.guid));
+    setValue((prev) => prev.filter((el) => el !== row.guid));
+  };
+
   return (
-    <Box sx={{width: "330px", height: "32px"}}>
+    <Box
+      sx={{
+        width: "330px",
+        height: "32px",
+        cursor: disabled ? "not-allowed" : "pointer",
+        border: errors?.[field?.slug] ? "1px solid red" : "none",
+        borderRadius: "4px",
+      }}
+    >
       <Select
         placeholder="Empty"
         id={`relationField`}
@@ -443,6 +497,7 @@ const AutoCompleteElement = ({
         required={required}
         defaultValue={value ?? ""}
         className=""
+        isMulti={isMulti}
         onChange={(e) => {
           changeHandler(e);
         }}
@@ -466,18 +521,72 @@ const AutoCompleteElement = ({
         }
         components={{
           DropdownIndicator: () => null,
-          MultiValue: ({data}) => (
-            <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{marginLeft: "10px", cursor: "pointer"}}
-              size={15}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                navigateToForm(tableSlug, "EDIT", value);
-              }}
-            />
-          ),
+          MultiValue: (option) => {
+            return (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span>
+                  {computedViewFields?.map((el, index) => {
+                    if (field?.attributes?.enable_multi_language) {
+                      return getRelationFieldTabsLabel(
+                        field,
+                        option.data,
+                        activeLang ?? i18n?.language
+                      );
+                      // return (
+                      //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
+                      //   option?.[`${el}`]
+                      // );
+                    } else {
+                      return isMulti ? el : option?.[el];
+                    }
+                  })}
+                </span>
+                <Box display="flex" alignItems="center">
+                  <IconGenerator
+                    icon="arrow-up-right-from-square.svg"
+                    style={{ marginLeft: "10px", cursor: "pointer" }}
+                    size={15}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      navigateToForm(tableSlug, "EDIT", option.data);
+                    }}
+                  />
+                  <span
+                    style={{
+                      cursor: "pointer",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      deleteHandler(option.data);
+                    }}
+                  >
+                    <svg
+                      height="16"
+                      width="16"
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                      focusable="false"
+                      class="css-tj5bde-Svg"
+                    >
+                      <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
+                    </svg>
+                  </span>
+                </Box>
+                {/* <IconGenerator
+                  icon="delete.svg"
+                  style={{ marginLeft: "10px", cursor: "pointer" }}
+                  size={15}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    deleteHandler(option.data);
+                  }}
+                /> */}
+              </div>
+            );
+          },
         }}
       />
       {errors?.[field?.slug] && (
@@ -485,10 +594,11 @@ const AutoCompleteElement = ({
           style={{
             color: "red",
             fontSize: "10px",
-            textAlign: "center",
+            // textAlign: "center",
             marginTop: "5px",
-          }}>
-          {"This field is required!"}
+          }}
+        >
+          {errors?.[field?.slug]?.message ?? "This field is required!"}
         </div>
       )}
     </Box>

@@ -17,8 +17,9 @@ export default function NewFileUpload({
   field,
   drawerDetail = false,
 }) {
+  console.log({ value });
   const inputRef = useRef("");
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -64,20 +65,28 @@ export default function NewFileUpload({
   };
 
   const valueGenerate = (value, separator = "_") => {
-    const splitted = value?.split(separator).slice(1, -1);
-    return splitted?.join(separator);
+    const splitted = value?.split(separator);
+    if (splitted?.length > 2) {
+      return splitted.slice(1, -1).join(separator);
+    } else {
+      return splitted?.[1];
+    }
   };
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
   return (
-    <div className={`Gallery ${className}`}>
+    <div
+      className={`Gallery ${className}`}
+      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    >
       {value && (
         <>
           <Box
-            sx={{width: drawerDetail ? "330px" : "100%"}}
-            className="uploadedFile">
+            sx={{ width: drawerDetail ? "330px" : "100%" }}
+            className="uploadedFile"
+          >
             <Button
               id="file_upload"
               aria-describedby={id}
@@ -87,7 +96,8 @@ export default function NewFileUpload({
                 minWidth: 40,
                 width: 40,
                 height: 27,
-              }}>
+              }}
+            >
               <AttachFileIcon
                 style={{
                   color: "#747474",
@@ -100,7 +110,8 @@ export default function NewFileUpload({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}>
+              }}
+            >
               {valueGenerate(value)}
             </Typography>
           </Box>
@@ -113,14 +124,16 @@ export default function NewFileUpload({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}>
+              }}
+            >
               <Button
                 href={value}
                 className=""
@@ -132,7 +145,8 @@ export default function NewFileUpload({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
-                }}>
+                }}
+              >
                 <OpenInFullIcon />
                 {t("show_file")}
               </Button>
@@ -144,7 +158,8 @@ export default function NewFileUpload({
                   justifyContent: "flex-start",
                 }}
                 disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}>
+                onClick={(e) => closeButtonHandler(e)}
+              >
                 <DeleteIcon />
                 {t("remove_file")}
               </Button>
@@ -159,7 +174,8 @@ export default function NewFileUpload({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}>
+                }}
+              >
                 <ChangeCircleIcon />
                 {t("change_file")}
               </Button>
@@ -187,17 +203,20 @@ export default function NewFileUpload({
           width: "40px",
           display: "flex",
           alignItems: "center",
-        }}>
+        }}
+      >
         {!value && (
           <Button
             id="file_upload_btn"
             onClick={() => inputRef.current.click()}
+            disabled={disabled}
             sx={{
               padding: 0,
               minWidth: 40,
               width: 40,
               height: 27,
-            }}>
+            }}
+          >
             <input
               id="file_upload"
               type="file"
@@ -211,7 +230,7 @@ export default function NewFileUpload({
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{width: 22, height: 22}}
+              style={{ width: 22, height: 22 }}
             />
           </Button>
         )}

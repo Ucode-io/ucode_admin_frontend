@@ -166,6 +166,8 @@ const RecursiveBlock = ({
         handleOpenNotify(e, "MICROFRONTEND");
       } else if (element?.type === "MINIO_FOLDER") {
         handleOpenNotify(e, "MINIO_FOLDER");
+      } else if (element?.type === "LINK") {
+        handleOpenNotify(e, "LINK");
       }
     }
   };

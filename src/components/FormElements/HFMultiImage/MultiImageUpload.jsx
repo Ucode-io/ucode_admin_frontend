@@ -103,27 +103,35 @@ function MultiImageUpload({
                 alignItems: "center",
                 gap: "10px",
                 padding: drawerDetail ? "0 9.6px" : "0",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}>
-              <Box
-                sx={{
-                  height: "25px",
-                  width: "27px",
-                  borderRadius: "4px",
-                  overflow: "hidden",
-                  padding: "0 0 0 0",
-                }}>
-                <img
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                  src={value?.[0]}
-                />
-              </Box>
-              <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
-                {parseImgPhoto(value?.[0])}
-              </Box>
+              {value?.map((img, index) => (
+                <>
+                  <Box
+                    key={index}
+                    sx={{
+                      height: "25px",
+                      width: "27px",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                      padding: "0 0 0 0",
+                    }}
+                    title={parseImgPhoto(img)}>
+                    <img
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                      src={img}
+                      alt="img"
+                    />
+                  </Box>
+                  {/* <Box sx={{ fontSize: "10px", wordBreak: "keep-all" }}> */}
+                  {/* {parseImgPhoto(value?.[0])} */}
+                  {/* </Box> */}
+                </>
+              ))}
             </Box>
           ) : (
             <Box
@@ -136,8 +144,8 @@ function MultiImageUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
                 position: "relative",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}>
               <img
                 style={{width: "100%", height: "100%", border: "none"}}
@@ -181,7 +189,7 @@ function MultiImageUpload({
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 justifyContent: "flex-start",
                 alignItems: "center",
               }}>
@@ -224,7 +232,7 @@ function MultiImageUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}>
               <Box
                 sx={{
@@ -300,7 +308,7 @@ function MultiImageUpload({
                 alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
-                cursor: "pointer",
+                cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
               }}
               onClick={(e) => {

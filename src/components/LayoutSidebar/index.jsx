@@ -31,7 +31,7 @@ import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
 import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
@@ -42,11 +42,13 @@ import {
   AccordionPanel,
   Box,
   Button,
+  ChakraBaseProvider,
   Flex,
   Popover,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  theme,
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
@@ -54,6 +56,7 @@ import {
   SidebarActionTooltip,
   SidebarAppTooltip,
 } from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import InviteModal from "@/components/InviteModal/InviteModal";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {useCompanyListQuery} from "@/services/companyService";
 import {
@@ -79,6 +82,9 @@ import {differenceInCalendarDays, parseISO} from "date-fns";
 import DocsChatwootModal from "./DocsChatwootModal";
 import {menuAccordionActions} from "../../store/menus/menus.slice";
 import UserIcon from "@/assets/icons/profile.svg";
+import {useRoleListQuery} from "../../services/roleServiceV2";
+import {useClientTypesQuery} from "../../views/client-types/utils";
+import useSearchParams from "../../hooks/useSearchParams";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -88,7 +94,7 @@ const LayoutSidebar = ({
 }) => {
   const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const {appId} = useParams();
 
@@ -372,7 +378,27 @@ const LayoutSidebar = ({
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : isWarning <= 7;
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
+
+  const [isOpenInviteModal, setIsOpenInviteModal] = useState(false);
+
+  const onOpenInviteModal = () => {
+    setIsOpenInviteModal(true);
+    updateSearchParam("invite", true);
+  };
+
+  const onCloseInviteModal = () => {
+    setIsOpenInviteModal(false);
+  };
+
+  // const {
+  // isOpen: isOpenInviteModal,
+  // onOpen: onOpenInviteModal,
+  // onClose: onCloseInviteModal,
+  // } = useDisclosure();
 
   return (
     <>
@@ -677,7 +703,8 @@ const LayoutSidebar = ({
                       background: "#F3F3F3",
                     },
                   }}
-                  onClick={handleOpenUserInvite}>
+                  // onClick={handleOpenUserInvite}
+                  onClick={onOpenInviteModal}>
                   {/* color: rgb(161, 160, 156) */}
                   {/* <img src={UserIcon} alt="user" /> */}
                   <svg
@@ -829,6 +856,14 @@ const LayoutSidebar = ({
       {menuSettingModal && (
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
+
+      <ChakraBaseProvider theme={theme}>
+        <InviteModal
+          isOpen={isOpenInviteModal}
+          onClose={onCloseInviteModal}
+          onOpen={onOpenInviteModal}
+        />
+      </ChakraBaseProvider>
     </>
   );
 };

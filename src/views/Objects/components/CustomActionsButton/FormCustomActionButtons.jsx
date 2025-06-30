@@ -2,16 +2,21 @@ import {useMemo} from "react";
 import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQuery";
 import ActionButton from "./ActionButton";
 
-const FormCustomActionButton = ({tableSlug, id, control, getAllData}) => {
-  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
-    {
+const FormCustomActionButton = ({
+  tableSlug,
+  id,
+  control,
+  getAllData,
+  microFrontendCallback = () => {},
+}) => {
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
       tableSlug,
-      queryPayload: {hasId: !!id},
+      queryPayload: { hasId: !!id },
       queryParams: {
         enabled: !!id,
       },
-    }
-  );
+    });
 
   const computedCustomEvents = useMemo(() => {
     return customEvents?.filter((event) => event.action_type === "HTTP");
@@ -28,6 +33,7 @@ const FormCustomActionButton = ({tableSlug, id, control, getAllData}) => {
             event={event}
             id={id}
             getAllData={getAllData}
+            microFrontendCallback={microFrontendCallback}
           />
         ) : (
           ""

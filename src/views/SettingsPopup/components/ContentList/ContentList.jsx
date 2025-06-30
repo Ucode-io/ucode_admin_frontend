@@ -17,6 +17,7 @@ export const ContentList = ({
   handleClose = () => {},
   handleDelete = () => {},
   handleEdit = () => {},
+  resources,
   ...props
 }) => {
   if (isLoading) {
@@ -74,7 +75,8 @@ export const ContentList = ({
                   clickHandler={clickHandler}
                   arr={arr}
                   val={val}
-                  onItemClick={onItemClick}>
+                  onItemClick={onItemClick}
+                  resources={resources}>
                   {getElementIcon(val?.icon)}
                   <p>{val?.label}</p>
                 </ResourceButton>
@@ -101,7 +103,14 @@ const FRLabel = ({children}) => {
   );
 };
 
-const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
+const ResourceButton = ({
+  children,
+  val,
+  arr = [],
+  clickHandler = () => {},
+  onItemClick = () => {},
+  resources,
+}) => {
   const computedElements = arr?.filter(
     (el) =>
       el?.type?.toLowerCase() ===
@@ -154,6 +163,12 @@ const ResourceButton = ({children, val, arr = [], clickHandler = () => {}}) => {
                   tab: "resources",
                   resource_type: val?.value,
                   edit: true,
+                  resourceId:
+                    val?.type === "CLICK_HOUSE"
+                      ? resources?.find(
+                          (resource) => resource?.resource_type === 2
+                        )?.id
+                      : el?.id,
                 });
                 setChosenResource(val);
               }}

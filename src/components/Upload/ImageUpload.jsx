@@ -112,7 +112,10 @@ const ImageUpload = ({
   };
 
   return (
-    <div className={`Gallery ${className}`}>
+    <div
+      className={`Gallery ${className}`}
+      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    >
       {value && (
         <>
           <div
@@ -301,7 +304,10 @@ const ImageUpload = ({
         {!value && (
           <Button
             id="imageUploadBtn"
-            onClick={() => inputRef.current.click()}
+            disabled={disabled}
+            onClick={() => {
+              inputRef.current.click();
+            }}
             sx={{
               padding: 0,
               minWidth: 40,

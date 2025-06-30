@@ -27,6 +27,8 @@ import {
   createFilterOptions,
 } from "@mui/material";
 import RowClickButton from "../RowClickButton";
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 
 const filter = createFilterOptions();
 
@@ -54,31 +56,33 @@ const HFAggridMultiselect = (props) => {
   };
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        width: "100%",
-        height: "100%",
-        left: 0,
-        top: 0,
-      }}>
-      <AutoCompleteElement
-        value={value}
-        width={width}
-        field={field}
-        classes={classes}
-        options={options}
-        hasIcon={hasIcon}
-        hasColor={hasColor}
-        className="hf-select"
-        onFormChange={setValue}
-        required={field?.required}
-        disabled={field?.attributes?.disabled}
-        isMultiSelect={isMultiSelect}
-        props={props}
-        onNavigateToDetail={onNavigateToDetail}
-      />
-    </Box>
+    <MaterialUIProvider>
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          left: 0,
+          top: 0,
+        }}>
+        <AutoCompleteElement
+          value={value}
+          width={width}
+          field={field}
+          classes={classes}
+          options={options}
+          hasIcon={hasIcon}
+          hasColor={hasColor}
+          className="hf-select"
+          onFormChange={setValue}
+          required={field?.required}
+          disabled={disabled}
+          isMultiSelect={isMultiSelect}
+          props={props}
+          onNavigateToDetail={onNavigateToDetail}
+        />
+      </Box>
+    </MaterialUIProvider>
   );
 };
 
@@ -123,7 +127,7 @@ const AutoCompleteElement = ({
         );
       } else {
         return localOptions?.find((item) => {
-          item?.value === value;
+          return item?.value === value;
         });
       }
     else return [localOptions?.find((option) => option.value === value?.[0])];

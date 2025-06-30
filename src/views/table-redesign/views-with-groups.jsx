@@ -1158,7 +1158,6 @@ export const NewUiViewsWithGroups = ({
                             visibleRelationColumns={visibleRelationColumns}
                             visibleForm={visibleForm}
                             menuItem={menuItem}
-                            navigateToDetailPage={navigateToDetailPage}
                             layoutType={layoutType}
                             setSelectedRow={setSelectedRow}
                           />

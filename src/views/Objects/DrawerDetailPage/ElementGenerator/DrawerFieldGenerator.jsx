@@ -63,6 +63,7 @@ function DrawerFieldGenerator({
   activeLang = "",
   setFormValue = () => {},
   errors,
+  isRequired,
 }) {
   const removeLangFromSlug = (slug) => {
     var lastIndex = slug.lastIndexOf("_");
@@ -122,7 +123,9 @@ function DrawerFieldGenerator({
       return (
         <RelationField
           disabled={isDisabled}
+          isRequired={isRequired}
           field={field}
+          errors={errors}
           control={control}
           name={computedSlug}
           setFormValue={setFormValue}

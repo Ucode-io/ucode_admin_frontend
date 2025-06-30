@@ -274,7 +274,7 @@ const RelationSettings = ({
     if (formType === "CREATE") return;
   }, [relation]);
 
-  const {isLoading: relationLoading} = useRelationGetByIdQuery({
+  const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: relation?.attributes?.relation_data?.id || relation?.id,
     queryParams: {
@@ -314,7 +314,8 @@ const RelationSettings = ({
             className={
               item.value === drawerType ? styles.active : styles.inactive
             }
-            onClick={() => setDrawerType(item.value)}>
+            onClick={() => setDrawerType(item.value)}
+          >
             {item.label}
           </Button>
         ))}
@@ -326,7 +327,8 @@ const RelationSettings = ({
           style={{
             borderBottom: "1px solid #e0e0e0",
             paddingBottom: "16px",
-          }}>
+          }}
+        >
           <h2>
             {formType === "CREATE"
               ? generateLangaugeText(
@@ -346,10 +348,11 @@ const RelationSettings = ({
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{height}}>
+        <div className={styles.settingsBlockBody} style={{ height }}>
           <form
             onSubmit={handleSubmit(submitHandler)}
-            className={styles.fieldSettingsForm}>
+            className={styles.fieldSettingsForm}
+          >
             <div>
               <div className={styles.noShadow}>
                 {drawerType === "SCHEMA" && (
@@ -359,7 +362,8 @@ const RelationSettings = ({
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr",
                         gap: "10px",
-                      }}>
+                      }}
+                    >
                       <FRow
                         label={
                           generateLangaugeText(
@@ -368,13 +372,15 @@ const RelationSettings = ({
                             "Label From"
                           ) || "Label From"
                         }
-                        required>
+                        required
+                      >
                         <Box
                           style={{
                             display: "flex",
                             flexDirection: "column",
                             gap: "6px",
-                          }}>
+                          }}
+                        >
                           {languages?.map((lang) => (
                             <HFTextField
                               name={`attributes.label_${lang?.slug}`}
@@ -395,13 +401,15 @@ const RelationSettings = ({
                             "Label To"
                           ) || "Label To"
                         }
-                        required>
+                        required
+                      >
                         <Box
                           style={{
                             display: "flex",
                             flexDirection: "column",
                             gap: "6px",
-                          }}>
+                          }}
+                        >
                           {languages?.map((lang) => (
                             <HFTextField
                               name={`attributes.label_to_${lang?.slug}`}
@@ -423,7 +431,8 @@ const RelationSettings = ({
                           "Table From"
                         ) || "Table From"
                       }
-                      required>
+                      required
+                    >
                       <HFSelect
                         name="table_from"
                         control={control}
@@ -443,7 +452,8 @@ const RelationSettings = ({
                             "Table to"
                           ) || "Table to"
                         }
-                        required>
+                        required
+                      >
                         <HFSelect
                           name="table_to"
                           control={control}
@@ -462,7 +472,8 @@ const RelationSettings = ({
                           "Relation type"
                         ) || "Relation type"
                       }
-                      required>
+                      required
+                    >
                       <HFSelect
                         name="type"
                         control={control}
@@ -481,7 +492,8 @@ const RelationSettings = ({
                             "Relate field type"
                           ) || "Relate field type"
                         }
-                        required>
+                        required
+                      >
                         <HFSelect
                           name="view_type"
                           control={control}
@@ -497,7 +509,8 @@ const RelationSettings = ({
                           i18n?.language,
                           "View fields"
                         ) || "View fields"
-                      }>
+                      }
+                    >
                       <HFMultipleSelect
                         name="view_fields"
                         control={control}
@@ -539,7 +552,8 @@ const RelationSettings = ({
                                   i18n?.language,
                                   "Multiple insert field"
                                 ) || "Multiple insert field"
-                              }>
+                              }
+                            >
                               <HFSelect
                                 options={computedColumns}
                                 control={control}
@@ -554,7 +568,8 @@ const RelationSettings = ({
                                   i18n?.language,
                                   "Fixed fields"
                                 ) || "Fixed fields"
-                              }>
+                              }
+                            >
                               <HFMultipleSelect
                                 options={computedColumns}
                                 control={control}
@@ -651,11 +666,24 @@ const RelationSettings = ({
                     <div
                       style={{
                         marginTop: "10px",
-                      }}>
+                      }}
+                    >
                       <HFCheckbox
                         control={control}
                         name="attributes.disabled"
                         label={"Disabled"}
+                      />
+                      <HFCheckbox
+                        control={control}
+                        name="attributes.required"
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Required"
+                          ) || "Required"
+                        }
+                        labelClassName={styles.custom_label}
                       />
                       <HFCheckbox
                         control={control}
@@ -692,9 +720,10 @@ const RelationSettings = ({
             <div className={styles.settingsFooter}>
               <PrimaryButton
                 className={styles.button}
-                style={{width: "100%", fontSize: "14px"}}
+                style={{ width: "100%", fontSize: "14px" }}
                 onClick={handleSubmit(submitHandler)}
-                loader={formLoader || loader}>
+                loader={formLoader || loader}
+              >
                 {generateLangaugeText(tableLan, i18n?.language, "Save") ||
                   "Save"}
               </PrimaryButton>

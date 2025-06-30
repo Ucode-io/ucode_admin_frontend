@@ -31,6 +31,7 @@ const RelationField = ({
   errors,
   isLayout = false,
   isMulti,
+  isRequired,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -51,7 +52,7 @@ const RelationField = ({
         name={(name || field.slug) ?? `${tableSlug}_id`}
         defaultValue={defaultValue}
         rules={{
-          required: required ? "This field is required!" : "",
+          required: required || isRequired ? "This field is required!" : "",
         }}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
@@ -64,7 +65,7 @@ const RelationField = ({
             setFormValue={setFormValue}
             control={control}
             name={name}
-            //   errors={errors}
+            errors={errors}
             isMulti={isMulti}
             required={required}
             activeLang={activeLang}
@@ -470,12 +471,19 @@ const AutoCompleteElement = ({
     }
   }, [state?.id, computedValue]);
 
+  const deleteHandler = async (row) => {
+    setLocalValue((prev) => prev.filter((el) => el.guid !== row.guid));
+    setValue((prev) => prev.filter((el) => el !== row.guid));
+  };
+
   return (
     <Box
       sx={{
         width: "330px",
         height: "32px",
         cursor: disabled ? "not-allowed" : "pointer",
+        border: errors?.[field?.slug] ? "1px solid red" : "none",
+        borderRadius: "4px",
       }}
     >
       <Select
@@ -533,16 +541,49 @@ const AutoCompleteElement = ({
                     }
                   })}
                 </span>
-                <IconGenerator
-                  icon="arrow-up-right-from-square.svg"
+                <Box display="flex" alignItems="center">
+                  <IconGenerator
+                    icon="arrow-up-right-from-square.svg"
+                    style={{ marginLeft: "10px", cursor: "pointer" }}
+                    size={15}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      navigateToForm(tableSlug, "EDIT", option.data);
+                    }}
+                  />
+                  <span
+                    style={{
+                      cursor: "pointer",
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      deleteHandler(option.data);
+                    }}
+                  >
+                    <svg
+                      height="16"
+                      width="16"
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                      focusable="false"
+                      class="css-tj5bde-Svg"
+                    >
+                      <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
+                    </svg>
+                  </span>
+                </Box>
+                {/* <IconGenerator
+                  icon="delete.svg"
                   style={{ marginLeft: "10px", cursor: "pointer" }}
                   size={15}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    navigateToForm(tableSlug, "EDIT", option.data);
+                    deleteHandler(option.data);
                   }}
-                />
+                /> */}
               </div>
             );
           },
@@ -553,11 +594,11 @@ const AutoCompleteElement = ({
           style={{
             color: "red",
             fontSize: "10px",
-            textAlign: "center",
+            // textAlign: "center",
             marginTop: "5px",
           }}
         >
-          {"This field is required!"}
+          {errors?.[field?.slug]?.message ?? "This field is required!"}
         </div>
       )}
     </Box>

@@ -42,6 +42,7 @@ export default function ViewTypeList({
   const {i18n} = useTranslation();
   const {menuId} = useParams();
   const viewsList = useSelector((state) => state.groupField.viewsList);
+  const viewsPath = useSelector((state) => state?.groupField?.viewsPath);
 
   const queryClient = useQueryClient();
   const {control, watch, setError, clearErrors} = useForm({});
@@ -211,8 +212,8 @@ export default function ViewTypeList({
         .create(tableSlug, {
           ...newViewJSON,
           table_slug:
-            viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
-            viewsList?.[viewsList?.length - 1]?.table_slug,
+            viewsPath?.[viewsPath?.length - 1]?.relation_table_slug ||
+            viewsPath?.[viewsPath?.length - 1]?.table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {

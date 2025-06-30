@@ -22,6 +22,7 @@ import {folderIds} from "./mock/folders";
 import FileUploadMenu from "../Components/Functions/FileUploadMenu";
 import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -101,6 +102,7 @@ const RecursiveBlock = ({
 
   const clickHandler = (e) => {
     e.stopPropagation();
+    dispatch(detailDrawerActions.setMainTabIndex(0));
     dispatch(menuActions.setMenuItem(element));
     dispatch(groupFieldActions.clearViews());
     dispatch(groupFieldActions.clearViewsPath());

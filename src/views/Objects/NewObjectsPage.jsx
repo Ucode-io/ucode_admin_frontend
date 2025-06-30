@@ -138,7 +138,7 @@ const NewObjectsPage = () => {
       : "true"
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
-
+  console.log("viewsssssssss", views);
   if (isLoading) {
     return (
       <Box bgcolor="#fff" height="100%">

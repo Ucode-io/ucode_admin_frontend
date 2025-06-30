@@ -1131,7 +1131,7 @@ export const NewUiViewsWithGroups = ({
                 )}
                 {view.type === "BOARD" && (
                   <BoardView
-                    setLoadings={setLoadings}
+                    setLoading={setLoading}
                     setLayoutType={setLayoutType}
                     selectedView={selectedView}
                     setSelectedView={setSelectedView}

@@ -11,6 +11,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 import { useBoardViewProps } from "./useBoardViewProps";
+import { BoardSkeleton } from "./components/BoardSkeleton";
 
 const BoardView = ({
   view,
@@ -27,7 +28,7 @@ const BoardView = ({
   setOpen = () => {},
 }) => {
   const {
-    loader,
+    isLoading,
     new_list,
     tableSlug,
     onDrop,
@@ -81,8 +82,8 @@ const BoardView = ({
 console.log({ groups });
   return (
     <div className={styles.container} ref={boardRef}>
-      {loader ? (
-        <PageFallback />
+      {isLoading ? (
+        <BoardSkeleton />
       ) : (
         <div className={styles.wrapper}>
           {(view?.quick_filters?.length > 0 ||
@@ -118,9 +119,7 @@ console.log({ groups });
                 <Draggable
                   key={tabIndex}
                   style={{
-                    borderBottom: isOnTop
-                      ? "1px solid rgba(0, 0, 0, 0.1)"
-                      : "none",
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
                     padding: "0 16px",
                     paddingLeft: tabIndex === 0 ? "16px" : "8px",
                     paddingRight:
@@ -140,6 +139,8 @@ console.log({ groups });
                     groupField={groupField}
                     navigateToCreatePage={navigateToCreatePage}
                     counts={groupsCounts}
+                    computedColumnsFor={computedColumnsFor}
+                    groupSlug={groupField?.slug}
                   />
                 </Draggable>
               ))}
@@ -147,12 +148,11 @@ console.log({ groups });
           </div>
           <div
             className={styles.board}
-            style={{
-              height: isFilterOpen
-                ? "calc(100vh - 121px)"
-                : "calc(100vh - 91px)",
-              paddingTop: "50px",
-            }}
+            // style={{
+            //   height: isFilterOpen
+            //     ? "calc(100vh - 121px)"
+            //     : "calc(100vh - 91px)",
+            // }}
           >
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>

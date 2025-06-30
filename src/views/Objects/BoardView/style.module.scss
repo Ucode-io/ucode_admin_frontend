@@ -19,14 +19,14 @@
 
 .boardHeader {
   width: 100%;
-  position: absolute;
+  position: sticky;
   top: 0;
+  left: 0;
   z-index: 10;
   background-color: #fff;
 }
 
 .wrapper {
-
   padding: 0 0px;
 
   .filters {
@@ -51,10 +51,9 @@
 
   .board {
     display: flex;
-    padding: 0px 16px 0 16px;
+    padding: 10px 16px 1px 16px;
     gap: 24px;
     width: 100%;
-    padding-bottom: 1px;
   }
 }
 

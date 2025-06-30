@@ -321,7 +321,7 @@ export const useBoardViewProps = ({
     tableSlug
   );
 
-  const loader = boardStructureMutation.isLoading;
+  const isLoading = boardStructureMutation.isLoading;
 
   const groupMutationForCounts = useGetBoardStructureMutation(
     {
@@ -505,13 +505,13 @@ export const useBoardViewProps = ({
     if (!board || !el) return;
 
     const onScroll = () => {
-      if (board.scrollTop > 0) {
-        setIsOnTop(true);
-        el.style.transform = `translateY(${board.scrollTop}px)`;
-      } else {
-        setIsOnTop(false);
-        el.style.transform = "none";
-      }
+      // if (board.scrollTop > 0) {
+      //   setIsOnTop(true);
+      //   el.style.transform = `translateY(${board.scrollTop}px)`;
+      // } else {
+      //   setIsOnTop(false);
+      //   el.style.transform = "none";
+      // }
 
       if (subGroupById) {
         handleSetOffsetOnScroll();
@@ -532,7 +532,7 @@ export const useBoardViewProps = ({
   // }, [subGroupById, groupFieldId]);
 
   return {
-    loader,
+    isLoading,
     new_list,
     tableSlug,
     onDrop,

@@ -39,7 +39,7 @@ const BoardColumn = ({
 
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
 
-  const isStatusType = selectedGroupField?.type === "STATUS";
+  const isStatusType = groupField?.type === FIELD_TYPES.STATUS;
 
   const { tableSlug } = useParams();
 
@@ -159,10 +159,18 @@ const BoardColumn = ({
   };
   const field = computedColumnsFor?.find((field) => field?.slug === groupSlug);
 
-  const color =
-    group?.color ||
-    field?.attributes?.options?.find((item) => item?.slug === group?.slug)
-      ?.color;
+  const color = isStatusType
+    ? field?.attributes?.todo?.options?.find(
+        (item) => item?.label === group?.name
+      )?.color ||
+      field?.attributes?.complete?.options?.find(
+        (item) => item?.label === group?.name
+      )?.color ||
+      field?.attributes?.progress?.options?.find(
+        (item) => item?.label === group?.name
+      )?.color
+    : field?.attributes?.options?.find((item) => item?.label === group?.name)
+        ?.color;
 
   const fixedElement = useRef(null);
 

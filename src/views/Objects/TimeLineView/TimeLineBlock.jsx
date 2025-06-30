@@ -44,6 +44,7 @@ export default function TimeLineBlock({
   setNoDates,
   noDates,
   calendarRef,
+  tableSlug,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -257,7 +258,7 @@ export default function TimeLineBlock({
     }
   }, [selectedType]);
 
-  const {tableSlug, appId} = useParams();
+  const {appId, menuId} = useParams();
 
   const [hoveredRowId, setHoveredRowId] = useState(null);
 
@@ -285,7 +286,7 @@ export default function TimeLineBlock({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     select: (data) => {
       return {

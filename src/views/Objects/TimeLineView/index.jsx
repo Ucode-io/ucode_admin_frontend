@@ -19,6 +19,7 @@ import useTabRouter from "../../../hooks/useTabRouter";
 
 export default function TimeLineView({
   view,
+  relationView = false,
   selectedTabIndex,
   setSelectedTabIndex,
   views,
@@ -45,9 +46,13 @@ export default function TimeLineView({
     setSelectedType,
   } = useDateLineProps({setCenterDate});
 
-  const {tableSlug, appId} = useParams();
-  const {filters} = useFilters(tableSlug, view.id);
+  const {tableSlug: tableSlugFromProps, appId, menuId} = useParams();
 
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromProps ?? view?.table_slug);
+
+  const {filters} = useFilters(tableSlug, view.id);
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
     endOfMonth(new Date()),
@@ -112,7 +117,7 @@ export default function TimeLineView({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      navigateToForm(tableSlug, "EDIT", row, {}, appId ?? menuId);
     }
   };
 
@@ -169,7 +174,7 @@ export default function TimeLineView({
       });
     }
   }, [data, dataFromQuery]);
-
+  console.log("tableSlugtableSlug", tableSlug);
   // FOR TABLE INFO
   const {
     data: {visibleColumns, visibleRelationColumns} = {data: []},
@@ -220,7 +225,7 @@ export default function TimeLineView({
     refetchTableInfo();
   };
 
-  const tabResponses = useQueries(queryGenerator(groupFields, filters));
+  const tabResponses = useQueries(queryGenerator(groupFields ?? [], filters));
   const tabs = tabResponses?.map((response) => response?.data);
 
   const form = useForm({
@@ -273,7 +278,7 @@ export default function TimeLineView({
       }
     });
   };
-
+  console.log("viewviewviewviewview", view);
   return (
     <MaterialUIProvider>
       <div>
@@ -290,6 +295,7 @@ export default function TimeLineView({
             <PageFallback />
           ) : (
             <TimeLineBlock
+              tableSlug={tableSlug}
               setDataFromQuery={setDataFromQuery}
               dataFromQuery={dataFromQuery}
               scrollToToday={scrollToToday}

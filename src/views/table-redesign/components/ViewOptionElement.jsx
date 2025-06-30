@@ -44,6 +44,7 @@ export const ColumnsVisibility = ({
   const [search, setSearch] = useState("");
   const allFields = Object.values(fieldsMap);
   const viewsList = useSelector((state) => state.groupField.viewsList);
+  const [columnFields, setColumnFields] = useState(view?.columns ?? []);
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -51,14 +52,14 @@ export const ColumnsVisibility = ({
 
       if (relationView && viewsList?.length > 1) {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
-      } else {
-        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-      }
+      } else if (!relationView) {
+        return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+      } else return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
     },
   });
 
   const visibleFields =
-    view?.columns
+    columnFields
       ?.map((id) => fieldsMap[id])
       .filter((el) => {
         return el?.type === "LOOKUP" || el?.type === "LOOKUPS"
@@ -67,7 +68,7 @@ export const ColumnsVisibility = ({
       }) ?? [];
   const invisibleFields =
     allFields.filter((field) => {
-      return !view?.columns?.includes(
+      return !columnFields?.includes(
         field?.type === "LOOKUP" || field?.type === "LOOKUPS"
           ? field.relation_id
           : field.id
@@ -85,7 +86,7 @@ export const ColumnsVisibility = ({
   );
 
   const onChange = (column, checked) => {
-    const columns = view?.columns ?? [];
+    const columns = columnFields ?? [];
     const id =
       column?.type === "LOOKUP" || column?.type === "LOOKUPS"
         ? column.relation_id
@@ -140,6 +141,7 @@ export const ColumnsVisibility = ({
     });
 
     if (computedResult) {
+      setColumnFields(computedResult);
       mutation.mutate({
         ...view,
         columns: computedResult?.map((item) =>

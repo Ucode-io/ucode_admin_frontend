@@ -352,15 +352,15 @@ function DrawerFormDetailPage({
                           drawerDetail={true}
                           control={rootForm.control}
                           field={field}
-                          watch={watch}
+                          watch={rootForm.watch}
                           isRequired={field?.attributes?.required}
                           isDisabled={
                             field?.attributes?.disabled ||
                             !field?.attributes?.field_permission
                               ?.edit_permission
                           }
-                          setFormValue={setFormValue}
-                          errors={errors}
+                          setFormValue={rootForm.setFormValue}
+                          errors={rootForm.errors}
                         />
                       </Box>
                     </Box>
@@ -375,7 +375,7 @@ function DrawerFormDetailPage({
           marginTop="auto"
           marginBottom="12px">
           <FormCustomActionButton
-            control={control?._formValues}
+            control={rootForm.control}
             tableSlug={tableSlug}
             id={selectedRow?.guid}
             getAllData={getAllData}

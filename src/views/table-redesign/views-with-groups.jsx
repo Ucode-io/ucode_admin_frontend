@@ -149,7 +149,6 @@ export const NewUiViewsWithGroups = ({
   handleMouseDown = () => {},
   setSelectedViewType = () => {},
 }) => {
-  console.log("menuItemmenuItemmenuItem", menuItem);
   const location = useLocation();
   const {id, menuId: menuid, tableSlug: tableSlugFromProps} = useParams();
   const tableSlug = tableSlugFromProps || view?.table_slug;
@@ -183,7 +182,7 @@ export const NewUiViewsWithGroups = ({
 
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const groupTable = view?.attributes?.group_by_columns;
-  console.log("viewsListviewsListviewsListviewsList", viewsList);
+
   const projectId = useSelector((state) => state.auth.projectId);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
@@ -418,8 +417,9 @@ export const NewUiViewsWithGroups = ({
       updateQueryWithoutRerender("v", viewEl?.id);
     }
   };
-  console.log("viewsviewsviewsviews", views);
+
   const handleViewClick = (view, index) => {
+    console.log("viewwwwwwwwwwww", view, index);
     viewHandler(view);
     setSelectedView(view);
 

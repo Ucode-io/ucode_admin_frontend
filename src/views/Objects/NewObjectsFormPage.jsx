@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useQuery, useQueryClient} from "react-query";
@@ -13,6 +13,15 @@ import layoutService from "../../services/layoutService";
 import {sortSections} from "../../utils/sectionsOrderNumber";
 import constructorObjectService from "../../services/constructorObjectService";
 import {showAlert} from "../../store/alert/alert.thunk";
+import {useSelector} from "react-redux";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import constructorRelationService from "../../services/constructorRelationService";
+
+const sortViews = (views = []) => {
+  const firstSection = views.find((v) => v.type === "SECTION");
+  const others = views.filter((v) => v.type !== "SECTION");
+  return firstSection ? [firstSection, ...others] : others;
+};
 
 function NewObjectsFormPage() {
   const {state, pathname} = useLocation();
@@ -22,10 +31,12 @@ function NewObjectsFormPage() {
   const [data, setData] = useState();
   const queryClient = useQueryClient();
   const [loader, setLoader] = useState(false);
-  const [btnLoader, setBtnLoader] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [sections, setSections] = useState([]);
   const [selectedView, setSelectedView] = useState(null);
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const selectedTabIndex = useSelector(
+    (state) => state?.drawer?.drawerTabIndex
+  );
   const [selectedViewType, setSelectedViewType] = useState(null);
 
   const projectInfo = state?.projectInfo;
@@ -35,34 +46,80 @@ function NewObjectsFormPage() {
   const viewId = query.get("v");
   const itemId = query.get("p");
 
+  const viewsPath = useSelector((state) => state.groupField.viewsPath);
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const selectedV = viewsList?.[viewsList.length - 1];
+  const lastPath = viewsPath?.[viewsPath.length - 1];
+  const isRelationView = Boolean(selectedV?.relation_table_slug);
+
   const rootForm = useForm({
     ...state,
   });
 
-  const {data: views} = useQuery(
-    ["GET_VIEWS_LIST", menuId],
-    () => {
-      return constructorViewService.getViewListMenuId(menuId);
-    },
+  const {data: menuViews} = useQuery(
+    ["GET_TABLE_VIEWS_LIST", menuId],
+    () => constructorViewService.getViewListMenuId(menuId),
     {
-      enabled: Boolean(menuId),
-      select: (res) => {
-        return (
+      enabled: !isRelationView && Boolean(menuId),
+      select: (res) =>
+        sortViews(
           res?.views?.filter(
             (item) => item?.type === "SECTION" || item?.is_relation_view
           ) ?? []
-        );
-      },
+        ),
       onSuccess: (data) => {
-        setSelectedView(data?.[selectedTabIndex]);
-        if (!pathname.includes("/login")) {
-          updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
+        if (selectedTabIndex >= data?.length) {
+          dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
-        if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+        setSelectedView(data?.[0]);
+        updateQueryWithoutRerender("v", data?.[0]?.id);
+        if (state?.toDocsTab) {
+          dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
+        }
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       },
     }
   );
-  console.log("selectedViewwww======> new ObjectsFormPage", selectedView);
+
+  const {data: relationViews} = useQuery(
+    ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
+    () =>
+      constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
+    {
+      enabled: Boolean(viewsList?.[viewsList?.length - 1]?.relation_table_slug),
+
+      select: (res) =>
+        sortViews(
+          res?.views?.filter(
+            (item) => item?.type === "SECTION" || item?.is_relation_view
+          ) ?? []
+        ),
+
+      onSuccess: (data) => {
+        if (selectedTabIndex >= data.length) {
+        }
+        setSelectedView(data?.[0]);
+        updateQueryWithoutRerender("v", data?.[0]?.id);
+
+        if (state?.toDocsTab) {
+          dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
+        }
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
+      },
+    }
+  );
+
+  const views = useMemo(() => {
+    return !isRelationView ? menuViews : relationViews;
+  }, [menuViews, relationViews, isRelationView, viewsList?.length]);
+
+  console.log("lastPathlastPathlastPath", lastPath);
+
   const {
     data: {
       fieldsMap,
@@ -90,11 +147,12 @@ function NewObjectsFormPage() {
       return menuService.getFieldsListMenu(
         menuId,
         selectedView?.id,
-        selectedView?.table_slug
+        lastPath?.relation_table_slug,
+        {}
       );
     },
     {
-      enabled: Boolean(selectedView?.table_slug),
+      enabled: Boolean(lastPath?.relation_table_slug),
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
@@ -108,6 +166,24 @@ function NewObjectsFormPage() {
             })) ?? [],
         };
       },
+    }
+  );
+
+  const {data: {relations} = {relations: []}} = useQuery(
+    ["GET_VIEWS_AND_FIELDS", viewsList?.length],
+    () =>
+      constructorRelationService.getList(
+        {
+          table_slug: viewsList?.[viewsList?.length - 1]?.table_slug,
+          relation_table_slug:
+            viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+          disable_table_to: true,
+        },
+        viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+          viewsList?.[viewsList?.length - 1]?.table_slug
+      ),
+    {
+      enabled: Boolean(viewsList?.[0]?.table_slug),
     }
   );
 
@@ -248,7 +324,7 @@ function NewObjectsFormPage() {
 
   const update = (data) => {
     delete data.invite;
-    setBtnLoader(true);
+    setLoading(true);
     constructorObjectService
       .update(tableSlug, {data})
       .then(() => {
@@ -260,11 +336,11 @@ function NewObjectsFormPage() {
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
-        setBtnLoader(false);
+        setLoading(false);
       });
   };
   const create = (data) => {
-    setBtnLoader(true);
+    setLoading(true);
 
     constructorObjectService
       .create(tableSlug, {data})
@@ -302,7 +378,7 @@ function NewObjectsFormPage() {
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
-        setBtnLoader(false);
+        setLoading(false);
         rootForm.refetch();
       });
   };
@@ -336,6 +412,7 @@ function NewObjectsFormPage() {
             return (
               <TabPanel key={view.id}>
                 <NewUiViewsWithGroups
+                  relationFields={relations}
                   selectedViewType={selectedViewType}
                   setSelectedViewType={setSelectedViewType}
                   tableInfo={tableInfo}
@@ -345,7 +422,6 @@ function NewObjectsFormPage() {
                   views={views}
                   view={view}
                   selectedTabIndex={selectedTabIndex}
-                  setSelectedTabIndex={setSelectedTabIndex}
                   fieldsMap={fieldsMap}
                   visibleRelationColumns={visibleRelationColumns}
                   visibleColumns={visibleColumns}

@@ -141,9 +141,7 @@ function DrawerObjectsPageModal({
             })) ?? [],
         };
       },
-      onSuccess: (data) => {
-        console.log("dataaaaaaaaaaaaaaa DrawerObjectsData", data);
-      },
+      onSuccess: (data) => {},
     }
   );
 

@@ -14,7 +14,6 @@ import {store} from "../../store";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {sortSections} from "../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import DrawerObjectsPage from "../../views/Objects/DrawerDetailPage/DrawerObjectsPage";
 import DrawerObjectsPageModal from "./DrawerObjectsPage";
 
 function NewModalDetailPage({

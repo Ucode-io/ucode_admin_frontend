@@ -419,7 +419,6 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleViewClick = (view, index) => {
-    console.log("viewwwwwwwwwwww", view, index);
     viewHandler(view);
     setSelectedView(view);
 
@@ -758,33 +757,44 @@ export const NewUiViewsWithGroups = ({
             bg="#fff"
             borderBottom="1px solid #EAECF0"
             columnGap="5px">
-            {(views ?? []).map((view, index) => (
-              <Button
-                key={view.id}
-                variant="ghost"
-                colorScheme="gray"
-                leftIcon={
-                  <SVG
-                    src={`/img/${viewIcons[view.type]}`}
-                    color={selectedTabIndex === index ? "#175CD3" : "#475467"}
-                    width={18}
-                    height={18}
-                  />
-                }
-                fontSize={13}
-                h={"30px"}
-                fontWeight={500}
-                color={selectedTabIndex === index ? "#175CD3" : "#475467"}
-                bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
-                _hover={
-                  selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
-                }
-                onClick={() => handleViewClick(view, index)}>
-                {view?.attributes?.[`name_${i18n?.language}`] ||
-                  view?.name ||
-                  view.type}
-              </Button>
-            ))}
+            <Flex
+              w={"70%"}
+              sx={{
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": {
+                  display: "none",
+                },
+              }}
+              overflow={"scroll"}>
+              {(views ?? []).map((view, index) => (
+                <Button
+                  minW={"100px"}
+                  key={view.id}
+                  variant="ghost"
+                  colorScheme="gray"
+                  leftIcon={
+                    <SVG
+                      src={`/img/${viewIcons[view.type]}`}
+                      color={selectedTabIndex === index ? "#175CD3" : "#475467"}
+                      width={18}
+                      height={18}
+                    />
+                  }
+                  fontSize={13}
+                  h={"30px"}
+                  fontWeight={500}
+                  color={selectedTabIndex === index ? "#175CD3" : "#475467"}
+                  bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
+                  _hover={
+                    selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
+                  }
+                  onClick={() => handleViewClick(view, index)}>
+                  {view?.attributes?.[`name_${i18n?.language}`] ||
+                    view?.name ||
+                    view.type}
+                </Button>
+              ))}
+            </Flex>
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
               <Button

@@ -43,7 +43,7 @@ import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {useProjectGetByIdQuery} from "../../../../services/projectService";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 
-const NewRouterTableSettings = () => {
+const NewRouterTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {id, tableSlug, appId} = useParams();
@@ -501,4 +501,4 @@ const NewRouterTableSettings = () => {
   );
 };
 
-export default NewRouterTableSettings;
+export default NewRouterTable;

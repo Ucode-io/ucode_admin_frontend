@@ -231,16 +231,19 @@ export default function ViewTypeList({
         });
     }
   };
+  const table_slug = relationView
+    ? viewsList?.[viewsList?.length - 1]?.table_slug
+    : tableSlug;
 
   const {data} = useQuery(
     ["GET_TABLE_INFO", {viewsList}],
     () => {
-      return constructorTableService.getTableInfo(viewsList?.[0]?.table_slug, {
+      return constructorTableService.getTableInfo(table_slug, {
         data: {},
       });
     },
     {
-      enabled: Boolean(viewsList?.[0]?.table_slug),
+      enabled: Boolean(table_slug),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];

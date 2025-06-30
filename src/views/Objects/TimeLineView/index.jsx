@@ -62,7 +62,7 @@ export default function TimeLineView({
 
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
-    .map((id) => fieldsMap?.[id])
+    ?.map((id) => fieldsMap?.[id])
     .filter((el) => el);
 
   const recursionFunctionForAddIsOpen = (data) => {

@@ -34,6 +34,10 @@ export default function TimeLineView({
   noDates,
   columnsForSearch = [],
   searchText = "",
+  layoutType,
+  selectedView,
+  projectInfo,
+  setFormValue = () => {},
 }) {
   const {
     handleScroll,
@@ -174,7 +178,7 @@ export default function TimeLineView({
       });
     }
   }, [data, dataFromQuery]);
-  console.log("tableSlugtableSlug", tableSlug);
+
   // FOR TABLE INFO
   const {
     data: {visibleColumns, visibleRelationColumns} = {data: []},
@@ -278,7 +282,7 @@ export default function TimeLineView({
       }
     });
   };
-  console.log("viewviewviewviewview", view);
+
   return (
     <MaterialUIProvider>
       <div>
@@ -295,6 +299,10 @@ export default function TimeLineView({
             <PageFallback />
           ) : (
             <TimeLineBlock
+              setFormValue={setFormValue}
+              projectInfo={projectInfo}
+              selectedView={selectedView}
+              layoutType={layoutType}
               tableSlug={tableSlug}
               setDataFromQuery={setDataFromQuery}
               dataFromQuery={dataFromQuery}

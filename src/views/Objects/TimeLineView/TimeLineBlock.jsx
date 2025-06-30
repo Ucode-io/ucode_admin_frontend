@@ -17,6 +17,8 @@ import {useProjectGetByIdQuery} from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import {useParams} from "react-router-dom";
 import {useQuery} from "react-query";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -45,12 +47,17 @@ export default function TimeLineBlock({
   noDates,
   calendarRef,
   tableSlug,
+  layoutType,
+  selectedView,
+  projectInfo,
+  setFormValue = () => {},
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
   const [focusedDays, setFocusedDays] = useState([]);
   const [openedRows, setOpenedRows] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const new_router = localStorage.getItem("new_router") === "true";
 
   const handleOpenSidebar = () => setIsSidebarOpen(true);
   const handleCloseSidebar = () => setIsSidebarOpen(false);
@@ -240,6 +247,22 @@ export default function TimeLineBlock({
 
   const openType = Boolean(anchorElType);
 
+  const {appId, menuId} = useParams();
+
+  const [hoveredRowId, setHoveredRowId] = useState(null);
+
+  // const projectId = useSelector((state) => state.company?.projectId);
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
+
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  // const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
   const handleClickType = (event) => {
     setAnchorElType(event.currentTarget);
   };
@@ -257,22 +280,6 @@ export default function TimeLineBlock({
       setZoomPosition(2);
     }
   }, [selectedType]);
-
-  const {appId, menuId} = useParams();
-
-  const [hoveredRowId, setHoveredRowId] = useState(null);
-
-  const projectId = useSelector((state) => state.company?.projectId);
-  const [openDrawerModal, setOpenDrawerModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState("");
-
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
-  );
-
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const {
     data: {layout} = {
@@ -349,6 +356,9 @@ export default function TimeLineBlock({
 
           {calendar_from_slug !== calendar_to_slug && (
             <TimeLineDayDataBlock
+              projectInfo={projectInfo}
+              selectedView={selectedView}
+              layoutType={layoutType}
               dateFilters={dateFilters}
               openedRows={openedRows}
               setOpenedRows={setOpenedRows}
@@ -468,7 +478,78 @@ export default function TimeLineBlock({
           </Button>
         </div>
       </div>
-      <DrawerDetailPage
+
+      {Boolean(open && projectInfo?.new_layout) &&
+      selectedViewType === "SidePeek" ? (
+        new_router ? (
+          <DrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        ) : (
+          <OldDrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        )
+      ) : selectedViewType === "CenterPeek" ? (
+        <ModalDetailPage
+          view={view}
+          projectInfo={projectInfo}
+          open={open}
+          setFormValue={setFormValue}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          layoutType={layoutType}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      ) : null}
+
+      {Boolean(open && !projectInfo?.new_layout) && (
+        <ModalDetailPage
+          open={open}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      )}
+      {/* <DrawerDetailPage
         view={view}
         projectInfo={projectInfo}
         open={openDrawerModal}
@@ -482,7 +563,7 @@ export default function TimeLineBlock({
         selectedViewType={selectedViewType}
         setSelectedViewType={setSelectedViewType}
         navigateToEditPage={navigateToDetailPage}
-      />
+      /> */}
     </TimelineBlockProvider>
   );
 }

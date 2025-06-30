@@ -1111,12 +1111,16 @@ export const NewUiViewsWithGroups = ({
                       />
                     ) : view.type === "TIMELINE" ? (
                       <TimeLineView
+                        setFormValue={setFormValue}
+                        projectInfo={projectInfo}
+                        layoutType={layoutType}
                         view={view}
                         noDates={noDates}
                         searchText={searchText}
                         columnsForSearch={columnsForSearch}
                         setViews={() => {}}
                         menuItem={menuItem}
+                        selectedView={selectedView}
                         selectedTabIndex={selectedTabIndex}
                         setSelectedTabIndex={setSelectedTabIndex}
                         views={views}

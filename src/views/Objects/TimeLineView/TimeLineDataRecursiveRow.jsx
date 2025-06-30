@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
-import { Collapse } from "@mui/material";
+import {Collapse} from "@mui/material";
 import cls from "./styles.module.scss";
-import { addDays } from "date-fns";
+import {addDays} from "date-fns";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import DrawerDetailPage from "../DrawerDetailPage";
-import { TimelineRowNewDateLine } from "./components/TimelineRowNewDateLine";
+import {TimelineRowNewDateLine} from "./components/TimelineRowNewDateLine";
 
 export default function TimeLineDataRecursiveRow({
   item,
@@ -34,6 +34,8 @@ export default function TimeLineDataRecursiveRow({
   setOpenDrawerModal,
   setSelectedRow,
   deepLength,
+  layoutType,
+  selectedView,
 }) {
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -136,8 +138,7 @@ export default function TimeLineDataRecursiveRow({
             setIsHintTaskShow(false);
           }
         }}
-        ref={timelineRecursiveRowRef}
-      >
+        ref={timelineRecursiveRowRef}>
         {isHintTaskShow && (
           <TimelineRowNewDateLine
             left={cursorPosX}
@@ -149,6 +150,8 @@ export default function TimeLineDataRecursiveRow({
         )}
         {(!item?.data || isSingleGroup) && (
           <TimeLineDayDataBlockItem
+            selectedView={selectedView}
+            layoutType={layoutType}
             menuItem={menuItem}
             key={isSingleGroup ? (item?.data?.[0] || item)?.guid : item?.guid}
             dateFilters={dateFilters}
@@ -184,8 +187,7 @@ export default function TimeLineDataRecursiveRow({
                 in={open}
                 timeout="auto"
                 unmountOnExit
-                key={optionItem?.title}
-              >
+                key={optionItem?.title}>
                 <TimeLineDataRecursiveRow
                   lastLabels={
                     lastLabels?.length

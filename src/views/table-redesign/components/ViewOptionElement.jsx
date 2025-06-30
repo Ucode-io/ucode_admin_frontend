@@ -44,7 +44,6 @@ export const ColumnsVisibility = ({
   const [search, setSearch] = useState("");
   const allFields = Object.values(fieldsMap);
   const viewsList = useSelector((state) => state.groupField.viewsList);
-  const [columnFields, setColumnFields] = useState(view?.columns ?? []);
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -59,7 +58,7 @@ export const ColumnsVisibility = ({
   });
 
   const visibleFields =
-    columnFields
+    view?.columns
       ?.map((id) => fieldsMap[id])
       .filter((el) => {
         return el?.type === "LOOKUP" || el?.type === "LOOKUPS"
@@ -68,7 +67,7 @@ export const ColumnsVisibility = ({
       }) ?? [];
   const invisibleFields =
     allFields.filter((field) => {
-      return !columnFields?.includes(
+      return !view?.columns?.includes(
         field?.type === "LOOKUP" || field?.type === "LOOKUPS"
           ? field.relation_id
           : field.id
@@ -86,7 +85,7 @@ export const ColumnsVisibility = ({
   );
 
   const onChange = (column, checked) => {
-    const columns = columnFields ?? [];
+    const columns = view?.columns ?? [];
     const id =
       column?.type === "LOOKUP" || column?.type === "LOOKUPS"
         ? column.relation_id
@@ -141,7 +140,6 @@ export const ColumnsVisibility = ({
     });
 
     if (computedResult) {
-      setColumnFields(computedResult);
       mutation.mutate({
         ...view,
         columns: computedResult?.map((item) =>

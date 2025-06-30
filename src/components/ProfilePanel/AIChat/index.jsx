@@ -6,6 +6,10 @@ import UserChat from "./UserChat";
 import ChatInput from "./ChatInput";
 import { ProjectTypeSelect } from "../../LayoutSidebar/Components/ProjectTypeSelect";
 import cls from "./style.module.scss";
+import { ProjectType } from "./components/ProjectType";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useMcpCellMutation } from "@/services/mcp/mcp.service";
+import { ProjectManagement } from "./components/ProjectManagement";
 
 const EntityCard = ({ onClick, icon, heading, description, bgcolor }) => {
   return (
@@ -51,7 +55,71 @@ export const AIMenu = ({
   handleChangeEntityType = () => {},
   selectedEntityType,
   ENTITY_TYPES,
+  setMessages = () => {},
 }) => {
+  const [disabled, setDisabled] = useState(false);
+  const [shoFields, setShowFields] = useState(false);
+
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+  } = useForm();
+
+  const { fields } = useFieldArray({
+    control,
+    name: "management_system",
+    rules: {
+      required: true,
+    },
+  });
+
+  const handleSelectProjectType = () => {
+    setDisabled(true);
+    setShowFields(true);
+  };
+
+  const cellMcpMutation = useMcpCellMutation({
+    onSuccess: (data) => {
+      handleSuccess(data);
+    },
+    onError: (error) => {
+      handleError(error?.data?.message || error?.data);
+    },
+  });
+
+  const onSubmit = (data) => {
+    const management_system = data?.management_system
+      ?.filter((item) => item?.is_checked)
+      ?.map((item) => item?.label);
+    const requestData = {
+      ...data,
+      management_system,
+    };
+
+    setMessages((prevMessages) => [
+      ...prevMessages?.filter((item) => !item?.isProjectType),
+      {
+        // text: `Project Type: ${watch("project_type")}\nManagement System: ${watch("management_system")?.map((item) => item)}`,
+        text: `Project Type: ${watch("project_type")}\nManagement System: ${management_system?.map((item) => item)}`,
+        sender: "user",
+      },
+      {
+        type: "loader",
+        sender: "chat",
+        isProjectType: true,
+      },
+    ]);
+
+    setDisabled(true);
+    handleChangeEntityType(null);
+    // setShowInput(true);
+    cellMcpMutation.mutate(requestData);
+  };
+
   return (
     <Menu
       TransitionProps={{
@@ -60,7 +128,12 @@ export const AIMenu = ({
       anchorEl={anchorEl}
       id="account-menu"
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        setShowFields(false);
+        setDisabled(false);
+        reset();
+      }}
       PaperProps={{
         elevation: 0,
         sx: {
@@ -105,7 +178,6 @@ export const AIMenu = ({
             Chat
           </Typography>
         </Box>
-
         <Box
           sx={{
             flexGrow: 1,
@@ -114,7 +186,27 @@ export const AIMenu = ({
             backgroundColor: "#ffff",
           }}
         >
-          {messages.length > 0 ? (
+          {selectedEntityType === ENTITY_TYPES.TEMPLATES && (
+            <ProjectType
+              control={control}
+              disabled={disabled}
+              errors={errors}
+              handleSelectProjectType={handleSelectProjectType}
+              setValue={setValue}
+              watch={watch}
+            />
+          )}
+          {shoFields && selectedEntityType === ENTITY_TYPES.TEMPLATES && (
+            <ProjectManagement
+              fields={fields}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              setMessages={setMessages}
+              watch={watch}
+              control={control}
+            />
+          )}
+          {messages.length > 0 || selectedEntityType ? (
             messages.map((msg, index) =>
               msg.sender === "user" ? (
                 <UserChat index={index} msg={msg} />
@@ -291,24 +383,25 @@ export const useAIChat = () => {
 
   const handleChangeEntityType = (type) => {
     setSelectedEntityType(type);
-    setMessages([
-      {
-        text: "",
-        sender: "chat",
-        content: (
-          <Box>
-            <p className={cls.title}>Choose the type of project</p>
-            <ProjectTypeSelect
-              appendMessage={appendMessage}
-              handleChangeEntityType={handleChangeEntityType}
-              handleClose={handleClose}
-              handleError={handleError}
-              handleSuccess={handleSuccess}
-            />
-          </Box>
-        ),
-      },
-    ]);
+    // setMessages([
+    //   {
+    //     text: "",
+    //     sender: "chat",
+    //     content: (
+    //       <Box>
+    //         <p className={cls.title}>Choose the type of project</p>
+    //         <ProjectTypeSelect
+    //           appendMessage={appendMessage}
+    //           handleChangeEntityType={handleChangeEntityType}
+    //           handleClose={handleClose}
+    //           handleError={handleError}
+    //           handleSuccess={handleSuccess}
+    //           setMessages={setMessages}
+    //         />
+    //       </Box>
+    //     ),
+    //   },
+    // ]);
   };
 
   const handleClick = (event) => {
@@ -446,6 +539,7 @@ export const useAIChat = () => {
     selectedEntityType,
     handleChangeEntityType,
     ENTITY_TYPES,
+    setMessages,
   };
 };
 

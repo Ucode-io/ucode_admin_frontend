@@ -27,7 +27,6 @@ function GptChat({index, msg}) {
       <img width={24} height={24} src="/img/chat.png" alt="" />
       <Paper
         sx={{
-          padding: "10px",
           backgroundColor: "#fff",
           alignSelf: "flex-start",
           maxWidth: "80%",

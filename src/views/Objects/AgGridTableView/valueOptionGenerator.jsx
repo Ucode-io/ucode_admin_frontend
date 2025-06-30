@@ -34,7 +34,7 @@ import HFMultiFileCellEditor from "./FieldRelationGenerator/HFMultiFileCellEdito
 import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
 
 const getColumnEditorParams = (item, columnDef) => {
-  console.log(item?.type);
+
   switch (item?.type) {
     case "SINGLE_LINE":
       columnDef.cellRenderer = HFTextInputField;
@@ -202,7 +202,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
     // WITH OPTIONS RELATION & MULTISELECT:
     case "LOOKUP": {
-      // console.log("LOOKUP")
       columnDef.cellRenderer = LookupCellEditor;
       columnDef.cellRendererParams = {
         field: item,
@@ -210,7 +209,6 @@ const getColumnEditorParams = (item, columnDef) => {
 
       columnDef.filterValueGetter = (params) => {
         const slugData = params?.data?.[`${item?.slug}_data`];
-        // console.log({ slugData });
         if (!slugData) return "";
         return getRelationFieldTabsLabel(item, slugData);
       };

@@ -116,7 +116,9 @@ const viewIcons = {
   TIMELINE: "line-chart-up.svg",
   WEBSITE: "globe.svg",
   TREE: "tree.svg",
+  SECTION: "layout.svg",
 };
+
 export const NewUiViewsWithGroups = ({
   modal = false,
   views,
@@ -767,10 +769,11 @@ export const NewUiViewsWithGroups = ({
               overflow={"scroll"}>
               {(views ?? []).map((view, index) => (
                 <Button
-                  minW={"100px"}
+                  minW={"80px"}
                   key={view.id}
                   variant="ghost"
                   colorScheme="gray"
+                  mx={"4px"}
                   leftIcon={
                     <SVG
                       src={`/img/${viewIcons[view.type]}`}

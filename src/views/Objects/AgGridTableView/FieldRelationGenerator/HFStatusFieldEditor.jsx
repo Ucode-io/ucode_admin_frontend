@@ -10,7 +10,7 @@ function HFStatusFieldEditor({value, setValue, colDef, data}) {
   };
 
   const field = colDef?.fieldObj;
-
+  const disabled = field?.disabled;
   return (
     <MaterialUIProvider>
       <Box

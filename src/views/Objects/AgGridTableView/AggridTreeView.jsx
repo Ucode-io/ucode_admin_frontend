@@ -57,7 +57,6 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {transliterate} from "../../../utils/textTranslater";
 import {getColumnIcon} from "../../table-redesign/icons";
-import AggridFooter from "./AggridFooter";
 import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
 import AggridDefaultComponents, {
@@ -75,7 +74,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -107,7 +106,8 @@ const myTheme = themeQuartz.withParams({
 
 function AggridTreeView(props) {
   const {
-    open,
+    // open,
+    relationView = false,
     view,
     mainForm,
     menuItem,
@@ -124,7 +124,7 @@ function AggridTreeView(props) {
     setLayoutType = () => {},
     navigateToDetailPage = () => {},
     navigateToEditPage = () => {},
-    navigateCreatePage = () => {},
+    navigateCreatePage,
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
@@ -132,10 +132,11 @@ function AggridTreeView(props) {
   const queryClient = useQueryClient();
   const {navigateToForm} = useTabRouter();
   const addClickedRef = useRef(false);
-  const {tableSlug, appId} = useParams();
+  const {tableSlug: tableSlugFromParams, appId} = useParams();
+  const new_router = localStorage.getItem("new_router") === "true";
+  const open = useSelector((state) => state?.drawer?.openDrawer);
   const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();
-  const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -155,6 +156,12 @@ function AggridTreeView(props) {
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
+  const viewsList = useSelector((state) => state?.groupField?.viewsList);
+  const selectedV = viewsList?.[viewsList?.length - 1];
+
+  const tableSlug = relationView
+    ? selectedV?.relation_table_slug || selectedV?.table_slug
+    : tableSlugFromParams || view?.table_slug;
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -173,10 +180,10 @@ function AggridTreeView(props) {
       },
     });
 
-  const tableSearch =
-    detectStringType(searchText) === "number"
-      ? parseInt(searchText)
-      : searchText;
+  // const tableSearch =
+  //   detectStringType(searchText) === "number"
+  //     ? parseInt(searchText)
+  //     : searchText;
 
   const handleOpenFieldDrawer = (column) => {
     if (column?.attributes?.relation_data) {
@@ -511,10 +518,6 @@ function AggridTreeView(props) {
         });
       }
 
-      // setTimeout(() => {
-      //   waitUntilStoreReady(parentNode);
-      // }, 800);
-
       return;
     } else {
       parentNode?.api?.applyServerSideTransaction({
@@ -577,13 +580,13 @@ function AggridTreeView(props) {
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -991,47 +994,65 @@ function AggridTreeView(props) {
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
         />
-
         {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
-          <DrawerDetailPage
-            projectInfo={projectInfo}
-            open={open}
-            setOpen={setOpen}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-            navigateCreatePage={navigateCreatePage}
-          />
+          new_router ? (
+            <DrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          ) : (
+            <OldDrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          )
         ) : selectedViewType === "CenterPeek" ? (
-          <NewModalDetailPage
-            modal={true}
+          <ModalDetailPage
+            view={view}
             projectInfo={projectInfo}
             open={open}
-            setOpen={setOpen}
+            setFormValue={setFormValue}
             selectedRow={selectedRow}
             menuItem={menuItem}
             layout={layout}
             fieldsMap={fieldsMap}
             refetch={refetch}
+            layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
-            navigateCreatePage={navigateCreatePage}
           />
         ) : null}
 
         {Boolean(open && !projectInfo?.new_layout) && (
           <ModalDetailPage
             open={open}
-            setOpen={setOpen}
             selectedRow={selectedRow}
             menuItem={menuItem}
             layout={layout}
@@ -1043,7 +1064,6 @@ function AggridTreeView(props) {
             navigateToEditPage={navigateToDetailPage}
           />
         )}
-
         <Drawer
           open={drawerState}
           anchor="right"

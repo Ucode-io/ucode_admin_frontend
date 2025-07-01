@@ -97,6 +97,7 @@ const DrawerTableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
+  const viewsList = useSelector((state) => state?.groupField?.viewsList);
 
   const viewId = searchParams.get("v");
 
@@ -336,6 +337,10 @@ const DrawerTableView = ({
       ? parseInt(searchText)
       : searchText;
 
+  const selectedV = viewsList?.[viewsList?.length - 1];
+  const computedFilter =
+    selectedV?.relation_table_slug || selectedV?.table_slug;
+
   const {
     data: {tableData, pageCount, dataCount} = {
       tableData: [],
@@ -370,6 +375,9 @@ const DrawerTableView = ({
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: tableSearch,
+          [`${computedFilter}_id`]: relationView
+            ? selectedV?.detailId
+            : undefined,
           limit: paginiation ?? limit,
           ...filters,
           [tab?.slug]: tab

@@ -429,8 +429,6 @@ export const NewUiViewsWithGroups = ({
       setSelectedTabIndex(index);
     } else {
       if (isSection) {
-        const lastView = viewsList?.[viewsList.length - 1];
-
         dispatch(detailDrawerActions.setDrawerTabIndex(index));
         dispatch(groupFieldActions.trimViewsDataUntil(view));
         dispatch(groupFieldActions.trimViewsUntil(view));

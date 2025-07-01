@@ -173,7 +173,7 @@ const DrawerRelationTable = ({
             limit: limitPage !== 0 ? limitPage : limit,
             from_tab: true,
             search: searchText,
-            // ...computedFilters,
+            ...computedFilters,
           },
         },
         {
@@ -243,7 +243,7 @@ const DrawerRelationTable = ({
       [relationId]: value,
     }));
   };
-
+  console.log("tableDataform", tableData);
   // useEffect(() => {
   //   update();
   // }, [update]);

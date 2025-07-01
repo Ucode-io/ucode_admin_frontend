@@ -11,6 +11,8 @@ import {useBoardViewProps} from "./useBoardViewProps";
 import {BoardSkeleton} from "./components/BoardSkeleton";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import clsx from "clsx";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 
 const BoardView = ({
   view,
@@ -19,12 +21,12 @@ const BoardView = ({
   menuItem,
   visibleColumns,
   visibleRelationColumns,
-  setLayoutType,
   searchText,
   columnsForSearch,
   checkedColumns,
-  open,
-  setOpen = () => {},
+  layoutType,
+  setLayoutType = () => {},
+  setFormValue = () => {},
 }) => {
   const {
     isLoading,
@@ -78,7 +80,8 @@ const BoardView = ({
     checkedColumns,
     columnsForSearch,
   });
-  console.log({groups});
+  const new_router = localStorage.getItem("new_router") === "true";
+
   return (
     <div className={styles.container} ref={boardRef}>
       {isLoading ? (
@@ -204,6 +207,7 @@ const BoardView = ({
                         }}>
                         {groups?.map((group, index) => (
                           <BoardColumn
+                            projectInfo={projectInfo}
                             key={group.value}
                             group={group}
                             boardData={
@@ -241,6 +245,7 @@ const BoardView = ({
                 {groups?.map((group, index) => (
                   <div key={group.value} className={styles.draggable}>
                     <BoardColumn
+                      projectInfo={projectInfo}
                       key={group.value}
                       group={group}
                       boardData={boardData?.[group?.name]}
@@ -281,7 +286,6 @@ const BoardView = ({
               menuItem={menuItem}
               layout={layout}
               fieldsMap={fieldsMap}
-              refetch={refetch}
               layoutType={layoutType}
               setLayoutType={setLayoutType}
               selectedViewType={selectedViewType}
@@ -297,7 +301,6 @@ const BoardView = ({
               menuItem={menuItem}
               layout={layout}
               fieldsMap={fieldsMap}
-              refetch={refetch}
               layoutType={layoutType}
               setLayoutType={setLayoutType}
               selectedViewType={selectedViewType}
@@ -314,7 +317,6 @@ const BoardView = ({
             menuItem={menuItem}
             layout={layout}
             fieldsMap={fieldsMap}
-            refetch={refetch}
             layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
@@ -329,7 +331,6 @@ const BoardView = ({
             menuItem={menuItem}
             layout={layout}
             fieldsMap={fieldsMap}
-            refetch={refetch}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}

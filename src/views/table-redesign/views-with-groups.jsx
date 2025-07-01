@@ -1146,6 +1146,8 @@ export const NewUiViewsWithGroups = ({
                 )}
                 {view.type === "BOARD" && (
                   <BoardView
+                    layoutType={layoutType}
+                    setFormValue={setFormValue}
                     setLoading={setLoading}
                     setLayoutType={setLayoutType}
                     selectedView={selectedView}
@@ -1161,8 +1163,6 @@ export const NewUiViewsWithGroups = ({
                     views={views}
                     fieldsMap={fieldsMap}
                     view={view}
-                    layoutType={layoutType}
-                    setFormValue={setFormValue}
                   />
                 )}
                 {view.type === "CALENDAR" && (

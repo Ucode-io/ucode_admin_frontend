@@ -55,6 +55,7 @@ const BoardColumn = ({
   const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
+  const [computedBoardData, setComputedBoardData] = useState(boardData);
 
   const mutateDrop = useDebounce((mutateData) => {
     constructorObjectService
@@ -164,6 +165,7 @@ const BoardColumn = ({
   };
 
   const navigateToEditPage = (row) => {
+    console.log("viewwwwwwwwwwwwww");
     setLoadings(true);
     setDateInfo({});
     setDefaultValue({});
@@ -203,6 +205,7 @@ const BoardColumn = ({
           }
         }
       } else {
+        console.log("enteredddddddd", projectInfo);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
         } else if (projectInfo?.new_layout) {

@@ -46,6 +46,7 @@ const HFAggridMultiselect = (props) => {
   const {value, setValue = () => {}, width = "100%", colDef, data} = props;
   const field = colDef?.fieldObj;
   const options = colDef?.cellEditorParams?.field?.attributes?.options;
+  const disabled = field?.disabled;
   const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
   const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
   const isMultiSelect =

@@ -119,6 +119,9 @@ function AgGridTableView(props) {
   const tableSlug = relationView
     ? view?.relation_table_slug
     : (tableSlugFromParams ?? view?.table_slug);
+
+  console.log("tableSlugtableSlug", tableSlug);
+
   const {i18n, t} = useTranslation();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -158,6 +161,13 @@ function AgGridTableView(props) {
 
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+
+  const pagination = useSelector((state) => state.pagination);
+  // const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
+
+  const {pageLimit, pageOffset} =
+    pagination?.paginationInfo?.find((item) => item?.tableSlug === tableSlug) ||
+    {};
 
   const visibleFields = useMemo(() => {
     return visibleColumns

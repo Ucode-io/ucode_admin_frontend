@@ -57,7 +57,6 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {transliterate} from "../../../utils/textTranslater";
 import {getColumnIcon} from "../../table-redesign/icons";
-import AggridFooter from "./AggridFooter";
 import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
 import AggridDefaultComponents, {
@@ -105,7 +104,8 @@ const myTheme = themeQuartz.withParams({
 
 function AggridTreeView(props) {
   const {
-    open,
+    // open,
+    relationView = false,
     view,
     mainForm,
     menuItem,
@@ -120,7 +120,6 @@ function AggridTreeView(props) {
     setLayoutType = () => {},
     navigateToEditPage = () => {},
     navigateCreatePage,
-    setOpen,
     selectedRow,
     navigateToDetailPage,
   } = props;
@@ -129,10 +128,11 @@ function AggridTreeView(props) {
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
   const addClickedRef = useRef(false);
-  const {tableSlug, appId} = useParams();
+  const {tableSlug: tableSlugFromParams, appId} = useParams();
+
+  const open = useSelector((state) => state?.drawer?.openDrawer);
   const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();
-  const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -152,6 +152,12 @@ function AggridTreeView(props) {
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
+  const viewsList = useSelector((state) => state?.groupField?.viewsList);
+  const selectedV = viewsList?.[viewsList?.length - 1];
+
+  const tableSlug = relationView
+    ? selectedV?.relation_table_slug || selectedV?.table_slug
+    : tableSlugFromParams || view?.table_slug;
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -170,10 +176,10 @@ function AggridTreeView(props) {
       },
     });
 
-  const tableSearch =
-    detectStringType(searchText) === "number"
-      ? parseInt(searchText)
-      : searchText;
+  // const tableSearch =
+  //   detectStringType(searchText) === "number"
+  //     ? parseInt(searchText)
+  //     : searchText;
 
   const handleOpenFieldDrawer = (column) => {
     if (column?.attributes?.relation_data) {
@@ -508,10 +514,6 @@ function AggridTreeView(props) {
         });
       }
 
-      // setTimeout(() => {
-      //   waitUntilStoreReady(parentNode);
-      // }, 800);
-
       return;
     } else {
       parentNode?.api?.applyServerSideTransaction({
@@ -574,13 +576,13 @@ function AggridTreeView(props) {
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -967,8 +969,6 @@ function AggridTreeView(props) {
       selectedViewType === "SidePeek" ? (
         <DrawerDetailPage
           projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
@@ -984,8 +984,6 @@ function AggridTreeView(props) {
         <NewModalDetailPage
           modal={true}
           projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
@@ -1001,8 +999,6 @@ function AggridTreeView(props) {
 
       {Boolean(open && !projectInfo?.new_layout) && (
         <ModalDetailPage
-          open={open}
-          setOpen={setOpen}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}

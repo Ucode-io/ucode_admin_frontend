@@ -98,7 +98,6 @@ const DrawerTableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams] = useSearchParams();
   const viewsList = useSelector((state) => state?.groupField?.viewsList);
-
   const viewId = searchParams.get("v");
 
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);

@@ -107,6 +107,9 @@ import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
 import {useProjectGetByIdQuery} from "../../services/projectService";
+import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
+import constructorFieldService from "../../services/constructorFieldService";
+import constructorRelationService from "../../services/constructorRelationService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -472,6 +475,72 @@ export const NewUiViewsWithGroups = ({
       dispatch(groupFieldActions.trimViewsDataUntil(item));
       updateQueryWithoutRerender("p", item?.detailId);
     }
+  };
+
+  const getRelationFields = async () => {
+    return new Promise(async (resolve) => {
+      const getFieldsData = constructorFieldService.getList({
+        table_id: id ?? menuItem?.table_id,
+      });
+
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        tableSlug
+      );
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
+
+      mainForm.setValue("fields", fields);
+      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
+        ...relation,
+        relatedTableSlug:
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
+      }));
+
+      const layoutRelations = [];
+      const tableRelations = [];
+
+      relationsWithRelatedTableSlug?.forEach((relation) => {
+        if (
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
+          relation.type === "Recursive" ||
+          (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === tableSlug)
+        ) {
+          layoutRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
+      });
+
+      const layoutRelationsFields = layoutRelations.map((relation) => ({
+        ...relation,
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        attributes: {
+          fields: relation.view_fields ?? [],
+        },
+        label:
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
+      }));
+
+      mainForm.setValue("relations", relations);
+      mainForm.setValue("relationsMap", listToMap(relations));
+      mainForm.setValue("layoutRelations", layoutRelationsFields);
+      mainForm.setValue("tableRelations", tableRelations);
+      resolve();
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+    });
   };
 
   useEffect(() => {
@@ -1210,13 +1279,33 @@ export const NewUiViewsWithGroups = ({
                           />
                         </MaterialUIProvider>
                       ) : view.type === "TREE" ? (
-                        <TreeView
-                          tableSlug={tableSlug}
-                          filters={filters}
-                          view={view}
-                          fieldsMap={fieldsMap}
-                          tab={tab}
-                        />
+                        <MaterialUIProvider>
+                          <AggridTreeView
+                            navigateCreatePage={navigateCreatePage}
+                            getRelationFields={getRelationFields}
+                            mainForm={mainForm}
+                            searchText={searchText}
+                            // open={open}
+                            // setOpen={setOpen}
+                            selectedRow={selectedRow}
+                            projectInfo={projectInfo}
+                            setLayoutType={setLayoutType}
+                            navigateToEditPage={navigateToEditPage}
+                            selectedTabIndex={selectedTabIndex}
+                            view={view}
+                            views={views}
+                            fieldsMap={fieldsMap}
+                            computedVisibleFields={computedVisibleFields}
+                            checkedColumns={checkedColumns}
+                            setCheckedColumns={setCheckedColumns}
+                            columnsForSearch={columnsForSearch}
+                            updateField={updateField}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            menuItem={menuItem}
+                          />
+                        </MaterialUIProvider>
                       ) : (
                         <TableComponent
                           projectInfo={projectInfo}
@@ -1298,11 +1387,30 @@ export const NewUiViewsWithGroups = ({
                         />
                       </MaterialUIProvider>
                     ) : view.type === "TREE" ? (
-                      <TreeView
-                        tableSlug={tableSlug}
-                        filters={filters}
+                      <AggridTreeView
+                        navigateCreatePage={navigateCreatePage}
+                        getRelationFields={getRelationFields}
+                        mainForm={mainForm}
+                        searchText={searchText}
+                        // open={open}
+                        // setOpen={setOpen}
+                        selectedRow={selectedRow}
+                        projectInfo={projectInfo}
+                        setLayoutType={setLayoutType}
+                        navigateToEditPage={navigateToEditPage}
+                        selectedTabIndex={selectedTabIndex}
                         view={view}
+                        views={views}
                         fieldsMap={fieldsMap}
+                        computedVisibleFields={computedVisibleFields}
+                        checkedColumns={checkedColumns}
+                        setCheckedColumns={setCheckedColumns}
+                        columnsForSearch={columnsForSearch}
+                        updateField={updateField}
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
+                        menuItem={menuItem}
                       />
                     ) : (
                       <TableComponent

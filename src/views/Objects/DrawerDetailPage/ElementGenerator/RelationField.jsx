@@ -444,11 +444,11 @@ const AutoCompleteElement = ({
         el?.includes(activeLang ?? i18n?.language)
       );
 
-      const filteredData = viewFields.filter((key) => {
+      const filteredData = viewFields?.filter((key) => {
         return !computedLanguages.some((lang) => key.includes(lang));
       });
 
-      return [...activeLangView, ...filteredData] ?? [];
+      return [...(activeLangView ?? []), ...(filteredData ?? [])] ?? [];
     } else {
       return field?.attributes?.view_fields?.map((el) => el?.slug);
     }

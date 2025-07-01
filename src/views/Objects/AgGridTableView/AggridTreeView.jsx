@@ -74,6 +74,7 @@ import NewModalDetailPage from "../../../components/NewModalDetailPage";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -836,24 +837,28 @@ function AggridTreeView(props) {
       sx={{
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
         overflow: "scroll",
-      }}>
+      }}
+    >
       <div className={style.gridTableTree}>
         <div
           className="ag-theme-quartz"
           style={{
             display: "flex",
             width: "100%",
-          }}>
+          }}
+        >
           <Box
             className="scrollbarNone"
-            sx={{width: "100%", background: "#fff"}}>
+            sx={{ width: "100%", background: "#fff" }}
+          >
             {Boolean(tabs?.length) && (
               <Box
                 sx={{
                   display: "flex",
                   padding: "10px 0 0 20px",
                   borderBottom: "1px solid #eee",
-                }}>
+                }}
+              >
                 {tabs?.map((item) => (
                   <Button
                     key={item.value}
@@ -866,7 +871,8 @@ function AggridTreeView(props) {
                       groupTab?.value === item?.value
                         ? style.tabGroupBtnActive
                         : style.tabGroupBtn
-                    }>
+                    }
+                  >
                     {item?.label}
                   </Button>
                 ))}
@@ -877,7 +883,8 @@ function AggridTreeView(props) {
               className="scrollbarNone"
               sx={{
                 height: "100%",
-              }}>
+              }}
+            >
               {!columns?.length ? (
                 <NoFieldsComponent />
               ) : (
@@ -965,21 +972,23 @@ function AggridTreeView(props) {
 
       {Boolean(open && projectInfo?.new_layout) &&
       selectedViewType === "SidePeek" ? (
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
-        />
+        <MaterialUIProvider>
+          <DrawerDetailPage
+            projectInfo={projectInfo}
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+            navigateCreatePage={navigateCreatePage}
+          />
+        </MaterialUIProvider>
       ) : selectedViewType === "CenterPeek" ? (
         <NewModalDetailPage
           modal={true}
@@ -1019,7 +1028,8 @@ function AggridTreeView(props) {
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -1038,7 +1048,8 @@ function AggridTreeView(props) {
         open={drawerStateField}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

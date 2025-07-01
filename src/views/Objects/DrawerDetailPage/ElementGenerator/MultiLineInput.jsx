@@ -58,7 +58,7 @@ const MultiLineInput = ({
           }}
           id="textAreaInput"
           onClick={(e) => {
-            !isDisabled && handleClick(e);
+            handleClick(e);
           }}
         >
           {value ? (

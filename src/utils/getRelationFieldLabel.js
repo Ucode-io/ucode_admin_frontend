@@ -94,8 +94,9 @@ export const getRelationFieldTabsLabelLang = (
       if (el?.slug?.endsWith(`_${lang}`)) {
         langLabel = option?.[el?.slug] ?? " ";
       }
-
-      result = option?.[el?.slug];
+      if(!el?.slug?.endsWith(`_id`)) {
+        result = option?.[el?.slug];
+      }
     }
 
     label += `${result ?? ""} `;

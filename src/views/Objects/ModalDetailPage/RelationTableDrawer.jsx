@@ -19,6 +19,7 @@ import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import DrawerObjectDataTable from "./DrawerObjectDataTable";
 import styles from "./style.module.scss";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 
 const RelationTableDrawer = forwardRef(
   (
@@ -49,19 +50,20 @@ const RelationTableDrawer = forwardRef(
       inputChangeHandler = () => {},
       currentPage,
       searchText,
+      fieldsMap,
     },
     ref
   ) => {
-    const {appId, tableSlug} = useParams();
+    const { appId, tableSlug } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const {navigateToForm} = useTabRouter();
+    const { navigateToForm } = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
     const [drawerState, setDrawerState] = useState(null);
 
     const [limit, setLimit] = useState(10);
-    const {i18n} = useTranslation();
+    const { i18n } = useTranslation();
     const [relOptions, setRelOptions] = useState([]);
     const [searchParams] = useSearchParams();
     const menuId = searchParams.get("menuId");
@@ -119,7 +121,7 @@ const RelationTableDrawer = forwardRef(
       }
     }, [paginiation, limit, currentPage]);
 
-    const {loader: menuLoader} = useMenuGetByIdQuery({
+    const { loader: menuLoader } = useMenuGetByIdQuery({
       menuId: searchParams.get("menuId"),
       queryParams: {
         enabled: Boolean(searchParams.get("menuId")),
@@ -131,13 +133,13 @@ const RelationTableDrawer = forwardRef(
 
     const getRelationFields = async () => {
       return new Promise(async (resolve) => {
-        const getFieldsData = constructorFieldService.getList({table_id: id});
+        const getFieldsData = constructorFieldService.getList({ table_id: id });
 
         const getRelations = constructorRelationService.getList({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         });
-        const [{relations = []}, {fields = []}] = await Promise.all([
+        const [{ relations = [] }, { fields = [] }] = await Promise.all([
           getRelations,
           getFieldsData,
         ]);
@@ -263,7 +265,7 @@ const RelationTableDrawer = forwardRef(
         pageCount = 1,
         columns = [],
         quickFilters = [],
-        fieldsMap = {},
+        // fieldsMap = {},
         count = 0,
       } = {},
       refetch,
@@ -299,14 +301,14 @@ const RelationTableDrawer = forwardRef(
       },
       {
         enabled: !!relatedTableSlug,
-        select: ({data}) => {
+        select: ({ data }) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
               ? 1
               : Math.ceil(data.count / paginiation);
 
-          const fieldsMap = listToMap(data.fields);
+          // const fieldsMap = listToMap(data.fields);
           const count = data?.count;
 
           const array = [];
@@ -334,7 +336,7 @@ const RelationTableDrawer = forwardRef(
             ?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters
-            ?.map(({field_id}) => fieldsMap[field_id])
+            ?.map(({ field_id }) => fieldsMap[field_id])
             ?.filter((el) => el);
 
           return {
@@ -427,7 +429,7 @@ const RelationTableDrawer = forwardRef(
       setFormValue("multi", tableData);
     }, [selectedTab, tableData]);
 
-    const {isLoading: deleteLoading, mutate: deleteHandler} = useMutation(
+    const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
@@ -451,7 +453,7 @@ const RelationTableDrawer = forwardRef(
       }
     );
 
-    const {data: {custom_events: customEvents = []} = {}} =
+    const { data: { custom_events: customEvents = [] } = {} } =
       useCustomActionsQuery({
         tableSlug: relatedTableSlug,
       });
@@ -478,10 +480,12 @@ const RelationTableDrawer = forwardRef(
         await constructorObjectService.deleteMultiple(tableSlug, {
           ids: selectedObjectsForDelete.map((i) => i.guid),
         });
-        queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
       } finally {
       }
     };
+
+    const [drawerStateField, setDrawerStateField] = useState(null);
 
     // if (Boolean(columns?.length)) return <PageFallback />;
 
@@ -524,6 +528,7 @@ const RelationTableDrawer = forwardRef(
               filters={filters}
               filterChangeHandler={filterChangeHandler}
               inputChangeHandler={inputChangeHandler}
+              setDrawerStateField={setDrawerStateField}
               paginationExtraButton={
                 id && (
                   <SecondaryButton onClick={navigateToTablePage}>
@@ -569,7 +574,8 @@ const RelationTableDrawer = forwardRef(
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -580,6 +586,21 @@ const RelationTableDrawer = forwardRef(
             selectedTabIndex={selectedTabIndex}
             height={`calc(100vh - 48px)`}
             getRelationFields={getRelationFields}
+          />
+        </Drawer>
+
+        <Drawer
+          open={drawerStateField}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal"
+        >
+          <RelationSettings
+            relation={drawerStateField}
+            closeSettingsBlock={() => setDrawerStateField(null)}
+            getRelationFields={getRelationFields}
+            formType={drawerStateField}
+            height={`calc(100vh - 48px)`}
           />
         </Drawer>
       </div>

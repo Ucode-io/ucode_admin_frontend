@@ -276,7 +276,10 @@ const RelationSettings = ({
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
-    id: relation?.attributes?.relation_data?.id || relation?.id,
+    id:
+      relation?.attributes?.relation_data?.id ||
+      relation?.relation_id ||
+      relation?.id,
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {

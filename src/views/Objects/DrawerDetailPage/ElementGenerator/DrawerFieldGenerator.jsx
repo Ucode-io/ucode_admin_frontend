@@ -53,6 +53,7 @@ import HFCodeField from "../../../../components/FormElements/HFCodeField";
 import JSONInput from "react-json-editor-ajrm";
 import { isJSONParsable } from "../../../../utils/isJsonValid";
 import CellManyToManyRelationElement from "../../../../components/ElementGenerators/CellManyToManyRelationElement";
+import { FIELD_TYPES } from "../../../../utils/constants/fieldTypes";
 
 function DrawerFieldGenerator({
   field,
@@ -408,6 +409,20 @@ function DrawerFieldGenerator({
       );
 
     default:
+      // if (field?.type === FIELD_TYPES.LOOKUP && !field?.relation_type) {
+      //   return (
+      //     <RelationField
+      //       disabled={isDisabled}
+      //       isRequired={isRequired}
+      //       field={field}
+      //       errors={errors}
+      //       control={control}
+      //       name={computedSlug}
+      //       setFormValue={setFormValue}
+      //       isMulti={field?.relation_type === "Many2Many"}
+      //     />
+      //   );
+      // } else {
       return (
         <InputField
           watch={watch}
@@ -419,6 +434,7 @@ function DrawerFieldGenerator({
           functions={functions}
         />
       );
+    // }
   }
 }
 

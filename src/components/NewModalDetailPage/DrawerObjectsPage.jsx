@@ -37,9 +37,6 @@ function DrawerObjectsPageModal({
   const {i18n} = useTranslation();
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
-  const queryTab = searchParams.get("view");
-  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
-  const projectId = store.getState().company.projectId;
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
   const tableSlug = selectedView?.table_slug;

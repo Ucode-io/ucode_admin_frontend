@@ -449,11 +449,12 @@ function DrawerDetailPage({
           onMouseDown={handleMouseDown}
           sx={{
             position: "absolute",
-            height: "calc(100vh - 50px)",
-            width: "3px",
+            height: "calc(100vh - 0px)",
+            width: "4px",
             left: 0,
             top: 0,
             cursor: "col-resize",
+            zIndex: 999999,
           }}
         />
       </DrawerContent>

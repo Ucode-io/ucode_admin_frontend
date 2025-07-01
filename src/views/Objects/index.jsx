@@ -24,20 +24,20 @@ import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
 import {Box, Popover, Skeleton} from "@mui/material";
 import NoDataPng from "../../assets/images/no-data.png";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import { viewTypes, viewTypesMap } from "../../utils/constants/viewTypes";
-import { DynamicTable } from "../table-redesign";
+import {viewTypes, viewTypesMap} from "../../utils/constants/viewTypes";
+import {DynamicTable} from "../table-redesign";
 import ViewTypeList from "./components/ViewTypeList";
 
 const ObjectsPage = () => {
-  const { tableSlug } = useParams();
-  const { state } = useLocation();
-  const { appId } = useParams();
+  const {tableSlug} = useParams();
+  const {state} = useLocation();
+  const {appId} = useParams();
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -78,12 +78,14 @@ const ObjectsPage = () => {
     data: {
       views,
       fieldsMap,
+      tableInfo,
       fieldsMapRel,
       visibleColumns,
       visibleRelationColumns,
     } = {
       views: [],
       fieldsMap: {},
+      tableInfo: {},
       fieldsMapRel: {},
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -105,7 +107,7 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views:
             data?.views?.filter(
@@ -114,6 +116,7 @@ const ObjectsPage = () => {
                 view?.type !== "SECTION" &&
                 Boolean(!view?.is_relation_view)
             ) ?? [],
+          tableInfo: data?.table_info || {},
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
@@ -124,7 +127,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({ views }) => {
+      onSuccess: ({views}) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -136,7 +139,7 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -148,6 +151,8 @@ const ObjectsPage = () => {
 
   const setViews = () => {};
 
+  const view = views?.[selectedTabIndex];
+
   const storageItem = localStorage.getItem("newUi");
   const newUi = JSON.parse(
     !storageItem || storageItem === "undefined" || storageItem === "false"
@@ -155,8 +160,6 @@ const ObjectsPage = () => {
       : "true"
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
-  const view = views?.[selectedTabIndex];
-  console.log({ view });
 
   if (isLoading) {
     if (view?.type === viewTypesMap.BOARD) {
@@ -193,6 +196,7 @@ const ObjectsPage = () => {
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
+        tableInfo={tableInfo}
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
         menuItem={menuItem}
@@ -207,7 +211,7 @@ const ObjectsPage = () => {
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
 
   return (
     <>
@@ -216,7 +220,7 @@ const ObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({ view })}
+                {getViewComponent([view?.type])({view})}
               </TabPanel>
             );
           })}
@@ -241,8 +245,7 @@ const ObjectsPage = () => {
               borderBottom="1px solid #EAECF0"
               padding="0 16px"
               display="flex"
-              alignItems="center"
-            >
+              alignItems="center">
               <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
                 <Button
                   leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
@@ -250,8 +253,7 @@ const ObjectsPage = () => {
                   colorScheme="gray"
                   color="#475467"
                   ref={addViewRef}
-                  onClick={handleAddViewClick}
-                >
+                  onClick={handleAddViewClick}>
                   {t("add")}
                 </Button>
                 {/* <div
@@ -272,8 +274,7 @@ const ObjectsPage = () => {
               alignItems="center"
               flexDirection="column"
               height="100%"
-              gap="16px"
-            >
+              gap="16px">
               <img src={NoDataPng} alt="No data" width={250} />
               <Text fontSize="16px" fontWeight="500" color="#475467">
                 No data found
@@ -298,8 +299,7 @@ const ObjectsPage = () => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}
-      >
+        }}>
         <ViewTypeList
           views={views}
           computedViewTypes={computedViewTypes}

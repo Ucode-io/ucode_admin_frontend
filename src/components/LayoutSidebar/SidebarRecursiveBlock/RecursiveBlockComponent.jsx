@@ -22,6 +22,7 @@ import {folderIds} from "./mock/folders";
 import FileUploadMenu from "../Components/Functions/FileUploadMenu";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -99,10 +100,7 @@ const RecursiveBlock = ({
       : element?.id === menuItem?.id;
 
   const clickHandler = (e) => {
-    e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    dispatch(menuActions.setMenuItem(element));
-    // NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
 
     if (Boolean(newRouter === "true")) {
       if (element?.type === "FOLDER") {
@@ -111,8 +109,10 @@ const RecursiveBlock = ({
         dispatch(detailDrawerActions.setMainTabIndex(0));
         dispatch(groupFieldActions.clearViews());
         dispatch(groupFieldActions.clearViewsPath());
-        NavigateByType({element, menuId: element?.id, navigate});
+        NavigateByType({element, appId, navigate});
       }
+    } else {
+      NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
     }
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {

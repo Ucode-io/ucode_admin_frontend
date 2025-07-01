@@ -15,7 +15,6 @@ const oldClickHandler = ({
   setFolderItem,
   auth,
 }) => {
-  console.log("elementttttttttttt", element);
   if (element?.id === "USERS_MENU_ITEM_ID") {
     return navigate("/client-types");
   }

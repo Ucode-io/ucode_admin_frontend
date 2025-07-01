@@ -66,19 +66,17 @@ function OldDrawerDetailPage({
   const isUserId = useSelector((state) => state?.auth?.userId);
 
   const {id: idFromParam, tableSlug, appId} = useParams();
-  console.log("appIdappIdappIdappIdappId", appId);
+
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
   }, [idFromParam, selectedRow]);
-
-  console.log("ididid", id);
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
-  const [selectedTab, setSelectTab] = useState();
+  const [selectedTab, setSelectTab] = useState({});
   const {i18n} = useTranslation();
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
@@ -86,7 +84,7 @@ function OldDrawerDetailPage({
   const permissions = useSelector(
     (state) => state?.permissions?.permissions?.[tableSlug]
   );
-  console.log("selectedTabselectedTab", selectedTab);
+
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -164,7 +162,7 @@ function OldDrawerDetailPage({
       if (!selectedTab?.relation_id) {
         reset(data?.response ?? {});
       }
-      // setSelectTab(relations[selectedTabIndex]);
+      setSelectTab(relations[selectedTabIndex]);
 
       setLoader(false);
     } catch (error) {
@@ -233,7 +231,7 @@ function OldDrawerDetailPage({
       if (!id) {
         setLoader(false);
       }
-      // setSelectTab(relations[selectedTabIndex]);
+      setSelectTab(relations[selectedTabIndex]);
     } catch (error) {
       console.error(error);
     }

@@ -78,12 +78,14 @@ const ObjectsPage = () => {
     data: {
       views,
       fieldsMap,
+      tableInfo,
       fieldsMapRel,
       visibleColumns,
       visibleRelationColumns,
     } = {
       views: [],
       fieldsMap: {},
+      tableInfo: {},
       fieldsMapRel: {},
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -114,6 +116,7 @@ const ObjectsPage = () => {
                 view?.type !== "SECTION" &&
                 Boolean(!view?.is_relation_view)
             ) ?? [],
+          tableInfo: data?.table_info || {},
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
@@ -193,6 +196,7 @@ const ObjectsPage = () => {
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
+        tableInfo={tableInfo}
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
         menuItem={menuItem}

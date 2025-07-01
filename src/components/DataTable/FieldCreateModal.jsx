@@ -40,7 +40,6 @@ import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attribute
 import constructorRelationService from "../../services/constructorRelationService";
 import {listToMap} from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import {useMemo, useState} from "react";
 
 const formulaTypes = [
   {label: "Сумма", value: "SUMM"},

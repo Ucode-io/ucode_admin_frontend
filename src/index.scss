@@ -142,6 +142,21 @@ div {
 .overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &:hover {
+    .newUIi_first_button {
+      display: flex !important;
+    }
+  }
+}
+
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.newUIi_first_button {
+  display: none !important;
 }
 
 .text_overflow_line {
@@ -685,8 +700,9 @@ u {
   .ql-picker.ql-font
   .ql-picker-item[data-value="san-francisco"]::before {
   content: "San Francisco";
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans",
+    "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
   font-weight: 400;
 }
 

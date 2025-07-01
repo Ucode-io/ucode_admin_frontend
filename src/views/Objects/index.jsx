@@ -24,7 +24,7 @@ import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
 import {Box, Popover, Skeleton} from "@mui/material";
 import NoDataPng from "../../assets/images/no-data.png";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import {viewTypes} from "../../utils/constants/viewTypes";
+import {viewTypes, viewTypesMap} from "../../utils/constants/viewTypes";
 import {DynamicTable} from "../table-redesign";
 import ViewTypeList from "./components/ViewTypeList";
 
@@ -147,6 +147,8 @@ const ObjectsPage = () => {
   });
 
   const setViews = () => {};
+
+  const view = views?.[selectedTabIndex];
 
   const storageItem = localStorage.getItem("newUi");
   const newUi = JSON.parse(

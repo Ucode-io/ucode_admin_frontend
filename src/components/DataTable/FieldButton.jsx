@@ -240,6 +240,7 @@ export default function FieldButton({
           menuItem={menuItem}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
+          mainForm={mainForm}
         />
       )}
     </>

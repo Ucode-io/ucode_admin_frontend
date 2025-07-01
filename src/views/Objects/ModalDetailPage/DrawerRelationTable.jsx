@@ -48,13 +48,17 @@ const DrawerRelationTable = ({
   handleMouseDown = () => {},
 }) => {
   const myRef = useRef();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [type, setType] = useState(null);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [searchParams] = useSearchParams();
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
+  const {
+    tableSlug: tableSlugFromParams,
+    id: idFromParams,
+    appId,
+  } = useParams();
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
@@ -70,7 +74,7 @@ const DrawerRelationTable = ({
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
-  const {fields, remove, update} = useFieldArray({
+  const { fields, remove, update } = useFieldArray({
     control,
     name: "multi",
   });
@@ -98,7 +102,7 @@ const DrawerRelationTable = ({
   }, [data]);
 
   const {
-    data: {fieldsMap} = {
+    data: { fieldsMap } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -119,7 +123,7 @@ const DrawerRelationTable = ({
     },
     {
       enabled: Boolean(relatedTableSlug),
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
@@ -135,13 +139,14 @@ const DrawerRelationTable = ({
 
   return (
     <>
-      <Box py={"5px"} sx={{height: "100vh"}}>
+      <Box py={"5px"} sx={{ height: "100vh" }}>
         <ChakraProvider theme={chakraUITheme}>
           <Flex
             px={3}
             mb={"10px"}
             gap={"10px"}
-            justifyContent={"space-between"}>
+            justifyContent={"space-between"}
+          >
             <Popover>
               <InputGroup ml="auto" w="320px">
                 <InputLeftElement>
@@ -164,7 +169,8 @@ const DrawerRelationTable = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto"></PopoverContent>
+                overflow="auto"
+              ></PopoverContent>
             </Popover>
             <PermissionWrapperV2 tableSlug={tableSlug} type="write">
               <Button
@@ -175,10 +181,11 @@ const DrawerRelationTable = ({
                     selectedTab?.relation?.relation_table_slug,
                     "CREATE",
                     {},
-                    {id: idFromParams},
+                    { id: idFromParams },
                     searchParams.get("menuId")
                   )
-                }>
+                }
+              >
                 Create item
               </Button>
             </PermissionWrapperV2>

@@ -58,6 +58,7 @@ function OldDrawerDetailPage({
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
+  const open = useSelector((state) => state?.drawer?.openDrawer);
   const handleClose = () => {
     dispatch(detailDrawerActions.closeDrawer());
   };

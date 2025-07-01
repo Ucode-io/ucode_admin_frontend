@@ -81,6 +81,33 @@
     display: none;
   }
 
+  .newUIi_first_button {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #007aff;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid rgba(0, 122, 255, 0.15);
+    background-color: #fff;
+
+    &:hover {
+      background-color: rgb(237, 244, 254);
+    }
+  }
+
+  .newUIi_first_button,
+  .table_multi_checkbox {
+    display: none;
+  }
+
   .data_table__row_number {
     display: block;
   }

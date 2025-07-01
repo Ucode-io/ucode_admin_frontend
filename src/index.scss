@@ -142,6 +142,21 @@ div {
 .overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &:hover {
+    .newUIi_first_button {
+      display: flex !important;
+    }
+  }
+}
+
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.newUIi_first_button {
+  display: none !important;
 }
 
 .text_overflow_line {

@@ -207,6 +207,7 @@ function AggridTreeView(props) {
         ...filters,
       }),
     {
+      enabled: false,
       onSuccess: (data) => {
         const computedRow = data?.data?.response?.map((item) => ({
           ...item,

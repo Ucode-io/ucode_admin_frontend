@@ -1,11 +1,10 @@
 import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {Box, Button, Drawer} from "@mui/material";
+import {Box, Drawer} from "@mui/material";
 import {
   CellStyleModule,
   CheckboxEditorModule,
-  ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
   ModuleRegistry,
@@ -67,7 +66,7 @@ import getColumnEditorParams from "./valueOptionGenerator";
 import DeleteColumnModal from "./DeleteColumnModal";
 import FieldCreateModal from "../../../components/DataTable/FieldCreateModal";
 import DrawerDetailPage from "../DrawerDetailPage";
-import NewModalDetailPage from "../../../components/NewModalDetailPage";
+
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
@@ -104,7 +103,6 @@ const myTheme = themeQuartz.withParams({
 
 function AggridTreeView(props) {
   const {
-    relationView = false,
     view,
     mainForm,
     menuItem,
@@ -114,8 +112,10 @@ function AggridTreeView(props) {
     visibleColumns,
     selectedTabIndex,
     selectedRow,
+    layoutType,
     computedVisibleFields,
-    setOpen = () => {},
+    relationView = false,
+    setFormValue = () => {},
     getRelationFields = () => {},
     setLayoutType = () => {},
     navigateToDetailPage = () => {},
@@ -129,6 +129,10 @@ function AggridTreeView(props) {
   const addClickedRef = useRef(false);
   const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
   const new_router = localStorage.getItem("new_router") === "true";
+
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();
@@ -153,10 +157,6 @@ function AggridTreeView(props) {
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const viewsList = useSelector((state) => state?.groupField?.viewsList);
   const selectedV = viewsList?.[viewsList?.length - 1];
-
-  const tableSlug = relationView
-    ? selectedV?.relation_table_slug || selectedV?.table_slug
-    : tableSlugFromParams || view?.table_slug;
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];

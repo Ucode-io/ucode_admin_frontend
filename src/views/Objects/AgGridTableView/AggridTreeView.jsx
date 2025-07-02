@@ -126,7 +126,6 @@ function AggridTreeView(props) {
   const dispatch = useDispatch();
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
-  const {navigateToForm} = useTabRouter();
   const addClickedRef = useRef(false);
   const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
   const new_router = localStorage.getItem("new_router") === "true";

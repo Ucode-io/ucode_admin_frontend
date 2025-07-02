@@ -71,6 +71,7 @@ import NewModalDetailPage from "../../../components/NewModalDetailPage";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -150,9 +151,7 @@ function AggridTreeView(props) {
   const viewsList = useSelector((state) => state?.groupField?.viewsList);
   const selectedV = viewsList?.[viewsList?.length - 1];
 
-  const tableSlug = relationView
-    ? selectedV?.relation_table_slug || selectedV?.table_slug
-    : tableSlugFromParams || view?.table_slug;
+  const new_router = localStorage.getItem("new_router") === "true";
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -955,38 +954,63 @@ function AggridTreeView(props) {
 
       {Boolean(open && projectInfo?.new_layout) &&
       selectedViewType === "SidePeek" ? (
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
-        />
+        new_router ? (
+          <DrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        ) : (
+          <OldDrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        )
       ) : selectedViewType === "CenterPeek" ? (
-        <NewModalDetailPage
-          modal={true}
+        <ModalDetailPage
+          view={view}
           projectInfo={projectInfo}
+          open={open}
+          setFormValue={setFormValue}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
           refetch={refetch}
+          layoutType={layoutType}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}
           navigateToEditPage={navigateToDetailPage}
-          navigateCreatePage={navigateCreatePage}
         />
       ) : null}
 
       {Boolean(open && !projectInfo?.new_layout) && (
         <ModalDetailPage
+          open={open}
           selectedRow={selectedRow}
           menuItem={menuItem}
           layout={layout}
@@ -998,7 +1022,6 @@ function AggridTreeView(props) {
           navigateToEditPage={navigateToDetailPage}
         />
       )}
-
       <Drawer
         open={drawerState}
         anchor="right"

@@ -100,7 +100,7 @@ const TableView = ({
     (state) => state.auth.permissions?.[tableSlug]
   );
 
-  console.log({ permissions });
+  console.log({permissions});
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -165,7 +165,7 @@ const TableView = ({
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({
-        table_id: id ?? menuItem?.table_id,
+        table_id: id ?? menuItem?.table_id ?? initialTableInf?.id,
       });
 
       const getRelations = constructorRelationService.getList(

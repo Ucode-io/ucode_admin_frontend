@@ -55,7 +55,7 @@ const FieldSettings = ({
   height,
   isTableView = false,
   onSubmit = () => {},
-  getRelationFields,
+  getRelationFields = () => {},
   slug,
   menuItem,
   tableLan,

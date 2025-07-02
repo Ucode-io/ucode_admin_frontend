@@ -826,7 +826,7 @@ function AggridTreeView(props) {
       );
     }
   }, [cleanedFilters]);
-
+  console.log("RENDERED THE PAGE!!!!");
   return (
     <Box
       sx={{

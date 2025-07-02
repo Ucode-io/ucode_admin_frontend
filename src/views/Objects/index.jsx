@@ -224,14 +224,14 @@ const ObjectsPage = () => {
               </TabPanel>
             );
           })}
-          <TabPanel>
+          {/* <TabPanel>
             <DocView
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
             />
-          </TabPanel>
+          </TabPanel> */}
         </div>
       </Tabs>
 

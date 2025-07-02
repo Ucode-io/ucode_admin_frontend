@@ -55,6 +55,7 @@ import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 
 const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
@@ -348,13 +349,13 @@ export const DynamicTable = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -454,9 +455,16 @@ export const DynamicTable = ({
                       relationAction={relationAction}
                       isRelationTable={isRelationTable}
                       setFieldCreateAnchor={setFieldCreateAnchor}
+                      fieldCreateAnchor={fieldCreateAnchor}
                       setFieldData={setFieldData}
                       getAllData={getAllData}
                       setCurrentColumnWidth={setCurrentColumnWidth}
+                      tableLan={tableLan}
+                      mainForm={mainForm}
+                      fieldData={fieldData}
+                      menuItem={menuItem}
+                      setDrawerState={setDrawerState}
+                      setDrawerStateField={setDrawerStateField}
                     />
                   ))}
               {!isRelationTable && (
@@ -478,6 +486,8 @@ export const DynamicTable = ({
                     setDrawerState={setDrawerState}
                     setDrawerStateField={setDrawerStateField}
                     menuItem={menuItem}
+                    setSortedDatas={setSortedDatas}
+                    sortedDatas={sortedDatas}
                   />
                 </PermissionWrapperV2>
               )}
@@ -655,7 +665,7 @@ export const DynamicTable = ({
             style={{minWidth: "160px", border: "none"}}
             color="error"
             onClick={multipleDelete}>
-            <Button style={{width: "120px"}} variant="outlined" color="error">
+            <Button variant="outlined" color="error">
               {generateLangaugeText(
                 tableLan,
                 i18n?.language,
@@ -716,6 +726,9 @@ const FieldButton = ({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  mainForm,
+  sortedDatas,
+  setSortedDatas,
   tableSlug,
 }) => {
   const queryClient = useQueryClient();
@@ -755,7 +768,9 @@ const FieldButton = ({
       setFieldOptionAnchor(null);
       setFieldCreateAnchor(null);
       dispatch(showAlert("Successful created", "success"));
-      updateView(res?.id);
+      if (res?.type === "LOOKUP") {
+        updateView(res?.relation_id);
+      } else updateView(res?.id);
     },
   });
 
@@ -807,6 +822,9 @@ const FieldButton = ({
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        ),
       },
     };
 
@@ -914,6 +932,9 @@ const FieldButton = ({
           menuItem={menuItem}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
+          view={view}
+          setSortedDatas={setSortedDatas}
+          sortedDatas={sortedDatas}
         />
       )}
     </>
@@ -937,6 +958,8 @@ const Th = ({
   setFieldCreateAnchor,
   setFieldData,
   setCurrentColumnWidth,
+  setDrawerState,
+  setDrawerStateField,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(null);
@@ -1006,7 +1029,7 @@ const Th = ({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
       });
   };
 
@@ -1026,7 +1049,7 @@ const Th = ({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
   };
@@ -1055,7 +1078,7 @@ const Th = ({
             if (column?.attributes?.relation_data?.id) {
               queryClient.refetchQueries([
                 "RELATION_GET_BY_ID",
-                { tableSlug, id: column?.attributes?.relation_data?.id },
+                {tableSlug, id: column?.attributes?.relation_data?.id},
               ]);
             }
           },
@@ -1082,7 +1105,7 @@ const Th = ({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({ tableSlug, field, order })
+              paginationActions.setSortValues({tableSlug, field, order})
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -1241,7 +1264,7 @@ const Th = ({
       updateRelationView(computedValuesForRelationView);
     } else {
       constructorViewService.update(tableSlug, computedValues).then(() => {
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
         handleSummaryClose();
       });
     }
@@ -1253,7 +1276,7 @@ const Th = ({
       ? "sticky"
       : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({ columns, column }) + 45}px`
+    ? `${calculateWidthFixedColumn({columns, column}) + 45}px`
     : "0";
   const bg =
     tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
@@ -1294,18 +1317,78 @@ const Th = ({
       left={left}
       bg={bg}
       zIndex={zIndex}
-      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}
-    >
+      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}>
       <Flex
         alignItems="center"
         columnGap="8px"
         whiteSpace="nowrap"
-        minW="max-content"
-      >
-        {getColumnIcon({ column })}
+        minW="max-content">
+        {getColumnIcon({column})}
         {label}
         {permissions?.field_filter && (
+          <IconButton
+            aria-label="more"
+            icon={
+              <Image
+                src="/img/chevron-down.svg"
+                alt="more"
+                style={{minWidth: 20}}
+              />
+            }
+            variant="ghost"
+            colorScheme="gray"
+            ml="auto"
+            onClick={(e) => {
+              setFieldCreateAnchor(e.currentTarget);
+              setFieldData(column);
+              if (column?.attributes?.relation_data?.id) {
+                queryClient.refetchQueries([
+                  "RELATION_GET_BY_ID",
+                  {tableSlug, id: column?.attributes?.relation_data?.id},
+                ]);
+              }
+            }}
+            size="xs"
+          />
+        )}
+
+        {/* {permissions?.field_filter && (
           <ChakraProvider>
+            {fieldCreateAnchor && (
+              <FieldCreateModal
+                tableLan={tableLan}
+                anchorEl={fieldCreateAnchor}
+                setAnchorEl={setFieldCreateAnchor}
+                watch={watch}
+                control={control}
+                setValue={setValue}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                target={target}
+                setFieldOptionAnchor={setFieldOptionAnchor}
+                reset={reset}
+                menuItem={menuItem}
+                mainForm={mainForm}
+                fieldData={fieldData}
+                handleOpenFieldDrawer={handleOpenFieldDrawer}
+                view={view}
+              />
+            )}
+            <IconButton
+              aria-label="more"
+              icon={
+                <Image
+                  src="/img/chevron-down.svg"
+                  alt="more"
+                  style={{ minWidth: 20 }}
+                />
+              }
+              variant="ghost"
+              colorScheme="gray"
+              ml="auto"
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              size="xs"
+            />
             <Popover>
               <PopoverTrigger>
                 <IconButton
@@ -1320,9 +1403,9 @@ const Th = ({
                   variant="ghost"
                   colorScheme="gray"
                   ml="auto"
-                  onClick={handleClick}
+                  onClick={(e) => setFieldCreateAnchor(e.currentTarget)}
                   size="xs"
-                />
+              />
               </PopoverTrigger>
               <Portal>
                 <PopoverContent
@@ -1368,14 +1451,14 @@ const Th = ({
               </Portal>
             </Popover>
           </ChakraProvider>
-        )}
+        )} */}
       </Flex>
 
       <Menu
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{ horizontal: "right" }}
+        anchorOrigin={{horizontal: "right"}}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -1389,15 +1472,13 @@ const Th = ({
               mr: 1,
             },
           },
-        }}
-      >
+        }}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-          }}
-        >
+          }}>
           {formulaTypes?.map((item) => (
             <div
               style={{
@@ -1408,8 +1489,7 @@ const Th = ({
               }}
               onClick={() => {
                 handleAddSummary(item, "add");
-              }}
-            >
+              }}>
               <div
                 style={{
                   display: "flex",
@@ -1417,15 +1497,13 @@ const Th = ({
                   justifyContent: "space-between",
                   width: "100%",
                 }}
-                className="subMenuItem"
-              >
+                className="subMenuItem">
                 <span
                   style={{
                     marginRight: "5px",
                     width: "20px",
                     height: "20px",
-                  }}
-                >
+                  }}>
                   {item.icon}
                 </span>
                 {item?.label}

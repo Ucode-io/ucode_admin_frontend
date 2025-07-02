@@ -393,7 +393,7 @@ function DrawerDetailPage({
 
   useEffect(() => {
     if (drawerRef.current) {
-      drawerRef.current.style.width = `${drawerWidth}px`;
+      drawerRef.current.style.width = `${drawerWidth ?? 650}px`;
       drawerRef.current.closest(".chakra-portal").style.position = "relative";
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }

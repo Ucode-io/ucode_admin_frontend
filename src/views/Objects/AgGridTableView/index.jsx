@@ -1,5 +1,6 @@
 import {mergeStringAndState} from "@/utils/jsonPath";
 import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button} from "@mui/material";
 import {
@@ -28,6 +29,7 @@ import {
 import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -35,12 +37,23 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
+import {
+  useFieldCreateMutation,
+  useFieldUpdateMutation,
+} from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
 import layoutService from "../../../services/layoutService";
+import {
+  useRelationFieldUpdateMutation,
+  useRelationsCreateMutation,
+} from "../../../services/relationService";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {paginationActions} from "../../../store/pagination/pagination.slice";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
@@ -58,7 +71,6 @@ import AggridDefaultComponents, {
 import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
 import style from "./style.module.scss";
 import getColumnEditorParams from "./valueOptionGenerator";
-import {useProjectGetByIdQuery} from "../../../services/projectService";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -100,6 +112,7 @@ function AgGridTableView(props) {
     computedVisibleFields,
     layoutType,
     projectInfo,
+    mainForm,
     setSelectedView = () => {},
     setSelectedRow = () => {},
     setOpen = () => {},
@@ -128,6 +141,7 @@ function AgGridTableView(props) {
   const [loadings, setLoadings] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [fieldData, setFieldData] = useState();
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
       ? "SidePeek"
@@ -138,6 +152,7 @@ function AgGridTableView(props) {
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") || view?.id;
+  const {control, watch, setValue, reset, handleSubmit} = useForm();
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -681,7 +696,200 @@ function AgGridTableView(props) {
     projectInfo,
     isWarningActive,
   ]);
-  console.log("columns", columns, rowData);
+
+  const getMainMenuItems = (params) => {
+    const defaultItems = params.defaultItems;
+
+    return [
+      {
+        name: "<span>Edit</span>",
+        action: (action) => {
+          setFieldCreateAnchor(true);
+          setFieldData(action.column?.colDef?.fieldObj);
+        },
+        icon: <DeleteIcon />,
+      },
+      ...defaultItems,
+      {
+        name: '<span style="color: #FE4842;">Delete field</span>',
+        action: (action) => {
+          setColumnId(action?.column?.colDef?.columnID);
+          handleOpenModal();
+        },
+        icon: <DeleteIcon />,
+      },
+    ];
+  };
+
+  useEffect(() => {
+    if (fieldData) {
+      reset({
+        ...fieldData,
+        attributes: {
+          ...fieldData.attributes,
+          format: fieldData?.type,
+        },
+      });
+    } else {
+      reset({
+        attributes: {
+          math: {label: "plus", value: "+"},
+        },
+      });
+    }
+  }, [fieldData]);
+
+  const {mutate: createField} = useFieldCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful created", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: updateField} = useFieldUpdateMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: createRelation} = useRelationsCreateMutation({
+    onSuccess: (res) => {
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
+    onSuccess: (res) => {
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+      reset({});
+      setFieldOptionAnchor(null);
+      setFieldCreateAnchor(null);
+      dispatch(showAlert("Successful updated", "success"));
+      updateView(res?.id);
+    },
+  });
+
+  const onSubmit = (values) => {
+    const data = {
+      ...values,
+      slug: slug,
+      table_id: menuItem?.table_id,
+      label: slug,
+      index: "string",
+      required: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+      attributes: {
+        ...values.attributes,
+        formula: values?.attributes?.advanced_type
+          ? values?.attributes?.formula
+          : values?.attributes?.from_formula +
+            " " +
+            values?.attributes?.math?.value +
+            " " +
+            values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        ),
+      },
+    };
+
+    const relationData = {
+      ...values,
+      attributes: {
+        ...values.attributes,
+        label: values?.table_to?.split("/")?.[0],
+        ...Object.fromEntries(
+          languages.map((lang) => [
+            `label_${lang.slug}`,
+            values?.table_to?.split("/")?.[0],
+          ])
+        ),
+        ...Object.fromEntries(
+          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
+        ),
+      },
+      table_to: values?.table_to?.split("/")?.[1],
+      relation_table_slug: tableSlug,
+      label: values?.table_from,
+      type: values?.relation_type,
+      required: false,
+      multiple_insert: false,
+      show_label: true,
+      id: fieldData ? fieldData?.id : generateGUID(),
+    };
+
+    if (!fieldData) {
+      if (values?.type !== "RELATION") {
+        createField({data, tableSlug});
+      }
+      if (values?.type === "RELATION") {
+        createRelation({data: relationData, tableSlug});
+      }
+    }
+    if (fieldData) {
+      if (values?.view_fields) {
+        updateRelation({data: values, tableSlug});
+      } else {
+        updateField({data, tableSlug});
+      }
+    }
+  };
+
+  const {update} = useFieldArray({
+    control: mainForm.control,
+    name: "fields",
+    keyName: "key",
+  });
+
+  const onGridReady = useCallback(
+    (params) => {
+      const datasource = createServerSideDatasource(filters, searchText);
+      params?.api?.setGridOption("serverSideDatasource", datasource);
+    },
+    [tableSlug, filters]
+  );
+
+  useEffect(() => {
+    if (gridApi?.current) {
+      const newDatasource = createServerSideDatasource(null, filters);
+      gridApi?.current?.api?.setGridOption(
+        "serverSideDatasource",
+        newDatasource
+      );
+    }
+  }, [filters, tableSearch, limit, offset]);
+
+  const getServerSideGroupKey = (dataItem) => {
+    return dataItem.guid;
+  };
+
+  const isServerSideGroup = (dataItem) => {
+    return dataItem.has_child;
+  };
+
+  const onPaginationChange = ({limit, offset}) => {
+    dispatch(
+      paginationActions.setTablePages({
+        tableSlug: tableSlug,
+        pageLimit: limit,
+        pageOffset: offset,
+      })
+    );
+  };
+
   return (
     <Box
       sx={{

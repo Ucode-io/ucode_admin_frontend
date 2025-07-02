@@ -903,6 +903,16 @@ const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
     handleClose,
     handleKeyDown,
     handleSendClick,
+    showInput,
+    setShowInput,
+    handleSuccess,
+    handleError,
+    onExited,
+    appendMessage,
+    selectedEntityType,
+    handleChangeEntityType,
+    ENTITY_TYPES,
+    setMessages,
   } = useAIChat();
 
   return (
@@ -938,6 +948,16 @@ const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
         handleClose={handleClose}
         handleKeyDown={handleKeyDown}
         handleSendClick={handleSendClick}
+        showInput={showInput}
+        setShowInput={setShowInput}
+        handleSuccess={handleSuccess}
+        handleError={handleError}
+        onExited={onExited}
+        appendMessage={appendMessage}
+        selectedEntityType={selectedEntityType}
+        handleChangeEntityType={handleChangeEntityType}
+        ENTITY_TYPES={ENTITY_TYPES}
+        setMessages={setMessages}
       />
     </>
   );

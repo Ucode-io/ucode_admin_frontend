@@ -1095,6 +1095,7 @@ export const NewUiViewsWithGroups = ({
                       <MaterialUIProvider>
                         {" "}
                         <AgGridTableView
+                          mainForm={mainForm}
                           setLoading={setLoading}
                           relationView={relationView}
                           projectInfo={projectInfo}
@@ -1205,6 +1206,7 @@ export const NewUiViewsWithGroups = ({
                       {view?.type === "GRID" ? (
                         <MaterialUIProvider>
                           <AgGridTableView
+                            mainForm={mainForm}
                             setLoading={setLoading}
                             relationView={relationView}
                             projectInfo={projectInfo}
@@ -1313,6 +1315,7 @@ export const NewUiViewsWithGroups = ({
                     {view?.type === "GRID" ? (
                       <MaterialUIProvider>
                         <AgGridTableView
+                          mainForm={mainForm}
                           setLoading={setLoading}
                           relationView={relationView}
                           projectInfo={projectInfo}

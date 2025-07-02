@@ -126,6 +126,9 @@ function AggridTreeView(props) {
   const addClickedRef = useRef(false);
   const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
 
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const {i18n, t} = useTranslation();
   const [columnId, setColumnId] = useState();

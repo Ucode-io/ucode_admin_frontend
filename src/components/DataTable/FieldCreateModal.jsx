@@ -84,8 +84,10 @@ export default function FieldCreateModal({
   menuItem,
   mainForm,
   view,
+  initialTableInfo,
+  tableSlug,
 }) {
-  const {tableSlug, id} = useParams();
+  const {id} = useParams();
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -95,7 +97,7 @@ export default function FieldCreateModal({
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
         {
-          table_id: id,
+          table_id: id ?? initialTableInfo?.id,
         },
         tableSlug
       );

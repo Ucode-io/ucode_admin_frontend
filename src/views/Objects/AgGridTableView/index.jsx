@@ -1,6 +1,5 @@
 import {mergeStringAndState} from "@/utils/jsonPath";
 import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button} from "@mui/material";
 import {
@@ -23,13 +22,11 @@ import {
   ColumnsToolPanelModule,
   MenuModule,
   RowGroupingModule,
-  ServerSideRowModelModule,
   TreeDataModule,
 } from "ag-grid-enterprise";
 import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -37,23 +34,12 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
-import {
-  useFieldCreateMutation,
-  useFieldUpdateMutation,
-} from "../../../services/constructorFieldService";
 import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
 import constructorViewService from "../../../services/constructorViewService";
 import layoutService from "../../../services/layoutService";
-import {
-  useRelationFieldUpdateMutation,
-  useRelationsCreateMutation,
-} from "../../../services/relationService";
-import {showAlert} from "../../../store/alert/alert.thunk";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
-import {paginationActions} from "../../../store/pagination/pagination.slice";
-import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
@@ -76,7 +62,6 @@ ModuleRegistry.registerModules([
   MenuModule,
   ClipboardModule,
   ColumnsToolPanelModule,
-  ServerSideRowModelModule,
   ClientSideRowModelModule,
   RowSelectionModule,
   RowGroupingModule,
@@ -112,7 +97,6 @@ function AgGridTableView(props) {
     computedVisibleFields,
     layoutType,
     projectInfo,
-    mainForm,
     setSelectedView = () => {},
     setSelectedRow = () => {},
     setOpen = () => {},
@@ -123,7 +107,6 @@ function AgGridTableView(props) {
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const gridApi = useRef(null);
-  const queryClient = useQueryClient();
   const pinFieldsRef = useRef({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -141,7 +124,6 @@ function AgGridTableView(props) {
   const [loadings, setLoadings] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [fieldData, setFieldData] = useState();
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
       ? "SidePeek"
@@ -152,7 +134,6 @@ function AgGridTableView(props) {
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") || view?.id;
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
@@ -175,19 +156,6 @@ function AgGridTableView(props) {
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
-  const pagination = useSelector((state) => state.pagination);
-  // const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-
-  const {pageLimit, pageOffset} =
-    pagination?.paginationInfo?.find((item) => item?.tableSlug === tableSlug) ||
-    {};
-
-  const visibleFields = useMemo(() => {
-    return visibleColumns
-      ?.filter((el) => computedVisibleFields?.includes(el?.id))
-      .map((item) => item?.slug);
-  }, [visibleColumns, computedVisibleFields]);
-
   const {isLoading, refetch} = useQuery(
     [
       "GET_OBJECTS_LIST_DATA",
@@ -206,7 +174,7 @@ function AgGridTableView(props) {
       constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
-          limit: pageLimit ? pageLimit : limit,
+          limit,
           search: tableSearch,
           view_fields: checkedColumns,
           [groupTab?.slug]: groupTab
@@ -215,11 +183,11 @@ function AgGridTableView(props) {
               ? [`${groupTab?.value}`]
               : groupTab?.value
             : "",
-          offset: Boolean(limitPage < 0) ? 0 : limitPage,
+          offset: Boolean(searchText) || Boolean(limitPage < 0) ? 0 : limitPage,
         },
       }),
     {
-      enabled: !!tableSlug && !view?.attributes?.treeData,
+      enabled: !!tableSlug,
       onSuccess: (data) => {
         setCount(data?.data?.count);
         setRowData([...(data?.data?.response ?? [])] ?? []);
@@ -230,75 +198,6 @@ function AgGridTableView(props) {
       },
     }
   );
-
-  const {isLoading: isLoadingTree, refetch: updateTreeData} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}],
-    () =>
-      constructorObjectService.getListTreeData(tableSlug, {
-        fields: [...visibleFields, "guid"],
-        [groupTab?.slug]: [groupTab?.value],
-        ...filters,
-      }),
-    {
-      enabled: Boolean(tableSlug && view?.attributes?.treeData),
-      onSuccess: (data) => {
-        setRowData([...(data?.data?.response ?? [])]);
-        setLoadings(false);
-      },
-      onError: () => {
-        setLoadings(false);
-      },
-    }
-  );
-
-  const createServerSideDatasource = (updatedFilters) => {
-    return {
-      getRows: async (params) => {
-        // const { startRow, endRow } = params.request;
-
-        // const limit = endRow - startRow;
-        // const offset = startRow;
-
-        try {
-          const resp = await constructorObjectService.getListV2(tableSlug, {
-            data: {
-              ...filters,
-              limit: pageLimit ? pageLimit : limit,
-              search: tableSearch,
-              view_fields: checkedColumns,
-              [groupTab?.slug]: groupTab
-                ? Object.values(fieldsMap).find(
-                    (el) => el.slug === groupTab?.slug
-                  )?.type === "MULTISELECT"
-                  ? [`${groupTab?.value}`]
-                  : groupTab?.value
-                : "",
-              offset:
-                Boolean(tableSearch) || Boolean(limitPage < 0) ? 0 : limitPage,
-              // offset,
-              ...updatedFilters,
-            },
-          });
-
-          const items = resp?.data?.response || [];
-          setCount(resp?.data?.count);
-
-          const rowData = items.map((item) => ({
-            ...item,
-            group: item.has_child,
-          }));
-
-          params.success({
-            rowData,
-            rowCount: undefined,
-          });
-        } catch (error) {
-          console.error("Error loading tree data:", error);
-          params.fail();
-        }
-      },
-    };
-  };
 
   const {
     data: {fiedlsarray} = {
@@ -505,7 +404,6 @@ function AgGridTableView(props) {
           removeRow,
           addRow,
           deleteFunction: deleteHandler,
-          updateTreeData: updateTreeData,
           cellClass: view.columns.length ? "actionBtn" : "actionBtnNoBorder",
         },
       ];
@@ -521,7 +419,7 @@ function AgGridTableView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        view?.attributes?.treeData ? updateTreeData() : refetch();
+        refetch();
         setLoadings(false);
       })
       .catch(() => setLoadings(false));
@@ -579,7 +477,7 @@ function AgGridTableView(props) {
     });
 
     constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
-      view?.attributes?.treeData ? null : refetch();
+      refetch();
     });
   }
 
@@ -626,8 +524,6 @@ function AgGridTableView(props) {
     });
   }
 
-  const getDataPath = useCallback((data) => data.path, []);
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -668,10 +564,7 @@ function AgGridTableView(props) {
   const isWarningActive =
     projectInfo?.subscription_type === "free_trial"
       ? isWarning <= 16
-      : projectInfo?.status === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+      : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -693,216 +586,25 @@ function AgGridTableView(props) {
     isWarningActive,
   ]);
 
-  const getMainMenuItems = (params) => {
-    const defaultItems = params.defaultItems;
-
-    return [
-      {
-        name: "<span>Edit</span>",
-        action: (action) => {
-          setFieldCreateAnchor(true);
-          setFieldData(action.column?.colDef?.fieldObj);
-        },
-        icon: <DeleteIcon />,
-      },
-      ...defaultItems,
-      {
-        name: '<span style="color: #FE4842;">Delete field</span>',
-        action: (action) => {
-          setColumnId(action?.column?.colDef?.columnID);
-          handleOpenModal();
-        },
-        icon: <DeleteIcon />,
-      },
-    ];
-  };
-
-  useEffect(() => {
-    if (fieldData) {
-      reset({
-        ...fieldData,
-        attributes: {
-          ...fieldData.attributes,
-          format: fieldData?.type,
-        },
-      });
-    } else {
-      reset({
-        attributes: {
-          math: {label: "plus", value: "+"},
-        },
-      });
-    }
-  }, [fieldData]);
-
-  const {mutate: createField} = useFieldCreateMutation({
-    onSuccess: (res) => {
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful created", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const {mutate: updateField} = useFieldUpdateMutation({
-    onSuccess: (res) => {
-      queryClient.refetchQueries(["GET_TABLE_INFO"]);
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful updated", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const {mutate: createRelation} = useRelationsCreateMutation({
-    onSuccess: (res) => {
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful updated", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const {mutate: updateRelation} = useRelationFieldUpdateMutation({
-    onSuccess: (res) => {
-      queryClient.refetchQueries(["GET_TABLE_INFO"]);
-      reset({});
-      setFieldOptionAnchor(null);
-      setFieldCreateAnchor(null);
-      dispatch(showAlert("Successful updated", "success"));
-      updateView(res?.id);
-    },
-  });
-
-  const onSubmit = (values) => {
-    const data = {
-      ...values,
-      slug: slug,
-      table_id: menuItem?.table_id,
-      label: slug,
-      index: "string",
-      required: false,
-      show_label: true,
-      id: fieldData ? fieldData?.id : generateGUID(),
-      attributes: {
-        ...values.attributes,
-        formula: values?.attributes?.advanced_type
-          ? values?.attributes?.formula
-          : values?.attributes?.from_formula +
-            " " +
-            values?.attributes?.math?.value +
-            " " +
-            values?.attributes?.to_formula,
-        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
-          values?.type
-        ),
-      },
-    };
-
-    const relationData = {
-      ...values,
-      attributes: {
-        ...values.attributes,
-        label: values?.table_to?.split("/")?.[0],
-        ...Object.fromEntries(
-          languages.map((lang) => [
-            `label_${lang.slug}`,
-            values?.table_to?.split("/")?.[0],
-          ])
-        ),
-        ...Object.fromEntries(
-          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
-        ),
-      },
-      table_to: values?.table_to?.split("/")?.[1],
-      relation_table_slug: tableSlug,
-      label: values?.table_from,
-      type: values?.relation_type,
-      required: false,
-      multiple_insert: false,
-      show_label: true,
-      id: fieldData ? fieldData?.id : generateGUID(),
-    };
-
-    if (!fieldData) {
-      if (values?.type !== "RELATION") {
-        createField({data, tableSlug});
-      }
-      if (values?.type === "RELATION") {
-        createRelation({data: relationData, tableSlug});
-      }
-    }
-    if (fieldData) {
-      if (values?.view_fields) {
-        updateRelation({data: values, tableSlug});
-      } else {
-        updateField({data, tableSlug});
-      }
-    }
-  };
-
-  const {update} = useFieldArray({
-    control: mainForm.control,
-    name: "fields",
-    keyName: "key",
-  });
-
-  const onGridReady = useCallback(
-    (params) => {
-      const datasource = createServerSideDatasource(filters, searchText);
-      params?.api?.setGridOption("serverSideDatasource", datasource);
-    },
-    [tableSlug, filters]
-  );
-
-  useEffect(() => {
-    if (gridApi?.current) {
-      const newDatasource = createServerSideDatasource(null, filters);
-      gridApi?.current?.api?.setGridOption(
-        "serverSideDatasource",
-        newDatasource
-      );
-    }
-  }, [filters, tableSearch, limit, offset]);
-
-  const getServerSideGroupKey = (dataItem) => {
-    return dataItem.guid;
-  };
-
-  const isServerSideGroup = (dataItem) => {
-    return dataItem.has_child;
-  };
-
-  const onPaginationChange = ({limit, offset}) => {
-    dispatch(
-      paginationActions.setTablePages({
-        tableSlug: tableSlug,
-        pageLimit: limit,
-        pageOffset: offset,
-      })
-    );
-  };
-
   return (
     <Box
       sx={{
-        height: `calc(100vh - ${calculatedHeight + 130}px)`,
+        height: `calc(100vh - ${calculatedHeight + 85}px)`,
         overflow: "scroll",
       }}>
-      <div
-        className={style.gridTable}
-        // style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
-        style={{height: `100%`}}>
+      <div className={style.gridTable}>
         <div
           className="ag-theme-quartz"
           style={{
             display: "flex",
             width: "100%",
           }}>
-          <Box sx={{width: "100%", background: "#fff"}}>
+          <Box
+            sx={{
+              width: "100%",
+              background: "#fff",
+              height: `calc(100vh - ${calculatedHeight + 85}px)`,
+            }}>
             {Boolean(tabs?.length) && (
               <Box
                 sx={{
@@ -938,10 +640,12 @@ function AgGridTableView(props) {
                   rowBuffer={15}
                   theme={myTheme}
                   gridOptions={{
-                    rowBuffer: 10,
-                    cacheBlockSize: 10,
+                    cacheBlockSize: 100,
                     maxBlocksInCache: 10,
+                    suppressCellSelection: false,
                   }}
+                  keepDetailRows={false}
+                  suppressAggFuncInHeader={true}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
                   loading={loadings}
@@ -957,15 +661,11 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
-                  suppressColumnVirtualisation={true}
-                  treeData={view?.attributes?.treeData}
-                  suppressColumnMoveAnimation={true}
+                  suppressColumnVirtualisation={false}
+                  suppressRowVirtualisation={false}
+                  suppressColumnMoveAnimation={false}
                   autoGroupColumnDef={autoGroupColumnDef}
-                  suppressServerSideFullWidthLoadingRow={true}
                   loadingOverlayComponent={CustomLoadingOverlay}
-                  getDataPath={
-                    view?.attributes?.treeData ? getDataPath : undefined
-                  }
                   onCellValueChanged={(e) => {
                     updateObject(e.data);
                   }}
@@ -982,7 +682,7 @@ function AgGridTableView(props) {
 
       <AggridFooter
         view={view}
-        limit={pageLimit ? pageLimit : limit}
+        limit={limit}
         count={count}
         rowData={rowData}
         refetch={refetch}
@@ -991,7 +691,6 @@ function AgGridTableView(props) {
         setLoading={setLoadings}
         createChild={createChild}
         selectedRows={selectedRows}
-        updateTreeData={updateTreeData}
       />
 
       {Boolean(!relationView && open && projectInfo?.new_layout) &&

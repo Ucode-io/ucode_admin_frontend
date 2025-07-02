@@ -29,7 +29,7 @@ import {
 import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -112,6 +112,7 @@ function AgGridTableView(props) {
     computedVisibleFields,
     layoutType,
     projectInfo,
+    mainForm,
     setSelectedView = () => {},
     setSelectedRow = () => {},
     setOpen = () => {},
@@ -140,6 +141,7 @@ function AgGridTableView(props) {
   const [loadings, setLoadings] = useState(true);
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [fieldData, setFieldData] = useState();
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
       ? "SidePeek"
@@ -150,6 +152,7 @@ function AgGridTableView(props) {
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") || view?.id;
+  const {control, watch, setValue, reset, handleSubmit} = useForm();
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];

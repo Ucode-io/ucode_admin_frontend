@@ -35,7 +35,7 @@ import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import useFilters from "../../../hooks/useFilters";
 import {
@@ -72,6 +72,8 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -110,16 +112,16 @@ function AggridTreeView(props) {
     searchText,
     projectInfo,
     layoutType,
+    selectedView,
     visibleColumns,
+    setSelectedView,
     selectedTabIndex,
     computedVisibleFields,
+    setSelectedRow = () => {},
     setFormValue = () => {},
     getRelationFields = () => {},
     setLayoutType = () => {},
-    navigateToEditPage = () => {},
-    navigateCreatePage,
     selectedRow,
-    navigateToDetailPage,
   } = props;
   const gridApi = useRef(null);
   const dispatch = useDispatch();
@@ -154,7 +156,8 @@ function AggridTreeView(props) {
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const viewsList = useSelector((state) => state?.groupField?.viewsList);
-  const selectedV = viewsList?.[viewsList?.length - 1];
+  const [searchParams] = useSearchParams();
+  const viewId = searchParams.get("v") || view?.id;
 
   const new_router = localStorage.getItem("new_router") === "true";
 
@@ -293,6 +296,91 @@ function AggridTreeView(props) {
     },
   });
 
+  const navigateToEditPage = (row) => {
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInf?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: row?.guid,
+      })
+    );
+    if (Boolean(selectedView?.is_relation_view)) {
+      setSelectedView(view);
+      setSelectedRow(row);
+      dispatch(detailDrawerActions.openDrawer());
+      updateQueryWithoutRerender("p", row?.guid);
+    } else {
+      if (new_router) {
+        updateQueryWithoutRerender("p", row?.guid);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
+      } else {
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
+      }
+    }
+  };
+
+  function navigateToDetailPage(row) {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      if (new_router) {
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      } else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  }
+
   const columns = useMemo(() => {
     if (fiedlsarray?.length) {
       return [
@@ -300,6 +388,7 @@ function AggridTreeView(props) {
           ...IndexColumn,
           menuItem,
           view,
+          treeData: true,
           addRow,
           createChildTree,
           appendNewRow,

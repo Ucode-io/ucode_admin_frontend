@@ -19,7 +19,7 @@ function RowIndexField(props) {
   return (
     <>
       <Box className={isSelected ? "rowIndexSelected" : "rowIndex"}>
-        {view?.attributes?.treeData ? (
+        {colDef?.treeData ? (
           <Button
             onClick={() => {
               colDef?.createChildTree(props);
@@ -39,7 +39,7 @@ function RowIndexField(props) {
         )}
         <Box className="indexValue">{value}</Box>
       </Box>
-      {!view?.attributes?.treeData &&
+      {!colDef?.treeData &&
         elementsLength - 1 === elementIndex &&
         !isSelected && (
           <Box

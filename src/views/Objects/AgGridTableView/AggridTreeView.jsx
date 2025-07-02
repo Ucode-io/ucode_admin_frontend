@@ -129,6 +129,7 @@ function AggridTreeView(props) {
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
   const addClickedRef = useRef(false);
+  const viewsList = useSelector((state) => state?.groupField?.viewsList);
   const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
 
   const tableSlug =
@@ -156,11 +157,9 @@ function AggridTreeView(props) {
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
-  const viewsList = useSelector((state) => state?.groupField?.viewsList);
-  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+  const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") || view?.id;
-
   const new_router = localStorage.getItem("new_router") === "true";
 
   const groupFieldId = view?.group_fields?.[0];
@@ -197,29 +196,29 @@ function AggridTreeView(props) {
       .map((item) => item?.slug);
   }, [visibleColumns, computedVisibleFields]);
 
-  const {isLoading: isLoadingTree, refetch} = useQuery(
-    ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
-    () =>
-      constructorObjectService.getListTreeData(tableSlug, {
-        fields: [...visibleFields, "guid"],
+  // const {isLoading: isLoadingTree, refetch} = useQuery(
+  //   ["GET_OBJECTS_TREEDATA", filters, {[groupTab?.slug]: groupTab}, searchText],
+  //   () =>
+  //     constructorObjectService.getListTreeData(tableSlug, {
+  //       fields: [...visibleFields, "guid"],
 
-        [recursiveField?.slug]: [null],
-        ...filters,
-      }),
-    {
-      enabled: false,
-      onSuccess: (data) => {
-        const computedRow = data?.data?.response?.map((item) => ({
-          ...item,
-        }));
+  //       [recursiveField?.slug]: [null],
+  //       ...filters,
+  //     }),
+  //   {
+  //     enabled: false,
+  //     onSuccess: (data) => {
+  //       const computedRow = data?.data?.response?.map((item) => ({
+  //         ...item,
+  //       }));
 
-        setLoading(false);
-      },
-      onError: () => {
-        setLoading(false);
-      },
-    }
-  );
+  //       setLoading(false);
+  //     },
+  //     onError: () => {
+  //       setLoading(false);
+  //     },
+  //   }
+  // );
 
   const {
     data: {fiedlsarray} = {
@@ -303,7 +302,7 @@ function AggridTreeView(props) {
     dispatch(
       groupFieldActions.addView({
         id: view?.id,
-        label: view?.table_label || initialTableInf?.label,
+        label: view?.table_label || initialTableInfo?.label,
         table_slug: view?.table_slug,
         relation_table_slug: view.relation_table_slug ?? null,
         is_relation_view: view?.is_relation_view,
@@ -428,7 +427,7 @@ function AggridTreeView(props) {
           addRowTree,
           addRow,
           deleteFunction: deleteHandler,
-          updateTreeData: refetch,
+          // updateTreeData: refetch,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"
             : "actionBtnNoBorder",
@@ -448,7 +447,7 @@ function AggridTreeView(props) {
       })
       .then((res) => {
         delete data?.new_field;
-        refetch();
+        // refetch();
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -909,15 +908,15 @@ function AggridTreeView(props) {
     [tableSlug, cleanedFilters]
   );
 
-  useEffect(() => {
-    if (gridApi?.current) {
-      const newDatasource = createServerSideDatasource(null, cleanedFilters);
-      gridApi?.current?.api?.setGridOption(
-        "serverSideDatasource",
-        newDatasource
-      );
-    }
-  }, [cleanedFilters]);
+  // useEffect(() => {
+  //   if (gridApi?.current) {
+  //     const newDatasource = createServerSideDatasource(null, cleanedFilters);
+  //     gridApi?.current?.api?.setGridOption(
+  //       "serverSideDatasource",
+  //       newDatasource
+  //     );
+  //   }
+  // }, [cleanedFilters]);
   console.log("RENDERED THE PAGE!!!!");
   return (
     <Box
@@ -1033,6 +1032,8 @@ function AggridTreeView(props) {
       />
 
       <FieldCreateModal
+        tableSlug={tableSlug}
+        initialTableInfo={initialTableInfo}
         mainForm={mainForm}
         anchorEl={fieldCreateAnchor}
         setAnchorEl={setFieldCreateAnchor}
@@ -1061,7 +1062,6 @@ function AggridTreeView(props) {
             menuItem={menuItem}
             layout={layout}
             fieldsMap={fieldsMap}
-            refetch={refetch}
             layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
@@ -1078,7 +1078,7 @@ function AggridTreeView(props) {
             menuItem={menuItem}
             layout={layout}
             fieldsMap={fieldsMap}
-            refetch={refetch}
+            // refetch={refetch}
             layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
@@ -1096,7 +1096,7 @@ function AggridTreeView(props) {
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          refetch={refetch}
+          // refetch={refetch}
           layoutType={layoutType}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
@@ -1112,7 +1112,7 @@ function AggridTreeView(props) {
           menuItem={menuItem}
           layout={layout}
           fieldsMap={fieldsMap}
-          refetch={refetch}
+          // refetch={refetch}
           setLayoutType={setLayoutType}
           selectedViewType={selectedViewType}
           setSelectedViewType={setSelectedViewType}

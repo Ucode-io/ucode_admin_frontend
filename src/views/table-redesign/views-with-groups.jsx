@@ -478,64 +478,63 @@ export const NewUiViewsWithGroups = ({
   };
 
   const getRelationFields = async () => {
-    console.log("workeddddddddddd");
-    // return new Promise(async (resolve) => {
-    //   const getFieldsData = constructorFieldService.getList({
-    //     table_id: id ?? menuItem?.table_id,
-    //   });
-    //   const getRelations = constructorRelationService.getList(
-    //     {
-    //       table_slug: tableSlug,
-    //       relation_table_slug: tableSlug,
-    //     },
-    //     tableSlug
-    //   );
-    //   const [{relations = []}, {fields = []}] = await Promise.all([
-    //     getRelations,
-    //     getFieldsData,
-    //   ]);
-    //   mainForm.setValue("fields", fields);
-    //   const relationsWithRelatedTableSlug = relations?.map((relation) => ({
-    //     ...relation,
-    //     relatedTableSlug:
-    //       relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
-    //   }));
-    //   const layoutRelations = [];
-    //   const tableRelations = [];
-    //   relationsWithRelatedTableSlug?.forEach((relation) => {
-    //     if (
-    //       (relation.type === "Many2One" &&
-    //         relation.table_from?.slug === tableSlug) ||
-    //       (relation.type === "One2Many" &&
-    //         relation.table_to?.slug === tableSlug) ||
-    //       relation.type === "Recursive" ||
-    //       (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-    //       (relation.type === "Many2Dynamic" &&
-    //         relation.table_from?.slug === tableSlug)
-    //     ) {
-    //       layoutRelations.push(relation);
-    //     } else {
-    //       tableRelations.push(relation);
-    //     }
-    //   });
-    //   const layoutRelationsFields = layoutRelations.map((relation) => ({
-    //     ...relation,
-    //     id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
-    //     attributes: {
-    //       fields: relation.view_fields ?? [],
-    //     },
-    //     label:
-    //       (relation?.label ?? relation[relation.relatedTableSlug]?.label)
-    //         ? relation[relation.relatedTableSlug]?.label
-    //         : relation?.title,
-    //   }));
-    //   mainForm.setValue("relations", relations);
-    //   mainForm.setValue("relationsMap", listToMap(relations));
-    //   mainForm.setValue("layoutRelations", layoutRelationsFields);
-    //   mainForm.setValue("tableRelations", tableRelations);
-    //   resolve();
-    //   queryClient.refetchQueries(["GET_TABLE_INFO"]);
-    // });
+    return new Promise(async (resolve) => {
+      const getFieldsData = constructorFieldService.getList({
+        table_id: id ?? menuItem?.table_id,
+      });
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        tableSlug
+      );
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
+      mainForm.setValue("fields", fields);
+      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
+        ...relation,
+        relatedTableSlug:
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
+      }));
+      const layoutRelations = [];
+      const tableRelations = [];
+      relationsWithRelatedTableSlug?.forEach((relation) => {
+        if (
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
+          relation.type === "Recursive" ||
+          (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === tableSlug)
+        ) {
+          layoutRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
+      });
+      const layoutRelationsFields = layoutRelations.map((relation) => ({
+        ...relation,
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        attributes: {
+          fields: relation.view_fields ?? [],
+        },
+        label:
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
+      }));
+      mainForm.setValue("relations", relations);
+      mainForm.setValue("relationsMap", listToMap(relations));
+      mainForm.setValue("layoutRelations", layoutRelationsFields);
+      mainForm.setValue("tableRelations", tableRelations);
+      resolve();
+      queryClient.refetchQueries(["GET_TABLE_INFO"]);
+    });
   };
 
   useEffect(() => {
@@ -1778,7 +1777,7 @@ const FiltersSwitch = ({
 };
 
 const ViewOptions = ({
-  relationView,
+  relationView = false,
   view,
   viewName,
   refetchViews,
@@ -1797,7 +1796,7 @@ const ViewOptions = ({
   views,
 }) => {
   const queryClient = useQueryClient();
-  const tableSlug = view?.table_slug;
+  const tableSlug = relationView ? view?.relation_table_slug : view?.table_slug;
   const {i18n, t} = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]

@@ -288,7 +288,7 @@ function OldDrawerDetailPage({
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
         setBtnLoader(false);
-        refetch();
+        // refetch();
       });
   };
   const create = (data) => {

@@ -23,16 +23,13 @@ import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
+import useSearchParams from "../../hooks/useSearchParams";
 import menuService from "../../services/menuService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import NewModalDetailPage from "../../components/NewModalDetailPage";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import useSearchParams from "../../hooks/useSearchParams";
-import {flushSync} from "react-dom";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableView = ({
   relationView = false,

@@ -78,7 +78,7 @@ const BoardView = ({
     checkedColumns,
     columnsForSearch,
   });
-console.log({ groups });
+
   return (
     <div className={styles.container} ref={boardRef}>
       {loader ? (

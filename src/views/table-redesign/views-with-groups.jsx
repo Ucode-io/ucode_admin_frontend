@@ -100,6 +100,7 @@ import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 import FilterPopover from "./FilterPopover";
 import FiltersList from "./FiltersList";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
+import { FilterButton } from "./FilterButton";
 
 
 const viewIcons = {
@@ -1377,56 +1378,56 @@ export const NewUiViewsWithGroups = ({
   );
 };
 
-const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
-  const tableViewFiltersOpen = useSelector(
-    (state) => state.main.tableViewFiltersOpen
-  );
-  const dispatch = useDispatch();
+// const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
+//   const tableViewFiltersOpen = useSelector(
+//     (state) => state.main.tableViewFiltersOpen
+//   );
+//   const dispatch = useDispatch();
 
-  const handleClick = (ev) => {
-    if (
-      tableViewFiltersOpen ||
-      (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
-    ) {
-      ev.stopPropagation();
-      return dispatch(
-        mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
-      );
-    }
-    onClick(ev);
-  };
+//   const handleClick = (ev) => {
+//     if (
+//       tableViewFiltersOpen ||
+//       (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
+//     ) {
+//       ev.stopPropagation();
+//       return dispatch(
+//         mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
+//       );
+//     }
+//     onClick(ev);
+//   };
 
-  return (
-    <Box position="relative">
-      <IconButton
-        ref={ref}
-        aria-label="filter"
-        icon={<Image src="/img/funnel.svg" alt="filter" />}
-        variant="ghost"
-        colorScheme="gray"
-        onClick={handleClick}
-        {...props}
-      />
-      {Boolean(view?.attributes?.quick_filters?.length) && (
-        <Flex
-          position="absolute"
-          top="-8px"
-          right="-4px"
-          w="16px"
-          h="16px"
-          bg="#007AFF"
-          alignItems="center"
-          justifyContent="center"
-          color="#fff"
-          borderRadius="50%"
-          fontSize="10px"
-        >
-          {view?.attributes?.quick_filters?.length}
-        </Flex>
-      )}
-    </Box>
-  );
-});
+//   return (
+//     <Box position="relative">
+//       <IconButton
+//         ref={ref}
+//         aria-label="filter"
+//         icon={<Image src="/img/funnel.svg" alt="filter" />}
+//         variant="ghost"
+//         colorScheme="gray"
+//         onClick={handleClick}
+//         {...props}
+//       />
+//       {Boolean(view?.attributes?.quick_filters?.length) && (
+//         <Flex
+//           position="absolute"
+//           top="-8px"
+//           right="-4px"
+//           w="16px"
+//           h="16px"
+//           bg="#007AFF"
+//           alignItems="center"
+//           justifyContent="center"
+//           color="#fff"
+//           borderRadius="50%"
+//           fontSize="10px"
+//         >
+//           {view?.attributes?.quick_filters?.length}
+//         </Flex>
+//       )}
+//     </Box>
+//   );
+// });
 
 // const FilterPopover = ({
 //   view,

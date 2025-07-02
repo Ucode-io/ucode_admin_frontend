@@ -112,7 +112,7 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{data = {}}, layoutData] = await Promise.all([
+      const [{ data = {} }, layoutData] = await Promise.all([
         getFormData,
         getLayoutData,
       ]);
@@ -203,7 +203,7 @@ const ObjectsFormPage = ({
     delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -278,6 +278,7 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
+    console.log("DATA", data);
     if (Boolean(id) && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
@@ -285,7 +286,7 @@ const ObjectsFormPage = ({
     }
   };
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -327,8 +328,8 @@ const ObjectsFormPage = ({
           relations={tableRelations ?? []}
           control={control}
           getValues={getValues}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
+          // handleSubmit={handleSubmit}
+          // onSubmit={onSubmit}
           reset={reset}
           setFormValue={setFormValue}
           tableSlug={tableSlugFromProps}
@@ -356,7 +357,8 @@ const ObjectsFormPage = ({
                       tableSlugFromParam
                     );
                     navigate(microPath);
-                  }}>
+                  }}
+                >
                   Пополнить баланс
                 </PrimaryButton>
               )}
@@ -373,14 +375,16 @@ const ObjectsFormPage = ({
                         tableSlugFromParam
                       );
                       navigate(microPathCloseMonth);
-                    }}>
+                    }}
+                  >
                     Закрытия месяца
                   </PrimaryButton>
                 </>
               )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
-              color="error">
+              color="error"
+            >
               {generateLangaugeText(lang, i18n.language, "Close") || "Close"}
             </SecondaryButton>
             <FormCustomActionButton
@@ -393,7 +397,10 @@ const ObjectsFormPage = ({
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"
-                onClick={handleSubmit(onSubmit)}>
+                onClick={handleSubmit(onSubmit, (err) =>
+                  console.log("ERR", err)
+                )}
+              >
                 <Save />
                 {generateLangaugeText(lang, i18n.language, "Save") || "Save"}
               </PrimaryButton>

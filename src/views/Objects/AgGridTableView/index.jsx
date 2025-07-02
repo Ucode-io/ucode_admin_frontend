@@ -83,6 +83,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import { transliterate } from "../../../utils/textTranslater";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import { paginationActions } from "../../../store/pagination/pagination.slice";
+import FastFilter from "../components/FastFilter";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -132,6 +133,11 @@ function AgGridTableView(props) {
     navigateCreatePage = () => {},
     layoutType,
     setSelectedRow,
+    filterVisible,
+    visibleForm,
+    visibleRelationColumns,
+    isVisibleLoading,
+    setFilterVisible,
   } = props;
   const navigate = useNavigate();
   const gridApi = useRef(null);
@@ -323,7 +329,7 @@ function AgGridTableView(props) {
   };
 
   const {
-    data: { fiedlsarray } = {
+    data: { fiedlsarray, fieldView } = {
       pageCount: 1,
       fiedlsarray: [],
       custom_events: [],
@@ -335,6 +341,8 @@ function AgGridTableView(props) {
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
+        fieldView: res?.data?.views ?? [],
+        custom_events: res?.data?.custom_events ?? [],
         fiedlsarray: res?.data?.fields
           ?.filter((el) => el?.attributes?.field_permission?.view_permission)
           ?.map((item, index) => {
@@ -857,17 +865,59 @@ function AgGridTableView(props) {
     );
   };
 
+  // ==========FILTER FIELDS=========== //
+  const getFilteredFilterFields = useMemo(() => {
+    const filteredFieldsView =
+      fieldView &&
+      fieldView?.find((item) => {
+        return item?.type === "GRID" && item?.attributes?.quick_filters;
+      });
+
+    const quickFilters = filteredFieldsView?.attributes?.quick_filters?.map(
+      (el) => {
+        return el?.field_id;
+      }
+    );
+    const filteredFields = fiedlsarray?.filter((item) => {
+      return quickFilters?.includes(item.id);
+    });
+
+    return filteredFields;
+  }, [fieldView, fiedlsarray]);
+
   return (
     <Box
+      className={style.gridWrapper}
       sx={{
+        display: "flex",
         height: `calc(100vh - ${calculatedHeight + 130}px)`,
         overflow: "scroll",
       }}
     >
+      <div className={filterVisible ? style.filters : style.filtersVisiblitiy}>
+        <Box className={style.block}>
+          <p>{t("filters")}</p>
+          <FastFilter
+            view={view}
+            fieldsMap={fieldsMap}
+            getFilteredFilterFields={getFilteredFilterFields}
+            isVertical
+            selectedTabIndex={selectedTabIndex}
+            visibleColumns={visibleColumns}
+            visibleRelationColumns={visibleRelationColumns}
+            visibleForm={visibleForm}
+            isVisibleLoading={isVisibleLoading}
+            setFilterVisible={setFilterVisible}
+          />
+        </Box>
+      </div>
       <div
         className={style.gridTable}
         // style={{ height: `calc(100vh - ${isFilterOpen ? 166 : 126}px)` }}
-        style={{ height: `100%` }}
+        style={{
+          height: `100%`,
+          width: filterVisible ? "calc(100% - 200px)" : "100%",
+        }}
       >
         <div
           className="ag-theme-quartz"

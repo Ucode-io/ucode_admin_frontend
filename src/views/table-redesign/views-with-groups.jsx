@@ -558,57 +558,6 @@ export const NewUiViewsWithGroups = ({
         ? DrawerTableView
         : TableView;
 
-  if (view?.type === "WEBSITE") {
-    return (
-      <>
-        <FiltersBlock
-          extra={
-            <>
-              <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-                <ShareModal />
-              </PermissionWrapperV2>
-
-              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-                <MuiButton
-                  variant="outlined"
-                  onClick={navigateToSettingsPage}
-                  style={{
-                    borderColor: "#A8A8A8",
-                    width: "35px",
-                    height: "35px",
-                    padding: "0px",
-                    minWidth: "35px",
-                  }}>
-                  <SettingsIcon
-                    style={{
-                      color: "#A8A8A8",
-                    }}
-                  />
-                </MuiButton>
-              </PermissionWrapperV2>
-            </>
-          }>
-          <ViewTabSelector
-            relationView={relationView}
-            selectedTabIndex={selectedTabIndex}
-            views={views}
-            settingsModalVisible={settingsModalVisible}
-            setSettingsModalVisible={setSettingsModalVisible}
-            isChanged={isChanged}
-            setIsChanged={setIsChanged}
-            selectedView={selectedView}
-            setSelectedView={setSelectedView}
-            menuItem={menuItem}
-          />
-          {view?.type === "FINANCE CALENDAR" && (
-            <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-          )}
-        </FiltersBlock>
-        <WebsiteView view={view} />
-      </>
-    );
-  }
-
   const tableName = tableInfo?.label;
 
   const viewName =
@@ -1141,6 +1090,7 @@ export const NewUiViewsWithGroups = ({
               <>
                 {!tabs?.length && (
                   <>
+                    {view?.type === "WEBSITE" && <WebsiteView view={view} />}
                     {view?.type === "GRID" && groupTable?.length ? (
                       <MaterialUIProvider>
                         {" "}

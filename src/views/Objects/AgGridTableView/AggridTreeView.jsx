@@ -1,11 +1,10 @@
-import {Button as ChakraButton, Flex, Text, grid} from "@chakra-ui/react";
+import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button, Drawer} from "@mui/material";
 import {
   CellStyleModule,
   CheckboxEditorModule,
-  ClientSideRowModelApiModule,
   ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
@@ -39,7 +38,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import useFilters from "../../../hooks/useFilters";
-import useTabRouter from "../../../hooks/useTabRouter";
 import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
@@ -63,7 +61,7 @@ import AggridDefaultComponents, {
   ActionsColumn,
   IndexColumn,
 } from "./Functions/AggridDefaultComponents";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import {queryGenerator} from "./Functions/queryGenerator";
 import style from "./style.module.scss";
 import getColumnEditorParams from "./valueOptionGenerator";
 import DeleteColumnModal from "./DeleteColumnModal";
@@ -75,13 +73,13 @@ import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
 
 ModuleRegistry.registerModules([
   MenuModule,
   ClipboardModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
-  ClientSideRowModelModule,
   RowSelectionModule,
   RowGroupingModule,
   TreeDataModule,
@@ -106,7 +104,6 @@ const myTheme = themeQuartz.withParams({
 
 function AggridTreeView(props) {
   const {
-    // open,
     relationView = false,
     view,
     mainForm,
@@ -115,7 +112,6 @@ function AggridTreeView(props) {
     searchText,
     projectInfo,
     visibleColumns,
-    checkedColumns,
     selectedTabIndex,
     selectedRow,
     computedVisibleFields,
@@ -132,7 +128,7 @@ function AggridTreeView(props) {
   const queryClient = useQueryClient();
   const {navigateToForm} = useTabRouter();
   const addClickedRef = useRef(false);
-  const {tableSlug: tableSlugFromParams, appId} = useParams();
+  const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
   const new_router = localStorage.getItem("new_router") === "true";
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const {i18n, t} = useTranslation();
@@ -169,7 +165,7 @@ function AggridTreeView(props) {
     (el) => el?.table_slug === tableSlug
   );
 
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents({
       customAutoGroupColumnDef: {
@@ -179,11 +175,6 @@ function AggridTreeView(props) {
         tableSlug,
       },
     });
-
-  // const tableSearch =
-  //   detectStringType(searchText) === "number"
-  //     ? parseInt(searchText)
-  //     : searchText;
 
   const handleOpenFieldDrawer = (column) => {
     if (column?.attributes?.relation_data) {
@@ -284,7 +275,7 @@ function AggridTreeView(props) {
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     select: (data) => {
       return {
@@ -857,7 +848,7 @@ function AggridTreeView(props) {
             <Box
               className="scrollbarNone"
               sx={{
-                height: "100%",
+                height: `calc(100vh - ${calculatedHeight + 85}px)`,
               }}>
               {!columns?.length ? (
                 <NoFieldsComponent />

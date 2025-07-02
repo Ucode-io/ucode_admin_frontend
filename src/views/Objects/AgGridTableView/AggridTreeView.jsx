@@ -113,6 +113,7 @@ function AggridTreeView(props) {
     visibleColumns,
     selectedTabIndex,
     computedVisibleFields,
+    setFormValue = () => {},
     getRelationFields = () => {},
     setLayoutType = () => {},
     navigateToEditPage = () => {},
@@ -956,7 +957,7 @@ function AggridTreeView(props) {
         handleOpenFieldDrawer={handleOpenFieldDrawer}
       />
 
-      {Boolean(open && projectInfo?.new_layout) &&
+      {Boolean(!relationView && open && projectInfo?.new_layout) &&
       selectedViewType === "SidePeek" ? (
         new_router ? (
           <DrawerDetailPage

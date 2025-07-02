@@ -157,6 +157,7 @@ function AggridTreeView(props) {
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const viewsList = useSelector((state) => state?.groupField?.viewsList);
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") || view?.id;
 

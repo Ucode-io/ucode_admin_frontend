@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import constructorViewService from "../../../services/constructorViewService";
-import { applyDrag } from "../../../utils/applyDrag";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
+import {applyDrag} from "../../../utils/applyDrag";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import {
   useGetBoardMutation,
   useGetBoardStructureMutation,
 } from "../../../services/boardViewService";
-import { throttle } from "lodash-es";
-import { flushSync } from "react-dom";
+import {throttle} from "lodash-es";
+import {flushSync} from "react-dom";
 
 export const useBoardViewProps = ({
   view,
@@ -33,11 +33,14 @@ export const useBoardViewProps = ({
   const projectId = useSelector((state) => state.company?.projectId);
 
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const { tableSlug, appId } = useParams();
+  const {appId, tableSlug: tableSlugFromParams, menuId} = useParams();
 
-  const { new_list, list } = useSelector((state) => state.filter);
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
-  const { t } = useTranslation();
+  const {new_list, list} = useSelector((state) => state.filter);
+
+  const {t} = useTranslation();
 
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -48,7 +51,6 @@ export const useBoardViewProps = ({
   const limit = 100;
 
   const [dateInfo, setDateInfo] = useState({});
-  const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
@@ -98,7 +100,7 @@ export const useBoardViewProps = ({
 
   const sortedBoardDataByLength = Object.entries(boardData)
     .sort((a, b) => a[1].length - b[1].length)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({name, value}))
     .filter(
       (item) =>
         item?.value?.length <
@@ -126,14 +128,12 @@ export const useBoardViewProps = ({
 
   const navigateToEditPage = (el) => {
     setOpenDrawerModal(true);
-    setSelectedRow(el);
     setDateInfo({});
     setDefaultValue({});
   };
 
-  const navigateToCreatePage = ({ group }) => {
+  const navigateToCreatePage = ({group}) => {
     setOpenDrawerModal(true);
-    setSelectedRow(null);
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
@@ -200,7 +200,7 @@ export const useBoardViewProps = ({
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {
@@ -216,7 +216,7 @@ export const useBoardViewProps = ({
       : searchText;
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -227,7 +227,7 @@ export const useBoardViewProps = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     select: (data) => {
       return {
@@ -251,9 +251,9 @@ export const useBoardViewProps = ({
 
           setBoardData((prev) => {
             if (subGroupById) {
-              return getMergedDataSubgroup({ newData, prev });
+              return getMergedDataSubgroup({newData, prev});
             } else {
-              return getMergedDataGroup({ newData, prev });
+              return getMergedDataGroup({newData, prev});
             }
           });
         }
@@ -551,18 +551,15 @@ export const useBoardViewProps = ({
     setBoardData,
     computedColumnsFor,
     setOpenDrawerModal,
-    setSelectedRow,
     setDateInfo,
     setDefaultValue,
     getGroupCounts,
     subGroupFieldSlug,
     projectInfo,
     openDrawerModal,
-    selectedRow,
     layout,
     selectedViewType,
     setSelectedViewType,
-    navigateToEditPage,
     dateInfo,
     defaultValue,
     fixedElement,
@@ -575,8 +572,8 @@ export const useBoardViewProps = ({
   };
 };
 
-const getMergedDataSubgroup = ({ newData, prev }) => {
-  const merged = { ...prev };
+const getMergedDataSubgroup = ({newData, prev}) => {
+  const merged = {...prev};
 
   for (const authorId in newData) {
     const newStatuses = newData[authorId];
@@ -597,8 +594,8 @@ const getMergedDataSubgroup = ({ newData, prev }) => {
   return merged;
 };
 
-const getMergedDataGroup = ({ newData, prev }) => {
-  const merged = { ...prev };
+const getMergedDataGroup = ({newData, prev}) => {
+  const merged = {...prev};
 
   for (const statusKey in newData) {
     const existing = prev[statusKey] || [];

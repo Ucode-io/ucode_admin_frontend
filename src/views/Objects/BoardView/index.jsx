@@ -13,8 +13,11 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
 import clsx from "clsx";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import {useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const BoardView = ({
+  relationView = false,
   view,
   fieldsMap,
   fieldsMapRel,
@@ -25,13 +28,16 @@ const BoardView = ({
   columnsForSearch,
   checkedColumns,
   layoutType,
+  selectedRow,
+  selectedView,
+  setLoading = () => {},
+  setSelectedRow = () => {},
   setLayoutType = () => {},
   setFormValue = () => {},
 }) => {
   const {
     isLoading,
     new_list,
-    tableSlug,
     onDrop,
     groups,
     groupField,
@@ -48,28 +54,22 @@ const BoardView = ({
     setBoardData,
     computedColumnsFor,
     setOpenDrawerModal,
-    setSelectedRow,
     setDateInfo,
     setDefaultValue,
     getGroupCounts,
     subGroupFieldSlug,
     projectInfo,
-    openDrawerModal,
-    selectedRow,
     layout,
     selectedViewType,
     setSelectedViewType,
-    navigateToEditPage,
-    dateInfo,
-    defaultValue,
     fixedElement,
     boardRef,
     t,
     isOnTop,
     subGroups,
     boardData,
-    refetchAfterChangeBoard,
   } = useBoardViewProps({
+    selectedView,
     view,
     fieldsMap,
     fieldsMapRel,
@@ -80,7 +80,16 @@ const BoardView = ({
     checkedColumns,
     columnsForSearch,
   });
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromParams,
+    appId,
+  } = useParams();
   const new_router = localStorage.getItem("new_router") === "true";
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+  const open = useSelector((state) => state?.drawer?.openDrawer);
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -207,6 +216,9 @@ const BoardView = ({
                         }}>
                         {groups?.map((group, index) => (
                           <BoardColumn
+                            setLoading={setLoading}
+                            selectedView={selectedView}
+                            tableSlug={tableSlug}
                             projectInfo={projectInfo}
                             key={group.value}
                             group={group}
@@ -245,6 +257,9 @@ const BoardView = ({
                 {groups?.map((group, index) => (
                   <div key={group.value} className={styles.draggable}>
                     <BoardColumn
+                      setLoading={setLoading}
+                      selectedView={selectedView}
+                      tableSlug={tableSlug}
                       projectInfo={projectInfo}
                       key={group.value}
                       group={group}
@@ -274,7 +289,7 @@ const BoardView = ({
         </div>
       )}
       <MaterialUIProvider>
-        {Boolean(open && projectInfo?.new_layout) &&
+        {Boolean(!relationView && open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
           new_router ? (
             <DrawerDetailPage

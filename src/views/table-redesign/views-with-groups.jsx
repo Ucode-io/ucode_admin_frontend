@@ -1161,6 +1161,9 @@ export const NewUiViewsWithGroups = ({
                 )}
                 {view.type === "BOARD" && (
                   <BoardView
+                    setSelectedRow={setSelectedRow}
+                    selectedRow={selectedRow}
+                    relationView={relationView}
                     layoutType={layoutType}
                     setFormValue={setFormValue}
                     setLoading={setLoading}

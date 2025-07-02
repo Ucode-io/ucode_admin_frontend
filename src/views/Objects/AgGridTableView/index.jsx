@@ -120,8 +120,6 @@ function AgGridTableView(props) {
     ? view?.relation_table_slug
     : (tableSlugFromParams ?? view?.table_slug);
 
-  console.log("tableSlugtableSlug", tableSlug);
-
   const {i18n, t} = useTranslation();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);

@@ -1,11 +1,10 @@
-import {Button as ChakraButton, Flex, Text, grid} from "@chakra-ui/react";
+import {Button as ChakraButton, Flex, Text} from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Box, Button, Drawer} from "@mui/material";
 import {
   CellStyleModule,
   CheckboxEditorModule,
-  ClientSideRowModelApiModule,
   ClientSideRowModelModule,
   ColumnApiModule,
   DateEditorModule,
@@ -39,7 +38,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import useDebounce from "../../../hooks/useDebounce";
 import useFilters from "../../../hooks/useFilters";
-import useTabRouter from "../../../hooks/useTabRouter";
 import {
   useFieldCreateMutation,
   useFieldUpdateMutation,
@@ -63,7 +61,7 @@ import AggridDefaultComponents, {
   ActionsColumn,
   IndexColumn,
 } from "./Functions/AggridDefaultComponents";
-import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
+import {queryGenerator} from "./Functions/queryGenerator";
 import style from "./style.module.scss";
 import getColumnEditorParams from "./valueOptionGenerator";
 import DeleteColumnModal from "./DeleteColumnModal";
@@ -79,7 +77,6 @@ ModuleRegistry.registerModules([
   ClipboardModule,
   ColumnsToolPanelModule,
   ServerSideRowModelModule,
-  ClientSideRowModelModule,
   RowSelectionModule,
   RowGroupingModule,
   TreeDataModule,
@@ -104,7 +101,6 @@ const myTheme = themeQuartz.withParams({
 
 function AggridTreeView(props) {
   const {
-    // open,
     relationView = false,
     view,
     mainForm,
@@ -113,7 +109,6 @@ function AggridTreeView(props) {
     searchText,
     projectInfo,
     visibleColumns,
-    checkedColumns,
     selectedTabIndex,
     computedVisibleFields,
     getRelationFields = () => {},
@@ -165,7 +160,7 @@ function AggridTreeView(props) {
     (el) => el?.table_slug === tableSlug
   );
 
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const {defaultColDef, autoGroupColumnDef, rowSelection, cellSelection} =
     AggridDefaultComponents({
       customAutoGroupColumnDef: {
@@ -175,11 +170,6 @@ function AggridTreeView(props) {
         tableSlug,
       },
     });
-
-  // const tableSearch =
-  //   detectStringType(searchText) === "number"
-  //     ? parseInt(searchText)
-  //     : searchText;
 
   const handleOpenFieldDrawer = (column) => {
     if (column?.attributes?.relation_data) {
@@ -878,7 +868,7 @@ function AggridTreeView(props) {
             <Box
               className="scrollbarNone"
               sx={{
-                height: "100%",
+                height: `calc(100vh - ${calculatedHeight + 85}px)`,
               }}>
               {!columns?.length ? (
                 <NoFieldsComponent />
@@ -948,7 +938,6 @@ function AggridTreeView(props) {
 
       <FieldCreateModal
         mainForm={mainForm}
-        // tableLan={tableLan}
         anchorEl={fieldCreateAnchor}
         setAnchorEl={setFieldCreateAnchor}
         watch={watch}
@@ -956,7 +945,6 @@ function AggridTreeView(props) {
         setValue={setValue}
         handleSubmit={handleSubmit}
         onSubmit={onSubmit}
-        // target={target}
         fields={visibleColumns}
         setFieldOptionAnchor={setFieldOptionAnchor}
         reset={reset}

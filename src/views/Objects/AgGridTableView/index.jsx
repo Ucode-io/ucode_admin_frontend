@@ -885,12 +885,16 @@ function AgGridTableView(props) {
     return filteredFields;
   }, [fieldView, fiedlsarray]);
 
+  const isNewLayout =
+    localStorage.getItem("newLayout") === "true" &&
+    localStorage.getItem("newLayout") !== "undefined";
+
   return (
     <Box
       className={style.gridWrapper}
       sx={{
         display: "flex",
-        height: `calc(100vh - ${calculatedHeight + 130}px)`,
+        height: `calc(100vh - ${isNewLayout ? calculatedHeight + 130 : 95}px)`,
         overflow: "scroll",
       }}
     >

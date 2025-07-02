@@ -50,7 +50,7 @@ const RelationTableDrawer = forwardRef(
       inputChangeHandler = () => {},
       currentPage,
       searchText,
-      fieldsMap,
+      // fieldsMap,
     },
     ref
   ) => {
@@ -265,7 +265,7 @@ const RelationTableDrawer = forwardRef(
         pageCount = 1,
         columns = [],
         quickFilters = [],
-        // fieldsMap = {},
+        fieldsMap = {},
         count = 0,
       } = {},
       refetch,
@@ -308,7 +308,12 @@ const RelationTableDrawer = forwardRef(
               ? 1
               : Math.ceil(data.count / paginiation);
 
-          // const fieldsMap = listToMap(data.fields);
+          const fieldsMap = listToMap(data.fields);
+          console.log(
+            "fields of data",
+            data.fields,
+            layoutData?.tabs?.[selectedTabIndex]?.attributes?.columns
+          );
           const count = data?.count;
 
           const array = [];
@@ -349,10 +354,13 @@ const RelationTableDrawer = forwardRef(
           };
         },
         onSuccess: () => {
+          // console.log("TABLE DATA", tableData);
           setFormValue("multi", tableData);
         },
       }
     );
+
+    console.log({ fieldsMap });
 
     const computedRelationFields = useMemo(() => {
       return Object.values(fieldsMap)?.filter((element) => {

@@ -1,0 +1,65 @@
+.extraNavbar {
+  // padding: 10px 16px;
+  background-color: #fff;
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 16px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+
+  .extraWrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .search {
+      border-right: 1px solid #eee;
+      display: flex;
+      align-items: center;
+
+      .count {
+        padding: 0 20px;
+
+        span {
+          color: #a8a8a8;
+          font-size: 13px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+        }
+      }
+
+      fieldset {
+        border: none;
+      }
+    }
+
+    .rightExtra {
+      display: flex;
+      gap: 5px;
+
+      .lineControl {
+        border-right: 1px solid #eee;
+        padding: 0;
+        padding-right: 10px;
+
+        .buttonSpan {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #a8a8a8;
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 16px;
+          letter-spacing: 0em;
+          text-align: left;
+        }
+      }
+    }
+  }
+}

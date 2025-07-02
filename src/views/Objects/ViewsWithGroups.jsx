@@ -52,6 +52,8 @@ import {mergeStringAndState} from "../../utils/jsonPath";
 import useTabRouter from "../../hooks/useTabRouter";
 import TimeLineView from "./TimeLineView/index.jsx";
 import {generateGUID} from "../../utils/generateID";
+import { ExtraNavbar } from "./components/ExtraNavbar/ExtraNavbar.jsx";
+import { useGetLang } from "../../hooks/useGetLang.js";
 
 const ViewsWithGroups = ({
   views,
@@ -62,19 +64,20 @@ const ViewsWithGroups = ({
   menuItem,
   visibleRelationColumns,
   visibleColumns,
+  refetchViews,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug } = useParams();
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const filterCount = useSelector((state) => state.quick_filter.quick_filters);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const {navigateToForm} = useTabRouter();
-  const {appId} = useParams();
+  const { navigateToForm } = useTabRouter();
+  const { appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -94,6 +97,8 @@ const ViewsWithGroups = ({
   const paginationCount = useSelector(
     (state) => state?.pagination?.paginationCount
   );
+
+  const tableLan = useGetLang("Table");
 
   const paginiationCount = useMemo(() => {
     const getObject = paginationCount.find((el) => el?.tableSlug === tableSlug);
@@ -174,7 +179,7 @@ const ViewsWithGroups = ({
     reset,
     setValue: setFormValue,
     getValues,
-    formState: {errors},
+    formState: { errors },
     watch,
   } = useForm({
     defaultValues: {
@@ -182,7 +187,7 @@ const ViewsWithGroups = ({
     },
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
@@ -195,7 +200,7 @@ const ViewsWithGroups = ({
     );
   };
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -205,7 +210,7 @@ const ViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
@@ -422,6 +427,41 @@ const ViewsWithGroups = ({
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
             )}
           </FiltersBlock>
+          <ExtraNavbar
+            filterCount={filterCount}
+            setFilterVisible={setFilterVisible}
+            inputChangeHandler={inputChangeHandler}
+            handleClickSearch={handleClickSearch}
+            inputKey={inputKey}
+            searchText={searchText}
+            openSearch={openSearch}
+            anchorElSearch={anchorElSearch}
+            handleCloseSearch={handleCloseSearch}
+            roleInfo={roleInfo}
+            permissions={permissions}
+            checkedColumns={checkedColumns}
+            setCheckedColumns={setCheckedColumns}
+            columnsForSearch={columnsForSearch}
+            updateField={updateField}
+            view={view}
+            fieldsMap={fieldsMap}
+            selectedTabIndex={selectedTabIndex}
+            visibleRelationColumns={visibleRelationColumns}
+            openHeightControl={openHeightControl}
+            handleCloseHeightControl={handleCloseHeightControl}
+            anchorElHeightControl={anchorElHeightControl}
+            tableHeightOptions={tableHeightOptions}
+            handleHeightControl={handleHeightControl}
+            handleClick={handleClick}
+            open={open}
+            handleClose={handleClose}
+            anchorEl={anchorEl}
+            computedVisibleFields={computedVisibleFields}
+            setSelectedTabIndex={setSelectedTabIndex}
+            views={views}
+            tableHeight={tableHeight}
+            withRightPanel={false}
+          />
           <AgGridTableView
             navigateToEditPage={navigateToEditPage}
             selectedTabIndex={selectedTabIndex}
@@ -439,6 +479,11 @@ const ViewsWithGroups = ({
             visibleForm={visibleForm}
             menuItem={menuItem}
             setLayoutType={setLayoutType}
+            searchText={searchText}
+            layoutType={layoutType}
+            viewFields={visibleColumns}
+            setFilterVisible={setFilterVisible}
+            filterVisible={filterVisible}
           />
         </Box>
       ) : (
@@ -498,6 +543,43 @@ const ViewsWithGroups = ({
           </FiltersBlock>
 
           {view?.type !== "TIMELINE" && (
+            <ExtraNavbar
+              filterCount={filterCount}
+              setFilterVisible={setFilterVisible}
+              inputChangeHandler={inputChangeHandler}
+              handleClickSearch={handleClickSearch}
+              inputKey={inputKey}
+              searchText={searchText}
+              openSearch={openSearch}
+              anchorElSearch={anchorElSearch}
+              handleCloseSearch={handleCloseSearch}
+              roleInfo={roleInfo}
+              permissions={permissions}
+              checkedColumns={checkedColumns}
+              setCheckedColumns={setCheckedColumns}
+              columnsForSearch={columnsForSearch}
+              updateField={updateField}
+              view={view}
+              fieldsMap={fieldsMap}
+              selectedTabIndex={selectedTabIndex}
+              visibleRelationColumns={visibleRelationColumns}
+              openHeightControl={openHeightControl}
+              handleCloseHeightControl={handleCloseHeightControl}
+              anchorElHeightControl={anchorElHeightControl}
+              tableHeightOptions={tableHeightOptions}
+              handleHeightControl={handleHeightControl}
+              handleClick={handleClick}
+              open={open}
+              handleClose={handleClose}
+              anchorEl={anchorEl}
+              computedVisibleFields={computedVisibleFields}
+              setSelectedTabIndex={setSelectedTabIndex}
+              views={views}
+              tableHeight={tableHeight}
+            />
+          )}
+
+          {/* {view?.type !== "TIMELINE" && (
             <div
               className={style.extraNavbar}
               style={{
@@ -763,7 +845,7 @@ const ViewsWithGroups = ({
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           <Tabs direction={"ltr"} defaultIndex={0}>
             <TableCard type="withoutPadding">

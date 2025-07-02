@@ -79,6 +79,8 @@ const DrawerRelationTable = ({
     name: "multi",
   });
 
+  console.log({ fields });
+
   const setCreateFormVisible = (relationId, value) => {
     setRelationsCreateFormVisible((prev) => ({
       ...prev,

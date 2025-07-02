@@ -109,6 +109,7 @@ function AggridTreeView(props) {
     fieldsMap,
     searchText,
     projectInfo,
+    layoutType,
     visibleColumns,
     selectedTabIndex,
     computedVisibleFields,

@@ -113,7 +113,6 @@ function AggridTreeView(props) {
     visibleColumns,
     selectedTabIndex,
     selectedRow,
-    layoutType,
     computedVisibleFields,
     relationView = false,
     setFormValue = () => {},

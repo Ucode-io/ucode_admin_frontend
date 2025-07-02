@@ -123,7 +123,7 @@ function AggridTreeView(props) {
   const pinFieldsRef = useRef({});
   const queryClient = useQueryClient();
   const addClickedRef = useRef(false);
-  const {tableSlug: tableSlugFromParams, appId} = useParams();
+  const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
 
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const {i18n, t} = useTranslation();
@@ -270,7 +270,7 @@ function AggridTreeView(props) {
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     select: (data) => {
       return {

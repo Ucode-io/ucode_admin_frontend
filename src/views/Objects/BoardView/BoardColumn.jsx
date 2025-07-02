@@ -35,7 +35,7 @@ const BoardColumn = ({
   tableSlug,
   selectedView,
   projectInfo,
-  setLoadings = () => {},
+  setLoading = () => {},
   setSelectedView = () => {},
   searchText,
   columnsForSearch,
@@ -52,10 +52,10 @@ const BoardColumn = ({
   const [searchParams] = useSearchParams();
   const viewId = searchParams.get("v") ?? view?.id;
   const new_router = localStorage.getItem("new_router") === "true";
-  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
   const [computedBoardData, setComputedBoardData] = useState(boardData);
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
 
   const mutateDrop = useDebounce((mutateData) => {
     constructorObjectService
@@ -165,31 +165,25 @@ const BoardColumn = ({
   };
 
   const navigateToEditPage = (row) => {
-    console.log("viewwwwwwwwwwwwww");
-    setLoadings(true);
     setDateInfo({});
     setDefaultValue({});
-    if (Boolean(view?.relation_table_slug)) {
-      queryClient.refetchQueries([
-        "GET_TABLE_VIEWS_LIST_RELATION",
-        view?.relation_table_slug,
-      ]);
-      dispatch(
-        groupFieldActions.addView({
-          id: view?.id,
-          label: view?.table_label,
-          table_slug: view?.table_slug,
-          relation_table_slug: view.relation_table_slug ?? null,
-          is_relation_view: view?.is_relation_view,
-          detailId: row?.guid,
-        })
-      );
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInf?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: row?.guid,
+      })
+    );
+    if (Boolean(selectedView?.is_relation_view)) {
       setSelectedView(view);
       setSelectedRow(row);
-      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      dispatch(detailDrawerActions.openDrawer());
       updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (Boolean(new_router === "true")) {
+      if (new_router) {
         updateQueryWithoutRerender("p", row?.guid);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
@@ -205,7 +199,6 @@ const BoardColumn = ({
           }
         }
       } else {
-        console.log("enteredddddddd", projectInfo);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
         } else if (projectInfo?.new_layout) {

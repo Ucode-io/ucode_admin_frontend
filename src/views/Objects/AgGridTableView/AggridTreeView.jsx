@@ -74,6 +74,7 @@ import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSe
 import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 
 ModuleRegistry.registerModules([
   MenuModule,

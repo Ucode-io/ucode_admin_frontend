@@ -82,6 +82,7 @@ const AppSidebar = ({
 
   const clickHandler = (el) => {
     dispatch(detailDrawerActions.setMainTabIndex(0));
+    dispatch(detailDrawerActions.closeDrawer());
     dispatch(groupFieldActions.clearViews());
     const handler =
       localStorage.getItem("new_router") === "true"
@@ -115,11 +116,11 @@ const AppSidebar = ({
         : menuTemplate?.menu_template?.text,
   };
 
-  function replaceValues(inputString, loginTableSlug, userId) {
-    return inputString
-      .replace("{login_table_slug}", loginTableSlug)
-      .replace("{user_id}", userId);
-  }
+  // function replaceValues(inputString, loginTableSlug, userId) {
+  //   return inputString
+  //     .replace("{login_table_slug}", loginTableSlug)
+  //     .replace("{user_id}", userId);
+  // }
 
   const {isLoading} = useMenuListQuery({
     params: {

@@ -14,13 +14,10 @@ import {
 } from "@/utils/indexedDb.jsx";
 import {queryGenerator} from "@/utils/queryGenerator";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
-import ShareModal from "@/views/Objects/ShareModal/ShareModal";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
-import TreeView from "@/views/Objects/TreeView";
 import WebsiteView from "@/views/Objects/WebsiteView";
 
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
-import ViewTabSelector from "@/views/Objects/components/ViewTypeSelector";
 import style from "@/views/Objects/style.module.scss";
 import {getColumnIcon} from "@/views/table-redesign/icons";
 import {
@@ -46,12 +43,8 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {
-  Backdrop,
-  Button as MuiButton,
-  Popover as MuiPopover,
-} from "@mui/material";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import {Backdrop, Popover as MuiPopover} from "@mui/material";
 import {addDays, endOfMonth, startOfMonth} from "date-fns";
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
@@ -67,16 +60,18 @@ import {
 } from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
-import FiltersBlock from "../../components/FiltersBlock";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useGetLang} from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
+import constructorFieldService from "../../services/constructorFieldService";
+import constructorRelationService from "../../services/constructorRelationService";
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../services/constructorTableService";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {generateGUID} from "../../utils/generateID";
@@ -84,12 +79,14 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {listToMap} from "../../utils/listToMap";
 import listToOptions from "../../utils/listToOptions";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import BoardView from "../Objects/BoardView";
 import CalendarView from "../Objects/CalendarView";
 import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
 import TimeLineView from "../Objects/TimeLineView";
 import {Filter} from "./FilterGenerator";
 import {LayoutPopup} from "./LayoutPopup";
+import {ScreenOptions} from "./ScreenOptions";
 import ViewSettingsModal from "./ViewSettings";
 import {CalendarSettings} from "./components/CalendarSettings";
 import {SubGroup} from "./components/SubGroup";
@@ -106,10 +103,6 @@ import {
 import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
-import constructorFieldService from "../../services/constructorFieldService";
-import constructorRelationService from "../../services/constructorRelationService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -185,7 +178,6 @@ export const NewUiViewsWithGroups = ({
   const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
-
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const groupTable = view?.attributes?.group_by_columns;
 
@@ -589,6 +581,10 @@ export const NewUiViewsWithGroups = ({
                   colorScheme="gray"
                   onClick={() => {
                     handleClose();
+                    if (location?.state?.fullPage) {
+                      navigate(-1);
+                      setLayoutType("SidePeek");
+                    }
                   }}
                   size="sm"
                 />
@@ -607,15 +603,56 @@ export const NewUiViewsWithGroups = ({
                 />
               )}
 
-              <IconButton
-                aria-label="home"
-                icon={<img src="/img/home.svg" alt="home" />}
-                variant="ghost"
-                colorScheme="gray"
-                onClick={() => navigate("/")}
-                ml="8px"
-                size="sm"
-              />
+              {relationView ? (
+                <MaterialUIProvider>
+                  <Flex>
+                    <ScreenOptions
+                      projectInfo={projectInfo}
+                      view={selectedView}
+                      selectedViewType={selectedViewType}
+                      selectedRow={selectedRow}
+                      setSelectedViewType={setSelectedViewType}
+                      setLayoutType={setLayoutType}
+                    />
+                    <Box
+                      sx={{
+                        marginLeft: "10px",
+                        height: "18px",
+                      }}>
+                      <Box
+                        onClick={() =>
+                          navigate(`/${menuId}/customize/${tableInfo?.id}`, {
+                            state: {
+                              ...data,
+                              tableSlug,
+                            },
+                          })
+                        }
+                        sx={{
+                          cursor: "pointer",
+                          alignItems: "center",
+                          gap: "5px",
+                          color: "rgba(55, 53, 47, 0.5)",
+                          "&:hover": {
+                            background: "rgba(55, 53, 47, 0.06)",
+                          },
+                        }}>
+                        <SpaceDashboardIcon />
+                      </Box>
+                    </Box>
+                  </Flex>
+                </MaterialUIProvider>
+              ) : (
+                <IconButton
+                  aria-label="home"
+                  icon={<img src="/img/home.svg" alt="home" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  onClick={() => navigate("/")}
+                  ml="8px"
+                  size="sm"
+                />
+              )}
               {viewsList?.length &&
                 viewsList?.map((item, index) => (
                   <>
@@ -803,9 +840,11 @@ export const NewUiViewsWithGroups = ({
                     selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                   }
                   onClick={() => handleViewClick(view, index)}>
-                  {view?.attributes?.[`name_${i18n?.language}`] ||
-                    view?.name ||
-                    view.type}
+                  {view?.is_relation_view
+                    ? view?.table_label
+                    : view?.attributes?.[`name_${i18n?.language}`] ||
+                      view?.name ||
+                      view.type}
                 </Button>
               ))}
             </Flex>

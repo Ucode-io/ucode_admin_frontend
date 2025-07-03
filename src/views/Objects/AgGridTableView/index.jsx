@@ -655,6 +655,7 @@ function AgGridTableView(props) {
                   immutableData={true}
                   getRowId={(params) => params.data?.guid}
                   deltaRowDataMode={true}
+                  domLayout="normal"
                   groupDisplayType="single"
                   paginationPageSize={limit}
                   undoRedoCellEditing={true}
@@ -664,7 +665,7 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
-                  suppressColumnVirtualisation={false}
+                  suppressColumnVirtualisation={true}
                   suppressRowVirtualisation={true}
                   suppressColumnMoveAnimation={false}
                   autoGroupColumnDef={autoGroupColumnDef}

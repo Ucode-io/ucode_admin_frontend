@@ -1,6 +1,3 @@
-import React from "react";
-
-// Import all field components
 import HFTextInputField from "./HFTextInputField";
 import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";

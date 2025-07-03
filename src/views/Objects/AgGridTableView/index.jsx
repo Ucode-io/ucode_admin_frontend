@@ -200,7 +200,7 @@ function AgGridTableView(props) {
   );
 
   const {
-    data: {fiedlsarray} = {
+    data: {fields} = {
       pageCount: 1,
       fiedlsarray: [],
       custom_events: [],
@@ -211,36 +211,38 @@ function AgGridTableView(props) {
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
-        fiedlsarray: res?.data?.fields?.map((item, index) => {
-          const columnDef = {
-            view,
-            flex: 1,
-            minWidth: 250,
-            editable: true,
-            enableRowGroup: true,
-            fieldObj: item,
-            field: item?.slug,
-            rowGroup: view?.attributes?.group_by_columns?.includes(item?.id)
-              ? true
-              : false,
-            cellClass:
-              item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
-            gridApi: gridApi,
-            columnID:
-              item?.type === "LOOKUP"
-                ? item?.relation_id
-                : item?.id || generateGUID(),
-            headerName:
-              item?.attributes?.[`label_${i18n?.language}`] || item?.label,
-            headerComponent: HeaderComponent,
-            pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
-          };
-          getColumnEditorParams(item, columnDef);
-          return columnDef;
-        }),
+        fields: res?.data?.fields,
       };
     },
   });
+
+  const fiedlsarray = useMemo(() => {
+    return fields?.map((item) => {
+      const columnDef = {
+        field: item?.slug,
+        fieldObj: item,
+        headerName:
+          item?.attributes?.[`label_${i18n?.language}`] || item?.label,
+        editable: true,
+        enableRowGroup: true,
+        flex: 1,
+        minWidth: 250,
+        rowGroup: view?.attributes?.group_by_columns?.includes(item?.id),
+        cellClass:
+          item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
+        columnID:
+          item?.type === "LOOKUP"
+            ? item?.relation_id
+            : item?.id || generateGUID(),
+        pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
+        headerComponent: HeaderComponent,
+      };
+
+      getColumnEditorParams(item, columnDef);
+
+      return columnDef;
+    });
+  }, [fields, view, i18n.language]);
 
   const {
     data: {layout} = {
@@ -637,12 +639,10 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={10}
                   theme={myTheme}
                   gridOptions={{
-                    cacheBlockSize: 100,
-                    maxBlocksInCache: 10,
-                    suppressCellSelection: false,
+                    suppressCellSelection: true,
+                    columnBuffer: 10,
                   }}
                   keepDetailRows={false}
                   suppressAggFuncInHeader={true}
@@ -652,7 +652,6 @@ function AgGridTableView(props) {
                   columnDefs={columns}
                   suppressRefresh={true}
                   enableClipboard={true}
-                  immutableData={true}
                   getRowId={(params) => params.data?.guid}
                   deltaRowDataMode={true}
                   domLayout="normal"
@@ -665,8 +664,11 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
-                  suppressColumnVirtualisation={true}
-                  suppressRowVirtualisation={true}
+                  suppressRowVirtualisation={false}
+                  suppressColumnVirtualisation={false}
+                  rowBuffer={50}
+                  immutableData={true}
+                  animateRows={false}
                   suppressColumnMoveAnimation={false}
                   autoGroupColumnDef={autoGroupColumnDef}
                   loadingOverlayComponent={CustomLoadingOverlay}

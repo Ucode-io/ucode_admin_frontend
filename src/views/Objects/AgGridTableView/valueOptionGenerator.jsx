@@ -70,57 +70,77 @@ const getColumnEditorParams = (item, columnDef) => {
 
   columnDef.cellRenderer = Renderer;
   columnDef.cellRendererParams = {field: item};
+  columnDef.pureComponent = true;
 
-  if (type === "SINGLE_LINE") {
-    columnDef.cellEditorParams = {maxLength: 255, field: item};
-    columnDef.valueFormatter = (params) => params.value || "";
-  } else if (type === "MONEY" || type === "MULTISELECT") {
-    columnDef.valueGetter = (params) =>
-      params?.data?.[params.colDef.field] || [];
-    if (type === "MULTISELECT") {
+  switch (type) {
+    case "SINGLE_LINE":
+      columnDef.cellEditorParams = {maxLength: 255, field: item};
+      columnDef.valueFormatter = (params) => params.value || "";
+      break;
+
+    case "MONEY":
+      columnDef.valueGetter = (params) =>
+        params?.data?.[params.colDef.field] || [];
+      break;
+
+    case "MULTISELECT":
+      columnDef.valueGetter = (params) =>
+        params?.data?.[params.colDef.field] || [];
       columnDef.cellEditorParams = {
-        values: item?.attributes?.options.map((o) => o?.label),
+        values: item?.attributes?.options?.map((o) => o?.label),
         field: item,
       };
-    }
-  } else if (type === "LOOKUP") {
-    columnDef.filterValueGetter = (params) => {
-      const slugData = params?.data?.[`${item?.slug}_data`];
-      return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
-    };
-  } else if (type === "FORMULA_FRONTEND") {
-    columnDef.valueGetter = (params) => {
-      const formula = item?.attributes?.formula;
-      if (!formula) return 0;
-      let computedFormula = formula;
-      const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
-      if (matches) {
-        matches.forEach((slug) => {
-          const value = params?.data?.[slug] ?? 0;
-          computedFormula = computedFormula.replace(
-            new RegExp(`\\b${slug}\\b`, "g"),
-            value
-          );
-        });
-      }
-      try {
-        return eval(computedFormula);
-      } catch (error) {
-        console.error("Error evaluating formula:", error);
-        return "ERROR";
-      }
-    };
-    columnDef.cellRendererParams = {
-      field: item,
-      formula: item?.attributes?.formula,
-    };
-  } else if (type === "PHONE" || type === "INTERNATION_PHONE") {
-    columnDef.valueFormatter = (params) => {
-      return params?.value ? "+" + Number(params?.value).toLocaleString() : "";
-    };
-  } else if (type === "DEFAULT") {
-    columnDef.cellEditorParams = {maxLength: 255, field: item};
-    columnDef.valueFormatter = (params) => params.value || "";
+      break;
+
+    case "LOOKUP":
+      columnDef.filterValueGetter = (params) => {
+        const slugData = params?.data?.[`${item?.slug}_data`];
+        return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
+      };
+      break;
+
+    case "FORMULA_FRONTEND":
+      columnDef.valueGetter = (params) => {
+        const formula = item?.attributes?.formula;
+        if (!formula) return 0;
+
+        let computedFormula = formula;
+        const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
+
+        if (matches) {
+          matches.forEach((slug) => {
+            const value = params?.data?.[slug] ?? 0;
+            computedFormula = computedFormula.replace(
+              new RegExp(`\\b${slug}\\b`, "g"),
+              value
+            );
+          });
+        }
+
+        try {
+          return eval(computedFormula);
+        } catch (error) {
+          console.error("Error evaluating formula:", error);
+          return "ERROR";
+        }
+      };
+      columnDef.cellRendererParams = {
+        field: item,
+        formula: item?.attributes?.formula,
+      };
+      break;
+
+    case "PHONE":
+    case "INTERNATION_PHONE":
+      columnDef.valueFormatter = (params) => {
+        return params?.value
+          ? "+" + Number(params?.value).toLocaleString()
+          : "";
+      };
+      break;
+
+    default:
+      break;
   }
 };
 

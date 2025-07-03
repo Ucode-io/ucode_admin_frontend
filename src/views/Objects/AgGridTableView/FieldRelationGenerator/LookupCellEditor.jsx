@@ -50,6 +50,7 @@ const customStyles = {
 };
 
 const LookupCellEditor = (props) => {
+  console.log("propspropspropsprops", props);
   const [options, setOptions] = useState([]);
   const {field, setValue, data, value} = props;
   const [page, setPage] = useState(1);
@@ -194,7 +195,7 @@ const LookupCellEditor = (props) => {
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 500);
 
   return (
-    <MaterialUIProvider>
+    <>
       <Box
         sx={{
           position: "relative",
@@ -226,7 +227,7 @@ const LookupCellEditor = (props) => {
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} />
       )}
-    </MaterialUIProvider>
+    </>
   );
 };
 

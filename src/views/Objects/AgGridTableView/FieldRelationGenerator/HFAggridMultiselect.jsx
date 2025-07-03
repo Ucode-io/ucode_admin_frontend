@@ -1,5 +1,5 @@
 import {makeStyles} from "@mui/styles";
-import {useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
 import styles from "./style.module.scss";
 import {useParams} from "react-router-dom";
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HFAggridMultiselect = (props) => {
+const HFAggridMultiselect = React.memo((props) => {
   const classes = useStyles();
 
   const {value, setValue = () => {}, width = "100%", colDef, data} = props;
@@ -85,7 +85,7 @@ const HFAggridMultiselect = (props) => {
       </Box>
     </MaterialUIProvider>
   );
-};
+});
 
 const AutoCompleteElement = ({
   props,

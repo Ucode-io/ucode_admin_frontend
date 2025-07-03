@@ -637,7 +637,7 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={15}
+                  rowBuffer={10}
                   theme={myTheme}
                   gridOptions={{
                     cacheBlockSize: 100,
@@ -652,6 +652,9 @@ function AgGridTableView(props) {
                   columnDefs={columns}
                   suppressRefresh={true}
                   enableClipboard={true}
+                  immutableData={true}
+                  getRowId={(params) => params.data?.guid}
+                  deltaRowDataMode={true}
                   groupDisplayType="single"
                   paginationPageSize={limit}
                   undoRedoCellEditing={true}
@@ -662,7 +665,7 @@ function AgGridTableView(props) {
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
                   suppressColumnVirtualisation={false}
-                  suppressRowVirtualisation={false}
+                  suppressRowVirtualisation={true}
                   suppressColumnMoveAnimation={false}
                   autoGroupColumnDef={autoGroupColumnDef}
                   loadingOverlayComponent={CustomLoadingOverlay}

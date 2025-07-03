@@ -408,11 +408,9 @@ function DrawerDetailPage({
         bg="white"
         position="relative"
         overflow={"hidden"}
-        boxShadow="
-    rgba(15, 15, 15, 0.04) 0px 0px 0px 1px,
-    rgba(15, 15, 15, 0.03) 0px 3px 6px,
-    rgba(15, 15, 15, 0.06) 0px 9px 24px
-  "
+        boxShadow="0px 0px 16px 1px rgba(15, 15, 15, 0.04),
+               0px 12px 16px rgba(15, 15, 15, 0.15),
+               0px 9px 24px rgba(15, 15, 15, 0.06)"
         style={{
           width: `${drawerWidth}px`,
           maxWidth: "90vw",

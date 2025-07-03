@@ -118,8 +118,6 @@ function NewObjectsFormPage() {
     return !isRelationView ? menuViews : relationViews;
   }, [menuViews, relationViews, isRelationView, viewsList?.length]);
 
-  console.log("lastPathlastPathlastPath", lastPath);
-
   const {
     data: {
       fieldsMap,

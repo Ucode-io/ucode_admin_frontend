@@ -1,28 +1,26 @@
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {Container, Draggable} from "react-smooth-dnd";
-import {getColumnIcon} from "../../table-redesign/icons";
-import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
 import {Flex, Text} from "@chakra-ui/react";
 import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {isEqual} from "lodash";
-import {Controller} from "react-hook-form";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import layoutService from "../../../services/layoutService";
-import {applyDrag} from "../../../utils/applyDrag";
-import "./style.scss";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {store} from "../../../store";
+import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
+import {isEqual} from "lodash";
+import React, {useEffect, useMemo, useState} from "react";
+import {Controller} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import layoutService from "../../../services/layoutService";
+import {store} from "../../../store";
+import {applyDrag} from "../../../utils/applyDrag";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import {getColumnIcon} from "../../table-redesign/icons";
 import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
-import {MicroFrontendPopup} from "../../../components/MicroFrontendPopup";
-import useSearchParams from "../../../hooks/useSearchParams";
+import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
+import "./style.scss";
 
 function DrawerFormDetailPage({
   view,
@@ -217,7 +215,7 @@ function DrawerFormDetailPage({
           </div>
         )}
 
-        <Box
+        {/* <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -256,10 +254,9 @@ function DrawerFormDetailPage({
                 },
               }}>
               <SpaceDashboardIcon />
-              {/* Customize layout */}
             </Box>
           </Box>
-        </Box>
+        </Box> */}
 
         <HeadingOptions
           selectedRow={selectedRow}

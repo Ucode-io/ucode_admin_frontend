@@ -1,3 +1,6 @@
+import React from "react";
+
+// Import all field components
 import HFTextInputField from "./HFTextInputField";
 import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
 import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
@@ -31,276 +34,97 @@ import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
 import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
 import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
 
+const fieldTypeMap = {
+  SINGLE_LINE: HFTextInputField,
+  NUMBER: HFNumberFieldCell,
+  FLOAT: HFFloatFieldCell,
+  TEXT: HFTextComponent,
+  LINK: HFLinkFieldEditor,
+  MONEY: HFMoneyFieldEditor,
+  STATUS: HFStatusFieldEditor,
+  MULTI_LINE: MultiLineCellEditor,
+  PASSWORD: PasswordCellEditor,
+  CHECKBOX: HFCheckboxCell,
+  SWITCH: HFSwitchCellEditor,
+  FORMULA: FormulaCellEditor,
+  FORMULA_FRONTEND: FrontendFormulaCellEditor,
+  INTERNATION_PHONE: PhoneCellEditor,
+  PHONE: PhoneCellEditor,
+  DATE: HFDatePicker,
+  DATE_TIME: HFDateTimePicker,
+  DATE_TIME_WITHOUT_TIME_ZONE: HFDateDatePickerWithoutTimeZoneTable,
+  TIME: HFTimePicker,
+  LOOKUP: LookupCellEditor,
+  MULTISELECT: HFAggridMultiselect,
+  PHOTO: HFPhotoUploadCellEditor,
+  MULTI_IMAGE: HFMultiImageCellEditor,
+  FILE: HFFileUploadCellEditor,
+  VIDEO: HFVideoUploadCellEditor,
+  MAP: HFModalMapCellEditor,
+  POLYGON: PolygonFieldTableCellEditor,
+  COLOR: ColorPicker,
+  ICON: IconPickerCell,
+  QR: HFQrFieldComponentCellEditor,
+};
+
 const getColumnEditorParams = (item, columnDef) => {
-  console.log(item?.type);
-  switch (item?.type) {
-    case "SINGLE_LINE":
-      columnDef.cellRenderer = HFTextInputField;
+  const type = item?.type;
+  const Renderer = fieldTypeMap[type] || HFTextInputField;
+
+  columnDef.cellRenderer = Renderer;
+  columnDef.cellRendererParams = {field: item};
+
+  if (type === "SINGLE_LINE") {
+    columnDef.cellEditorParams = {maxLength: 255, field: item};
+    columnDef.valueFormatter = (params) => params.value || "";
+  } else if (type === "MONEY" || type === "MULTISELECT") {
+    columnDef.valueGetter = (params) =>
+      params?.data?.[params.colDef.field] || [];
+    if (type === "MULTISELECT") {
       columnDef.cellEditorParams = {
-        maxLength: 255,
+        values: item?.attributes?.options.map((o) => o?.label),
         field: item,
       };
-      columnDef.valueFormatter = (params) => params.value || "";
-      break;
-
-    case "NUMBER":
-      columnDef.cellRenderer = HFNumberFieldCell;
-
-      break;
-
-    case "FLOAT":
-      columnDef.cellRenderer = HFFloatFieldCell;
-
-      break;
-
-    case "TEXT":
-      (columnDef.cellRenderer = HFTextComponent),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
-
-      break;
-
-    case "LINK":
-      (columnDef.cellRenderer = HFLinkFieldEditor),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
-
-      break;
-
-    case "MONEY":
-      (columnDef.cellRenderer = HFMoneyFieldEditor),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
-
-      columnDef.valueGetter = (params) => {
-        return params?.data?.[params.colDef.field] || [];
-      };
-
-      break;
-
-    case "STATUS":
-      (columnDef.cellRenderer = HFStatusFieldEditor),
-        (columnDef.cellRendererParams = {
-          field: item,
-        });
-
-      break;
-
-    case "MULTI_LINE":
-      (columnDef.cellRenderer = MultiLineCellEditor),
-        (columnDef.cellEditorParams = {
-          maxLength: 50,
-        });
-
-      break;
-
-    case "PASSWORD":
-      columnDef.cellRenderer = PasswordCellEditor;
-
-      break;
-
-    case "CHECKBOX":
-      columnDef.cellRenderer = HFCheckboxCell;
-      break;
-
-    case "SWITCH":
-      columnDef.cellRenderer = HFSwitchCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      break;
-
-    case "FORMULA_FRONTEND":
-      columnDef.cellRenderer = FrontendFormulaCellEditor;
-      columnDef.valueGetter = (params) => {
-        const formula = item?.attributes?.formula;
-        if (!formula) return 0;
-
-        let computedFormula = formula;
-        const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
-
-        if (matches) {
-          matches.forEach((slug) => {
-            const value = params?.data?.[slug] ?? 0;
-            computedFormula = computedFormula?.replace(
-              new RegExp(`\\b${slug}\\b`, "g"),
-              value
-            );
-          });
-        }
-
-        try {
-          return eval(computedFormula);
-        } catch (error) {
-          console.error("Error evaluating formula:", error);
-          return "ERROR";
-        }
-      };
-      columnDef.cellRendererParams = {
-        field: item,
-        formula: item?.attributes?.formula,
-      };
-      break;
-
-    case "FORMULA":
-      columnDef.cellRenderer = FormulaCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-        formula: item?.attributes?.formula,
-      };
-      break;
-
-    case "INTERNATION_PHONE":
-    case "PHONE":
-      (columnDef.cellRenderer = PhoneCellEditor),
-        (columnDef.valueFormatter = (params) => {
-          if (Boolean(params?.value)) {
-            return "+" + Number(params?.value).toLocaleString();
-          } else return "";
-        });
-
-      break;
-
-    // DATE FIELDS:
-    case "DATE":
-      columnDef.cellRenderer = HFDatePicker;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      break;
-
-    case "DATE_TIME":
-      columnDef.cellRenderer = HFDateTimePicker;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      break;
-
-    case "DATE_TIME_WITHOUT_TIME_ZONE":
-      columnDef.cellRenderer = HFDateDatePickerWithoutTimeZoneTable;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      break;
-
-    case "TIME":
-      columnDef.cellRenderer = HFTimePicker;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      break;
-
-    // WITH OPTIONS RELATION & MULTISELECT:
-    case "LOOKUP": {
-      // console.log("LOOKUP")
-      columnDef.cellRenderer = LookupCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-
-      columnDef.filterValueGetter = (params) => {
-        const slugData = params?.data?.[`${item?.slug}_data`];
-        // console.log({ slugData });
-        if (!slugData) return "";
-        return getRelationFieldTabsLabel(item, slugData);
-      };
-
-      break;
     }
-
-    case "MULTISELECT":
-      columnDef.cellRenderer = HFAggridMultiselect;
-      columnDef.cellEditorParams = {
-        values: item?.attributes?.options.map((option) => option?.label),
-        field: item,
-      };
-
-      columnDef.valueGetter = (params) => {
-        return params?.data?.[params.colDef.field] || [];
-      };
-
-      break;
-
-    // FILE & PHOTO FIELDS
-    case "PHOTO":
-      columnDef.cellRenderer = HFPhotoUploadCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "MULTI_IMAGE":
-      columnDef.cellRenderer = HFMultiImageCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "FILE":
-      columnDef.cellRenderer = HFFileUploadCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "VIDEO":
-      columnDef.cellRenderer = HFVideoUploadCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "MAP":
-      columnDef.cellRenderer = HFModalMapCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "POLYGON":
-      columnDef.cellRenderer = PolygonFieldTableCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "COLOR":
-      columnDef.cellRenderer = ColorPicker;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "ICON":
-      columnDef.cellRenderer = IconPickerCell;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    case "QR":
-      columnDef.cellRenderer = HFQrFieldComponentCellEditor;
-      columnDef.cellRendererParams = {
-        field: item,
-      };
-      break;
-
-    default:
-      columnDef.cellRenderer = HFTextInputField;
-      columnDef.cellEditorParams = {
-        maxLength: 255,
-        field: item,
-      };
-      columnDef.valueFormatter = (params) => params.value || "";
-      break;
+  } else if (type === "LOOKUP") {
+    columnDef.filterValueGetter = (params) => {
+      const slugData = params?.data?.[`${item?.slug}_data`];
+      return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
+    };
+  } else if (type === "FORMULA_FRONTEND") {
+    columnDef.valueGetter = (params) => {
+      const formula = item?.attributes?.formula;
+      if (!formula) return 0;
+      let computedFormula = formula;
+      const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
+      if (matches) {
+        matches.forEach((slug) => {
+          const value = params?.data?.[slug] ?? 0;
+          computedFormula = computedFormula.replace(
+            new RegExp(`\\b${slug}\\b`, "g"),
+            value
+          );
+        });
+      }
+      try {
+        return eval(computedFormula);
+      } catch (error) {
+        console.error("Error evaluating formula:", error);
+        return "ERROR";
+      }
+    };
+    columnDef.cellRendererParams = {
+      field: item,
+      formula: item?.attributes?.formula,
+    };
+  } else if (type === "PHONE" || type === "INTERNATION_PHONE") {
+    columnDef.valueFormatter = (params) => {
+      return params?.value ? "+" + Number(params?.value).toLocaleString() : "";
+    };
+  } else if (type === "DEFAULT") {
+    columnDef.cellEditorParams = {maxLength: 255, field: item};
+    columnDef.valueFormatter = (params) => params.value || "";
   }
 };
+
 export default getColumnEditorParams;

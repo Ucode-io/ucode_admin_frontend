@@ -242,7 +242,7 @@ function AgGridTableView(props) {
 
       return columnDef;
     });
-  }, [fields, view, i18n.language]);
+  }, [fields?.length]);
 
   const {
     data: {layout} = {
@@ -588,6 +588,8 @@ function AgGridTableView(props) {
     isWarningActive,
   ]);
 
+  console.log("rowDatarowData", rowData);
+
   return (
     <Box
       sx={{
@@ -639,12 +641,16 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
+                  rowBuffer={20}
                   theme={myTheme}
                   gridOptions={{
                     suppressCellSelection: true,
-                    columnBuffer: 10,
+                    columnBuffer: 20,
+                    rowBuffer: 10,
                   }}
                   keepDetailRows={false}
+                  suppressRowHoverHighlight={true}
+                  suppressKeyboardEvent={(params) => true}
                   suppressAggFuncInHeader={true}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
@@ -666,7 +672,6 @@ function AgGridTableView(props) {
                   onColumnPinned={onColumnPinned}
                   suppressRowVirtualisation={false}
                   suppressColumnVirtualisation={false}
-                  rowBuffer={50}
                   immutableData={true}
                   animateRows={false}
                   suppressColumnMoveAnimation={false}

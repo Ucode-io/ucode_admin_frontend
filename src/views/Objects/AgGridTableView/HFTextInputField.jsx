@@ -6,7 +6,6 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 const HFTextInputField = (props) => {
   const {value, setValue, colDef, data} = props;
   const field = props?.colDef?.fieldObj;
-  const view = colDef?.view;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);

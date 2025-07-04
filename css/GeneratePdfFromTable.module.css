@@ -1,10 +1,10 @@
 .wrapper button {
-  border: 1px solid #E5E9EB;
+  border: 1px solid #e5e9eb;
   border-radius: 4px;
   min-width: 32px;
   min-width: 32px;
-  height: 32px;
-  min-height: 32px;
+  height: 25px;
+  min-height: 25px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -13,5 +13,5 @@
   transition-duration: 0.2s;
 }
 .wrapper button:hover {
-  border-color: #0067F4;
+  border-color: #0067f4;
 }/*# sourceMappingURL=GeneratePdfFromTable.module.css.map */

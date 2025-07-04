@@ -47,7 +47,7 @@
 .CTableRow.new-ui .data_table__number_cell .data_table__row_checkbox.checked {
   display: flex !important;
 }
-.CTableRow.new-ui .first_button {
+.CTableRow.new-ui .newUIi_first_button {
   position: absolute;
   z-index: 10;
   top: 50%;
@@ -64,10 +64,10 @@
   border: 1px solid rgba(0, 122, 255, 0.15);
   background-color: #fff;
 }
-.CTableRow.new-ui .first_button:hover {
+.CTableRow.new-ui .newUIi_first_button:hover {
   background-color: rgb(237, 244, 254);
 }
-.CTableRow.new-ui .first_button,
+.CTableRow.new-ui .newUIi_first_button,
 .CTableRow.new-ui .table_multi_checkbox {
   display: none;
 }
@@ -80,7 +80,7 @@
 .CTableRow.new-ui:hover .table_multi_checkbox {
   display: block;
 }
-.CTableRow.new-ui:hover .first_button {
+.CTableRow.new-ui:hover .newUIi_first_button {
   display: flex;
 }
 .CTableRow.new-ui:hover .data_table__row_number {

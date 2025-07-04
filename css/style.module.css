@@ -164,7 +164,8 @@
 .minio .form .formcard :nth-child(1) > div {
   padding-left: 0;
   padding-right: 0;
-}/*# sourceMappingURL=style.module.css.map */ckground-color: #FEF7C3;
+}/*# sourceMappingURL=style.module.css.map */mission {
+  background-color: #FEF7C3;
 }
 
 .iconBtn {
@@ -176,7 +177,7 @@
 }
 
 .tbBadgeCell {
-  border-right: none !important;
+  text-align: center;
 }
 
 .headCellBox {
@@ -188,7 +189,7 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 18px;
-}/*# sourceMappingURL=style.module.css.map */flex;
+}/*# sourceMappingURL=style.module.css.map */x;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
@@ -341,7 +342,10 @@
 }
 .popupIconWrapper:hover {
   transform: scale(1.2);
-}/*# sourceMappingURL=style.module.css.map */ .text {
+}/*# sourceMappingURL=style.module.css.map */ color: #4f5464;
+  font-weight: 600;
+}
+.minio .miniocontainermiddle .card .text {
   font-weight: normal;
   color: #a2b5cd;
   font-weight: 600;
@@ -509,18 +513,15 @@
   font-weight: normal;
   color: #a2b5cd;
   font-weight: 600;
-}/*# sourceMappingURL=style.module.css.map */px;
-  -moz-column-gap: 8px;
-       column-gap: 8px;
-  row-gap: 16px;
 }
-.detail .method > div {
-  display: flex;
-  align-items: center;
-  -moz-column-gap: 8px;
-       column-gap: 8px;
-}
-.detail .method span {
+
+.imgTitle {
+  display: inline-block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}/*# sourceMappingURL=style.module.css.map */pan {
   width: 100%;
   max-width: 60px;
   height: 100%;

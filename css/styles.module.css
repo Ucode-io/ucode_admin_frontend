@@ -1,111 +1,119 @@
-.billingCard {
-  flex-grow: 1;
+.text {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  max-width: 600px;
+  max-height: 200px;
+  overflow: auto;
+  margin-top: 15px;
+}
+.text span {
+  font-weight: 600;
+}
+
+.headCellBox {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  border-radius: 12px;
-  text-align: center;
-  padding: 24px;
-  border: 1px solid #E2E8F0;
-  background-color: #ffffff;
-  position: relative;
-  overflow: hidden;
+  -moz-column-gap: 4px;
+       column-gap: 4px;
+  color: #475467;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
 }
 
-.billingCard.bestPlan {
-  border: 2px solid #4F46E5;
+.bodyCellBox {
+  color: #475467;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
 }
 
-.btn {
-  margin-top: auto;
-}/*# sourceMappingURL=styles.module.css.map */: #475467;
-}/*# sourceMappingURL=styles.module.css.map */lor: #fff;
-  padding: 4px 10px;
-  height: 100%;
-  border-radius: 0;
+.addFilterBtn {
+  width: 100%;
+}/*# sourceMappingURL=styles.module.css.map */ex;
+  align-items: center;
+  -moz-column-gap: 5px;
+       column-gap: 5px;
+  transform: translate(-50%, -100%);
+  font-size: 10px;
+}/*# sourceMappingURL=styles.module.css.map */ 100% 1px;
+  margin-right: 5px;
+}
+
+.group_by_column_header_btn {
+  padding: 0;
+  background-color: transparent;
   border: none;
-  outline: none;
+  color: rgba(55, 53, 47, 0.45);
+  transform: rotate(270deg);
+}
+.group_by_column_header_btn.open {
+  color: rgba(55, 53, 47, 0.85);
+  transform: rotate(0deg);
 }
 
-.activity .header {
-  padding: 24px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.activity .header .leftside {
-  display: flex;
-  align-items: center;
-  -moz-column-gap: 16px;
-       column-gap: 16px;
-}
-.activity .header .leftside .foldericon {
-  width: 44px;
-  height: 44px;
+.group_by_column_header_btn_inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f6fa;
-  border-radius: 50%;
-  cursor: pointer;
 }
-.activity .header .leftside .foldericon svg {
-  width: 24px;
-  height: 24px;
+
+.group_by_sub_column {
+  height: 32px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e5e9eb;
 }
-.activity .header .rightside {
+
+.highlighted {
+  border-radius: 4px;
+  background-color: rgba(255, 205, 56, 0.4);
+  outline: rgba(255, 205, 56, 0.4) solid 2px;
+}/*# sourceMappingURL=styles.module.css.map */;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e5e9eb;
+}
+
+.group_by.isHidden {
+  visibility: hidden;
+}
+
+.newBtn {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  padding: 6px 8px;
+  color: rgba(70, 68, 64, 0.45);
+}
+.newBtn span {
   display: flex;
   align-items: center;
   -moz-column-gap: 8px;
        column-gap: 8px;
 }
-.activity .header .rightside .createicon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f6fa;
-  border-radius: 50%;
-  cursor: pointer;
+
+.sidebarResizeHandle {
+  width: 5px;
+  cursor: ew-resize;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgba(35, 131, 226, 0.8);
+  opacity: 0;
 }
-.activity .header .rightside .createicon:hover {
-  background: #d8d9db;
-  transition: 0.5s;
+.sidebarResizeHandle:hover {
+  opacity: 1;
 }
-.activity .header .rightside .createicon svg {
-  width: 24px;
-  height: 24px;
-}
-.activity .header .rightside .deleteicon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f6fa;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.activity .header .rightside .deleteicon:hover {
-  background: #e35169;
-  color: #fff;
-  transition: 0.5s;
-}
-.activity .header .rightside .deleteicon svg {
-  width: 24px;
-  height: 24px;
-}
-.activity .header .rightside .addicon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #007aff;
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
+.sidebarResizeHandle:active {
+  opacity: 1;
+}/*# sourceMappingURL=styles.module.css.map */pointer;
 }
 .activity .header .rightside .addicon:hover {
   background: #005fc4;

@@ -1,4 +1,9 @@
-@import url("https://cdn.syncfusion.com/ej2/20.3.56/bootstrap5.css");/*# sourceMappingURL=index.css.map */-inline-tool .button-wrapper-text {
+.ce-inline-tool.ce-inline-tool--font {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+.ce-inline-tool .button-wrapper-text {
   width: 30px;
 }
 .ce-inline-tool .selectionList {

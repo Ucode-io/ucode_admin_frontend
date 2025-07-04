@@ -88,7 +88,9 @@
   line-height: 24px;
   letter-spacing: -0.006em;
   text-align: center;
-}/*# sourceMappingURL=index.module.css.map */*# sourceMappingURL=index.module.css.map */x;
+}/*# sourceMappingURL=index.module.css.map */right: 20px;
+  outline: none;
+}/*# sourceMappingURL=index.module.css.map */x;
   font-weight: 600;
   padding: 0 4px 12px 4px;
   border-bottom: 2px solid transparent;
@@ -96,19 +98,19 @@
   cursor: pointer;
 }
 .tabs .tab.active {
-  color: #337E28;
-  border-color: #337E28;
+  color: #007afe;
+  border-color: #007afe;
 }
 
 .content {
   background-color: white;
-  border-top: 1px solid #EAECF0;
+  border-top: 1px solid #eaecf0;
   display: flex;
 }
 .content .templatesList {
   width: 360px;
   min-width: 360px;
-  border-right: 1px solid #EAECF0;
+  border-right: 1px solid #eaecf0;
   min-height: calc(100vh - 130px);
   height: calc(100vh - 130px);
   overflow: auto;
@@ -118,11 +120,11 @@
   font-size: 18px;
   font-weight: 500;
   padding: 20px;
-  border-bottom: 1px solid #EAECF0;
+  border-bottom: 1px solid #eaecf0;
 }
 .content .templatesList .list .row {
-  padding: 8px 12px;
-  font-size: 16px;
+  padding: 4px 12px;
+  font-size: 14px;
   line-height: 24px;
   display: flex;
   align-items: center;
@@ -132,7 +134,7 @@
   width: 24px;
   height: 24px;
   margin-right: 12px;
-  color: #449424;
+  color: #007afe;
 }
 .content .templatesList .list .row:hover {
   background-color: rgba(145, 158, 171, 0.08);
@@ -144,7 +146,7 @@
 .content .form {
   width: 360px;
   min-width: 360px;
-  border-right: 1px solid #EAECF0;
+  border-right: 1px solid #eaecf0;
   min-height: calc(100vh - 130px);
   height: calc(100vh - 130px);
   overflow: auto;

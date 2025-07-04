@@ -472,7 +472,9 @@ export const NewUiViewsWithGroups = ({
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
-        navigate(view?.attributes?.url_object);
+        navigate(
+          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
+        );
       }
       setOpen(true);
       setSelectedRow(null);

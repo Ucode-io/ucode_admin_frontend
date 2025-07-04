@@ -72,9 +72,12 @@ export const ScreenOptions = ({
                 color: "#37352f",
               }}
               key={option.label}
-              onClick={() => handleClose(option)}>
+              onClick={() => {
+                localStorage.setItem("detailPage", option?.icon);
+                handleClose(option);
+              }}>
               <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
-                <span>{getColumnFieldIcon(option)}</span>
+                <span>{getColumnFieldIcon(option?.icon)}</span>
                 {option.label}
               </Box>
 

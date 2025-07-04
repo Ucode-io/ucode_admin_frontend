@@ -14,8 +14,10 @@ import FRow from "../../../../components/FormElements/FRow";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import constructorTableService from "../../../../services/constructorTableService";
 import listToOptions from "../../../../utils/listToOptions";
-import LinkIcon from "@mui/icons-material/Link";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {groupFieldActions} from "../../../../store/groupField/groupField.slice";
+import {listToMapWithoutRel} from "../../../../utils/listToMap";
+import menuService from "../../../../services/menuService";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -38,14 +40,18 @@ export default function ViewTypeList({
 }) {
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
-  const [relationField, setRelationField] = useState(null);
+  const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const {menuId} = useParams();
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const viewsPath = useSelector((state) => state?.groupField?.viewsPath);
+  const lastPath = viewsPath?.[viewsPath?.length - 1];
+  const groupByTableSlug = useSelector(
+    (state) => state?.groupField?.groupByFieldSlug
+  );
 
   const queryClient = useQueryClient();
-  const {control, watch, setError, clearErrors} = useForm({});
+  const {control, watch, setError, clearErrors, setValue} = useForm({});
   const [error] = useState(false);
 
   const tableSlug = Boolean(relationView)
@@ -159,6 +165,23 @@ export default function ViewTypeList({
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
 
+  const {
+    data: {fieldsMapRel} = {
+      fieldsMapRel: {},
+    },
+    isLoading,
+  } = useQuery(
+    ["GET_VIEW_FIELDS_CREATE", i18n?.language, groupByTableSlug],
+    () =>
+      menuService.getFieldsListMenu(menuId, lastPath?.id, groupByTableSlug, {}),
+    {
+      enabled: Boolean(groupByTableSlug),
+      select: ({data}) => ({
+        fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
+      }),
+    }
+  );
+
   const createView = () => {
     if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
       setError("group_fields", {message: "Please select group"});
@@ -189,6 +212,7 @@ export default function ViewTypeList({
             },
           })
           .then(() => {
+            dispatch(groupFieldActions.clearGroupBySlug());
             queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
@@ -212,11 +236,12 @@ export default function ViewTypeList({
         .create(tableSlug, {
           ...newViewJSON,
           table_slug:
-            viewsPath?.[viewsPath?.length - 1]?.relation_table_slug ||
-            viewsPath?.[viewsPath?.length - 1]?.table_slug,
+            viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+            viewsList?.[viewsList?.length - 1]?.table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {
+          dispatch(groupFieldActions.clearGroupBySlug());
           if (relationView && viewsList?.length > 1) {
             return queryClient.refetchQueries([
               "GET_TABLE_VIEWS_LIST_RELATION",
@@ -272,11 +297,12 @@ export default function ViewTypeList({
     return filteredFields;
   }, [tableRelations]);
 
-  const computedColumnsForTabGroup = (Object.values(fieldsMap) ?? []).filter(
-    (column) =>
-      ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
-        column.type
-      )
+  const computedColumnsForTabGroup = (
+    Object.values(groupByTableSlug ? fieldsMapRel : fieldsMap) ?? []
+  ).filter((column) =>
+    ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+      column.type
+    )
   );
 
   const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
@@ -391,19 +417,6 @@ export default function ViewTypeList({
                   </FRow>
                 </MaterialUIProvider>
               )}
-              {selectedViewTab === "BOARD" && (
-                <MaterialUIProvider>
-                  <FRow label="Group by" required>
-                    <HFSelect
-                      options={computedColumnsForTabGroupOptions}
-                      control={control}
-                      name="group_fields"
-                      MenuProps={{disablePortal: true}}
-                      required={true}
-                    />
-                  </FRow>
-                </MaterialUIProvider>
-              )}
               {Boolean(relationView) && (
                 <MaterialUIProvider>
                   <FRow label="Relation Field" required>
@@ -413,8 +426,39 @@ export default function ViewTypeList({
                       name="table_slug"
                       MenuProps={{disablePortal: true}}
                       required={true}
+                      onChange={(e) => {
+                        dispatch(groupFieldActions.addGroupBySlug(e));
+                        setValue("table_slug", e);
+                      }}
                     />
                   </FRow>
+                </MaterialUIProvider>
+              )}
+              {selectedViewTab === "BOARD" && (
+                <MaterialUIProvider>
+                  {relationView ? (
+                    Boolean(groupByTableSlug) && (
+                      <FRow label="Group by" required>
+                        <HFSelect
+                          options={computedColumnsForTabGroupOptions}
+                          control={control}
+                          name="group_fields"
+                          MenuProps={{disablePortal: true}}
+                          required={true}
+                        />
+                      </FRow>
+                    )
+                  ) : (
+                    <FRow label="Group by" required>
+                      <HFSelect
+                        options={computedColumnsForTabGroupOptions}
+                        control={control}
+                        name="group_fields"
+                        MenuProps={{disablePortal: true}}
+                        required={true}
+                      />
+                    </FRow>
+                  )}
                 </MaterialUIProvider>
               )}
             </div>

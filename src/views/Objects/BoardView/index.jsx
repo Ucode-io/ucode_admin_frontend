@@ -79,6 +79,7 @@ const BoardView = ({
     searchText,
     checkedColumns,
     columnsForSearch,
+    relationView,
   });
   const {
     id,
@@ -276,7 +277,7 @@ const BoardView = ({
                       setDefaultValue={setDefaultValue}
                       searchText={searchText}
                       columnsForSearch={columnsForSearch}
-                      groupSlug={groupField.slug}
+                      groupSlug={groupField?.slug}
                       getGroupCounts={getGroupCounts}
                       groupItem={group?.name}
                       groupField={groupField}

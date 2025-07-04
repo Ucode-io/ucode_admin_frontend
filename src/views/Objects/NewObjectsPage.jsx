@@ -109,6 +109,7 @@ const NewObjectsPage = () => {
         //     is_relation_view: data?.tableInfo?.is_relation_view ?? false,
         //   })
         // );
+
         dispatch(
           groupFieldActions.addViewPath({
             id: data?.tableInfo.id,

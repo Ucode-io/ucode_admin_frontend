@@ -595,15 +595,17 @@ const DrawerTableView = ({
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
   useEffect(() => {
-    if (localStorage.getItem("detailPage") === "undefined")
+    if (localStorage.getItem("detailPage") === "undefined") {
       setSelectedViewType("SidePeek");
-    localStorage.setItem("detailPage", "SidePeek");
+      localStorage.setItem("detailPage", "SidePeek");
+    }
   }, [localStorage.getItem("detailPage")]);
 
   return (
     <MaterialUIProvider>
       <div id="wrapper_drag" className={styles.wrapper}>
         <DynamicTable
+          relationView={relationView}
           projectInfo={projectInfo}
           tableLan={tableLan}
           custom_events={custom_events}

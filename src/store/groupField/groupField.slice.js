@@ -6,6 +6,7 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
     initialState: {
       viewsList: [],
       viewsPath: [],
+      groupByFieldSlug: "",
     },
     reducers: {
       addViewPath: (state, {payload}) => {
@@ -70,6 +71,13 @@ export const {actions: groupFieldActions, reducer: groupFieldReducer} =
             }
           }
         }
+      },
+
+      addGroupBySlug: (state, {payload}) => {
+        state.groupByFieldSlug = payload;
+      },
+      clearGroupBySlug: (state) => {
+        state.groupByFieldSlug = "";
       },
       trimViewsUntil: (state, {payload}) => {
         if (!payload) return;

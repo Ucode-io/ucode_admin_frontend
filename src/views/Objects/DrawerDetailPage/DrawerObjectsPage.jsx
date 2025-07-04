@@ -46,6 +46,7 @@ function DrawerObjectsPage({
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
+
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
@@ -131,7 +132,12 @@ function DrawerObjectsPage({
     },
     isLoading,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", i18n?.language, selectedTabIndex, lastPath],
+    [
+      "GET_VIEWS_AND_FIELDS",
+      i18n?.language,
+      selectedTabIndex,
+      lastPath?.length,
+    ],
     () =>
       menuService.getFieldsListMenu(
         menuId,

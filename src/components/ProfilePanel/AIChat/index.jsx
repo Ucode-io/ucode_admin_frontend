@@ -1,5 +1,5 @@
-import {Box, Menu, Typography} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
+import { Box, IconButton, Menu, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import sendToGptService from "../../../services/sendToGptService";
 import GptChat from "./GptChat";
 import UserChat from "./UserChat";
@@ -10,6 +10,7 @@ import { ProjectType } from "./components/ProjectType";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useMcpCellMutation } from "@/services/mcp/mcp.service";
 import { ProjectManagement } from "./components/ProjectManagement";
+import { ArrowBack } from "@mui/icons-material";
 
 const EntityCard = ({ onClick, icon, heading, description, bgcolor }) => {
   return (
@@ -58,7 +59,7 @@ export const AIMenu = ({
   setMessages = () => {},
 }) => {
   const [disabled, setDisabled] = useState(false);
-  const [shoFields, setShowFields] = useState(false);
+  const [showFields, setShowFields] = useState(false);
 
   const {
     control,
@@ -78,8 +79,8 @@ export const AIMenu = ({
   });
 
   const handleSelectProjectType = () => {
-    setDisabled(true);
-    setShowFields(true);
+    // setDisabled(true);
+    // setShowFields(true);
   };
 
   const cellMcpMutation = useMcpCellMutation({
@@ -172,9 +173,25 @@ export const AIMenu = ({
             color: "#000",
             padding: "10px",
             borderBottom: "1px solid #ccc",
+            position: "relative",
           }}
         >
-          <Typography sx={{ marginLeft: "10px" }} variant="h4">
+          {selectedEntityType && (
+            <IconButton
+              color="#475467"
+              onClick={onExited}
+              sx={{ position: "absolute", left: "10px" }}
+            >
+              <ArrowBack htmlColor="#475467" />
+            </IconButton>
+          )}
+          <Typography
+            sx={{
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+            variant="h4"
+          >
             Chat
           </Typography>
         </Box>
@@ -187,24 +204,26 @@ export const AIMenu = ({
           }}
         >
           {selectedEntityType === ENTITY_TYPES.TEMPLATES && (
-            <ProjectType
-              control={control}
-              disabled={disabled}
-              errors={errors}
-              handleSelectProjectType={handleSelectProjectType}
-              setValue={setValue}
-              watch={watch}
-            />
-          )}
-          {shoFields && selectedEntityType === ENTITY_TYPES.TEMPLATES && (
-            <ProjectManagement
-              fields={fields}
-              handleSubmit={handleSubmit}
-              onSubmit={onSubmit}
-              setMessages={setMessages}
-              watch={watch}
-              control={control}
-            />
+            <>
+              <ProjectType
+                control={control}
+                disabled={disabled}
+                errors={errors}
+                handleSelectProjectType={handleSelectProjectType}
+                setValue={setValue}
+                watch={watch}
+              />
+              {watch("project_type") && (
+                <ProjectManagement
+                  fields={fields}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  setMessages={setMessages}
+                  watch={watch}
+                  control={control}
+                />
+              )}
+            </>
           )}
           {messages.length > 0 || selectedEntityType ? (
             messages.map((msg, index) =>
@@ -221,7 +240,7 @@ export const AIMenu = ({
                 height: "100%",
                 display: "flex",
                 // alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start",
                 flexDirection: "column",
                 gap: "10px",
                 fontSize: "16px",
@@ -542,4 +561,3 @@ export const useAIChat = () => {
     setMessages,
   };
 };
-

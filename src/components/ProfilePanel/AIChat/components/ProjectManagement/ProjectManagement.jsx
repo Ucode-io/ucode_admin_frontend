@@ -64,6 +64,7 @@ export const ProjectManagement = ({
                   label={el.label}
                   key={el.value}
                   disabled={disabled}
+                  id={`management_system${index}`}
                   style={{
                     transform: "translateY(-1px)",
                     margin: "3px 3px 3px -1px",
@@ -75,6 +76,9 @@ export const ProjectManagement = ({
             <Box display="flex" justifyContent="flex-end">
               <button
                 type="button"
+                disabled={
+                  !watch("management_system")?.some((item) => item?.is_checked)
+                }
                 onClick={() => {
                   if (
                     watch("management_system")?.some((item) => item?.is_checked)

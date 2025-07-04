@@ -91,7 +91,7 @@ export const ProjectType = ({
                 }}
               />
             </Box>
-            {!disabled && (
+            {/* {!disabled && (
               <Box className={cls.buttonBox}>
                 <button
                   type="button"
@@ -102,7 +102,7 @@ export const ProjectType = ({
                   Confirm
                 </button>
               </Box>
-            )}
+            )} */}
           </div>
         </Box>
       </Paper>

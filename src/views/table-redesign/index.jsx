@@ -125,6 +125,7 @@ const mockColumns = Array.from({length: 5}, (_, index) => ({
 }));
 
 export const DynamicTable = ({
+  relationView,
   projectInfo,
   tableLan,
   dataCount,
@@ -132,7 +133,6 @@ export const DynamicTable = ({
   data = [],
   setDrawerState,
   setDrawerStateField,
-  removableHeight,
   getValues,
   additionalRow,
   mainForm,
@@ -151,13 +151,10 @@ export const DynamicTable = ({
   watch,
   control,
   setFormValue,
-  navigateToEditPage,
-  dataLength,
   onDeleteClick,
   onRowClick = () => {},
   tableSlug,
   isResizeble,
-  paginationExtraButton,
   selectedObjectsForDelete,
   setSelectedObjectsForDelete,
   onCheckboxChange,
@@ -172,7 +169,6 @@ export const DynamicTable = ({
   refetch = () => {},
   menuItem,
   loader,
-  height,
   isPaginationPositionSticky,
   getAllData = () => {},
   tableSlugProp = "",
@@ -187,6 +183,8 @@ export const DynamicTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
+  const isModal =
+    relationView && localStorage.getItem("detailPage") === "CenterPeek";
 
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.tableViewFiltersOpen
@@ -397,7 +395,7 @@ export const DynamicTable = ({
           borderRadius: 0,
           flexGrow: 1,
           backgroundColor: "#fff",
-          height: `calc(100vh - ${calculatedHeight + 130}px)`,
+          height: `calc(100vh - ${calculatedHeight + (isModal ? 230 : 130)}px)`,
         }}>
         <table id="resizeMe">
           <thead

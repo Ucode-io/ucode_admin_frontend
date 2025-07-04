@@ -179,6 +179,7 @@ export const NewUiViewsWithGroups = ({
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
+
   const groupTable = view?.attributes?.group_by_columns;
 
   const projectId = useSelector((state) => state.auth.projectId);
@@ -436,11 +437,7 @@ export const NewUiViewsWithGroups = ({
         dispatch(detailDrawerActions.setDrawerTabIndex(index));
         dispatch(
           groupFieldActions.addViewPath({
-            id: view?.id,
-            label: view?.table_label,
-            table_slug: view?.table_slug,
-            relation_table_slug: view?.relation_table_slug ?? null,
-            is_relation_view: view?.is_relation_view,
+            ...view,
           })
         );
       } else {
@@ -527,6 +524,12 @@ export const NewUiViewsWithGroups = ({
       resolve();
       queryClient.refetchQueries(["GET_TABLE_INFO"]);
     });
+  };
+
+  const handleClosePop = () => {
+    console.log("entereddddddddddd");
+    dispatch(groupFieldActions.clearGroupBySlug());
+    setViewAnchorEl(null);
   };
 
   useEffect(() => {
@@ -868,7 +871,9 @@ export const NewUiViewsWithGroups = ({
             <MuiPopover
               open={Boolean(viewAnchorEl)}
               anchorEl={viewAnchorEl}
-              onClose={() => setViewAnchorEl(null)}
+              onClose={() => {
+                handleClosePop();
+              }}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",

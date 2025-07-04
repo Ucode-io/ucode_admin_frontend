@@ -26,9 +26,6 @@ export const useBoardViewProps = ({
   columnsForSearch,
 }) => {
   const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
-  const checkedColumns = columnsForSearch
-    ?.filter((item) => item?.is_search && searchableTypes?.includes(item?.type))
-    ?.map((item) => item?.slug);
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 
@@ -77,9 +74,9 @@ export const useBoardViewProps = ({
 
   const subGroupField = fieldsMap[subGroupById];
   const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
-
+  console.log("viewwwwwwww=w=w=w=w=w=w=", view, fieldsMapRel);
   const groupFieldId = view?.group_fields?.[0];
-  const groupField = fieldsMapRel[groupFieldId];
+  const groupField = fieldsMapRel?.[groupFieldId];
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -186,6 +183,8 @@ export const useBoardViewProps = ({
   };
 
   const getGroupCounts = () => {
+    if (!groupField?.slug) return;
+
     const mutateBody = {
       data: {
         group_by: {
@@ -193,8 +192,15 @@ export const useBoardViewProps = ({
         },
       },
     };
+
     groupMutationForCounts.mutate(mutateBody);
   };
+
+  useEffect(() => {
+    if (groupField?.slug) {
+      getGroupCounts();
+    }
+  }, [groupField?.slug]);
 
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
@@ -265,6 +271,7 @@ export const useBoardViewProps = ({
   );
 
   const mutateBoardData = (offsetProp) => {
+    if (!groupField?.slug) return;
     const fields = [
       ...visibleColumns
         ?.filter((item) => {
@@ -281,7 +288,7 @@ export const useBoardViewProps = ({
     boardMutation.mutate({
       data: {
         group_by: {
-          field: groupField.slug,
+          field: groupField?.slug,
         },
         subgroup_by: {
           field: subGroupFieldSlug,
@@ -355,10 +362,11 @@ export const useBoardViewProps = ({
   }, [boardData]);
 
   const mutateBoardStructure = () => {
+    if (!groupField?.slug) return;
     const mutateBody = {
       data: {
         group_by: {
-          field: groupField.slug,
+          field: groupField?.slug,
         },
       },
     };
@@ -380,7 +388,7 @@ export const useBoardViewProps = ({
   useEffect(() => {
     mutateBoardStructure();
     setOffset(0);
-  }, [subGroupById, groupFieldId]);
+  }, [subGroupById, groupFieldId, groupField?.slug]);
 
   // groupField, subGroupFieldSlug, subGroupById
 

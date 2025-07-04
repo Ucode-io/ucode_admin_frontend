@@ -31,7 +31,7 @@ const HFCheckbox = ({
           }}
         >
           <Checkbox
-            id={`checkbox${id}`}
+            id={`checkbox-${id}`}
             style={{
               transform: "translateY(-1px)",
               marginRight: "8px",

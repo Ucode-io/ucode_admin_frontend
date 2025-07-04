@@ -511,7 +511,7 @@ export const useBoardViewProps = ({
     if (groupField?.slug) {
       mutateBoardData();
     }
-  }, [groupField?.slug]);
+  }, [groupField?.slug, view?.columns]);
 
   useEffect(() => {
     const board = boardRef.current;

@@ -25,7 +25,7 @@ export const useBoardViewProps = ({
   // checkedColumns,
   columnsForSearch,
 }) => {
-  const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
+  // const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 
@@ -74,7 +74,7 @@ export const useBoardViewProps = ({
 
   const subGroupField = fieldsMap[subGroupById];
   const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
-  console.log("viewwwwwwww=w=w=w=w=w=w=", view, fieldsMapRel);
+
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel?.[groupFieldId];
 
@@ -123,11 +123,11 @@ export const useBoardViewProps = ({
     ];
   };
 
-  const navigateToEditPage = (el) => {
-    setOpenDrawerModal(true);
-    setDateInfo({});
-    setDefaultValue({});
-  };
+  // const navigateToEditPage = (el) => {
+  //   setOpenDrawerModal(true);
+  //   setDateInfo({});
+  //   setDefaultValue({});
+  // };
 
   const navigateToCreatePage = ({group}) => {
     setOpenDrawerModal(true);
@@ -144,10 +144,10 @@ export const useBoardViewProps = ({
     }
   };
 
-  const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
-    navigate(url);
-  };
+  // const navigateToSettingsPage = () => {
+  //   const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+  //   navigate(url);
+  // };
 
   const updateView = (tabs) => {
     const computedData = {

@@ -527,7 +527,6 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleClosePop = () => {
-    console.log("entereddddddddddd");
     dispatch(groupFieldActions.clearGroupBySlug());
     setViewAnchorEl(null);
   };
@@ -551,7 +550,7 @@ export const NewUiViewsWithGroups = ({
 
   const viewName =
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
-
+  console.log("selectedRowselectedRow", selectedRow);
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>

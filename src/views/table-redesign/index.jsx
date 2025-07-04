@@ -55,8 +55,9 @@ import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import { useGetLang } from "../../hooks/useGetLang";
 
-const mockColumns = Array.from({length: 5}, (_, index) => ({
+const mockColumns = Array.from({ length: 5 }, (_, index) => ({
   attributes: {
     field_permission: {
       edit_permission: true,
@@ -176,7 +177,7 @@ export const DynamicTable = ({
   getAllData = () => {},
   tableSlugProp = "",
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -252,7 +253,7 @@ export const DynamicTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -348,13 +349,13 @@ export const DynamicTable = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
@@ -386,9 +387,10 @@ export const DynamicTable = ({
       className="CTableContainer"
       style={
         isPaginationPositionSticky
-          ? {display: "flex", flexDirection: "column", height: "100%"}
+          ? { display: "flex", flexDirection: "column", height: "100%" }
           : {}
-      }>
+      }
+    >
       <div
         className="table"
         style={{
@@ -397,7 +399,8 @@ export const DynamicTable = ({
           flexGrow: 1,
           backgroundColor: "#fff",
           height: `calc(100vh - ${calculatedHeight + 130}px)`,
-        }}>
+        }}
+      >
         <table id="resizeMe">
           <thead
             style={{
@@ -405,7 +408,8 @@ export const DynamicTable = ({
               position: "sticky",
               top: 0,
               zIndex: 2,
-            }}>
+            }}
+          >
             <tr>
               <IndexTh
                 items={isRelationTable ? fields : data}
@@ -462,7 +466,8 @@ export const DynamicTable = ({
                 <PermissionWrapperV2
                   tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
                   type="add_field"
-                  id="addField">
+                  id="addField"
+                >
                   <FieldButton
                     tableLan={tableLan}
                     openFieldSettings={openFieldSettings}
@@ -570,7 +575,8 @@ export const DynamicTable = ({
                     zIndex: "1",
                     width: "45px",
                     color: "#007aff",
-                  }}>
+                  }}
+                >
                   <Flex
                     id="addRowBtn"
                     h="30px"
@@ -578,8 +584,9 @@ export const DynamicTable = ({
                     justifyContent="center"
                     transition="background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
                     cursor="pointer"
-                    _hover={{bg: "rgba(0, 122, 255, 0.08)"}}
-                    onClick={() => setAddNewRow(true)}>
+                    _hover={{ bg: "rgba(0, 122, 255, 0.08)" }}
+                    onClick={() => setAddNewRow(true)}
+                  >
                     <AddRoundedIcon fill="#007aff" />
                   </Flex>
                 </td>
@@ -599,13 +606,15 @@ export const DynamicTable = ({
         py="6px"
         borderTop="1px solid #EAECF0"
         justifyContent="space-between"
-        bg="#fff">
+        bg="#fff"
+      >
         <Flex
           columnGap="16px"
           alignItems="center"
           fontSize={14}
           fontWeight={600}
-          color="#344054">
+          color="#344054"
+        >
           {generateLangaugeText(tableLan, i18n?.language, "Show") || "Show"}
           <ChakraProvider>
             <CreatableSelect
@@ -627,7 +636,7 @@ export const DynamicTable = ({
                 label: `${option.value} ${generateLangaugeText(tableLan, i18n?.language, "rows") || "rows"}`,
               }))}
               menuPlacement="top"
-              onChange={({value}) => getLimitValue(value)}
+              onChange={({ value }) => getLimitValue(value)}
               onCreateOption={onCreateLimitOption}
             />
           </ChakraProvider>
@@ -650,9 +659,10 @@ export const DynamicTable = ({
 
         {selectedObjectsForDelete?.length > 0 && (
           <RectangleIconButton
-            style={{minWidth: "160px", border: "none"}}
+            style={{ minWidth: "160px", border: "none" }}
             color="error"
-            onClick={multipleDelete}>
+            onClick={multipleDelete}
+          >
             <Button variant="outlined" color="error">
               {generateLangaugeText(
                 tableLan,
@@ -667,8 +677,8 @@ export const DynamicTable = ({
   );
 };
 
-const IndexTh = ({items, selectedItems, onSelectAll}) => {
-  const {tableSlug} = useParams();
+const IndexTh = ({ items, selectedItems, onSelectAll }) => {
+  const { tableSlug } = useParams();
   const [hover, setHover] = useState(false);
 
   const showCheckbox = hover;
@@ -686,11 +696,12 @@ const IndexTh = ({items, selectedItems, onSelectAll}) => {
       left={0}
       zIndex={1}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}>
+      onMouseLeave={() => setHover(false)}
+    >
       {!showCheckbox && <Image src="/img/hash.svg" alt="index" mx="auto" />}
       {showCheckbox && (
         <Checkbox
-          style={{width: 10, height: 10}}
+          style={{ width: 10, height: 10 }}
           checked={items?.length === selectedItems?.length}
           indeterminate={
             selectedItems?.length > 0 && items?.length !== selectedItems?.length
@@ -983,7 +994,7 @@ const Th = ({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const permissions = useSelector(
     (state) => state.permissions?.permissions?.[tableSlug]
@@ -1081,13 +1092,15 @@ const Th = ({
     else return false;
   }, [view?.attributes?.summaries, column]);
 
+  const lang = useGetLang("Table");
+
   const menu = [
     {
       id: 1,
       children: [
         {
           id: 2,
-          title: "Edit field",
+          title: generateLangaugeText(lang, i18n.language, "Edit field"),
           icon: <CreateOutlinedIcon />,
           onClickAction: (e) => {
             setFieldCreateAnchor(e.currentTarget);
@@ -1107,7 +1120,7 @@ const Th = ({
       children: [
         {
           id: 8,
-          title: `Sort ${
+          title: `${generateLangaugeText(lang, i18n.language, "Sort")} ${
             sortedDatas?.find((item) => item.field === column.id)?.order ===
             "ASC"
               ? "Z -> A"
@@ -1144,7 +1157,9 @@ const Th = ({
         },
         {
           id: 18,
-          title: computedViewSummaries ? `Unset Summary` : "Add Summary",
+          title: computedViewSummaries
+            ? `Unset Summary`
+            : generateLangaugeText(lang, i18n.language, "Add Summary"),
           icon: <PlaylistAddCircleIcon />,
           arrowIcon: <KeyboardArrowRightIcon />,
           onClickAction: (e) => {

@@ -508,6 +508,12 @@ export const useBoardViewProps = ({
   }, [list, searchText]);
 
   useEffect(() => {
+    if (groupField?.slug) {
+      mutateBoardData();
+    }
+  }, [groupField?.slug]);
+
+  useEffect(() => {
     const board = boardRef.current;
     const el = fixedElement.current;
     if (!board || !el) return;

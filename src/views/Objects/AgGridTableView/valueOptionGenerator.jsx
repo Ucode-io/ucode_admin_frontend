@@ -1,35 +1,33 @@
-import HFTextInputField from "./HFTextInputField";
-import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
-import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
-import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
-import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
-import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
-import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
-import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
-import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
-import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
-import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
-import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
+import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
+import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
 import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
+import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
+import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
+import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
+import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
 import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
-import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
-import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
+import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
 import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
-import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
+import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
+import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
+import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
+import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
+import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
+import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
+import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
+import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
+import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
-import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
 import {
   HFDateDatePickerWithoutTimeZoneTable,
   HFDatePicker,
   HFDateTimePicker,
   HFTimePicker,
 } from "./FieldRelationGenerator/hf-date-pickers";
-import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
-import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
-import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
-import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
+import HFTextInputField from "./HFTextInputField";
 
 const fieldTypeMap = {
   SINGLE_LINE: HFTextInputField,
@@ -37,7 +35,6 @@ const fieldTypeMap = {
   FLOAT: HFFloatFieldCell,
   TEXT: HFTextComponent,
   LINK: HFLinkFieldEditor,
-  MONEY: HFMoneyFieldEditor,
   STATUS: HFStatusFieldEditor,
   MULTI_LINE: MultiLineCellEditor,
   PASSWORD: PasswordCellEditor,
@@ -61,7 +58,6 @@ const fieldTypeMap = {
   POLYGON: PolygonFieldTableCellEditor,
   COLOR: ColorPicker,
   ICON: IconPickerCell,
-  QR: HFQrFieldComponentCellEditor,
 };
 
 const getColumnEditorParams = (item, columnDef) => {
@@ -76,11 +72,6 @@ const getColumnEditorParams = (item, columnDef) => {
     case "SINGLE_LINE":
       columnDef.cellEditorParams = {maxLength: 255, field: item};
       columnDef.valueFormatter = (params) => params.value || "";
-      break;
-
-    case "MONEY":
-      columnDef.valueGetter = (params) =>
-        params?.data?.[params.colDef.field] || [];
       break;
 
     case "MULTISELECT":

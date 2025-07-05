@@ -9,33 +9,34 @@ import {
   Tooltip,
 } from "@mui/material";
 import {Parser} from "hot-formula-parser";
-import {useState} from "react";
+import React, {useState} from "react";
 import RowClickButton from "../RowClickButton";
 
 const parser = new Parser();
 
 const FormulaCellEditor = (props) => {
-  let {field, setValue, value, data} = props;
+  let {value, data} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
-  const formula = field?.attributes?.formula ?? "";
+  const formula = colDef?.formula ?? "";
+  const disabled = colDef?.disabled;
 
-  const updateValue = () => {
-    let computedFormula = formula;
-    const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
-    fieldsListSorted?.forEach((field) => {
-      // let value = values[field.slug] ?? 0;
+  // const updateValue = () => {
+  //   let computedFormula = formula;
+  //   const fieldsListSorted = fieldsList
+  //     ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+  //     : [];
+  //   fieldsListSorted?.forEach((field) => {
+  //     // let value = values[field.slug] ?? 0;
 
-      if (typeof value === "string") value = `'${value}'`;
-      if (typeof value === "object") value = `"${value}"`;
-      if (typeof value === "boolean")
-        value = JSON.stringify(value).toUpperCase();
-      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
-    });
+  //     if (typeof value === "string") value = `'${value}'`;
+  //     if (typeof value === "object") value = `"${value}"`;
+  //     if (typeof value === "boolean")
+  //       value = JSON.stringify(value).toUpperCase();
+  //     computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+  //   });
 
-    const {error, result} = parser.parse(computedFormula);
-  };
+  //   const {error, result} = parser.parse(computedFormula);
+  // };
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -69,7 +70,7 @@ const FormulaCellEditor = (props) => {
           isNewTableView && updateObject();
         }}
         fullWidth
-        disabled={field?.disabled}
+        disabled={disabled}
         sx={{
           backgroundColor: "transparent",
           "& .MuiInputBase-root": {
@@ -84,8 +85,8 @@ const FormulaCellEditor = (props) => {
         }}
         InputProps={{
           // inputProps: {tabIndex},
-          readOnly: field?.disabled,
-          style: field?.disabled
+          readOnly: disabled,
+          style: disabled
             ? {
                 background: "inherit",
                 paddingRight: "0",
@@ -110,7 +111,7 @@ const FormulaCellEditor = (props) => {
                     <FunctionsIcon />
                   </IconButton>
                 </Tooltip>
-                {field?.disabled && (
+                {disabled && (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
                       <Lock style={{fontSize: "20px"}} />
@@ -130,4 +131,4 @@ const FormulaCellEditor = (props) => {
   );
 };
 
-export default FormulaCellEditor;
+export default React.memo(FormulaCellEditor);

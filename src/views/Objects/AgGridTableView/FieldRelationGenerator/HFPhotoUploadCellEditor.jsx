@@ -3,8 +3,9 @@ import ImageUploadCellEditor from "./ImageComponents/ImageUploadCellEditor";
 import RowClickButton from "../RowClickButton";
 import {Box} from "@mui/material";
 
-export default function HFPhotoUploadCellEditor(props) {
-  const {field, value, setValue, data, colDef} = props;
+function HFPhotoUploadCellEditor(props) {
+  const {value, setValue, data, colDef} = props;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -26,7 +27,7 @@ export default function HFPhotoUploadCellEditor(props) {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
         {...props}
       />
       {/* {!disabledHelperText && error?.message && (
@@ -38,3 +39,5 @@ export default function HFPhotoUploadCellEditor(props) {
     </Box>
   );
 }
+
+export default React.memo(HFPhotoUploadCellEditor);

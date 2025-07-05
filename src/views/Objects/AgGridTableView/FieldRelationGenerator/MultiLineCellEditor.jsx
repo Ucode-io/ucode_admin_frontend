@@ -123,4 +123,4 @@ function MultiLineCellEditor(props) {
   );
 }
 
-export default MultiLineCellEditor;
+export default React.memo(MultiLineCellEditor);

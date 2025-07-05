@@ -1,9 +1,11 @@
 import {Box} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 import MultiImageUploadCellEditor from "./ImageComponents/MultiImageUploadCellEditor";
+import React from "react";
 
 const HFMultiImageCellEditor = (props) => {
-  const {field, setValue, value, data, colDef} = props;
+  const {setValue, value, data, colDef} = props;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -23,8 +25,7 @@ const HFMultiImageCellEditor = (props) => {
       <MultiImageUploadCellEditor
         value={value ?? []}
         onChange={setValue}
-        field={field}
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
@@ -36,4 +37,4 @@ const HFMultiImageCellEditor = (props) => {
   );
 };
 
-export default HFMultiImageCellEditor;
+export default React.memo(HFMultiImageCellEditor);

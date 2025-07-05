@@ -1,24 +1,14 @@
-import {useEffect} from "react";
-import {makeStyles} from "@mui/styles";
-import styles from "./style.module.scss";
-import {useLocation} from "react-router-dom";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {Box, Button, InputAdornment, TextField} from "@mui/material";
+import {Box, InputAdornment, TextField} from "@mui/material";
+import React, {useEffect} from "react";
+import {useLocation} from "react-router-dom";
 import RowClickButton from "../RowClickButton";
-
-const useStyles = makeStyles((theme) => ({
-  input: {
-    padding: "0px",
-    "&::placeholder": {
-      color: "#fff",
-    },
-  },
-}));
+import styles from "./style.module.scss";
 
 const HFLinkFieldEditor = (props) => {
-  const {value, setValue, isNewTableView = false, colDef, data} = props;
+  const {value, setValue, colDef, data} = props;
   const location = useLocation();
-  const field = colDef?.fieldObj;
+  const disabled = colDef?.disabled;
 
   useEffect(() => {
     if (
@@ -69,12 +59,12 @@ const HFLinkFieldEditor = (props) => {
           },
         }}
         InputProps={{
-          readOnly: field?.attributes?.disabled,
+          readOnly: disabled,
           inputProps: {style: {height: "32px"}},
 
           endAdornment: (
             <InputAdornment position="start">
-              {field?.attributes?.disabled ? (
+              {disabled ? (
                 <button style={{width: "20px", height: "20px"}}>
                   <img
                     src="/table-icons/lock.svg"
@@ -98,11 +88,9 @@ const HFLinkFieldEditor = (props) => {
         className={"custom_textfield_new"}
         {...props}
       />
-      {/* {colDef?.colIndex === 0 && ( */}
       <RowClickButton onRowClick={onNavigateToDetail} />
-      {/* )} */}
     </Box>
   );
 };
 
-export default HFLinkFieldEditor;
+export default React.memo(HFLinkFieldEditor);

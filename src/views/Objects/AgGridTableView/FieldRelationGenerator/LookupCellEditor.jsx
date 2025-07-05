@@ -50,7 +50,6 @@ const customStyles = {
 };
 
 const LookupCellEditor = (props) => {
-  console.log("propspropspropsprops", props);
   const [options, setOptions] = useState([]);
   const {field, setValue, data, value} = props;
   const [page, setPage] = useState(1);
@@ -231,4 +230,4 @@ const LookupCellEditor = (props) => {
   );
 };
 
-export default LookupCellEditor;
+export default React.memo(LookupCellEditor);

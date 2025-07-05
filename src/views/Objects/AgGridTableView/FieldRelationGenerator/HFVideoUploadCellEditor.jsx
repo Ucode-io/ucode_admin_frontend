@@ -1,9 +1,11 @@
 import {Box} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 import VideoUploadCellEditor from "./ImageComponents/VideoUploadCellEditor";
+import React from "react";
 
 const HFVideoUploadCellEditor = (props) => {
   const {field, setValue, value, data, colDef} = props;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -24,7 +26,7 @@ const HFVideoUploadCellEditor = (props) => {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={field?.attributes?.disabled}
+        disabled={disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
@@ -37,4 +39,4 @@ const HFVideoUploadCellEditor = (props) => {
   );
 };
 
-export default HFVideoUploadCellEditor;
+export default React.memo(HFVideoUploadCellEditor);

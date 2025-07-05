@@ -20,7 +20,7 @@ const requestV2 = axios.create({
 // }
 
 const errorHandler = (error, hooks) => {
-  console.log({error})
+  console.log({error});
   if (
     error?.response?.status === 401 &&
     error?.response?.data?.data ===
@@ -72,6 +72,10 @@ const errorHandler = (error, hooks) => {
 
 requestV2.interceptors.request.use(
   (config) => {
+    if (typeof config.headers !== "object" || config.headers === null) {
+      config.headers = {};
+    }
+
     const authStore = store.getState().auth;
     const token = authStore.token;
     const resourceId = authStore.resourceId;
@@ -84,18 +88,9 @@ requestV2.interceptors.request.use(
       config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
     }
-    // if (!config.params?.["project-id"]) {
-    //   if (config.params) {
-    //     config.params["project-id"] = projectId;
-    //   } else {
-    //     config.params = {
-    //       "project-id": projectId,
-    //     };
-    //   }
-    // }
+
     return config;
   },
-
   (error) => errorHandler(error)
 );
 

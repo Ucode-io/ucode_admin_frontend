@@ -59,6 +59,8 @@ const ConstructorTablesFormPage = () => {
       ...value,
     }))
   );
+
+  console.log("ididid", id, tableSlug);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const mainForm = useForm({
@@ -156,11 +158,9 @@ const ConstructorTablesFormPage = () => {
   };
 
   const getRelationFields = async () => {
-    return new Promise(async (resolve) => {
+    try {
       const getFieldsData = constructorFieldService.getList(
-        {
-          table_id: id,
-        },
+        {table_id: id},
         tableSlug
       );
 
@@ -169,14 +169,18 @@ const ConstructorTablesFormPage = () => {
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
+
       const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
+
       mainForm.setValue("fields", fields);
-      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
+
+      const relationsWithRelatedTableSlug = relations.map((relation) => ({
         ...relation,
         relatedTableSlug:
           relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
@@ -185,7 +189,7 @@ const ConstructorTablesFormPage = () => {
       const layoutRelations = [];
       const tableRelations = [];
 
-      relationsWithRelatedTableSlug?.forEach((relation) => {
+      relationsWithRelatedTableSlug.forEach((relation) => {
         if (
           (relation.type === "Many2One" &&
             relation.table_from?.slug === tableSlug) ||
@@ -209,17 +213,21 @@ const ConstructorTablesFormPage = () => {
           fields: relation.view_fields ?? [],
         },
         label:
-          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+          relation?.label ??
+          relation[relation.relatedTableSlug]?.label ??
+          relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
       mainForm.setValue("relationsMap", listToMap(relations));
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
-      resolve();
-    });
+      console.log("entereddddddddddd Try Last");
+    } catch (error) {
+      console.log("entereddddddddddd Error");
+      console.error("getRelationFields error:", error);
+      // Optional: throw error or show toast/notification
+    }
   };
 
   const createType = async (data) => {
@@ -335,13 +343,13 @@ const ConstructorTablesFormPage = () => {
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   if (loader) return <PageFallback />;
 

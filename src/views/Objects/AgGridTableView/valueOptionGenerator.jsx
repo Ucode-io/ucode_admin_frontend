@@ -83,43 +83,43 @@ const getColumnEditorParams = (item, columnDef) => {
       };
       break;
 
-    case "LOOKUP":
-      columnDef.filterValueGetter = (params) => {
-        const slugData = params?.data?.[`${item?.slug}_data`];
-        return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
-      };
-      break;
+    // case "LOOKUP":
+    //   columnDef.filterValueGetter = (params) => {
+    //     const slugData = params?.data?.[`${item?.slug}_data`];
+    //     return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
+    //   };
+    //   break;
 
-    case "FORMULA_FRONTEND":
-      columnDef.valueGetter = (params) => {
-        const formula = item?.attributes?.formula;
-        if (!formula) return 0;
+    // case "FORMULA_FRONTEND":
+    //   columnDef.valueGetter = (params) => {
+    //     const formula = item?.attributes?.formula;
+    //     if (!formula) return 0;
 
-        let computedFormula = formula;
-        const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
+    //     let computedFormula = formula;
+    //     const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
 
-        if (matches) {
-          matches.forEach((slug) => {
-            const value = params?.data?.[slug] ?? 0;
-            computedFormula = computedFormula.replace(
-              new RegExp(`\\b${slug}\\b`, "g"),
-              value
-            );
-          });
-        }
+    //     if (matches) {
+    //       matches.forEach((slug) => {
+    //         const value = params?.data?.[slug] ?? 0;
+    //         computedFormula = computedFormula.replace(
+    //           new RegExp(`\\b${slug}\\b`, "g"),
+    //           value
+    //         );
+    //       });
+    //     }
 
-        try {
-          return eval(computedFormula);
-        } catch (error) {
-          console.error("Error evaluating formula:", error);
-          return "ERROR";
-        }
-      };
-      columnDef.cellRendererParams = {
-        field: item,
-        formula: item?.attributes?.formula,
-      };
-      break;
+    //     try {
+    //       return eval(computedFormula);
+    //     } catch (error) {
+    //       console.error("Error evaluating formula:", error);
+    //       return "ERROR";
+    //     }
+    //   };
+    //   columnDef.cellRendererParams = {
+    //     field: item,
+    //     formula: item?.attributes?.formula,
+    //   };
+    //   break;
 
     case "PHONE":
     case "INTERNATION_PHONE":

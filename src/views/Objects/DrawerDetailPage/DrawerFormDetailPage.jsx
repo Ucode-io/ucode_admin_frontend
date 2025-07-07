@@ -318,7 +318,7 @@ function DrawerFormDetailPage({
                               !field?.attributes?.field_permission
                                 ?.edit_permission
                             }
-                            setFormValue={rootForm.setFormValue}
+                            setFormValue={rootForm.setValue}
                             errors={rootForm.errors}
                           />
                         </Box>

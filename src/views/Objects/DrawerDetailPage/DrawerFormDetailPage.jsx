@@ -1,16 +1,16 @@
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {Container, Draggable} from "react-smooth-dnd";
-import {getColumnIcon} from "../../table-redesign/icons";
+import { Box, Button, Menu, MenuItem, TextField, Tooltip } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Container, Draggable } from "react-smooth-dnd";
+import { getColumnIcon } from "../../table-redesign/icons";
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
-import {Flex, Text} from "@chakra-ui/react";
-import {Check} from "@mui/icons-material";
+import { Flex, Text } from "@chakra-ui/react";
+import { Check } from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {isEqual} from "lodash";
-import {Controller} from "react-hook-form";
+import { isEqual } from "lodash";
+import { Controller } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import { applyDrag } from "../../../utils/applyDrag";
@@ -195,6 +195,32 @@ function DrawerFormDetailPage({
     setMicroFrontendId(id);
   };
 
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = slug.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
+  const computedSlug = (field) => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${activeLang}`;
+    } else if (field.id?.includes("@")) {
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    } else if (field?.id?.includes("#")) {
+      if (field?.type === "Many2Many") {
+        return `${field.id?.split("#")?.[0]}_ids`;
+      } else if (field?.type === "Many2One") {
+        return `${field.id?.split("#")?.[0]}_id`;
+      }
+    }
+
+    return field?.slug;
+  };
+
   return (
     <>
       <Box
@@ -262,72 +288,87 @@ function DrawerFormDetailPage({
                         : { height: "34px" })}
                       py="8px"
                     >
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent={"space-between"}
-                        padding="5px"
-                        borderRadius={"4px"}
-                        width="170px"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: "#F7F7F7",
-                          },
-                        }}
-                      >
+                      <Tooltip title={field.label} placement="left">
                         <Box
-                          width="18px"
-                          height="16px"
-                          mr="8px"
                           display="flex"
                           alignItems="center"
-                          justifyContent="center"
-                          sx={{ color: "#787774" }}
+                          justifyContent={"space-between"}
+                          padding="5px"
+                          borderRadius={"4px"}
+                          width="170px"
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: "#F7F7F7",
+                            },
+                          }}
                         >
-                          <span className="drag">
-                            <DragIndicatorIcon
-                              style={{ width: "16px", height: "16px" }}
-                            />
-                          </span>
-                          <span style={{ color: "#787774" }} className="icon">
-                            {getColumnIcon({
-                              column: {
-                                type: field?.type ?? field?.relation_type,
-                                table_slug: field?.table_slug ?? field?.slug,
-                              },
-                            })}
-                          </span>
+                          <Box
+                            width="18px"
+                            height="16px"
+                            mr="8px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            sx={{ color: "#787774" }}
+                          >
+                            <span className="drag">
+                              <DragIndicatorIcon
+                                style={{ width: "16px", height: "16px" }}
+                              />
+                            </span>
+                            <span style={{ color: "#787774" }} className="icon">
+                              {getColumnIcon({
+                                column: {
+                                  type: field?.type ?? field?.relation_type,
+                                  table_slug: field?.table_slug ?? field?.slug,
+                                },
+                              })}
+                            </span>
+                          </Box>
+                          <Box
+                            fontSize="14px"
+                            color="#787774"
+                            fontWeight="500"
+                            width="100%"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                          >
+                            {getFieldLanguageLabel(field)}
+                          </Box>
                         </Box>
-                        <Box
-                          fontSize="14px"
-                          color="#787774"
-                          fontWeight="500"
-                          width="100%"
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                        >
-                          {getFieldLanguageLabel(field)}
+                      </Tooltip>
+                      <Tooltip
+                        title={
+                          field?.type !== FIELD_TYPES.MULTI_LINE &&
+                          field?.type !== FIELD_TYPES.LOOKUP &&
+                          field?.type !== FIELD_TYPES.LOOKUPS &&
+                          field?.type !== FIELD_TYPES.SWITCH &&
+                          field?.type !== FIELD_TYPES.CHECKBOX
+                            ? watch(computedSlug(field))
+                            : ""
+                        }
+                      >
+                        <Box sx={{ width: "60%" }}>
+                          <DrawerFieldGenerator
+                            reset={reset}
+                            activeLang={activeLang}
+                            drawerDetail={true}
+                            control={control}
+                            field={field}
+                            watch={watch}
+                            isRequired={field?.attributes?.required}
+                            isDisabled={
+                              field?.attributes?.disabled ||
+                              !field?.attributes?.field_permission
+                                ?.edit_permission
+                            }
+                            setFormValue={setFormValue}
+                            errors={errors}
+                            computedSlug={computedSlug(field)}
+                          />
                         </Box>
-                      </Box>
-                      <Box sx={{ width: "60%" }}>
-                        <DrawerFieldGenerator
-                          reset={reset}
-                          activeLang={activeLang}
-                          drawerDetail={true}
-                          control={control}
-                          field={field}
-                          watch={watch}
-                          isRequired={field?.attributes?.required}
-                          isDisabled={
-                            field?.attributes?.disabled ||
-                            !field?.attributes?.field_permission
-                              ?.edit_permission
-                          }
-                          setFormValue={setFormValue}
-                          errors={errors}
-                        />
-                      </Box>
+                      </Tooltip>
                     </Box>
                   </Draggable>
                 ))}
@@ -379,7 +420,7 @@ const HeadingOptions = ({
   selectedRow,
   setFormValue = () => {},
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const selectedFieldSlug =
@@ -524,7 +565,7 @@ const CHTextField = ({
       control={control}
       name={name}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}

@@ -1478,18 +1478,18 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   );
   const dispatch = useDispatch();
 
-  //   const handleClick = (ev) => {
-  //     if (
-  //       tableViewFiltersOpen ||
-  //       (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
-  //     ) {
-  //       ev.stopPropagation();
-  //       return dispatch(
-  //         mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
-  //       );
-  //     }
-  //     onClick(ev);
-  //   };
+  const handleClick = (ev) => {
+    if (
+      tableViewFiltersOpen ||
+      (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
+    ) {
+      ev.stopPropagation();
+      return dispatch(
+        mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
+      );
+    }
+    onClick(ev);
+  };
 
   return (
     <Box position="relative">

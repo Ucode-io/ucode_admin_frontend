@@ -904,8 +904,9 @@ const FieldButton = ({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}>
-        <AddRoundedIcon style={{marginTop: "3px"}} />
+        }}
+      >
+        <AddRoundedIcon style={{ marginTop: "3px" }} />
       </Box>
       <FieldOptionModal
         tableLan={tableLan}
@@ -917,6 +918,7 @@ const FieldButton = ({
       />
       {fieldCreateAnchor && (
         <FieldCreateModal
+          tableSlug={tableSlug}
           tableLan={tableLan}
           anchorEl={fieldCreateAnchor}
           setAnchorEl={setFieldCreateAnchor}
@@ -934,6 +936,7 @@ const FieldButton = ({
           view={view}
           setSortedDatas={setSortedDatas}
           sortedDatas={sortedDatas}
+          mainForm={mainForm}
         />
       )}
     </>

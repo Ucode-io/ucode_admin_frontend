@@ -119,13 +119,15 @@ function FieldCreateHeaderComponent(props) {
           setDrawerState={setDrawerState}
           setDrawerStateField={setDrawerStateField}
           menuItem={menuItem}
+          mainForm={mainForm}
         />
       </PermissionWrapperV2>
       <Drawer
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -142,7 +144,8 @@ function FieldCreateHeaderComponent(props) {
         open={drawerStateField}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

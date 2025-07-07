@@ -1,26 +1,25 @@
-import {Flex, Text} from "@chakra-ui/react";
-import {Check} from "@mui/icons-material";
+import { Box, Button, Menu, MenuItem, TextField, Tooltip } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Container, Draggable } from "react-smooth-dnd";
+import { getColumnIcon } from "../../table-redesign/icons";
+import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
+import { Flex, Text } from "@chakra-ui/react";
+import { Check } from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
-import {isEqual} from "lodash";
-import React, {useEffect, useMemo, useState} from "react";
-import {Controller} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import { isEqual } from "lodash";
+import { Controller } from "react-hook-form";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import layoutService from "../../../services/layoutService";
 import {store} from "../../../store";
 import {applyDrag} from "../../../utils/applyDrag";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
-import {getColumnIcon} from "../../table-redesign/icons";
 import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
-import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
 import "./style.scss";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import { useSelector } from "react-redux";
 
 function DrawerFormDetailPage({
   view,
@@ -194,6 +193,34 @@ function DrawerFormDetailPage({
     setMicroFrontendId(id);
   };
 
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = slug.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
+  const computedSlug = (field) => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${activeLang}`;
+    } else if (field.id?.includes("@")) {
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    } else if (field?.id?.includes("#")) {
+      if (field?.type === "Many2Many") {
+        return `${field.id?.split("#")?.[0]}_ids`;
+      } else if (field?.type === "Many2One") {
+        return `${field.id?.split("#")?.[0]}_id`;
+      }
+    }
+
+    return field?.slug;
+  };
+
+  const {watch, setValue: setFormValue, control, reset, formState: {errors}} = rootForm;
+
   return (
     <MaterialUIProvider>
       <Box
@@ -230,36 +257,34 @@ function DrawerFormDetailPage({
             height: "calc(100vh - 94px)",
           }}>
           {sections?.map((section, secIndex) => (
-            <Box
+            <Container
               sx={{
                 margin: "8px 0 0 0",
               }}
-              key={secIndex}>
-              <Container
-                behaviour="contain"
-                style={{
-                  width: "100%",
-                }}
-                onDragStart={() => setDragAction(true)}
-                onDragEnd={() => setDragAction(false)}
-                dragHandleSelector=".drag-handle"
-                dragClass="drag-item"
-                lockAxis="y"
-                onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-                {section?.fields
-                  ?.filter((el) => filterFields(el))
-                  .map((field, fieldIndex) => (
-                    <Draggable
-                      className={Boolean(defaultAdmin) ? "drag-handle" : ""}
-                      key={field?.id ?? fieldIndex}>
-                      <Box
-                        className={dragAction ? "rowColumnDrag" : "rowColumn"}
-                        display="flex"
-                        alignItems="center"
-                        {...(Boolean(field?.type === "MULTISELECT")
-                          ? {minHeight: "30px"}
-                          : {height: "34px"})}
-                        py="8px">
+              onDragStart={() => setDragAction(true)}
+              onDragEnd={() => setDragAction(false)}
+              dragHandleSelector=".drag-handle"
+              dragClass="drag-item"
+              lockAxis="y"
+              onDrop={(dropResult) => onDrop(secIndex, dropResult)}
+            >
+              {section?.fields
+                ?.filter((el) => filterFields(el))
+                .map((field, fieldIndex) => (
+                  <Draggable
+                    className={Boolean(defaultAdmin) ? "drag-handle" : ""}
+                    key={field?.id ?? fieldIndex}
+                  >
+                    <Box
+                      className={dragAction ? "rowColumnDrag" : "rowColumn"}
+                      display="flex"
+                      alignItems="center"
+                      {...(Boolean(field?.type === "MULTISELECT")
+                        ? { minHeight: "30px" }
+                        : { height: "34px" })}
+                      py="8px"
+                    >
+                      <Tooltip title={field.label} placement="left">
                         <Box
                           display="flex"
                           alignItems="center"
@@ -271,7 +296,8 @@ function DrawerFormDetailPage({
                             "&:hover": {
                               backgroundColor: "#F7F7F7",
                             },
-                          }}>
+                          }}
+                        >
                           <Box
                             width="18px"
                             height="16px"
@@ -279,13 +305,14 @@ function DrawerFormDetailPage({
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
-                            sx={{color: "#787774"}}>
+                            sx={{ color: "#787774" }}
+                          >
                             <span className="drag">
                               <DragIndicatorIcon
-                                style={{width: "16px", height: "16px"}}
+                                style={{ width: "16px", height: "16px" }}
                               />
                             </span>
-                            <span style={{color: "#787774"}} className="icon">
+                            <span style={{ color: "#787774" }} className="icon">
                               {getColumnIcon({
                                 column: {
                                   type: field?.type ?? field?.relation_type,
@@ -301,33 +328,48 @@ function DrawerFormDetailPage({
                             width="100%"
                             overflow="hidden"
                             textOverflow="ellipsis"
-                            whiteSpace="nowrap">
+                            whiteSpace="nowrap"
+                          >
                             {getFieldLanguageLabel(field)}
                           </Box>
                         </Box>
-                        <Box sx={{width: "60%"}}>
+                      </Tooltip>
+                      <Tooltip
+                        title={
+                          field?.type !== FIELD_TYPES.MULTI_LINE &&
+                          field?.type !== FIELD_TYPES.LOOKUP &&
+                          field?.type !== FIELD_TYPES.LOOKUPS &&
+                          field?.type !== FIELD_TYPES.SWITCH &&
+                          field?.type !== FIELD_TYPES.CHECKBOX
+                            ? watch(computedSlug(field))
+                            : ""
+                        }
+                      >
+                        <Box sx={{ width: "60%" }}>
                           <DrawerFieldGenerator
+                            reset={reset}
                             activeLang={activeLang}
                             drawerDetail={true}
-                            control={rootForm.control}
+                            control={control}
                             field={field}
-                            watch={rootForm.watch}
+                            watch={watch}
                             isRequired={field?.attributes?.required}
                             isDisabled={
                               field?.attributes?.disabled ||
                               !field?.attributes?.field_permission
                                 ?.edit_permission
                             }
-                            setFormValue={rootForm.setFormValue}
-                            errors={rootForm.errors}
+                            setFormValue={setFormValue}
+                            errors={errors}
+                            computedSlug={computedSlug(field)}
                           />
                         </Box>
-                      </Box>
-                    </Draggable>
-                  ))}
-              </Container>
-            </Box>
-          ))}
+                      </Tooltip>
+                    </Box>
+                  </Draggable>
+                ))}
+            </Container>
+        ))}
         </Box>
         <Box
           display="flex"
@@ -373,7 +415,7 @@ const HeadingOptions = ({
   selectedRow,
   setFormValue = () => {},
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const selectedFieldSlug =
@@ -512,7 +554,7 @@ const CHTextField = ({
       control={control}
       name={name}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}

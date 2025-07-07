@@ -1,4 +1,4 @@
-import {lazy} from "react";
+import React, {lazy} from "react";
 
 const HFTextInputField = lazy(() => import("./HFTextInputField"));
 

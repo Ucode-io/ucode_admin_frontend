@@ -1,30 +1,12 @@
-import React, {useEffect, useMemo, useState} from "react";
-import RelationField from "./RelationField";
 import {
-  HFDateDatePickerWithoutTimeZoneTableField,
-  HFDatePickerField,
-  HFDateTimePickerField,
-  HFTimePickerField,
-} from "./hf-datePickers";
-import HFPhotoUpload from "../../../../components/FormElements/HFPhotoUpload";
-import HFMultipleAutocomplete from "./hf-multiselectField";
-import HFStatusField from "./hf-statusField";
-import HFCheckbox from "./hf-checkboxField";
-import {HFVideoUpload} from "./hf-videoUploadField";
-import HFSwitch from "../../../table-redesign/hf-switch";
-import HFMultiImage from "../../../../components/FormElements/HFMultiImage";
-import HFLinkField from "../../../../components/FormElements/HFLinkField";
-import HFFileUpload from "../../../../components/FormElements/HFFileUpload";
-import HFMoneyField from "./hf-moneyField";
-import {Controller, useWatch} from "react-hook-form";
-import {
-  ChakraProvider,
   Box as ChakraBox,
+  ChakraProvider,
   Input,
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import {NumericFormat} from "react-number-format";
+import {Lock} from "@mui/icons-material";
+import FunctionsIcon from "@mui/icons-material/Functions";
 import {
   Box,
   IconButton,
@@ -33,27 +15,40 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
-import HFModalMap from "../../../../components/FormElements/HFModalMap";
-import PolygonFieldTable from "../../../../components/ElementGenerators/PolygonFieldTable";
-import HFIconPicker from "./hf-iconPicker";
-import HFColorPicker from "./hf-colorPicker";
 import {Parser} from "hot-formula-parser";
-import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import {Lock} from "@mui/icons-material";
-import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
-import {numberWithSpaces} from "../../../../utils/formatNumbers";
-import MultiLineInput from "./MultiLineInput";
-import HFInternationalPhone from "./hf-internationalPhone";
-import HFSelect from "../../../../components/FormElements/HFSelect";
+import React, {useEffect, useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {NumericFormat} from "react-number-format";
 import {useQuery} from "react-query";
-import constructorFunctionService from "../../../../services/constructorFunctionService";
-import listToOptions from "../../../../utils/listToOptions";
+import PolygonFieldTable from "../../../../components/ElementGenerators/PolygonFieldTable";
 import HFCodeField from "../../../../components/FormElements/HFCodeField";
-import JSONInput from "react-json-editor-ajrm";
-import {isJSONParsable} from "../../../../utils/isJsonValid";
-import CellManyToManyRelationElement from "../../../../components/ElementGenerators/CellManyToManyRelationElement";
+import HFFileUpload from "../../../../components/FormElements/HFFileUpload";
+import HFLinkField from "../../../../components/FormElements/HFLinkField";
+import HFModalMap from "../../../../components/FormElements/HFModalMap";
+import HFMultiFile from "../../../../components/FormElements/HFMultiFile";
+import HFMultiImage from "../../../../components/FormElements/HFMultiImage";
+import HFPhotoUpload from "../../../../components/FormElements/HFPhotoUpload";
+import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
+import constructorFunctionService from "../../../../services/constructorFunctionService";
+import {numberWithSpaces} from "../../../../utils/formatNumbers";
+import listToOptions from "../../../../utils/listToOptions";
+import HFSwitch from "../../../table-redesign/hf-switch";
+import MultiLineInput from "./MultiLineInput";
+import RelationField from "./RelationField";
+import HFCheckbox from "./hf-checkboxField";
+import HFColorPicker from "./hf-colorPicker";
+import {
+  HFDateDatePickerWithoutTimeZoneTableField,
+  HFDatePickerField,
+  HFDateTimePickerField,
+  HFTimePickerField,
+} from "./hf-datePickers";
+import HFIconPicker from "./hf-iconPicker";
+import HFInternationalPhone from "./hf-internationalPhone";
+import HFMoneyField from "./hf-moneyField";
+import HFMultipleAutocomplete from "./hf-multiselectField";
+import HFStatusField from "./hf-statusField";
+import {HFVideoUpload} from "./hf-videoUploadField";
 
 function DrawerFieldGenerator({
   field,

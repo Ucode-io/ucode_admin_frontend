@@ -3,7 +3,6 @@ import {Check} from "@mui/icons-material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
 import {isEqual} from "lodash";
 import React, {useEffect, useMemo, useState} from "react";
@@ -24,7 +23,7 @@ import "./style.scss";
 
 function DrawerFormDetailPage({
   view,
-  modal,
+  modal = false,
   data,
   layout,
   fieldsMap,
@@ -34,11 +33,6 @@ function DrawerFormDetailPage({
   handleMouseDown,
   projectInfo,
   rootForm,
-  tableInfo,
-  selectedViewType,
-  setLayoutType = () => {},
-  navigateToEditPage = () => {},
-  setSelectedViewType = () => {},
 }) {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
@@ -178,21 +172,21 @@ function DrawerFormDetailPage({
 
   const getAllData = () => {};
 
-  const [microFrontendId, setMicroFrontendId] = useState("");
-  const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
+  // const [microFrontendId, setMicroFrontendId] = useState("");
+  // const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
 
   const handleNavigateToMicroFrontend = (id) => {
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
 
-  const handleCloseMicroFrontendModal = () => {
-    setIsMicroFrontendOpen(false);
-    setMicroFrontendId("");
-  };
+  // const handleCloseMicroFrontendModal = () => {
+  //   setIsMicroFrontendOpen(false);
+  //   setMicroFrontendId("");
+  // };
 
-  const microFrontendCallback = (id) => {
-    setMicroFrontendId(id);
-  };
+  // const microFrontendCallback = (id) => {
+  //   setMicroFrontendId(id);
+  // };
 
   return (
     <MaterialUIProvider>

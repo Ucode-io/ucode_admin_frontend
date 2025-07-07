@@ -94,7 +94,6 @@ function AgGridTableView(props) {
     checkedColumns,
     selectedView,
     selectedTabIndex,
-    computedVisibleFields,
     layoutType,
     projectInfo,
     setSelectedView = () => {},

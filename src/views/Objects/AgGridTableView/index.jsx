@@ -206,7 +206,7 @@ function AgGridTableView(props) {
       custom_events: [],
     },
   } = useQuery({
-    queryKey: ["GET_TABLE_INFO", tableSlug, view],
+    queryKey: ["GET_TABLE_INFO", tableSlug],
     queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
     enabled: Boolean(tableSlug),
     select: (res) => {
@@ -220,7 +220,18 @@ function AgGridTableView(props) {
     return fields?.map((item) => {
       const columnDef = {
         field: item?.slug,
-        fieldObj: item,
+        fieldObj:
+          (item?.type === "STATUS" ||
+            item?.type === "LOOKUP" ||
+            item?.type === "FILE" ||
+            item?.type === "MAP" ||
+            item?.type === "POLYGON") &&
+          item,
+        disabled: item?.disabled || item?.attributes?.disabled,
+        editPermission: item?.attributes?.field_permission?.edit_permission,
+        formula: item?.attributes?.formula || "",
+        label: item?.label,
+
         headerName:
           item?.attributes?.[`label_${i18n?.language}`] || item?.label,
         editable: true,
@@ -230,10 +241,7 @@ function AgGridTableView(props) {
         rowGroup: view?.attributes?.group_by_columns?.includes(item?.id),
         cellClass:
           item?.type === "LOOKUP" ? "customFieldsRelation" : "customFields",
-        columnID:
-          item?.type === "LOOKUP"
-            ? item?.relation_id
-            : item?.id || generateGUID(),
+        columnID: item?.type === "LOOKUP" ? item?.relation_id : item?.id || "",
         pinned: view?.attributes?.pinnedFields?.[item?.id]?.pinned ?? "",
         headerComponent: HeaderComponent,
       };
@@ -242,7 +250,7 @@ function AgGridTableView(props) {
 
       return columnDef;
     });
-  }, [fields?.length]);
+  }, [fields]);
 
   const {
     data: {layout} = {
@@ -588,8 +596,6 @@ function AgGridTableView(props) {
     isWarningActive,
   ]);
 
-  console.log("rowDatarowData", rowData);
-
   return (
     <Box
       sx={{
@@ -641,12 +647,12 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={10}
+                  rowBuffer={20}
                   theme={myTheme}
                   gridOptions={{
                     suppressCellSelection: true,
                     columnBuffer: 10,
-                    rowBuffer: 10,
+                    rowBuffer: 20,
                   }}
                   suppressRowHoverHighlight={true}
                   suppressKeyboardEvent={(params) => true}
@@ -669,7 +675,6 @@ function AgGridTableView(props) {
                   onColumnPinned={onColumnPinned}
                   suppressRowVirtualisation={false}
                   suppressColumnVirtualisation={false}
-                  animateRows={false}
                   suppressColumnMoveAnimation={false}
                   autoGroupColumnDef={autoGroupColumnDef}
                   loadingOverlayComponent={CustomLoadingOverlay}
@@ -756,7 +761,7 @@ function AgGridTableView(props) {
         />
       ) : null}
 
-      {Boolean(open && !projectInfo?.new_layout) && (
+      {Boolean(!relationView && open && !projectInfo?.new_layout) && (
         <ModalDetailPage
           open={open}
           setOpen={setOpen}

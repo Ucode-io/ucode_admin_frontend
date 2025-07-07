@@ -1,18 +1,15 @@
-import { NumericFormat } from "react-number-format";
+import {NumericFormat} from "react-number-format";
 import RowClickButton from "../RowClickButton";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
+import React from "react";
 
 const HFFloatFieldCell = (props) => {
-  const { value, setValue, colDef, data } = props;
-  const field = props?.colDef?.fieldObj;
+  const {value, setValue, colDef, data} = props;
+  const disabled = colDef?.disabled || !colDef?.editPermission;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   return (
     <Box
@@ -24,8 +21,7 @@ const HFFloatFieldCell = (props) => {
         "&:hover .rowClickButton": {
           display: "block",
         },
-      }}
-    >
+      }}>
       <NumericFormat
         disabled={disabled}
         size="small"
@@ -55,7 +51,7 @@ const HFFloatFieldCell = (props) => {
         className="custom_number_field"
       />
       {disabled && (
-        <Box sx={{ position: "absolute", right: "14px", top: "6px" }}>
+        <Box sx={{position: "absolute", right: "14px", top: "6px"}}>
           <img src="/table-icons/lock.svg" alt="lock" />
         </Box>
       )}
@@ -66,4 +62,4 @@ const HFFloatFieldCell = (props) => {
   );
 };
 
-export default HFFloatFieldCell;
+export default React.memo(HFFloatFieldCell);

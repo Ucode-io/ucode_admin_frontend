@@ -1,6 +1,7 @@
 import {Box} from "@mui/material";
 import RowClickButton from "../RowClickButton.jsx";
 import NewFileUploadCellEditor from "./ImageComponents/NewFileUploadCellEditor.jsx";
+import React from "react";
 
 const HFFileUploadCellEditor = (props) => {
   const {field, value, setValue, colDef, data} = props;
@@ -38,4 +39,4 @@ const HFFileUploadCellEditor = (props) => {
   );
 };
 
-export default HFFileUploadCellEditor;
+export default React.memo(HFFileUploadCellEditor);

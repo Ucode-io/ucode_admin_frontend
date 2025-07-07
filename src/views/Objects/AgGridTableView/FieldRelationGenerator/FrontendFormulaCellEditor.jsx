@@ -37,10 +37,10 @@ const FrontendFormulaCellEditor = (props) => {
       if (error) {
         console.error("Formula evaluation error:", error);
         setCalculatedValue("ERROR");
-        node.setDataValue(field.slug, "ERROR");
+        node.setDataValue(colDef?.field, "ERROR");
       } else {
         setCalculatedValue(result);
-        node.setDataValue(field.slug, result);
+        node.setDataValue(colDef?.field, result);
       }
     } catch (err) {
       console.error("Error evaluating formula:", err);
@@ -102,4 +102,4 @@ const FrontendFormulaCellEditor = (props) => {
   );
 };
 
-export default FrontendFormulaCellEditor;
+export default React.memo(FrontendFormulaCellEditor);

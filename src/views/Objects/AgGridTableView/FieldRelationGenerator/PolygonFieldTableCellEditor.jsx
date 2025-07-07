@@ -1,9 +1,8 @@
-import {Box, Button, Modal} from "@mui/material";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
-import {useState} from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import HFPolygonFieldCellEditor from "./MapCellEditorComponents/HFPolygonFieldCellEditor";
+import {Box, Button, Modal} from "@mui/material";
+import React, {useState} from "react";
 import RowClickButton from "../RowClickButton";
+import HFPolygonFieldCellEditor from "./MapCellEditorComponents/HFPolygonFieldCellEditor";
 
 const style = {
   position: "absolute",
@@ -20,6 +19,7 @@ const style = {
 function PolygonFieldTableCellEditor(props) {
   const [open, setOpen] = useState(false);
   const {field, value, setValue, data, colDef} = props;
+  const disabled = colDef?.disabled;
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -50,7 +50,7 @@ function PolygonFieldTableCellEditor(props) {
             justifyContent: "space-between",
             padding: "0  14px 0 13px",
           }}
-          onClick={() => !field?.attributes?.disabled && handleOpen()}>
+          onClick={() => !disabled && handleOpen()}>
           <Box>
             <span>Polygon</span>
             <Button>
@@ -58,7 +58,7 @@ function PolygonFieldTableCellEditor(props) {
             </Button>
           </Box>
 
-          {field?.attributes?.disabled && (
+          {disabled && (
             <Box>
               <img src="/table-icons/lock.svg" alt="lock" />
             </Box>
@@ -109,4 +109,4 @@ function PolygonFieldTableCellEditor(props) {
   );
 }
 
-export default PolygonFieldTableCellEditor;
+export default React.memo(PolygonFieldTableCellEditor);

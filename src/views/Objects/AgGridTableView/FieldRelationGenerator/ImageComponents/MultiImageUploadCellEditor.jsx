@@ -23,7 +23,6 @@ const style = {
 
 function MultiImageUploadCellEditor({
   value = [],
-  field = {},
   tabIndex = 0,
   onChange = () => {},
   disabled = false,

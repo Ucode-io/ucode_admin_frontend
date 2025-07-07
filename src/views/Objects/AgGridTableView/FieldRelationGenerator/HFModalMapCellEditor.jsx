@@ -8,6 +8,7 @@ import RowClickButton from "../RowClickButton";
 function HFModalMapCellEditor(props) {
   const [open, setOpen] = useState(false);
   const {value, setValue, field, isTransparent = false, data, colDef} = props;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -35,7 +36,7 @@ function HFModalMapCellEditor(props) {
       {" "}
       <Box>
         <TextField
-          disabled={field?.attributes?.disabled}
+          disabled={disabled}
           id={`map_field`}
           value={
             value
@@ -45,7 +46,7 @@ function HFModalMapCellEditor(props) {
           defaultValue={"defaultValue"}
           variant="standard"
           width="small"
-          onClick={() => !field?.attributes?.disabled && handleOpen()}
+          onClick={() => !disabled && handleOpen()}
           sx={{
             width: "100%",
             backgroundColor: "transparent",
@@ -60,7 +61,7 @@ function HFModalMapCellEditor(props) {
             },
           }}
           InputProps={{
-            endAdornment: field?.attributes?.disabled ? (
+            endAdornment: disabled ? (
               <img src="/table-icons/lock.svg" alt="lock" />
             ) : (
               ""
@@ -112,4 +113,4 @@ function HFModalMapCellEditor(props) {
   );
 }
 
-export default HFModalMapCellEditor;
+export default React.memo(HFModalMapCellEditor);

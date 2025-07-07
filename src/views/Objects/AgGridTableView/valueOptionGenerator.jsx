@@ -1,35 +1,33 @@
-import HFTextInputField from "./HFTextInputField";
-import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
-import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
-import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
-import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
-import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
-import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
-import HFMoneyFieldEditor from "./FieldRelationGenerator/HFMoneyFieldEditor";
-import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
-import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
-import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
-import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
 import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
+import FormulaCellEditor from "./FieldRelationGenerator/FormulaCellEditor";
+import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
 import HFAggridMultiselect from "./FieldRelationGenerator/HFAggridMultiselect";
+import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
+import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
+import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
+import HFLinkFieldEditor from "./FieldRelationGenerator/HFLinkFieldEditor";
 import HFModalMapCellEditor from "./FieldRelationGenerator/HFModalMapCellEditor";
 import HFMultiImageCellEditor from "./FieldRelationGenerator/HFMultiImageCellEditor";
-import HFFileUploadCellEditor from "./FieldRelationGenerator/HFFileUploadCellEditor";
-import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
+import HFNumberFieldCell from "./FieldRelationGenerator/HFNumberFieldCell";
 import HFPhotoUploadCellEditor from "./FieldRelationGenerator/HFPhotoUploadCellEditor";
-import FrontendFormulaCellEditor from "./FieldRelationGenerator/FrontendFormulaCellEditor";
+import HFStatusFieldEditor from "./FieldRelationGenerator/HFStatusFieldEditor";
+import HFSwitchCellEditor from "./FieldRelationGenerator/HFSwitchCellEditor";
+import HFTextComponent from "./FieldRelationGenerator/HFTextComponent";
+import HFVideoUploadCellEditor from "./FieldRelationGenerator/HFVideoUploadCellEditor";
+import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
+import LookupCellEditor from "./FieldRelationGenerator/LookupCellEditor";
+import MultiLineCellEditor from "./FieldRelationGenerator/MultiLineCellEditor";
+import PasswordCellEditor from "./FieldRelationGenerator/PasswordCellEditor";
+import PhoneCellEditor from "./FieldRelationGenerator/PhoneCellEditor";
 import PolygonFieldTableCellEditor from "./FieldRelationGenerator/PolygonFieldTableCellEditor";
-import HFQrFieldComponentCellEditor from "./FieldRelationGenerator/HFQrFieldComponentCellEditor";
 import {
   HFDateDatePickerWithoutTimeZoneTable,
   HFDatePicker,
   HFDateTimePicker,
   HFTimePicker,
 } from "./FieldRelationGenerator/hf-date-pickers";
-import HFCheckboxCell from "./FieldRelationGenerator/HFCheckboxCell";
-import ColorPicker from "./FieldRelationGenerator/ColorPickerCell";
-import IconPickerCell from "./FieldRelationGenerator/IconPickerCell";
-import HFFloatFieldCell from "./FieldRelationGenerator/HFFloatFieldCell";
+import HFTextInputField from "./HFTextInputField";
 
 const fieldTypeMap = {
   SINGLE_LINE: HFTextInputField,
@@ -37,7 +35,6 @@ const fieldTypeMap = {
   FLOAT: HFFloatFieldCell,
   TEXT: HFTextComponent,
   LINK: HFLinkFieldEditor,
-  MONEY: HFMoneyFieldEditor,
   STATUS: HFStatusFieldEditor,
   MULTI_LINE: MultiLineCellEditor,
   PASSWORD: PasswordCellEditor,
@@ -61,7 +58,6 @@ const fieldTypeMap = {
   POLYGON: PolygonFieldTableCellEditor,
   COLOR: ColorPicker,
   ICON: IconPickerCell,
-  QR: HFQrFieldComponentCellEditor,
 };
 
 const getColumnEditorParams = (item, columnDef) => {
@@ -78,11 +74,6 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.valueFormatter = (params) => params.value || "";
       break;
 
-    case "MONEY":
-      columnDef.valueGetter = (params) =>
-        params?.data?.[params.colDef.field] || [];
-      break;
-
     case "MULTISELECT":
       columnDef.valueGetter = (params) =>
         params?.data?.[params.colDef.field] || [];
@@ -92,43 +83,43 @@ const getColumnEditorParams = (item, columnDef) => {
       };
       break;
 
-    case "LOOKUP":
-      columnDef.filterValueGetter = (params) => {
-        const slugData = params?.data?.[`${item?.slug}_data`];
-        return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
-      };
-      break;
+    // case "LOOKUP":
+    //   columnDef.filterValueGetter = (params) => {
+    //     const slugData = params?.data?.[`${item?.slug}_data`];
+    //     return slugData ? getRelationFieldTabsLabel(item, slugData) : "";
+    //   };
+    //   break;
 
-    case "FORMULA_FRONTEND":
-      columnDef.valueGetter = (params) => {
-        const formula = item?.attributes?.formula;
-        if (!formula) return 0;
+    // case "FORMULA_FRONTEND":
+    //   columnDef.valueGetter = (params) => {
+    //     const formula = item?.attributes?.formula;
+    //     if (!formula) return 0;
 
-        let computedFormula = formula;
-        const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
+    //     let computedFormula = formula;
+    //     const matches = computedFormula.match(/[a-zA-Z0-9_]+/g);
 
-        if (matches) {
-          matches.forEach((slug) => {
-            const value = params?.data?.[slug] ?? 0;
-            computedFormula = computedFormula.replace(
-              new RegExp(`\\b${slug}\\b`, "g"),
-              value
-            );
-          });
-        }
+    //     if (matches) {
+    //       matches.forEach((slug) => {
+    //         const value = params?.data?.[slug] ?? 0;
+    //         computedFormula = computedFormula.replace(
+    //           new RegExp(`\\b${slug}\\b`, "g"),
+    //           value
+    //         );
+    //       });
+    //     }
 
-        try {
-          return eval(computedFormula);
-        } catch (error) {
-          console.error("Error evaluating formula:", error);
-          return "ERROR";
-        }
-      };
-      columnDef.cellRendererParams = {
-        field: item,
-        formula: item?.attributes?.formula,
-      };
-      break;
+    //     try {
+    //       return eval(computedFormula);
+    //     } catch (error) {
+    //       console.error("Error evaluating formula:", error);
+    //       return "ERROR";
+    //     }
+    //   };
+    //   columnDef.cellRendererParams = {
+    //     field: item,
+    //     formula: item?.attributes?.formula,
+    //   };
+    //   break;
 
     case "PHONE":
     case "INTERNATION_PHONE":

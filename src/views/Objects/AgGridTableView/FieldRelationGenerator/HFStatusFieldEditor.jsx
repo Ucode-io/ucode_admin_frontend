@@ -147,4 +147,4 @@ function HFStatusFieldEditor({value, setValue, colDef, data}) {
   );
 }
 
-export default HFStatusFieldEditor;
+export default React.memo(HFStatusFieldEditor);

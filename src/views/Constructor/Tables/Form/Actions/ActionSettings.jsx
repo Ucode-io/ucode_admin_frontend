@@ -98,7 +98,10 @@ const ActionSettings = ({
     }));
   }, [microfrontend]);
 
-  const functionsOptions = [...microfrontendOptions, ...functions];
+  const functionsOptions = [
+    ...(microfrontendOptions || []),
+    ...(functions || []),
+  ];
 
   const createAction = (data) => {
     setLoader(true);

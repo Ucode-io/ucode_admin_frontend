@@ -7,14 +7,15 @@ import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useParams, useSearchParams} from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import request from "../../utils/request";
 import CascadingElement from "./CascadingElement";
 import styles from "./style.module.scss";
+import { pageToOffset } from "../../utils/pageToOffset";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -51,7 +52,7 @@ const CellManyToManyRelationElement = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascadings?.length === 4 ? (
             <CascadingElement
               field={field}
@@ -117,12 +118,14 @@ const AutoCompleteElement = ({
   newUi,
   setFormValue = () => {},
 }) => {
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
+  const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
+  const { state } = useLocation();
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option, i18n.language);
@@ -136,12 +139,13 @@ const AutoCompleteElement = ({
     }, null);
     return matchingProperty;
   }
-  const {id} = useParams();
+  const { id } = useParams();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersFieldFroms = useMemo(() => {
+    setPage(1);
     return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
   }, [autoFilters, index]);
 
@@ -160,8 +164,90 @@ const AutoCompleteElement = ({
     return result?.guid ? result : value;
   }, [autoFilters, filtersHandler, value]);
 
-  const {data: optionsFromFunctions} = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+  // const { data: optionsFromFunctions } = useQuery(
+  //   ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+  //   () => {
+  //     return request.post(
+  //       `/invoke_function/${field?.attributes?.function_path}`,
+  //       {
+  //         params: {
+  //           from_input: true,
+  //         },
+  //         data: {
+  //           table_slug: tableSlug,
+  //           ...autoFiltersValue,
+  //           search: debouncedValue,
+  //           limit: 10,
+  //           offset: 0,
+  //           view_fields:
+  //             field?.view_fields?.map((field) => field.slug) ??
+  //             field?.attributes?.view_fields?.map((field) => field.slug),
+  //         },
+  //       }
+  //     );
+  //   },
+  //   {
+  //     enabled: !!field?.attributes?.function_path,
+  //     select: (res) => {
+  //       const options = res?.data?.response ?? [];
+  //       const slugOptions =
+  //         res?.table_slug === tableSlug ? res?.data?.response : [];
+
+  //       return {
+  //         options,
+  //         slugOptions,
+  //       };
+  //     },
+  //   }
+  // );
+
+  const { data: optionsFromLocale } = useQuery(
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field, page],
+    () => {
+      if (!field?.table_slug) return null;
+      return constructorObjectService.getListV2(
+        field?.table_slug,
+        {
+          data: {
+            ...autoFiltersValue,
+            additional_request: {
+              additional_field: "guid",
+              additional_values: [defaultValue ?? id],
+            },
+            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+            search: debouncedValue.trim(),
+            limit: 10,
+            offset: pageToOffset(page, 10),
+          },
+        },
+        {
+          language_setting: i18n?.language,
+        }
+      );
+    },
+    {
+      enabled: !field?.attributes?.function_path,
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
+        return {
+          options,
+          slugOptions,
+        };
+      },
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
+        }
+      },
+    }
+  );
+
+  const { data: optionsFromFunctions } = useQuery(
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
@@ -174,7 +260,7 @@ const AutoCompleteElement = ({
             ...autoFiltersValue,
             search: debouncedValue,
             limit: 10,
-            offset: 0,
+            offset: pageToOffset(page, 10),
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
@@ -194,42 +280,12 @@ const AutoCompleteElement = ({
           slugOptions,
         };
       },
-    }
-  );
-
-  const {data: optionsFromLocale} = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field],
-    () => {
-      if (!field?.table_slug) return null;
-      return constructorObjectService.getListV2(
-        field?.table_slug,
-        {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [defaultValue ?? id],
-            },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-          },
-        },
-        {
-          language_setting: i18n?.language,
+      onSuccess: (data) => {
+        if (page > 1) {
+          setAllOptions((prevOptions) => [...prevOptions, ...data.options]);
+        } else {
+          setAllOptions(data?.options);
         }
-      );
-    },
-    {
-      enabled: !field?.attributes?.function_path,
-      select: (res) => {
-        const options = res?.data?.response ?? [];
-        const slugOptions =
-          res?.table_slug === tableSlug ? res?.data?.response : [];
-        return {
-          options,
-          slugOptions,
-        };
       },
     }
   );
@@ -240,9 +296,7 @@ const AutoCompleteElement = ({
     if (Array.isArray(value)) {
       return value
         ?.map((id) => {
-          const option = optionsFromLocale?.options?.find(
-            (el) => el?.guid === id
-          );
+          const option = allOptions?.find((el) => el?.guid === id);
 
           if (!option) return null;
           return {
@@ -251,9 +305,7 @@ const AutoCompleteElement = ({
         })
         .filter((el) => el !== null);
     } else {
-      const option = optionsFromLocale?.options?.find(
-        (el) => el?.guid === value
-      );
+      const option = allOptions?.find((el) => el?.guid === value);
 
       if (!option) return [];
 
@@ -263,7 +315,7 @@ const AutoCompleteElement = ({
         },
       ];
     }
-  }, [optionsFromLocale?.options, value]);
+  }, [allOptions, optionsFromLocale?.options, value]);
 
   const changeHandler = (value) => {
     if (!value) setValue(null);
@@ -281,12 +333,35 @@ const AutoCompleteElement = ({
   //     setAllOptions(matchingOption.response);
   //   }
   // }, [relOptions, field]);
+  let lastScrollTop = 0;
+
+  function loadMoreItems() {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  const handleListOnScroll = (e) => {
+    const target = e.target;
+
+    const scrollTop = target.scrollTop;
+    const scrollHeight = target.scrollHeight;
+    const clientHeight = target.clientHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      loadMoreItems();
+    }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  };
 
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
         disabled={disabled}
-        options={optionsFromLocale?.options ?? []}
+        options={allOptions ?? []}
         value={computedValue}
         popupIcon={
           isBlackBg ? (
@@ -311,6 +386,9 @@ const AutoCompleteElement = ({
           getRelationFieldTabsLabel(field, option, i18n.language)
         }
         multiple
+        ListboxProps={{
+          onScroll: handleListOnScroll,
+        }}
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
         renderInput={(params) => (
           <TextField

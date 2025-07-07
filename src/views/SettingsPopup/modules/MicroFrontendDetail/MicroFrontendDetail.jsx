@@ -1,4 +1,4 @@
-import { useMicroFrontendDetailProps } from "./useMicroFrontendDetailProps"
+import {useMicroFrontendDetailProps} from "./useMicroFrontendDetailProps";
 import {Save} from "@mui/icons-material";
 import PrimaryButton from "@/components/Buttons/PrimaryButton";
 import SecondaryButton from "@/components/Buttons/SecondaryButton";
@@ -10,12 +10,11 @@ import HeaderSettings from "@/components/HeaderSettings";
 import PageFallback from "@/components/PageFallback";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import HFSelect from "@/components/FormElements/HFSelect";
-import { ContentTitle } from "../../components/ContentTitle";
-import { Box, Grid } from "@mui/material";
-import { SaveCancelBtns } from "../../components/SaveCancelBtns";
+import {ContentTitle} from "../../components/ContentTitle";
+import {Box, Grid} from "@mui/material";
+import {SaveCancelBtns} from "../../components/SaveCancelBtns";
 
 export const MicroFrontendDetail = () => {
-
   const {
     loader,
     microfrontendId,
@@ -33,18 +32,16 @@ export const MicroFrontendDetail = () => {
 
   return (
     <div>
-      <ContentTitle 
-        subtitle={microfrontendId ? mainForm.watch("name"): "Новый"}
+      <ContentTitle
+        subtitle={microfrontendId ? mainForm.watch("name") : "Новый"}
         withBackBtn
-        onBackClick={handleBackClick}
-      >
+        onBackClick={handleBackClick}>
         Микрофронтенд
       </ContentTitle>
       <Box mt={2}>
         <ContentTitle>Детали</ContentTitle>
       </Box>
-      <form
-        onSubmit={mainForm.handleSubmit(onSubmit)}>
+      <form onSubmit={mainForm.handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <FRow
@@ -62,27 +59,26 @@ export const MicroFrontendDetail = () => {
             </FRow>
           </Grid>
           {resourceId !== "ucode_gitlab" && (
-          <Grid item xs={6}>
-            <FRow label="Репозиторий" required>
-              {microfrontendId ? (
-                <HFTextField
-                  name="path"
-                  control={mainForm.control}
-                  disabled
-                />
-              ) : (
-                <HFSelect
-                  name="repo_name"
-                  control={mainForm.control}
-                  options={repositories ?? []}
-                  required
-                />
-              )}
-            </FRow>
-          </Grid>
-        )}
-        {
-          resourceId !== "ucode_gitlab" && (
+            <Grid item xs={6}>
+              <FRow label="Репозиторий" required>
+                {microfrontendId ? (
+                  <HFTextField
+                    name="path"
+                    control={mainForm.control}
+                    disabled
+                  />
+                ) : (
+                  <HFSelect
+                    name="repo_name"
+                    control={mainForm.control}
+                    options={repositories ?? []}
+                    required
+                  />
+                )}
+              </FRow>
+            </Grid>
+          )}
+          {resourceId !== "ucode_gitlab" && (
             <Grid item xs={6}>
               <FRow label="Ветка" required>
                 {microfrontendId ? (
@@ -101,62 +97,61 @@ export const MicroFrontendDetail = () => {
                 )}
               </FRow>
             </Grid>
-          )
-        }
-        {resourceId === "ucode_gitlab" && (
+          )}
+          {resourceId === "ucode_gitlab" && (
+            <Grid item xs={6}>
+              <FRow
+                label={"Ссылка"}
+                componentClassName="flex gap-2 align-center"
+                required>
+                <HFTextField
+                  disabledHelperText
+                  name="path"
+                  control={mainForm.control}
+                  fullWidth
+                  required
+                />
+              </FRow>
+            </Grid>
+          )}
           <Grid item xs={6}>
             <FRow
-              label={"Ссылка"}
+              label={"Названия"}
               componentClassName="flex gap-2 align-center"
               required>
               <HFTextField
                 disabledHelperText
-                name="path"
+                name="name"
                 control={mainForm.control}
                 fullWidth
                 required
               />
             </FRow>
           </Grid>
-        )}
-        <Grid item xs={6}>
-          <FRow
-            label={"Названия"}
-            componentClassName="flex gap-2 align-center"
-            required>
-            <HFTextField
-              disabledHelperText
-              name="name"
-              control={mainForm.control}
-              fullWidth
-              required
-            />
-          </FRow>
-        </Grid>
-        <Grid item xs={6}>
-          <FRow label="Фреймворк" required>
-            <HFSelect
-              name="framework_type"
-              control={mainForm.control}
-              options={frameworkOptions}
-              defaultValue="REACT"
-              required
-            />
-          </FRow>
-        </Grid>
-        {resourceId === "ucode_gitlab" && (
           <Grid item xs={6}>
-            <FRow label="Описания">
-              <HFTextField
-                name="description"
+            <FRow label="Фреймворк" required>
+              <HFSelect
+                name="framework_type"
                 control={mainForm.control}
-                multiline
-                rows={4}
-                fullWidth
+                options={frameworkOptions}
+                defaultValue="REACT"
+                required
               />
             </FRow>
           </Grid>
-        )}
+          {resourceId === "ucode_gitlab" && (
+            <Grid item xs={6}>
+              <FRow label="Описания">
+                <HFTextField
+                  name="description"
+                  control={mainForm.control}
+                  multiline
+                  rows={4}
+                  fullWidth
+                />
+              </FRow>
+            </Grid>
+          )}
         </Grid>
       </form>
       <PermissionWrapperV2 tableSlug="app" type="update">
@@ -169,7 +164,7 @@ export const MicroFrontendDetail = () => {
           }}
         />
       </PermissionWrapperV2>
-{/* 
+      {/* 
       <Footer
         extra={
           <>
@@ -190,4 +185,4 @@ export const MicroFrontendDetail = () => {
       /> */}
     </div>
   );
-}
+};

@@ -387,7 +387,9 @@ export const NewUiViewsWithGroups = ({
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
-        navigate(view?.attributes?.url_object);
+        navigate(
+          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
+        );
       }
       dispatch(detailDrawerActions.openDrawer());
       setSelectedRow(null);
@@ -1476,18 +1478,18 @@ const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
   );
   const dispatch = useDispatch();
 
-  const handleClick = (ev) => {
-    if (
-      tableViewFiltersOpen ||
-      (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
-    ) {
-      ev.stopPropagation();
-      return dispatch(
-        mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
-      );
-    }
-    onClick(ev);
-  };
+  //   const handleClick = (ev) => {
+  //     if (
+  //       tableViewFiltersOpen ||
+  //       (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
+  //     ) {
+  //       ev.stopPropagation();
+  //       return dispatch(
+  //         mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
+  //       );
+  //     }
+  //     onClick(ev);
+  //   };
 
   return (
     <Box position="relative">

@@ -107,7 +107,7 @@ const ConnectionCreateModal = ({
     tableSlug
   );
 
-  const {data: relationsData} = useRelationsListQuery({
+  const { data: relationsData } = useRelationsListQuery({
     queryParams: {
       enabled: Boolean(mainTableSlug),
     },
@@ -116,6 +116,7 @@ const ConnectionCreateModal = ({
       relation_slug: mainTableSlug,
       "project-id": projectId,
     },
+    tableSlug: mainTableSlug,
   });
 
   const computedFilteredRelations = useMemo(() => {

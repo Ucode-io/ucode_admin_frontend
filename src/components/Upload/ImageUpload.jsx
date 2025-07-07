@@ -63,6 +63,8 @@ const ImageUpload = ({
     fileService
       .folderUpload(data, {
         folder_name: field?.attributes?.path,
+        format: field?.attributes?.format,
+        ratio: field?.attributes?.ratio,
       })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
@@ -114,8 +116,7 @@ const ImageUpload = ({
   return (
     <div
       className={`Gallery ${className}`}
-      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
-    >
+      style={{cursor: disabled ? "not-allowed" : "pointer"}}>
       {value && (
         <>
           <div

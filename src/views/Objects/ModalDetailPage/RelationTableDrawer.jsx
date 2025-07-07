@@ -15,6 +15,7 @@ import {listToMap} from "../../../utils/listToMap";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import DrawerObjectDataTable from "./DrawerObjectDataTable";
 import styles from "./style.module.scss";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
 
 const RelationTableDrawer = forwardRef(
   (
@@ -329,6 +330,8 @@ const RelationTableDrawer = forwardRef(
       }
     };
 
+    const [drawerStateField, setDrawerStateField] = useState(null);
+
     // if (Boolean(columns?.length)) return <PageFallback />;
 
     return (
@@ -371,6 +374,7 @@ const RelationTableDrawer = forwardRef(
               filters={filters}
               filterChangeHandler={filterChangeHandler}
               inputChangeHandler={inputChangeHandler}
+              setDrawerStateField={setDrawerStateField}
               paginationExtraButton={
                 id && (
                   <SecondaryButton onClick={navigateToTablePage}>
@@ -426,6 +430,20 @@ const RelationTableDrawer = forwardRef(
             selectedTabIndex={selectedTabIndex}
             height={`calc(100vh - 48px)`}
             getRelationFields={getRelationFields}
+          />
+        </Drawer>
+
+        <Drawer
+          open={drawerStateField}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal">
+          <RelationSettings
+            relation={drawerStateField}
+            closeSettingsBlock={() => setDrawerStateField(null)}
+            getRelationFields={getRelationFields}
+            formType={drawerStateField}
+            height={`calc(100vh - 48px)`}
           />
         </Drawer>
       </div>

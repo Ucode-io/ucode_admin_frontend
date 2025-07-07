@@ -322,8 +322,8 @@ const ObjectsFormPage = ({
           relations={tableRelations ?? []}
           control={control}
           getValues={getValues}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
+          // handleSubmit={handleSubmit}
+          // onSubmit={onSubmit}
           reset={reset}
           setFormValue={setFormValue}
           watch={watch}
@@ -387,7 +387,9 @@ const ObjectsFormPage = ({
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"
-                onClick={handleSubmit(onSubmit)}>
+                onClick={handleSubmit(onSubmit, (err) =>
+                  console.log("ERR", err)
+                )}>
                 <Save />
                 {generateLangaugeText(lang, i18n.language, "Save") || "Save"}
               </PrimaryButton>

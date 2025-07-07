@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import requestV2 from "../utils/requestV2";
 
 const constructorRelationService = {
-  getList: (params, tableSlug) => requestV2.get(`/relations/${tableSlug}`, { params }),
+  getList: (params, headers, tableSlug) => requestV2.get(`/relations/${tableSlug}`, { params, headers }),
   update: (data, tableSlug) => requestV2.put(`/relations/${tableSlug}`, data),
   create: (data, tableSlug) => requestV2.post(`/relations/${tableSlug}`, data),
   delete: (id, tableSlug) => requestV2.delete(`/relations/${tableSlug}/${id}`),

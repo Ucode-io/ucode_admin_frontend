@@ -46,6 +46,41 @@ import ButtonFieldComponents from "./ButtonFieldComponents";
 import StatusFieldSettings from "./StatusFieldSettings";
 import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
+const photoFormats = [
+  {
+    label: "PNG",
+    value: "png",
+  },
+  {
+    label: "WebP",
+    value: "webp",
+  },
+];
+
+const photoRatios = [
+  {
+    label: "4:3",
+    value: "1.3",
+  },
+  {
+    label: "1:1",
+    value: "1",
+  },
+  {
+    label: "3:2",
+    value: "1.5",
+  },
+
+  {
+    label: "16:9",
+    value: "1.7",
+  },
+  {
+    label: "2:3",
+    value: "0.7",
+  },
+];
+
 const FieldSettings = ({
   closeSettingsBlock,
   mainForm,
@@ -459,6 +494,43 @@ const FieldSettings = ({
 
                   {fieldType === "STATUS" && (
                     <StatusFieldSettings control={control} />
+                  )}
+
+                  {fieldType === "PHOTO" && (
+                    <>
+                      <FRow
+                        required={true}
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Photo formats"
+                          ) || "Photo format"
+                        }>
+                        <HFSelect
+                          required={true}
+                          defaultValue="png"
+                          control={control}
+                          options={photoFormats}
+                          name={"attributes.format"}
+                        />
+                      </FRow>
+
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Ratio"
+                          ) || "Ratio"
+                        }>
+                        <HFSelect
+                          control={control}
+                          options={photoRatios}
+                          name={"attributes.ratio"}
+                        />
+                      </FRow>
+                    </>
                   )}
 
                   {(fieldType === "FILE" ||

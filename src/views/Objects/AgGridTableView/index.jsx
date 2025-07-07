@@ -394,7 +394,9 @@ function AgGridTableView(props) {
               return {
                 ...field,
                 colIndex: index,
-                onRowClick: navigateToEditPage,
+                onRowClick: (e) => {
+                  navigateToEditPage(e);
+                },
               };
             }
             return null;
@@ -592,6 +594,7 @@ function AgGridTableView(props) {
 
   return (
     <Box
+      className={style.gridWrapper}
       sx={{
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
         overflow: "scroll",

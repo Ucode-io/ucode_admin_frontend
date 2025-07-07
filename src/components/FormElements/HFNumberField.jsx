@@ -94,7 +94,7 @@ const HFNumberField = ({
               id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
               allowNegative
               fullWidth={fullWidth}
-              value={typeof value === "number" ? value : ""}
+              value={!isNaN(value) ? value : ""}
               onChange={(e) => handleChange(e, onChange)}
               className={"custom_textfield"}
               name={name}
@@ -120,7 +120,8 @@ const HFNumberField = ({
                   bottom: newColumn ? "-10px" : "-20px",
                   left: "10px",
                 }}
-                error>
+                error
+              >
                 {error?.message}
               </FormHelperText>
             )}

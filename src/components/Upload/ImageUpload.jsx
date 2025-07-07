@@ -63,6 +63,8 @@ const ImageUpload = ({
     fileService
       .folderUpload(data, {
         folder_name: field?.attributes?.path,
+        format: field?.attributes?.format,
+        ratio: field?.attributes?.ratio,
       })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
@@ -114,17 +116,15 @@ const ImageUpload = ({
   return (
     <div
       className={`Gallery ${className}`}
-      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
-    >
+      style={{cursor: disabled ? "not-allowed" : "pointer"}}>
       {value && (
         <>
           <div
-            style={{ padding: drawerDetail ? "0 10px" : 0 }}
+            style={{padding: drawerDetail ? "0 10px" : 0}}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}
-            onClick={handleClick}
-          >
+            onClick={handleClick}>
             <div className="img">
               <img
                 src={value}
@@ -141,8 +141,7 @@ const ImageUpload = ({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}
-            >
+              }}>
               {value.split("#")[0].split("_")[1] ?? ""}
             </Typography>
           </div>
@@ -155,16 +154,14 @@ const ImageUpload = ({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}
-            >
+              }}>
               <Button
                 sx={{
                   display: "flex",
@@ -172,8 +169,7 @@ const ImageUpload = ({
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
-                onClick={() => handleOpenImg()}
-              >
+                onClick={() => handleOpenImg()}>
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
@@ -184,18 +180,16 @@ const ImageUpload = ({
                   gap: "10px",
                   justifyContent: "flex-start",
                 }}
-                onClick={() => imageClickHandler()}
-              >
+                onClick={() => imageClickHandler()}>
                 <DownloadIcon />
                 Dowload
               </Button>
               <RectangleIconButton
                 color="error"
                 className="removeImg"
-                onClick={closeButtonHandler}
-              >
+                onClick={closeButtonHandler}>
                 <DeleteIcon
-                  style={{ width: "17px", height: "17px", marginRight: "12px" }}
+                  style={{width: "17px", height: "17px", marginRight: "12px"}}
                 />
                 Remove Image
               </RectangleIconButton>
@@ -211,8 +205,7 @@ const ImageUpload = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}
-              >
+                }}>
                 <ChangeCircleIcon />
                 Change Image
               </Button>
@@ -241,11 +234,10 @@ const ImageUpload = ({
                   transform: `rotate(${degree}deg)`,
                 }}
                 aria-describedby={id}
-                onClick={handleClick}
-              >
+                onClick={handleClick}>
                 <img
                   src={value}
-                  style={{ transform: `scale(${imgScale})` }}
+                  style={{transform: `scale(${imgScale})`}}
                   className="uploadedImage"
                   alt=""
                 />
@@ -253,8 +245,7 @@ const ImageUpload = ({
                   sx={{
                     fontSize: "10px",
                     color: "#747474",
-                  }}
-                >
+                  }}>
                   {value?.split?.("_")?.[1] ?? ""}
                 </Typography>
               </Box>
@@ -265,9 +256,8 @@ const ImageUpload = ({
                   right: "-300px",
                   top: "-50px",
                   color: "white",
-                }}
-              >
-                <ClearIcon style={{ width: "30px", height: "30px" }} />
+                }}>
+                <ClearIcon style={{width: "30px", height: "30px"}} />
               </Button>
 
               <Button
@@ -279,9 +269,8 @@ const ImageUpload = ({
                   right: "-150px",
                   bottom: "-50px",
                   color: "#eee",
-                }}
-              >
-                <ZoomInIcon style={{ width: "30px", height: "30px" }} />
+                }}>
+                <ZoomInIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
                 onClick={() => {
@@ -292,9 +281,8 @@ const ImageUpload = ({
                   right: "-220px",
                   bottom: "-50px",
                   color: "#eee",
-                }}
-              >
-                <ZoomOutIcon style={{ width: "30px", height: "30px" }} />
+                }}>
+                <ZoomOutIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
                 onClick={rotateImg}
@@ -303,10 +291,9 @@ const ImageUpload = ({
                   right: "-300px",
                   bottom: "-50px",
                   color: "#eee",
-                }}
-              >
+                }}>
                 <Rotate90DegreesCcwIcon
-                  style={{ width: "30px", height: "30px" }}
+                  style={{width: "30px", height: "30px"}}
                 />
               </Button>
             </Box>
@@ -327,8 +314,7 @@ const ImageUpload = ({
               minWidth: 40,
               width: 40,
               height: 27,
-            }}
-          >
+            }}>
             <input
               id="img_upload"
               type="file"
@@ -343,7 +329,7 @@ const ImageUpload = ({
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{ width: 22, height: 22 }}
+              style={{width: 22, height: 22}}
             />
           </Button>
         )}

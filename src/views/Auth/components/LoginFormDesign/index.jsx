@@ -302,6 +302,7 @@ const LoginFormDesign = ({
       type: googleAuth?.type ? googleAuth?.type : getFormValue?.type,
       sms_id: codeAppValue?.sms_id,
     };
+
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -313,6 +314,8 @@ const LoginFormDesign = ({
         getFormValue?.project_id &&
         getFormValue?.environment_id
       ) {
+        onSubmitDialog(data);
+      } else if (getFormValue?.firebase) {
         onSubmitDialog(data);
       } else if (googleAuth?.type === "google" && googleAuth?.google_token) {
         onSubmitDialog(data);

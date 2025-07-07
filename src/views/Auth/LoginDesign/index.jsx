@@ -17,7 +17,9 @@ const LoginDesign = () => {
               ? styles.outletPhone
               : formType === "FORGOT_PASSWORD"
                 ? styles.outletForgot
-                : styles.outlet
+                : formType === "FIREBASEOTP"
+                  ? styles.outletFirebase
+                  : styles.outlet
         }>
         <div className={styles.page}>
           <LoginFormDesign

@@ -23,6 +23,7 @@ import authService from "../../../../services/auth/authService";
 import companyService from "../../../../services/companyService";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import connectionServiceV2 from "../../../../services/auth/connectionService";
+import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
@@ -178,8 +179,19 @@ const LoginFormDesign = ({
           sms_id: codeAppValue?.sms_id,
           type: "phone",
         });
+      } else if (values?.firebase) {
+        getCompany({
+          ...values,
+          session_info: firebaseToken,
+          type: "phone",
+          service_type: "firebase",
+        });
       } else {
-        getSendCodeApp({...values, type: "PHONE"});
+        if (!values?.phone?.includes("+998")) {
+          getSendCodeApp({...values, type: "PHONE", firebase: true});
+        } else {
+          getSendCodeApp({...values, type: "PHONE"});
+        }
       }
     }
     if (selectedTabIndex === 2) {
@@ -197,6 +209,7 @@ const LoginFormDesign = ({
 
   const getCompany = (values) => {
     setGoogleAuth(values);
+    delete values.firebase;
     const data = {
       password: values?.password ? values?.password : "",
       username: values?.username ? values?.password : "",
@@ -234,26 +247,21 @@ const LoginFormDesign = ({
   };
 
   const sendVerificationCode = async (values) => {
-    // if (!phoneNumber.match(/^\+\d{10,15}$/)) {
-    //   alert("Enter a valid phone number with + and country code.");
-    //   return;
-    // }
-
     try {
-      console.log("entered to sign up");
       const result = await auth.signInWithPhoneNumber(
         values?.phone,
         recaptchaVerifierRef.current
       );
-      console.log("resultttttt", result);
+      console.log("resultresultresult", result);
+      setFireBaseToken(result?.verificationId);
+      setFormType("FIREBASEOTP");
     } catch (error) {
       console.error("SMS error", error);
-      alert("Error sending code: " + error.message);
     }
   };
 
   const getSendCodeApp = (values) => {
-    if (values?.phone?.includes("+998")) {
+    if (!values?.firebase) {
       authService
         .sendCodeApp({
           recipient: values?.phone ?? values?.email,
@@ -408,9 +416,7 @@ const LoginFormDesign = ({
       {
         size: "invisible",
         callback: (response) => {
-          setFireBaseToken(response);
-          console.log("response========>", response);
-          console.log("reCAPTCHA solved");
+          // setFireBaseToken(response);
         },
         "expired-callback": () => {
           alert("reCAPTCHA expired. Please try again.");
@@ -418,6 +424,13 @@ const LoginFormDesign = ({
       }
     );
     recaptchaVerifierRef.current.render();
+
+    return () => {
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -509,6 +522,15 @@ const LoginFormDesign = ({
               onSelect={(index) => setSelectedTabIndex(index)}>
               {formType === "OTP" ? (
                 <PhoneOtpInput
+                  watch={watch}
+                  control={control}
+                  loading={loading}
+                  setFormType={setFormType}
+                  setCodeAppValue={setCodeAppValue}
+                  setValue={setValue}
+                />
+              ) : formType === "FIREBASEOTP" ? (
+                <FireBaseOtp
                   watch={watch}
                   control={control}
                   loading={loading}

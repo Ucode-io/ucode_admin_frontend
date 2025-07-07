@@ -1,26 +1,27 @@
 import HFSelect from "../../../../FormElements/HFSelect";
 import cls from "./styles.module.scss";
 import { Box } from "@mui/material";
-import { useProjectTypeProps } from "./useProjectTypeProps";
+import { useTablesProps } from "./useTablesProps";
+import listToOptions from "@/utils/listToOptions";
 import { ChatBox } from "../ChatBox";
 
-export const ProjectType = ({ control, errors, setValue = () => {}, disabled }) => {
-  const { getManagementOptions, projectTypeOptions } = useProjectTypeProps();
-
+export const Tables = ({ control, errors, disabled }) => {
+  const { tables, handleOnChange } = useTablesProps();
   return (
     <ChatBox>
       <Box
         sx={{
           width: "100%",
           borderRadius: "10px",
-          // paddingTop: "10px",
-          // fontSize: "14px",
+          // overflow: "hidden",
+          paddingTop: "10px",
+          fontSize: "14px",
           // padding: "10px",
           // backgroundColor: "#F5F6FA",
         }}
       >
         <div className={cls.form}>
-          <h3 className={cls.title}>Select Project Type</h3>
+          <h3 className={cls.title}>Select table</h3>
           <Box
             sx={{
               display: "flex",
@@ -30,27 +31,19 @@ export const ProjectType = ({ control, errors, setValue = () => {}, disabled }) 
           >
             <HFSelect
               control={control}
-              name="project_type"
+              name="table"
               // label="Project Type"
-              placeholder="Select project type"
-              options={projectTypeOptions}
+              placeholder="Select table"
+              options={listToOptions(tables?.tables, "label", "slug")}
               error={errors.type}
               helperText={errors.type?.message}
-              onChange={(value) => {
-                setValue(
-                  "management_system",
-                  getManagementOptions(value)?.map((item) => ({
-                    ...item,
-                    is_checked: false,
-                  })) || []
-                );
-              }}
               isClearable={false}
               displayEmpty={false}
               isSearchable
               autoFocus
               disabled={disabled}
               fieldProps={{
+                onChange: handleOnChange,
                 sx: {
                   "& .MuiInputBase-root.Mui-disabled, & .MuiInputBase-root, & .MuiOutlinedInput-input":
                     {
@@ -63,17 +56,17 @@ export const ProjectType = ({ control, errors, setValue = () => {}, disabled }) 
             />
           </Box>
           {/* {!disabled && (
-              <Box className={cls.buttonBox}>
-                <button
-                  type="button"
-                  className={clsx(cls.save, cls.button)}
-                  disabled={!watch("project_type")}
-                  onClick={handleSelectProjectType}
-                >
-                  Confirm
-                </button>
-              </Box>
-            )} */}
+            <Box className={cls.buttonBox}>
+              <button
+                type="button"
+                className={clsx(cls.save, cls.button)}
+                disabled={!watch("project_type")}
+                onClick={handleSelectProjectType}
+              >
+                Confirm
+              </button>
+            </Box>
+          )} */}
         </div>
       </Box>
     </ChatBox>

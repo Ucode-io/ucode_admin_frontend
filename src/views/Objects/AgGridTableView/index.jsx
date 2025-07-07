@@ -220,13 +220,7 @@ function AgGridTableView(props) {
     return fields?.map((item) => {
       const columnDef = {
         field: item?.slug,
-        fieldObj:
-          (item?.type === "STATUS" ||
-            item?.type === "LOOKUP" ||
-            item?.type === "FILE" ||
-            item?.type === "MAP" ||
-            item?.type === "POLYGON") &&
-          item,
+        fieldObj: item,
         disabled: item?.disabled || item?.attributes?.disabled,
         editPermission: item?.attributes?.field_permission?.edit_permission,
         formula: item?.attributes?.formula || "",

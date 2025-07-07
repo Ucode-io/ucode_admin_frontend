@@ -74,14 +74,14 @@ const getColumnEditorParams = (item, columnDef) => {
       columnDef.valueFormatter = (params) => params.value || "";
       break;
 
-    case "MULTISELECT":
-      columnDef.valueGetter = (params) =>
-        params?.data?.[params.colDef.field] || [];
-      columnDef.cellEditorParams = {
-        values: item?.attributes?.options?.map((o) => o?.label),
-        field: item,
-      };
-      break;
+    // case "MULTISELECT":
+    //   columnDef.valueGetter = (params) =>
+    //     params?.data?.[params.colDef.field] || [];
+    //   columnDef.cellEditorParams = {
+    //     values: item?.attributes?.options?.map((o) => o?.label),
+    //     field: item,
+    //   };
+    //   break;
 
     // case "LOOKUP":
     //   columnDef.filterValueGetter = (params) => {

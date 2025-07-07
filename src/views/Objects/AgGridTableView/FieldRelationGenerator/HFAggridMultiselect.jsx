@@ -45,12 +45,11 @@ const HFAggridMultiselect = React.memo((props) => {
   const {value, setValue = () => {}, width = "100%", colDef, data} = props;
 
   const field = colDef?.fieldObj;
-  const options = colDef?.cellEditorParams?.field?.attributes?.options;
+  const options = field?.attributes?.options;
   const disabled = field?.disabled;
-  const hasColor = colDef?.cellEditorParams?.field.attributes?.has_color;
-  const hasIcon = colDef?.cellEditorParams?.field.attributes?.has_icon;
-  const isMultiSelect =
-    colDef?.cellEditorParams?.field.attributes?.is_multiselect;
+  const hasColor = field?.attributes?.has_color;
+  const hasIcon = field?.attributes?.has_icon;
+  const isMultiSelect = field?.attributes?.is_multiselect;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);

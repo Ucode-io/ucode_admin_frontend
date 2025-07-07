@@ -78,7 +78,7 @@ const ActionSettings = ({
         console.log("ERR =>", err);
       },
       select: (res) => {
-        return res.functions?.list?.map((el) => ({
+        return res.functions?.map((el) => ({
           value: el["id"],
           label: el["name"],
           type: "Functions",

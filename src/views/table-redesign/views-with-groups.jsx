@@ -104,6 +104,7 @@ import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
 import {FilterButton} from "./FilterButton";
+import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -150,7 +151,12 @@ export const NewUiViewsWithGroups = ({
   setSelectedViewType = () => {},
 }) => {
   const location = useLocation();
-  const {id, menuId: menuid, tableSlug: tableSlugFromProps} = useParams();
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromProps,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps || view?.table_slug;
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();

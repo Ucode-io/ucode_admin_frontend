@@ -1,3 +1,4 @@
+import {Skeleton} from "@mui/material";
 import React, {lazy} from "react";
 
 const HFTextInputField = lazy(() => import("./HFTextInputField"));
@@ -67,7 +68,23 @@ const getColumnEditorParams = (item, columnDef) => {
 
   columnDef.cellRenderer = (props) => (
     <React.Suspense
-      fallback={<div style={{minHeight: 40}}>Loading field…</div>}>
+      fallback={
+        <div
+          style={{
+            height: "32px",
+            padding: "3px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <Skeleton
+            variant="rectangular"
+            style={{borderRadius: "6px"}}
+            width={220}
+            height={20}
+          />
+        </div>
+      }>
       <Renderer {...props} />
     </React.Suspense>
   );

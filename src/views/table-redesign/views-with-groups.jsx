@@ -96,6 +96,7 @@ import {
   TabGroup,
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
+import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 
 const AggridTreeView = lazy(
   () => import("../Objects/AgGridTableView/AggridTreeView")
@@ -155,7 +156,12 @@ export const NewUiViewsWithGroups = ({
   setSelectedViewType = () => {},
 }) => {
   const location = useLocation();
-  const {id, menuId: menuid, tableSlug: tableSlugFromProps} = useParams();
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromProps,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps || view?.table_slug;
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();

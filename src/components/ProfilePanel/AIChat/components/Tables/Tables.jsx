@@ -5,7 +5,12 @@ import { useTablesProps } from "./useTablesProps";
 import listToOptions from "@/utils/listToOptions";
 import { ChatBox } from "../ChatBox";
 
-export const Tables = ({ control, errors, disabled }) => {
+export const Tables = ({
+  control,
+  errors,
+  disabled,
+  setChatInputValue = () => {},
+}) => {
   const { tables, handleOnChange } = useTablesProps();
   return (
     <ChatBox>
@@ -42,6 +47,9 @@ export const Tables = ({ control, errors, disabled }) => {
               isSearchable
               autoFocus
               disabled={disabled}
+              onChange={() => {
+                setChatInputValue("");
+              }}
               fieldProps={{
                 onChange: handleOnChange,
                 sx: {

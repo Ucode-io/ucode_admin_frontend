@@ -20,6 +20,10 @@ function ChatInput({
       value: `Update the ${selectedTable} table:\n- Add field1, field2, field3 fields`,
     },
     {
+      label: "Edit fields",
+      value: `Update the${selectedTable} table:\n -Edit field1's type to TYPE(if need), label to LABEL(if need)`,
+    },
+    {
       label: "Delete fields",
       value: `Update the ${selectedTable} table:\n- Delete field1, field2, field3 fields`,
     },
@@ -30,10 +34,6 @@ function ChatInput({
     {
       label: "Delete relation",
       value: `Update the ${selectedTable} table:\n- Delete relation with table1, table2 tables`,
-    },
-    {
-      label: "Edit field",
-      value: `Update the${selectedTable} table:\n -Edit field1's type to TYPE(if need), label to LABEL(if need)`,
     },
   ];
 
@@ -124,13 +124,14 @@ function ChatInput({
                     backgroundColor: "#fff",
                     borderRadius: "16px",
                     fontSize: "14px",
-                    // border: "1px solid #E0E2E8",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
                     height: "26px",
                   }}
+                  sx={{
+                    "& .MuiChip-label": {
+                      padding: "2px 8px 0px 8px",
+                    },
+                  }}
+                  size="small"
                   variant="outlined"
                   key={item.label}
                   label={item.label}

@@ -55,8 +55,8 @@ import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 import {useGetLang} from "../../hooks/useGetLang";
+import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 
 const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
@@ -698,8 +698,8 @@ const IndexTh = ({items, selectedItems, onSelectAll}) => {
       position="sticky"
       left={0}
       zIndex={1}
-      onMouseEnter={hasPermission ? () => setHover(true) : null}
-      onMouseLeave={hasPermission ? () => setHover(false) : null}>
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}>
       {!showCheckbox && <Image src="/img/hash.svg" alt="index" mx="auto" />}
       {showCheckbox && (
         <Checkbox

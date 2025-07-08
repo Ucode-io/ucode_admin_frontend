@@ -23,7 +23,7 @@ import {useSelector} from "react-redux";
 
 function DrawerFormDetailPage({
   view,
-  modal,
+  modal = false,
   data,
   layout,
   fieldsMap,
@@ -33,11 +33,6 @@ function DrawerFormDetailPage({
   handleMouseDown,
   projectInfo,
   rootForm,
-  tableInfo,
-  selectedViewType,
-  setLayoutType = () => {},
-  navigateToEditPage = () => {},
-  setSelectedViewType = () => {},
 }) {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
@@ -177,21 +172,21 @@ function DrawerFormDetailPage({
 
   const getAllData = () => {};
 
-  const [microFrontendId, setMicroFrontendId] = useState("");
-  const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
+  // const [microFrontendId, setMicroFrontendId] = useState("");
+  // const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
 
   const handleNavigateToMicroFrontend = (id) => {
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
 
-  const handleCloseMicroFrontendModal = () => {
-    setIsMicroFrontendOpen(false);
-    setMicroFrontendId("");
-  };
+  // const handleCloseMicroFrontendModal = () => {
+  //   setIsMicroFrontendOpen(false);
+  //   setMicroFrontendId("");
+  // };
 
-  const microFrontendCallback = (id) => {
-    setMicroFrontendId(id);
-  };
+  // const microFrontendCallback = (id) => {
+  //   setMicroFrontendId(id);
+  // };
 
   const removeLangFromSlug = (slug) => {
     var lastIndex = slug.lastIndexOf("_");

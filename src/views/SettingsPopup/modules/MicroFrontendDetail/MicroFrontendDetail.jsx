@@ -154,16 +154,16 @@ export const MicroFrontendDetail = () => {
           )}
         </Grid>
       </form>
-      <PermissionWrapperV2 tableSlug="app" type="update">
-        <SaveCancelBtns
-          saveProps={{
-            onClick: mainForm.handleSubmit(onSubmit),
-          }}
-          cancelProps={{
-            onClick: handleBackClick,
-          }}
-        />
-      </PermissionWrapperV2>
+      {/* <PermissionWrapperV2 tableSlug="app" type="update"> */}
+      <SaveCancelBtns
+        saveProps={{
+          onClick: mainForm.handleSubmit(onSubmit),
+        }}
+        cancelProps={{
+          onClick: handleBackClick,
+        }}
+      />
+      {/* </PermissionWrapperV2> */}
       {/* 
       <Footer
         extra={

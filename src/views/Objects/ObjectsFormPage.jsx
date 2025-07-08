@@ -59,19 +59,24 @@ const ObjectsFormPage = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
-  const itemId = searchParams.get("p");
-  const tableSlug = state?.table_slug;
 
-  const {menuId} = useParams();
+  const {menuId, tableSlug: tableSlugFromParam, id: idFromParam} = useParams();
+  const itemId = searchParams.get("p") ?? idFromParam;
+
+  const tableSlug = tableSlugFromParam ?? state?.table_slug;
 
   const microPath = `/main/${itemId}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${itemId}&slug=${state?.tableSlug}`;
   const microPathCloseMonth = `/main/${itemId}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${itemId}`;
 
   const id = useMemo(() => {
     return (
-      state?.[`${state?.tableSlug}_id`] || itemId || menuId || selectedRow?.guid
+      state?.[`${state?.tableSlug}_id`] ||
+      idFromParam ||
+      itemId ||
+      menuId ||
+      selectedRow?.guid
     );
-  }, [itemId, selectedRow, menuId, state]);
+  }, [itemId, selectedRow, menuId, state, idFromParam]);
 
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
@@ -98,7 +103,7 @@ const ObjectsFormPage = ({
 
   const getAllData = async () => {
     setLoader(true);
-    const getLayoutData = layoutService.getLayout(tableSlug, menuId, {
+    const getLayoutData = layoutService.getLayout(tableSlug, id, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -151,7 +156,7 @@ const ObjectsFormPage = ({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+    const getLayout = layoutService.getLayout(tableSlug, id, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -298,7 +303,7 @@ const ObjectsFormPage = ({
     deleteTab(pathname);
     navigate(-1);
   };
-
+  console.log("datadatadata", data);
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>

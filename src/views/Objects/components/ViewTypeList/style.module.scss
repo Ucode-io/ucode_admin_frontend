@@ -1,4 +1,14 @@
 .viewTypeList {
+  border-radius: 0px;
+  border: 1px solid #eee;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #f7f5f5;
+  box-shadow:
+    0px 0px 16px 1px rgba(15, 15, 15, 0.04),
+    0px 12px 16px rgba(15, 15, 15, 0.15),
+    0px 9px 24px rgba(15, 15, 15, 0.06);
+
   .wrapper {
     display: flex;
 

@@ -137,6 +137,7 @@ const TableView = ({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{relations = []}, {fields = []}] = await Promise.all([
@@ -555,13 +556,13 @@ const TableView = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

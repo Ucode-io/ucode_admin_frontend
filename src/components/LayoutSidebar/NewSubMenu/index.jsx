@@ -8,8 +8,6 @@ import menuService, {useMenuListQuery} from "../../../services/menuService";
 import {Box, Skeleton} from "@mui/material";
 import {Container} from "react-smooth-dnd";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
-import Permissions from "../Components/Permission";
-import {applyDrag} from "../../../utils/applyDrag";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -29,17 +27,8 @@ function NewSubMenu({
   languageData = [],
   element,
 }) {
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const {i18n} = useTranslation();
-  const defaultLanguage = i18n.language;
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
-
-  const [isCopied, setIsCopied] = useState(false);
-  const company = store.getState().company;
-
   const projectSettingLan = languageData?.find((el) => el?.key === "Setting");
 
   // const handleClick = () => {
@@ -188,22 +177,11 @@ function NewSubMenu({
                           setElement={setElement}
                           setSubMenuIsOpen={setSubMenuIsOpen}
                           menuStyle={menuStyleNew}
-                          menuItemId={searchParams.get("menuId")}
                           index={index}
                           selectedApp={selectedApp}
                           buttonProps={{className: "highlight-on-hover"}}
                         />
                       )
-                    )}
-                    {element?.id === adminId && (
-                      <Permissions
-                        projectSettingLan={projectSettingLan}
-                        menuStyle={{
-                          ...menuStyles,
-                          background: "#fff",
-                        }}
-                        setElement={setElement}
-                      />
                     )}
                   </Container>
                 ) : (

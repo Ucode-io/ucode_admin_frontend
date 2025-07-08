@@ -1,7 +1,7 @@
 import {Save} from "@mui/icons-material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {
   useLocation,
@@ -17,6 +17,7 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import layoutService from "../../services/layoutService";
+import {useMenuGetByIdQuery} from "../../services/menuService";
 import {store} from "../../store";
 import {showAlert} from "../../store/alert/alert.thunk";
 import {sortSections} from "../../utils/sectionsOrderNumber";
@@ -26,8 +27,6 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 import {useTranslation} from "react-i18next";
-import {useMenuGetByIdQuery} from "../../services/menuService";
-import {generateID} from "../../utils/generateID";
 import DividentWayll from "./DividentWayll";
 import {useGetLang} from "../../hooks/useGetLang";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
@@ -41,6 +40,7 @@ const ObjectsFormPage = ({
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const {state = {}} = useLocation();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {navigateToForm} = useTabRouter();
@@ -54,30 +54,24 @@ const ObjectsFormPage = ({
   const [data, setData] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
+  const [selectedView, setSelectedView] = useState();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
-  const menuId = searchParams.get("menuId");
+  const itemId = searchParams.get("p");
+  const tableSlug = state?.table_slug;
 
-  const {id: idFromParam, tableSlug: tableSlugFromParam, appId} = useParams();
-  const test = useParams();
+  const {menuId} = useParams();
 
-  const microPath = `/main/${idFromParam}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${idFromParam}&slug=${tableSlugFromParam}`;
-  const microPathCloseMonth = `/main/${idFromParam}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${idFromParam}`;
+  const microPath = `/main/${itemId}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${itemId}&slug=${state?.tableSlug}`;
+  const microPathCloseMonth = `/main/${itemId}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${itemId}`;
 
   const id = useMemo(() => {
     return (
-      state?.[`${tableSlugFromParam}_id`] ||
-      idFromParam ||
-      appId ||
-      selectedRow?.guid
+      state?.[`${state?.tableSlug}_id`] || itemId || menuId || selectedRow?.guid
     );
-  }, [idFromParam, selectedRow, appId, state]);
-
-  const tableSlug = useMemo(() => {
-    return tableSlugFromProps || tableSlugFromParam;
-  }, [tableSlugFromParam, tableSlugFromProps]);
+  }, [itemId, selectedRow, menuId, state]);
 
   const isInvite = menu.invite;
   const {i18n} = useTranslation();
@@ -112,7 +106,7 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, layoutData] = await Promise.all([
+      const [{data = {}}, layoutData] = await Promise.all([
         getFormData,
         getLayoutData,
       ]);
@@ -203,7 +197,7 @@ const ObjectsFormPage = ({
     delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, { data })
+      .update(tableSlug, {data})
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -278,15 +272,14 @@ const ObjectsFormPage = ({
   };
 
   const onSubmit = (data) => {
-    console.log("DATA", data);
-    if (Boolean(id) && !window.location.pathname?.includes("create")) {
+    if (Boolean(itemId) && !window.location.pathname?.includes("create")) {
       update(data);
     } else {
       create(data);
     }
   };
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -297,9 +290,9 @@ const ObjectsFormPage = ({
   });
 
   useEffect(() => {
-    if (id) getAllData();
+    if (itemId) getAllData();
     else getFields();
-  }, [id]);
+  }, [itemId]);
 
   const clickHandler = () => {
     deleteTab(pathname);
@@ -322,6 +315,7 @@ const ObjectsFormPage = ({
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
+          tableSlug={tableSlug}
           getAllData={getAllData}
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
@@ -332,14 +326,13 @@ const ObjectsFormPage = ({
           // onSubmit={onSubmit}
           reset={reset}
           setFormValue={setFormValue}
-          tableSlug={tableSlugFromProps}
           watch={watch}
           loader={loader}
           setSelectTab={setSelectTab}
           selectedTab={selectedTab}
           errors={errors}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
-          id={id}
+          id={itemId}
           menuItem={menuItem}
           data={data}
         />
@@ -351,14 +344,13 @@ const ObjectsFormPage = ({
               (tableSlug === "investors" || tableSlug === "legal_entities") && (
                 <PrimaryButton
                   onClick={() => {
-                    localStorage.setItem("idFromParams", idFromParam);
+                    localStorage.setItem("idFromParams", itemId);
                     localStorage.setItem(
                       "tableSlugFromParam",
-                      tableSlugFromParam
+                      selectedView?.table_slug
                     );
                     navigate(microPath);
-                  }}
-                >
+                  }}>
                   Пополнить баланс
                 </PrimaryButton>
               )}
@@ -369,22 +361,20 @@ const ObjectsFormPage = ({
                   <DividentWayll />
                   <PrimaryButton
                     onClick={() => {
-                      localStorage.setItem("idFromParams", idFromParam);
+                      localStorage.setItem("idFromParams", itemId);
                       localStorage.setItem(
                         "tableSlugFromParam",
                         tableSlugFromParam
                       );
                       navigate(microPathCloseMonth);
-                    }}
-                  >
+                    }}>
                     Закрытия месяца
                   </PrimaryButton>
                 </>
               )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
-              color="error"
-            >
+              color="error">
               {generateLangaugeText(lang, i18n.language, "Close") || "Close"}
             </SecondaryButton>
             <FormCustomActionButton
@@ -399,8 +389,7 @@ const ObjectsFormPage = ({
                 id="submit"
                 onClick={handleSubmit(onSubmit, (err) =>
                   console.log("ERR", err)
-                )}
-              >
+                )}>
                 <Save />
                 {generateLangaugeText(lang, i18n.language, "Save") || "Save"}
               </PrimaryButton>

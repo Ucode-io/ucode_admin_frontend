@@ -42,9 +42,9 @@ import {listToMap} from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 
 const formulaTypes = [
-  { label: "Сумма", value: "SUMM" },
-  { label: "Максимум", value: "MAX" },
-  { label: "Среднее", value: "AVG" },
+  {label: "Сумма", value: "SUMM"},
+  {label: "Максимум", value: "MAX"},
+  {label: "Среднее", value: "AVG"},
 ];
 
 const formulaFormatOptions = [
@@ -84,8 +84,10 @@ export default function FieldCreateModal({
   menuItem,
   mainForm,
   view,
+  initialTableInfo,
+  tableSlug,
 }) {
-  const { tableSlug, id } = useParams();
+  const {id} = useParams();
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -95,7 +97,7 @@ export default function FieldCreateModal({
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
         {
-          table_id: id,
+          table_id: id ?? initialTableInfo?.id,
         },
         tableSlug
       );
@@ -107,7 +109,7 @@ export default function FieldCreateModal({
         },
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -188,9 +190,9 @@ export default function FieldCreateModal({
   const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
-  const { isLoading: relationLoading } = useRelationGetByIdQuery({
+  const {isLoading: relationLoading} = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
@@ -232,7 +234,7 @@ export default function FieldCreateModal({
   const openColor = Boolean(colorEl);
   const openMath = Boolean(mathEl);
 
-  const { control: formulaControl, watch: formulaWatch } = useForm({
+  const {control: formulaControl, watch: formulaWatch} = useForm({
     defaultValues: {
       formulaFormat: "FORMULA_FRONTEND",
     },
@@ -250,7 +252,7 @@ export default function FieldCreateModal({
     }
   };
 
-  const { isLoading: fieldLoading } = useFieldsListQuery({
+  const {isLoading: fieldLoading} = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
       tableSlug: tableSlug,
@@ -260,7 +262,7 @@ export default function FieldCreateModal({
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {
-            return { value: item.slug, label: item.label };
+            return {value: item.slug, label: item.label};
           })
         );
       },
@@ -271,14 +273,14 @@ export default function FieldCreateModal({
     language_setting: i18n?.language,
   };
 
-  const { isLoading: fieldsLoading } = useQuery(
+  const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: { limit: 0, offset: 0 },
+          data: {limit: 0, offset: 0},
         },
         params
       );
@@ -441,7 +443,7 @@ export default function FieldCreateModal({
   return (
     <Popover
       anchorReference="anchorPosition"
-      anchorPosition={{ top: 450, left: 900 }}
+      anchorPosition={{top: 450, left: 900}}
       id="menu-appbar"
       open={open}
       onClose={handleClose}
@@ -454,14 +456,12 @@ export default function FieldCreateModal({
       transformOrigin={{
         vertical: "bottom",
         horizontal: "left",
-      }}
-    >
+      }}>
       <div className={style.field}>
         <Typography
           variant="h6"
           textTransform="uppercase"
-          className={style.title}
-        >
+          className={style.title}>
           {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
             "ADD COLUMN"}
         </Typography>
@@ -470,21 +470,18 @@ export default function FieldCreateModal({
           onSubmit={handleSubmit(
             format?.includes("FORMULA") ? innerOnsubmit : onSubmit
           )}
-          className={style.form}
-        >
+          className={style.form}>
           <MaterialUIProvider>
             <Box
               className={style.field}
               style={{
                 display: "flex",
                 flexDirection: "column",
-              }}
-            >
+              }}>
               <Box
                 sx={{
                   width: "100%",
-                }}
-              >
+                }}>
                 {!ValueTypes(values?.type) && !FormatTypes(format) ? (
                   <FRow
                     label={
@@ -492,9 +489,8 @@ export default function FieldCreateModal({
                       "Label"
                     }
                     classname={style.custom_label}
-                    required
-                  >
-                    <Box style={{ display: "flex", gap: "6px" }}>
+                    required>
+                    <Box style={{display: "flex", gap: "6px"}}>
                       <HFTextFieldWithMultiLanguage
                         control={control}
                         name="attributes.label"
@@ -515,8 +511,7 @@ export default function FieldCreateModal({
                 }
                 componentClassName="flex gap-2 align-center"
                 required
-                classname={style.custom_label}
-              >
+                classname={style.custom_label}>
                 <HFSelect
                   className={style.input}
                   disabledHelperText
@@ -543,7 +538,7 @@ export default function FieldCreateModal({
                 />
               </FRow>
             </Box>
-            <Box sx={{ padding: "0 5px" }}>
+            <Box sx={{padding: "0 5px"}}>
               {formatIncludes?.includes(format) ? (
                 <FRow
                   label={
@@ -552,8 +547,7 @@ export default function FieldCreateModal({
                   }
                   componentClassName="flex gap-2 align-center"
                   required
-                  classname={style.custom_label}
-                >
+                  classname={style.custom_label}>
                   <HFSelect
                     className={style.input}
                     disabledHelperText
@@ -580,8 +574,7 @@ export default function FieldCreateModal({
                   onClick={() => {
                     handleOpenFieldDrawer(fieldData);
                     closeAllDrawer();
-                  }}
-                >
+                  }}>
                   <SettingsIcon />
                   {generateLangaugeText(
                     tableLan,
@@ -599,8 +592,7 @@ export default function FieldCreateModal({
                   lockAxis="y"
                   orientation="vertical"
                   onDrop={onDrop}
-                  dragHandleSelector=".column-drag-handle"
-                >
+                  dragHandleSelector=".column-drag-handle">
                   {dropdownFields.map((item, index) => (
                     <Draggable key={item.id}>
                       <Box key={item.id} className="column-drag-handle">
@@ -613,16 +605,14 @@ export default function FieldCreateModal({
                         >
                           <FRow
                             label={`Option ${index + 1}`}
-                            className={style.option}
-                          >
+                            className={style.option}>
                             <span
                               className={style.startAdornment}
                               style={{
                                 background: watch(
                                   `attributes.options.${index}.color`
                                 ),
-                              }}
-                            ></span>
+                              }}></span>
 
                             <HFTextField
                               disabledHelperText
@@ -688,14 +678,13 @@ export default function FieldCreateModal({
                         transformOrigin={{
                           vertical: "top",
                           horizontal: "left",
-                        }}
-                      >
+                        }}>
                         <Card elevation={12} className="ColorPickerPopup">
                           {colorList.map((color, colorIndex) => (
                             <div
                               className="round"
                               key={colorIndex}
-                              style={{ backgroundColor: color }}
+                              style={{backgroundColor: color}}
                               onClick={() => {
                                 setValue(
                                   `attributes.options.${idx}.color`,
@@ -718,8 +707,7 @@ export default function FieldCreateModal({
                         label: "",
                         value: "",
                       });
-                    }}
-                  >
+                    }}>
                     +
                     {generateLangaugeText(
                       tableLan,
@@ -794,8 +782,7 @@ export default function FieldCreateModal({
                     ))}
                     <div
                       className={style.summaryButton}
-                      onClick={addNewSummary}
-                    >
+                      onClick={addNewSummary}>
                       <button type="button">+ Create new</button>
                     </div>
                   </div>
@@ -872,8 +859,7 @@ export default function FieldCreateModal({
                     <span
                       id={`math_plus`}
                       className={`math_${mathType?.label}`}
-                      onClick={(e) => setMathEl(e.currentTarget)}
-                    >
+                      onClick={(e) => setMathEl(e.currentTarget)}>
                       {mathType?.value}
                     </span>
                     <HFSelect
@@ -905,8 +891,7 @@ export default function FieldCreateModal({
                       transformOrigin={{
                         vertical: "top",
                         horizontal: "right",
-                      }}
-                    >
+                      }}>
                       <Box className="math">
                         {math.map((item) => {
                           return (
@@ -916,8 +901,7 @@ export default function FieldCreateModal({
                               onClick={() => {
                                 setValue("attributes.math", item);
                                 setMathEl(null);
-                              }}
-                            >
+                              }}>
                               {item?.value}
                             </span>
                           );
@@ -933,8 +917,7 @@ export default function FieldCreateModal({
                     display: "flex",
                     alignItems: "baseline",
                     columnGap: "5px",
-                  }}
-                >
+                  }}>
                   <HFSwitch
                     id="advanced_switch"
                     control={control}
@@ -957,7 +940,7 @@ export default function FieldCreateModal({
               relatedTableSlug={relatedTableSlug}
             />
           ) : null}
-          <Box className={style.button_group} sx={{ padding: "0 5px" }}>
+          <Box className={style.button_group} sx={{padding: "0 5px"}}>
             <Button variant="contained" color="error" onClick={handleClick}>
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}

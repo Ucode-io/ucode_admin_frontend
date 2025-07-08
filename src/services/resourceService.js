@@ -158,10 +158,6 @@ export const useResourceEnvironmentGetByIdQuery = ({id, queryParams} = {}) => {
   );
 };
 
-// export const useResourceDeleteMutation = (mutationSettings) => {
-//   return useMutation((data) => resourceService.deleteResourceEnvironment(data), mutationSettings)
-// }
-
 export const useResourceDeleteMutation = (mutationSettings) => {
   return useMutation((data) => resourceService.delete(data), mutationSettings);
 };

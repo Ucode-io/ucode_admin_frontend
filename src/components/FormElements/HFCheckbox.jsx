@@ -22,17 +22,18 @@ const HFCheckbox = ({
       control={control}
       name={name}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div
           className={className}
           style={{
             background: isBlackBg ? "#2A2D34" : "",
             color: isBlackBg ? "#fff" : "",
-          }}>
+          }}
+        >
           <Checkbox
             id={`checkbox${id}`}
             style={{
-              transform: "translatey(-1px)",
+              transform: "translateY(-1px)",
               marginRight: "8px",
               margin: "8px 8px 8px 0",
               padding: 0,
@@ -55,12 +56,14 @@ const HFCheckbox = ({
           {isShowLable && (
             <label
               htmlFor={`checkbox-${id}`}
-              className={`label ${labelClassName}`}>
+              className={`label ${labelClassName}`}
+            >
               {label}
             </label>
           )}
         </div>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 

@@ -28,6 +28,7 @@ const MainLayout = ({setFavicon, favicon}) => {
     queryParams: {
       onSuccess: (data) => {
         localStorage.setItem("project_status", data?.status);
+        window.dispatchEvent(new Event("storageUpdate"));
       },
     },
   });
@@ -112,8 +113,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           handleOpenBilling={handleOpenBilling}
         />
         <div
-          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}
-        >
+          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}
@@ -128,8 +128,7 @@ const MainLayout = ({setFavicon, favicon}) => {
               location.pathname?.includes("object")
                 ? styles.contentLayout
                 : styles.content
-            }
-          >
+            }>
             <Outlet />
             <ToastContainer hideProgressBar />
           </div>

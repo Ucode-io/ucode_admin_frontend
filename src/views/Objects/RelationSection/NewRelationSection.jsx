@@ -7,7 +7,9 @@ import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useParams, useSearchParams} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import PageFallback from "../../../components/PageFallback";
+import constructorObjectService from "../../../services/constructorObjectService";
 import constructorTableService from "../../../services/constructorTableService";
 import {listToMap} from "../../../utils/listToMap";
 import FilesSection from "../FilesSection";
@@ -19,13 +21,13 @@ import RelationTable from "./RelationTable";
 import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationSection";
 import styles from "./style.module.scss";
 import {useDispatch, useSelector} from "react-redux";
-import constructorObjectService from "../../../services/constructorObjectService";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+
 import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
 import FullpagePeekMaininfo from "../FullpagePeekMaininfo";
 import layoutService from "../../../services/layoutService";
+import constructorViewService from "../../../services/constructorViewService";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -33,8 +35,6 @@ const NewRelationSection = ({
   relations,
   loader,
   getAllData = () => {},
-  tableSlug: tableSlugFromProps,
-  id: idFromProps,
   limit,
   setLimit,
   relatedTable,
@@ -46,15 +46,12 @@ const NewRelationSection = ({
   setSelectTab,
   selectedTab,
   errors,
-  menuItem,
   data,
+  id,
+  tableSlug,
 }) => {
-  const {tableSlug: tableSlugFromParams, id: idFromParams, appId} = useParams();
-  const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
-  const id = idFromProps ?? idFromParams;
-
+  const {menuId} = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
@@ -67,7 +64,9 @@ const NewRelationSection = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [type, setType] = useState(null);
+  const [selectedView, setSelectedView] = useState();
   const queryTab = searchParams.get("tab");
+  const viewId = searchParams.get("v");
   const myRef = useRef();
   const dispatch = useDispatch();
   const tables = useSelector((state) => state?.auth?.tables);
@@ -84,6 +83,22 @@ const NewRelationSection = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const {data: views} = useQuery(
+    ["GET_OBJECT_LIST", menuId],
+    () => {
+      return constructorViewService.getViewListMenuId(menuId);
+    },
+    {
+      enabled: Boolean(menuId),
+      select: (res) => {
+        return res?.views ?? [];
+      },
+      onSuccess: (data) => {
+        setSelectedView(data?.find((el) => el?.id === viewId));
+      },
+    }
+  );
 
   const filteredRelations = useMemo(() => {
     if (data?.table_id) {
@@ -152,7 +167,7 @@ const NewRelationSection = ({
 
   const navigateToCreatePage = () => {
     let mapped = {
-      [`${tableSlug}_id`]: idFromParams ?? "",
+      [`${tableSlug}_id`]: id ?? "",
     };
     defaultValuesFromJwt.forEach((el) => {
       let keys = Object.keys(el);
@@ -192,8 +207,7 @@ const NewRelationSection = ({
             data: {
               offset: 0,
               limit: 0,
-              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
-                idFromParams,
+              [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: id,
             },
           },
           {
@@ -208,7 +222,7 @@ const NewRelationSection = ({
           );
         })
         .catch((a) => console.log("error", a));
-  }, [getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
+  }, [getRelatedTabeSlug, id, relationFieldSlug, tableSlug]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
@@ -245,7 +259,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap, views} = {
+    data: {fieldsMap} = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -266,7 +280,6 @@ const NewRelationSection = ({
       select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
-          views: data?.views,
         };
       },
       enabled: !!relatedTableSlug,
@@ -313,7 +326,7 @@ const NewRelationSection = ({
 
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-
+  console.log("datadata", data);
   return (
     <>
       {selectedManyToManyRelation && (
@@ -362,7 +375,8 @@ const NewRelationSection = ({
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
                         {el?.type === "relation"
-                          ? el?.relation?.attributes?.[
+                          ? el?.label ||
+                            el?.relation?.attributes?.[
                               `label_to_${i18n?.language}`
                             ]
                           : el?.attributes?.[`label_${i18n?.language}`] ||

@@ -26,11 +26,12 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
   const autoGroupColumnDef = useMemo(
     () => ({
       minWidth: 230,
-      field: recursiveField?.view_fields?.[0]?.slug,
+      field: recursiveField?.view_fields?.[1]?.slug,
       cellRendererParams: {
         suppressCount: true,
       },
       minWidth: 280,
+
       cellRendererParams: {
         innerRenderer: (params) => {
           return (

@@ -3,7 +3,6 @@ import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import TimeLineDays from "./TimeLineDays";
 import styles from "./styles.module.scss";
 import TimeLineDataRecursiveRow from "./TimeLineDataRecursiveRow";
-import { useTimelineBlockContext } from "./providers/TimelineBlockProvider";
 
 export default function TimeLineDayDataBlock({
   data,
@@ -32,6 +31,9 @@ export default function TimeLineDayDataBlock({
   calendarRef,
   setOpenDrawerModal,
   setSelectedRow,
+  layoutType,
+  selectedView,
+  projectInfo,
 }) {
   return (
     <>
@@ -39,12 +41,7 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
-          height:
-            view?.attributes?.group_by_columns?.length !== 0
-              ? "calc(100% - 63px)"
-              : "100%",
-        }}
-      >
+        }}>
         <div className={styles.days} id="timelineDays">
           {datesList.map((date, index) => (
             <TimeLineDays
@@ -64,6 +61,8 @@ export default function TimeLineDayDataBlock({
           <div className={styles.dataContainer}>
             {data?.map((item, index) => (
               <TimeLineDataRecursiveRow
+                selectedView={selectedView}
+                layoutType={layoutType}
                 menuItem={menuItem}
                 fieldsMapPopup={fieldsMapPopup}
                 dateFilters={dateFilters}
@@ -107,9 +106,11 @@ export default function TimeLineDayDataBlock({
                     width: "100%",
                     height: "32px",
                   }}
-                  key={item?.label}
-                >
+                  key={item?.label}>
                   <TimeLineDayDataBlockItem
+                    projectInfo={projectInfo}
+                    selectedView={selectedView}
+                    layoutType={layoutType}
                     selectedType={selectedType}
                     computedColumnsFor={computedColumnsFor}
                     groupbyFields={groupbyFields}

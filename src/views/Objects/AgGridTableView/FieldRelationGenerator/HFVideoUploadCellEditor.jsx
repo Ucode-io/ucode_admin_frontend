@@ -1,15 +1,11 @@
 import {Box} from "@mui/material";
 import RowClickButton from "../RowClickButton";
 import VideoUploadCellEditor from "./ImageComponents/VideoUploadCellEditor";
+import React from "react";
 
 const HFVideoUploadCellEditor = (props) => {
-  const {setValue, value, data, colDef} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {field, setValue, value, data, colDef} = props;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -43,4 +39,4 @@ const HFVideoUploadCellEditor = (props) => {
   );
 };
 
-export default HFVideoUploadCellEditor;
+export default React.memo(HFVideoUploadCellEditor);

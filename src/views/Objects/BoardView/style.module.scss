@@ -93,6 +93,12 @@
   color: rgba(70, 68, 64, 0.45);
 }
 
+.addButton {
+  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+}
+
 .counter {
   width: 24px;
   height: 24px;
@@ -149,13 +155,14 @@
 
 .card {
   min-height: 120px;
-  padding: 7px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  // gap: 4px;
+  gap: 10px;
   border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 4px 0px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  box-shadow:
+    rgba(0, 0, 0, 0.04) 0px 2px 4px 0px,
+    rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
   transition: background-color 0.3s ease;
   cursor: pointer;
 

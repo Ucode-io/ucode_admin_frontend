@@ -115,7 +115,7 @@ const Resources = ({
   const {mutate: deleteResource, isLoading: deleteLoading} =
     useResourceDeleteMutationV2({
       onSuccess: () => {
-        refetch();
+        // refetch();
         handleClose();
       },
     });
@@ -131,7 +131,7 @@ const Resources = ({
   const {mutate: addResourceFromCluster, isLoading: clusterLoading} =
     useResourceCreateFromClusterMutation({
       onSuccess: () => {
-        refetch();
+        // refetch();
       },
     });
 
@@ -199,7 +199,7 @@ const Resources = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleClick(e);
-                      handleOpenNotify(e, "CREATE_FOLDER");
+                      // handleOpenNotify(e, "CREATE_FOLDER");
                     }}
                   />
                 </Box>
@@ -216,7 +216,7 @@ const Resources = ({
                     onClick={(e) => {
                       navigate(`/main/${appId}/resources/create`);
                       e.stopPropagation();
-                      handleOpenNotify(e, "CREATE_FOLDER");
+                      // handleOpenNotify(e, "CREATE_FOLDER");
                     }}
                   />
                 </Box>

@@ -84,7 +84,7 @@ const Permissions = ({level = 1, menuStyle, setElement, projectSettingLan}) => {
   };
 
   return (
-    <Box sx={{padding: "0 12px"}}>
+    <Box sx={{margin: "0 5px"}}>
       <div className="parent-block column-drag-handle">
         <Button
           id="permissin_btn"

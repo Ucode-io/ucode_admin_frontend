@@ -1,18 +1,12 @@
-import {Box, ChakraProvider} from "@chakra-ui/react";
+import {Box} from "@chakra-ui/react";
 import {Checkbox} from "@mui/material";
-import {useId} from "react";
+import React, {useId} from "react";
 import RowClickButton from "../RowClickButton";
 
 const HFCheckboxCell = (props) => {
   const id = useId();
   const {setValue, value, colDef, data} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
+  const disabled = colDef?.disabled;
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
   };
@@ -54,4 +48,4 @@ const HFCheckboxCell = (props) => {
   );
 };
 
-export default HFCheckboxCell;
+export default React.memo(HFCheckboxCell);

@@ -1,36 +1,42 @@
-import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "react-query";
-import { store } from "../../../../store";
-import { useTranslation } from "react-i18next";
-import { useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useProjectGetByIdQuery, useProjectsAllSettingQuery, useProjectUpdateMutation } from "../../../../services/projectService";
-import { showAlert } from "../../../../store/alert/alert.thunk";
-import { useGetLang } from "../../../../hooks/useGetLang";
-import { useSettingsPopupContext } from "../../providers";
+import {useNavigate} from "react-router-dom";
+import {useQueryClient} from "react-query";
+import {store} from "../../../../store";
+import {useTranslation} from "react-i18next";
+import {useMemo} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
+import {
+  useProjectGetByIdQuery,
+  useProjectsAllSettingQuery,
+  useProjectUpdateMutation,
+} from "../../../../services/projectService";
+import {showAlert} from "../../../../store/alert/alert.thunk";
+import {useGetLang} from "../../../../hooks/useGetLang";
+import {useSettingsPopupContext} from "../../providers";
 
 export const useProjectSettings = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const company = store.getState().company;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const lang = useGetLang("Setting");
-  const { control, reset, handleSubmit, watch, register, setValue } = useForm({
+  const {control, reset, handleSubmit, watch, register, setValue} = useForm({
     defaultValues: {
       new_layout: false,
       new_design: false,
+      new_router: false,
     },
   });
   const dispatch = useDispatch();
 
-  const { handleClose } = useSettingsPopupContext();
+  const {handleClose} = useSettingsPopupContext();
 
-  const { isLoading } = useProjectGetByIdQuery({
+  const {isLoading} = useProjectGetByIdQuery({
     projectId: company.projectId,
     queryParams: {
       onSuccess: (res) => {
-        console.log({ res });
+        console.log({res});
+
         reset({
           ...res,
           language: res?.language?.map((lang) => lang.id),
@@ -41,21 +47,21 @@ export const useProjectSettings = () => {
     },
   });
 
-  const { data: language } = useProjectsAllSettingQuery({
+  const {data: language} = useProjectsAllSettingQuery({
     params: {
       "project-id": company.projectId,
       type: "LANGUAGE",
       limit: 200,
     },
   });
-  const { data: timezone } = useProjectsAllSettingQuery({
+  const {data: timezone} = useProjectsAllSettingQuery({
     params: {
       "project-id": company.projectId,
       type: "TIMEZONE",
       limit: 200,
     },
   });
-  const { data: currency } = useProjectsAllSettingQuery({
+  const {data: currency} = useProjectsAllSettingQuery({
     params: {
       "project-id": company.projectId,
       type: "CURRENCY",
@@ -96,9 +102,10 @@ export const useProjectSettings = () => {
     return arr;
   }, [currency]);
 
-  const { mutate: updateProject, isLoading: btnLoading } =
+  const {mutate: updateProject, isLoading: btnLoading} =
     useProjectUpdateMutation({
-      onSuccess: () => {
+      onSuccess: (data) => {
+        newRouterHandler(data);
         dispatch(showAlert("Successfully updated", "success"));
         queryClient.invalidateQueries(["PROJECTS"]);
       },
@@ -133,6 +140,19 @@ export const useProjectSettings = () => {
         label: item.label,
       })),
     });
+  };
+
+  const newRouterHandler = (data) => {
+    const oldValue = localStorage.getItem("new_router") === "true";
+    const newValue = Boolean(data?.new_router);
+
+    if (oldValue !== newValue) {
+      localStorage.setItem("new_router", String(newValue));
+      window.location.reload();
+      handleClose();
+    } else {
+      handleClose();
+    }
   };
 
   return {

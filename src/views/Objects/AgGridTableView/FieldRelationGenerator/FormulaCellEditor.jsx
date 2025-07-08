@@ -9,40 +9,34 @@ import {
   Tooltip,
 } from "@mui/material";
 import {Parser} from "hot-formula-parser";
-import {useState} from "react";
+import React, {useState} from "react";
 import RowClickButton from "../RowClickButton";
 
 const parser = new Parser();
 
 const FormulaCellEditor = (props) => {
-  let {setValue, value, data} = props;
+  let {value, data} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
+  const formula = colDef?.formula ?? "";
+  const disabled = colDef?.disabled;
 
-  const field = props?.colDef?.fieldObj;
+  // const updateValue = () => {
+  //   let computedFormula = formula;
+  //   const fieldsListSorted = fieldsList
+  //     ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+  //     : [];
+  //   fieldsListSorted?.forEach((field) => {
+  //     // let value = values[field.slug] ?? 0;
 
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  //     if (typeof value === "string") value = `'${value}'`;
+  //     if (typeof value === "object") value = `"${value}"`;
+  //     if (typeof value === "boolean")
+  //       value = JSON.stringify(value).toUpperCase();
+  //     computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+  //   });
 
-  const formula = field?.attributes?.formula ?? "";
-
-  const updateValue = () => {
-    let computedFormula = formula;
-    const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
-    fieldsListSorted?.forEach((field) => {
-      // let value = values[field.slug] ?? 0;
-
-      if (typeof value === "string") value = `'${value}'`;
-      if (typeof value === "object") value = `"${value}"`;
-      if (typeof value === "boolean")
-        value = JSON.stringify(value).toUpperCase();
-      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
-    });
-
-    const {error, result} = parser.parse(computedFormula);
-  };
+  //   const {error, result} = parser.parse(computedFormula);
+  // };
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -137,4 +131,4 @@ const FormulaCellEditor = (props) => {
   );
 };
 
-export default FormulaCellEditor;
+export default React.memo(FormulaCellEditor);

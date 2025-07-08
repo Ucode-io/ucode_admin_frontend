@@ -1,13 +1,11 @@
 import clsx from "clsx";
 import cls from "./styles.module.scss";
 import { TimelineRecursiveRow } from "../TimelineRecursiveRow";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import KeyboardDoubleArrowDownOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowDownOutlined";
 import { SidebarButton } from "../SidebarButton";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { useTimelineBlockContext } from "../../providers/TimelineBlockProvider";
-import { useDispatch, useSelector } from "react-redux";
-import { mainActions } from "../../../../../store/main/main.slice";
 
 export const Sidebar = ({
   handleCloseSidebar,
@@ -26,12 +24,6 @@ export const Sidebar = ({
 }) => {
   const { setOpenDrawerModal } = useTimelineBlockContext();
 
-  const timelineSidebarWidth = useSelector(
-    (state) => state.main.timelineSidebarWidth
-  );
-
-  const dispatch = useDispatch();
-
   const [isAllOpen, setIsAllOpen] = useState(false);
 
   const handleAllOpen = () => {
@@ -46,39 +38,8 @@ export const Sidebar = ({
 
   const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
 
-  const boxRef = useRef(null);
-  const [width, setWidth] = useState(timelineSidebarWidth || 200); // начальная ширина
-  const isResizing = useRef(false);
-
-  const MIN_WIDTH = 100;
-  const MAX_WIDTH = window.innerWidth - 440; // 100vh - 440px
-
-  const handleMouseDown = () => {
-    isResizing.current = true;
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isResizing.current) return;
-    const newWidth = e.clientX - boxRef.current.getBoundingClientRect().left;
-    const clampedWidth = Math.max(MIN_WIDTH, Math.min(newWidth, MAX_WIDTH));
-    setWidth(clampedWidth);
-    dispatch(mainActions.setTimelineSidebarWidth(clampedWidth));
-  };
-
-  const handleMouseUp = () => {
-    isResizing.current = false;
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
-
   return (
-    <div
-      className={clsx(cls.group_by, { [cls.isHidden]: !isSidebarOpen })}
-      style={{ width }}
-      ref={boxRef}
-    >
+    <div className={clsx(cls.group_by, { [cls.isHidden]: !isSidebarOpen })}>
       <div className={clsx(cls.fakeDiv)}>
         <div className={cls.header}>
           <span
@@ -102,10 +63,6 @@ export const Sidebar = ({
               </span>
             </button>
           )}
-          <div
-            onMouseDown={handleMouseDown}
-            className={cls.sidebarResizeHandle}
-          />
         </div>
         <SidebarButton
           className={cls.sidebarBtn}

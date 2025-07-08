@@ -1,17 +1,10 @@
 import {Box, ChakraProvider, Switch} from "@chakra-ui/react";
-import {useId} from "react";
 import RowClickButton from "../RowClickButton";
+import React from "react";
 
 const HFSwitchCellEditor = (props) => {
-  const id = useId();
   const {setValue, value, colDef, data} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
+  const disabled = colDef?.disabled;
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
   };
@@ -35,4 +28,4 @@ const HFSwitchCellEditor = (props) => {
   );
 };
 
-export default HFSwitchCellEditor;
+export default React.memo(HFSwitchCellEditor);

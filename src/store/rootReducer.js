@@ -22,6 +22,8 @@ import {viewsReducer} from "./views/view.slice";
 import {isOnlineReducer} from "./isOnline/isOnline.slice";
 import {permissionsReducer} from "./permissions/permissions.slice";
 import {menuAccordionReducer} from "./menus/menus.slice";
+import {groupFieldReducer} from "./groupField/groupField.slice";
+import {detailDrawerReducer} from "./detailDrawer/detailDrawer.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -122,10 +124,15 @@ const permissions = {
   storage,
 };
 
-// const groupFieldPersistConfig = {
-//   key: "groupField",
-//   storage,
-// }
+const groupFieldPersistConfig = {
+  key: "view",
+  storage,
+};
+
+const detailDrawerConfig = {
+  key: "detailDrawer",
+  storage,
+};
 
 const rootReducer = combineReducers({
   main: persistReducer(mainPersistConfig, mainReducer),
@@ -156,9 +163,10 @@ const rootReducer = combineReducers({
   cashbox: persistReducer(cashboxPersistConfig, cashboxReducer),
   selectedRow: persistReducer(selectedRowPersistConfig, selectedRowReducer),
   viewSelectedTab: persistReducer(viewTab, viewsReducer),
-  // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),
+  groupField: groupFieldReducer,
   alert: alertReducer,
   isOnline: persistReducer(isOnline, isOnlineReducer),
+  drawer: detailDrawerReducer,
   permissions: persistReducer(permissions, permissionsReducer),
 });
 

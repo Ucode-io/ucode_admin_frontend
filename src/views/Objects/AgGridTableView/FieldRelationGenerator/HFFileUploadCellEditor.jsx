@@ -1,15 +1,10 @@
 import {Box} from "@mui/material";
 import RowClickButton from "../RowClickButton.jsx";
 import NewFileUploadCellEditor from "./ImageComponents/NewFileUploadCellEditor.jsx";
+import React from "react";
 
 const HFFileUploadCellEditor = (props) => {
-  const {value, setValue, colDef, data} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const {field, value, setValue, colDef, data} = props;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
@@ -32,7 +27,7 @@ const HFFileUploadCellEditor = (props) => {
         onChange={(val) => {
           setValue(val);
         }}
-        disabled={disabled}
+        disabled={field?.attributes?.disabled}
       />
       {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
@@ -44,4 +39,4 @@ const HFFileUploadCellEditor = (props) => {
   );
 };
 
-export default HFFileUploadCellEditor;
+export default React.memo(HFFileUploadCellEditor);

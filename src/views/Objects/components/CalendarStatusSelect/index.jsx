@@ -40,7 +40,7 @@ const CalendarStatusSelect = ({ view, fieldsMap, info, setInfo }) => {
 
   return (
     <>
-      {/* <Divider style={{ marginBottom: 5 }} /> */}
+      <Divider style={{ marginBottom: 5 }} />
       {/* <FRow label={field?.label}>
         <CSelect
           options={options}

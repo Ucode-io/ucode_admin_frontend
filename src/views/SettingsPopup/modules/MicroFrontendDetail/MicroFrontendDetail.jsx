@@ -1,4 +1,4 @@
-import { useMicroFrontendDetailProps } from "./useMicroFrontendDetailProps"
+import {useMicroFrontendDetailProps} from "./useMicroFrontendDetailProps";
 import {Save} from "@mui/icons-material";
 import PrimaryButton from "@/components/Buttons/PrimaryButton";
 import SecondaryButton from "@/components/Buttons/SecondaryButton";
@@ -10,12 +10,11 @@ import HeaderSettings from "@/components/HeaderSettings";
 import PageFallback from "@/components/PageFallback";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import HFSelect from "@/components/FormElements/HFSelect";
-import { ContentTitle } from "../../components/ContentTitle";
-import { Box, Grid } from "@mui/material";
-import { SaveCancelBtns } from "../../components/SaveCancelBtns";
+import {ContentTitle} from "../../components/ContentTitle";
+import {Box, Grid} from "@mui/material";
+import {SaveCancelBtns} from "../../components/SaveCancelBtns";
 
 export const MicroFrontendDetail = () => {
-
   const {
     loader,
     microfrontendId,
@@ -36,8 +35,7 @@ export const MicroFrontendDetail = () => {
       <ContentTitle
         subtitle={microfrontendId ? mainForm.watch("name") : "Новый"}
         withBackBtn
-        onBackClick={handleBackClick}
-      >
+        onBackClick={handleBackClick}>
         Микрофронтенд
       </ContentTitle>
       <Box mt={2}>
@@ -49,8 +47,7 @@ export const MicroFrontendDetail = () => {
             <FRow
               label={"Ресурс"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFSelect
                 disabledHelperText
                 name="resource_id"
@@ -58,7 +55,6 @@ export const MicroFrontendDetail = () => {
                 fullWidth
                 options={resourceOptions}
                 required
-                disabled={!!microfrontendId}
               />
             </FRow>
           </Grid>
@@ -107,15 +103,13 @@ export const MicroFrontendDetail = () => {
               <FRow
                 label={"Ссылка"}
                 componentClassName="flex gap-2 align-center"
-                required
-              >
+                required>
                 <HFTextField
                   disabledHelperText
                   name="path"
                   control={mainForm.control}
                   fullWidth
                   required
-                  disabled={!!microfrontendId}
                 />
               </FRow>
             </Grid>
@@ -124,15 +118,13 @@ export const MicroFrontendDetail = () => {
             <FRow
               label={"Названия"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="name"
                 control={mainForm.control}
                 fullWidth
                 required
-                disabled={!!microfrontendId}
               />
             </FRow>
           </Grid>
@@ -144,7 +136,6 @@ export const MicroFrontendDetail = () => {
                 options={frameworkOptions}
                 defaultValue="REACT"
                 required
-                disabled={!!microfrontendId}
               />
             </FRow>
           </Grid>
@@ -157,7 +148,6 @@ export const MicroFrontendDetail = () => {
                   multiline
                   rows={4}
                   fullWidth
-                  disabled={!!microfrontendId}
                 />
               </FRow>
             </Grid>
@@ -195,4 +185,4 @@ export const MicroFrontendDetail = () => {
       /> */}
     </div>
   );
-}
+};

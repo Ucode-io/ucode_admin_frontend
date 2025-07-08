@@ -53,14 +53,13 @@ export default function GeneratePdfFromTable({row, view, projectId}) {
           "aria-labelledby": "basic-button",
         }}>
         <Box sx={{width: "110px"}}>
+          <PdfMenuList handleClose={handleClose} row={row} />
           <MicroFrontPdf
             projectId={projectId}
             view={view}
             handleClose={handleClose}
             row={row}
           />
-
-          <PdfMenuList handleClose={handleClose} row={row} />
         </Box>
       </Menu>
     </div>

@@ -1,5 +1,5 @@
-import {FormHelperText} from "@mui/material";
-import {Controller} from "react-hook-form";
+import { FormHelperText } from "@mui/material";
+import { Controller } from "react-hook-form";
 import ImageUpload from "../Upload/ImageUpload";
 import VideoUpload from "../Upload/VideoUpload";
 
@@ -8,7 +8,7 @@ const HFVideoUpload = ({
   name,
   required,
   updateObject,
-  isNewTableView = false,
+  isNewTableView=false,
   tabIndex,
   rules,
   disabledHelperText = false,
@@ -24,14 +24,14 @@ const HFVideoUpload = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <VideoUpload
             name={name}
             value={value}
             onChange={(val) => {
-              onChange(val);
-              isNewTableView && updateObject();
+              onChange(val)
+              isNewTableView && updateObject()
             }}
             tabIndex={tabIndex}
             disabled={disabled}
@@ -42,7 +42,8 @@ const HFVideoUpload = ({
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 

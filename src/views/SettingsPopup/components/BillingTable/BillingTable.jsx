@@ -60,9 +60,9 @@ export const BillingTable = ({ handClickBalance }) => {
         component={Paper}
         sx={{
           borderRadius: 1,
-          maxHeight: "calc(100vh - 450px)",
-          minHeight: `calc(100vh - ${transactions?.length ? "700px" : "450px"})`,
-          border: "1px solid #dbe0e4",
+          // borderTop: "2px solid #dbe0e4",
+          maxHeight: "calc(100vh - 550px)",
+          minHeight: "calc(100vh - 650px)",
           marginBottom: "15px",
         }}
         className="scrollbarNone"
@@ -71,6 +71,7 @@ export const BillingTable = ({ handClickBalance }) => {
           sx={{
             position: "relative",
             borderTop: "0px",
+            border: "1px solid #dbe0e4",
             borderRadius: "8px",
           }}
           stickyHeader

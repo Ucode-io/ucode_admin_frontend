@@ -1,19 +1,15 @@
 import {NumericFormat} from "react-number-format";
 import RowClickButton from "../RowClickButton";
 import {Box} from "@mui/material";
+import React from "react";
 
 const HFNumberFieldCell = (props) => {
   const {value, setValue, colDef, data} = props;
-  const field = props?.colDef?.fieldObj;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
   return (
     <Box
       sx={{
@@ -51,4 +47,4 @@ const HFNumberFieldCell = (props) => {
   );
 };
 
-export default HFNumberFieldCell;
+export default React.memo(HFNumberFieldCell);

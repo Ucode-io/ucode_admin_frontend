@@ -19,6 +19,8 @@ import {
   useRelationsCreateMutation,
 } from "../../services/relationService";
 import {transliterate} from "../../utils/textTranslater";
+import {useGetLang} from "../../hooks/useGetLang";
+import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 
 export default function FieldButton({
   openFieldSettings,
@@ -32,7 +34,11 @@ export default function FieldButton({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  setSortedDatas,
+  sortedDatas,
+  visibleColumns,
 }) {
+  const tableLan = useGetLang("Table");
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -140,6 +146,11 @@ export default function FieldButton({
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        )
+          ? true
+          : false,
       },
     };
 
@@ -202,8 +213,7 @@ export default function FieldButton({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}
-      >
+        }}>
         <span
           style={{
             whiteSpace: "nowrap",
@@ -213,9 +223,8 @@ export default function FieldButton({
             fontWeight: 500,
             lineHeight: "normal",
             backgroundColor: "#fff",
-          }}
-        >
-          <AddRoundedIcon style={{ marginTop: "3px" }} />
+          }}>
+          <AddRoundedIcon style={{marginTop: "3px"}} />
         </span>
       </CTableHeadCell>
       <FieldOptionModal
@@ -241,6 +250,12 @@ export default function FieldButton({
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
           mainForm={mainForm}
+          setFieldData={setFieldData}
+          view={view}
+          setSortedDatas={setSortedDatas}
+          sortedDatas={sortedDatas}
+          tableLan={tableLan}
+          visibleColumns={visibleColumns}
         />
       )}
     </>

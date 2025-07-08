@@ -15,15 +15,9 @@ import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import RowClickButton from "../RowClickButton";
 
 const IconPickerCell = (props) => {
-  const {value, setValue, error, colDef, data} = props;
+  const {value, setValue, field, error, colDef, data} = props;
   const buttonRef = useRef();
   const id = useId();
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -74,13 +68,17 @@ const IconPickerCell = (props) => {
           ref={buttonRef}
           style={{backgroundColor: value ?? "transparent"}}
           aria-describedby={id}
-          onClick={!disabled && handleOpen}>
-          {disabled ? (
+          onClick={!field?.attributes?.disabled && handleOpen}>
+          {field?.attributes?.disabled ? (
             <Tooltip title="This field is disabled for this role!">
               <img src="/table-icons/lock.svg" alt="lock" />
             </Tooltip>
           ) : (
-            <IconGenerator size={16} icon={value} disabled={disabled} />
+            <IconGenerator
+              size={16}
+              icon={value}
+              disabled={field?.attributes?.disabled}
+            />
           )}
         </div>
 

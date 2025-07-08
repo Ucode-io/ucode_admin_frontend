@@ -1,19 +1,15 @@
-import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
+import {Box} from "@mui/material";
 import {format, isValid, parse} from "date-fns";
 import RowClickButton from "../RowClickButton";
-import {Box} from "@mui/material";
 
 export const HFDatePicker = (props) => {
   const {setValue, value, data, colDef} = props;
-  const field = colDef?.fieldObj;
+  const disabled = colDef?.disabled;
+
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
   };
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   return (
     <Box
@@ -61,11 +57,7 @@ export const HFDatePicker = (props) => {
 
 export const HFDateTimePicker = (props) => {
   const {setValue, value, data, colDef} = props;
-  const field = colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -115,12 +107,7 @@ export const HFDateTimePicker = (props) => {
 
 export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
   const {setValue, value, data, colDef} = props;
-
-  const field = colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);
@@ -156,12 +143,7 @@ export const HFDateDatePickerWithoutTimeZoneTable = (props) => {
 
 export const HFTimePicker = (props) => {
   const {setValue, value, data, colDef} = props;
-
-  const field = colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
+  const disabled = colDef?.disabled;
 
   const onNavigateToDetail = () => {
     props?.colDef?.onRowClick(data);

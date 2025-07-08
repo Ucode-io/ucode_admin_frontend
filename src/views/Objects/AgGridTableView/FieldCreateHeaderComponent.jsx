@@ -111,7 +111,6 @@ function FieldCreateHeaderComponent(props) {
     <>
       <PermissionWrapperV2 tableSlug={tableSlug} type={"add_field"}>
         <AggridFieldButton
-          mainForm={mainForm}
           view={column?.colDef?.view}
           setFieldCreateAnchor={setFieldCreateAnchor}
           fieldCreateAnchor={fieldCreateAnchor}
@@ -126,8 +125,7 @@ function FieldCreateHeaderComponent(props) {
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -144,8 +142,7 @@ function FieldCreateHeaderComponent(props) {
         open={drawerStateField}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+        orientation="horizontal">
         <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

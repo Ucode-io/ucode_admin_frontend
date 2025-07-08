@@ -1,6 +1,6 @@
 import style from "./styles.module.scss";
-import { Badge, Button, Divider, Menu, Switch } from "@mui/material";
-import { Description, MoreVertOutlined } from "@mui/icons-material";
+import {Badge, Button, Divider, Menu, Switch} from "@mui/material";
+import {Description, MoreVertOutlined} from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SearchInput from "../../../../components/SearchInput";
@@ -10,9 +10,6 @@ import GroupByButton from "../../GroupByButton";
 import VisibleColumnsButton from "../../VisibleColumnsButton";
 import TableViewGroupByButton from "../../TableViewGroupByButton";
 import ExcelButtons from "../ExcelButtons";
-import FilterPopover from "../../../table-redesign/FilterPopover";
-import { FilterButton } from "../../../table-redesign/FilterButton";
-import { ChakraProvider } from "@chakra-ui/react";
 
 export const ExtraNavbar = ({
   filterCount,
@@ -57,8 +54,7 @@ export const ExtraNavbar = ({
       className={style.extraNavbar}
       style={{
         minHeight: "42px",
-      }}
-    >
+      }}>
       <div className={style.extraWrapper}>
         <div className={style.search}>
           <Badge
@@ -71,8 +67,7 @@ export const ExtraNavbar = ({
               setFilterVisible((prev) => !prev);
             }}
             badgeContent={filterCount}
-            color="primary"
-          >
+            color="primary">
             <FilterAltOutlinedIcon color={"#A8A8A8"} />
           </Badge>
           {/* {view?.type === "GRID" ? (
@@ -118,8 +113,7 @@ export const ExtraNavbar = ({
               onClick={handleClickSearch}
               style={{
                 paddingRight: "10px",
-              }}
-            >
+              }}>
               <MoreHorizIcon />
             </button>
           )}
@@ -153,8 +147,7 @@ export const ExtraNavbar = ({
                   zIndex: 0,
                 },
               },
-            }}
-          >
+            }}>
             <SearchParams
               checkedColumns={checkedColumns}
               setCheckedColumns={setCheckedColumns}
@@ -227,14 +220,12 @@ export const ExtraNavbar = ({
                         zIndex: 0,
                       },
                     },
-                  }}
-                >
+                  }}>
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
                       <div
                         className={style.template}
-                        onClick={() => handleHeightControl(el.value)}
-                      >
+                        onClick={() => handleHeightControl(el.value)}>
                         <span>{el.label}</span>
 
                         <Switch
@@ -260,8 +251,7 @@ export const ExtraNavbar = ({
                   color: "#A8A8A8",
                   borderColor: "#A8A8A8",
                   minWidth: "auto",
-                }}
-              >
+                }}>
                 <MoreVertOutlined
                   style={{
                     color: "#888",
@@ -307,8 +297,7 @@ export const ExtraNavbar = ({
                     zIndex: 0,
                   },
                 },
-              }}
-            >
+              }}>
               <div className={style.menuBar}>
                 <ExcelButtons
                   computedVisibleFields={computedVisibleFields}
@@ -319,16 +308,14 @@ export const ExtraNavbar = ({
                 />
                 <div
                   className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
+                  onClick={() => setSelectedTabIndex(views?.length)}>
                   <div
                     className={`${style.element} ${
                       selectedTabIndex === views?.length ? style.active : ""
-                    }`}
-                  >
+                    }`}>
                     <Description
                       className={style.icon}
-                      style={{ color: "#6E8BB7" }}
+                      style={{color: "#6E8BB7"}}
                     />
                   </div>
                   <span>Template</span>

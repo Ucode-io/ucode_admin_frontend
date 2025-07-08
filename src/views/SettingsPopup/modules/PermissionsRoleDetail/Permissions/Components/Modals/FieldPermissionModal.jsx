@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import {Box, Card, Checkbox, Modal, Typography} from "@mui/material";
-import { Controller, useFieldArray } from "react-hook-form";
+import {useFieldArray} from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,10 +10,9 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
-import { useTranslation } from "react-i18next";
-import { generateLangaugeText } from "../../../../../../../utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
 import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
-import cls from "./styles.module.scss";
 
 const FieldPermissions = ({
   closeModal,
@@ -24,8 +23,8 @@ const FieldPermissions = ({
   projectSettingLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.field_permissions`;
-  const { i18n } = useTranslation();
-  const { fields } = useFieldArray({
+  const {i18n} = useTranslation();
+  const {fields} = useFieldArray({
     control,
     name: basePath,
   });
@@ -82,26 +81,20 @@ const FieldPermissions = ({
               >
                 <CTableHead>
                   <CTableHeadRow>
-                    <CTableCell w={2}>
-                      <Box className={cls.headCellBox}>No</Box>
+                    <CTableCell w={2}>No</CTableCell>
+                    <CTableCell>
+                      {generateLangaugeText(
+                        projectSettingLan,
+                        i18n?.language,
+                        "Field name"
+                      ) ?? "Field name"}
                     </CTableCell>
                     <CTableCell>
-                      <Box className={cls.headCellBox}>
-                        {generateLangaugeText(
-                          projectSettingLan,
-                          i18n?.language,
-                          "Field name"
-                        ) ?? "Field name"}
-                      </Box>
-                    </CTableCell>
-                    <CTableCell>
-                      <Box className={cls.headCellBox}>
-                        {generateLangaugeText(
-                          projectSettingLan,
-                          i18n?.language,
-                          "View permission"
-                        ) ?? "View permission"}
-                      </Box>
+                      {generateLangaugeText(
+                        projectSettingLan,
+                        i18n?.language,
+                        "View permission"
+                      ) ?? "View permission"}
                       <CustomCheckbox
                         checked={allViewTrue ? true : false}
                         onChange={(e) => {
@@ -110,13 +103,11 @@ const FieldPermissions = ({
                       />
                     </CTableCell>
                     <CTableCell>
-                      <Box className={cls.headCellBox}>
-                        {generateLangaugeText(
-                          projectSettingLan,
-                          i18n?.language,
-                          "Edit permission"
-                        ) ?? "Edit permission"}
-                      </Box>
+                      {generateLangaugeText(
+                        projectSettingLan,
+                        i18n?.language,
+                        "Edit permission"
+                      ) ?? "Edit permission"}
                       <CustomCheckbox
                         checked={allEditTrue ? true : false}
                         onChange={(e) => {
@@ -129,46 +120,22 @@ const FieldPermissions = ({
                 <CTableBody columnsCount={4} dataLength={fields?.length}>
                   {fields?.map((field, fieldIndex) => (
                     <CTableHeadRow key={field.id}>
-                      <CTableCell>
-                        <Box className={cls.bodyCellBox}>{fieldIndex + 1}</Box>
-                      </CTableCell>
-                      <CTableCell>
-                        <Box className={cls.bodyCellBox}>{field.label}</Box>
-                      </CTableCell>
+                      <CTableCell>{fieldIndex + 1}</CTableCell>
+                      <CTableCell>{field.label}</CTableCell>
                       <CTableCell>
                         <Box sx={{ justifyContent: "center", display: "flex" }}>
-                          <Controller
-                            control={control}
+                          <FormCheckbox
                             name={`${basePath}.${fieldIndex}.view_permission`}
-                            render={({ field: { onChange, value } }) => (
-                              <CustomCheckbox
-                                onChange={onChange}
-                                checked={value}
-                              />
-                            )}
+                            control={control}
                           />
-                          {/* <FormCheckbox
-                            name={`${basePath}.${fieldIndex}.view_permission`}
-                            control={control}
-                          /> */}
                         </Box>
                       </CTableCell>
                       <CTableCell>
                         <Box sx={{ justifyContent: "center", display: "flex" }}>
-                          <Controller
-                            control={control}
+                          <FormCheckbox
                             name={`${basePath}.${fieldIndex}.edit_permission`}
-                            render={({ field: { onChange, value } }) => (
-                              <CustomCheckbox
-                                onChange={onChange}
-                                checked={value}
-                              />
-                            )}
+                            control={control}
                           />
-                          {/* <FormCheckbox
-                            name={`${basePath}.${fieldIndex}.edit_permission`}
-                            control={control}
-                          /> */}
                         </Box>
                       </CTableCell>
                     </CTableHeadRow>

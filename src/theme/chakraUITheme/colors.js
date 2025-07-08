@@ -1,7 +1,6 @@
 const colors = {
 	primary: {
 		main: '#007AFF',
-		brand: "#2383e2",
 		50: '#E5F2FF',
 		100: '#B8DAFF',
 		200: '#8AC2FF',

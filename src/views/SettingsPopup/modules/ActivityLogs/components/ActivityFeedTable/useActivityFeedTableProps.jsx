@@ -77,7 +77,7 @@ export const useActivityFeedTableProps = ({
   // const [collectionText, setCollectionText] = useState("");
   // const [userInfoText, setUserInfoText] = useState("");
 
-  const collectionRef = useRef(null);
+  const collectionRef = useRef();
   const userInfoRef = useRef();
 
   const onCollectionChange = (e) => {

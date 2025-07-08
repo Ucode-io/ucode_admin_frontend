@@ -15,7 +15,12 @@ import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {Box, Button, Menu, MenuItem, TextField, Tooltip} from "@mui/material";
 import DrawerFieldGenerator from "./DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
-import {useNavigate, useParams} from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {Flex, Text} from "@chakra-ui/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -33,20 +38,22 @@ const FullpagePeekMaininfo = ({
   computedSections = [],
   updateCurrentLayout = () => {},
 }) => {
-  const {tableSlug, appId, id} = useParams();
+  const {menuId} = useParams();
   const {i18n} = useTranslation();
   const navigate = useNavigate();
+  const {state} = useLocation();
   const [isShow, setIsShow] = useState(true);
   const [activeLang, setActiveLang] = useState();
   const [dragAction, setDragAction] = useState(false);
   const projectId = store.getState().company.projectId;
   const [sections, setSections] = useState(computedSections ?? []);
   const rowData = watch();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("p");
+  const tableSlug = state?.tableSlug;
 
   const auth = store.getState().auth;
-
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
-
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
@@ -62,7 +69,7 @@ const FullpagePeekMaininfo = ({
       });
     });
     return fields;
-  }, [relation]);
+  }, []);
 
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
@@ -133,14 +140,12 @@ const FullpagePeekMaininfo = ({
               }}>
               <Button
                 onClick={() =>
-                  navigate(
-                    `/main/${appId}/layout-settings/${tableSlug}/${id}`,
-                    {
-                      state: {
-                        ...rowData,
-                      },
-                    }
-                  )
+                  navigate(`/${menuId}/customize/${id}`, {
+                    state: {
+                      ...rowData,
+                      tableSlug,
+                    },
+                  })
                 }
                 sx={{
                   display: "none",
@@ -160,7 +165,7 @@ const FullpagePeekMaininfo = ({
               watch={watch}
               fields={fieldsList}
               selectedTab={selectedTab}
-              layoutData={relation}
+              tableSlug={tableSlug}
             />
           </Box>
 
@@ -281,8 +286,8 @@ const HeadingOptions = ({
   selectedTab,
   layoutData,
   setFormValue = () => {},
+  tableSlug,
 }) => {
-  const {tableSlug} = useParams();
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -354,12 +359,7 @@ const HeadingOptions = ({
           gap: "10px",
         }}>
         <CHTextField
-          placeholder={
-            Boolean(watch("attributes.layout_heading")) ||
-            !Boolean(watch(selectedField?.slug))
-              ? "Enter value"
-              : "Select field"
-          }
+          placeholder={selectedFieldSlug?.slug ? "" : "Select field"}
           control={control}
           name={selectedField?.slug || ""}
           defaultValue={fieldValue}

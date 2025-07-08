@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import constructorViewService from "../../../services/constructorViewService";
-import { applyDrag } from "../../../utils/applyDrag";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
+import {applyDrag} from "../../../utils/applyDrag";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import {
   useGetBoardMutation,
   useGetBoardStructureMutation,
 } from "../../../services/boardViewService";
-import { throttle } from "lodash-es";
-import { flushSync } from "react-dom";
+import {throttle} from "lodash-es";
+import {flushSync} from "react-dom";
 
 export const useBoardViewProps = ({
   view,
@@ -25,19 +25,19 @@ export const useBoardViewProps = ({
   // checkedColumns,
   columnsForSearch,
 }) => {
-  const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
-  const checkedColumns = columnsForSearch
-    ?.filter((item) => item?.is_search && searchableTypes?.includes(item?.type))
-    ?.map((item) => item?.slug);
+  // const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
   const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const { tableSlug, appId } = useParams();
+  const {appId, tableSlug: tableSlugFromParams, menuId} = useParams();
 
-  const { new_list, list } = useSelector((state) => state.filter);
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
-  const { t } = useTranslation();
+  const {new_list, list} = useSelector((state) => state.filter);
+
+  const {t} = useTranslation();
 
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -48,7 +48,6 @@ export const useBoardViewProps = ({
   const limit = 100;
 
   const [dateInfo, setDateInfo] = useState({});
-  const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
 
   const [openDrawerModal, setOpenDrawerModal] = useState(false);
@@ -77,7 +76,7 @@ export const useBoardViewProps = ({
   const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
 
   const groupFieldId = view?.group_fields?.[0];
-  const groupField = fieldsMapRel[groupFieldId];
+  const groupField = fieldsMapRel?.[groupFieldId];
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -98,7 +97,7 @@ export const useBoardViewProps = ({
 
   const sortedBoardDataByLength = Object.entries(boardData)
     .sort((a, b) => a[1].length - b[1].length)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({name, value}))
     .filter(
       (item) =>
         item?.value?.length <
@@ -124,16 +123,14 @@ export const useBoardViewProps = ({
     ];
   };
 
-  const navigateToEditPage = (el) => {
-    setOpenDrawerModal(true);
-    setSelectedRow(el);
-    setDateInfo({});
-    setDefaultValue({});
-  };
+  // const navigateToEditPage = (el) => {
+  //   setOpenDrawerModal(true);
+  //   setDateInfo({});
+  //   setDefaultValue({});
+  // };
 
-  const navigateToCreatePage = ({ group }) => {
+  const navigateToCreatePage = ({group}) => {
     setOpenDrawerModal(true);
-    setSelectedRow(null);
     if (isStatusType) {
       setDefaultValue({
         field: selectedGroupField?.slug,
@@ -147,10 +144,10 @@ export const useBoardViewProps = ({
     }
   };
 
-  const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
-    navigate(url);
-  };
+  // const navigateToSettingsPage = () => {
+  //   const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
+  //   navigate(url);
+  // };
 
   const updateView = (tabs) => {
     const computedData = {
@@ -186,6 +183,8 @@ export const useBoardViewProps = ({
   };
 
   const getGroupCounts = () => {
+    if (!groupField?.slug) return;
+
     const mutateBody = {
       data: {
         group_by: {
@@ -193,14 +192,21 @@ export const useBoardViewProps = ({
         },
       },
     };
+
     groupMutationForCounts.mutate(mutateBody);
   };
+
+  useEffect(() => {
+    if (groupField?.slug) {
+      getGroupCounts();
+    }
+  }, [groupField?.slug]);
 
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {
@@ -216,7 +222,7 @@ export const useBoardViewProps = ({
       : searchText;
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -227,7 +233,7 @@ export const useBoardViewProps = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     select: (data) => {
       return {
@@ -251,9 +257,9 @@ export const useBoardViewProps = ({
 
           setBoardData((prev) => {
             if (subGroupById) {
-              return getMergedDataSubgroup({ newData, prev });
+              return getMergedDataSubgroup({newData, prev});
             } else {
-              return getMergedDataGroup({ newData, prev });
+              return getMergedDataGroup({newData, prev});
             }
           });
         }
@@ -265,6 +271,7 @@ export const useBoardViewProps = ({
   );
 
   const mutateBoardData = (offsetProp) => {
+    if (!groupField?.slug) return;
     const fields = [
       ...visibleColumns
         ?.filter((item) => {
@@ -281,7 +288,7 @@ export const useBoardViewProps = ({
     boardMutation.mutate({
       data: {
         group_by: {
-          field: groupField.slug,
+          field: groupField?.slug,
         },
         subgroup_by: {
           field: subGroupFieldSlug,
@@ -355,10 +362,11 @@ export const useBoardViewProps = ({
   }, [boardData]);
 
   const mutateBoardStructure = () => {
+    if (!groupField?.slug) return;
     const mutateBody = {
       data: {
         group_by: {
-          field: groupField.slug,
+          field: groupField?.slug,
         },
       },
     };
@@ -380,7 +388,7 @@ export const useBoardViewProps = ({
   useEffect(() => {
     mutateBoardStructure();
     setOffset(0);
-  }, [subGroupById, groupFieldId]);
+  }, [subGroupById, groupFieldId, groupField?.slug]);
 
   // groupField, subGroupFieldSlug, subGroupById
 
@@ -500,6 +508,12 @@ export const useBoardViewProps = ({
   }, [list, searchText]);
 
   useEffect(() => {
+    if (groupField?.slug) {
+      mutateBoardData();
+    }
+  }, [groupField?.slug, view?.columns]);
+
+  useEffect(() => {
     const board = boardRef.current;
     const el = fixedElement.current;
     if (!board || !el) return;
@@ -551,18 +565,15 @@ export const useBoardViewProps = ({
     setBoardData,
     computedColumnsFor,
     setOpenDrawerModal,
-    setSelectedRow,
     setDateInfo,
     setDefaultValue,
     getGroupCounts,
     subGroupFieldSlug,
     projectInfo,
     openDrawerModal,
-    selectedRow,
     layout,
     selectedViewType,
     setSelectedViewType,
-    navigateToEditPage,
     dateInfo,
     defaultValue,
     fixedElement,
@@ -575,8 +586,8 @@ export const useBoardViewProps = ({
   };
 };
 
-const getMergedDataSubgroup = ({ newData, prev }) => {
-  const merged = { ...prev };
+const getMergedDataSubgroup = ({newData, prev}) => {
+  const merged = {...prev};
 
   for (const authorId in newData) {
     const newStatuses = newData[authorId];
@@ -597,8 +608,8 @@ const getMergedDataSubgroup = ({ newData, prev }) => {
   return merged;
 };
 
-const getMergedDataGroup = ({ newData, prev }) => {
-  const merged = { ...prev };
+const getMergedDataGroup = ({newData, prev}) => {
+  const merged = {...prev};
 
   for (const statusKey in newData) {
     const existing = prev[statusKey] || [];

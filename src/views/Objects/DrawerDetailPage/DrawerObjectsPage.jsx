@@ -171,6 +171,7 @@ function DrawerObjectsPage({
             viewsList?.[viewsList?.length - 1]?.relation_table_slug,
           disable_table_to: true,
         },
+        {},
         viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
           viewsList?.[viewsList?.length - 1]?.table_slug
       ),

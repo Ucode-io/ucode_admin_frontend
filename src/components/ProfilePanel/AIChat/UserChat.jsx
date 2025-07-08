@@ -17,22 +17,23 @@ function UserChat({ msg, index }) {
         key={index}
         sx={{
           display: "flex",
-          alignItems: "center",
-          margin: "10px",
+          alignItems: "flex-end",
+          margin: "16px",
           justifyContent: "flex-end",
+          gap: "12px",
         }}
       >
         <Paper
           sx={{
-            padding: "10px",
-            backgroundColor: "#F4F4F4",
-            alignSelf: "flex-end",
-            maxWidth: "70%",
+            backgroundColor: "#F2F4FC",
+            alignSelf: "flex-start",
+            maxWidth: "80%",
             color: "#000",
-            borderRadius: "20px",
-            padding: "10px 10px 10px 10px",
+            wordBreak: "break-all",
+            border: "1px solid #E0E2E8",
             minHeight: "40px",
-            marginRight: "10px",
+            flexGrow: 1,
+            padding: "10px",
           }}
         >
           <Typography

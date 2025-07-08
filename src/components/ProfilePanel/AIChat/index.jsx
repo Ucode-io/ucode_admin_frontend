@@ -217,7 +217,12 @@ export const AIMenu = ({
           )}
           {selectedEntityType === ENTITY_TYPES.TABLES && (
             <>
-              <Tables control={control} disabled={disabled} errors={errors} />
+              <Tables
+                control={control}
+                disabled={disabled}
+                setChatInputValue={setInputValue}
+                errors={errors}
+              />
             </>
           )}
           {messages.length > 0 || selectedEntityType ? (
@@ -435,6 +440,7 @@ export const useAIChat = () => {
     setInputValue("");
     setLoader(false);
     setSelectedEntityType(null);
+    reset();
   };
 
   const cellMcpMutation = useMcpCellMutation({

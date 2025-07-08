@@ -24,7 +24,7 @@ import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
 import {Box, Popover, Skeleton} from "@mui/material";
 import NoDataPng from "../../assets/images/no-data.png";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import {viewTypes, viewTypesMap} from "../../utils/constants/viewTypes";
+import { viewTypes, VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
 import {DynamicTable} from "../table-redesign";
 import ViewTypeList from "./components/ViewTypeList";
 
@@ -162,7 +162,7 @@ const ObjectsPage = () => {
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
   if (isLoading) {
-    if (view?.type === viewTypesMap.BOARD) {
+    if (view?.type === VIEW_TYPES_MAP.BOARD) {
       return null;
     }
 

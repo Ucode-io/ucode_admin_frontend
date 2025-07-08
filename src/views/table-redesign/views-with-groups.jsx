@@ -151,7 +151,12 @@ export const NewUiViewsWithGroups = ({
   setSelectedViewType = () => {},
 }) => {
   const location = useLocation();
-  const {id, menuId: menuid, tableSlug: tableSlugFromProps, appId} = useParams();
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromProps,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps || view?.table_slug;
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();

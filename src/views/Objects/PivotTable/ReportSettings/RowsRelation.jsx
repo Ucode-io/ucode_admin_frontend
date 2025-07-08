@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
-import { useFieldArray } from "react-hook-form";
+import React, {useEffect, useMemo, useState} from "react";
+import {useQuery} from "react-query";
+import {useFieldArray} from "react-hook-form";
 
-import { CircularProgress, Collapse } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import {CircularProgress, Collapse} from "@mui/material";
+import {Delete} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
@@ -18,17 +18,21 @@ import HFMultipleAutocomplete from "../../../../components/FormElements/HFMultip
 import constructorRelationService from "../../../../services/constructorRelationService";
 import styles from "./relation.module.scss";
 import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
-import { use } from "i18next";
-import { useParams } from "react-router-dom";
+import {use} from "i18next";
+import {useParams} from "react-router-dom";
 
-export default function RowsRelation({ form, tables, getTables }) {
-  const { fields: objectFields, append, remove } = useFieldArray({ control: form.control, name: "rows_relation" });
+export default function RowsRelation({form, tables, getTables}) {
+  const {
+    fields: objectFields,
+    append,
+    remove,
+  } = useFieldArray({control: form.control, name: "rows_relation"});
 
   const computedOptions = useMemo(() => {
     return (
       tables
         // .filter((table) => !form.watch(`rows`).some((row) => row.slug === table.slug))
-        .map((i) => ({ label: i.label, value: i.slug, id: i.id }))
+        .map((i) => ({label: i.label, value: i.slug, id: i.id}))
     );
   }, [tables]);
 
@@ -36,10 +40,19 @@ export default function RowsRelation({ form, tables, getTables }) {
     <div className={styles.repeatedBlock}>
       <div className={styles.items}>
         {objectFields.map((row, idx) => (
-          <RowItem key={row.title} remove={remove} idx={idx} form={form} options={computedOptions} getTables={getTables} />
+          <RowItem
+            key={row.title}
+            remove={remove}
+            idx={idx}
+            form={form}
+            options={computedOptions}
+            getTables={getTables}
+          />
         ))}
       </div>
-      <PrimaryButton style={{ width: "100%" }} onClick={() => append({ title: "", tables: [{ label: "" }] })}>
+      <PrimaryButton
+        style={{width: "100%"}}
+        onClick={() => append({title: "", tables: [{label: ""}]})}>
         <AddIcon />
         <span>Add new item</span>
       </PrimaryButton>
@@ -47,35 +60,61 @@ export default function RowsRelation({ form, tables, getTables }) {
   );
 }
 
-function RowItem({ form, options, idx, remove, getTables }) {
-  const { fields: tables, append: appendObj, remove: rmoveObj } = useFieldArray({ control: form.control, name: `rows_relation.${idx}.objects` });
+function RowItem({form, options, idx, remove, getTables}) {
+  const {
+    fields: tables,
+    append: appendObj,
+    remove: rmoveObj,
+  } = useFieldArray({
+    control: form.control,
+    name: `rows_relation.${idx}.objects`,
+  });
 
   const [expandedRowsIds, setExpandedRowsIds] = useState([idx]);
 
   const handleRowsExpand = (key) => {
-    setExpandedRowsIds((p) => (key === "open" ? [...p, idx] : p.filter((id) => id !== idx)));
+    setExpandedRowsIds((p) =>
+      key === "open" ? [...p, idx] : p.filter((id) => id !== idx)
+    );
   };
 
   return (
     <div className={styles.item}>
       <div className={styles.expand}>
-        <RectangleIconButton style={{ marginBottom: "10px" }} onClick={() => handleRowsExpand(expandedRowsIds.includes(idx) ? "close" : "open")}>
+        <RectangleIconButton
+          style={{marginBottom: "10px"}}
+          onClick={() =>
+            handleRowsExpand(expandedRowsIds.includes(idx) ? "close" : "open")
+          }>
           {expandedRowsIds.includes(idx) ? <RemoveIcon /> : <AddIcon />}
         </RectangleIconButton>
         <FRow label="Label">
-          <HFTextField fullWidth required control={form.control} name={`rows_relation.${idx}.label`} />
+          <HFTextField
+            fullWidth
+            required
+            control={form.control}
+            name={`rows_relation.${idx}.label`}
+          />
         </FRow>
       </div>
       <Collapse in={expandedRowsIds.includes(idx)} timeout="auto" unmountOnExit>
         <div>
           <div className={styles.objects}>
             {tables.map((table, objIdx) => (
-              <ObjectItem form={form} idx={idx} objIdx={objIdx} options={options} key={table.id} rmoveObj={rmoveObj} getTables={getTables} />
+              <ObjectItem
+                form={form}
+                idx={idx}
+                objIdx={objIdx}
+                options={options}
+                key={table.id}
+                rmoveObj={rmoveObj}
+                getTables={getTables}
+              />
             ))}
           </div>
 
           <div className={styles.footerBtns}>
-            <PrimaryButton onClick={() => appendObj({ label: "" })}>
+            <PrimaryButton onClick={() => appendObj({label: ""})}>
               <AddIcon />
               <span>Add new object</span>
             </PrimaryButton>
@@ -90,9 +129,12 @@ function RowItem({ form, options, idx, remove, getTables }) {
   );
 }
 
-function ObjectItem({ form, idx, objIdx, options, rmoveObj, getTables }) {
-  const { data: fields, isLoading } = useQuery(
-    ["GET_TABLE_FIELDS", form.watch(`rows_relation.${idx}.objects.${objIdx}.slug`)],
+function ObjectItem({form, idx, objIdx, options, rmoveObj, getTables}) {
+  const {data: fields, isLoading} = useQuery(
+    [
+      "GET_TABLE_FIELDS",
+      form.watch(`rows_relation.${idx}.objects.${objIdx}.slug`),
+    ],
     () => {
       return constructorFieldService.getList({
         table_slug: form.watch(`rows_relation.${idx}.objects.${objIdx}.slug`),
@@ -101,7 +143,7 @@ function ObjectItem({ form, idx, objIdx, options, rmoveObj, getTables }) {
     },
     {
       enabled: !!form.watch(`rows_relation.${idx}.objects.${objIdx}.slug`),
-      select: ({ fields }) =>
+      select: ({fields}) =>
         fields.map((i) => ({
           label: i.label + " -> " + i.slug,
           value: i.slug,
@@ -109,30 +151,47 @@ function ObjectItem({ form, idx, objIdx, options, rmoveObj, getTables }) {
           attributes: i.attributes ?? null,
         })),
       onSuccess: (data) => {
-        form.setValue(`rows_relation.${idx}.objects.${objIdx}.fields_length`, data.length);
+        form.setValue(
+          `rows_relation.${idx}.objects.${objIdx}.fields_length`,
+          data.length
+        );
       },
     }
   );
 
-  const relationTableSlug = form.watch(`rows_relation.${idx}.objects.${objIdx}.slug`);
-const {tableSlug} = useParams();
-  const { data: relationTables } = useQuery(["GET_RELATIONS_LIST", relationTableSlug], () => constructorRelationService.getList({ table_slug: relationTableSlug }, tableSlug), {
-    enabled: !!relationTableSlug,
-    select: (res) =>
-      res.relations?.map((r) => ({
-        value: r.table_from.slug,
-        label: r.table_from.label,
-        isRelationTable: r.table_to.slug === relationTableSlug,
-        viewFields: r.view_fields,
-        field_from: r.field_from,
-        table_to: r.table_to,
-      })),
-  });
+  const relationTableSlug = form.watch(
+    `rows_relation.${idx}.objects.${objIdx}.slug`
+  );
+  const {tableSlug} = useParams();
+  const {data: relationTables} = useQuery(
+    ["GET_RELATIONS_LIST", relationTableSlug],
+    () =>
+      constructorRelationService.getList(
+        {table_slug: relationTableSlug},
+        {},
+        tableSlug
+      ),
+    {
+      enabled: !!relationTableSlug,
+      select: (res) =>
+        res.relations?.map((r) => ({
+          value: r.table_from.slug,
+          label: r.table_from.label,
+          isRelationTable: r.table_to.slug === relationTableSlug,
+          viewFields: r.view_fields,
+          field_from: r.field_from,
+          table_to: r.table_to,
+        })),
+    }
+  );
 
   const onObjectSelect = (slug) => {
     const selected = options.find((obj) => obj.value === slug);
     if (selected) {
-      form.setValue(`rows_relation.${idx}.objects.${objIdx}.label`, selected.label);
+      form.setValue(
+        `rows_relation.${idx}.objects.${objIdx}.label`,
+        selected.label
+      );
       form.setValue(`rows_relation.${idx}.objects.${objIdx}.id`, selected.id);
     }
   };
@@ -149,8 +208,14 @@ const {tableSlug} = useParams();
         label: getField(v).label,
         table_slug: relationTableSlug,
         attributes: getField(v).attributes,
-        table_to: getField(v).type === "LOOKUP" || getField(v).type === "LOOKUPS" ? relationTables.find((i) => i.field_from === v)?.table_to : undefined,
-        view_fields: getField(v).type === "LOOKUP" || getField(v).type === "LOOKUPS" ? relationTables.find((i) => i.field_from === v)?.viewFields : undefined,
+        table_to:
+          getField(v).type === "LOOKUP" || getField(v).type === "LOOKUPS"
+            ? relationTables.find((i) => i.field_from === v)?.table_to
+            : undefined,
+        view_fields:
+          getField(v).type === "LOOKUP" || getField(v).type === "LOOKUPS"
+            ? relationTables.find((i) => i.field_from === v)?.viewFields
+            : undefined,
       }))
     );
   };
@@ -160,7 +225,10 @@ const {tableSlug} = useParams();
     form.watch(`values`).forEach((value, idx) => {
       value.objects.forEach((obj, objIdx) => {
         if (obj.id === curObj.id) {
-          form.setValue(`rows_relation.${idx}.objects.${objIdx}.date_field_slug`, val);
+          form.setValue(
+            `rows_relation.${idx}.objects.${objIdx}.date_field_slug`,
+            val
+          );
         }
       });
     });
@@ -171,20 +239,42 @@ const {tableSlug} = useParams();
       form.setValue(
         `rows_relation.${idx}.objects.${objIdx}.table_field_settings`,
         fields
-          .filter((f) => form.watch(`rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`).some((slug) => slug === f.value))
+          .filter((f) =>
+            form
+              .watch(
+                `rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`
+              )
+              .some((slug) => slug === f.value)
+          )
           .map((v) => ({
             field_slug: v.value,
             field_type: v.type,
             label: v.label,
             attributes: v.attributes,
             table_slug: relationTableSlug,
-            table_to: v.type === "LOOKUP" || v.type === "LOOKUPS" ? relationTables?.find((i) => i.field_from === v.value)?.table_to : undefined,
-            view_fields: v.type === "LOOKUP" || v.type === "LOOKUPS" ? relationTables?.find((i) => i.field_from === v.value)?.viewFields : undefined,
+            table_to:
+              v.type === "LOOKUP" || v.type === "LOOKUPS"
+                ? relationTables?.find((i) => i.field_from === v.value)
+                    ?.table_to
+                : undefined,
+            view_fields:
+              v.type === "LOOKUP" || v.type === "LOOKUPS"
+                ? relationTables?.find((i) => i.field_from === v.value)
+                    ?.viewFields
+                : undefined,
           }))
           .sort(
             (a, b) =>
-              form.watch(`rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`).indexOf(a.field_slug) -
-              form.watch(`rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`).indexOf(b.field_slug)
+              form
+                .watch(
+                  `rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`
+                )
+                .indexOf(a.field_slug) -
+              form
+                .watch(
+                  `rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`
+                )
+                .indexOf(b.field_slug)
           )
       );
     }
@@ -217,7 +307,7 @@ const {tableSlug} = useParams();
         </FRow>
         <FRow label="Relation table">
           <HFSelect
-            style={{ width: "100%" }}
+            style={{width: "100%"}}
             clearable
             options={relationTables?.filter((r) => r.isRelationTable)}
             control={form.control}
@@ -226,7 +316,8 @@ const {tableSlug} = useParams();
           />
         </FRow>
         <FRow label="Fields">
-          <div className={`${styles.fields} ${!fields?.length ? styles.border : ""}`}>
+          <div
+            className={`${styles.fields} ${!fields?.length ? styles.border : ""}`}>
             {isLoading ? (
               <div className={styles.loader}>
                 <CircularProgress />
@@ -236,7 +327,7 @@ const {tableSlug} = useParams();
                 onChange={onFieldChange}
                 defaultValue={[]}
                 control={form.control}
-                field={{ attributes: { options: fields, is_multiselect: true } }}
+                field={{attributes: {options: fields, is_multiselect: true}}}
                 width="100%"
                 name={`rows_relation.${idx}.objects.${objIdx}.table_field_settings_ids`}
               />
@@ -250,7 +341,10 @@ const {tableSlug} = useParams();
         </FRow>
       </div>
 
-      <PrimaryButton style={{ width: "100%" }} color="error" onClick={() => rmoveObj(objIdx)}>
+      <PrimaryButton
+        style={{width: "100%"}}
+        color="error"
+        onClick={() => rmoveObj(objIdx)}>
         <Delete />
         <span>Delete object</span>
       </PrimaryButton>

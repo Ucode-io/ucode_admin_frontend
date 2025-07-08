@@ -158,6 +158,7 @@ const DrawerTableView = ({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{relations = []}, {fields = []}] = await Promise.all([

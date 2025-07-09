@@ -1701,7 +1701,7 @@ const FiltersSwitch = ({
   const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
   const tableSlug = view?.table_slug;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
@@ -1725,8 +1725,8 @@ const FiltersSwitch = ({
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
-    ...checkedColumns.map((c) => ({...c, checked: true})),
-    ...unCheckedColumns.map((c) => ({...c, checked: false})),
+    ...checkedColumns.map((c) => ({ ...c, checked: true })),
+    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
   ].filter((column) =>
     search === ""
       ? true
@@ -1755,7 +1755,7 @@ const FiltersSwitch = ({
 
     await mutation.mutateAsync({
       ...view,
-      attributes: {...view?.attributes, quick_filters: result},
+      attributes: { ...view?.attributes, quick_filters: result },
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -1804,13 +1804,14 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
-            isChecked={column.checked}
+            isChecked={column.is_checked}
             onChange={(ev) => onChange(column, ev.target.checked)}
           />
         </Flex>

@@ -50,8 +50,8 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
     }
   };
 
-  const updateField = (field) => {
-    const index = fields.findIndex((el) => el.id === field.id);
+  const updateField = (field, index) => {
+    // const index = fields.findIndex((el) => el.id === field.id);
 
     if (!id) {
       update(index, field);
@@ -59,7 +59,7 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
     } else {
       setFormLoader(true);
       constructorFieldService
-        .update(field)
+        .update({ data: field, tableSlug })
         .then((res) => {
           update(index, field);
           setDrawerState(null);
@@ -159,7 +159,7 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
         <FieldSettings
           tableLan={tableLan}
           closeSettingsBlock={() => setDrawerState(null)}
-          onSubmit={(index, field) => update(index, field)}
+          onSubmit={(index, field) => updateField(field, index)}
           field={drawerState}
           formType={drawerState}
           mainForm={mainForm}

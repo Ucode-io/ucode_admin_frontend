@@ -170,14 +170,14 @@ export const NewUiViewsWithGroups = ({
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -188,7 +188,7 @@ export const NewUiViewsWithGroups = ({
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -196,7 +196,7 @@ export const NewUiViewsWithGroups = ({
   const groupTable = view?.attributes?.group_by_columns;
 
   const projectId = useSelector((state) => state.auth.projectId);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const settingsForm = useForm({
     defaultValues: {
@@ -270,12 +270,12 @@ export const NewUiViewsWithGroups = ({
     mode: "all",
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -568,7 +568,7 @@ export const NewUiViewsWithGroups = ({
 
   const viewName =
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
-  console.log("selectedRowselectedRow", selectedRow);
+
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>

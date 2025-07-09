@@ -1565,7 +1565,8 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);

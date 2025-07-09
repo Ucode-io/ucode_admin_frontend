@@ -271,28 +271,6 @@ export const useBoardViewProps = ({
     tableSlug
   );
 
-  const filters = useMemo(() => {
-    if (isJSONParsable(list?.[tableSlug]?.[view?.id])) {
-      const tempFilters = JSON.parse(
-        JSON.stringify(list?.[tableSlug]?.[view?.id])
-      );
-
-      Object.keys(tempFilters)?.forEach((item) => {
-        if (
-          tempFilters[item] === "null" ||
-          !tempFilters[item] ||
-          tempFilters[item]?.includes("null")
-        ) {
-          delete tempFilters[item];
-        }
-      });
-
-      return tempFilters;
-    } else {
-      return {};
-    }
-  }, [tableSlug, list, view?.id]);
-
   const mutateBoardData = (offsetProp) => {
     if (!groupField?.slug) return;
     const fields = [
@@ -321,7 +299,7 @@ export const useBoardViewProps = ({
         fields: fields,
         // search: boardSearch,
         // view_fields: checkedColumns ?? [],
-        ...filters,
+        ...list?.[tableSlug]?.[view?.id],
       },
     });
   };

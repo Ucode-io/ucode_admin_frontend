@@ -8,10 +8,10 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useEffect } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useLocation, useParams } from "react-router-dom";
+import React, {useMemo, useState} from "react";
+import {useEffect} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useLocation, useParams} from "react-router-dom";
 import FRow from "../../../../components/FormElements/FRow";
 import useDebounce from "../../../../hooks/useDebounce";
 import constructorObjectService from "../../../../services/constructorObjectService";
@@ -33,8 +33,8 @@ function LinkedListTables({
   selectedObject,
   exportToHTML,
 }) {
-  const { tableSlug } = useParams();
-  const { state } = useLocation();
+  const {tableSlug} = useParams();
+  const {state} = useLocation();
 
   const [debouncedValue, setDebouncedValue] = useState("");
   const [debouncedObjectValue, setdebouncedObjectValue] = useState("");
@@ -53,13 +53,17 @@ function LinkedListTables({
     : tableSlug;
 
   // ==========GET RELATION TABLE SLUG========
-  const { data: computedRelationValue = [] } = useQuery(
+  const {data: computedRelationValue = []} = useQuery(
     ["GET_RELATION_OBJECT_LIST", tableSlug, getSelectTedTemplate],
     () => {
-      return constructorRelationService.getList({
-        table_slug: "file",
-        relation_table_slug: "file",
-      }, tableSlug);
+      return constructorRelationService.getList(
+        {
+          table_slug: "file",
+          relation_table_slug: "file",
+        },
+        {},
+        tableSlug
+      );
     },
     {
       select: (res) => {
@@ -89,7 +93,7 @@ function LinkedListTables({
           result,
         };
       },
-      onSuccess: ({ result }) => {
+      onSuccess: ({result}) => {
         setSelectedOutputTable(result?.value ?? "");
       },
     }
@@ -114,13 +118,17 @@ function LinkedListTables({
   // );
 
   // ==========GET LINKED OBJECT LIST=========
-  const { data: computedRelations = [] } = useQuery(
+  const {data: computedRelations = []} = useQuery(
     ["GET_RELATION_OBJECTS", tableSlug, getSelectTedTemplate],
     () => {
-      return constructorRelationService.getList({
-        table_slug: tableSlug,
-        relation_table_slug: tableSlug,
-      }, tableSlug);
+      return constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        {},
+        tableSlug
+      );
     },
     {
       select: (res) => {
@@ -169,7 +177,7 @@ function LinkedListTables({
           linkedDefault,
         };
       },
-      onSuccess: ({ result, linkedDefault }) => {
+      onSuccess: ({result, linkedDefault}) => {
         setSelectedLinkedObject(linkedDefault?.value ?? result?.value);
       },
     }
@@ -192,7 +200,7 @@ function LinkedListTables({
   }, [selectTableSlug, computedRelations?.relations]);
 
   // ========LINKED OBJECT LIST TABLE VIEW===========
-  const { data: computedLinkedObjects = [] } = useQuery(
+  const {data: computedLinkedObjects = []} = useQuery(
     ["GET_OBJECT_LIST_TABLE", selectTableSlug, state, debouncedObjectValue],
     () => {
       // if (state === undefined) return null;
@@ -227,14 +235,14 @@ function LinkedListTables({
           linkedObject,
         };
       },
-      onSuccess: ({ defaultValue }) => {
+      onSuccess: ({defaultValue}) => {
         setSelectedObject(defaultValue ? defaultValue : selectedObject);
       },
     }
   );
 
   // =========GET OUTPUT OBJECT LIST==========
-  const { data: computedObject = [] } = useQuery(
+  const {data: computedObject = []} = useQuery(
     ["GET_OBJECT_LIST", outputTableSlug, computedLinkedObjects, debouncedValue],
     () => {
       if (outputTableSlug === undefined) return null;
@@ -262,7 +270,7 @@ function LinkedListTables({
           ];
         const arr = [
           ...computedObject,
-          { label: val?.[subttitleFieldSlug] ?? "", value: val?.guid ?? "" },
+          {label: val?.[subttitleFieldSlug] ?? "", value: val?.guid ?? ""},
         ];
 
         const defaultValue = arr?.find((item) => {
@@ -275,7 +283,7 @@ function LinkedListTables({
           defaultValue,
         };
       },
-      onSuccess: ({ defaultValue }) => {
+      onSuccess: ({defaultValue}) => {
         setSelectedOutputObject(defaultValue ?? selectedOutputObject);
       },
     }
@@ -334,8 +342,7 @@ function LinkedListTables({
                 <ClearIcon />
               </IconButton>
             )
-          }
-        >
+          }>
           {computedRelations?.arr?.map((item) => (
             <MenuItem value={item?.value}>{item?.label}</MenuItem>
           ))}
@@ -347,8 +354,7 @@ function LinkedListTables({
           id="demo-simple-select"
           value={selectedOutputTable}
           onChange={handleChange}
-          size="small"
-        >
+          size="small">
           {computedRelationValue?.computedValue?.map((item) => (
             <MenuItem value={item?.value}>{item?.label}</MenuItem>
           ))}
@@ -405,8 +411,7 @@ function LinkedListTables({
                   ...params.InputProps,
                 }}
               />
-            )}
-          ></Autocomplete>
+            )}></Autocomplete>
         </FormControl>
       </FRow>
       {/*       

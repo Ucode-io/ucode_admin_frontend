@@ -46,7 +46,7 @@ import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutl
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import {Backdrop, Popover as MuiPopover} from "@mui/material";
 import {addDays, endOfMonth, startOfMonth} from "date-fns";
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import React, {lazy, useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {default as InlineSVG, default as SVG} from "react-inlinesvg";
@@ -79,11 +79,6 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {listToMap} from "../../utils/listToMap";
 import listToOptions from "../../utils/listToOptions";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
-import BoardView from "../Objects/BoardView";
-import CalendarView from "../Objects/CalendarView";
-import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
-import TimeLineView from "../Objects/TimeLineView";
 import {Filter} from "./FilterGenerator";
 import {LayoutPopup} from "./LayoutPopup";
 import {ScreenOptions} from "./ScreenOptions";
@@ -100,11 +95,22 @@ import {
   Group,
   TabGroup,
 } from "./components/ViewOptionElement";
-import DrawerTableView from "./drawer-table-view";
-import TableView from "./table-view";
-import TableViewOld from "./table-view-old";
 import {FilterButton} from "./FilterButton";
 import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+
+const AggridTreeView = lazy(
+  () => import("../Objects/AgGridTableView/AggridTreeView")
+);
+const BoardView = lazy(() => import("../Objects/BoardView"));
+const CalendarView = lazy(() => import("../Objects/CalendarView"));
+const DrawerFormDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
+);
+const TimeLineView = lazy(() => import("../Objects/TimeLineView"));
+const DrawerTableView = lazy(() => import("./drawer-table-view"));
+const TableView = lazy(() => import("./table-view"));
+const TableViewOld = lazy(() => import("./table-view-old"));
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -487,6 +493,7 @@ export const NewUiViewsWithGroups = ({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
@@ -897,6 +904,7 @@ export const NewUiViewsWithGroups = ({
             <MuiPopover
               open={Boolean(viewAnchorEl)}
               anchorEl={viewAnchorEl}
+              anchorPosition={{ top: 200, left: 600 }}
               onClose={() => {
                 handleClosePop();
               }}
@@ -1105,7 +1113,9 @@ export const NewUiViewsWithGroups = ({
           <Tabs
             direction={"ltr"}
             defaultIndex={0}
-            // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+            style={{
+              height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
+            }}
           >
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
@@ -1238,7 +1248,7 @@ export const NewUiViewsWithGroups = ({
                     ) : null}
                   </>
                 )}
-                {view.type === "BOARD" && (
+                {view.type === VIEW_TYPES_MAP.BOARD && (
                   <BoardView
                     setSelectedRow={setSelectedRow}
                     selectedRow={selectedRow}
@@ -1506,56 +1516,6 @@ export const NewUiViewsWithGroups = ({
   );
 };
 
-// const FilterButton = forwardRef(({view, onClick, ...props}, ref) => {
-//   const tableViewFiltersOpen = useSelector(
-//     (state) => state.main.tableViewFiltersOpen
-//   );
-//   const dispatch = useDispatch();
-
-//   const handleClick = (ev) => {
-//     if (
-//       tableViewFiltersOpen ||
-//       (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
-//     ) {
-//       ev.stopPropagation();
-//       return dispatch(
-//         mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
-//       );
-//     }
-//     onClick(ev);
-//   };
-
-//   return (
-//     <Box position="relative">
-//       <IconButton
-//         ref={ref}
-//         aria-label="filter"
-//         icon={<Image src="/img/funnel.svg" alt="filter" />}
-//         variant="ghost"
-//         colorScheme="gray"
-//         onClick={handleClick}
-//         {...props}
-//       />
-//       {Boolean(view?.attributes?.quick_filters?.length) && (
-//         <Flex
-//           position="absolute"
-//           top="-8px"
-//           right="-4px"
-//           w="16px"
-//           h="16px"
-//           bg="#007AFF"
-//           alignItems="center"
-//           justifyContent="center"
-//           color="#fff"
-//           borderRadius="50%"
-//           fontSize="10px">
-//           {view?.attributes?.quick_filters?.length}
-//         </Flex>
-//       )}
-//     </Box>
-//   );
-// });
-
 const FilterPopover = ({
   view,
   visibleColumns,
@@ -1605,7 +1565,8 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);

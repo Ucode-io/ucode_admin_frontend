@@ -137,6 +137,7 @@ const TableView = ({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{relations = []}, {fields = []}] = await Promise.all([
@@ -455,7 +456,6 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    console.log("layoutTypelayoutType", layoutType);
     if (layoutType === "PopupLayout") {
       setSelectedRow(row);
       setOpen(true);
@@ -478,7 +478,7 @@ const TableView = ({
       return data[variable] || "";
     });
   };
-
+  console.log("menuItemmenuItem", menuItem);
   const navigateToDetailPage = (row) => {
     if (
       view?.attributes?.navigate?.params?.length ||
@@ -503,6 +503,7 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
+      console.log("tableSlug", menuItem, tableSlug);
       navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id || appId);
     }
   };
@@ -555,13 +556,13 @@ const TableView = ({
     differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
     1;
 
-    const isWarningActive =
-      projectInfo?.subscription_type === "free_trial"
-        ? isWarning <= 16
-        : projectInfo?.status === "insufficient_funds" &&
-            projectInfo?.subscription_type === "paid"
-          ? isWarning <= 5
-          : isWarning <= 7;
+  const isWarningActive =
+    projectInfo?.subscription_type === "free_trial"
+      ? isWarning <= 16
+      : projectInfo?.status === "insufficient_funds" &&
+          projectInfo?.subscription_type === "paid"
+        ? isWarning <= 5
+        : isWarning <= 7;
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

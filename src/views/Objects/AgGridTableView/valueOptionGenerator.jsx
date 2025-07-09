@@ -80,7 +80,7 @@ const getColumnEditorParams = (item, columnDef) => {
           <Skeleton
             variant="rectangular"
             style={{borderRadius: "6px"}}
-            width={220}
+            width={"100%"}
             height={20}
           />
         </div>

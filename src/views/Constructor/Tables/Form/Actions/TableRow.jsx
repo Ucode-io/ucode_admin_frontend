@@ -1,8 +1,8 @@
-import { Delete } from "@mui/icons-material";
-import { Autocomplete, TextField } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Delete} from "@mui/icons-material";
+import {Autocomplete, TextField} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
@@ -35,13 +35,17 @@ function TableRow({
   });
 
   //============GET RELATIONS===========
-  const { data: relations } = useQuery(
+  const {data: relations} = useQuery(
     ["GET_RELATION_LIST", slug],
     () => {
-      return constructorRelationService.getList({
-        table_slug: slug,
-        relation_table_slug: slug,
-      }, slug);
+      return constructorRelationService.getList(
+        {
+          table_slug: slug,
+          relation_table_slug: slug,
+        },
+        {},
+        slug
+      );
     },
     {
       select: (res) => {
@@ -88,7 +92,7 @@ function TableRow({
     });
   }, [getListValues, selectedTableOptions]);
 
-  const { data: values } = useQuery(
+  const {data: values} = useQuery(
     ["GET_OBJECT_LIST", selectedTableOptions, getFilterData, debouncedValue],
     () => {
       return constructorObjectService.getListV2(selectedTableOptions, {
@@ -201,8 +205,7 @@ function TableRow({
                     ...params.InputProps,
                   }}
                 />
-              )}
-            ></Autocomplete>
+              )}></Autocomplete>
           ) : summary?.type === "TABLE" ? (
             <HFSelect
               fullWidth

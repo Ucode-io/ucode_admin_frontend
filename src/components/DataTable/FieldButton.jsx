@@ -42,7 +42,9 @@ export default function FieldButton({
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [searchParams, setSearchParams] = useSearchParams();
-  const {tableSlug} = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
+
   const dispatch = useDispatch();
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
@@ -213,7 +215,8 @@ export default function FieldButton({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}>
+        }}
+      >
         <span
           style={{
             whiteSpace: "nowrap",
@@ -223,8 +226,9 @@ export default function FieldButton({
             fontWeight: 500,
             lineHeight: "normal",
             backgroundColor: "#fff",
-          }}>
-          <AddRoundedIcon style={{marginTop: "3px"}} />
+          }}
+        >
+          <AddRoundedIcon style={{ marginTop: "3px" }} />
         </span>
       </CTableHeadCell>
       <FieldOptionModal
@@ -256,6 +260,7 @@ export default function FieldButton({
           sortedDatas={sortedDatas}
           tableLan={tableLan}
           visibleColumns={visibleColumns}
+          tableSlug={tableSlug}
         />
       )}
     </>

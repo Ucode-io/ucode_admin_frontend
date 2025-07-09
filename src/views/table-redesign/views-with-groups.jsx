@@ -97,6 +97,7 @@ import {
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
 import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
 
 const AggridTreeView = lazy(
   () => import("../Objects/AgGridTableView/AggridTreeView")
@@ -903,7 +904,7 @@ export const NewUiViewsWithGroups = ({
             <MuiPopover
               open={Boolean(viewAnchorEl)}
               anchorEl={viewAnchorEl}
-              anchorPosition={{top: 200, left: 600}}
+              anchorPosition={{ top: 200, left: 600 }}
               onClose={() => {
                 handleClosePop();
               }}
@@ -1112,7 +1113,9 @@ export const NewUiViewsWithGroups = ({
           <Tabs
             direction={"ltr"}
             defaultIndex={0}
-            // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
+            style={{
+              height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
+            }}
           >
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
@@ -1245,7 +1248,7 @@ export const NewUiViewsWithGroups = ({
                     ) : null}
                   </>
                 )}
-                {view.type === "BOARD" && (
+                {view.type === VIEW_TYPES_MAP.BOARD && (
                   <BoardView
                     setSelectedRow={setSelectedRow}
                     selectedRow={selectedRow}
@@ -1562,7 +1565,8 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);

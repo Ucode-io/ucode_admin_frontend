@@ -13,6 +13,7 @@ import {
 } from "../../../services/boardViewService";
 import {throttle} from "lodash-es";
 import {flushSync} from "react-dom";
+import { isJSONParsable } from "../../../utils/isJsonValid";
 
 export const useBoardViewProps = ({
   view,
@@ -30,14 +31,14 @@ export const useBoardViewProps = ({
   const projectId = useSelector((state) => state.company?.projectId);
 
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const {appId, tableSlug: tableSlugFromParams, menuId} = useParams();
+  const { appId, tableSlug: tableSlugFromParams, menuId } = useParams();
 
   const tableSlug =
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
-  const {new_list, list} = useSelector((state) => state.filter);
+  const { new_list, list } = useSelector((state) => state.filter);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
   const isStatusType = selectedGroupField?.type === "STATUS";
@@ -97,7 +98,7 @@ export const useBoardViewProps = ({
 
   const sortedBoardDataByLength = Object.entries(boardData)
     .sort((a, b) => a[1].length - b[1].length)
-    .map(([name, value]) => ({name, value}))
+    .map(([name, value]) => ({ name, value }))
     .filter(
       (item) =>
         item?.value?.length <
@@ -129,7 +130,7 @@ export const useBoardViewProps = ({
   //   setDefaultValue({});
   // };
 
-  const navigateToCreatePage = ({group}) => {
+  const navigateToCreatePage = ({ group }) => {
     setOpenDrawerModal(true);
     if (isStatusType) {
       setDefaultValue({
@@ -206,7 +207,7 @@ export const useBoardViewProps = ({
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {
@@ -222,7 +223,7 @@ export const useBoardViewProps = ({
       : searchText;
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -257,9 +258,9 @@ export const useBoardViewProps = ({
 
           setBoardData((prev) => {
             if (subGroupById) {
-              return getMergedDataSubgroup({newData, prev});
+              return getMergedDataSubgroup({ newData, prev });
             } else {
-              return getMergedDataGroup({newData, prev});
+              return getMergedDataGroup({ newData, prev });
             }
           });
         }

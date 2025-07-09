@@ -190,7 +190,8 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+      >
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="/">
@@ -201,6 +202,11 @@ const NewRouter = () => {
                 <UsersList />
               </Suspense>
             }
+          />
+
+          <Route
+            path="microfrontend/:microfrontendId"
+            element={<Microfrontend />}
           />
 
           {/* <Route index element={<Navigate to={redirectLink} />} /> */}

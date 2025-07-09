@@ -36,7 +36,8 @@ function DrawerFormDetailPage({
 }) {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
-  const {tableSlug, menuId} = useParams();
+  const { tableSlug: tableSlugParam, menuId } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;

@@ -20,8 +20,9 @@ const FastFilter = ({
   setFilterVisible,
   container,
   tableSlug,
+  filterChangeHandler,
 }) => {
-  const {new_list} = useSelector((state) => state.filter);
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const FastFilter = ({
 
   const dispatch = useDispatch();
 
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, view?.id);
 
   const computedFields = useMemo(() => {
     const filter = view?.attributes?.quick_filters ?? [];
@@ -69,6 +70,7 @@ const FastFilter = ({
   }, [view?.attributes?.quick_filters, fieldsMap, new_list, tableSlug]);
 
   const onChange = (value, name) => {
+    filterChangeHandler(value, name);
     dispatch(
       filterActions.setFilter({
         tableSlug: tableSlug,
@@ -82,7 +84,8 @@ const FastFilter = ({
   return (
     <div
       className={styles.filtersBlock}
-      style={{flexDirection: isVertical ? "column" : "row"}}>
+      style={{ flexDirection: isVertical ? "column" : "row" }}
+    >
       {computedFields?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter

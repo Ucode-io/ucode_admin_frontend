@@ -147,7 +147,7 @@ function DrawerObjectsPage({
       ),
     {
       enabled: Boolean(lastPath?.relation_table_slug),
-      select: ({data}) => ({
+      select: ({ data }) => ({
         fieldsMap: listToMap(data?.fields),
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
         visibleColumns: data?.fields ?? [],

@@ -5,6 +5,7 @@ import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {TabPanel, Tabs} from "react-tabs";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import { NewUiViewsWithGroups } from "../../views/table-redesign/views-with-groups";
 
 function DrawerObjectsPage({
   projectInfo,

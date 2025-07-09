@@ -36,7 +36,8 @@ function DrawerFormDetailPage({
 }) {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
-  const {tableSlug, menuId} = useParams();
+  const { tableSlug: tableSlugParam, menuId } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
@@ -226,17 +227,19 @@ function DrawerFormDetailPage({
     <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{height: "calc(100vh - 94px)"}}
+        sx={{ height: "calc(100vh - 94px)" }}
         pb={"10px"}
         overflow={"auto"}
         display="flex"
-        flexDirection="column">
+        flexDirection="column"
+      >
         {isMultiLanguage && (
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
                 className={activeLang === lang?.short_name && "active"}
-                onClick={() => setActiveLang(lang?.short_name)}>
+                onClick={() => setActiveLang(lang?.short_name)}
+              >
                 {lang?.name}
               </Button>
             ))}
@@ -256,7 +259,8 @@ function DrawerFormDetailPage({
           sx={{
             overflow: "auto",
             height: "calc(100vh - 94px)",
-          }}>
+          }}
+        >
           {sections?.map((section, secIndex) => (
             <Container
               sx={{
@@ -294,7 +298,8 @@ function DrawerFormDetailPage({
                             "&:hover": {
                               backgroundColor: "#F7F7F7",
                             },
-                          }}>
+                          }}
+                        >
                           <Box
                             width="18px"
                             height="16px"
@@ -302,13 +307,14 @@ function DrawerFormDetailPage({
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
-                            sx={{color: "#787774"}}>
+                            sx={{ color: "#787774" }}
+                          >
                             <span className="drag">
                               <DragIndicatorIcon
-                                style={{width: "16px", height: "16px"}}
+                                style={{ width: "16px", height: "16px" }}
                               />
                             </span>
-                            <span style={{color: "#787774"}} className="icon">
+                            <span style={{ color: "#787774" }} className="icon">
                               {getColumnIcon({
                                 column: {
                                   type: field?.type ?? field?.relation_type,
@@ -324,7 +330,8 @@ function DrawerFormDetailPage({
                             width="100%"
                             overflow="hidden"
                             textOverflow="ellipsis"
-                            whiteSpace="nowrap">
+                            whiteSpace="nowrap"
+                          >
                             {getFieldLanguageLabel(field)}
                           </Box>
                         </Box>
@@ -369,9 +376,10 @@ function DrawerFormDetailPage({
           display="flex"
           justifyContent="flex-end"
           marginTop="auto"
-          marginBottom="12px">
+          marginBottom="12px"
+        >
           <FormCustomActionButton
-            control={rootForm.control}
+            control={rootForm?.control?._formValues}
             tableSlug={tableSlug}
             id={selectedRow?.guid}
             getAllData={getAllData}

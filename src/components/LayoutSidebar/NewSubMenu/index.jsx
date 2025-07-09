@@ -8,6 +8,7 @@ import menuService, {useMenuListQuery} from "../../../services/menuService";
 import {Box, Skeleton} from "@mui/material";
 import {Container} from "react-smooth-dnd";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
+import { applyDrag } from "../../../utils/applyDrag";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -66,7 +67,6 @@ function NewSubMenu({
   // };
 
   const onDrop = (dropResult) => {
-    console.log({ menuChilds, elementId: element?.id });
     const result = applyDrag(menuChilds?.[element?.id]?.children, dropResult);
     if (result) {
       menuService
@@ -94,14 +94,16 @@ function NewSubMenu({
         position: "relative",
         minHeight: "32px",
         padding: "0 0 0 15px",
-      }}>
+      }}
+    >
       <div className="body">
         <Box
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-          }}>
+          }}
+        >
           <div>
             <Box className="nav-block">
               {/* {selectedApp?.id === adminId && (
@@ -160,7 +162,8 @@ function NewSubMenu({
                 ) : menuChilds?.[element?.id]?.children?.length ? (
                   <Container
                     dragHandleSelector=".column-drag-handle"
-                    onDrop={onDrop}>
+                    onDrop={onDrop}
+                  >
                     {menuChilds?.[element?.id]?.children?.map(
                       (childElement, index) => (
                         <RecursiveBlock
@@ -179,7 +182,7 @@ function NewSubMenu({
                           menuStyle={menuStyleNew}
                           index={index}
                           selectedApp={selectedApp}
-                          buttonProps={{className: "highlight-on-hover"}}
+                          buttonProps={{ className: "highlight-on-hover" }}
                         />
                       )
                     )}
@@ -193,7 +196,8 @@ function NewSubMenu({
                         height: "30px",
                         display: "flex",
                         alignItems: "center",
-                      }}>
+                      }}
+                    >
                       No pages inside
                     </Box>
                   </>

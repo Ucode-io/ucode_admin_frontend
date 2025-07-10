@@ -1,7 +1,7 @@
 import constructorObjectService from "../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "./getRelationFieldLabel";
 
-export const queryGenerator = (groupField, filters = {}) => {
+export const queryGenerator = (groupField, filters = {}, lang) => {
   if (!groupField)
     return {
       queryFn: () => {},
@@ -34,12 +34,13 @@ export const queryGenerator = (groupField, filters = {}) => {
         {tableSlug: groupField.table_slug, filters: computedFilters},
       ],
       queryFn,
-      select: (res) =>
-        res?.data?.response?.map((el) => ({
-          label: getRelationFieldTabsLabel(groupField, el),
+      select: (res) => {
+        return res?.data?.response?.map((el) => ({
+          label: getRelationFieldTabsLabel(groupField, el, lang),
           value: el.guid,
           slug: groupField?.slug,
-        })),
+        }))
+      }
     };
   }
 };

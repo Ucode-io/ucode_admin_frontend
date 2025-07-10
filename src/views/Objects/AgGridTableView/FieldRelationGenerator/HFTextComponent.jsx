@@ -15,13 +15,13 @@ function HFTextComponent(props) {
             height: "100%",
             padding: "0 0 0 5px",
           }}>
-          {props?.field?.label}
+          {props?.colDef?.label}
         </Box>
       ) : (
         <Box sx={{width: "100%", height: "100%"}}>
           <Box sx={{width: "100%", height: "29px"}}></Box>
           <Box sx={{width: "100%", fontWeight: "700", fontSize: "16px"}}>
-            {props?.field?.label}
+            {props?.colDef?.label}
           </Box>
         </Box>
       )}
@@ -33,4 +33,4 @@ function HFTextComponent(props) {
   );
 }
 
-export default HFTextComponent;
+export default React.memo(HFTextComponent);

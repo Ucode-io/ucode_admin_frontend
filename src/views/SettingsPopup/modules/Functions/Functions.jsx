@@ -40,15 +40,13 @@ export const Functions = () => {
           <Box
             display="flex"
             justifyContent="space-between"
-            alignItems="center"
-          >
+            alignItems="center">
             <span>Environments</span>
             <Box
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
-              gap={"16px"}
-            >
+              gap={"16px"}>
               <SearchInput onChange={(e) => inputChangeHandler(e)} />
               <PermissionWrapperV2 tableSlug="app" type="write">
                 <Button primary onClick={navigateToCreateForm}>
@@ -60,7 +58,7 @@ export const Functions = () => {
         </ContentTitle>
 
         <TableCard type={"withoutPadding"}>
-          <CTable disablePagination removableHeight={false}>
+          <CTable disablePagination removableHeight={140}>
             <CTableHead>
               <CTableCell className={cls.tableHeadCell} width={10}>
                 №
@@ -77,13 +75,11 @@ export const Functions = () => {
             <CTableBody
               loader={loader}
               columnsCount={4}
-              dataLength={list?.functions?.length}
-            >
+              dataLength={list?.functions?.length}>
               {list?.functions?.map((element, index) => (
                 <CTableRow
                   key={element.id}
-                  onClick={() => navigateToEditForm(element.id)}
-                >
+                  onClick={() => navigateToEditForm(element.id)}>
                   <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
                   <CTableCell className={cls.tBodyCell}>
                     {element?.name}
@@ -103,8 +99,7 @@ export const Functions = () => {
                   <CTableCell className={cls.tBodyCell}>
                     <RectangleIconButton
                       color="error"
-                      onClick={() => deleteFunction(element.id)}
-                    >
+                      onClick={() => deleteFunction(element.id)}>
                       <Delete color="error" />
                     </RectangleIconButton>
                   </CTableCell>
@@ -126,8 +121,7 @@ export const Functions = () => {
             borderTop: "1px solid #eee",
             paddingRight: "30px",
           }}
-          color="primary"
-        >
+          color="primary">
           <Box>
             <Pagination
               count={Math.ceil(list?.count / 10)}

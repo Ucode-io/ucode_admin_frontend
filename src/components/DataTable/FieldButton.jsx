@@ -19,6 +19,8 @@ import {
   useRelationsCreateMutation,
 } from "../../services/relationService";
 import {transliterate} from "../../utils/textTranslater";
+import {useGetLang} from "../../hooks/useGetLang";
+import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
 
 export default function FieldButton({
   openFieldSettings,
@@ -32,11 +34,17 @@ export default function FieldButton({
   setDrawerState,
   setDrawerStateField,
   menuItem,
+  setSortedDatas,
+  sortedDatas,
+  visibleColumns,
 }) {
+  const tableLan = useGetLang("Table");
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [searchParams, setSearchParams] = useSearchParams();
-  const {tableSlug} = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
+
   const dispatch = useDispatch();
   const {control, watch, setValue, reset, handleSubmit} = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
@@ -140,6 +148,11 @@ export default function FieldButton({
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        )
+          ? true
+          : false,
       },
     };
 
@@ -241,6 +254,13 @@ export default function FieldButton({
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
           mainForm={mainForm}
+          setFieldData={setFieldData}
+          view={view}
+          setSortedDatas={setSortedDatas}
+          sortedDatas={sortedDatas}
+          tableLan={tableLan}
+          visibleColumns={visibleColumns}
+          tableSlug={tableSlug}
         />
       )}
     </>

@@ -80,8 +80,7 @@ const AddDataColumn = React.memo(
             left: "0",
             backgroundColor: "#F6F6F6",
             zIndex: "2",
-          }}
-        >
+          }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column, index) => (
@@ -95,8 +94,7 @@ const AddDataColumn = React.memo(
               left: "0",
               backgroundColor: "#fff",
               zIndex: "1",
-            }}
-          >
+            }}>
             <NewTableDataForm
               tableSlug={tableSlug}
               fields={columns}
@@ -104,7 +102,6 @@ const AddDataColumn = React.memo(
               getValues={getValues}
               mainForm={mainForm}
               control={control}
-              setValue={setFormValue}
               setFormValue={setFormValue}
               relationfields={relationfields}
               data={data}
@@ -131,13 +128,11 @@ const AddDataColumn = React.memo(
             padding: "0 5px",
             right: "0",
             borderLeft: "1px solid #eee",
-          }}
-        >
+          }}>
           <td
             style={{
               border: "none",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
@@ -145,25 +140,22 @@ const AddDataColumn = React.memo(
                 padding: "3px",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                 <RectangleIconButton
                   color="error"
-                  onClick={() => setAddNewRow(false)}
-                >
+                  onClick={() => setAddNewRow(false)}>
                   <ClearIcon color="error" />
                 </RectangleIconButton>
               </PermissionWrapperV2>
               {isLoading ? (
                 <CircularProgress
-                  style={{ width: "20px", height: "20px", marginLeft: "4px" }}
+                  style={{width: "20px", height: "20px", marginLeft: "4px"}}
                 />
               ) : (
                 <RectangleIconButton
                   color="success"
-                  onClick={handleSubmit(onSubmit)}
-                >
+                  onClick={handleSubmit(onSubmit)}>
                   <DoneIcon color="success" />
                 </RectangleIconButton>
               )}

@@ -92,6 +92,7 @@ const GroupTableView = ({
           table_slug: slug,
           relation_table_slug: slug,
         },
+        {},
         slug
       );
       const [{relations = []}, {fields = []}] = await Promise.all([
@@ -131,7 +132,7 @@ const GroupTableView = ({
           fields: relation.view_fields ?? [],
         },
         label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
             ? relation[relation.relatedTableSlug]?.label
             : relation?.title,
       }));

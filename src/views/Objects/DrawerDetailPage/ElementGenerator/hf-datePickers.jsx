@@ -1,17 +1,17 @@
 import {Controller} from "react-hook-form";
 import {DatePickerInput, DateTimePicker, TimeInput} from "@mantine/dates";
-import { format, isValid, parse, parseISO } from "date-fns";
+import {format, isValid, parse, parseISO} from "date-fns";
 import "./style.scss";
-import { Box } from "@chakra-ui/react";
-import { Lock } from "@mui/icons-material";
+import {Box} from "@chakra-ui/react";
+import {Lock} from "@mui/icons-material";
 
 export const HFDatePickerField = ({
   control,
   name,
+  defaultValue = "",
   required,
   disabled,
   drawerDetail = false,
-  defaultValue = "",
 }) => {
   return (
     <Controller
@@ -22,7 +22,7 @@ export const HFDatePickerField = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue || undefined}
-      render={({ field: { onChange, value } }) => {
+      render={({field: {onChange, value}}) => {
         return (
           <Box position="relative">
             <DatePickerInput
@@ -69,9 +69,8 @@ export const HFDatePickerField = ({
                   right: "1px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                }}
-              >
-                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+                }}>
+                <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
               </Box>
             )}
           </Box>
@@ -84,10 +83,10 @@ export const HFDatePickerField = ({
 export const HFDateTimePickerField = ({
   control,
   name,
+  defaultValue = "",
   required,
   disabled,
   drawerDetail = false,
-  defaultValue = "",
 }) => {
   return (
     <Controller
@@ -98,7 +97,7 @@ export const HFDateTimePickerField = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue}
-      render={({ field: { onChange, value } }) => {
+      render={({field: {onChange, value}}) => {
         return (
           <Box position="relative">
             <DateTimePicker
@@ -141,9 +140,8 @@ export const HFDateTimePickerField = ({
                   right: "1px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                }}
-              >
-                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+                }}>
+                <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
               </Box>
             )}
           </Box>
@@ -156,10 +154,10 @@ export const HFDateTimePickerField = ({
 export const HFDateDatePickerWithoutTimeZoneTableField = ({
   control,
   name,
+  defaultValue = "",
   required,
   disabled,
   drawerDetail = false,
-  defaultValue = "",
 }) => {
   return (
     <Controller
@@ -170,7 +168,7 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue}
-      render={({ field: { onChange, value } }) => {
+      render={({field: {onChange, value}}) => {
         return (
           <Box position="relative">
             <DateTimePicker
@@ -214,9 +212,8 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
                   right: "1px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                }}
-              >
-                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+                }}>
+                <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
               </Box>
             )}
           </Box>
@@ -241,7 +238,7 @@ export const HFTimePickerField = ({
       rules={{
         required: required ? "This field is required" : false,
       }}
-      render={({ field: { onChange, value } }) => {
+      render={({field: {onChange, value}}) => {
         return (
           <Box position="relative">
             {disabled && (
@@ -256,9 +253,8 @@ export const HFTimePickerField = ({
                   right: "1px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                }}
-              >
-                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+                }}>
+                <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
               </Box>
             )}
             <TimeInput

@@ -21,7 +21,7 @@ const RelationField = ({
   control,
   field,
   name,
-  setFormValue = () => {},
+  setFormValue,
   formTableSlug,
   defaultValue,
   disabled,
@@ -112,6 +112,7 @@ const AutoCompleteElement = ({
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
+  const menuId = searchParams.get("menuId");
 
   const customStyles = {
     control: (provided, state) => ({
@@ -293,7 +294,6 @@ const AutoCompleteElement = ({
     try {
       const id = state?.[`${tableSlug}_id`] || value;
       const res = await constructorObjectService.getById(tableSlug, id);
-
       const data = res?.data?.response;
 
       if (data && data.prepayment_balance) {

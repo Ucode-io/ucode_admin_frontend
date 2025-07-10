@@ -23,7 +23,8 @@ export const CodeForm = ({
   watch,
   type,
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
+  console.log("resourceOptionsresourceOptions", resourceOptions);
   return (
     <Box marginTop={2}>
       <form onSubmit={onSubmit}>
@@ -35,8 +36,7 @@ export const CodeForm = ({
                 "Resource"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFSelect
                 disabledHelperText
                 name="resource_id"
@@ -55,8 +55,7 @@ export const CodeForm = ({
                 "Function type"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFSelect
                 disabledHelperText
                 name="type"
@@ -84,8 +83,7 @@ export const CodeForm = ({
                   generateLangaugeText(lang, i18n?.language, "Repository") ||
                   "Repository"
                 }
-                required
-              >
+                required>
                 {functionId ? (
                   <HFTextField disabled={true} name="path" control={control} />
                 ) : (
@@ -107,8 +105,7 @@ export const CodeForm = ({
                   generateLangaugeText(lang, i18n?.language, "Branch") ||
                   "Branch"
                 }
-                required
-              >
+                required>
                 {functionId ? (
                   <HFTextField name="branch" control={control} disabled />
                 ) : (
@@ -131,8 +128,7 @@ export const CodeForm = ({
                   "Ссылка"
                 }
                 componentClassName="flex gap-2 align-center"
-                required
-              >
+                required>
                 <HFTextField
                   disabledHelperText
                   name="path"
@@ -140,10 +136,6 @@ export const CodeForm = ({
                   fullWidth
                   required
                   disabled={functionId}
-                  showLockWhenDisabled={false}
-                  inputStyleProps={{
-                    backgroundColor: functionId ? "#f5f5f5" : "#fff",
-                  }}
                 />
               </FRow>
             </Grid>
@@ -154,8 +146,7 @@ export const CodeForm = ({
                 generateLangaugeText(lang, i18n?.language, "Name") || "Name"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="name"
@@ -165,14 +156,6 @@ export const CodeForm = ({
                 disabled={
                   watch("resource_id") === "ucode_gitlab" ? false : true
                 }
-                showLockWhenDisabled={false}
-                inputStyleProps={{
-                  backgroundColor: (
-                    watch("resource_id") === "ucode_gitlab" ? false : true
-                  )
-                    ? "#f5f5f5"
-                    : "#fff",
-                }}
               />
             </FRow>
           </Grid>
@@ -183,9 +166,8 @@ export const CodeForm = ({
                 "Replica count"
               }
               componentClassName="flex gap-2 align-center"
-              required
-            >
-              <Box sx={{ width: "100%" }}>
+              required>
+              <Box sx={{width: "100%"}}>
                 <HFNumberField name="max_scale" control={control} required />
               </Box>
             </FRow>
@@ -196,8 +178,7 @@ export const CodeForm = ({
                 label={
                   generateLangaugeText(lang, i18n?.language, "Description") ||
                   "Description"
-                }
-              >
+                }>
                 <HFTextField
                   name="description"
                   control={control}

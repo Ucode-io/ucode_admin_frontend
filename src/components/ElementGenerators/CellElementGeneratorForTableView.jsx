@@ -56,7 +56,6 @@ const CellElementGeneratorForTableView = ({
   newColumn = false,
   isBlackBg = false,
   isTableView = false,
-  onRowClick = () => {},
   setFormValue = () => {},
   updateObject = () => {},
   newUi,
@@ -151,7 +150,6 @@ const CellElementGeneratorForTableView = ({
     case "SINGLE_LINE":
       return (
         <HFTextField
-          onRowClick={onRowClick}
           disabled={isDisabled}
           isFormEdit
           updateObject={updateObject}
@@ -655,7 +653,6 @@ const CellElementGeneratorForTableView = ({
           isFormEdit
           name={computedSlug}
           required={field?.required}
-          setValue={setFormValue}
         />
       );
 

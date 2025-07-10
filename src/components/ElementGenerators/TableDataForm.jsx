@@ -1,6 +1,6 @@
-import {Box} from "@mui/material";
-import React, {useMemo} from "react";
-import {useMutation} from "react-query";
+import { Box } from "@mui/material";
+import React, { useMemo } from "react";
+import { useMutation } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
@@ -21,7 +21,6 @@ const TableDataForm = ({
   relOptions,
   isTableView,
   relationfields,
-  onRowClick = () => {},
   getValues = () => {},
   setFormValue = () => {},
   newUi,
@@ -94,7 +93,6 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           relationfields={relationfields}
-          onRowClick={onRowClick}
           newUi={newUi}
         />
       )}

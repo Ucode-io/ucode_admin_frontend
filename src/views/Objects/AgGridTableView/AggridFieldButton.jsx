@@ -18,6 +18,7 @@ import {transliterate} from "../../../utils/textTranslater";
 import style from "./style.module.scss";
 import {generateGUID} from "../../../utils/generateID";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 export default function AggridFieldButton({
   view,
@@ -123,6 +124,9 @@ export default function AggridFieldButton({
             values?.attributes?.math?.value +
             " " +
             values?.attributes?.to_formula,
+        has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
+          values?.type
+        ),
       },
     };
 
@@ -193,7 +197,6 @@ export default function AggridFieldButton({
       />
       {fieldCreateAnchor && (
         <FieldCreateModal
-          mainForm={mainForm}
           anchorEl={fieldCreateAnchor}
           setAnchorEl={setFieldCreateAnchor}
           watch={watch}
@@ -207,6 +210,7 @@ export default function AggridFieldButton({
           menuItem={menuItem}
           fieldData={fieldData}
           handleOpenFieldDrawer={handleOpenFieldDrawer}
+          mainForm={mainForm}
         />
       )}
     </>

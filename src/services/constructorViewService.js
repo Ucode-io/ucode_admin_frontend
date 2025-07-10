@@ -1,5 +1,5 @@
-import request from "../utils/request";
 import requestV2 from "../utils/requestV2";
+import requestV3 from "../utils/requestV3";
 
 const constructorViewService = {
   getList: (tableSlug, params) =>
@@ -12,6 +12,9 @@ const constructorViewService = {
   delete: (id, tableSlug) => requestV2.delete(`/views/${tableSlug}/${id}`),
   changeViewOrder: (data, tableSlug) =>
     requestV2.put(`/views/${tableSlug}/update-order`, data),
+  getViewListMenuId: (menuId) => requestV3.get(`menus/${menuId}/views`),
+  createViewMenuId: (menu_id, data) =>
+    requestV3.post(`menus/${menu_id}/views`, data),
 };
 
 export default constructorViewService;

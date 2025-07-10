@@ -53,6 +53,7 @@ function FieldCreateHeaderComponent(props) {
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{relations = []}, {fields = []}] = await Promise.all([
@@ -111,7 +112,6 @@ function FieldCreateHeaderComponent(props) {
     <>
       <PermissionWrapperV2 tableSlug={tableSlug} type={"add_field"}>
         <AggridFieldButton
-          mainForm={mainForm}
           view={column?.colDef?.view}
           setFieldCreateAnchor={setFieldCreateAnchor}
           fieldCreateAnchor={fieldCreateAnchor}
@@ -120,6 +120,7 @@ function FieldCreateHeaderComponent(props) {
           setDrawerState={setDrawerState}
           setDrawerStateField={setDrawerStateField}
           menuItem={menuItem}
+          mainForm={mainForm}
         />
       </PermissionWrapperV2>
       <Drawer

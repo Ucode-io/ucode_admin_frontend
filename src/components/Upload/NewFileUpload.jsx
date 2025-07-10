@@ -17,7 +17,7 @@ export default function NewFileUpload({
   field,
   drawerDetail = false,
 }) {
-  console.log({ value });
+
   const inputRef = useRef("");
   const { i18n, t } = useTranslation();
   const [previewVisible, setPreviewVisible] = useState(false);

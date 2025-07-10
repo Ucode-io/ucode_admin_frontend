@@ -365,7 +365,7 @@ const AutoCompleteElement = ({
         value={computedValue}
         popupIcon={
           isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
+            <ArrowDropDownIcon style={{color: "#fff"}} />
           ) : (
             <ArrowDropDownIcon />
           )
@@ -376,8 +376,7 @@ const AutoCompleteElement = ({
         noOptionsText={
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
             Create new
           </span>
         }
@@ -405,7 +404,6 @@ const AutoCompleteElement = ({
                 background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
                 color: isBlackBg ? "#fff" : "",
                 height: "32px",
-                overflow: "auto",
               },
             }}
             size="small"
@@ -418,8 +416,7 @@ const AutoCompleteElement = ({
                 {values?.map((el, index) => (
                   <div
                     key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
+                    className={styles.multipleAutocompleteTags}>
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
@@ -429,8 +426,7 @@ const AutoCompleteElement = ({
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}
-                    >
+                      }}>
                       <LaunchIcon
                         style={{
                           fontSize: "15px",
@@ -443,8 +439,8 @@ const AutoCompleteElement = ({
 
                     <Close
                       fontSize="12"
-                      onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: "pointer" }}
+                      onClick={getTagProps({index})?.onDelete}
+                      style={{cursor: "pointer"}}
                     />
                   </div>
                 ))}

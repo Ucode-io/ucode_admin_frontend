@@ -1,36 +1,44 @@
-import { Box } from "@mui/material";
-import { Container, Draggable } from "react-smooth-dnd";
+import {Box} from "@mui/material";
+import {Container, Draggable} from "react-smooth-dnd";
 import PageFallback from "../../../components/PageFallback";
 import FastFilter from "../components/FastFilter";
 import BoardColumn from "./BoardColumn";
+import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
 import styles from "./style.module.scss";
-import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
-import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import clsx from "clsx";
-import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import DrawerDetailPage from "../DrawerDetailPage";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
-import { useBoardViewProps } from "./useBoardViewProps";
-import { BoardSkeleton } from "./components/BoardSkeleton";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import {useBoardViewProps} from "./useBoardViewProps";
+import {BoardSkeleton} from "./components/BoardSkeleton";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import clsx from "clsx";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import {useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 const BoardView = ({
+  relationView = false,
   view,
   fieldsMap,
   fieldsMapRel,
   menuItem,
   visibleColumns,
   visibleRelationColumns,
-  setLayoutType,
   searchText,
   columnsForSearch,
   checkedColumns,
-  open,
-  setOpen = () => {},
+  layoutType,
+  selectedRow,
+  selectedView,
+  setLoading = () => {},
+  setSelectedRow = () => {},
+  setLayoutType = () => {},
+  setFormValue = () => {},
 }) => {
   const {
     isLoading,
     new_list,
-    tableSlug,
     onDrop,
     groups,
     groupField,
@@ -47,28 +55,22 @@ const BoardView = ({
     setBoardData,
     computedColumnsFor,
     setOpenDrawerModal,
-    setSelectedRow,
     setDateInfo,
     setDefaultValue,
     getGroupCounts,
     subGroupFieldSlug,
     projectInfo,
-    openDrawerModal,
-    selectedRow,
     layout,
     selectedViewType,
     setSelectedViewType,
-    navigateToEditPage,
-    dateInfo,
-    defaultValue,
     fixedElement,
     boardRef,
     t,
     isOnTop,
     subGroups,
     boardData,
-    refetchAfterChangeBoard,
   } = useBoardViewProps({
+    selectedView,
     view,
     fieldsMap,
     fieldsMapRel,
@@ -78,7 +80,18 @@ const BoardView = ({
     searchText,
     checkedColumns,
     columnsForSearch,
+    relationView,
   });
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromParams,
+    appId,
+  } = useParams();
+  const new_router = localStorage.getItem("new_router") === "true";
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+  const open = useSelector((state) => state?.drawer?.openDrawer);
 
   return (
     <div className={styles.container} ref={boardRef}>
@@ -92,7 +105,12 @@ const BoardView = ({
             <div className={styles.filtersVisiblitiy}>
               <Box className={styles.block}>
                 <p>{t("filters")}</p>
-                <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+                <FastFilter
+                  tableSlug={tableSlug}
+                  view={view}
+                  fieldsMap={fieldsMap}
+                  isVertical
+                />
               </Box>
             </div>
           )}
@@ -148,11 +166,19 @@ const BoardView = ({
           </div>
           <div
             className={styles.board}
-            // style={{
-            //   height: isFilterOpen
-            //     ? "calc(100vh - 121px)"
-            //     : "calc(100vh - 91px)",
-            // }}
+            style={{
+              paddingBottom: isFilterOpen ? "130px" : "90px",
+              // height: isFilterOpen
+              //   ? "calc(100vh - 171px)"
+              //   : "calc(100vh - 140px)",
+              // paddingTop: "50px",
+              // ? subGroupById
+              //   ? "calc(100vh - 171px)"
+              //   : "calc(100vh - 121px)"
+              // : subGroupById
+              //   ? "calc(100vh - 133px)"
+              //   : "calc(100vh - 83px)",
+            }}
           >
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>
@@ -200,6 +226,10 @@ const BoardView = ({
                       >
                         {groups?.map((group, index) => (
                           <BoardColumn
+                            setLoading={setLoading}
+                            selectedView={selectedView}
+                            tableSlug={tableSlug}
+                            projectInfo={projectInfo}
                             key={group.value}
                             group={group}
                             boardData={
@@ -225,6 +255,8 @@ const BoardView = ({
                             subGroupById={subGroupById}
                             subItem={subGroup?.name}
                             subGroupFieldSlug={subGroupFieldSlug}
+                            layoutType={layoutType}
+                            menuItem={menuItem}
                           />
                         ))}
                       </div>
@@ -237,6 +269,10 @@ const BoardView = ({
                 {groups?.map((group, index) => (
                   <div key={group.value} className={styles.draggable}>
                     <BoardColumn
+                      setLoading={setLoading}
+                      selectedView={selectedView}
+                      tableSlug={tableSlug}
+                      projectInfo={projectInfo}
                       key={group.value}
                       group={group}
                       boardData={boardData?.[group?.name]}
@@ -252,10 +288,12 @@ const BoardView = ({
                       setDefaultValue={setDefaultValue}
                       searchText={searchText}
                       columnsForSearch={columnsForSearch}
-                      groupSlug={groupField.slug}
+                      groupSlug={groupField?.slug}
                       getGroupCounts={getGroupCounts}
                       groupItem={group?.name}
                       groupField={groupField}
+                      layoutType={layoutType}
+                      menuItem={menuItem}
                     />
                   </div>
                 ))}
@@ -265,23 +303,68 @@ const BoardView = ({
         </div>
       )}
       <MaterialUIProvider>
-        <DrawerDetailPage
-          projectInfo={projectInfo}
-          open={open ? open : openDrawerModal}
-          setOpen={open ? setOpen : setOpenDrawerModal}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          refetch={refetchAfterChangeBoard}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToEditPage}
-          dateInfo={dateInfo}
-          defaultValue={defaultValue}
-          modal
-        />
+        {Boolean(!relationView && open && projectInfo?.new_layout) &&
+        selectedViewType === "SidePeek" ? (
+          new_router ? (
+            <DrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+            />
+          ) : (
+            <OldDrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+            />
+          )
+        ) : selectedViewType === "CenterPeek" ? (
+          <ModalDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        ) : null}
+
+        {Boolean(open && !projectInfo?.new_layout) && (
+          <ModalDetailPage
+            open={open}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+          />
+        )}
       </MaterialUIProvider>
     </div>
   );

@@ -59,23 +59,17 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
           <button
             className="close-btn"
             type="button"
-            onClick={(e) => closeButtonHandler(e)}
-          >
-            <CancelIcon />
+            onClick={(e) => closeButtonHandler(e)}>
+            <CancelIcon/>
           </button>
-          <video
-            ref={videoRef}
-            src={value}
-            className="img"
-            onClick={async (ev) => {
-              try {
-                await ev.target.requestFullscreen();
-                ev.target.play();
-              } catch (err) {
-                ev.target.play();
-              }
-            }}
-          />
+          <video ref={videoRef} src={value} className="img" onClick={async (ev) => {
+            try {
+              await ev.target.requestFullscreen();
+              ev.target.play();
+            } catch (err) {
+              ev.target.play();
+            }
+          }}/>
         </div>
       )}
 
@@ -87,30 +81,29 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
           style={
             disabled
               ? {
-                  background: "#c0c0c039",
-                }
+                background: "#c0c0c039",
+              }
               : {
-                  background: "inherit",
-                  color: "inherit",
-                }
-          }
-        >
+                background: "inherit",
+                color: "inherit",
+              }
+          }>
           <div className="add-icon">
             {!loading ? (
               <>
                 {disabled ? (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
-                      <Lock style={{ fontSize: "20px" }} />
+                      <Lock style={{fontSize: "20px"}}/>
                     </InputAdornment>
                   </Tooltip>
                 ) : (
-                  <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                  <AddCircleOutlineIcon style={{fontSize: "35px"}}/>
                 )}
                 {/* <p>Max size: 4 MB</p> */}
               </>
             ) : (
-              <CircularProgress />
+              <CircularProgress/>
             )}
           </div>
 

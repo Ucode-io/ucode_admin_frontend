@@ -29,7 +29,6 @@ const ObjectDataTable = ({
   currentView,
   setDrawerStateField,
   removableHeight,
-  getValues,
   additionalRow,
   mainForm,
   selectedView,
@@ -49,6 +48,7 @@ const ObjectDataTable = ({
   columns = [],
   relatedTableSlug,
   watch,
+  getValues,
   control,
   setFormValue = () => {},
   navigateToEditPage,
@@ -228,7 +228,7 @@ const ObjectDataTable = ({
     return totalWidth;
   };
   const parentRef = useRef(null);
-
+  console.log("getValuesgetValues", getValues());
   return (
     <CTable
       custom_events={custom_events}

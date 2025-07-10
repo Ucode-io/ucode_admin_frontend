@@ -20,10 +20,9 @@ import ExternalDatabases from "./ExternalDatabases";
 import {useState} from "react";
 import {useQuery} from "react-query";
 import conectionDatabaseService from "../../../../services/connectionDatabaseService";
-import {useNavigate} from "react-router-dom";
+// import ExternalDatabases from "../../../ExternalDatabases";
 
-export const Models = ({onClose}) => {
-  const navigate = useNavigate();
+export const Models = () => {
   const {tables, loader, setSearchText, navigateToEditForm, deleteTable} =
     useModelsProps();
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -40,54 +39,24 @@ export const Models = ({onClose}) => {
     }
   );
 
-  const trackConnection = (ids) => {
-    if (Array.isArray(ids)) {
-      conectionDatabaseService
-        .trackTable(selectedConnection?.id, {
-          table_ids: ids,
-        })
-        .then((res) => refetch())
-        .finally(() => {
-          setLoadingId(null);
-        });
-    } else {
-      setLoadingId(ids);
-      conectionDatabaseService
-        .trackTable(selectedConnection?.id, {
-          table_ids: [ids],
-        })
-        .then((res) => refetch())
-        .finally(() => {
-          setLoadingId(null);
-        });
-    }
-  };
-
-  const renderTables = Boolean(selectedConnection?.id)
-    ? connectionTables
-    : tables?.tables;
-
-  const notTrackedTablesIds = renderTables
-    ?.filter((el) => !(el?.is_tracked || Boolean(el?.slug)))
-    ?.map((el) => el.id);
-
-  const deleteMenuTable = (element) => {
-    deleteTable(element.id);
-
-    navigate("/reloadRelations", {
-      state: {
-        redirectUrl: "/main/c57eedc3-a954-4262-a0af-376c65b5a284",
-      },
-    });
-    onClose();
+  const trackConnection = (id) => {
+    setLoadingId(id);
+    conectionDatabaseService
+      .trackTable(selectedConnection?.id, {
+        table_ids: [id],
+      })
+      .then((res) => refetch())
+      .finally(() => {
+        setLoadingId(null);
+      });
   };
 
   return (
     <>
       <Tabs>
-        <TabList style={{ borderBottom: "none", marginBottom: "10px" }}>
-          <Tab style={{ padding: "10px" }}>Models</Tab>
-          <Tab style={{ padding: "10px" }}>ChartDB</Tab>
+        <TabList style={{borderBottom: "none", marginBottom: "10px"}}>
+          <Tab style={{padding: "10px"}}>Models</Tab>
+          <Tab style={{padding: "10px"}}>ChartDB</Tab>
           {/* <Tab style={{padding: "10px"}}>External Databases</Tab> */}
         </TabList>
         <TabPanel>
@@ -96,10 +65,9 @@ export const Models = ({onClose}) => {
               <Box
                 display={"flex"}
                 justifyContent="space-between"
-                alignItems={"center"}
-              >
+                alignItems={"center"}>
                 <span>Таблицы</span>
-                <Box display={"flex"} gap="10px">
+                <Box display={"flex"} alignItems={"center"} gap="10px">
                   <SearchInput
                     onChange={(val) => {
                       setSearchText(val);
@@ -109,22 +77,12 @@ export const Models = ({onClose}) => {
                     selectedConnection={selectedConnection}
                     setSelectedConnection={setSelectedConnection}
                   />
-                  <Button
-                    variant="outlined"
-                    onClick={() => trackConnection(notTrackedTablesIds)}
-                    disabled={!notTrackedTablesIds?.length}
-                  >
-                    Track all
-                  </Button>
                 </Box>
               </Box>
             </ContentTitle>
 
-            <TableCard
-              type={"withoutPadding"}
-              bodyClassname={cls.tableCardBody}
-            >
-              <CTable disablePagination removableHeight={false}>
+            <TableCard type={"withoutPadding"}>
+              <CTable disablePagination removableHeight={120}>
                 <CTableHead>
                   <CTableCell className={cls.tableHeadCell} width={10}>
                     №
@@ -137,12 +95,14 @@ export const Models = ({onClose}) => {
                   <CTableCell className={cls.tableHeadCell} width={60} />
                 </CTableHead>
                 <CTableBody columnsCount={4} dataLength={1} loader={loader}>
-                  {renderTables?.map((element, index) => (
+                  {(Boolean(selectedConnection?.id)
+                    ? connectionTables
+                    : tables?.tables
+                  )?.map((element, index) => (
                     <CTableRow key={element.id}>
                       <CTableCell
-                        style={{ textAlign: "center" }}
-                        className={cls.tBodyCell}
-                      >
+                        style={{textAlign: "center"}}
+                        className={cls.tBodyCell}>
                         {index + 1}
                       </CTableCell>
                       <CTableCell className={cls.tBodyCell}>
@@ -167,8 +127,7 @@ export const Models = ({onClose}) => {
                             element?.is_tracked || Boolean(element?.slug)
                               ? "contained"
                               : "outlined"
-                          }
-                        >
+                          }>
                           {loadingId === element.id ? (
                             <CircularProgress size={20} />
                           ) : element?.is_tracked ? (
@@ -180,14 +139,12 @@ export const Models = ({onClose}) => {
                       </CTableCell>
 
                       <CTableCell
-                        className={clsx(cls.tBodyCell, cls.tBodyAction)}
-                      >
+                        className={clsx(cls.tBodyCell, cls.tBodyAction)}>
                         <RectangleIconButton
                           id="delete_btn"
                           color="error"
                           size="small"
-                          onClick={() => deleteMenuTable(element)}
-                        >
+                          onClick={() => deleteTable(element.id)}>
                           <Delete color="error" />
                         </RectangleIconButton>
                       </CTableCell>
@@ -199,7 +156,7 @@ export const Models = ({onClose}) => {
           </div>
         </TabPanel>
         <TabPanel>
-          <Box sx={{ height: "585px" }}>
+          <Box sx={{height: "585px"}}>
             <ChartDb />
           </Box>
         </TabPanel>

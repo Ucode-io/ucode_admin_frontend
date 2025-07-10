@@ -1,5 +1,7 @@
 import "./style.scss";
 
+import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import {mainActions} from "@/store/main/main.slice";
 import {
   Accordion,
   AccordionButton,
@@ -9,25 +11,27 @@ import {
   Box,
   Flex,
 } from "@chakra-ui/react";
-import {useEffect, useMemo, useState} from "react";
-import {BsThreeDots} from "react-icons/bs";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {Draggable} from "react-smooth-dnd";
 import AddIcon from "@mui/icons-material/Add";
-import IconGenerator from "../IconPicker/IconGenerator";
-import {useDispatch, useSelector} from "react-redux";
-import {menuActions} from "../../store/menuItem/menuItem.slice";
-import MenuIcon from "./MenuIcon";
-import {useTranslation} from "react-i18next";
-import {store} from "../../store";
-import {relationTabActions} from "../../store/relationTab/relationTab.slice";
-import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
-import {mainActions} from "@/store/main/main.slice";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import NewSubMenu from "./NewSubMenu";
-import {useMenuListQuery} from "../../services/menuService";
 import {Skeleton, Tooltip} from "@mui/material";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
+import {useMenuListQuery} from "../../services/menuService";
+import {store} from "../../store";
+import {menuActions} from "../../store/menuItem/menuItem.slice";
 import {menuAccordionActions} from "../../store/menus/menus.slice";
+import {relationTabActions} from "../../store/relationTab/relationTab.slice";
+import IconGenerator from "../IconPicker/IconGenerator";
+import MenuIcon from "./MenuIcon";
+import NewSubMenu from "./NewSubMenu";
+import newClickHandler from "./newClickHandler";
+import oldClickHandler from "./oldClickHandler";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -61,8 +65,10 @@ const AppSidebar = ({
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const auth = store.getState().auth;
-  const {appId} = useParams();
+  const {menuId, tableSlug} = useParams();
+
   const [loading, setLoading] = useState(false);
+  const [folderItem, setFolderItem] = useState(null);
 
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
@@ -75,71 +81,33 @@ const AppSidebar = ({
     : readPermission;
 
   const clickHandler = (el) => {
-    if (element?.id === USERS_MENU_ITEM_ID) {
-      return navigate("/client-types");
-    }
-    // setMenuItem(element);
-    dispatch(menuActions.setMenuItem(element));
-    dispatch(relationTabActions.clear());
+    dispatch(detailDrawerActions.setMainTabIndex(0));
+    dispatch(detailDrawerActions.closeDrawer());
+    dispatch(groupFieldActions.clearViews());
+    const handler =
+      localStorage.getItem("new_router") === "true"
+        ? newClickHandler
+        : oldClickHandler;
 
-    setSelectedApp(element);
-    if (element.type === "FOLDER") {
-      setMenuDraggable(false);
-      const isOpen = menuChilds[element.id]?.open;
-      if (isOpen) {
-        closeMenu(element.id);
-        return;
-      } else {
-        coontrolAccordionAction(element);
-        setElement(element);
-        setSubMenuIsOpen(true);
-        navigate(`/main/${element.id}`);
-      }
-
-      return;
-    } else if (element.type === "TABLE") {
-      setSubMenuIsOpen(false);
-      navigate(
-        `/main/${element?.parent_id}/object/${element?.data?.table?.slug}?menuId=${element?.id}`
-      );
-    } else if (element.type === "LINK") {
-      const website_link = element?.attributes?.website_link;
-      if (element?.attributes?.website_link) {
-        navigate(`/main/${element?.id}/website`, {
-          state: {
-            url: website_link,
-          },
-        });
-      } else if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
-        navigate(
-          replaceValues(
-            element?.attributes?.link,
-            auth?.loginTableSlug,
-            auth?.userId
-          )
-        );
-      } else {
-        navigate(element?.attributes?.link);
-      }
-      setSubMenuIsOpen(false);
-    } else if (element.type === "MICROFRONTEND") {
-      setSubMenuIsOpen(false);
-      let obj = {};
-      element?.attributes?.params.forEach((el) => {
-        obj[el.key] = el.value;
-      });
-      const searchParams = new URLSearchParams(obj || {});
-      return navigate({
-        pathname: `/main/${element.id}/page/${element?.data?.microfrontend?.id}`,
-        search: `?menuId=${element?.id}&${searchParams.toString()}`,
-      });
-    } else if (element.type === "WEBPAGE") {
-      navigate(
-        `/main/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`
-      );
-      setSubMenuIsOpen(false);
-    }
+    handler({
+      el,
+      element,
+      menuActions,
+      relationTabActions,
+      setSelectedApp,
+      setMenuDraggable,
+      menuChilds,
+      setFolderItem,
+      closeMenu,
+      navigate,
+      dispatch,
+      coontrolAccordionAction,
+      setElement,
+      setSubMenuIsOpen,
+      auth,
+    });
   };
+
   const menuStyle = {
     ...menuTemplate?.menu_template,
     text:
@@ -148,26 +116,21 @@ const AppSidebar = ({
         : menuTemplate?.menu_template?.text,
   };
 
-  const [searchParams] = useSearchParams();
-
-  const menuId = searchParams.get("menuId");
-
-  function replaceValues(inputString, loginTableSlug, userId) {
-    return inputString
-      .replace("{login_table_slug}", loginTableSlug)
-      .replace("{user_id}", userId);
-  }
+  // function replaceValues(inputString, loginTableSlug, userId) {
+  //   return inputString
+  //     .replace("{login_table_slug}", loginTableSlug)
+  //     .replace("{user_id}", userId);
+  // }
 
   const {isLoading} = useMenuListQuery({
     params: {
-      parent_id: appId,
+      parent_id: folderItem?.id,
       search: subSearchText,
     },
     queryParams: {
-      enabled:
-        Boolean(appId) && !Boolean(menuChilds?.[element?.id]?.children?.length),
+      enabled: Boolean(folderItem?.id),
       onSuccess: (res) => {
-        if (!menuDraggable) computeMenuChilds(appId, res?.menus ?? []);
+        computeMenuChilds(folderItem?.id, res?.menus ?? []);
         setLoading(false);
       },
     },
@@ -249,7 +212,7 @@ const AppSidebar = ({
             key={index}
             onClick={(e) => {
               e.stopPropagation();
-              clickHandler();
+              clickHandler(element);
               dispatch(mainActions.setSidebarHighlightedMenu(null));
             }}
             position="relative"
@@ -265,8 +228,8 @@ const AppSidebar = ({
             bg={activeMenu ? `${"#F0F0EF"} !important` : menuStyle?.background}
             color={
               Boolean(
-                appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                  appId === element?.id
+                menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                  menuId === element?.id
               ) || menuId === element?.id
                 ? "#5F5E5A"
                 : "#A8A8A8"
@@ -313,7 +276,7 @@ const AppSidebar = ({
                         id={"three_dots"}
                         size={13}
                         onClick={(e) => {
-                          handleOpenNotify(e, "FOLDER");
+                          handleOpenNotify(e, "FOLDER", true);
                         }}
                         style={{
                           color: activeMenu
@@ -331,7 +294,7 @@ const AppSidebar = ({
                       id={"create_folder"}
                       className="extra_icon"
                       onClick={(e) => {
-                        handleOpenNotify(e, "CREATE_TO_FOLDER");
+                        handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
                       <AddIcon
                         size={13}
@@ -477,8 +440,8 @@ const AppSidebar = ({
                   }
                   color={
                     Boolean(
-                      appId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                        appId === element?.id
+                      menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
+                        menuId === element?.id
                     ) || menuId === element?.id
                       ? "#5F5E5A"
                       : "#A8A8A8"

@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {BsThreeDots} from "react-icons/bs";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {Draggable} from "react-smooth-dnd";
 import {useMenuListQuery} from "../../../services/menuService";
 import {store} from "../../../store";
@@ -20,6 +20,9 @@ import TableSettingSidebar from "../Components/TableSidebar/TableSidebar";
 import "../style.scss";
 import {folderIds} from "./mock/folders";
 import FileUploadMenu from "../Components/Functions/FileUploadMenu";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -48,7 +51,7 @@ const RecursiveBlock = ({
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
-  const {appId} = useParams();
+  const {menuId, appId} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {i18n} = useTranslation();
@@ -56,6 +59,8 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [id, setId] = useState();
+  const [searchParams] = useSearchParams();
+  const newRouter = localStorage.getItem("new_router");
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const activeRequest =
     element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
@@ -95,9 +100,20 @@ const RecursiveBlock = ({
       : element?.id === menuItem?.id;
 
   const clickHandler = (e) => {
-    e.stopPropagation();
     dispatch(menuActions.setMenuItem(element));
-    NavigateByType({element, appId, navigate});
+
+    if (Boolean(newRouter === "true")) {
+      if (element?.type === "FOLDER") {
+        setSubMenuIsOpen(true);
+      } else {
+        dispatch(detailDrawerActions.setMainTabIndex(0));
+        dispatch(groupFieldActions.clearViews());
+        dispatch(groupFieldActions.clearViewsPath());
+        NavigateByType({element, appId, navigate});
+      }
+    } else {
+      NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
+    }
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
       setChildBlockVisible((prev) => !prev);

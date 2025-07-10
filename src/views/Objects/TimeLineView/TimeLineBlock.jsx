@@ -2,23 +2,23 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import TimeLineDatesRow from "./TimeLineDatesRow";
 import TimeLineDayDataBlock from "./TimeLineDayDataBlocks";
 import styles from "./styles.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { isSameDay, isValid, isWithinInterval } from "date-fns";
-import { Sidebar } from "./components/Sidebar";
-import { Button, Menu } from "@mui/material";
+import {useDispatch, useSelector} from "react-redux";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {isSameDay, isValid, isWithinInterval} from "date-fns";
+import {Sidebar} from "./components/Sidebar";
+import {Button, Menu} from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckIcon from "@mui/icons-material/Check";
-import { TimelineBlockProvider } from "./providers/TimelineBlockProvider";
-import { SidebarButton } from "./components/SidebarButton";
+import {TimelineBlockProvider} from "./providers/TimelineBlockProvider";
+import {SidebarButton} from "./components/SidebarButton";
 import DrawerDetailPage from "../DrawerDetailPage";
-import { useProjectGetByIdQuery } from "../../../services/projectService";
+import {useProjectGetByIdQuery} from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import useDebounce from "../../../hooks/useDebounce";
-import { viewSearch } from "../../../utils/viewSearch";
+import {useParams} from "react-router-dom";
+import {useQuery} from "react-query";
+import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 export default function TimeLineBlock({
   setDataFromQuery,
@@ -46,14 +46,18 @@ export default function TimeLineBlock({
   setNoDates,
   noDates,
   calendarRef,
-  searchText,
-  columnsForSearch,
+  tableSlug,
+  layoutType,
+  selectedView,
+  projectInfo,
+  setFormValue = () => {},
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
   const [focusedDays, setFocusedDays] = useState([]);
   const [openedRows, setOpenedRows] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const new_router = localStorage.getItem("new_router") === "true";
 
   const handleOpenSidebar = () => setIsSidebarOpen(true);
   const handleCloseSidebar = () => setIsSidebarOpen(false);
@@ -97,7 +101,7 @@ export default function TimeLineBlock({
       }
 
       for (let i = 0; i < record.data.length; i++) {
-        let { start_date, end_date } = record.data[i];
+        let {start_date, end_date} = record.data[i];
         let startDate = start_date ? new Date(start_date) : null;
         let endDate = end_date ? new Date(end_date) : null;
 
@@ -105,7 +109,7 @@ export default function TimeLineBlock({
           continue;
 
         for (let j = i + 1; j < record.data.length; j++) {
-          let { start_date: otherStartDate, end_date: otherEndDate } =
+          let {start_date: otherStartDate, end_date: otherEndDate} =
             record.data[j];
           let otherStart = otherStartDate ? new Date(otherStartDate) : null;
           let otherEnd = otherEndDate ? new Date(otherEndDate) : null;
@@ -123,15 +127,15 @@ export default function TimeLineBlock({
       }
 
       if (shouldDuplicate) {
-        result.push({ ...record, data: record.data.slice(1) });
+        result.push({...record, data: record.data.slice(1)});
 
-        result.push({ ...record, data: [record.data[0]] });
+        result.push({...record, data: [record.data[0]]});
       } else {
         result.push(record);
       }
     });
 
-    const { refData, refGroupByFields } = computedDataRef.current;
+    const {refData, refGroupByFields} = computedDataRef.current;
 
     if (
       refData.length > result.length &&
@@ -145,12 +149,6 @@ export default function TimeLineBlock({
       setComputedData(result);
     }
   }, [data, view?.attributes?.group_by_columns]);
-
-  const filteredData = viewSearch({
-    columnsForSearch,
-    computedData,
-    searchText,
-  });
 
   function findEmptyDates(data) {
     const result = [];
@@ -181,7 +179,7 @@ export default function TimeLineBlock({
   }, [computedData]);
 
   function safeIsWithinInterval(date, interval) {
-    const { start, end } = interval || {};
+    const {start, end} = interval || {};
     const isValidDate = (d) => d instanceof Date && !isNaN(d);
 
     if (!isValidDate(date) || !isValidDate(start) || !isValidDate(end)) {
@@ -193,7 +191,7 @@ export default function TimeLineBlock({
     }
 
     try {
-      return isWithinInterval(date, { start, end });
+      return isWithinInterval(date, {start, end});
     } catch (err) {
       console.error("safeIsWithinInterval error:", err);
       return false;
@@ -216,12 +214,12 @@ export default function TimeLineBlock({
           start: startDate1,
           end: endDate1,
         }) ||
-        safeIsWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
+        safeIsWithinInterval(endDate2, {start: startDate1, end: endDate1}) ||
         safeIsWithinInterval(startDate1, {
           start: startDate2,
           end: endDate2,
         }) ||
-        safeIsWithinInterval(endDate1, { start: startDate2, end: endDate2 })
+        safeIsWithinInterval(endDate1, {start: startDate2, end: endDate2})
       );
     }
 
@@ -249,6 +247,22 @@ export default function TimeLineBlock({
 
   const openType = Boolean(anchorElType);
 
+  const {appId, menuId} = useParams();
+
+  const [hoveredRowId, setHoveredRowId] = useState(null);
+
+  // const projectId = useSelector((state) => state.company?.projectId);
+  const [openDrawerModal, setOpenDrawerModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState("");
+
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage")
+  );
+
+  // const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+
   const handleClickType = (event) => {
     setAnchorElType(event.currentTarget);
   };
@@ -267,24 +281,8 @@ export default function TimeLineBlock({
     }
   }, [selectedType]);
 
-  const { tableSlug, appId } = useParams();
-
-  const [hoveredRowId, setHoveredRowId] = useState(null);
-
-  const projectId = useSelector((state) => state.company?.projectId);
-  const [openDrawerModal, setOpenDrawerModal] = useState(false);
-  const [selectedRow, setSelectedRow] = useState("");
-
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
-  );
-
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
-
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -295,7 +293,7 @@ export default function TimeLineBlock({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, appId ?? menuId);
     },
     select: (data) => {
       return {
@@ -319,14 +317,12 @@ export default function TimeLineBlock({
         setOpenDrawerModal,
         calendar_from_slug,
         calendar_to_slug,
-        searchText,
-      }}
-    >
+      }}>
       <div className={styles.main_container}>
         {view?.attributes?.group_by_columns?.length !== 0 && (
           <Sidebar
             view={view}
-            computedData={filteredData}
+            computedData={computedData}
             hasSameDay={hasSameDay}
             openedRows={openedRows}
             setOpenedRows={setOpenedRows}
@@ -360,6 +356,9 @@ export default function TimeLineBlock({
 
           {calendar_from_slug !== calendar_to_slug && (
             <TimeLineDayDataBlock
+              projectInfo={projectInfo}
+              selectedView={selectedView}
+              layoutType={layoutType}
               dateFilters={dateFilters}
               openedRows={openedRows}
               setOpenedRows={setOpenedRows}
@@ -368,7 +367,7 @@ export default function TimeLineBlock({
               setFocusedDays={setFocusedDays}
               selectedType={selectedType}
               zoomPosition={zoomPosition}
-              data={filteredData}
+              data={computedData}
               fieldsMap={fieldsMap}
               view={view}
               tabs={tabs}
@@ -393,8 +392,7 @@ export default function TimeLineBlock({
             style={{
               display: "flex",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Button
               onClick={handleClickType}
               style={{
@@ -405,8 +403,7 @@ export default function TimeLineBlock({
                 alignItems: "center",
                 gap: "3px",
                 padding: "0px",
-              }}
-            >
+              }}>
               <span>
                 {types.find((item) => item.value === selectedType).title}
               </span>
@@ -441,15 +438,13 @@ export default function TimeLineBlock({
                     zIndex: 0,
                   },
                 },
-              }}
-            >
+              }}>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   gap: "5px",
-                }}
-              >
+                }}>
                 {types.map((el) => (
                   <Button
                     onClick={() => setSelectedType(el.value)}
@@ -461,8 +456,7 @@ export default function TimeLineBlock({
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                    }}
-                  >
+                    }}>
                     {el.title}
                     {el.value === selectedType && <CheckIcon />}
                   </Button>
@@ -479,13 +473,84 @@ export default function TimeLineBlock({
               fontSize: "14px",
               fontWeight: "400",
             }}
-            onClick={() => scrollToToday()}
-          >
+            onClick={() => scrollToToday()}>
             Today
           </Button>
         </div>
       </div>
-      <DrawerDetailPage
+
+      {Boolean(open && projectInfo?.new_layout) &&
+      selectedViewType === "SidePeek" ? (
+        new_router ? (
+          <DrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        ) : (
+          <OldDrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setFormValue={setFormValue}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            refetch={refetch}
+            layoutType={layoutType}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToDetailPage}
+          />
+        )
+      ) : selectedViewType === "CenterPeek" ? (
+        <ModalDetailPage
+          view={view}
+          projectInfo={projectInfo}
+          open={open}
+          setFormValue={setFormValue}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          layoutType={layoutType}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      ) : null}
+
+      {Boolean(open && !projectInfo?.new_layout) && (
+        <ModalDetailPage
+          open={open}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToDetailPage}
+        />
+      )}
+      {/* <DrawerDetailPage
+        view={view}
         projectInfo={projectInfo}
         open={openDrawerModal}
         setOpen={setOpenDrawerModal}
@@ -498,7 +563,7 @@ export default function TimeLineBlock({
         selectedViewType={selectedViewType}
         setSelectedViewType={setSelectedViewType}
         navigateToEditPage={navigateToDetailPage}
-      />
+      /> */}
     </TimelineBlockProvider>
   );
 }

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
   FormControl,
   FormHelperText,
@@ -7,6 +7,8 @@ import {
   Select,
   IconButton,
   Box,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -31,12 +33,17 @@ const HFSelect = ({
   id,
   isClearable = true,
   disabled = false,
+  displayEmpty = true,
+  isSearchable = false,
+  autoFocus = false,
+  fieldProps = {},
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
 
-  const handleClear = () => {
+  const handleClear = (onFormChange) => {
     setSelectedValue("");
+    onFormChange("");
     onChange("");
   };
 
@@ -55,6 +62,44 @@ const HFSelect = ({
         field: { onChange: onFormChange, value },
         fieldState: { error },
       }) => {
+        if (isSearchable) {
+          return (
+            <FormControl style={{ width }}>
+              <Autocomplete
+                options={options}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option?.label || ""
+                }
+                value={options.find((opt) => opt.value === value) || null}
+                onChange={(event, newValue) => {
+                  const newVal = newValue ? newValue.value : "";
+                  setSelectedValue(newVal);
+                  onFormChange(newVal);
+                  onChange(newVal);
+                }}
+                isOptionEqualToValue={(option, val) =>
+                  option.value === val.value
+                }
+                disabled={disabled}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={label}
+                    placeholder={placeholder}
+                    size="small"
+                    error={!!error}
+                    helperText={!disabledHelperText && error?.message}
+                    autoFocus={autoFocus}
+                    {...fieldProps}
+                  />
+                )}
+                disableClearable={!isClearable}
+                {...props}
+              />
+            </FormControl>
+          );
+        }
+
         return (
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
@@ -68,7 +113,7 @@ const HFSelect = ({
               inputProps={{ placeholder }}
               fullWidth
               id={idSet}
-              displayEmpty
+              displayEmpty={displayEmpty}
               renderValue={
                 value !== ""
                   ? undefined
@@ -81,23 +126,26 @@ const HFSelect = ({
                 onChange(e.target.value);
                 setSelectedValue(e.target.value);
               }}
-              onOpen={() => {
-                onOpen();
-              }}
+              onOpen={() => onOpen()}
               disabled={disabled}
               {...props}
             >
               {optionType === "GROUP"
                 ? options?.map((group, groupIndex) => [
                     <MenuItem
-                      onClick={(e) => getOnchangeField(group)}
-                      style={{ fontWeight: 600, color: "#000", fontSize: 15 }}
+                      key={`group_${groupIndex}`}
+                      onClick={() => getOnchangeField(group)}
+                      style={{
+                        fontWeight: 600,
+                        color: "#000",
+                        fontSize: 15,
+                      }}
                     >
                       {group.label}
                     </MenuItem>,
                     group.options?.map((option) => (
                       <MenuItem
-                        onClick={(e) => getOnchangeField(option)}
+                        onClick={() => getOnchangeField(option)}
                         key={option.value}
                         value={option.value}
                         style={{ paddingLeft: 30 }}
@@ -116,7 +164,7 @@ const HFSelect = ({
                 : options?.map((option) => (
                     <MenuItem
                       id={`field_option_${option?.value}`}
-                      onClick={(e) => getOnchangeField(option)}
+                      onClick={() => getOnchangeField(option)}
                       key={option?.value}
                       value={option?.value}
                     >
@@ -134,10 +182,7 @@ const HFSelect = ({
               <Box sx={{ position: "absolute", right: "20px", top: "3px" }}>
                 {isClearable && !disabled && (
                   <IconButton
-                    onClick={() => {
-                      onFormChange("");
-                      handleClear();
-                    }}
+                    onClick={() => handleClear(onFormChange)}
                     size="small"
                   >
                     <ClearIcon />
@@ -148,7 +193,7 @@ const HFSelect = ({
           </FormControl>
         );
       }}
-    ></Controller>
+    />
   );
 };
 

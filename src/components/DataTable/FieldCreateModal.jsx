@@ -42,9 +42,9 @@ import {listToMap} from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 
 const formulaTypes = [
-  { label: "Сумма", value: "SUMM" },
-  { label: "Максимум", value: "MAX" },
-  { label: "Среднее", value: "AVG" },
+  {label: "Сумма", value: "SUMM"},
+  {label: "Максимум", value: "MAX"},
+  {label: "Среднее", value: "AVG"},
 ];
 
 const formulaFormatOptions = [
@@ -84,8 +84,10 @@ export default function FieldCreateModal({
   menuItem,
   mainForm,
   view,
+  initialTableInfo,
 }) {
-  const { tableSlug, id } = useParams();
+  const { id, tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -95,7 +97,7 @@ export default function FieldCreateModal({
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
         {
-          table_id: id,
+          table_id: id ?? initialTableInfo?.id,
         },
         tableSlug
       );
@@ -105,6 +107,7 @@ export default function FieldCreateModal({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([

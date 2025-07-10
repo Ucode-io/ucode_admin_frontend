@@ -14,9 +14,9 @@ const MultiselectCellColoredElement = ({
   fieldsMap,
   slug,
   columnIndex,
-  view,
   ...props
 }) => {
+
   const hasColor = field?.attributes?.has_color;
   const hasIcon = field?.attributes?.has_icon;
 
@@ -85,14 +85,13 @@ const MultiselectCellColoredElement = ({
           )}
 
           {tag.label ?? tag.value}
-          {/* <span
-            className={clsx(cls.cellColoredElementLabelPopup, hintPosition, {
+          <span
+            className={clsx(cls.cellColoredElementLabelPopup, {
               [cls.fromLeft]: columnIndex === 0,
-              [cls.fromBottom]: view?.type === "TIMELINE",
             })}
           >
             {field?.label}
-          </span> */}
+          </span>
         </div>
       ))}
     </div>

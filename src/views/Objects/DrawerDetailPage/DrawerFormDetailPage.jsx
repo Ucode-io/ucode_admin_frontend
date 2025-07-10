@@ -1,28 +1,25 @@
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import {Box, Button} from "@mui/material";
+import {isEqual} from "lodash";
 import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {Container, Draggable} from "react-smooth-dnd";
-import {getColumnIcon} from "../../table-redesign/icons";
-import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
-import {Flex, Text} from "@chakra-ui/react";
-import {Check} from "@mui/icons-material";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {isEqual} from "lodash";
-import {Controller} from "react-hook-form";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import layoutService from "../../../services/layoutService";
-import {applyDrag} from "../../../utils/applyDrag";
-import "./style.scss";
-import {store} from "../../../store";
 import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Container, Draggable} from "react-smooth-dnd";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import layoutService from "../../../services/layoutService";
+import {store} from "../../../store";
+import {applyDrag} from "../../../utils/applyDrag";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import {getColumnIcon} from "../../table-redesign/icons";
 import FormCustomActionButton from "../components/CustomActionsButton/FormCustomActionButtons";
+import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
+import HeadingOptions from "./HeadingOptions";
+import "./style.scss";
 
 function DrawerFormDetailPage({
-  control,
-  watch,
+  view,
+  modal = false,
   data,
   layout,
   fieldsMap,
@@ -31,12 +28,12 @@ function DrawerFormDetailPage({
   selectedTabIndex = 0,
   handleMouseDown,
   projectInfo,
-  setFormValue = () => {},
-  reset = () => {},
-  errors,
+  rootForm,
 }) {
+  const navigate = useNavigate();
   const {i18n} = useTranslation();
-  const {tableSlug} = useParams();
+  const {tableSlug: tableSlugParam, menuId} = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
@@ -94,20 +91,20 @@ function DrawerFormDetailPage({
 
   useEffect(() => {
     if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
-      setFormValue(
+      rootForm.setValue(
         selectedRow?.FROM_DATE_SLUG,
         selectedRow?.[selectedRow?.FROM_DATE_SLUG]
       );
-      setFormValue(
+      rootForm.setValue(
         selectedRow?.TO_DATE_SLUG,
         selectedRow?.[selectedRow?.TO_DATE_SLUG]
       );
     }
-    setFormValue(
+    rootForm.setValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
     );
-  }, [selectedTab, selectedRow]);
+  }, [selectedRow]);
 
   useEffect(() => {
     if (!data?.tabs?.[0]?.sections) return;
@@ -115,14 +112,15 @@ function DrawerFormDetailPage({
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
       fields: section?.fields?.filter(
-        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
+        (el) =>
+          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id
       ),
     }));
 
     setSections((prevSections) =>
       isEqual(prevSections, updatedSections) ? prevSections : updatedSections
     );
-  }, [data, watch("attributes.layout_heading")]);
+  }, [data, rootForm.watch("attributes.layout_heading")]);
 
   const getFieldLanguageLabel = (el) => {
     if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
@@ -146,11 +144,7 @@ function DrawerFormDetailPage({
         return allFields.push(field);
       });
     });
-    return !!allFields.find((field) =>
-      field?.enable_multilanguage
-        ? field?.enable_multilanguage
-        : field?.attributes?.enable_multilanguage === true
-    );
+    return !!allFields.find((field) => field?.enable_multilanguage === true);
   }, [selectedTab]);
 
   useEffect(() => {
@@ -175,29 +169,27 @@ function DrawerFormDetailPage({
 
   const getAllData = () => {};
 
-  const [microFrontendId, setMicroFrontendId] = useState("");
-  const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
-
-  const navigate = useNavigate();
+  // const [microFrontendId, setMicroFrontendId] = useState("");
+  // const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
 
   const handleNavigateToMicroFrontend = (id) => {
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
 
-  const handleCloseMicroFrontendModal = () => {
-    setIsMicroFrontendOpen(false);
-    setMicroFrontendId("");
-  };
+  // const handleCloseMicroFrontendModal = () => {
+  //   setIsMicroFrontendOpen(false);
+  //   setMicroFrontendId("");
+  // };
 
-  const microFrontendCallback = (id) => {
-    setMicroFrontendId(id);
-  };
+  // const microFrontendCallback = (id) => {
+  //   setMicroFrontendId(id);
+  // };
 
   return (
-    <>
+    <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{height: "calc(100vh - 44px)"}}
+        sx={{height: "calc(100vh - 94px)"}}
         pb={"10px"}
         overflow={"auto"}
         display="flex"
@@ -216,120 +208,125 @@ function DrawerFormDetailPage({
 
         <HeadingOptions
           selectedRow={selectedRow}
-          watch={watch}
-          control={control}
+          watch={rootForm.watch}
+          control={rootForm.control}
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
-          setFormValue={setFormValue}
+          setFormValue={rootForm.setValue}
         />
 
-        {sections?.map((section, secIndex) => (
-          <Box
-            sx={{
-              margin: "8px 0 0 0",
-            }}
-            key={secIndex}>
-            <Container
-              behaviour="contain"
-              style={{
-                width: "100%",
+        <Box
+          sx={{
+            overflow: "auto",
+            height: "calc(100vh - 94px)",
+          }}>
+          {sections?.map((section, secIndex) => (
+            <Box
+              sx={{
+                margin: "8px 0 0 0",
               }}
-              onDragStart={() => setDragAction(true)}
-              onDragEnd={() => setDragAction(false)}
-              dragHandleSelector=".drag-handle"
-              dragClass="drag-item"
-              lockAxis="y"
-              onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
-              {section?.fields
-                ?.filter((el) => filterFields(el))
-                .map((field, fieldIndex) => (
-                  <Draggable
-                    className={Boolean(defaultAdmin) ? "drag-handle" : ""}
-                    key={field?.id ?? fieldIndex}>
-                    <Box
-                      className={dragAction ? "rowColumnDrag" : "rowColumn"}
-                      display="flex"
-                      alignItems="center"
-                      {...(Boolean(field?.type === "MULTISELECT")
-                        ? {minHeight: "30px"}
-                        : {height: "34px"})}
-                      py="8px">
+              key={secIndex}>
+              <Container
+                behaviour="contain"
+                style={{
+                  width: "100%",
+                }}
+                onDragStart={() => setDragAction(true)}
+                onDragEnd={() => setDragAction(false)}
+                dragHandleSelector=".drag-handle"
+                dragClass="drag-item"
+                lockAxis="y"
+                onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
+                {section?.fields
+                  ?.filter((el) => filterFields(el))
+                  .map((field, fieldIndex) => (
+                    <Draggable
+                      className={Boolean(defaultAdmin) ? "drag-handle" : ""}
+                      key={field?.id ?? fieldIndex}>
                       <Box
+                        className={dragAction ? "rowColumnDrag" : "rowColumn"}
                         display="flex"
                         alignItems="center"
-                        justifyContent={"space-between"}
-                        padding="5px"
-                        borderRadius={"4px"}
-                        width="170px"
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: "#F7F7F7",
-                          },
-                        }}>
+                        {...(Boolean(field?.type === "MULTISELECT")
+                          ? {minHeight: "30px"}
+                          : {height: "34px"})}
+                        py="8px">
                         <Box
-                          width="18px"
-                          height="16px"
-                          mr="8px"
                           display="flex"
                           alignItems="center"
-                          justifyContent="center"
-                          sx={{color: "#787774"}}>
-                          <span className="drag">
-                            <DragIndicatorIcon
-                              style={{width: "16px", height: "16px"}}
-                            />
-                          </span>
-                          <span style={{color: "#787774"}} className="icon">
-                            {getColumnIcon({
-                              column: {
-                                type: field?.type ?? field?.relation_type,
-                                table_slug: field?.table_slug ?? field?.slug,
-                              },
-                            })}
-                          </span>
+                          justifyContent={"space-between"}
+                          padding="5px"
+                          borderRadius={"4px"}
+                          width="170px"
+                          sx={{
+                            "&:hover": {
+                              backgroundColor: "#F7F7F7",
+                            },
+                          }}>
+                          <Box
+                            width="18px"
+                            height="16px"
+                            mr="8px"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            sx={{color: "#787774"}}>
+                            <span className="drag">
+                              <DragIndicatorIcon
+                                style={{width: "16px", height: "16px"}}
+                              />
+                            </span>
+                            <span style={{color: "#787774"}} className="icon">
+                              {getColumnIcon({
+                                column: {
+                                  type: field?.type ?? field?.relation_type,
+                                  table_slug: field?.table_slug ?? field?.slug,
+                                },
+                              })}
+                            </span>
+                          </Box>
+                          <Box
+                            fontSize="14px"
+                            color="#787774"
+                            fontWeight="500"
+                            width="100%"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap">
+                            {getFieldLanguageLabel(field)}
+                          </Box>
                         </Box>
-                        <Box
-                          fontSize="14px"
-                          color="#787774"
-                          fontWeight="500"
-                          width="100%"
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap">
-                          {getFieldLanguageLabel(field)}
+                        <Box sx={{width: "60%"}}>
+                          <DrawerFieldGenerator
+                            activeLang={activeLang}
+                            drawerDetail={true}
+                            control={rootForm.control}
+                            field={field}
+                            watch={rootForm.watch}
+                            isRequired={field?.attributes?.required}
+                            isDisabled={
+                              field?.attributes?.disabled ||
+                              !field?.attributes?.field_permission
+                                ?.edit_permission
+                            }
+                            setFormValue={rootForm.setValue}
+                            errors={rootForm.errors}
+                          />
                         </Box>
                       </Box>
-                      <Box sx={{width: "60%"}}>
-                        <DrawerFieldGenerator
-                          reset={reset}
-                          activeLang={activeLang}
-                          drawerDetail={true}
-                          control={control}
-                          field={field}
-                          watch={watch}
-                          isRequired={field?.attributes?.required}
-                          isDisabled={
-                            field?.attributes?.disabled ||
-                            !field?.attributes?.field_permission
-                              ?.edit_permission
-                          }
-                          setFormValue={setFormValue}
-                          errors={errors}
-                        />
-                      </Box>
-                    </Box>
-                  </Draggable>
-                ))}
-            </Container>
-          </Box>
-        ))}
+                    </Draggable>
+                  ))}
+              </Container>
+            </Box>
+          ))}
+        </Box>
         <Box
           display="flex"
           justifyContent="flex-end"
           marginTop="auto"
           marginBottom="12px">
           <FormCustomActionButton
-            control={control?._formValues}
+            control={rootForm?.control?._formValues}
             tableSlug={tableSlug}
             id={selectedRow?.guid}
             getAllData={getAllData}
@@ -355,167 +352,139 @@ function DrawerFormDetailPage({
         itemId={selectedRow?.guid}
         microFrontendId={microFrontendId}
       /> */}
-    </>
+    </MaterialUIProvider>
   );
 }
 
-const HeadingOptions = ({
-  watch,
-  control,
-  fieldsMap,
-  selectedTab,
-  selectedRow,
-  setFormValue = () => {},
-}) => {
-  const {i18n} = useTranslation();
-  const [anchorEl, setAnchorEl] = useState(null);
+// const CHTextField = ({
+//   control,
+//   name = "",
+//   defaultValue = "",
+//   placeholder = "",
+// }) => {
+//   return (
+//     <Controller
+//       control={control}
+//       name={name}
+//       defaultValue={defaultValue}
+//       render={({field: {onChange, value}, fieldState: {error}}) => (
+//         <TextField
+//           placeholder={placeholder}
+//           onChange={(e) => onChange(e.target.value)}
+//           className="headingText"
+//           value={value ?? ""}
+//         />
+//       )}
+//     />
+//   );
+// };
 
-  const selectedFieldSlug =
-    watch("attributes.layout_heading") ||
-    selectedTab?.attributes?.layout_heading;
+// const ScreenOptions = ({
+//   projectInfo,
+//   view,
+//   selectedViewType,
+//   selectedRow,
+//   setSelectedViewType = () => {},
+//   setLayoutType = () => {},
+//   navigateToEditPage = () => {},
+// }) => {
+//   const navigate = useNavigate();
+//   const {menuId} = useParams();
+//   const [anchorEl, setAnchorEl] = useState(null);
 
-  const selectedField = Object.values(fieldsMap).find(
-    (field) => field?.slug === selectedFieldSlug
-  );
+//   const options = [
+//     {label: "Side peek", icon: "SidePeek"},
+//     {label: "Center peek", icon: "CenterPeek"},
+//     {label: "Full page", icon: "FullPage"},
+//   ];
 
-  const fieldValue = selectedField
-    ? (selectedRow?.[selectedField.slug] ?? "")
-    : "";
+//   const handleClick = (event) => {
+//     setAnchorEl(event.currentTarget);
+//   };
 
-  const fieldsList = Object.values(fieldsMap).map((field) => ({
-    label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
-    value: field?.slug,
-    type: field?.type,
-    table_slug: field?.slug,
-  }));
+//   const handleClose = (option) => {
+//     localStorage.setItem("detailPage", option?.icon);
+//     if (option?.icon === "FullPage") {
+//       setLayoutType("SimpleLayout");
+//       navigate(`/${menuId}/detail?p=${selectedRow?.guid}`, {
+//         state: {
+//           viewId: view?.id,
+//           table_slug: view?.table_slug,
+//           projectInfo: projectInfo,
+//           selectedRow: selectedRow,
+//         },
+//       });
+//     }
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+//     if (option) setSelectedViewType(option?.icon);
+//     setAnchorEl(null);
+//   };
 
-  const handleClose = (option) => {
-    if (option) {
-      setFormValue("attributes.layout_heading", option.table_slug);
-    }
-    setAnchorEl(null);
-  };
+//   return (
+//     <Box>
+//       <Box onClick={handleClick}>
+//         <span>{getColumnFieldIcon(selectedViewType)}</span>
+//       </Box>
 
-  return (
-    <>
-      <Box
-        className="layoutHeading"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          paddingLeft: "3px",
-          gap: "10px",
-        }}>
-        <Flex
-          onClick={(e) =>
-            !Boolean(watch("attributes.layout_heading")) && handleClick(e)
-          }
-          flexDirection={"column"}
-          justifyContent={"flex-start"}>
-          <CHTextField
-            placeholder={
-              Boolean(watch("attributes.layout_heading")) ||
-              !Boolean(watch(selectedField?.slug))
-                ? "Enter value"
-                : "Select field"
-            }
-            control={control}
-            name={selectedField?.slug || ""}
-            defaultValue={fieldValue}
-            key={selectedField?.slug}
-          />
-        </Flex>
+//       <Menu
+//         anchorEl={anchorEl}
+//         open={Boolean(anchorEl)}
+//         onClose={() => handleClose(null)}>
+//         <Box sx={{width: "220px", padding: "4px 0"}}>
+//           {options.map((option) => (
+//             <MenuItem
+//               style={{
+//                 display: "flex",
+//                 alignItems: "center",
+//                 flexDirection: "row",
+//                 justifyContent: "space-between",
+//                 gap: "6px",
+//                 color: "#37352f",
+//               }}
+//               key={option.label}
+//               onClick={() => handleClose(option)}>
+//               <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+//                 <span>{getColumnFieldIcon(option)}</span>
+//                 {option.label}
+//               </Box>
 
-        <Box sx={{cursor: "pointer"}}>
-          <Flex
-            p={"5px"}
-            borderRadius={6}
-            onClick={handleClick}
-            gap={2}
-            alignItems={"center"}>
-            <Text>
-              {
-                fieldsList?.find(
-                  (field) => field?.value === watch("attributes.layout_heading")
-                )?.label
-              }
-            </Text>
-            {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Flex>
-        </Box>
-      </Box>
+//               <Box>{option?.icon === selectedViewType ? <Check /> : ""}</Box>
+//             </MenuItem>
+//           ))}
+//         </Box>
+//       </Menu>
+//     </Box>
+//   );
+// };
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "180px", padding: "4px 0"}}>
-          {fieldsList
-            .filter(
-              (field) =>
-                field?.type === FIELD_TYPES.SINGLE_LINE ||
-                field?.type === FIELD_TYPES.TEXT ||
-                field?.type === FIELD_TYPES.INCREMENT_ID
-            )
-            .map((option) => (
-              <MenuItem
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  gap: "6px",
-                  color: "#37352f",
-                  height: "32px",
-                }}
-                key={option.label}
-                onClick={() => handleClose(option)}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}>
-                  {option.label}
-                </Box>
-
-                <Box>
-                  {option.table_slug === selectedFieldSlug ? <Check /> : ""}
-                </Box>
-              </MenuItem>
-            ))}
-        </Box>
-      </Menu>
-    </>
-  );
-};
-
-const CHTextField = ({
-  control,
-  name = "",
-  defaultValue = "",
-  placeholder = "",
-}) => {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
-        <TextField
-          placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
-          className="headingText"
-          value={value ?? ""}
-        />
-      )}
-    />
-  );
+export const getColumnFieldIcon = (column) => {
+  if (column === "SidePeek") {
+    return (
+      <img
+        src="/img/drawerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else if (column === "CenterPeek") {
+    return (
+      <img
+        src="/img/centerPeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
+  } else
+    return (
+      <img
+        src="/img/fullpagePeek.svg"
+        width={"18px"}
+        height={"18px"}
+        alt="drawer svg"
+      />
+    );
 };
 
 export default DrawerFormDetailPage;

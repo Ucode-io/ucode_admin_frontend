@@ -16,11 +16,12 @@ function ChatInput({
       placeholder="Type your message..."
       value={inputValue}
       onChange={(e) => {
-        if (inputValue?.length > 0) {
-          setLoader(true);
-        }
+        // if (inputValue?.length > 0) {
+        //   setLoader(true);
+        // }
         setInputValue(e.target.value);
       }}
+      autoFocus
       onKeyDown={handleKeyDown}
       sx={{
         "& .MuiInputBase-input": {
@@ -66,7 +67,8 @@ function ChatInput({
               }}
               onClick={() => {
                 handleSendClick();
-              }}>
+              }}
+            >
               <img src="/img/gptSendIcon.svg" alt="" />
             </button>
           </InputAdornment>

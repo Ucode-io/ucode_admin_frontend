@@ -4,46 +4,36 @@ import CheckIcon from "@mui/icons-material/Check";
 import DescriptionIcon from "@mui/icons-material/Description";
 import FileTypes from "./FileType";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
-import { useState } from "react";
-import clsx from "clsx";
 const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
-const Card = ({ item, selected, onSelect, handleNavigate }) => {
+const Card = ({item, selected, onSelect, handleNavigate}) => {
   const url = `${cdnURL}${item?.link}`;
   const parts = item?.file_name_download?.split(".") || ".";
   const extension = parts[parts?.length - 1]?.toUpperCase();
   const size = item?.file_size / 1048576;
 
-  const [load, setLoad] = useState(false);
-
   return (
-    <Box className={style.card} onClick={() => handleNavigate(item)}>
+    <Box
+      className={style.card}
+      key={item?.id}
+      onClick={() => handleNavigate(item)}>
       <span
         className={`${selected ? style.checked : style.unchecked}`}
         onClick={(e) => {
           e.stopPropagation();
           onSelect(item);
-        }}
-      >
+        }}>
         {selected && <CheckIcon />}
       </span>
       <Box className={`${style.file} ${selected && style.dop}`}>
         {extension === "PNG" || extension === "JPEG" || extension === "JPG" ? (
-          <img
-            alt="sorry"
-            src={url}
-            onLoad={() => setLoad(true)}
-            className={clsx(style.img, { [style.hidden]: !load })}
-            loading="lazy"
-          />
+          <img alt="sorry" src={url} className={style.img} />
         ) : (
           <DescriptionIcon />
         )}
       </Box>
       <Typography className={style.title} variant="h6">
-        <Tooltip title={item?.title} className={style.imgTitle}>
-          {item?.title}
-        </Tooltip>
+        <Tooltip title={item?.title}>{item?.title}</Tooltip>
       </Typography>
       <Typography variant="h6" className={style.text}>
         <FileTypes item={extension.toUpperCase()} />
@@ -56,13 +46,7 @@ const Card = ({ item, selected, onSelect, handleNavigate }) => {
   );
 };
 
-const MinioFiles = ({
-  minios,
-  setSelectedCards,
-  selectedCards,
-  size,
-  modal,
-}) => {
+const MinioFiles = ({minios, setSelectedCards, selectedCards, size, modal}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -77,7 +61,7 @@ const MinioFiles = ({
 
   const handleNavigate = (item) => {
     if (modal) {
-      setSearchParams({ fileId: item?.id, tab: "filesDetail" });
+      setSearchParams({fileId: item?.id, tab: "filesDetail"});
     } else {
       navigate(`${location.pathname}/${item?.id}`);
     }
@@ -88,7 +72,7 @@ const MinioFiles = ({
       <Box className={size}>
         {minios?.files?.map((item) => (
           <Card
-            key={item?.id}
+            key={item}
             item={item}
             selected={selectedCards?.includes(item)}
             onSelect={toggleSelectCard}

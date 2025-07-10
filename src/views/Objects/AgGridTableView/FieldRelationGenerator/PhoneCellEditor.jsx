@@ -6,16 +6,11 @@ import styles from "./style.module.scss";
 import useDebounce from "../../../../hooks/useDebounce";
 import {isString} from "lodash-es";
 import RowClickButton from "../RowClickButton";
+import React from "react";
 
 const PhoneCellEditor = (props) => {
-  const {setValue = () => {}, value = "", data} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
+  const {setValue = () => {}, value = "", data, colDef} = props;
+  const disabled = colDef?.disabled;
   const inputChangeHandler = useDebounce((val) => setValue(val), 500);
 
   const onNavigateToDetail = () => {
@@ -59,4 +54,4 @@ const PhoneCellEditor = (props) => {
   );
 };
 
-export default PhoneCellEditor;
+export default React.memo(PhoneCellEditor);

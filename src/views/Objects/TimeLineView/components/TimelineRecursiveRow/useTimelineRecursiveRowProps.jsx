@@ -15,7 +15,7 @@ export const useTimelineRecursiveRowProps = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const { hoveredRowId, searchText, searchField } = useTimelineBlockContext();
+  const { hoveredRowId } = useTimelineBlockContext();
 
   const viewFields = Object.values(fieldsMap)
     .find((field) => field?.table_slug === item?.group_by_slug)
@@ -58,7 +58,7 @@ export const useTimelineRecursiveRowProps = ({
   };
 
   const computedValue = useMemo(() => {
-    const slugs = viewFields ?? [];
+    const slugs = viewFields?.map((item) => item) ?? [];
 
     return slugs
       .map((slug) =>
@@ -96,7 +96,5 @@ export const useTimelineRecursiveRowProps = ({
     computedValue,
     open,
     hoveredRowId,
-    searchText,
-    searchField,
   };
 };

@@ -1,4 +1,8 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import chakraUITheme from "@/theme/chakraUITheme";
+import {useEffect, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
 import {
   useLocation,
   useNavigate,
@@ -6,56 +10,34 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
-import ViewsWithGroups from "./ViewsWithGroups";
-import BoardView from "./BoardView";
-import CalendarView from "./CalendarView";
-import {useQuery} from "react-query";
-import PageFallback from "../../components/PageFallback";
+import constructorTableService from "../../services/constructorTableService";
+import {useMenuGetByIdQuery} from "../../services/menuService";
+import {store} from "../../store";
 import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
-import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
-import ViewTabSelector from "./components/ViewTypeSelector";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import {store} from "../../store";
-import {useTranslation} from "react-i18next";
-import constructorTableService from "../../services/constructorTableService";
-import TimeLineView from "./TimeLineView";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
-import {useSelector} from "react-redux";
-import {useMenuPermissionGetByIdQuery} from "../../services/rolePermissionService";
-import chakraUITheme from "@/theme/chakraUITheme";
+import ViewsWithGroups from "./ViewsWithGroups";
 
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
-import {
-  Box,
-  Popover,
-  Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import {TableDataSkeleton} from "../../components/TableDataSkeleton";
-import {DynamicTable} from "../table-redesign";
-import {AddIcon, ArrowBackIcon, ChevronRightIcon} from "@chakra-ui/icons";
 import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
+import {Box, Popover, Skeleton} from "@mui/material";
 import NoDataPng from "../../assets/images/no-data.png";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import { viewTypes, VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import {DynamicTable} from "../table-redesign";
 import ViewTypeList from "./components/ViewTypeList";
-import { viewTypes, viewTypesMap } from "../../utils/constants/viewTypes";
 
 const ObjectsPage = () => {
-  const { tableSlug } = useParams();
-  const { state } = useLocation();
-  const navigate = useNavigate();
-  const { appId } = useParams();
+  const {tableSlug} = useParams();
+  const {state} = useLocation();
+  const {appId} = useParams();
+  const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
   const menuId = searchParams.get("menuId");
 
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
       state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
@@ -88,28 +70,6 @@ const ObjectsPage = () => {
     setIsViewCreateModalOpen(false);
   };
 
-  const { isLoading: permissionGetByIdLoading } = useMenuPermissionGetByIdQuery(
-    {
-      projectId: projectId,
-      roleId: roleId,
-      parentId: appId,
-      queryParams: {
-        enabled: Boolean(menuId),
-        onSuccess: (res) => {
-          if (
-            !res?.menus
-              ?.filter((item) => item?.permission?.read)
-              ?.some((el) => el?.id === menuId)
-          ) {
-            console.log("object");
-            navigate(resultDefaultLink);
-          }
-        },
-        cacheTime: false,
-      },
-    }
-  );
-
   const params = {
     language_setting: i18n?.language,
   };
@@ -118,12 +78,14 @@ const ObjectsPage = () => {
     data: {
       views,
       fieldsMap,
+      tableInfo,
       fieldsMapRel,
       visibleColumns,
       visibleRelationColumns,
     } = {
       views: [],
       fieldsMap: {},
+      tableInfo: {},
       fieldsMapRel: {},
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -145,14 +107,16 @@ const ObjectsPage = () => {
     {
       enabled: Boolean(tableSlug),
 
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views:
             data?.views?.filter(
               (view) =>
                 view?.attributes?.view_permission?.view === true &&
-                view?.type !== "SECTION"
+                view?.type !== "SECTION" &&
+                Boolean(!view?.is_relation_view)
             ) ?? [],
+          tableInfo: data?.table_info || {},
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
@@ -163,7 +127,7 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({ views }) => {
+      onSuccess: ({views}) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -175,7 +139,7 @@ const ObjectsPage = () => {
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -187,6 +151,8 @@ const ObjectsPage = () => {
 
   const setViews = () => {};
 
+  const view = views?.[selectedTabIndex];
+
   const storageItem = localStorage.getItem("newUi");
   const newUi = JSON.parse(
     !storageItem || storageItem === "undefined" || storageItem === "false"
@@ -195,11 +161,8 @@ const ObjectsPage = () => {
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
-  const view = views[selectedTabIndex];
-
-  // if (isLoading) return <PageFallback />;
   if (isLoading) {
-    if (view?.type === viewTypesMap.BOARD) {
+    if (view?.type === VIEW_TYPES_MAP.BOARD) {
       return null;
     }
 
@@ -212,40 +175,6 @@ const ObjectsPage = () => {
           <Skeleton height="40px" width="100%" />
         </Box>
         <DynamicTable loader={true} />
-        {/* <Table>
-          <TableHead>
-            <TableRow>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-              <Box display="flex" paddingX="16px">
-                <Skeleton width="80px" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-                <Skeleton width="100%" height="50px" />
-              </Box>
-            </TableRow>
-          </TableBody>
-        </Table> */}
       </Box>
     );
   }
@@ -261,44 +190,28 @@ const ObjectsPage = () => {
   };
 
   const renderView = {
-    // BOARD: (props) => (
-    //   <BoardView
-    //     menuItem={menuItem}
-    //     fieldsMapRel={fieldsMapRel}
-    //     {...defaultProps}
-    //     {...props}
-    //   />
-    // ),
-    // CALENDAR: (props) => (
-    //   <CalendarView menuItem={menuItem} {...defaultProps} {...props} />
-    // ),
     "CALENDAR HOUR": (props) => (
       <CalendarHourView {...defaultProps} {...props} />
     ),
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
+        tableInfo={tableInfo}
         visibleColumns={visibleColumns}
         visibleRelationColumns={visibleRelationColumns}
         menuItem={menuItem}
         refetchViews={refetch}
+        setOpen={setOpen}
+        open={open}
         {...defaultProps}
         {...props}
       />
     ),
-    // TIMELINE: (props) => (
-    //   <TimeLineView
-    //     setViews={() => {}}
-    //     isViewLoading={isLoading}
-    //     {...defaultProps}
-    //     {...props}
-    //   />
-    // ),
   };
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
 
   return (
     <>
@@ -307,18 +220,18 @@ const ObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({ view })}
+                {getViewComponent([view?.type])({view})}
               </TabPanel>
             );
           })}
-          <TabPanel>
+          {/* <TabPanel>
             <DocView
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
               setSelectedTabIndex={setSelectedTabIndex}
             />
-          </TabPanel>
+          </TabPanel> */}
         </div>
       </Tabs>
 
@@ -332,8 +245,7 @@ const ObjectsPage = () => {
               borderBottom="1px solid #EAECF0"
               padding="0 16px"
               display="flex"
-              alignItems="center"
-            >
+              alignItems="center">
               <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
                 <Button
                   leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
@@ -341,8 +253,7 @@ const ObjectsPage = () => {
                   colorScheme="gray"
                   color="#475467"
                   ref={addViewRef}
-                  onClick={handleAddViewClick}
-                >
+                  onClick={handleAddViewClick}>
                   {t("add")}
                 </Button>
                 {/* <div
@@ -363,8 +274,7 @@ const ObjectsPage = () => {
               alignItems="center"
               flexDirection="column"
               height="100%"
-              gap="16px"
-            >
+              gap="16px">
               <img src={NoDataPng} alt="No data" width={250} />
               <Text fontSize="16px" fontWeight="500" color="#475467">
                 No data found
@@ -389,8 +299,7 @@ const ObjectsPage = () => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}
-      >
+        }}>
         <ViewTypeList
           views={views}
           computedViewTypes={computedViewTypes}

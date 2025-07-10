@@ -22,10 +22,11 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 import {viewsActions} from "../../../../store/views/view.slice";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
+import {detailDrawerActions} from "../../../../store/detailDrawer/detailDrawer.slice";
 
 const ViewTabSelector = ({
+  relationView,
   selectedTabIndex,
-  setSelectedTabIndex,
   settingsModalVisible,
   setSettingsModalVisible,
   isChanged,
@@ -36,6 +37,7 @@ const ViewTabSelector = ({
   views = [],
   setTab,
   menuItem,
+  setSelectedTabIndex = () => {},
 }) => {
   const {t} = useTranslation();
   const {tableSlug, appId} = useParams();
@@ -46,6 +48,7 @@ const ViewTabSelector = ({
   const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
   const [typeNewView, setTypeNewView] = useState(null);
   const open = Boolean(anchorEl);
+  const new_router = localStorage.getItem("new_router") === "true";
   const id = open ? "simple-popover" : undefined;
   const {i18n} = useTranslation();
   const dispatch = useDispatch();
@@ -95,15 +98,12 @@ const ViewTabSelector = ({
 
   return (
     <>
-      <div className={style.selector} style={{ minWidth: "fit-content" }}>
+      <div className={style.selector} style={{minWidth: "fit-content"}}>
         <div className={style.leftSide}>
           <div className={style.button}>
-            {/* <Button
-              style={{ height: "100%" }}
-              onClick={() => navigate(`/main/${menuItem?.parent_id}`)}
-            >
-              <ArrowBackIcon style={{ color: "#000" }} />
-            </Button> */}
+            <Button style={{height: "100%"}} onClick={() => navigate(-1)}>
+              <ArrowBackIcon style={{color: "#000"}} />
+            </Button>
           </div>
 
           <div className={style.title}>
@@ -118,11 +118,10 @@ const ViewTabSelector = ({
           <Container
             lockAxis="x"
             onDrop={onDrop}
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            style={{ display: "flex", alignItems: "center" }}
+            dropPlaceholder={{className: "drag-row-drop-preview"}}
+            style={{display: "flex", alignItems: "center"}}
             getChildPayload={(i) => views[i]}
-            orientation="horizontal"
-          >
+            orientation="horizontal">
             {views.map((view, index) => (
               <Draggable key={view.id}>
                 <div
@@ -133,11 +132,15 @@ const ViewTabSelector = ({
                         tabIndex: index,
                       })
                     );
-
-                    setSelectedTabIndex(index);
+                    if (new_router) {
+                      relationView
+                        ? dispatch(detailDrawerActions.setDrawerTabIndex(index))
+                        : dispatch(detailDrawerActions.setMainTabIndex(index));
+                    } else {
+                      setSelectedTabIndex(index);
+                    }
                   }}
-                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}
-                >
+                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
                   {view.type === "TABLE" && (
                     <TableChart className={style.icon} />
                   )}
@@ -204,10 +207,9 @@ const ViewTabSelector = ({
             className={style.element}
             aria-describedby={id}
             variant="contained"
-            onClick={handleClick}
-          >
-            <AddIcon className={style.icon} style={{ color: "#000" }} />
-            <strong style={{ color: "#000" }}>{t("add")}</strong>
+            onClick={handleClick}>
+            <AddIcon className={style.icon} style={{color: "#000"}} />
+            <strong style={{color: "#000"}}>{t("add")}</strong>
           </div>
         </PermissionWrapperV2>
 
@@ -219,8 +221,7 @@ const ViewTabSelector = ({
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
-          }}
-        >
+          }}>
           <ViewTypeList
             views={views}
             computedViewTypes={computedViewTypes}
@@ -235,8 +236,7 @@ const ViewTabSelector = ({
       <Modal
         className={style.modal}
         open={settingsModalVisible}
-        onClose={closeModal}
-      >
+        onClose={closeModal}>
         <ViewSettings
           closeModal={closeModal}
           defaultViewTab={defaultViewTab}

@@ -1,20 +1,14 @@
-import {Box, Button, TextField} from "@mui/material";
-import styles from "./style.module.scss";
+import {Box, TextField} from "@mui/material";
 import RowClickButton from "./RowClickButton";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import React from "react";
 
 const HFTextInputField = (props) => {
   const {value, setValue, colDef, data} = props;
-  const field = props?.colDef?.fieldObj;
-  const view = colDef?.view;
 
+  const disabled = colDef?.disabled;
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);
   };
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   return (
     <Box
@@ -22,7 +16,6 @@ const HFTextInputField = (props) => {
         width: "100%",
         height: "100%",
         background: "#0000",
-
         "&:hover .rowClickButton": {
           display: "block",
         },
@@ -47,19 +40,14 @@ const HFTextInputField = (props) => {
         }}
         className="custom_textfield_new"
         InputProps={{
-          endAdornment: disabled ? (
+          endAdornment: disabled && (
             <img src="/table-icons/lock.svg" alt="lock" />
-          ) : (
-            ""
           ),
         }}
       />
-
-      {/* {colDef?.colIndex === 0 && ( */}
       <RowClickButton onRowClick={onNavigateToDetail} />
-      {/* )} */}
     </Box>
   );
 };
 
-export default HFTextInputField;
+export default React.memo(HFTextInputField);

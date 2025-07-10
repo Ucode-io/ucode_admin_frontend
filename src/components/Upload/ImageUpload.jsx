@@ -216,7 +216,7 @@ const ImageUpload = ({
               style={{
                 display: "none",
               }}
-              accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras"
+              accept=".jpg, .jpeg, .png, .gif"
               className="hidden"
               ref={inputRef}
               tabIndex={tabIndex}
@@ -324,7 +324,7 @@ const ImageUpload = ({
               autoFocus={tabIndex === 1}
               onChange={inputChangeHandler}
               disabled={disabled}
-              accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .HEIC, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras"
+              accept=".jpg, .jpeg, .png, .gif"
             />
             <img
               src="/img/newUpload.svg"

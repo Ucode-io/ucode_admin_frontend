@@ -22,24 +22,21 @@ import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import NewModalDetailPage from "../../components/NewModalDetailPage";
-import { useProjectGetByIdQuery } from "../../services/projectService";
+import {useNavigate, useParams} from "react-router-dom";
 import useSearchParams from "../../hooks/useSearchParams";
-import { flushSync } from "react-dom";
+import menuService from "../../services/menuService";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableView = ({
+  relationView = false,
   selectedRow,
-  setSelectedRow = () => {},
-  open,
-  setOpen = () => {},
-  setLayoutType = () => {},
   layoutType,
   filterVisible,
-  setCurrentPage,
   currentPage,
-  setFilterVisible,
   handleClickFilter,
   handleCloseFilter,
   visibleColumns,
@@ -52,35 +49,53 @@ const TableView = ({
   shouldGet,
   isTableView = false,
   selectedView,
-  reset = () => {},
   fieldsMap,
   isDocView,
   sortedDatas = [],
-  setSortedDatas,
   formVisible,
-  setFormVisible,
   selectedObjects,
   checkedColumns,
   getValues,
   searchText,
-  setSelectedObjects,
   selectedLinkedObject,
-  selectedTabIndex,
   selectedLinkedTableSlug,
   menuItem,
-  setFormValue,
   currentView,
   watch,
   tableLan,
   tableSlugProp = "",
+  projectInfo,
+  setSortedDatas = () => {},
+  setSelectedObjects = () => {},
+  setFormVisible = () => {},
+  setCurrentPage = () => {},
+  setFilterVisible = () => {},
+  reset = () => {},
+  setFormValue = () => {},
+  setSelectedRow = () => {},
+  setLayoutType = () => {},
+  setSelectedView = () => {},
   ...props
 }) => {
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
+  const {t} = useTranslation();
+  const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug: paramsTableSlug, appId } = useParams();
-  const tableSlug = tableSlugProp || paramsTableSlug;
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
+  const open = useSelector((state) => state?.drawer?.openDrawer);
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromParams,
+    appId,
+  } = useParams();
+  const new_router = localStorage.getItem("new_router") === "true";
+  const tableSlug =
+    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
+
+  const permissions = useSelector(
+    (state) => state.auth.permissions?.[tableSlug]
+  );
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -95,8 +110,12 @@ const TableView = ({
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
-  const menuId = searchParams.get("menuId");
-  const projectId = useSelector((state) => state.auth.projectId);
+  const viewId = searchParams.get("v") ?? view?.id;
+  const menuId = menuid ?? searchParams.get("menuId");
+  const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+  const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -108,7 +127,7 @@ const TableView = ({
     defaultValues: {
       show_in_menu: true,
       fields: [],
-      app_id: appId,
+      app_id: menuId,
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -126,13 +145,11 @@ const TableView = ({
     mode: "all",
   });
 
-  const { update } = useFieldArray({
+  const {update} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
   });
-
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const paginiation = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
@@ -143,7 +160,7 @@ const TableView = ({
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList({
-        table_id: id ?? menuItem?.table_id,
+        table_id: id ?? menuItem?.table_id ?? initialTableInf?.id,
       });
 
       const getRelations = constructorRelationService.getList(
@@ -151,9 +168,10 @@ const TableView = ({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -218,7 +236,7 @@ const TableView = ({
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view.attributes.fixedColumns[key]) {
-          result.push({ id: key, value: view.attributes.fixedColumns[key] });
+          result.push({id: key, value: view.attributes.fixedColumns[key]});
         }
       }
     }
@@ -267,7 +285,7 @@ const TableView = ({
       );
 
       if (matchingSort) {
-        const { field, order } = matchingSort;
+        const {field, order} = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -294,7 +312,7 @@ const TableView = ({
   }, [filters]);
 
   const {
-    data: { fiedlsarray, fieldView, custom_events } = {
+    data: {fiedlsarray, fieldView, custom_events} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -330,7 +348,7 @@ const TableView = ({
       : searchText;
 
   const {
-    data: { tableData, pageCount, dataCount } = {
+    data: {tableData, pageCount, dataCount} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -344,18 +362,19 @@ const TableView = ({
       "GET_OBJECTS_LIST",
       {
         tableSlug,
-        tableSearch,
+        searchText,
         sortedDatas,
         currentPage,
         limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
+        filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
         paginiation,
         // currentView,
       },
     ],
+
     queryFn: () => {
-      return constructorObjectService.getListV2(tableSlug, {
+      return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
         data: {
           row_view_id: view?.id,
           offset: pageToOffset(currentPage, paginiation),
@@ -373,7 +392,7 @@ const TableView = ({
         },
       });
     },
-    enabled: !!tableSlug,
+    enabled: Boolean(tableSlug),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -395,7 +414,7 @@ const TableView = ({
   });
 
   const {
-    data: { layout } = {
+    data: {layout} = {
       layout: [],
     },
   } = useQuery({
@@ -406,7 +425,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {
@@ -436,17 +455,51 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (view?.attributes?.url_object) {
-      navigateToDetailPage(row);
-    } else if (projectInfo?.new_layout) {
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInf?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: row?.guid,
+      })
+    );
+    if (Boolean(selectedView?.is_relation_view)) {
+      setSelectedView(view);
       setSelectedRow(row);
-      setOpen(true);
+      dispatch(detailDrawerActions.openDrawer());
+      updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (layoutType === "PopupLayout") {
-        setSelectedRow(row);
-        setOpen(true);
+      if (new_router) {
+        updateQueryWithoutRerender("p", row?.guid);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
       } else {
-        navigateToDetailPage(row);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(row);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(row);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(row);
+          }
+        }
       }
     }
   };
@@ -454,13 +507,13 @@ const TableView = ({
   const navigateCreatePage = (row) => {
     if (projectInfo?.new_layout) {
       setSelectedRow(row);
-      setOpen(true);
+      dispatch(detailDrawerActions.openDrawer());
     } else {
       if (layoutType === "PopupLayout") {
         setSelectedRow(row);
-        setOpen(true);
+        dispatch(detailDrawerActions.openDrawer());
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, {}, menuId ?? appId);
+        navigateToForm(tableSlug, "CREATE", {}, {}, menuId);
       }
     }
   };
@@ -495,7 +548,14 @@ const TableView = ({
 
       navigate(`${matches}${params ? "?" + params : ""}`);
     } else {
-      navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+      if (new_router)
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
     }
   };
 
@@ -526,7 +586,7 @@ const TableView = ({
         multi: tableData.map((i) => i),
       });
     }
-  }, [tableData, reset]);
+  }, [reset, tableData]);
 
   useEffect(() => {
     refetch();
@@ -536,6 +596,13 @@ const TableView = ({
       )
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
+
+  useEffect(() => {
+    if (localStorage.getItem("detailPage") === "undefined") {
+      setSelectedViewType("SidePeek");
+      localStorage.setItem("detailPage", "SidePeek");
+    }
+  }, [localStorage.getItem("detailPage")]);
 
   return (
     <MaterialUIProvider>
@@ -596,39 +663,58 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
-          tableSlugProp={tableSlug}
           {...props}
         />
 
         {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
-          <DrawerDetailPage
-            projectInfo={projectInfo}
-            open={open}
-            setFormValue={setFormValue}
-            setOpen={setOpen}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
+          new_router ? (
+            <DrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          ) : (
+            <OldDrawerDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          )
         ) : selectedViewType === "CenterPeek" ? (
-          <NewModalDetailPage
-            modal={true}
+          <ModalDetailPage
+            view={view}
             projectInfo={projectInfo}
             open={open}
             setFormValue={setFormValue}
-            setOpen={setOpen}
             selectedRow={selectedRow}
             menuItem={menuItem}
             layout={layout}
             fieldsMap={fieldsMap}
             refetch={refetch}
+            layoutType={layoutType}
             setLayoutType={setLayoutType}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}
@@ -639,7 +725,6 @@ const TableView = ({
         {Boolean(open && !projectInfo?.new_layout) && (
           <ModalDetailPage
             open={open}
-            setOpen={setOpen}
             selectedRow={selectedRow}
             menuItem={menuItem}
             layout={layout}
@@ -656,8 +741,7 @@ const TableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -676,8 +760,7 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
+          orientation="horizontal">
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

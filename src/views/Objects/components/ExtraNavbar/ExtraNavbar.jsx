@@ -1,6 +1,6 @@
 import style from "./styles.module.scss";
-import { Badge, Button, Divider, Menu, Switch } from "@mui/material";
-import { Description, MoreVertOutlined } from "@mui/icons-material";
+import {Badge, Button, Divider, Menu, Switch} from "@mui/material";
+import {Description, MoreVertOutlined} from "@mui/icons-material";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SearchInput from "../../../../components/SearchInput";
@@ -10,9 +10,10 @@ import GroupByButton from "../../GroupByButton";
 import VisibleColumnsButton from "../../VisibleColumnsButton";
 import TableViewGroupByButton from "../../TableViewGroupByButton";
 import ExcelButtons from "../ExcelButtons";
-import FilterPopover from "../../../table-redesign/FilterPopover";
-import { FilterButton } from "../../../table-redesign/FilterButton";
-import { ChakraProvider } from "@chakra-ui/react";
+import { VIEW_TYPES_MAP } from "../../../../utils/constants/viewTypes";
+import { AddIcon } from "@chakra-ui/icons";
+import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
+import { useNavigate } from "react-router-dom";
 
 export const ExtraNavbar = ({
   filterCount,
@@ -48,10 +49,20 @@ export const ExtraNavbar = ({
   views,
   tableHeight,
   withRightPanel = true,
+  tableSlug,
+  isRelationTable,
+  navigateToForm,
+  navigateCreatePage,
   // visibleColumns,
   // refetchViews,
   // tableLan,
 }) => {
+  const navigate = useNavigate();
+
+  const objectNavigate = () => {
+    navigate(view?.attributes?.url_object);
+  };
+
   return (
     <div
       className={style.extraNavbar}
@@ -165,9 +176,10 @@ export const ExtraNavbar = ({
         </div>
         {withRightPanel && (
           <div className={style.rightExtra}>
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
-              <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
-            )}
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+              view?.type !== VIEW_TYPES_MAP.GRID && (
+                <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+              )}
             <Divider orientation="vertical" flexItem />
             {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
               <GroupByButton
@@ -252,6 +264,28 @@ export const ExtraNavbar = ({
               </>
             )}
             <Divider orientation="vertical" flexItem />
+            {view?.type === VIEW_TYPES_MAP.GRID && (
+              <>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                  {
+                    <Button
+                      id="addObject"
+                      variant="outlined"
+                      onClick={() => {
+                        if (view?.attributes?.url_object) {
+                          objectNavigate();
+                        } else {
+                          navigateToForm(tableSlug, "CREATE");
+                        }
+                      }}
+                    >
+                      <AddIcon style={{ color: "#007AFF" }} />
+                      Add object
+                    </Button>
+                  }
+                </PermissionWrapperV2>
+              </>
+            )}
             {permissions?.excel_menu && (
               <Button
                 onClick={handleClick}

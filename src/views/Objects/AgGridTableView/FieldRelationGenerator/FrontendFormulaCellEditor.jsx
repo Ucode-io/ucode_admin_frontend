@@ -7,15 +7,9 @@ import RowClickButton from "../RowClickButton";
 const parser = new Parser();
 
 const FrontendFormulaCellEditor = (props) => {
-  const {data, value, node, formula} = props;
+  const {data, value, node, field, formula} = props;
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   const [calculatedValue, setCalculatedValue] = useState(value);
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
 
   const evaluateFormula = useCallback(() => {
     if (!formula || !data) return;
@@ -43,10 +37,10 @@ const FrontendFormulaCellEditor = (props) => {
       if (error) {
         console.error("Formula evaluation error:", error);
         setCalculatedValue("ERROR");
-        node.setDataValue(field.slug, "ERROR");
+        node.setDataValue(colDef?.field, "ERROR");
       } else {
         setCalculatedValue(result);
-        node.setDataValue(field.slug, result);
+        node.setDataValue(colDef?.field, result);
       }
     } catch (err) {
       console.error("Error evaluating formula:", err);
@@ -73,7 +67,6 @@ const FrontendFormulaCellEditor = (props) => {
         },
       }}>
       <TextField
-        disabled={disabled}
         size="small"
         value={formulaIsVisible ? formula : calculatedValue}
         fullWidth
@@ -109,4 +102,4 @@ const FrontendFormulaCellEditor = (props) => {
   );
 };
 
-export default FrontendFormulaCellEditor;
+export default React.memo(FrontendFormulaCellEditor);

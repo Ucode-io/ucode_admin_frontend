@@ -1,9 +1,8 @@
-import {Box, Button, Modal} from "@mui/material";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
-import {useState} from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import HFPolygonFieldCellEditor from "./MapCellEditorComponents/HFPolygonFieldCellEditor";
+import {Box, Button, Modal} from "@mui/material";
+import React, {useState} from "react";
 import RowClickButton from "../RowClickButton";
+import HFPolygonFieldCellEditor from "./MapCellEditorComponents/HFPolygonFieldCellEditor";
 
 const style = {
   position: "absolute",
@@ -19,14 +18,8 @@ const style = {
 };
 function PolygonFieldTableCellEditor(props) {
   const [open, setOpen] = useState(false);
-  const {value, setValue, data, colDef} = props;
-
-  const field = props?.colDef?.fieldObj;
-
-  const disabled =
-    field?.attributes?.disabled ||
-    !field?.attributes?.field_permission?.edit_permission;
-
+  const {field, value, setValue, data, colDef} = props;
+  const disabled = colDef?.disabled;
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -116,4 +109,4 @@ function PolygonFieldTableCellEditor(props) {
   );
 }
 
-export default PolygonFieldTableCellEditor;
+export default React.memo(PolygonFieldTableCellEditor);

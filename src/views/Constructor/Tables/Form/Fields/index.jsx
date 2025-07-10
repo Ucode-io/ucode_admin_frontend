@@ -3,7 +3,7 @@ import {Add} from "@mui/icons-material";
 import {Drawer} from "@mui/material";
 import {useMemo, useState} from "react";
 import {useFieldArray} from "react-hook-form";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
@@ -15,11 +15,14 @@ import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
 
 const Fields = ({mainForm, getRelationFields, tableLan}) => {
-  const {id, tableSlug} = useParams();
+  const {tableSlug} = useParams();
+  const {state = {}} = useLocation();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const {i18n} = useTranslation();
   const [selectedField, setSelectedField] = useState({});
+  const id = state?.tableInfo?.id;
+
   const {fields, prepend, update, remove} = useFieldArray({
     control: mainForm.control,
     name: "fields",
@@ -47,8 +50,8 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
     }
   };
 
-  const updateField = (field) => {
-    const index = fields.findIndex((el) => el.id === field.id);
+  const updateField = (field, index) => {
+    // const index = fields.findIndex((el) => el.id === field.id);
 
     if (!id) {
       update(index, field);
@@ -56,7 +59,7 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
     } else {
       setFormLoader(true);
       constructorFieldService
-        .update(field)
+        .update({ data: field, tableSlug })
         .then((res) => {
           update(index, field);
           setDrawerState(null);
@@ -156,7 +159,7 @@ const Fields = ({mainForm, getRelationFields, tableLan}) => {
         <FieldSettings
           tableLan={tableLan}
           closeSettingsBlock={() => setDrawerState(null)}
-          onSubmit={(index, field) => update(index, field)}
+          onSubmit={(index, field) => updateField(field, index)}
           field={drawerState}
           formType={drawerState}
           mainForm={mainForm}

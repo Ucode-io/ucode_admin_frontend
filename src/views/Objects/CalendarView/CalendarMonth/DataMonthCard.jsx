@@ -159,17 +159,15 @@ const DataMonthCard = ({
           e.stopPropagation();
           openMenu(e);
         }}
-        ref={ref}
-      >
+        ref={ref}>
         <div
-        // className={styles.resizing}
-        // style={{
-        //   background: infoBlockBg,
-        //   height: "100%",
-        //   borderRadius: "6px",
-        // }}
-        >
-          {/* <div
+          className={styles.resizing}
+          style={{
+            background: infoBlockBg,
+            height: "100%",
+            borderRadius: "6px",
+          }}>
+          <div
             className={styles.infoCard}
             style={{
               height: "100%",
@@ -179,8 +177,8 @@ const DataMonthCard = ({
                 ? "saturate(100%)"
                 : "saturate(50%) brightness(125%)",
             }}>
-          </div> */}
-          <InfoBlockMonth viewFields={viewFields} data={info} />
+            <InfoBlockMonth viewFields={viewFields} data={info} />
+          </div>
         </div>
       </div>
 
@@ -188,10 +186,9 @@ const DataMonthCard = ({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
-        transformOrigin={{ horizontal: "center", vertical: "top" }}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-      >
+        classes={{list: styles.menu, paper: styles.paper}}
+        transformOrigin={{horizontal: "center", vertical: "top"}}
+        anchorOrigin={{horizontal: "center", vertical: "bottom"}}>
         <div className={styles.popupHeader}>
           <p className={styles.time}>
             {dateValidFormat(info.calendar?.elementFromTime, "HH:mm")} -
@@ -199,10 +196,7 @@ const DataMonthCard = ({
           </p>
 
           <IconGenerator
-            onClick={() => {
-              navigateToEditPage(info);
-              closeMenu();
-            }}
+            onClick={() => navigateToEditPage(info)}
             className={styles.linkIcon}
             icon="arrow-up-right-from-square.svg"
             size={16}
@@ -230,7 +224,7 @@ const DataMonthCard = ({
               dateValidFormat(info[field.slug], "dd.MM.yyyy - HH:mm")
             ) : field?.type === "MULTISELECT" ? (
               <MultiselectCellColoredElement
-                style={{ padding: "2px 5px", marginBottom: 4 }}
+                style={{padding: "2px 5px", marginBottom: 4}}
                 value={info[field.slug]}
                 field={field}
               />

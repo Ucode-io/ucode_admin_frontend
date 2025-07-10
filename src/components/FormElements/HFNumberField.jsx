@@ -31,8 +31,6 @@ const HFNumberField = ({
     const inputValue = event.target.value.replace(/\s+/g, "");
     const parsedValue = inputValue ? parseFloat(inputValue) : "";
 
-    if (inputValue === "-") return;
-
     if (parsedValue || parsedValue === 0) {
       onChange(parsedValue);
     } else {

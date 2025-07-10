@@ -28,7 +28,6 @@ const Form = ({
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("access_token");
-  const editTrue = searchParams.get("edit");
 
   const environments = useMemo(() => {
     return projectEnvironments?.map((item) => ({
@@ -43,7 +42,7 @@ const Form = ({
     }));
   }, [projectEnvironments]);
 
-  const resourceType = useWatch({
+  const resurceType = useWatch({
     control,
     name: "resource_type",
   });
@@ -115,20 +114,17 @@ const Form = ({
   return (
     <Box
       flex={1}
-      sx={{ borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)` }}
-    >
+      sx={{borderRight: "1px solid #e5e9eb", height: `calc(100vh - 50px)`}}>
       <Box
         style={{
           overflow: "auto",
-        }}
-      >
+        }}>
         <Stack spacing={4}>
           <Box
             sx={{
               padding: "15px",
               fontWeight: "bold",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
@@ -136,9 +132,8 @@ const Form = ({
                 gap: "20px",
                 flexWrap: "nowrap",
                 justifyContent: "space-between",
-              }}
-            >
-              <Box sx={{ width: "48%" }}>
+              }}>
+              <Box sx={{width: "48%"}}>
                 <FieldLabel
                   children={
                     generateLangaugeText(settingLan, i18n?.language, "Name") ||
@@ -156,7 +151,7 @@ const Form = ({
                 />
               </Box>
 
-              <Box sx={{ width: "48%" }}>
+              <Box sx={{width: "48%"}}>
                 <FieldLabel
                   children={
                     generateLangaugeText(settingLan, i18n?.language, "Type") ||
@@ -169,14 +164,14 @@ const Form = ({
                   onChange={onResourceTypeChange}
                   required
                   name="resource_type"
-                  resourceType={resourceType}
+                  resurceType={resurceType}
                   disabled={isEditPage}
                 />
               </Box>
             </Box>
 
             {!isEditPage && (
-              <Box sx={{ marginTop: "20px", marginBottom: "20px" }}>
+              <Box sx={{marginTop: "20px", marginBottom: "20px"}}>
                 <FieldLabel
                   children={
                     generateLangaugeText(
@@ -198,7 +193,7 @@ const Form = ({
               </Box>
             )}
 
-            {Number(resourceType) === 11 && Boolean(editTrue) && (
+            {Number(resurceType) === 11 && (
               <Box
                 sx={{
                   display: "flex",
@@ -206,9 +201,8 @@ const Form = ({
                   justifyContent: "space-between",
                   flexWrap: "wrap",
                   gap: "20px",
-                }}
-              >
-                <Box sx={{ width: "48%" }}>
+                }}>
+                <Box sx={{width: "48%"}}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -230,56 +224,52 @@ const Form = ({
                     }}
                   />
                 </Box>
-                {Boolean(editTrue) && (
-                  <>
-                    <Box sx={{ width: "48%" }}>
-                      <FieldLabel
-                        children={
-                          generateLangaugeText(
-                            settingLan,
-                            i18n?.language,
-                            "Username"
-                          ) || "Username"
-                        }
-                      />
-                      <HFResourceField
-                        control={control}
-                        required
-                        disabled
-                        name="settings.superset.username"
-                        fullWidth
-                        inputProps={{
-                          placeholder: "Username",
-                        }}
-                      />
-                    </Box>
-                    <Box sx={{ width: "48%" }}>
-                      <FieldLabel
-                        children={
-                          generateLangaugeText(
-                            settingLan,
-                            i18n?.language,
-                            "Password"
-                          ) || "Password"
-                        }
-                      />
-                      <HFResourceField
-                        control={control}
-                        required
-                        disabled
-                        name="settings.superset.password"
-                        fullWidth
-                        inputProps={{
-                          placeholder: "Password",
-                        }}
-                      />
-                    </Box>
-                  </>
-                )}
+                <Box sx={{width: "48%"}}>
+                  <FieldLabel
+                    children={
+                      generateLangaugeText(
+                        settingLan,
+                        i18n?.language,
+                        "Username"
+                      ) || "Username"
+                    }
+                  />
+                  <HFResourceField
+                    control={control}
+                    required
+                    disabled
+                    name="settings.superset.username"
+                    fullWidth
+                    inputProps={{
+                      placeholder: "Username",
+                    }}
+                  />
+                </Box>
+                <Box sx={{width: "48%"}}>
+                  <FieldLabel
+                    children={
+                      generateLangaugeText(
+                        settingLan,
+                        i18n?.language,
+                        "Password"
+                      ) || "Password"
+                    }
+                  />
+                  <HFResourceField
+                    control={control}
+                    required
+                    disabled
+                    name="settings.superset.password"
+                    fullWidth
+                    inputProps={{
+                      placeholder: "Password",
+                    }}
+                  />
+                </Box>
               </Box>
             )}
 
-            {Boolean(Number(resourceType) === 7 || type === "SMTP") && (
+            {Boolean(Number(resurceType) === 7 || type === "SMTP") && (
               <Box
                 sx={{
                   display: "flex",
@@ -287,8 +277,7 @@ const Form = ({
                   justifyContent: "space-between",
                   flexWrap: "wrap",
                   gap: "20px",
-                }}
-              >
+                }}>
                 <Box width={"48%"}>
                   <FieldLabel
                     children={
@@ -377,16 +366,15 @@ const Form = ({
               </Box>
             )}
 
-            {Boolean(Number(resourceType) === 6 || type === "SMS") && (
+            {Boolean(Number(resurceType) === 6 || type === "SMS") && (
               <Box
                 sx={{
                   display: "flex",
                   flexWrap: "wrap",
                   gap: "20px",
                   justifyContent: "space-between",
-                }}
-              >
-                <Box sx={{ width: "48%" }}>
+                }}>
+                <Box sx={{width: "48%"}}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -407,7 +395,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{ width: "48%" }}>
+                <Box sx={{width: "48%"}}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -428,7 +416,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{ width: "48%" }}>
+                <Box sx={{width: "48%"}}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -450,7 +438,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{ width: "48%" }}>
+                <Box sx={{width: "48%"}}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -471,7 +459,7 @@ const Form = ({
                   />
                 </Box>
 
-                <Box sx={{ width: "48%" }}>
+                <Box sx={{width: "48%"}}>
                   <FieldLabel
                     children={
                       generateLangaugeText(
@@ -494,7 +482,7 @@ const Form = ({
               </Box>
             )}
 
-            {Number(resourceType) === 5 || type === "GITHUB" ? (
+            {Number(resurceType) === 5 || type === "GITHUB" ? (
               <>
                 <FieldLabel
                   children={
@@ -533,7 +521,7 @@ const Form = ({
               </>
             ) : null}
 
-            {Number(resourceType) === 8 ? (
+            {Number(resurceType) === 8 ? (
               <>
                 <FieldLabel
                   children={
@@ -577,7 +565,7 @@ const Form = ({
         </Stack>
       </Box>
 
-      {resourceType === 4 && (
+      {resurceType === 4 && (
         <VariableResources settingLan={settingLan} control={control} />
       )}
     </Box>

@@ -246,29 +246,28 @@ const LoginFormDesign = ({
   };
 
   const sendVerificationCode = async (values) => {
-    recaptchaVerifierRef.current = new RecaptchaVerifier(
+    const recaptchaVerifier = new RecaptchaVerifier(
+      auth,
       "recaptcha-container",
       {
-        size: "normal",
+        size: "invisible",
         callback: (response) => {
-          // setFireBaseToken(response);
+          console.log("response", response);
         },
-        "expired-callback": () => {
-          alert("reCAPTCHA expired. Please try again.");
-        },
-      },
-      auth
+        "expired-callback": () => {},
+      }
     );
-    recaptchaVerifierRef.current.render();
+
+    await recaptchaVerifier.render();
 
     const result = await signInWithPhoneNumber(
+      auth,
       values?.phone,
-      recaptchaVerifierRef.current
+      recaptchaVerifier
     );
 
     setFireBaseToken(result?.verificationId);
     setFormType("FIREBASEOTP");
-    console.error("SMS error", error);
   };
 
   const getSendCodeApp = (values) => {
@@ -484,7 +483,7 @@ const LoginFormDesign = ({
 
   return (
     <>
-      <div id="recaptcha-container" style={{display: "none"}}></div>
+      <div id="recaptcha-container"></div>
       <Box sx={{height: "350px"}}>
         {Boolean(
           formType !== "REGISTER" &&

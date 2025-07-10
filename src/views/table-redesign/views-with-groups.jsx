@@ -405,8 +405,9 @@ export const NewUiViewsWithGroups = ({
         navigate(
           `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
         );
+      } else {
+        dispatch(detailDrawerActions.openDrawer());
       }
-      dispatch(detailDrawerActions.openDrawer());
       setSelectedRow(null);
     } else {
       if (layoutType === "PopupLayout") {

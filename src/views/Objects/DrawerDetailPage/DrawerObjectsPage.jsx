@@ -142,12 +142,13 @@ function DrawerObjectsPage({
       menuService.getFieldsListMenu(
         menuId,
         selectedV?.id,
-        lastPath?.relation_table_slug,
+        lastPath?.relation_table_slug || lastPath?.table_slug,
         {}
       ),
     {
-      enabled: Boolean(lastPath?.relation_table_slug),
-      select: ({ data }) => ({
+      enabled:
+        Boolean(lastPath?.relation_table_slug) || Boolean(lastPath?.table_slug),
+      select: ({data}) => ({
         fieldsMap: listToMap(data?.fields),
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
         visibleColumns: data?.fields ?? [],

@@ -98,6 +98,7 @@ import {
 import {FilterButton} from "./FilterButton";
 import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import { ViewCreate } from "../Objects/components/ViewCreate";
 
 const AggridTreeView = lazy(
   () => import("../Objects/AgGridTableView/AggridTreeView")
@@ -913,8 +914,14 @@ export const NewUiViewsWithGroups = ({
                 vertical: "bottom",
                 horizontal: "left",
               }}
+              PaperProps={{
+                sx: {
+                  overflow: "visible !important",
+                },
+              }}
             >
-              <ViewTypeList
+              <ViewCreate />
+              {/* <ViewTypeList
                 tableRelations={tableRelations}
                 relationView={relationView}
                 view={view}
@@ -929,7 +936,7 @@ export const NewUiViewsWithGroups = ({
                   setSettingsModalVisible(true);
                   setSelectedView(data);
                 }}
-              />
+              /> */}
             </MuiPopover>
 
             <Popover placement="bottom-end">

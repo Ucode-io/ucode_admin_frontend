@@ -1,4 +1,3 @@
-import "firebase/compat/auth";
 import LoginTab from "./LoginTab";
 import EspLogin from "./EspLogin";
 import EmailAuth from "./EmailAuth";
@@ -6,7 +5,6 @@ import {useQuery} from "react-query";
 import PhoneLogin from "./PhoneLogin";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import firebase from "firebase/compat/app";
 import {Box, Dialog} from "@mui/material";
 import classes from "./style.module.scss";
 import {useTranslation} from "react-i18next";
@@ -24,20 +22,17 @@ import companyService from "../../../../services/companyService";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import connectionServiceV2 from "../../../../services/auth/connectionService";
 import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
+import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
+import {auth} from "./firebase";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
-  authDomain: "ucode-c166d.firebaseapp.com",
-  projectId: "ucode-c166d",
-  storageBucket: "ucode-c166d.firebasestorage.app",
-  messagingSenderId: "195504606938",
-  appId: "1:195504606938:web:1f01f882f66e1b52339fe3",
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
+//   authDomain: "ucode-c166d.firebaseapp.com",
+//   projectId: "ucode-c166d",
+//   storageBucket: "ucode-c166d.firebasestorage.app",
+//   messagingSenderId: "195504606938",
+//   appId: "1:195504606938:web:1f01f882f66e1b52339fe3",
+// };
 
 const LoginFormDesign = ({
   index,
@@ -251,17 +246,28 @@ const LoginFormDesign = ({
   };
 
   const sendVerificationCode = async (values) => {
-    try {
-      const result = await auth.signInWithPhoneNumber(
-        values?.phone,
-        recaptchaVerifierRef.current
-      );
-      console.log("resultresultresult", result);
-      setFireBaseToken(result?.verificationId);
-      setFormType("FIREBASEOTP");
-    } catch (error) {
-      console.error("SMS error", error);
-    }
+    const recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {
+          console.log("response", response);
+        },
+        "expired-callback": () => {},
+      }
+    );
+
+    await recaptchaVerifier.render();
+
+    const result = await signInWithPhoneNumber(
+      auth,
+      values?.phone,
+      recaptchaVerifier
+    );
+
+    setFireBaseToken(result?.verificationId);
+    setFormType("FIREBASEOTP");
   };
 
   const getSendCodeApp = (values) => {
@@ -418,29 +424,6 @@ const LoginFormDesign = ({
   };
 
   useEffect(() => {
-    recaptchaVerifierRef.current = new firebase.auth.RecaptchaVerifier(
-      "recaptcha-container",
-      {
-        size: "invisible",
-        callback: (response) => {
-          // setFireBaseToken(response);
-        },
-        "expired-callback": () => {
-          alert("reCAPTCHA expired. Please try again.");
-        },
-      }
-    );
-    recaptchaVerifierRef.current.render();
-
-    return () => {
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear();
-        recaptchaVerifierRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
         if (connection?.options?.length === 1) {
@@ -500,7 +483,7 @@ const LoginFormDesign = ({
 
   return (
     <>
-      <div id="recaptcha-container" style={{display: "none"}}></div>
+      <div id="recaptcha-container"></div>
       <Box sx={{height: "350px"}}>
         {Boolean(
           formType !== "REGISTER" &&

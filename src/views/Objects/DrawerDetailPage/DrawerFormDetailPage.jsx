@@ -184,7 +184,7 @@ function DrawerFormDetailPage({
   // const microFrontendCallback = (id) => {
   //   setMicroFrontendId(id);
   // };
-
+console.log({ isMultiLanguage });
   return (
     <MaterialUIProvider>
       <Box

@@ -212,14 +212,16 @@ const FieldSettings = ({
     }
   };
 
+  const menuItemStore = useSelector((state) => state.menu.menuItem);
+
   const {data: backetOptions} = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
   });
   const updateField = (field) => {
-    if (id || menuItem?.table_id) {
-      updateOldField({data: field, tableSlug: tableSlug});
+    if (id || menuItem?.table_id || menuItemStore.table_id) {
+      updateOldField({ data: field, tableSlug: tableSlug });
     } else {
       updateFieldInform(field);
       closeSettingsBlock();

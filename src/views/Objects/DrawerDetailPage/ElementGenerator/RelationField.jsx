@@ -299,7 +299,9 @@ const AutoCompleteElement = ({
       if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
-
+      if (tableSlug === "model") {
+        console.log(res?.data?.response);
+      }
       setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
@@ -414,8 +416,10 @@ const AutoCompleteElement = ({
   }, [value]);
 
   useEffect(() => {
-    setLocalValue(computedValueMulti);
-  }, []);
+    if (computedValueMulti && isMulti) {
+      setLocalValue(computedValueMulti);
+    }
+  }, [computedValueMulti]);
 
   useEffect(() => {
     setClientTypeValue();
@@ -475,6 +479,10 @@ const AutoCompleteElement = ({
     setLocalValue((prev) => prev.filter((el) => el.guid !== row.guid));
     setValue((prev) => prev.filter((el) => el !== row.guid));
   };
+
+  if (tableSlug === "models") {
+    console.log({ localValue, value });
+  }
 
   return (
     <Tooltip

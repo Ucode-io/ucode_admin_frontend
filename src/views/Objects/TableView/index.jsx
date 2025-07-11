@@ -68,7 +68,8 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug, appId} = useParams();
+  const { id, slug, tableSlug: tableSlugParam, appId } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -597,6 +598,7 @@ const TableView = ({
               isVisibleLoading={isVisibleLoading}
               setFilterVisible={setFilterVisible}
               filterChangeHandler={filterChangeHandler}
+              tableSlug={tableSlug}
             />
           </Box>
         </div>

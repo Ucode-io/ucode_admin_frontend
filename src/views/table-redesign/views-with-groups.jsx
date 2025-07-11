@@ -1166,6 +1166,7 @@ export const NewUiViewsWithGroups = ({
                     setFullScreen={setFullScreen}
                     fullScreen={fullScreen}
                     fieldsMap={fieldsMap}
+                    projectInfo={projectInfo}
                   />
                 </form>
               </Box>

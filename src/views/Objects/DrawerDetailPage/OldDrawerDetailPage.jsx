@@ -107,7 +107,10 @@ function OldDrawerDetailPage({
     const getFormData = constructorObjectService.getById(relSlug, id);
 
     try {
-      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
 
       const layout1 = {
         ...layout,
@@ -243,7 +246,7 @@ function OldDrawerDetailPage({
     watch,
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     setValue: setFormValue,
     getValues,
   } = useForm({
@@ -272,7 +275,7 @@ function OldDrawerDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
@@ -295,7 +298,7 @@ function OldDrawerDetailPage({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         updateLayout();
         setOpen(false);
@@ -427,14 +430,16 @@ function OldDrawerDetailPage({
               ref={drawerRef}
               bg={"white"}
               resize={"both"}
-              position={"relative"}>
+              position={"relative"}
+            >
               <DrawerHeader
                 px="12px"
                 bg="white"
                 display={"flex"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                pr={6}>
+                pr={6}
+              >
                 <Flex h={"44px"} w={"88%"} align="center">
                   <Flex alignItems={"center"}>
                     <Box
@@ -444,9 +449,10 @@ function OldDrawerDetailPage({
                       alignItems="center"
                       justifyContent="center"
                       width="24px"
-                      height="24px">
+                      height="24px"
+                    >
                       <KeyboardDoubleArrowRightIcon
-                        style={{color: "rgba(55, 53, 47, 0.45)"}}
+                        style={{ color: "rgba(55, 53, 47, 0.45)" }}
                         w={6}
                         h={6}
                       />
@@ -496,8 +502,11 @@ function OldDrawerDetailPage({
                               h={18}
                               display={"flex"}
                               alignItems={"center"}
-                              variant="outlined">
-                              <SpaceDashboardIcon style={{color: "#808080"}} />
+                              variant="outlined"
+                            >
+                              <SpaceDashboardIcon
+                                style={{ color: "#808080" }}
+                              />
                             </Button>
                             <Box
                               sx={{
@@ -521,7 +530,8 @@ function OldDrawerDetailPage({
                         overflowX: "auto",
                         display: "flex",
                         width: "80%",
-                      }}>
+                      }}
+                    >
                       {data?.tabs?.map((el, index) => (
                         <Tab
                           onClick={(e) => {
@@ -535,7 +545,8 @@ function OldDrawerDetailPage({
                             padding: "0 10px",
                             fontSize: "11px",
                             fontWeight: "500",
-                          }}>
+                          }}
+                        >
                           {el?.type === "relation"
                             ? el?.relation?.table_from?.label
                             : el?.attributes?.[`label_to_${i18n?.language}`] ||
@@ -555,7 +566,8 @@ function OldDrawerDetailPage({
                   bg={"#007aff"}
                   color={"#fff"}
                   w={100}
-                  h={10}>
+                  h={10}
+                >
                   Save
                 </Button>
                 {/* )} */}
@@ -565,7 +577,8 @@ function OldDrawerDetailPage({
                 <DrawerBody
                   position={"relative"}
                   p="0px 50px"
-                  overflow={"auto"}>
+                  overflow={"auto"}
+                >
                   <OldDrawerFormDetailPage
                     projectInfo={projectInfo}
                     handleMouseDown={handleMouseDown}
@@ -587,6 +600,7 @@ function OldDrawerDetailPage({
                     watch={watch}
                     getAllData={getAllData}
                     errors={errors}
+                    reset={reset}
                   />
                 </DrawerBody>
               </TabPanel>

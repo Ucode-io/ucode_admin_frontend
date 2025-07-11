@@ -13,7 +13,6 @@ import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
 import {Drawer} from "@mui/material";
@@ -33,8 +32,9 @@ const DrawerDetailPage = lazy(() => import("../Objects/DrawerDetailPage"));
 const OldDrawerDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/OldDrawerDetailPage")
 );
-// import DrawerDetailPage from "../Objects/DrawerDetailPage";
-// import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+const ModalDetailPage = lazy(
+  () => import("@/views/Objects/ModalDetailPage/ModalDetailPage")
+);
 
 const TableView = ({
   relationView = false,
@@ -97,10 +97,6 @@ const TableView = ({
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
-
-  const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
-  );
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -545,9 +541,6 @@ const TableView = ({
         .join("&");
 
       const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
       const matches = replaceUrlVariables(urlTemplate, row);
 

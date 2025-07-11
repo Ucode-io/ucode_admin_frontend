@@ -417,6 +417,15 @@ const NewRouter = () => {
               </KeepAliveWrapper>
             }
           />
+          <Route
+            path=":menuId/detail/:appId/:tableSlug/:id"
+            element={
+              <KeepAliveWrapper>
+                <ObjectsFormPage />
+                {/* <NewObjectsFormPage /> */}
+              </KeepAliveWrapper>
+            }
+          />
 
           <Route
             path=":menuId/customize/:id"

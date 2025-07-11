@@ -98,6 +98,7 @@ import {
 import {FilterButton} from "./FilterButton";
 import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import { ViewProvider } from "../../providers/ViewProvider";
 
 const AggridTreeView = lazy(
   () => import("../Objects/AgGridTableView/AggridTreeView")
@@ -571,7 +572,7 @@ export const NewUiViewsWithGroups = ({
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
   return (
-    <>
+    <ViewProvider state={{ view }}>
       <ChakraProvider theme={chakraUITheme}>
         <Flex
           h={modal ? `100vh` : "100vh"}
@@ -1514,7 +1515,7 @@ export const NewUiViewsWithGroups = ({
         handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
       />
-    </>
+    </ViewProvider>
   );
 };
 

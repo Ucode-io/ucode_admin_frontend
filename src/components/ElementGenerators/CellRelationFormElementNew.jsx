@@ -8,8 +8,8 @@ import React, {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useSearchParams} from "react-router-dom";
-import Select, {components} from "react-select";
+import { useParams, useSearchParams } from "react-router-dom";
+import Select, { components } from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
@@ -17,12 +17,12 @@ import {
   getRelationFieldTabsLabel,
   getRelationFieldTabsLabelLang,
 } from "../../utils/getRelationFieldLabel";
-import {pageToOffset} from "../../utils/pageToOffset";
+import { pageToOffset } from "../../utils/pageToOffset";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -62,7 +62,7 @@ const CellRelationFormElementNew = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -151,7 +151,7 @@ const AutoCompleteElement = ({
   row,
   newUi,
 }) => {
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -166,8 +166,9 @@ const AutoCompleteElement = ({
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
   const [searchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
-  const {i18n} = useTranslation();
+  // const menuId = searchParams.get("menuId");
+  const { menuId } = useParams();
+  const { i18n } = useTranslation();
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );

@@ -27,6 +27,7 @@ import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import RelationDefault from "./RelationDefault.jsx";
 import styles from "./style.module.scss";
 import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
+import { useViewContext } from "../../../../../providers/ViewProvider.jsx";
 
 const relationViewTypes = [
   {
@@ -47,17 +48,19 @@ const RelationSettings = ({
   height,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
+  const { view } = useViewContext();
+  const { tableSlug: tableSlugParam } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
   const [drawerType, setDrawerType] = useState("SCHEMA");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
     useState(true);
   const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] =
     useState(true);
   const languages = useSelector((state) => state.languages.list);
-  const {handleSubmit, control, reset, watch, setValue} = useForm({
+  const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       table_from: tableSlug,
       auto_filters: [
@@ -103,21 +106,21 @@ const RelationSettings = ({
     language_setting: i18n?.language,
   };
 
-  const {isLoading: fieldsLoading} = useQuery(
+  const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", values?.table_to, i18n?.language],
     () => {
       if (!values?.table_to) return [];
       return constructorObjectService.getList(
         values?.table_to,
         {
-          data: {limit: 0, offset: 0},
+          data: { limit: 0, offset: 0 },
         },
         params
       );
     },
     {
       cacheTime: 10,
-      onSuccess: ({data}) => {
+      onSuccess: ({ data }) => {
         if (!data) return;
 
         const fields = data?.fields ?? [];
@@ -165,7 +168,7 @@ const RelationSettings = ({
     }
   );
 
-  const {data: functions = []} = useQuery(
+  const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -184,7 +187,7 @@ const RelationSettings = ({
     }));
   }, [values.columnsList, values]);
 
-  const {data: app} = useQuery(["GET_TABLE_LIST"], () => {
+  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
     return constructorTableService.getList();
   });
 

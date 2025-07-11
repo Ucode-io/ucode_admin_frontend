@@ -21,16 +21,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 
 const NewObjectsPage = () => {
-  const {state, pathname} = useLocation();
-  const {menuId} = useParams();
+  const { state, pathname } = useLocation();
+  const { menuId } = useParams();
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
 
-  const {data: views, refetch} = useQuery(
+  const { data: views, refetch } = useQuery(
     ["GET_VIEWS_LIST", menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
@@ -86,7 +86,7 @@ const NewObjectsPage = () => {
       enabled: Boolean(
         selectedView?.table_slug && selectedView?.type !== "SECTION"
       ),
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -126,7 +126,7 @@ const NewObjectsPage = () => {
 
   useEffect(() => {
     if (pathname.includes("/login")) {
-      navigate("/", {replace: false});
+      navigate("/", { replace: false });
     }
   }, []);
 
@@ -192,7 +192,7 @@ const NewObjectsPage = () => {
           {views?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({view})}
+                {getViewComponent([view?.type])({ view })}
               </TabPanel>
             );
           })}

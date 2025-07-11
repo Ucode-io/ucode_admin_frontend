@@ -372,8 +372,8 @@ function DrawerDetailPage({
     const deltaX = e.clientX - startX.current;
     let newWidth = startWidth.current - deltaX;
 
-    if (newWidth < 650) newWidth = 650;
-    if (newWidth > 1050) newWidth = 1050;
+    if (newWidth < 1050) newWidth = 1050;
+    if (newWidth > 1150) newWidth = 1150;
 
     if (drawerRef.current) {
       drawerRef.current.style.width = `${newWidth}px`;
@@ -393,7 +393,7 @@ function DrawerDetailPage({
 
   useEffect(() => {
     if (drawerRef.current) {
-      drawerRef.current.style.width = `${drawerWidth ?? 650}px`;
+      drawerRef.current.style.width = `${drawerWidth ?? 1050}px`;
       drawerRef.current.closest(".chakra-portal").style.position = "relative";
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }

@@ -17,7 +17,7 @@ import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
 import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {lazy, useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -28,8 +28,13 @@ import menuService from "../../services/menuService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+
+const DrawerDetailPage = lazy(() => import("../Objects/DrawerDetailPage"));
+const OldDrawerDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/OldDrawerDetailPage")
+);
+// import DrawerDetailPage from "../Objects/DrawerDetailPage";
+// import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 
 const TableView = ({
   relationView = false,

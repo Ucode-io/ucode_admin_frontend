@@ -106,7 +106,7 @@ function OldDrawerFormDetailPage({
       selectedTab?.attributes?.layout_heading
     );
   }, [selectedTab, selectedRow]);
-  console.log("selectedTabselectedTabselectedTab", selectedTab, selectedRow);
+
   useEffect(() => {
     if (!data?.tabs?.[0]?.sections) return;
 

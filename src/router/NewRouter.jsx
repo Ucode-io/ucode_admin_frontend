@@ -150,25 +150,25 @@ const NewRouter = () => {
   if (!isAuth)
     if (microfrontendUrl && window.location.hostname !== "localhost")
       return (
-        <Suspense fallback={<p> Loading...</p>}>
-          <Routes>
-            <Route index element={<Navigate to={redirectLink} />} />
-            <Route path="/">
-              <Route index element={<Navigate to="/login " />} />
-              <Route
-                path="login"
-                element={
-                  <LoginMicrofrontend
-                    microfrontendUrl={microfrontendUrl}
-                    isLoading={isLoading}
-                  />
-                }
-              />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Route>
+        // <Suspense fallback={<p> Loading...</p>}>
+        <Routes>
+          <Route index element={<Navigate to={redirectLink} />} />
+          <Route path="/">
+            <Route index element={<Navigate to="/login " />} />
+            <Route
+              path="login"
+              element={
+                <LoginMicrofrontend
+                  microfrontendUrl={microfrontendUrl}
+                  isLoading={isLoading}
+                />
+              }
+            />
             <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
-        </Suspense>
+          </Route>
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+        // </Suspense>
       );
     else
       return (

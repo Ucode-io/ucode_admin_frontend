@@ -3,10 +3,8 @@ import {Parser} from "hot-formula-parser";
 import {useTranslation} from "react-i18next";
 import {Suspense, lazy, useEffect, useMemo, useState} from "react";
 import {Skeleton} from "@mui/material";
+import CellRelationFormElementNew from "./CellRelationFormElementNew";
 
-const CellRelationFormElementNew = lazy(
-  () => import("./CellRelationFormElementNew")
-);
 const CellManyToManyRelationElement = lazy(
   () => import("./CellManyToManyRelationElement")
 );
@@ -137,36 +135,26 @@ const CellElementGeneratorForRelation = ({
           />
         </Suspense>
       ) : (
-        <Suspense
-          fallback={
-            <Skeleton
-              variant="rectangular"
-              style={{borderRadius: "6px"}}
-              width={"100%"}
-              height={20}
-            />
-          }>
-          <CellRelationFormElementNew
-            row={row}
-            isFormEdit
-            data={data}
-            index={index}
-            field={field}
-            control={control}
-            isTableView={isTableView}
-            name={computedSlug}
-            tableView={tableView}
-            disabled={isDisabled}
-            isBlackBg={isBlackBg}
-            isNewTableView={true}
-            setFormValue={setFormValue}
-            updateObject={updateObject}
-            defaultValue={defaultValue}
-            relationfields={relationfields}
-            placeholder={field.attributes?.placeholder}
-            newUi={newUi}
-          />
-        </Suspense>
+        <CellRelationFormElementNew
+          row={row}
+          isFormEdit
+          data={data}
+          index={index}
+          field={field}
+          control={control}
+          isTableView={isTableView}
+          name={computedSlug}
+          tableView={tableView}
+          disabled={isDisabled}
+          isBlackBg={isBlackBg}
+          isNewTableView={true}
+          setFormValue={setFormValue}
+          updateObject={updateObject}
+          defaultValue={defaultValue}
+          relationfields={relationfields}
+          placeholder={field.attributes?.placeholder}
+          newUi={newUi}
+        />
       );
     },
     LOOKUPS: () => (

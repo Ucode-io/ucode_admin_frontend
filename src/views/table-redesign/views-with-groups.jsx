@@ -13,10 +13,6 @@ import {
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
 import {queryGenerator} from "@/utils/queryGenerator";
-import AgGridTableView from "@/views/Objects/AgGridTableView";
-import GroupTableView from "@/views/Objects/TableView/GroupTableView";
-import WebsiteView from "@/views/Objects/WebsiteView";
-
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
 import style from "@/views/Objects/style.module.scss";
 import {getColumnIcon} from "@/views/table-redesign/icons";
@@ -97,18 +93,23 @@ import {
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
 
-const AggridTreeView = lazy(
-  () => import("../Objects/AgGridTableView/AggridTreeView")
-);
+const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
 const CalendarView = lazy(() => import("../Objects/CalendarView"));
-const DrawerFormDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
-);
 const TimeLineView = lazy(() => import("../Objects/TimeLineView"));
 const DrawerTableView = lazy(() => import("./drawer-table-view"));
 const TableView = lazy(() => import("./table-view"));
 const TableViewOld = lazy(() => import("./table-view-old"));
+const AgGridTableView = lazy(() => import("@/views/Objects/AgGridTableView"));
+const GroupTableView = lazy(
+  () => import("@/views/Objects/TableView/GroupTableView")
+);
+const AggridTreeView = lazy(
+  () => import("../Objects/AgGridTableView/AggridTreeView")
+);
+const DrawerFormDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
+);
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",

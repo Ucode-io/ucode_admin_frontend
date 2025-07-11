@@ -1,45 +1,42 @@
+import HFCheckbox from "@/views/table-redesign/hf-checkbox";
+import {
+  HFDateDatePickerWithoutTimeZoneTable,
+  HFDatePicker,
+  HFDateTimePicker,
+  HFTimePicker,
+} from "@/views/table-redesign/hf-date";
+import HFSwitch from "@/views/table-redesign/hf-switch";
+import {HFVideoUpload} from "@/views/table-redesign/hf-video-upload";
 import {Parser} from "hot-formula-parser";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
-import HFCheckbox from "@/views/table-redesign/hf-checkbox";
+import HFButtonField from "../FormElements/HFButtonField";
 import HFColorPicker from "../FormElements/HFColorPicker";
-import {
-  HFDatePicker,
-  HFDateDatePickerWithoutTimeZoneTable,
-  HFTimePicker,
-  HFDateTimePicker,
-} from "@/views/table-redesign/hf-date";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFFloatField from "../FormElements/HFFloatField";
 import HFFormulaField from "../FormElements/HFFormulaField";
 import HFIconPicker from "../FormElements/HFIconPicker";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
+import HFLinkField from "../FormElements/HFLinkField";
 import HFModalMap from "../FormElements/HFModalMap";
+import HFMultiFile from "../FormElements/HFMultiFile";
 import HFMultiImage from "../FormElements/HFMultiImage";
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
 import HFPassword from "../FormElements/HFPassword";
 import HFPhotoUpload from "../FormElements/HFPhotoUpload";
 import HFQrFieldComponent from "../FormElements/HFQrField";
-import HFSwitch from "@/views/table-redesign/hf-switch";
+import HFStatusField from "../FormElements/HFStatusField";
+import HFTextComponent from "../FormElements/HFTextComponent";
 import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
-import {HFVideoUpload} from "@/views/table-redesign/hf-video-upload";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellElementGenerator from "./CellElementGenerator";
-import CodeCellFormElement from "./JsonCellElement";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
-import ProgrammingLan from "./ProgrammingLan";
-import HFLinkField from "../FormElements/HFLinkField";
-import HFButtonField from "../FormElements/HFButtonField";
-import HFTextComponent from "../FormElements/HFTextComponent";
-import HFStatusField from "../FormElements/HFStatusField";
-import HFMoneyField from "../FormElements/HFMoneyField";
-import HFMultiFile from "../FormElements/HFMultiFile";
 
 const parser = new Parser();
 
@@ -194,23 +191,6 @@ const CellElementGeneratorForTableView = ({
 
     case "BUTTON":
       return <HFButtonField field={field} row={row} isTableView={true} />;
-
-    case "MONEY":
-      return (
-        <HFMoneyField
-          fullWidth
-          row={row}
-          field={field}
-          control={control}
-          isTableView={true}
-          watch={watch}
-          name={computedSlug}
-          disabled={isDisabled}
-          required={field.required}
-          updateObject={updateObject}
-          newUi={newUi}
-        />
-      );
 
     case "STATUS":
       return (
@@ -440,24 +420,6 @@ const CellElementGeneratorForTableView = ({
           newUi={newUi}
         />
       );
-    case "MULTISELECT_V2":
-      return (
-        <HFMultipleAutocomplete
-          disabled={isDisabled}
-          isFormEdit
-          updateObject={updateObject}
-          isNewTableView={true}
-          control={control}
-          name={computedSlug}
-          width="100%"
-          required={field.required}
-          field={field}
-          placeholder={field.attributes?.placeholder}
-          isBlackBg={isBlackBg}
-          defaultValue={defaultValue}
-          data={data}
-        />
-      );
 
     case "DATE":
       return (
@@ -677,36 +639,6 @@ const CellElementGeneratorForTableView = ({
       return (
         <PolygonFieldTable
           field={field}
-          control={control}
-          updateObject={updateObject}
-          computedSlug={computedSlug}
-          isDisabled={isDisabled}
-          isNewTableView={true}
-          row={row}
-          newColumn={newColumn}
-        />
-      );
-
-    case "JSON":
-      return (
-        <CodeCellFormElement
-          field={field}
-          isWrapField={isWrapField}
-          control={control}
-          updateObject={updateObject}
-          computedSlug={computedSlug}
-          isDisabled={isDisabled}
-          isNewTableView={true}
-          row={row}
-          newColumn={newColumn}
-        />
-      );
-
-    case "PROGRAMMING_LANGUAGE":
-      return (
-        <ProgrammingLan
-          field={field}
-          isWrapField={isWrapField}
           control={control}
           updateObject={updateObject}
           computedSlug={computedSlug}

@@ -13,10 +13,6 @@ import {
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
 import {queryGenerator} from "@/utils/queryGenerator";
-import AgGridTableView from "@/views/Objects/AgGridTableView";
-import GroupTableView from "@/views/Objects/TableView/GroupTableView";
-import WebsiteView from "@/views/Objects/WebsiteView";
-
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
 import style from "@/views/Objects/style.module.scss";
 import {getColumnIcon} from "@/views/table-redesign/icons";
@@ -99,18 +95,23 @@ import {FilterButton} from "./FilterButton";
 import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
 
-const AggridTreeView = lazy(
-  () => import("../Objects/AgGridTableView/AggridTreeView")
-);
+const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
 const CalendarView = lazy(() => import("../Objects/CalendarView"));
-const DrawerFormDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
-);
 const TimeLineView = lazy(() => import("../Objects/TimeLineView"));
 const DrawerTableView = lazy(() => import("./drawer-table-view"));
 const TableView = lazy(() => import("./table-view"));
 const TableViewOld = lazy(() => import("./table-view-old"));
+const AgGridTableView = lazy(() => import("@/views/Objects/AgGridTableView"));
+const GroupTableView = lazy(
+  () => import("@/views/Objects/TableView/GroupTableView")
+);
+const AggridTreeView = lazy(
+  () => import("../Objects/AgGridTableView/AggridTreeView")
+);
+const DrawerFormDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
+);
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -1085,11 +1086,12 @@ export const NewUiViewsWithGroups = ({
                   fieldsMap={fieldsMap}
                   visibleRelationColumns={visibleRelationColumns}
                   checkedColumns={checkedColumns}
-                  onDocsClick={() =>
+                  projectId={projectId}
+                  onDocsClick={() => {
                     dispatch(
                       detailDrawerActions.setDrawerTabIndex(views?.length)
-                    )
-                  }
+                    );
+                  }}
                   searchText={searchText}
                   computedVisibleFields={computedVisibleFields}
                   handleOpenPopup={handleOpenPopup}
@@ -1840,9 +1842,14 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
+  projectId,
 }) => {
+  const navigate = useNavigate();
+  const {menuId, appId, tableSlug: tableSlugFromProps} = useParams();
   const queryClient = useQueryClient();
-  const tableSlug = relationView ? view?.relation_table_slug : view?.table_slug;
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromProps ?? view?.table_slug);
   const {i18n, t} = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
@@ -1998,6 +2005,14 @@ const ViewOptions = ({
       return await refetchViews();
     },
   });
+
+  const navigateToOldTemplate = () => {
+    if (localStorage.getItem("new_router") === "true") {
+      navigate(`/${menuId}/object/${tableSlug}/docs`);
+    } else {
+      navigate(`/main/${appId}/object/${tableSlug}/docs`);
+    }
+  };
 
   return (
     <Popover
@@ -2309,7 +2324,11 @@ const ViewOptions = ({
                 borderRadius={6}
                 _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
-                onClick={onDocsClick}>
+                onClick={(e) => {
+                  onDocsClick(e);
+                  projectId === "c7168030-b876-4d01-8063-f7ad9f92e974" &&
+                    navigateToOldTemplate();
+                }}>
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||

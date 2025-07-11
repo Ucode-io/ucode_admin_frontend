@@ -26,7 +26,14 @@ import {
 } from "ag-grid-enterprise";
 import {AgGridReact} from "ag-grid-react";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
@@ -44,9 +51,6 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {getColumnIcon} from "../../table-redesign/icons";
-import DrawerDetailPage from "../DrawerDetailPage";
-import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import AggridFooter from "./AggridFooter";
 import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
@@ -57,6 +61,14 @@ import AggridDefaultComponents, {
 import {detectStringType, queryGenerator} from "./Functions/queryGenerator";
 import style from "./style.module.scss";
 import getColumnEditorParams from "./valueOptionGenerator";
+
+const DrawerDetailPage = lazy(() => import("../DrawerDetailPage"));
+const OldDrawerDetailPage = lazy(
+  () => import("../DrawerDetailPage/OldDrawerDetailPage")
+);
+const ModalDetailPage = lazy(
+  () => import("../ModalDetailPage/ModalDetailPage")
+);
 
 ModuleRegistry.registerModules([
   MenuModule,

@@ -1,10 +1,14 @@
-import { Box } from "@mui/material";
-import React, { useMemo } from "react";
-import { useMutation } from "react-query";
+import {Box, Skeleton} from "@mui/material";
+import React, {Suspense, lazy, useMemo} from "react";
+import {useMutation} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
-import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
+// import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
+
+const CellElementGeneratorForTableView = lazy(
+  () => import("./CellElementGeneratorForTableView")
+);
 
 const TableDataForm = ({
   row,
@@ -75,26 +79,36 @@ const TableDataForm = ({
           newUi={newUi}
         />
       ) : (
-        <CellElementGeneratorForTableView
-          row={row}
-          data={data}
-          field={field}
-          index={index}
-          watch={watch}
-          key={field?.id}
-          fields={fields}
-          control={control}
-          getValues={getValues}
-          tableView={tableView}
-          tableSlug={tableSlug}
-          relOptions={relOptions}
-          isTableView={isTableView}
-          isWrapField={isWrapField}
-          updateObject={updateObject}
-          setFormValue={setFormValue}
-          relationfields={relationfields}
-          newUi={newUi}
-        />
+        <Suspense
+          fallback={
+            <Skeleton
+              variant="rectangular"
+              style={{borderRadius: "6px"}}
+              width={"100%"}
+              height={20}
+            />
+          }>
+          <CellElementGeneratorForTableView
+            row={row}
+            data={data}
+            field={field}
+            index={index}
+            watch={watch}
+            key={field?.id}
+            fields={fields}
+            control={control}
+            getValues={getValues}
+            tableView={tableView}
+            tableSlug={tableSlug}
+            relOptions={relOptions}
+            isTableView={isTableView}
+            isWrapField={isWrapField}
+            updateObject={updateObject}
+            setFormValue={setFormValue}
+            relationfields={relationfields}
+            newUi={newUi}
+          />
+        </Suspense>
       )}
     </Box>
   );

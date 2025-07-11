@@ -156,7 +156,12 @@ export const NewUiViewsWithGroups = ({
   setSelectedViewType = () => {},
 }) => {
   const location = useLocation();
-  const {id, menuId: menuid, tableSlug: tableSlugFromProps} = useParams();
+  const {
+    id,
+    menuId: menuid,
+    tableSlug: tableSlugFromProps,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps || view?.table_slug;
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();
@@ -1053,11 +1058,12 @@ export const NewUiViewsWithGroups = ({
                   fieldsMap={fieldsMap}
                   visibleRelationColumns={visibleRelationColumns}
                   checkedColumns={checkedColumns}
-                  onDocsClick={() =>
+                  projectId={projectId}
+                  onDocsClick={() => {
                     dispatch(
                       detailDrawerActions.setDrawerTabIndex(views?.length)
-                    )
-                  }
+                    );
+                  }}
                   searchText={searchText}
                   computedVisibleFields={computedVisibleFields}
                   handleOpenPopup={handleOpenPopup}
@@ -1802,9 +1808,14 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
+  projectId,
 }) => {
+  const navigate = useNavigate();
+  const {menuId, appId, tableSlug: tableSlugFromProps} = useParams();
   const queryClient = useQueryClient();
-  const tableSlug = relationView ? view?.relation_table_slug : view?.table_slug;
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromProps ?? view?.table_slug);
   const {i18n, t} = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
@@ -1960,6 +1971,14 @@ const ViewOptions = ({
       return await refetchViews();
     },
   });
+
+  const navigateToOldTemplate = () => {
+    if (localStorage.getItem("new_router") === "true") {
+      navigate(`/${menuId}/object/${tableSlug}/docs`);
+    } else {
+      navigate(`/main/${appId}/object/${tableSlug}/docs`);
+    }
+  };
 
   return (
     <Popover
@@ -2271,7 +2290,11 @@ const ViewOptions = ({
                 borderRadius={6}
                 _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
-                onClick={onDocsClick}>
+                onClick={(e) => {
+                  onDocsClick(e);
+                  projectId === "c7168030-b876-4d01-8063-f7ad9f92e974" &&
+                    navigateToOldTemplate();
+                }}>
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||

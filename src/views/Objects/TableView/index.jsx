@@ -26,6 +26,7 @@ import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import {useProjectGetByIdQuery} from "../../../services/projectService";
 import {store} from "../../../store";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import OldModalDetailPage from "../ModalDetailPage/OldModalDetailPage";
 
 const TableView = ({
   filterVisible,
@@ -663,7 +664,7 @@ const TableView = ({
       </div>
 
       {open && (
-        <ModalDetailPage
+        <OldModalDetailPage
           open={open}
           setOpen={setOpen}
           selectedRow={selectedRow}

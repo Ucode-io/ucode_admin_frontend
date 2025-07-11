@@ -27,6 +27,7 @@ import menuService from "../../services/menuService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
 
 const DrawerDetailPage = lazy(() => import("../Objects/DrawerDetailPage"));
 const OldDrawerDetailPage = lazy(
@@ -721,7 +722,7 @@ const TableView = ({
         ) : null}
 
         {Boolean(open && !projectInfo?.new_layout) && (
-          <ModalDetailPage
+          <OldModalDetailPage
             open={open}
             selectedRow={selectedRow}
             menuItem={menuItem}

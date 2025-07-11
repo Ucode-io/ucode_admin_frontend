@@ -13,11 +13,10 @@ import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
 import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {lazy, useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -28,8 +27,15 @@ import menuService from "../../services/menuService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import DrawerDetailPage from "../Objects/DrawerDetailPage";
-import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
+
+const DrawerDetailPage = lazy(() => import("../Objects/DrawerDetailPage"));
+const OldDrawerDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/OldDrawerDetailPage")
+);
+const ModalDetailPage = lazy(
+  () => import("@/views/Objects/ModalDetailPage/ModalDetailPage")
+);
 
 const TableView = ({
   relationView = false,
@@ -92,10 +98,6 @@ const TableView = ({
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
-
-  const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
-  );
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -540,9 +542,6 @@ const TableView = ({
         .join("&");
 
       const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
       const matches = replaceUrlVariables(urlTemplate, row);
 
@@ -723,7 +722,7 @@ const TableView = ({
         ) : null}
 
         {Boolean(open && !projectInfo?.new_layout) && (
-          <ModalDetailPage
+          <OldModalDetailPage
             open={open}
             selectedRow={selectedRow}
             menuItem={menuItem}

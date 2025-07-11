@@ -1,10 +1,16 @@
 import {useSelector} from "react-redux";
 import {Parser} from "hot-formula-parser";
 import {useTranslation} from "react-i18next";
-import {useEffect, useMemo, useState} from "react";
+import {Suspense, lazy, useEffect, useMemo, useState} from "react";
+import {Skeleton} from "@mui/material";
 import CellRelationFormElementNew from "./CellRelationFormElementNew";
-import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
-import CellRelationFormElementForNewColumn from "./CellRelationFormElementForNewColumn";
+
+const CellManyToManyRelationElement = lazy(
+  () => import("./CellManyToManyRelationElement")
+);
+const CellRelationFormElementForNewColumn = lazy(
+  () => import("./CellRelationFormElementForNewColumn")
+);
 
 const parser = new Parser();
 
@@ -98,26 +104,36 @@ const CellElementGeneratorForRelation = ({
   const renderInputValues = {
     LOOKUP: () => {
       return newColumn ? (
-        <CellRelationFormElementForNewColumn
-          isFormEdit
-          row={row}
-          data={data}
-          field={field}
-          index={index}
-          control={control}
-          name={computedSlug}
-          mainForm={mainForm}
-          isNewRow={isNewRow}
-          tableView={tableView}
-          disabled={isDisabled}
-          isBlackBg={isBlackBg}
-          isNewTableView={true}
-          updateObject={updateObject}
-          setFormValue={setFormValue}
-          defaultValue={defaultValue}
-          relationfields={relationfields}
-          placeholder={field.attributes?.placeholder}
-        />
+        <Suspense
+          fallback={
+            <Skeleton
+              variant="rectangular"
+              style={{borderRadius: "6px"}}
+              width={"100%"}
+              height={20}
+            />
+          }>
+          <CellRelationFormElementForNewColumn
+            isFormEdit
+            row={row}
+            data={data}
+            field={field}
+            index={index}
+            control={control}
+            name={computedSlug}
+            mainForm={mainForm}
+            isNewRow={isNewRow}
+            tableView={tableView}
+            disabled={isDisabled}
+            isBlackBg={isBlackBg}
+            isNewTableView={true}
+            updateObject={updateObject}
+            setFormValue={setFormValue}
+            defaultValue={defaultValue}
+            relationfields={relationfields}
+            placeholder={field.attributes?.placeholder}
+          />
+        </Suspense>
       ) : (
         <CellRelationFormElementNew
           row={row}
@@ -142,22 +158,32 @@ const CellElementGeneratorForRelation = ({
       );
     },
     LOOKUPS: () => (
-      <CellManyToManyRelationElement
-        newUi={newUi}
-        row={row}
-        isFormEdit
-        field={field}
-        index={index}
-        control={control}
-        name={computedSlug}
-        disabled={isDisabled}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        setFormValue={setFormValue}
-        defaultValue={defaultValue}
-        updateObject={updateObject}
-        placeholder={field.attributes?.placeholder}
-      />
+      <Suspense
+        fallback={
+          <Skeleton
+            variant="rectangular"
+            style={{borderRadius: "6px"}}
+            width={"100%"}
+            height={20}
+          />
+        }>
+        <CellManyToManyRelationElement
+          newUi={newUi}
+          row={row}
+          isFormEdit
+          field={field}
+          index={index}
+          control={control}
+          name={computedSlug}
+          disabled={isDisabled}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          setFormValue={setFormValue}
+          defaultValue={defaultValue}
+          updateObject={updateObject}
+          placeholder={field.attributes?.placeholder}
+        />
+      </Suspense>
     ),
   };
 

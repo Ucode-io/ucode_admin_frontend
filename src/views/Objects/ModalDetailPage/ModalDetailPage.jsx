@@ -23,6 +23,7 @@ function ModalDetailPage({
   layout,
   menuItem,
   selectedRow,
+  modal = false,
   dateInfo = {},
   fullScreen = false,
   projectInfo,
@@ -52,7 +53,7 @@ function ModalDetailPage({
   const {navigateToForm} = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const {menuId, tableSlug: tableFromParams} = useParams();
+  const {menuId, tableSlug: tableFromParams, appId} = useParams();
   const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
@@ -65,11 +66,13 @@ function ModalDetailPage({
 
   const tableSlug =
     tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
+
   const [selectedView, setSelectedView] = useState(null);
 
   const query = new URLSearchParams(window.location.search);
-  const viewId = query.get("v");
-  const itemId = query.get("p");
+  const viewId = query.get("v") ?? view?.id;
+  const itemId = query.get("p") ?? selectedRow?.guid;
+
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -163,7 +166,8 @@ function ModalDetailPage({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+    const id = menuId ?? appId;
+    const getLayout = layoutService.getLayout(tableSlug, id, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });

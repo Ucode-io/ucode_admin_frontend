@@ -26,6 +26,7 @@ import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
 
 const TableViewOld = ({
   selectedRow,
@@ -655,7 +656,7 @@ const TableViewOld = ({
         ) : null}
 
         {Boolean(open && !projectInfo?.new_layout) && (
-          <ModalDetailPage
+          <OldModalDetailPage
             open={open}
             selectedRow={selectedRow}
             menuItem={menuItem}

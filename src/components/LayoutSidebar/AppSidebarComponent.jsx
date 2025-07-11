@@ -204,6 +204,15 @@ const AppSidebar = ({
     }
   };
 
+  function isValidUrl(str) {
+    try {
+      new URL(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   return (
     <Draggable key={index}>
       {element?.type !== "FOLDER" && (
@@ -241,16 +250,22 @@ const AppSidebar = ({
               h={36}
               alignItems="center"
               justifyContent="center">
-              <IconGenerator
-                icon={!icon || icon === "folder.svg" ? "folder-new.svg" : icon}
-                size={iconSize}
-                style={{
-                  color:
-                    icon && icon !== "folder.svg"
-                      ? menuStyle?.text || "#475467"
-                      : "#fff",
-                }}
-              />
+              {isValidUrl(icon) ? (
+                <img width={"24px"} height={"24px"} src={icon} />
+              ) : (
+                <IconGenerator
+                  icon={
+                    !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                  }
+                  size={iconSize}
+                  style={{
+                    color:
+                      icon && icon !== "folder.svg"
+                        ? menuStyle?.text || "#475467"
+                        : "#fff",
+                  }}
+                />
+              )}
             </Flex>
 
             <Box
@@ -467,17 +482,21 @@ const AppSidebar = ({
                     <Box
                       sx={{width: "20px", height: "20px"}}
                       className={sidebarIsOpen ? "accordionFolderIcon" : ""}>
-                      <IconGenerator
-                        icon={
-                          !icon || icon === "folder.svg"
-                            ? "folder-new.svg"
-                            : icon
-                        }
-                        size={iconSize}
-                        style={{
-                          color: getMenuColor(element, icon),
-                        }}
-                      />
+                      {isValidUrl(icon) ? (
+                        <img width={"24px"} height={"24px"} src={icon} />
+                      ) : (
+                        <IconGenerator
+                          icon={
+                            !icon || icon === "folder.svg"
+                              ? "folder-new.svg"
+                              : icon
+                          }
+                          size={iconSize}
+                          style={{
+                            color: getMenuColor(element, icon),
+                          }}
+                        />
+                      )}
                     </Box>
                   </Flex>
 

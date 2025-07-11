@@ -45,7 +45,6 @@ import {
 } from "./hf-datePickers";
 import HFIconPicker from "./hf-iconPicker";
 import HFInternationalPhone from "./hf-internationalPhone";
-import HFMoneyField from "./hf-moneyField";
 import HFMultipleAutocomplete from "./hf-multiselectField";
 import HFStatusField from "./hf-statusField";
 import {HFVideoUpload} from "./hf-videoUploadField";
@@ -316,17 +315,6 @@ function DrawerFieldGenerator({
         />
       );
 
-    case "MONEY":
-      return (
-        <HFMoneyField
-          disabled={isDisabled}
-          drawerDetail={drawerDetail}
-          control={control}
-          name={computedSlug}
-          field={field}
-          watch={watch}
-        />
-      );
     case "MAP":
       return (
         <HFModalMap

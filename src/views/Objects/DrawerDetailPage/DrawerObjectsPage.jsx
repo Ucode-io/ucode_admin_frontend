@@ -2,16 +2,17 @@ import React, {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
-import {TabPanel, Tabs} from "react-tabs";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { TabPanel, Tabs } from "react-tabs";
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorViewService from "../../../services/constructorViewService";
 import menuService from "../../../services/menuService";
-import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
-import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
-import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {Box, Flex, Spinner} from "@chakra-ui/react";
+import { detailDrawerActions } from "../../../store/detailDrawer/detailDrawer.slice";
+import { listToMap, listToMapWithoutRel } from "../../../utils/listToMap";
+import { updateQueryWithoutRerender } from "../../../utils/useSafeQueryUpdater";
+import { NewUiViewsWithGroups } from "../../table-redesign/views-with-groups";
+import { Box, Flex, Spinner } from "@chakra-ui/react";
+import { useViewContext } from "../../../providers/ViewProvider";
 
 const sortViews = (views = []) => {
   const firstSection = views.find((v) => v.type === "SECTION");
@@ -38,11 +39,16 @@ function DrawerObjectsPage({
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
-  const {state} = useLocation();
+  const { view } = useViewContext();
+  const { state } = useLocation();
   const dispatch = useDispatch();
-  const {menuId} = useParams();
-  const {i18n} = useTranslation();
+  const [searchParams] = useSearchParams();
+  const { menuId: menuIdParam } = useParams();
+  const menuId = menuIdParam || searchParams.get("menuId");
+  const { i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
+
+  const isNewRouter = localStorage.getItem("new_router") === "true";
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -55,7 +61,7 @@ function DrawerObjectsPage({
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
-  const {data: menuViews} = useQuery(
+  const { data: menuViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
     {
@@ -82,7 +88,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const {data: relationViews} = useQuery(
+  const { data: relationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
@@ -141,14 +147,14 @@ function DrawerObjectsPage({
     () =>
       menuService.getFieldsListMenu(
         menuId,
-        selectedV?.id,
+        isNewRouter ? selectedV?.id : view?.id,
         lastPath?.relation_table_slug || lastPath?.table_slug,
         {}
       ),
     {
       enabled:
         Boolean(lastPath?.relation_table_slug) || Boolean(lastPath?.table_slug),
-      select: ({data}) => ({
+      select: ({ data }) => ({
         fieldsMap: listToMap(data?.fields),
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
         visibleColumns: data?.fields ?? [],
@@ -162,7 +168,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const {data: {relations} = {relations: []}} = useQuery(
+  const { data: { relations } = { relations: [] } } = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],
     () =>
       constructorRelationService.getList(
@@ -189,7 +195,7 @@ function DrawerObjectsPage({
             {loading ? (
               <Flex alignItems={"center"} justifyContent={"center"} h={"100vh"}>
                 <Spinner
-                  style={{width: "50px", height: "50px", color: "#007aff"}}
+                  style={{ width: "50px", height: "50px", color: "#007aff" }}
                   size={"lg"}
                 />
               </Flex>

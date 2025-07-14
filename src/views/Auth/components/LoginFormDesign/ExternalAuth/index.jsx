@@ -19,18 +19,20 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
           width: "100%",
           justifyContent: "space-between",
           marginTop: "16px",
-        }}>
-        <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
+        }}
+      >
+        <Box sx={{ border: "1px solid #F2F4F7", width: "40%" }}></Box>
         <Box
           sx={{
             width: "20%",
             textAlign: "center",
             fontSize: "14px",
             color: "#475467",
-          }}>
+          }}
+        >
           {t("or")}
         </Box>
-        <Box sx={{border: "1px solid #F2F4F7", width: "40%"}}></Box>
+        <Box sx={{ border: "1px solid #F2F4F7", width: "40%" }}></Box>
       </Box>
 
       <Tooltip title="Google Auth!">
@@ -46,13 +48,15 @@ function ExternalAuth({setFormType = () => {}, getCompany = () => {}}) {
             display: "flex",
             alignItems: "center",
             gap: "5px",
-            marginTop: "24px",
+            marginTop: "20px",
             justifyContent: "center",
-          }}>
+          }}
+        >
           <p>{t("account.not")}</p>
           <Box
             onClick={() => navigate("/registration")}
-            sx={{color: "#175CD3", fontSize: "14px", cursor: "pointer"}}>
+            sx={{ color: "#175CD3", fontSize: "14px", cursor: "pointer" }}
+          >
             {t("create.account")}
           </Box>
         </Box>

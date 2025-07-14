@@ -9,16 +9,18 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import layoutService from "../../../services/layoutService";
 import PageSettings from "../../../components/PageSettings";
-import {useDispatch} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {showAlert} from "../../../store/alert/alert.thunk";
 import {Dialog} from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useViewContext } from "../../../providers/ViewProvider";
 
 function LayoutSettings() {
-  const {state} = useLocation();
+  const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {menuId} = useParams();
+  const { menuId: menuIdParam, appId } = useParams();
+  const menuId = menuIdParam || appId;
   const [sectionIndex, setSectionIndex] = useState(null);
   const [selectedSection, setSelectedSection] = useState();
   const [sections, setSections] = useState();
@@ -26,8 +28,12 @@ function LayoutSettings() {
   const tableSlug = state?.tableSlug;
   const [loader, setLoader] = useState(false);
 
+  const { view } = useViewContext();
+  const groupStore = useSelector((state) => state?.groupField);
+  console.log({ groupStore });
+
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -55,7 +61,7 @@ function LayoutSettings() {
 
   const updateSectionFields = (newFields) => {
     const updatedSection = sections.map((section, index) =>
-      index === sectionIndex ? {...section, fields: newFields} : section
+      index === sectionIndex ? { ...section, fields: newFields } : section
     );
 
     setSections(updatedSection);
@@ -97,7 +103,8 @@ function LayoutSettings() {
           w={"77%"}
           borderRadius={12}
           borderBottomRadius={0}
-          bg={"#fff"}>
+          bg={"#fff"}
+        >
           <LayoutSections
             sections={sections}
             setSections={setSections}

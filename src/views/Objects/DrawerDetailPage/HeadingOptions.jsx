@@ -1,12 +1,13 @@
 import {Flex, Text} from "@chakra-ui/react";
 import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
-import React, {useState} from "react";
-import {Controller} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {Check} from "@mui/icons-material";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { Check } from "@mui/icons-material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import { useSelector } from "react-redux";
 
 const HeadingOptions = ({
   watch,
@@ -16,7 +17,7 @@ const HeadingOptions = ({
   selectedRow,
   setFormValue = () => {},
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const selectedFieldSlug =
@@ -55,55 +56,61 @@ const HeadingOptions = ({
         className="layoutHeading"
         sx={{
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "space-between",
           paddingLeft: "3px",
           gap: "10px",
-        }}>
+        }}
+      >
         <Flex
-          onClick={(e) =>
-            !Boolean(watch("attributes.layout_heading")) && handleClick(e)
-          }
+          onClick={(e) => !selectedFieldSlug && handleClick(e)}
+          width={"100%"}
           flexDirection={"column"}
-          justifyContent={"flex-start"}>
-          <CHTextField
-            placeholder={
-              Boolean(watch("attributes.layout_heading")) ? "" : "Select field"
-            }
+          justifyContent={"flex-start"}
+        >
+          <AutoResizeTextarea
             control={control}
-            name={selectedField?.slug || ""}
-            defaultValue={fieldValue}
-            key={selectedField?.slug}
+            selectedField={selectedField}
+            fieldValue={fieldValue}
+            placeholder="Empty"
+            watch={watch}
           />
         </Flex>
 
-        <Box sx={{cursor: "pointer"}}>
-          <Flex
-            p={"5px"}
-            borderRadius={6}
-            onClick={handleClick}
-            gap={2}
-            alignItems={"center"}>
-            <Text>
-              {
-                fieldsList?.find(
-                  (field) => field?.value === watch("attributes.layout_heading")
-                )?.label
-              }
-            </Text>
-            {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </Flex>
+        <Box sx={{ display: "flex", gap: "10px" }}>
+          {!selectedFieldSlug && (
+            <Box sx={{ cursor: "pointer" }}>
+              <Flex
+                p={"5px"}
+                borderRadius={6}
+                onClick={handleClick}
+                gap={2}
+                alignItems={"center"}
+              >
+                <Text>
+                  {
+                    fieldsList?.find(
+                      (field) =>
+                        field?.value === watch("attributes.layout_heading")
+                    )?.label
+                  }
+                </Text>
+                {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </Flex>
+            </Box>
+          )}
+          <Button variant="contained" type="submit">
+            Save
+          </Button>
         </Box>
-        <Button variant="contained" type="submit">
-          Save
-        </Button>
       </Box>
 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "180px", padding: "4px 0"}}>
+        onClose={() => handleClose(null)}
+      >
+        <Box sx={{ width: "180px", padding: "4px 0" }}>
           {fieldsList
             .filter(
               (field) =>
@@ -123,13 +130,15 @@ const HeadingOptions = ({
                   height: "32px",
                 }}
                 key={option.label}
-                onClick={() => handleClose(option)}>
+                onClick={() => handleClose(option)}
+              >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: "5px",
-                  }}>
+                  }}
+                >
                   {option.label}
                 </Box>
 
@@ -144,25 +153,61 @@ const HeadingOptions = ({
   );
 };
 
-const CHTextField = ({
+const AutoResizeTextarea = ({
   control,
-  name = "",
-  defaultValue = "",
-  placeholder = "",
+  selectedField,
+  fieldValue,
+  watch,
+  ...props
 }) => {
+  const textareaRef = useRef(null);
+  const name = selectedField?.slug;
+
+  const headingValue = watch(name);
+
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
+  useEffect(() => {
+    resizeTextarea();
+  }, [headingValue]);
+
   return (
     <Controller
       control={control}
-      name={name}
-      defaultValue={defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
-        <TextField
-          placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
-          className="headingText"
-          value={value ?? ""}
-        />
-      )}
+      name={name ?? ""}
+      defaultValue={fieldValue}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        return (
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={onChange}
+            rows={1}
+            style={{
+              resize: "none",
+              outline: "none",
+              maxWidth: "100%",
+              width: "100%",
+              whiteSpace: "break-spaces",
+              wordBreak: "breakWord",
+              caretColor: "rgb(50, 48, 44)",
+              padding: "0px 2px 0px",
+              fontSize: "32px",
+              fontWeight: "900",
+              lineHeight: "1.3",
+              margin: "0px",
+              overflow: "hidden",
+            }}
+            {...props}
+          />
+        );
+      }}
     />
   );
 };

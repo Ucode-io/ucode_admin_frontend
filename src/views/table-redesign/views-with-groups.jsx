@@ -1123,7 +1123,19 @@ export const NewUiViewsWithGroups = ({
             {new_router && view?.type === "SECTION" ? (
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
-                  <Suspense fallback={<div>Loading...</div>}>
+                  <Suspense
+                    fallback={
+                      <div
+                        style={{
+                          height: "90vh",
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                        <CircularProgress />
+                      </div>
+                    }>
                     <DrawerFormDetailPage
                       view={view}
                       modal={modal}

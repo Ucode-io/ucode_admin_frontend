@@ -1,4 +1,4 @@
-import {getApp, getApps, initializeApp} from "firebase/app";
+import {initializeApp} from "firebase/app";
 import {getAuth} from "firebase/auth";
 
 const firebaseConfig = {
@@ -10,7 +10,7 @@ const firebaseConfig = {
   appId: "1:195504606938:web:1f01f882f66e1b52339fe3",
 };
 
-const app = getApps()?.length === 0 ? initializeApp(firebaseConfig) : getApp();
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 auth.useDeviceLanguage();
 

@@ -482,16 +482,31 @@ export default function FieldCreateModal({
 
   const popoverAnchorProps = {};
   if (!fieldData) {
-    popoverAnchorProps.anchorReference = "anchorPosition";
-    popoverAnchorProps.anchorPosition = {
-      top: 270,
-      left: window.innerWidth - 300,
-    };
+    // popoverAnchorProps.anchorReference = "anchorPosition";
+
+    // if (format.includes("FORMULA")) {
+    //   popoverAnchorProps.anchorReference = "anchorPosition";
+    //   popoverAnchorProps.anchorPosition = {
+    //     top: 370,
+    //     left: window.innerWidth - 300,
+    //   };
+    // } else {
+    //   popoverAnchorProps.anchorPosition = {
+    //     top: 270,
+    //     left: window.innerWidth - 300,
+    //   };
+    // }
+
+    // popoverAnchorProps.anchorOrigin = {
+    //   vertical: "bottom",
+    //   horizontal: "center",
+    // };
+    // popoverAnchorProps.transformOrigin = {
+    //   vertical: "bottom",
+    //   horizontal: "left",
+    // };
+
     popoverAnchorProps.anchorOrigin = {
-      vertical: "bottom",
-      horizontal: "center",
-    };
-    popoverAnchorProps.transformOrigin = {
       vertical: "bottom",
       horizontal: "left",
     };
@@ -677,6 +692,9 @@ export default function FieldCreateModal({
                         className={style.btn}
                         type="button"
                         onClick={handleSortField}
+                        onMouseEnter={() => {
+                          setOpenedDropdown(null);
+                        }}
                       >
                         <SortByAlphaOutlinedIcon />
                         <span>
@@ -701,6 +719,9 @@ export default function FieldCreateModal({
                               : false
                           )
                         }
+                        onMouseEnter={() => {
+                          setOpenedDropdown(null);
+                        }}
                       >
                         <ViewWeekOutlinedIcon />
                         <span>
@@ -789,6 +810,8 @@ export default function FieldCreateModal({
               {format === FIELD_TYPES.MULTISELECT && (
                 <Box
                   width={"100%"}
+                  paddingY={"6px"}
+                  borderBottom="1px solid #e5e9eb"
                   onMouseEnter={() => {
                     setOpenedDropdown(dropdownTypes.editProperty);
                   }}
@@ -832,7 +855,7 @@ export default function FieldCreateModal({
                   width="100%"
                   marginTop="6px"
                   paddingTop="6px"
-                  borderTop="1px solid #e5e9eb"
+                  // borderTop="1px solid #e5e9eb"
                 >
                   <Box width={"100%"}>
                     <button
@@ -1078,6 +1101,9 @@ export default function FieldCreateModal({
                   name="attributes.type"
                   control={control}
                   options={formulaTypes}
+                  onOpen={() => {
+                    setOpenedDropdown(null);
+                  }}
                 />
               </FRow>
               {(type === "SUMM" || type === "MAX" || type === "AVG") && (
@@ -1087,6 +1113,9 @@ export default function FieldCreateModal({
                       name="attributes.table_from"
                       control={control}
                       options={computedTables}
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
                     />
                   </FRow>
 
@@ -1095,6 +1124,9 @@ export default function FieldCreateModal({
                       name="attributes.sum_field"
                       control={control}
                       options={fields}
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
                     />
                   </FRow>
 
@@ -1197,6 +1229,9 @@ export default function FieldCreateModal({
                           "Select variable"
                         ) || "Select variable"
                       }
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
                     />
 
                     <span
@@ -1222,6 +1257,9 @@ export default function FieldCreateModal({
                           "Select variable"
                         ) || "Select variable"
                       }
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
                     />
 
                     <Menu

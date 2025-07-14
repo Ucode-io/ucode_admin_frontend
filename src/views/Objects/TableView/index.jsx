@@ -715,6 +715,7 @@ const TableView = ({
           getRelationFields={getRelationFields}
           formType={drawerStateField}
           height={`calc(100vh - 48px)`}
+          view={view}
         />
       </Drawer>
     </div>

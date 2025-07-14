@@ -299,9 +299,6 @@ const AutoCompleteElement = ({
       if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
-      if (tableSlug === "model") {
-        console.log(res?.data?.response);
-      }
       setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
@@ -344,6 +341,9 @@ const AutoCompleteElement = ({
       field?.id?.split("#")?.[0] === "client_type"
     ) {
       setValue(value?.guid ?? value?.guid);
+      if (tableSlug === "models") {
+        console.log("first2");
+      }
       setLocalValue(value);
     }
   };
@@ -355,6 +355,10 @@ const AutoCompleteElement = ({
 
   const computedValueMulti = useMemo(() => {
     if (!value) return [];
+
+    // if (tableSlug === "models") {
+    //   console.log({ optionsFromLocale: optionsFromLocale.options, allOptions });
+    // }
 
     if (Array.isArray(value)) {
       return value
@@ -416,7 +420,12 @@ const AutoCompleteElement = ({
   }, [value]);
 
   useEffect(() => {
-    if (computedValueMulti && isMulti) {
+    console.log({ computedValueMulti, isMulti });
+    if (tableSlug === "models") {
+      console.log("first3");
+      console.log({ computedValueMulti, isMulti });
+    }
+    if (computedValueMulti?.length && isMulti) {
       setLocalValue(computedValueMulti);
     }
   }, [computedValueMulti]);
@@ -471,6 +480,9 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (localValue?.length === 0 && computedValue?.guid) {
       setLocalValue([computedValue]);
+      if (tableSlug === "models") {
+        console.log("first1");
+      }
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);

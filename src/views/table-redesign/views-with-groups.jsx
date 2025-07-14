@@ -99,8 +99,6 @@ import {
   TabGroup,
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
-import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
-import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
 import DrawerTableView from "./drawer-table-view";
@@ -108,6 +106,9 @@ import AgGridTableView from "@/views/Objects/AgGridTableView";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
+import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
+import {ViewProvider} from "../../providers/ViewProvider";
 
 const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
@@ -571,7 +572,7 @@ export const NewUiViewsWithGroups = ({
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
   return (
-    <>
+    <ViewProvider state={{view}}>
       <ChakraProvider theme={chakraUITheme}>
         <Flex
           h={modal ? `100vh` : "100vh"}
@@ -1528,7 +1529,7 @@ export const NewUiViewsWithGroups = ({
         handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
       />
-    </>
+    </ViewProvider>
   );
 };
 

@@ -19,6 +19,9 @@ export default function useTabRouter() {
     menuId = "",
     itemId = ""
   ) => {
+    const isNewRouter = localStorage.getItem("new_router") === "true"
+
+
     if (type === "CREATE") {
       const id = generateID();
 
@@ -34,24 +37,47 @@ export default function useTabRouter() {
       navigate(link, {state});
       return;
     }
-    const link = `/main/${appId}/object/${tableSlug}/${row.guid}?menuId=${menuId}&itemId=${itemId}`;
+console.log({isNewRouter})
+    if(isNewRouter) {
+      const link = `/${menuId}/detail/${menuId}/${tableSlug}/${row.guid}?menuId=${menuId}&itemId=${itemId}`;
 
-    const tab = tabs.find((tab) => tab.link === link);
+      const tab = tabs.find((tab) => tab.link === link);
 
-    if (tab) {
+      if (tab) {
+        navigate(link);
+        return;
+      }
+
+      const newTab = {
+        id: generateID(),
+        link,
+        tableSlug,
+        row,
+      };
+
+      dispatch(tabRouterActions.addTab(newTab));
       navigate(link);
-      return;
+
+    } else {
+      const link = `/main/${appId}/object/${tableSlug}/${row.guid}?menuId=${menuId}&itemId=${itemId}`;
+
+      const tab = tabs.find((tab) => tab.link === link);
+
+      if (tab) {
+        navigate(link);
+        return;
+      }
+
+      const newTab = {
+        id: generateID(),
+        link,
+        tableSlug,
+        row,
+      };
+
+      dispatch(tabRouterActions.addTab(newTab));
+      navigate(link);
     }
-
-    const newTab = {
-      id: generateID(),
-      link,
-      tableSlug,
-      row,
-    };
-
-    dispatch(tabRouterActions.addTab(newTab));
-    navigate(link);
   };
 
   const removeTab = (link) => {

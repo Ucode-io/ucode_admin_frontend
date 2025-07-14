@@ -2,7 +2,7 @@ import React, {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import constructorRelationService from "../../../services/constructorRelationService";
 import constructorViewService from "../../../services/constructorViewService";
@@ -11,7 +11,8 @@ import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slic
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {Flex, Spinner} from "@chakra-ui/react";
+import {Box, Flex, Spinner} from "@chakra-ui/react";
+import {useViewContext} from "../../../providers/ViewProvider";
 
 const sortViews = (views = []) => {
   const firstSection = views.find((v) => v.type === "SECTION");
@@ -37,11 +38,16 @@ function DrawerObjectsPage({
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
+  const {view} = useViewContext();
   const {state} = useLocation();
   const dispatch = useDispatch();
-  const {menuId} = useParams();
+  const [searchParams] = useSearchParams();
+  const {menuId: menuIdParam} = useParams();
+  const menuId = menuIdParam || searchParams.get("menuId");
   const {i18n} = useTranslation();
   const [loading, setLoading] = useState(false);
+
+  const isNewRouter = localStorage.getItem("new_router") === "true";
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -140,7 +146,7 @@ function DrawerObjectsPage({
     () =>
       menuService.getFieldsListMenu(
         menuId,
-        selectedV?.id,
+        isNewRouter ? selectedV?.id : view?.id,
         lastPath?.relation_table_slug || lastPath?.table_slug,
         {}
       ),

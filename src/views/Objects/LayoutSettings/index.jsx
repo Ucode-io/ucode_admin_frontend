@@ -19,18 +19,19 @@ function LayoutSettings() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { menuId: menuIdParam, appId } = useParams();
+  const {
+    menuId: menuIdParam,
+    appId,
+    tableSlug: tableSlugParams,
+  } = useParams();
   const menuId = menuIdParam || appId;
   const [sectionIndex, setSectionIndex] = useState(null);
   const [selectedSection, setSelectedSection] = useState();
   const [sections, setSections] = useState();
   const selectedRow = state;
-  const tableSlug = state?.tableSlug;
+  const tableSlug = state?.tableSlug || tableSlugParams;
   const [loader, setLoader] = useState(false);
 
-  const { view } = useViewContext();
-  const groupStore = useSelector((state) => state?.groupField);
-  console.log({ groupStore });
 
   const {
     data: { layout } = {

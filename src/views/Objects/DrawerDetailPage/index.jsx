@@ -152,7 +152,6 @@ function DrawerDetailPage({
               : relation.table_from?.slug,
         }))
       );
-      console.log(data?.response);
       rootForm.reset(data?.response ?? {});
       setSelectTab(relations[selectedTabIndex]);
 

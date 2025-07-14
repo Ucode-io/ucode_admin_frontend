@@ -189,19 +189,18 @@ const FieldSettings = ({
     });
 
   const createField = (field) => {
-    console.log({ field });
-    // const data = {
-    //   ...field,
-    //   id: generateGUID(),
-    //   label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
-    //   show_label: true,
-    // };
-    // if (tableSlug) {
-    //   createNewField({ data, tableSlug: slug || tableSlug });
-    // } else {
-    //   prepandFieldInForm(data);
-    //   closeSettingsBlock();
-    // }
+    const data = {
+      ...field,
+      id: generateGUID(),
+      label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
+      show_label: true,
+    };
+    if (tableSlug) {
+      createNewField({ data, tableSlug: slug || tableSlug });
+    } else {
+      prepandFieldInForm(data);
+      closeSettingsBlock();
+    }
   };
 
   const addColumnToView = (data) => {

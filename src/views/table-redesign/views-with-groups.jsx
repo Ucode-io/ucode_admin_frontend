@@ -99,6 +99,9 @@ import {FilterButton} from "./FilterButton";
 import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
 import { ViewCreate } from "../Objects/components/ViewCreate";
+import FRow from "../../components/FormElements/FRow";
+import HFSelect from "../../components/FormElements/HFSelect";
+import { useViewWithGroupsProps } from "./useViewWithGroupsProps";
 
 const AggridTreeView = lazy(
   () => import("../Objects/AgGridTableView/AggridTreeView")
@@ -571,6 +574,27 @@ export const NewUiViewsWithGroups = ({
   const viewName =
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
+  const {
+    getViewSettings,
+    viewsWithSettings,
+    createView,
+    handleSelectViewType,
+    selectedViewAnchor,
+    selectedViewTab,
+    closeViewSettings,
+  } = useViewWithGroupsProps({
+    relationView,
+    tableSlug,
+    viewsList,
+    control,
+    fieldsMap,
+    fieldsMapRel,
+    i18n,
+    menuId,
+    views,
+    handleClose,
+  });
+
   return (
     <>
       <ChakraProvider theme={chakraUITheme}>
@@ -920,7 +944,13 @@ export const NewUiViewsWithGroups = ({
                 },
               }}
             >
-              <ViewCreate />
+              <ViewCreate
+                views={views}
+                computedViewTypes={computedViewTypes}
+                handleClose={handleClose}
+                setSelectedView={setSelectedView}
+                handleSelectViewType={handleSelectViewType}
+              />
               {/* <ViewTypeList
                 tableRelations={tableRelations}
                 relationView={relationView}
@@ -937,6 +967,53 @@ export const NewUiViewsWithGroups = ({
                   setSelectedView(data);
                 }}
               /> */}
+            </MuiPopover>
+            <MuiPopover
+              id={"view-settings"}
+              open={
+                !!selectedViewAnchor &&
+                viewsWithSettings.includes(selectedViewTab)
+              }
+              anchorEl={selectedViewAnchor}
+              onClose={closeViewSettings}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              anchorPosition={{ top: 200, left: 600 }}
+            >
+              <Box
+                sx={{
+                  backgroundColor: "#fff",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  width: "250px",
+                  border: "1px solid #D0D5DD",
+                  padding: "10px",
+                  // boxShadow:
+                  //   "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
+                }}
+              >
+                {getViewSettings(selectedViewTab)}
+                <Box marginTop={"10px"}>
+                  <Button
+                    w="100%"
+                    h="32px"
+                    borderRadius="8px"
+                    color="#fff"
+                    bg="#175CD3"
+                    onClick={() => {
+                      createView();
+                      // closeViewSettings();
+                      // refetchViews();
+                      // refetchRelationViews();
+                      // refetchTableRelations();
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Box>
+              </Box>
             </MuiPopover>
 
             <Popover placement="bottom-end">

@@ -1,10 +1,27 @@
 import cls from "./styles.module.scss";
-import { Box } from "@mui/material";
+import { Box, Dialog } from "@mui/material";
 import { useViewCreateProps } from "./useViewCreateProps";
 import SVG from "react-inlinesvg";
 
-export const ViewCreate = () => {
-  const { computedViewTypes, viewIcons } = useViewCreateProps();
+export const ViewCreate = ({
+  tableRelations,
+  relationView,
+  view,
+  fieldsMap,
+  tableSlug,
+  views,
+  refetchViews,
+  handleSelectViewType,
+}) => {
+  const { computedViewTypes, viewIcons, selectedViewTab } = useViewCreateProps({
+    tableRelations,
+    relationView,
+    view,
+    fieldsMap,
+    tableSlug,
+    views,
+    refetchViews,
+  });
 
   return (
     <Box className={cls.paper}>
@@ -14,7 +31,10 @@ export const ViewCreate = () => {
       <ul className={cls.list}>
         {computedViewTypes.map((type, index) => (
           <li className={cls.item} key={type.value}>
-            <button className={cls.button}>
+            <button
+              className={cls.button}
+              onClick={(e) => handleSelectViewType(e, type.value)}
+            >
               <span className={cls.buttonInner}>
                 <span className={cls.icon}>
                   <SVG

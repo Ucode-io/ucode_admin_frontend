@@ -2,28 +2,37 @@ import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import {Button, Modal, Popover} from "@mui/material";
-import {useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { Box, Button, Modal, Popover } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 import constructorViewService from "../../../../services/constructorViewService";
-import {applyDrag} from "../../../../utils/applyDrag";
-import {viewTypes} from "../../../../utils/constants/viewTypes";
+import { applyDrag } from "../../../../utils/applyDrag";
+import {
+  VIEW_TYPES_MAP,
+  viewTypes,
+} from "../../../../utils/constants/viewTypes";
 import ViewSettings from "../ViewSettings";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import {viewsActions} from "../../../../store/views/view.slice";
+import { viewsActions } from "../../../../store/views/view.slice";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
-import {detailDrawerActions} from "../../../../store/detailDrawer/detailDrawer.slice";
+import { detailDrawerActions } from "../../../../store/detailDrawer/detailDrawer.slice";
 import { ViewCreate } from "../ViewCreate";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import constructorTableService from "../../../../services/constructorTableService";
+import listToOptions from "../../../../utils/listToOptions";
+import { useForm } from "react-hook-form";
 
 const ViewTabSelector = ({
   relationView,
@@ -53,6 +62,20 @@ const ViewTabSelector = ({
   const id = open ? "simple-popover" : undefined;
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
+
+  const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
+  const openViewSettings = (event) => {
+    setSelectedViewAnchor(event.currentTarget);
+  };
+  const closeViewSettings = () => {
+    setSelectedViewAnchor(null);
+  };
+
+  const [selectedViewTab, setSelectedViewTab] = useState(VIEW_TYPES_MAP.TABLE);
+  const handleSelectViewType = (e, type) => {
+    setSelectedViewTab(type);
+    openViewSettings(e);
+  };
 
   const handleClick = (event) => {
     setSelectedView("NEW");
@@ -96,6 +119,41 @@ const ViewTabSelector = ({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
+
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const table_slug = relationView
+    ? viewsList?.[viewsList?.length - 1]?.table_slug
+    : tableSlug;
+
+  const { data } = useQuery(
+    ["GET_TABLE_INFO", { viewsList }],
+    () => {
+      return constructorTableService.getTableInfo(table_slug, {
+        data: {},
+      });
+    },
+    {
+      enabled: Boolean(table_slug),
+      cacheTime: 10,
+      select: (res) => {
+        const fields = res?.data?.fields ?? [];
+
+        return { fields };
+      },
+    }
+  );
+
+  const fields = data?.fields ?? [];
+
+  const computedColumns = useMemo(() => {
+    const filteredFields = fields?.filter(
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+    );
+    return listToOptions(filteredFields, "label", "slug");
+  }, [fields]);
+
+  const { control, watch, setError, clearErrors, setValue } = useForm({});
 
   return (
     <>
@@ -234,6 +292,7 @@ const ViewTabSelector = ({
             openModal={openModal}
             setSelectedView={setSelectedView}
             setTypeNewView={setTypeNewView}
+            handleSelectViewType={handleSelectViewType}
           />
           {/* <ViewTypeList
             views={views}
@@ -243,6 +302,51 @@ const ViewTabSelector = ({
             setSelectedView={setSelectedView}
             setTypeNewView={setTypeNewView}
           /> */}
+        </Popover>
+        <Popover
+          id={"view-settings"}
+          open={!!selectedViewAnchor}
+          anchorEl={selectedViewAnchor}
+          onClose={closeViewSettings}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: "#fff",
+            }}
+          >
+            <MaterialUIProvider>
+              <FRow
+                label={
+                  selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
+                }
+                required
+              >
+                <HFSelect
+                  options={computedColumns}
+                  control={control}
+                  name="calendar_from_slug"
+                  MenuProps={{ disablePortal: true }}
+                  required={true}
+                />
+              </FRow>
+              <FRow
+                label={selectedViewTab === "CALENDAR" ? "Date to" : "Time to"}
+                required
+              >
+                <HFSelect
+                  options={computedColumns}
+                  control={control}
+                  name="calendar_to_slug"
+                  MenuProps={{ disablePortal: true }}
+                  required={true}
+                />
+              </FRow>
+            </MaterialUIProvider>
+          </Box>
         </Popover>
       </div>
 

@@ -2,20 +2,22 @@ import {Add} from "@mui/icons-material";
 import {Button} from "@mui/material";
 import {useEffect, useMemo, useRef} from "react";
 import {useState} from "react";
-import {useParams, useSearchParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import BoardCardRowGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator";
 import BoardPhotoGenerator from "../../../components/ElementGenerators/BoardCardRowGenerator/BoardPhotoGenerator";
 import useDebounce from "../../../hooks/useDebounce";
 import constructorObjectService from "../../../services/constructorObjectService";
-import {groupFieldActions} from "../../../store/groupField/groupField.slice";
-import {applyDrag} from "../../../utils/applyDrag";
+import { groupFieldActions } from "../../../store/groupField/groupField.slice";
+import { applyDrag } from "../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
-import {useDispatch, useSelector} from "react-redux";
-import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
-import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
-import {useQueryClient} from "react-query";
+import { updateQueryWithoutRerender } from "../../../utils/useSafeQueryUpdater";
+import { useDispatch, useSelector } from "react-redux";
+import { detailDrawerActions } from "../../../store/detailDrawer/detailDrawer.slice";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import { useQueryClient } from "react-query";
+import { mergeStringAndState } from "../../../utils/jsonPath";
+import useTabRouter from "../../../hooks/useTabRouter";
 
 const BoardColumn = ({
   group,
@@ -44,9 +46,11 @@ const BoardColumn = ({
   setBoardData,
   groupItem,
   groupField,
+  layoutType,
+  menuItem,
 }) => {
   const dispatch = useDispatch();
-  const {menuId} = useParams();
+  const { menuId, appId } = useParams();
   const queryClient = useQueryClient();
   const [index, setIndex] = useState();
   const [searchParams] = useSearchParams();
@@ -56,6 +60,9 @@ const BoardColumn = ({
   const isStatusType = selectedGroupField?.type === "STATUS";
   const [computedBoardData, setComputedBoardData] = useState(boardData);
   const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+  const navigate = useNavigate();
+
+  const { navigateToForm } = useTabRouter();
 
   const mutateDrop = useDebounce((mutateData) => {
     constructorObjectService
@@ -68,7 +75,7 @@ const BoardColumn = ({
   }, 0);
 
   const onDrop = (dropResult) => {
-    let dropResultTemp = {...dropResult};
+    let dropResultTemp = { ...dropResult };
 
     const payload = dropResultTemp.payload;
 
@@ -323,7 +330,8 @@ const BoardColumn = ({
         className={styles.column}
         style={{
           backgroundColor: color ? color + "08" : "rgba(84, 72, 49, 0.04)",
-        }}>
+        }}
+      >
         <Container
           groupName="subtask"
           getChildPayload={(i) => computedBoardData[i]}
@@ -338,18 +346,21 @@ const BoardColumn = ({
           style={{
             padding: "10px 8px 0 8px",
           }}
-          animationDuration={300}>
+          animationDuration={300}
+        >
           {computedBoardData?.length > 0 ? (
             computedBoardData.map((el, boardDataIndex) => (
               <Draggable
                 key={el.guid}
                 index={index}
-                className={styles.cardWrapper}>
+                className={styles.cardWrapper}
+              >
                 <div
                   className={styles.card}
                   key={el.guid}
                   onClick={() => navigateToEditPage(el)}
-                  data-guid={el.guid}>
+                  data-guid={el.guid}
+                >
                   {photoViewFields.map((field) => (
                     <BoardPhotoGenerator
                       key={field.id}
@@ -384,6 +395,7 @@ const BoardColumn = ({
                         columnIndex={columnIndex}
                         showFieldLabel
                         hintPosition={columnIndex === 0 ? "top" : "left"}
+                        view={view}
                       />
                     </>
                   ))}
@@ -400,14 +412,15 @@ const BoardColumn = ({
 
         <div className={styles.columnFooterBlock}>
           <Button
-            style={{height: "41px"}}
+            style={{ height: "41px" }}
             id={`addBoardItem`}
             variant="contain"
             fullWidth
             onClick={(e) => {
               e.stopPropagation();
               navigateToCreatePage();
-            }}>
+            }}
+          >
             <Add /> Add new
           </Button>
         </div>

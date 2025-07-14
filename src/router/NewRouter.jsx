@@ -191,7 +191,8 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+      >
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="/">
@@ -202,6 +203,11 @@ const NewRouter = () => {
                 <UsersList />
               </Suspense>
             }
+          />
+
+          <Route
+            path="microfrontend/:microfrontendId"
+            element={<Microfrontend />}
           />
 
           {/* <Route index element={<Navigate to={redirectLink} />} /> */}
@@ -411,6 +417,15 @@ const NewRouter = () => {
               <KeepAliveWrapper>
                 {/* <ObjectsFormPage /> */}
                 <NewObjectsFormPage />
+              </KeepAliveWrapper>
+            }
+          />
+          <Route
+            path=":menuId/detail/:appId/:tableSlug/:id"
+            element={
+              <KeepAliveWrapper>
+                <ObjectsFormPage />
+                {/* <NewObjectsFormPage /> */}
               </KeepAliveWrapper>
             }
           />

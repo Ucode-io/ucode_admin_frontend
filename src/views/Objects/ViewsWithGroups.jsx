@@ -456,7 +456,9 @@ const ViewsWithGroups = ({
             setSelectedTabIndex={setSelectedTabIndex}
             views={views}
             tableHeight={tableHeight}
-            withRightPanel={false}
+            tableSlug={tableSlug}
+            isRelationTable={false}
+            navigateToForm={navigateToForm}
           />
           <AgGridTableView
             navigateToEditPage={navigateToEditPage}

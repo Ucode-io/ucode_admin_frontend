@@ -1,12 +1,12 @@
 import {Close} from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {Autocomplete, TextField} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery} from "react-query";
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -216,8 +216,8 @@ const AutoCompleteElement = ({
             },
             view_fields: field.attributes?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
+            limit: 15,
+            offset: pageToOffset(page, 15),
           },
         },
         {
@@ -290,11 +290,24 @@ const AutoCompleteElement = ({
     }
   );
 
+  const loadMoreItems = useDebounce(function () {
+    if (field?.attributes?.function_path) {
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }, 500);
+
+  const refetchCount = useRef(0);
+  const MAX_REFETCH_COUNT = 15;
+
   const computedValue = useMemo(() => {
-    if (!value) return [];
+    if (!value) {
+      return [];
+    }
 
     if (Array.isArray(value)) {
-      return value
+      const foundedValue = value
         ?.map((id) => {
           const option = allOptions?.find((el) => el?.guid === id);
 
@@ -304,6 +317,20 @@ const AutoCompleteElement = ({
           };
         })
         .filter((el) => el !== null);
+
+      if (foundedValue?.length) {
+        return foundedValue;
+      } else if (
+        !foundedValue.length &&
+        value.length > 0 &&
+        refetchCount.current < MAX_REFETCH_COUNT
+      ) {
+        loadMoreItems();
+        refetchCount.current++;
+        return [];
+      } else {
+        return [];
+      }
     } else {
       const option = allOptions?.find((el) => el?.guid === value);
 
@@ -335,14 +362,6 @@ const AutoCompleteElement = ({
   // }, [relOptions, field]);
   let lastScrollTop = 0;
 
-  function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }
-
   const handleListOnScroll = (e) => {
     const target = e.target;
 
@@ -365,7 +384,7 @@ const AutoCompleteElement = ({
         value={computedValue}
         popupIcon={
           isBlackBg ? (
-            <ArrowDropDownIcon style={{color: "#fff"}} />
+            <ArrowDropDownIcon style={{ color: "#fff" }} />
           ) : (
             <ArrowDropDownIcon />
           )
@@ -376,7 +395,8 @@ const AutoCompleteElement = ({
         noOptionsText={
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}>
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+          >
             Create new
           </span>
         }
@@ -404,6 +424,7 @@ const AutoCompleteElement = ({
                 background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
                 color: isBlackBg ? "#fff" : "",
                 height: "32px",
+                overflow: "auto",
               },
             }}
             size="small"
@@ -416,7 +437,8 @@ const AutoCompleteElement = ({
                 {values?.map((el, index) => (
                   <div
                     key={el.value}
-                    className={styles.multipleAutocompleteTags}>
+                    className={styles.multipleAutocompleteTags}
+                  >
                     <p className={styles.value}>
                       {getOptionLabel(values[index])}
                     </p>
@@ -426,7 +448,8 @@ const AutoCompleteElement = ({
                         e.stopPropagation();
                         e.preventDefault();
                         navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}>
+                      }}
+                    >
                       <LaunchIcon
                         style={{
                           fontSize: "15px",
@@ -439,8 +462,8 @@ const AutoCompleteElement = ({
 
                     <Close
                       fontSize="12"
-                      onClick={getTagProps({index})?.onDelete}
-                      style={{cursor: "pointer"}}
+                      onClick={getTagProps({ index })?.onDelete}
+                      style={{ cursor: "pointer" }}
                     />
                   </div>
                 ))}

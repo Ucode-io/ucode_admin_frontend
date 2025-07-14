@@ -10,6 +10,10 @@ import GroupByButton from "../../GroupByButton";
 import VisibleColumnsButton from "../../VisibleColumnsButton";
 import TableViewGroupByButton from "../../TableViewGroupByButton";
 import ExcelButtons from "../ExcelButtons";
+import { VIEW_TYPES_MAP } from "../../../../utils/constants/viewTypes";
+import { AddIcon } from "@chakra-ui/icons";
+import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
+import { useNavigate } from "react-router-dom";
 
 export const ExtraNavbar = ({
   filterCount,
@@ -45,16 +49,27 @@ export const ExtraNavbar = ({
   views,
   tableHeight,
   withRightPanel = true,
+  tableSlug,
+  isRelationTable,
+  navigateToForm,
+  navigateCreatePage,
   // visibleColumns,
   // refetchViews,
   // tableLan,
 }) => {
+  const navigate = useNavigate();
+
+  const objectNavigate = () => {
+    navigate(view?.attributes?.url_object);
+  };
+
   return (
     <div
       className={style.extraNavbar}
       style={{
         minHeight: "42px",
-      }}>
+      }}
+    >
       <div className={style.extraWrapper}>
         <div className={style.search}>
           <Badge
@@ -67,7 +82,8 @@ export const ExtraNavbar = ({
               setFilterVisible((prev) => !prev);
             }}
             badgeContent={filterCount}
-            color="primary">
+            color="primary"
+          >
             <FilterAltOutlinedIcon color={"#A8A8A8"} />
           </Badge>
           {/* {view?.type === "GRID" ? (
@@ -113,7 +129,8 @@ export const ExtraNavbar = ({
               onClick={handleClickSearch}
               style={{
                 paddingRight: "10px",
-              }}>
+              }}
+            >
               <MoreHorizIcon />
             </button>
           )}
@@ -147,7 +164,8 @@ export const ExtraNavbar = ({
                   zIndex: 0,
                 },
               },
-            }}>
+            }}
+          >
             <SearchParams
               checkedColumns={checkedColumns}
               setCheckedColumns={setCheckedColumns}
@@ -158,9 +176,10 @@ export const ExtraNavbar = ({
         </div>
         {withRightPanel && (
           <div className={style.rightExtra}>
-            {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) && (
-              <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
-            )}
+            {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+              view?.type !== VIEW_TYPES_MAP.GRID && (
+                <FixColumnsTableView view={view} fieldsMap={fieldsMap} />
+              )}
             <Divider orientation="vertical" flexItem />
             {(roleInfo === "DEFAULT ADMIN" || permissions?.group) && (
               <GroupByButton
@@ -220,12 +239,14 @@ export const ExtraNavbar = ({
                         zIndex: 0,
                       },
                     },
-                  }}>
+                  }}
+                >
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
                       <div
                         className={style.template}
-                        onClick={() => handleHeightControl(el.value)}>
+                        onClick={() => handleHeightControl(el.value)}
+                      >
                         <span>{el.label}</span>
 
                         <Switch
@@ -243,6 +264,28 @@ export const ExtraNavbar = ({
               </>
             )}
             <Divider orientation="vertical" flexItem />
+            {view?.type === VIEW_TYPES_MAP.GRID && (
+              <>
+                <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                  {
+                    <Button
+                      id="addObject"
+                      variant="outlined"
+                      onClick={() => {
+                        if (view?.attributes?.url_object) {
+                          objectNavigate();
+                        } else {
+                          navigateToForm(tableSlug, "CREATE");
+                        }
+                      }}
+                    >
+                      <AddIcon style={{ color: "#007AFF" }} />
+                      Add object
+                    </Button>
+                  }
+                </PermissionWrapperV2>
+              </>
+            )}
             {permissions?.excel_menu && (
               <Button
                 onClick={handleClick}
@@ -251,7 +294,8 @@ export const ExtraNavbar = ({
                   color: "#A8A8A8",
                   borderColor: "#A8A8A8",
                   minWidth: "auto",
-                }}>
+                }}
+              >
                 <MoreVertOutlined
                   style={{
                     color: "#888",
@@ -297,7 +341,8 @@ export const ExtraNavbar = ({
                     zIndex: 0,
                   },
                 },
-              }}>
+              }}
+            >
               <div className={style.menuBar}>
                 <ExcelButtons
                   computedVisibleFields={computedVisibleFields}
@@ -308,14 +353,16 @@ export const ExtraNavbar = ({
                 />
                 <div
                   className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}>
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
                   <div
                     className={`${style.element} ${
                       selectedTabIndex === views?.length ? style.active : ""
-                    }`}>
+                    }`}
+                  >
                     <Description
                       className={style.icon}
-                      style={{color: "#6E8BB7"}}
+                      style={{ color: "#6E8BB7" }}
                     />
                   </div>
                   <span>Template</span>

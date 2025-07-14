@@ -8,7 +8,7 @@ export const viewTypes = [
   "GRID",
 ];
 
-export const viewTypesMap = {
+export const VIEW_TYPES_MAP = {
   TABLE: "TABLE",
   CALENDAR: "CALENDAR",
   TIMELINE: "TIMELINE",

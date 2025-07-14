@@ -8,6 +8,7 @@ import menuService, {useMenuListQuery} from "../../../services/menuService";
 import {Box, Skeleton} from "@mui/material";
 import {Container} from "react-smooth-dnd";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
+import {applyDrag} from "../../../utils/applyDrag";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -32,7 +33,6 @@ function NewSubMenu({
   const projectSettingLan = languageData?.find((el) => el?.key === "Setting");
 
   const onDrop = (dropResult) => {
-    console.log({menuChilds, elementId: element?.id});
     const result = applyDrag(menuChilds?.[element?.id]?.children, dropResult);
     if (result) {
       menuService

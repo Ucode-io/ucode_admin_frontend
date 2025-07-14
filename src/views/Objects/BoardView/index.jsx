@@ -15,6 +15,7 @@ import clsx from "clsx";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import {useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 const BoardView = ({
   relationView = false,
@@ -130,7 +131,8 @@ const BoardView = ({
               }}
               style={{
                 display: "flex",
-              }}>
+              }}
+            >
               {groups?.map((group, tabIndex) => (
                 <Draggable
                   key={tabIndex}
@@ -140,7 +142,8 @@ const BoardView = ({
                     paddingLeft: tabIndex === 0 ? "16px" : "8px",
                     paddingRight:
                       tabIndex === groups?.length - 1 ? "16px" : "0",
-                  }}>
+                  }}
+                >
                   <ColumnHeaderBlock
                     field={
                       group?.name === "Unassigned"
@@ -164,30 +167,34 @@ const BoardView = ({
           <div
             className={styles.board}
             style={{
-              height: isFilterOpen
-                ? "calc(100vh - 121px)"
-                : "calc(100vh - 91px)",
-              paddingTop: "50px",
+              paddingBottom: isFilterOpen ? "130px" : "90px",
+              // height: isFilterOpen
+              //   ? "calc(100vh - 171px)"
+              //   : "calc(100vh - 140px)",
+              // paddingTop: "50px",
               // ? subGroupById
               //   ? "calc(100vh - 171px)"
               //   : "calc(100vh - 121px)"
               // : subGroupById
               //   ? "calc(100vh - 133px)"
               //   : "calc(100vh - 83px)",
-            }}>
+            }}
+          >
             {subGroupById ? (
               <div className={styles.boardSubGroupWrapper}>
                 {subGroups?.map((subGroup, subGroupIndex) => (
                   <div key={subGroup?.name} data-sub-group={subGroup?.name}>
                     <button
                       className={styles.boardSubGroupBtn}
-                      onClick={() => handleToggle(subGroup?.name)}>
+                      onClick={() => handleToggle(subGroup?.name)}
+                    >
                       <span
                         className={clsx(styles.boardSubGroupBtnInner, {
                           [styles.selected]: openedGroups.includes(
                             subGroup?.name
                           ),
-                        })}>
+                        })}
+                      >
                         <span className={styles.iconWrapper}>
                           <span className={styles.icon}>
                             <PlayArrowRoundedIcon fontSize="small" />
@@ -198,7 +205,8 @@ const BoardView = ({
                           style={{
                             color: getColor(subGroup?.name),
                             background: getColor(subGroup?.name) + 33,
-                          }}>
+                          }}
+                        >
                           {subGroup?.name === "Unassigned"
                             ? "Unassigned"
                             : subGroupField?.type === FIELD_TYPES.LOOKUP ||
@@ -214,7 +222,8 @@ const BoardView = ({
                           display: "flex",
                           gap: 8,
                           alignItems: "flex-start",
-                        }}>
+                        }}
+                      >
                         {groups?.map((group, index) => (
                           <BoardColumn
                             setLoading={setLoading}
@@ -246,6 +255,8 @@ const BoardView = ({
                             subGroupById={subGroupById}
                             subItem={subGroup?.name}
                             subGroupFieldSlug={subGroupFieldSlug}
+                            layoutType={layoutType}
+                            menuItem={menuItem}
                           />
                         ))}
                       </div>
@@ -254,7 +265,7 @@ const BoardView = ({
                 ))}
               </div>
             ) : (
-              <div style={{display: "flex", gap: 8}}>
+              <div style={{ display: "flex", gap: 8 }}>
                 {groups?.map((group, index) => (
                   <div key={group.value} className={styles.draggable}>
                     <BoardColumn
@@ -281,6 +292,8 @@ const BoardView = ({
                       getGroupCounts={getGroupCounts}
                       groupItem={group?.name}
                       groupField={groupField}
+                      layoutType={layoutType}
+                      menuItem={menuItem}
                     />
                   </div>
                 ))}

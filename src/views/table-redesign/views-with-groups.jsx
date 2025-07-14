@@ -106,6 +106,9 @@ import AgGridTableView from "@/views/Objects/AgGridTableView";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
+import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
+import {ViewProvider} from "../../providers/ViewProvider";
 
 const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
@@ -283,7 +286,9 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const {data: tabs} = useQuery(
+    queryGenerator(groupField, filters, i18n.language)
+  );
 
   const navigateToSettingsPage = () => {
     if (new_router) {
@@ -401,8 +406,9 @@ export const NewUiViewsWithGroups = ({
         navigate(
           `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
         );
+      } else {
+        dispatch(detailDrawerActions.openDrawer());
       }
-      dispatch(detailDrawerActions.openDrawer());
       setSelectedRow(null);
     } else {
       if (layoutType === "PopupLayout") {
@@ -566,7 +572,7 @@ export const NewUiViewsWithGroups = ({
     view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
   return (
-    <>
+    <ViewProvider state={{view}}>
       <ChakraProvider theme={chakraUITheme}>
         <Flex
           h={modal ? `100vh` : "100vh"}
@@ -1087,8 +1093,9 @@ export const NewUiViewsWithGroups = ({
           <Tabs
             direction={"ltr"}
             defaultIndex={0}
-            // style={{ overflow: view.type === "TIMELINE" ? "auto" : "visible" }}
-          >
+            style={{
+              height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
+            }}>
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
               view?.type !== "BOARD" && (
@@ -1136,6 +1143,7 @@ export const NewUiViewsWithGroups = ({
                     setFullScreen={setFullScreen}
                     fullScreen={fullScreen}
                     fieldsMap={fieldsMap}
+                    projectInfo={projectInfo}
                   />
                 </form>
               </Box>
@@ -1522,7 +1530,7 @@ export const NewUiViewsWithGroups = ({
         handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
       />
-    </>
+    </ViewProvider>
   );
 };
 
@@ -1575,7 +1583,8 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug} = useParams();
+  const {tableSlug: tableSlugParam} = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
@@ -1819,7 +1828,7 @@ const FiltersSwitch = ({
           {getLabel(column)}
           <Switch
             ml="auto"
-            isChecked={column.checked}
+            isChecked={column.is_checked}
             onChange={(ev) => onChange(column, ev.target.checked)}
           />
         </Flex>

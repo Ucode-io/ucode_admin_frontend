@@ -99,21 +99,17 @@ import {
   TabGroup,
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
+import TableView from "./table-view";
+import TableViewOld from "./table-view-old";
+import DrawerTableView from "./drawer-table-view";
+import AgGridTableView from "@/views/Objects/AgGridTableView";
+import GroupTableView from "@/views/Objects/TableView/GroupTableView";
+import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 
 const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
 const CalendarView = lazy(() => import("../Objects/CalendarView"));
 const TimeLineView = lazy(() => import("../Objects/TimeLineView"));
-const DrawerTableView = lazy(() => import("./drawer-table-view"));
-const TableView = lazy(() => import("./table-view"));
-const TableViewOld = lazy(() => import("./table-view-old"));
-const AgGridTableView = lazy(() => import("@/views/Objects/AgGridTableView"));
-const GroupTableView = lazy(
-  () => import("@/views/Objects/TableView/GroupTableView")
-);
-const AggridTreeView = lazy(
-  () => import("../Objects/AgGridTableView/AggridTreeView")
-);
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
 );
@@ -198,7 +194,6 @@ export const NewUiViewsWithGroups = ({
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
-
   const groupTable = view?.attributes?.group_by_columns;
 
   const projectId = useSelector((state) => state.auth.projectId);
@@ -1121,30 +1116,44 @@ export const NewUiViewsWithGroups = ({
             {new_router && view?.type === "SECTION" ? (
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
-                  <DrawerFormDetailPage
-                    view={view}
-                    modal={modal}
-                    tableInfo={tableInfo}
-                    navigateToEditPage={navigateToEditPage}
-                    setLayoutType={setLayoutType}
-                    layoutType={layoutType}
-                    selectedViewType={selectedViewType}
-                    setSelectedViewType={setSelectedViewType}
-                    onSubmit={onSubmit}
-                    rootForm={rootForm}
-                    handleMouseDown={handleMouseDown}
-                    layout={layout}
-                    selectedTab={layout?.tabs?.[0]}
-                    selectedTabIndex={selectedTabIndex}
-                    menuItem={menuItem}
-                    data={data}
-                    selectedRow={row}
-                    handleClose={handleClose}
-                    dateInfo={dateInfo}
-                    setFullScreen={setFullScreen}
-                    fullScreen={fullScreen}
-                    fieldsMap={fieldsMap}
-                  />
+                  <Suspense
+                    fallback={
+                      <div
+                        style={{
+                          height: "90vh",
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                        <CircularProgress />
+                      </div>
+                    }>
+                    <DrawerFormDetailPage
+                      view={view}
+                      modal={modal}
+                      tableInfo={tableInfo}
+                      navigateToEditPage={navigateToEditPage}
+                      setLayoutType={setLayoutType}
+                      layoutType={layoutType}
+                      selectedViewType={selectedViewType}
+                      setSelectedViewType={setSelectedViewType}
+                      onSubmit={onSubmit}
+                      rootForm={rootForm}
+                      handleMouseDown={handleMouseDown}
+                      layout={layout}
+                      selectedTab={layout?.tabs?.[0]}
+                      selectedTabIndex={selectedTabIndex}
+                      menuItem={menuItem}
+                      data={data}
+                      selectedRow={row}
+                      handleClose={handleClose}
+                      dateInfo={dateInfo}
+                      setFullScreen={setFullScreen}
+                      fullScreen={fullScreen}
+                      fieldsMap={fieldsMap}
+                    />
+                  </Suspense>
                 </form>
               </Box>
             ) : (
@@ -1153,83 +1162,55 @@ export const NewUiViewsWithGroups = ({
                   <>
                     {view?.type === "WEBSITE" && <WebsiteView view={view} />}
                     {view?.type === "GRID" && groupTable?.length ? (
-                      <Suspense
-                        fallback={
-                          <div
-                            style={{
-                              height: "90vh",
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}>
-                            <CircularProgress />
-                          </div>
-                        }>
-                        <MaterialUIProvider>
-                          <AgGridTableView
-                            mainForm={mainForm}
-                            setLoading={setLoading}
-                            relationView={relationView}
-                            projectInfo={projectInfo}
-                            searchText={searchText}
-                            selectedRow={selectedRow}
-                            setLayoutType={setLayoutType}
-                            navigateToEditPage={navigateToEditPage}
-                            selectedTabIndex={selectedTabIndex}
-                            view={view}
-                            views={views}
-                            fieldsMap={fieldsMap}
-                            computedVisibleFields={computedVisibleFields}
-                            checkedColumns={checkedColumns}
-                            setCheckedColumns={setCheckedColumns}
-                            columnsForSearch={columnsForSearch}
-                            updateField={updateField}
-                            visibleColumns={visibleColumns}
-                            visibleRelationColumns={visibleRelationColumns}
-                            visibleForm={visibleForm}
-                            menuItem={menuItem}
-                            layoutType={layoutType}
-                            setFormValue={setFormValue}
-                          />
-                        </MaterialUIProvider>
-                      </Suspense>
-                    ) : view.type === "TABLE" && groupTable?.length ? (
-                      <Suspense
-                        fallback={
-                          <div
-                            style={{
-                              height: "90vh",
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}>
-                            <CircularProgress />
-                          </div>
-                        }>
-                        <GroupTableView
-                          tableLan={tableLan}
-                          selectedTabIndex={selectedTabIndex}
-                          reset={reset}
-                          sortedDatas={sortedDatas}
-                          menuItem={menuItem}
-                          fields={fields}
-                          setFormValue={setFormValue}
-                          control={control}
-                          setFormVisible={setFormVisible}
-                          formVisible={formVisible}
-                          filters={filters}
-                          checkedColumns={checkedColumns}
-                          view={view}
-                          setSortedDatas={setSortedDatas}
-                          fieldsMap={fieldsMap}
+                      <MaterialUIProvider>
+                        <AgGridTableView
+                          mainForm={mainForm}
+                          setLoading={setLoading}
+                          relationView={relationView}
+                          projectInfo={projectInfo}
                           searchText={searchText}
-                          selectedObjects={selectedObjects}
-                          setSelectedObjects={setSelectedObjects}
-                          selectedView={selectedView}
+                          selectedRow={selectedRow}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
+                          selectedTabIndex={selectedTabIndex}
+                          view={view}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
+                          layoutType={layoutType}
+                          setFormValue={setFormValue}
                         />
-                      </Suspense>
+                      </MaterialUIProvider>
+                    ) : view.type === "TABLE" && groupTable?.length ? (
+                      <GroupTableView
+                        tableLan={tableLan}
+                        selectedTabIndex={selectedTabIndex}
+                        reset={reset}
+                        sortedDatas={sortedDatas}
+                        menuItem={menuItem}
+                        fields={fields}
+                        setFormValue={setFormValue}
+                        control={control}
+                        setFormVisible={setFormVisible}
+                        formVisible={formVisible}
+                        filters={filters}
+                        checkedColumns={checkedColumns}
+                        view={view}
+                        setSortedDatas={setSortedDatas}
+                        fieldsMap={fieldsMap}
+                        searchText={searchText}
+                        selectedObjects={selectedObjects}
+                        setSelectedObjects={setSelectedObjects}
+                        selectedView={selectedView}
+                      />
                     ) : view.type === "TIMELINE" ? (
                       <Suspense
                         fallback={
@@ -1338,180 +1319,14 @@ export const NewUiViewsWithGroups = ({
                   tabs?.map((tab) => (
                     <TabPanel key={tab.value}>
                       {view?.type === "GRID" ? (
-                        <Suspense
-                          fallback={
-                            <div
-                              style={{
-                                height: "90vh",
-                                width: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}>
-                              <CircularProgress />
-                            </div>
-                          }>
-                          <MaterialUIProvider>
-                            <AgGridTableView
-                              mainForm={mainForm}
-                              setLoading={setLoading}
-                              relationView={relationView}
-                              projectInfo={projectInfo}
-                              searchText={searchText}
-                              selectedRow={selectedRow}
-                              setLayoutType={setLayoutType}
-                              navigateToEditPage={navigateToEditPage}
-                              selectedTabIndex={selectedTabIndex}
-                              view={view}
-                              views={views}
-                              fieldsMap={fieldsMap}
-                              computedVisibleFields={computedVisibleFields}
-                              checkedColumns={checkedColumns}
-                              setCheckedColumns={setCheckedColumns}
-                              columnsForSearch={columnsForSearch}
-                              updateField={updateField}
-                              visibleColumns={visibleColumns}
-                              visibleRelationColumns={visibleRelationColumns}
-                              visibleForm={visibleForm}
-                              menuItem={menuItem}
-                              setFormValue={setFormValue}
-                            />
-                          </MaterialUIProvider>
-                        </Suspense>
-                      ) : view.type === "TREE" ? (
-                        <Suspense
-                          fallback={
-                            <div
-                              style={{
-                                height: "90vh",
-                                width: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}>
-                              <CircularProgress />
-                            </div>
-                          }>
-                          <MaterialUIProvider>
-                            <AggridTreeView
-                              navigateCreatePage={navigateCreatePage}
-                              getRelationFields={getRelationFields}
-                              mainForm={mainForm}
-                              searchText={searchText}
-                              layoutType={layoutType}
-                              selectedRow={selectedRow}
-                              projectInfo={projectInfo}
-                              setLayoutType={setLayoutType}
-                              navigateToEditPage={navigateToEditPage}
-                              selectedTabIndex={selectedTabIndex}
-                              view={view}
-                              views={views}
-                              fieldsMap={fieldsMap}
-                              relationView={relationView}
-                              setFormValue={setFormValue}
-                              computedVisibleFields={computedVisibleFields}
-                              checkedColumns={checkedColumns}
-                              setCheckedColumns={setCheckedColumns}
-                              columnsForSearch={columnsForSearch}
-                              updateField={updateField}
-                              visibleColumns={visibleColumns}
-                              visibleRelationColumns={visibleRelationColumns}
-                              visibleForm={visibleForm}
-                              menuItem={menuItem}
-                            />
-                          </MaterialUIProvider>
-                        </Suspense>
-                      ) : (
-                        <Suspense
-                          fallback={
-                            <div
-                              style={{
-                                height: "90vh",
-                                width: "100%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}>
-                              <CircularProgress />
-                            </div>
-                          }>
-                          <TableComponent
-                            projectInfo={projectInfo}
-                            setLoading={setLoading}
-                            refetchMenuViews={refetchMenuViews}
-                            setSelectedView={setSelectedView}
-                            relationView={relationView}
-                            selectedRow={selectedRow}
-                            setSelectedRow={setSelectedRow}
-                            setLayoutType={setLayoutType}
-                            layoutType={layoutType}
-                            tableLan={tableLan}
-                            isVertical
-                            setCurrentPage={setCurrentPage}
-                            currentPage={currentPage}
-                            visibleColumns={visibleColumns}
-                            visibleRelationColumns={visibleRelationColumns}
-                            visibleForm={visibleForm}
-                            filterVisible={filterVisible}
-                            control={control}
-                            getValues={getValues}
-                            setFormVisible={setFormVisible}
-                            formVisible={formVisible}
-                            filters={filters}
-                            setFilterVisible={setFilterVisible}
-                            view={view}
-                            fieldsMap={fieldsMap}
-                            setFormValue={setFormValue}
-                            setSortedDatas={setSortedDatas}
-                            tab={tab}
-                            selectedObjects={selectedObjects}
-                            setSelectedObjects={setSelectedObjects}
-                            menuItem={menuItem}
-                            selectedTabIndex={selectedTabIndex}
-                            reset={reset}
-                            sortedDatas={sortedDatas}
-                            fields={fields}
-                            checkedColumns={checkedColumns}
-                            searchText={searchText}
-                            selectedView={selectedView}
-                            currentView={view}
-                            watch={watch}
-                          />
-                        </Suspense>
-                      )}
-                    </TabPanel>
-                  ))}
-
-                {!tabs?.length &&
-                !groupTable?.length &&
-                view.type !== "TIMELINE" &&
-                view.type !== "BOARD" &&
-                view.type !== "CALENDAR" ? (
-                  <>
-                    {view?.type === "GRID" ? (
-                      <Suspense
-                        fallback={
-                          <div
-                            style={{
-                              height: "90vh",
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}>
-                            <CircularProgress />
-                          </div>
-                        }>
                         <MaterialUIProvider>
                           <AgGridTableView
                             mainForm={mainForm}
                             setLoading={setLoading}
                             relationView={relationView}
                             projectInfo={projectInfo}
-                            tableSlug={tableSlug}
                             searchText={searchText}
                             selectedRow={selectedRow}
-                            layoutType={layoutType}
                             setLayoutType={setLayoutType}
                             navigateToEditPage={navigateToEditPage}
                             selectedTabIndex={selectedTabIndex}
@@ -1530,62 +1345,36 @@ export const NewUiViewsWithGroups = ({
                             setFormValue={setFormValue}
                           />
                         </MaterialUIProvider>
-                      </Suspense>
-                    ) : view.type === "TREE" ? (
-                      <Suspense
-                        fallback={
-                          <div
-                            style={{
-                              height: "90vh",
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}>
-                            <CircularProgress />
-                          </div>
-                        }>
-                        <AggridTreeView
-                          navigateCreatePage={navigateCreatePage}
-                          getRelationFields={getRelationFields}
-                          mainForm={mainForm}
-                          searchText={searchText}
-                          selectedRow={selectedRow}
-                          projectInfo={projectInfo}
-                          layoutType={layoutType}
-                          setLayoutType={setLayoutType}
-                          navigateToEditPage={navigateToEditPage}
-                          selectedTabIndex={selectedTabIndex}
-                          view={view}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                          relationView={relationView}
-                          setFormValue={setFormValue}
-                          computedVisibleFields={computedVisibleFields}
-                          checkedColumns={checkedColumns}
-                          setCheckedColumns={setCheckedColumns}
-                          columnsForSearch={columnsForSearch}
-                          updateField={updateField}
-                          visibleColumns={visibleColumns}
-                          visibleRelationColumns={visibleRelationColumns}
-                          visibleForm={visibleForm}
-                          menuItem={menuItem}
-                        />
-                      </Suspense>
-                    ) : (
-                      <Suspense
-                        fallback={
-                          <div
-                            style={{
-                              height: "90vh",
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}>
-                            <CircularProgress />
-                          </div>
-                        }>
+                      ) : view.type === "TREE" ? (
+                        <MaterialUIProvider>
+                          <AggridTreeView
+                            navigateCreatePage={navigateCreatePage}
+                            getRelationFields={getRelationFields}
+                            mainForm={mainForm}
+                            searchText={searchText}
+                            layoutType={layoutType}
+                            selectedRow={selectedRow}
+                            projectInfo={projectInfo}
+                            setLayoutType={setLayoutType}
+                            navigateToEditPage={navigateToEditPage}
+                            selectedTabIndex={selectedTabIndex}
+                            view={view}
+                            views={views}
+                            fieldsMap={fieldsMap}
+                            relationView={relationView}
+                            setFormValue={setFormValue}
+                            computedVisibleFields={computedVisibleFields}
+                            checkedColumns={checkedColumns}
+                            setCheckedColumns={setCheckedColumns}
+                            columnsForSearch={columnsForSearch}
+                            updateField={updateField}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            menuItem={menuItem}
+                          />
+                        </MaterialUIProvider>
+                      ) : (
                         <TableComponent
                           projectInfo={projectInfo}
                           setLoading={setLoading}
@@ -1597,37 +1386,145 @@ export const NewUiViewsWithGroups = ({
                           setLayoutType={setLayoutType}
                           layoutType={layoutType}
                           tableLan={tableLan}
-                          visibleColumns={visibleColumns}
+                          isVertical
                           setCurrentPage={setCurrentPage}
                           currentPage={currentPage}
+                          visibleColumns={visibleColumns}
                           visibleRelationColumns={visibleRelationColumns}
                           visibleForm={visibleForm}
-                          currentView={view}
                           filterVisible={filterVisible}
-                          setFilterVisible={setFilterVisible}
-                          getValues={getValues}
-                          selectedTabIndex={selectedTabIndex}
-                          isTableView={true}
-                          reset={reset}
-                          sortedDatas={sortedDatas}
-                          menuItem={menuItem}
-                          fields={fields}
-                          setFormValue={setFormValue}
                           control={control}
+                          getValues={getValues}
                           setFormVisible={setFormVisible}
                           formVisible={formVisible}
                           filters={filters}
-                          checkedColumns={checkedColumns}
+                          setFilterVisible={setFilterVisible}
                           view={view}
-                          setSortedDatas={setSortedDatas}
                           fieldsMap={fieldsMap}
-                          searchText={searchText}
+                          setFormValue={setFormValue}
+                          setSortedDatas={setSortedDatas}
+                          tab={tab}
                           selectedObjects={selectedObjects}
                           setSelectedObjects={setSelectedObjects}
+                          menuItem={menuItem}
+                          selectedTabIndex={selectedTabIndex}
+                          reset={reset}
+                          sortedDatas={sortedDatas}
+                          fields={fields}
+                          checkedColumns={checkedColumns}
+                          searchText={searchText}
                           selectedView={selectedView}
+                          currentView={view}
                           watch={watch}
                         />
-                      </Suspense>
+                      )}
+                    </TabPanel>
+                  ))}
+
+                {!tabs?.length &&
+                !groupTable?.length &&
+                view.type !== "TIMELINE" &&
+                view.type !== "BOARD" &&
+                view.type !== "CALENDAR" ? (
+                  <>
+                    {view?.type === "GRID" ? (
+                      <MaterialUIProvider>
+                        <AgGridTableView
+                          mainForm={mainForm}
+                          setLoading={setLoading}
+                          relationView={relationView}
+                          projectInfo={projectInfo}
+                          tableSlug={tableSlug}
+                          searchText={searchText}
+                          selectedRow={selectedRow}
+                          layoutType={layoutType}
+                          setLayoutType={setLayoutType}
+                          navigateToEditPage={navigateToEditPage}
+                          selectedTabIndex={selectedTabIndex}
+                          view={view}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          computedVisibleFields={computedVisibleFields}
+                          checkedColumns={checkedColumns}
+                          setCheckedColumns={setCheckedColumns}
+                          columnsForSearch={columnsForSearch}
+                          updateField={updateField}
+                          visibleColumns={visibleColumns}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          menuItem={menuItem}
+                          setFormValue={setFormValue}
+                        />
+                      </MaterialUIProvider>
+                    ) : view.type === "TREE" ? (
+                      <AggridTreeView
+                        navigateCreatePage={navigateCreatePage}
+                        getRelationFields={getRelationFields}
+                        mainForm={mainForm}
+                        searchText={searchText}
+                        selectedRow={selectedRow}
+                        projectInfo={projectInfo}
+                        layoutType={layoutType}
+                        setLayoutType={setLayoutType}
+                        navigateToEditPage={navigateToEditPage}
+                        selectedTabIndex={selectedTabIndex}
+                        view={view}
+                        views={views}
+                        fieldsMap={fieldsMap}
+                        relationView={relationView}
+                        setFormValue={setFormValue}
+                        computedVisibleFields={computedVisibleFields}
+                        checkedColumns={checkedColumns}
+                        setCheckedColumns={setCheckedColumns}
+                        columnsForSearch={columnsForSearch}
+                        updateField={updateField}
+                        visibleColumns={visibleColumns}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
+                        menuItem={menuItem}
+                      />
+                    ) : (
+                      <TableComponent
+                        projectInfo={projectInfo}
+                        setLoading={setLoading}
+                        refetchMenuViews={refetchMenuViews}
+                        setSelectedView={setSelectedView}
+                        relationView={relationView}
+                        selectedRow={selectedRow}
+                        setSelectedRow={setSelectedRow}
+                        setLayoutType={setLayoutType}
+                        layoutType={layoutType}
+                        tableLan={tableLan}
+                        visibleColumns={visibleColumns}
+                        setCurrentPage={setCurrentPage}
+                        currentPage={currentPage}
+                        visibleRelationColumns={visibleRelationColumns}
+                        visibleForm={visibleForm}
+                        currentView={view}
+                        filterVisible={filterVisible}
+                        setFilterVisible={setFilterVisible}
+                        getValues={getValues}
+                        selectedTabIndex={selectedTabIndex}
+                        isTableView={true}
+                        reset={reset}
+                        sortedDatas={sortedDatas}
+                        menuItem={menuItem}
+                        fields={fields}
+                        setFormValue={setFormValue}
+                        control={control}
+                        setFormVisible={setFormVisible}
+                        formVisible={formVisible}
+                        filters={filters}
+                        checkedColumns={checkedColumns}
+                        view={view}
+                        setSortedDatas={setSortedDatas}
+                        fieldsMap={fieldsMap}
+                        searchText={searchText}
+                        selectedObjects={selectedObjects}
+                        setSelectedObjects={setSelectedObjects}
+                        selectedView={selectedView}
+                        watch={watch}
+                      />
                     )}
                   </>
                 ) : null}

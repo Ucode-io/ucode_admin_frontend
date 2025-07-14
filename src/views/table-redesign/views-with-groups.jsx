@@ -105,11 +105,14 @@ import DrawerTableView from "./drawer-table-view";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
-import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
+// import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
 import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
 import {ViewProvider} from "../../providers/ViewProvider";
 
+const DrawerFormDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
+);
 const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
 const CalendarView = lazy(() => import("../Objects/CalendarView"));
@@ -1120,30 +1123,33 @@ export const NewUiViewsWithGroups = ({
             {new_router && view?.type === "SECTION" ? (
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
-                  <DrawerFormDetailPage
-                    view={view}
-                    modal={modal}
-                    tableInfo={tableInfo}
-                    navigateToEditPage={navigateToEditPage}
-                    setLayoutType={setLayoutType}
-                    layoutType={layoutType}
-                    selectedViewType={selectedViewType}
-                    setSelectedViewType={setSelectedViewType}
-                    onSubmit={onSubmit}
-                    rootForm={rootForm}
-                    handleMouseDown={handleMouseDown}
-                    layout={layout}
-                    selectedTab={layout?.tabs?.[0]}
-                    selectedTabIndex={selectedTabIndex}
-                    menuItem={menuItem}
-                    data={data}
-                    selectedRow={row}
-                    handleClose={handleClose}
-                    dateInfo={dateInfo}
-                    setFullScreen={setFullScreen}
-                    fullScreen={fullScreen}
-                    fieldsMap={fieldsMap}
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <DrawerFormDetailPage
+                      view={view}
+                      modal={modal}
+                      tableInfo={tableInfo}
+                      navigateToEditPage={navigateToEditPage}
+                      setLayoutType={setLayoutType}
+                      layoutType={layoutType}
+                      selectedViewType={selectedViewType}
+                      setSelectedViewType={setSelectedViewType}
+                      onSubmit={onSubmit}
+                      rootForm={rootForm}
+                      handleMouseDown={handleMouseDown}
+                      layout={layout}
+                      selectedTab={layout?.tabs?.[0]}
+                      selectedTabIndex={selectedTabIndex}
+                      menuItem={menuItem}
+                      data={data}
+                      selectedRow={row}
+                      handleClose={handleClose}
+                      dateInfo={dateInfo}
+                      setFullScreen={setFullScreen}
+                      fullScreen={fullScreen}
+                      fieldsMap={fieldsMap}
+                      projectInfo={projectInfo}
+                    />
+                  </Suspense>
                 </form>
               </Box>
             ) : (

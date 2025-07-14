@@ -59,8 +59,33 @@ function DrawerFieldGenerator({
   setFormValue = () => {},
   errors,
   isRequired,
-  computedSlug,
 }) {
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = slug.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
+  const computedSlug = useMemo(() => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${activeLang}`;
+    } else if (field.id?.includes("@")) {
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    } else if (field?.id?.includes("#")) {
+      if (field?.type === "Many2Many") {
+        return `${field.id?.split("#")?.[0]}_ids`;
+      } else if (field?.type === "Many2One") {
+        return `${field.id?.split("#")?.[0]}_id`;
+      }
+    }
+
+    return field?.slug;
+  }, [field?.slug, activeLang, field]);
+
   const defaultValue = useMemo(() => {
     if (
       field?.type === "DATE" ||

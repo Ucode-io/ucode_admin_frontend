@@ -219,22 +219,6 @@ function DrawerDetailPage({
     }
   };
 
-  const {
-    reset,
-    watch,
-    control,
-    handleSubmit,
-    formState: {errors},
-    setValue: setFormValue,
-    getValues,
-  } = useForm({
-    defaultValues: {
-      ...state,
-      ...dateInfo,
-      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
-    },
-  });
-
   useEffect(() => {
     if (defaultValue) {
       if (Array.isArray(defaultValue)) {
@@ -336,7 +320,7 @@ function DrawerDetailPage({
     if (Boolean(itemId) && selectedView?.type === "SECTION") {
       getAllData();
     } else getFields();
-  }, [itemId, selectedView, viewsPath?.length]);
+  }, [itemId, selectedView]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -394,7 +378,7 @@ function DrawerDetailPage({
         style={{
           width: `${drawerWidth}px`,
           maxWidth: "90vw",
-          transition: "width 0.4s ease",
+          transition: "width 0.1s ease",
           overflow: "hidden",
           background: "#fff",
         }}>

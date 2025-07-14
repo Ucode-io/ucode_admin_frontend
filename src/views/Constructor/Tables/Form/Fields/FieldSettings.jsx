@@ -5,17 +5,20 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   Divider,
+  FormControlLabel,
   IconButton,
+  Switch,
   Typography,
 } from "@mui/material";
-import {TreeView} from "@mui/x-tree-view";
-import {useEffect, useMemo, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import { TreeView } from "@mui/x-tree-view";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -30,12 +33,12 @@ import constructorFieldService, {
 } from "../../../../../services/constructorFieldService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import {useMenuListQuery} from "../../../../../services/menuService";
+import { useMenuListQuery } from "../../../../../services/menuService";
 import {
   fieldButtons,
   fieldTypesOptions,
 } from "../../../../../utils/constants/fieldTypes";
-import {generateGUID} from "../../../../../utils/generateID";
+import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
@@ -44,7 +47,8 @@ import styles from "./style.module.scss";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 import ButtonFieldComponents from "./ButtonFieldComponents";
 import StatusFieldSettings from "./StatusFieldSettings";
-import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 
 const photoFormats = [
   {
@@ -95,10 +99,10 @@ const FieldSettings = ({
   menuItem,
   tableLan,
 }) => {
-  const {id, appId, tableSlug} = useParams();
-  const {handleSubmit, control, reset, watch, setValue} = useForm();
+  const { id, appId, tableSlug } = useParams();
+  const { handleSubmit, control, reset, watch, setValue, register } = useForm();
   const [formLoader, setFormLoader] = useState(false);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [check, setCheck] = useState(false);
@@ -124,7 +128,7 @@ const FieldSettings = ({
   });
 
   const {
-    data: {views, columns, relationColumns} = {
+    data: { views, columns, relationColumns } = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -132,16 +136,16 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", {tableSlug}],
+    ["GET_VIEWS_AND_FIELDS", { tableSlug }],
     () => {
       if (!tableSlug) return false;
       return constructorTableService.getTableInfo(tableSlug, {
-        data: {limit: 10, offset: 0, app_id: appId},
+        data: { limit: 10, offset: 0, app_id: appId },
       });
     },
     {
       enabled: Boolean(!!tableSlug),
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -162,11 +166,11 @@ const FieldSettings = ({
       type: item?.type,
       options: item?.type === "MULTISELECT" ? item?.attributes?.options : [],
       table_slug: item?.table_slug,
-      attributes: {...item?.attributes},
+      attributes: { ...item?.attributes },
     }));
   }, [columns]);
 
-  const {mutate: createNewField, isLoading: createLoading} =
+  const { mutate: createNewField, isLoading: createLoading } =
     useFieldCreateMutation({
       onSuccess: (res) => {
         prepandFieldInForm(res);
@@ -175,7 +179,7 @@ const FieldSettings = ({
         addColumnToView(res);
       },
     });
-  const {mutate: updateOldField, isLoading: updateLoading} =
+  const { mutate: updateOldField, isLoading: updateLoading } =
     useFieldUpdateMutation({
       onSuccess: (res) => {
         updateFieldInform(field);
@@ -192,7 +196,7 @@ const FieldSettings = ({
       show_label: true,
     };
     if (tableSlug) {
-      createNewField({data, tableSlug: slug || tableSlug});
+      createNewField({ data, tableSlug: slug || tableSlug });
     } else {
       prepandFieldInForm(data);
       closeSettingsBlock();
@@ -214,7 +218,7 @@ const FieldSettings = ({
 
   const menuItemStore = useSelector((state) => state.menu.menuItem);
 
-  const {data: backetOptions} = useMenuListQuery({
+  const { data: backetOptions } = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
@@ -235,11 +239,13 @@ const FieldSettings = ({
   };
 
   const submitHandler = (values) => {
-    console.log("formTypeformTypeformType", formType, values);
     const data = {
       ...values,
       attributes: {
         ...values?.attributes,
+        ratio: customRatio
+          ? Number(values?.ratio1) / Number(values?.ratio2)
+          : values?.attributes?.ratio,
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
@@ -274,7 +280,7 @@ const FieldSettings = ({
   const computedMultiSelectOptions =
     selectedField?.options ?? selectedField?.attributes?.options;
 
-  const {data: computedRelationFields} = useQuery(
+  const { data: computedRelationFields } = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
@@ -347,6 +353,12 @@ const FieldSettings = ({
     },
   ];
 
+  const [customRatio, setCustomRatio] = useState(false);
+
+  const handleCustomRatio = (e) => {
+    setCustomRatio(e.target.checked);
+  };
+
   return (
     <div className={styles.settingsBlock}>
       <Box className={styles.additional}>
@@ -355,7 +367,8 @@ const FieldSettings = ({
             className={
               item.value === drawerType ? styles.active : styles.inactive
             }
-            onClick={() => setDrawerType(item.value)}>
+            onClick={() => setDrawerType(item.value)}
+          >
             {item.label}
           </Button>
         ))}
@@ -368,7 +381,8 @@ const FieldSettings = ({
               className={
                 drawerType === "ATTRIBUTES" ? styles.active : styles.inactive
               }
-              onClick={() => setDrawerType("ATTRIBUTES")}>
+              onClick={() => setDrawerType("ATTRIBUTES")}
+            >
               {generateLangaugeText(tableLan, i18n?.language, "Field") ||
                 "Field"}
             </Button>
@@ -392,10 +406,11 @@ const FieldSettings = ({
           </IconButton>
         </div>
 
-        <div className={styles.settingsBlockBody} style={{height}}>
+        <div className={styles.settingsBlockBody} style={{ height }}>
           <form
             onSubmit={handleSubmit(submitHandler)}
-            className={styles.fieldSettingsForm}>
+            className={styles.fieldSettingsForm}
+          >
             <Card>
               {drawerType === "SCHEMA" && (
                 <Box className="p-2">
@@ -405,7 +420,8 @@ const FieldSettings = ({
                       "Type"
                     }
                     required
-                    classname={styles.custom_label}>
+                    classname={styles.custom_label}
+                  >
                     <HFSelect
                       disabledHelperText
                       name="type"
@@ -428,8 +444,9 @@ const FieldSettings = ({
                         ) || "Name"
                       }
                       classname={styles.custom_label}
-                      required>
-                      <Box style={{display: "flex", gap: "6px"}}>
+                      required
+                    >
+                      <Box style={{ display: "flex", gap: "6px" }}>
                         <HFTextFieldWithMultiLanguage
                           control={control}
                           name="attributes.label"
@@ -453,8 +470,9 @@ const FieldSettings = ({
                         ) || "Value"
                       }
                       classname={styles.custom_label}
-                      required>
-                      <Box style={{display: "flex", gap: "6px"}}>
+                      required
+                    >
+                      <Box style={{ display: "flex", gap: "6px" }}>
                         <HFTextField
                           control={control}
                           name="label"
@@ -473,7 +491,8 @@ const FieldSettings = ({
                       "Key"
                     }
                     required
-                    classname={styles.custom_label}>
+                    classname={styles.custom_label}
+                  >
                     <HFTextField
                       className={styles.input}
                       disabledHelperText
@@ -508,7 +527,8 @@ const FieldSettings = ({
                             i18n?.language,
                             "Photo formats"
                           ) || "Photo format"
-                        }>
+                        }
+                      >
                         <HFSelect
                           required={true}
                           defaultValue="png"
@@ -525,13 +545,77 @@ const FieldSettings = ({
                             i18n?.language,
                             "Ratio"
                           ) || "Ratio"
-                        }>
+                        }
+                      >
                         <HFSelect
+                          disabled={customRatio}
                           control={control}
                           options={photoRatios}
                           name={"attributes.ratio"}
                         />
                       </FRow>
+                      <FormControlLabel
+                        style={{
+                          marginLeft: "0",
+                          columnGap: "5px",
+                          marginBottom: "10px",
+                        }}
+                        labelPlacement="start"
+                        label={
+                          <span style={{ fontWeight: "bold" }}>
+                            Custom ratio:{" "}
+                          </span>
+                        }
+                        control={
+                          <Checkbox
+                            icon={
+                              <img
+                                src="/img/checbkox.svg"
+                                alt="checkbox"
+                                style={{ width: 20 }}
+                              />
+                            }
+                            checkedIcon={
+                              <img
+                                src="/img/checkbox-checked.svg"
+                                alt="checked"
+                                style={{ width: 20 }}
+                              />
+                            }
+                            style={{
+                              transform: "translate(-1px)",
+                              marginRight: "8px",
+                              padding: "4px",
+                            }}
+                            checked={customRatio}
+                            onChange={handleCustomRatio}
+                            color="primary"
+                          />
+                        }
+                      />
+                      {customRatio && (
+                        <Box display="flex" columnGap="5px" marginBottom="10px">
+                          <input
+                            className={styles.ratioInput}
+                            {...register("ratio1")}
+                            type="number"
+                          />
+                          <span
+                            style={{
+                              margin: "0 5px",
+                              fontWeight: "bold",
+                              alignSelf: "center",
+                            }}
+                          >
+                            :
+                          </span>
+                          <input
+                            className={styles.ratioInput}
+                            {...register("ratio2")}
+                            type="number"
+                          />
+                        </Box>
+                      )}
                     </>
                   )}
 
@@ -554,7 +638,8 @@ const FieldSettings = ({
                             : {folder}
                           </Typography>
                         </>
-                      }>
+                      }
+                    >
                       <TreeView
                         defaultCollapseIcon={<ExpandMoreIcon />}
                         defaultExpandIcon={<ChevronRightIcon />}
@@ -562,7 +647,8 @@ const FieldSettings = ({
                         onNodeSelect={handleSelect}
                         style={{
                           border: "1px solid #D4DAE2",
-                        }}>
+                        }}
+                      >
                         {backetOptions?.menus?.map((item) => (
                           <FieldTreeView
                             element={item}
@@ -614,7 +700,8 @@ const FieldSettings = ({
                             "Error message"
                           ) || "Error message"
                         }
-                        classname={styles.custom_label}>
+                        classname={styles.custom_label}
+                      >
                         <HFTextField
                           className={styles.input}
                           fullWidth
@@ -675,7 +762,8 @@ const FieldSettings = ({
                           "Autofill table"
                         ) || "Autofill table"
                       }
-                      classname={styles.custom_label}>
+                      classname={styles.custom_label}
+                    >
                       <HFSelect
                         disabledHelperText
                         name="autofill_table"
@@ -694,7 +782,8 @@ const FieldSettings = ({
                           "Autofill field"
                         ) || "Autofill field"
                       }
-                      classname={styles.custom_label}>
+                      classname={styles.custom_label}
+                    >
                       <HFSelect
                         disabledHelperText
                         name="autofill_field"
@@ -731,7 +820,8 @@ const FieldSettings = ({
                           "Hide Field from"
                         ) || "Hide Field From"
                       }
-                      classname={styles.custom_label}>
+                      classname={styles.custom_label}
+                    >
                       <HFSelect
                         id="hide_fields"
                         disabledHelperText
@@ -773,7 +863,8 @@ const FieldSettings = ({
                               i18n?.language,
                               "Hide Value"
                             ) || "Hide Value"
-                          }>
+                          }
+                        >
                           <HFNumberField
                             id="hide_path_field"
                             type={"number"}
@@ -791,7 +882,8 @@ const FieldSettings = ({
                               i18n?.language,
                               "Number Range"
                             ) || "Number Range"
-                          }>
+                          }
+                        >
                           <HFSelect
                             id="hide_type_field"
                             options={numberTypeOptions}
@@ -824,9 +916,10 @@ const FieldSettings = ({
               id="field_save"
               size="large"
               className={styles.button}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
               onClick={handleSubmit(submitHandler)}
-              loader={formLoader || createLoading || updateLoading}>
+              loader={formLoader || createLoading || updateLoading}
+            >
               {generateLangaugeText(tableLan, i18n?.language, "Save") || "Save"}
             </PrimaryButton>
           </div>

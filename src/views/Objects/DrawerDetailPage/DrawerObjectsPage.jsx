@@ -11,7 +11,7 @@ import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slic
 import {listToMap, listToMapWithoutRel} from "../../../utils/listToMap";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {NewUiViewsWithGroups} from "../../table-redesign/views-with-groups";
-import {Box, Flex, Spinner} from "@chakra-ui/react";
+import {Flex, Spinner} from "@chakra-ui/react";
 
 const sortViews = (views = []) => {
   const firstSection = views.find((v) => v.type === "SECTION");
@@ -30,7 +30,6 @@ function DrawerObjectsPage({
   fullScreen,
   rootForm,
   onSubmit = () => {},
-  setViews = () => {},
   setFullScreen = () => {},
   handleMouseDown = () => {},
   selectedViewType,
@@ -211,7 +210,6 @@ function DrawerObjectsPage({
                 visibleRelationColumns={visibleRelationColumns}
                 visibleColumns={visibleColumns}
                 fieldsMapRel={fieldsMapRel}
-                setViews={setViews}
                 setSelectedView={setSelectedView}
                 selectedView={selectedView}
                 projectInfo={projectInfo}

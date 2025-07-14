@@ -20,11 +20,6 @@ import useTabRouter from "../../../hooks/useTabRouter";
 export default function TimeLineView({
   view,
   relationView = false,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  views,
-  selectedTable,
-  setViews,
   isViewLoading,
   menuItem,
   fieldsMap: fieldsMapPopup,

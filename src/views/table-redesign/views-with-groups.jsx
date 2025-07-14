@@ -105,14 +105,12 @@ import DrawerTableView from "./drawer-table-view";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
+import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
 
 const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
 const CalendarView = lazy(() => import("../Objects/CalendarView"));
 const TimeLineView = lazy(() => import("../Objects/TimeLineView"));
-const DrawerFormDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
-);
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -150,7 +148,6 @@ export const NewUiViewsWithGroups = ({
   refetchMenuViews = () => {},
   setSelectedTabIndex = () => {},
   onSubmit = () => {},
-  setViews = () => {},
   refetchViews = () => {},
   setSelectedView = () => {},
   handleClose = () => {},
@@ -1116,44 +1113,30 @@ export const NewUiViewsWithGroups = ({
             {new_router && view?.type === "SECTION" ? (
               <Box px={10}>
                 <form onSubmit={rootForm.handleSubmit(onSubmit)}>
-                  <Suspense
-                    fallback={
-                      <div
-                        style={{
-                          height: "90vh",
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}>
-                        <CircularProgress />
-                      </div>
-                    }>
-                    <DrawerFormDetailPage
-                      view={view}
-                      modal={modal}
-                      tableInfo={tableInfo}
-                      navigateToEditPage={navigateToEditPage}
-                      setLayoutType={setLayoutType}
-                      layoutType={layoutType}
-                      selectedViewType={selectedViewType}
-                      setSelectedViewType={setSelectedViewType}
-                      onSubmit={onSubmit}
-                      rootForm={rootForm}
-                      handleMouseDown={handleMouseDown}
-                      layout={layout}
-                      selectedTab={layout?.tabs?.[0]}
-                      selectedTabIndex={selectedTabIndex}
-                      menuItem={menuItem}
-                      data={data}
-                      selectedRow={row}
-                      handleClose={handleClose}
-                      dateInfo={dateInfo}
-                      setFullScreen={setFullScreen}
-                      fullScreen={fullScreen}
-                      fieldsMap={fieldsMap}
-                    />
-                  </Suspense>
+                  <DrawerFormDetailPage
+                    view={view}
+                    modal={modal}
+                    tableInfo={tableInfo}
+                    navigateToEditPage={navigateToEditPage}
+                    setLayoutType={setLayoutType}
+                    layoutType={layoutType}
+                    selectedViewType={selectedViewType}
+                    setSelectedViewType={setSelectedViewType}
+                    onSubmit={onSubmit}
+                    rootForm={rootForm}
+                    handleMouseDown={handleMouseDown}
+                    layout={layout}
+                    selectedTab={layout?.tabs?.[0]}
+                    selectedTabIndex={selectedTabIndex}
+                    menuItem={menuItem}
+                    data={data}
+                    selectedRow={row}
+                    handleClose={handleClose}
+                    dateInfo={dateInfo}
+                    setFullScreen={setFullScreen}
+                    fullScreen={fullScreen}
+                    fieldsMap={fieldsMap}
+                  />
                 </form>
               </Box>
             ) : (
@@ -1233,7 +1216,6 @@ export const NewUiViewsWithGroups = ({
                           noDates={noDates}
                           searchText={searchText}
                           columnsForSearch={columnsForSearch}
-                          setViews={() => {}}
                           menuItem={menuItem}
                           selectedView={selectedView}
                           selectedTabIndex={selectedTabIndex}
@@ -1276,7 +1258,6 @@ export const NewUiViewsWithGroups = ({
                       projectInfo={projectInfo}
                       menuItem={menuItem}
                       fieldsMapRel={fieldsMapRel}
-                      setViews={setViews}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}
                       visibleColumns={visibleColumns}

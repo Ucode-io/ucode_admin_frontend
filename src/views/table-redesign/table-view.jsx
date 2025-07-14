@@ -13,7 +13,6 @@ import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
 import {Drawer} from "@mui/material";
@@ -28,13 +27,9 @@ import menuService from "../../services/menuService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-
-const DrawerDetailPage = lazy(() => import("../Objects/DrawerDetailPage"));
-const OldDrawerDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/OldDrawerDetailPage")
-);
-// import DrawerDetailPage from "../Objects/DrawerDetailPage";
-// import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 
 const TableView = ({
   relationView = false,
@@ -97,10 +92,6 @@ const TableView = ({
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
-
-  const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
-  );
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -238,10 +229,10 @@ const TableView = ({
 
   const columns = useMemo(() => {
     const result = [];
-    for (const key in view.attributes.fixedColumns) {
-      if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+    for (const key in view?.attributes.fixedColumns) {
+      if (view?.attributes.fixedColumns.hasOwnProperty(key)) {
+        if (view?.attributes.fixedColumns[key]) {
+          result.push({id: key, value: view?.attributes.fixedColumns[key]});
         }
       }
     }
@@ -545,9 +536,6 @@ const TableView = ({
         .join("&");
 
       const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
       const matches = replaceUrlVariables(urlTemplate, row);
 

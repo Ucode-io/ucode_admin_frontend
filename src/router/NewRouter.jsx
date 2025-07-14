@@ -78,6 +78,7 @@ import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
 import NewObjectsPage from "../views/Objects/NewObjectsPage";
+import DocView from "../views/Objects/DocView";
 
 const AuthLayoutDesign = lazy(
   () => import("../layouts/AuthLayout/AuthLayoutDesign")
@@ -150,25 +151,25 @@ const NewRouter = () => {
   if (!isAuth)
     if (microfrontendUrl && window.location.hostname !== "localhost")
       return (
-        <Suspense fallback={<p> Loading...</p>}>
-          <Routes>
-            <Route index element={<Navigate to={redirectLink} />} />
-            <Route path="/">
-              <Route index element={<Navigate to="/login " />} />
-              <Route
-                path="login"
-                element={
-                  <LoginMicrofrontend
-                    microfrontendUrl={microfrontendUrl}
-                    isLoading={isLoading}
-                  />
-                }
-              />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Route>
+        // <Suspense fallback={<p> Loading...</p>}>
+        <Routes>
+          <Route index element={<Navigate to={redirectLink} />} />
+          <Route path="/">
+            <Route index element={<Navigate to="/login " />} />
+            <Route
+              path="login"
+              element={
+                <LoginMicrofrontend
+                  microfrontendUrl={microfrontendUrl}
+                  isLoading={isLoading}
+                />
+              }
+            />
             <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
-        </Suspense>
+          </Route>
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+        // </Suspense>
       );
     else
       return (
@@ -389,6 +390,8 @@ const NewRouter = () => {
           />
 
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
+
+          <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />
 
           <Route
             path=":menuId/templates/create"

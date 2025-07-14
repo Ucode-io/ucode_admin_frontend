@@ -2,11 +2,12 @@ import {MenuItem} from "@mui/material";
 import React from "react";
 import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 
 export default function PdfMenuList({row, handleClose, projectId}) {
-  const {tableSlug, menuId} = useParams();
+  const navigate = useNavigate();
+  const {tableSlug, menuId, appId} = useParams();
   const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
   const userId = useSelector((state) => state.auth.userId);
 
@@ -19,7 +20,7 @@ export default function PdfMenuList({row, handleClose, projectId}) {
     };
 
     handleClose(e);
-    navigate(`/main/${menuId}/object/${tableSlug}`, {state});
+    navigate(`/main/${menuId ?? appId}/object/${tableSlug}`, {state});
   };
 
   const {

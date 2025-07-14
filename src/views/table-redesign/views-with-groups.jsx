@@ -13,10 +13,6 @@ import {
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
 import {queryGenerator} from "@/utils/queryGenerator";
-import AgGridTableView from "@/views/Objects/AgGridTableView";
-import GroupTableView from "@/views/Objects/TableView/GroupTableView";
-import WebsiteView from "@/views/Objects/WebsiteView";
-
 import ViewTypeList from "@/views/Objects/components/ViewTypeList";
 import style from "@/views/Objects/style.module.scss";
 import {getColumnIcon} from "@/views/table-redesign/icons";
@@ -44,9 +40,16 @@ import {
 } from "@chakra-ui/react";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {Backdrop, Popover as MuiPopover} from "@mui/material";
+import {Backdrop, CircularProgress, Popover as MuiPopover} from "@mui/material";
 import {addDays, endOfMonth, startOfMonth} from "date-fns";
-import React, {lazy, useEffect, useMemo, useRef, useState} from "react";
+import React, {
+  Suspense,
+  lazy,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {default as InlineSVG, default as SVG} from "react-inlinesvg";
@@ -96,21 +99,26 @@ import {
   TabGroup,
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
-import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
-import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
 
-const AggridTreeView = lazy(
-  () => import("../Objects/AgGridTableView/AggridTreeView")
-);
+const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
 const CalendarView = lazy(() => import("../Objects/CalendarView"));
-const DrawerFormDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
-);
 const TimeLineView = lazy(() => import("../Objects/TimeLineView"));
 const DrawerTableView = lazy(() => import("./drawer-table-view"));
 const TableView = lazy(() => import("./table-view"));
 const TableViewOld = lazy(() => import("./table-view-old"));
+const AgGridTableView = lazy(() => import("@/views/Objects/AgGridTableView"));
+const GroupTableView = lazy(
+  () => import("@/views/Objects/TableView/GroupTableView")
+);
+const AggridTreeView = lazy(
+  () => import("../Objects/AgGridTableView/AggridTreeView")
+);
+const DrawerFormDetailPage = lazy(
+  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
+);
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -170,14 +178,14 @@ export const NewUiViewsWithGroups = ({
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {filters} = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -188,7 +196,7 @@ export const NewUiViewsWithGroups = ({
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -196,7 +204,7 @@ export const NewUiViewsWithGroups = ({
   const groupTable = view?.attributes?.group_by_columns;
 
   const projectId = useSelector((state) => state.auth.projectId);
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const settingsForm = useForm({
     defaultValues: {
@@ -270,12 +278,12 @@ export const NewUiViewsWithGroups = ({
     mode: "all",
   });
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "multi",
   });
 
-  const { mutate: updateField, isLoading: updateLoading } =
+  const {mutate: updateField, isLoading: updateLoading} =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -285,7 +293,7 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs } = useQuery(
+  const {data: tabs} = useQuery(
     queryGenerator(groupField, filters, i18n.language)
   );
 
@@ -387,7 +395,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const { isLoading } = useTableByIdQuery({
+  const {isLoading} = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -414,7 +422,7 @@ export const NewUiViewsWithGroups = ({
         dispatch(detailDrawerActions.openDrawer());
         setSelectedRow(null);
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
+        navigateToForm(tableSlug, "CREATE", {}, {id}, menuId);
       }
     }
   };
@@ -441,7 +449,7 @@ export const NewUiViewsWithGroups = ({
 
     const isSection = view?.type === "SECTION";
     if (!new_router) {
-      dispatch(viewsActions.setViewTab({ tableSlug, tabIndex: index }));
+      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
       setSelectedTabIndex(index);
     } else {
       if (isSection) {
@@ -497,7 +505,7 @@ export const NewUiViewsWithGroups = ({
         {},
         tableSlug
       );
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+      const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -577,13 +585,11 @@ export const NewUiViewsWithGroups = ({
           h={modal ? `100vh` : "100vh"}
           overflow={"hidden"}
           flexDirection="column"
-          bg={"white"}
-        >
+          bg={"white"}>
           {updateLoading && (
             <Backdrop
-              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
-              open={true}
-            >
+              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
+              open={true}>
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -595,8 +601,7 @@ export const NewUiViewsWithGroups = ({
               alignItems="center"
               bg="#fff"
               borderBottom="1px solid #EAECF0"
-              columnGap="8px"
-            >
+              columnGap="8px">
               {relationView && (
                 <IconButton
                   aria-label="back"
@@ -642,8 +647,7 @@ export const NewUiViewsWithGroups = ({
                       sx={{
                         marginLeft: "10px",
                         height: "18px",
-                      }}
-                    >
+                      }}>
                       <Box
                         onClick={() =>
                           navigate(`/${menuId}/customize/${tableInfo?.id}`, {
@@ -661,8 +665,7 @@ export const NewUiViewsWithGroups = ({
                           "&:hover": {
                             background: "rgba(55, 53, 47, 0.06)",
                           },
-                        }}
-                      >
+                        }}>
                         <SpaceDashboardIcon />
                       </Box>
                     </Box>
@@ -696,8 +699,7 @@ export const NewUiViewsWithGroups = ({
                       columnGap="8px"
                       onClick={() => {
                         handleBreadCrumb(item, index);
-                      }}
-                    >
+                      }}>
                       <Flex
                         w="16px"
                         h="16px"
@@ -708,8 +710,7 @@ export const NewUiViewsWithGroups = ({
                         fontWeight={500}
                         fontSize={11}
                         justifyContent="center"
-                        alignItems="center"
-                      >
+                        alignItems="center">
                         {item?.label?.[0]}
                       </Flex>
                       {item?.label}
@@ -727,8 +728,7 @@ export const NewUiViewsWithGroups = ({
                   borderColor="#D0D5DD"
                   color="#344054"
                   leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px"
-                >
+                  borderRadius="8px">
                   {generateLangaugeText(
                     tableLan,
                     i18n?.language,
@@ -745,8 +745,7 @@ export const NewUiViewsWithGroups = ({
               alignItems="center"
               bg="#fff"
               borderBottom="1px solid #EAECF0"
-              columnGap="8px"
-            >
+              columnGap="8px">
               {relationView && (
                 <IconButton
                   aria-label="back"
@@ -791,8 +790,7 @@ export const NewUiViewsWithGroups = ({
                 color="#344054"
                 fontWeight={500}
                 alignItems="center"
-                columnGap="8px"
-              >
+                columnGap="8px">
                 <Flex
                   w="16px"
                   h="16px"
@@ -803,8 +801,7 @@ export const NewUiViewsWithGroups = ({
                   fontWeight={500}
                   fontSize={11}
                   justifyContent="center"
-                  alignItems="center"
-                >
+                  alignItems="center">
                   {tableName?.[0]}
                 </Flex>
                 {tableName}
@@ -820,8 +817,7 @@ export const NewUiViewsWithGroups = ({
                   borderColor="#D0D5DD"
                   color="#344054"
                   leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px"
-                >
+                  borderRadius="8px">
                   {generateLangaugeText(
                     tableLan,
                     i18n?.language,
@@ -839,8 +835,7 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="5px"
-          >
+            columnGap="5px">
             <Flex
               w={"70%"}
               sx={{
@@ -849,8 +844,7 @@ export const NewUiViewsWithGroups = ({
                   display: "none",
                 },
               }}
-              overflow={"scroll"}
-            >
+              overflow={"scroll"}>
               {(views ?? []).map((view, index) => (
                 <Button
                   minW={"80px"}
@@ -872,10 +866,9 @@ export const NewUiViewsWithGroups = ({
                   color={selectedTabIndex === index ? "#175CD3" : "#475467"}
                   bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
                   _hover={
-                    selectedTabIndex === index ? { bg: "#D1E9FF" } : undefined
+                    selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
                   }
-                  onClick={() => handleViewClick(view, index)}
-                >
+                  onClick={() => handleViewClick(view, index)}>
                   {view?.is_relation_view
                     ? view?.table_label
                     : view?.attributes?.[`name_${i18n?.language}`] ||
@@ -891,8 +884,7 @@ export const NewUiViewsWithGroups = ({
                 variant="ghost"
                 colorScheme="gray"
                 color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}
-              >
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
                 {generateLangaugeText(tableLan, i18n?.language, "View") ||
                   "View"}
               </Button>
@@ -905,15 +897,14 @@ export const NewUiViewsWithGroups = ({
             <MuiPopover
               open={Boolean(viewAnchorEl)}
               anchorEl={viewAnchorEl}
-              anchorPosition={{ top: 200, left: 600 }}
+              anchorPosition={{top: 200, left: 600}}
               onClose={() => {
                 handleClosePop();
               }}
               anchorOrigin={{
                 vertical: "bottom",
                 horizontal: "left",
-              }}
-            >
+              }}>
               <ViewTypeList
                 tableRelations={tableRelations}
                 relationView={relationView}
@@ -971,8 +962,7 @@ export const NewUiViewsWithGroups = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto"
-              >
+                overflow="auto">
                 {columnsForSearch.map((column) => (
                   <Flex
                     key={column.id}
@@ -981,10 +971,9 @@ export const NewUiViewsWithGroups = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
-                    cursor="pointer"
-                  >
-                    {getColumnIcon({ column })}
+                    _hover={{bg: "#EAECF0"}}
+                    cursor="pointer">
+                    {getColumnIcon({column})}
                     <ViewOptionTitle>
                       {column?.attributes?.[`label_${i18n.language}`] ||
                         column?.label}
@@ -997,7 +986,7 @@ export const NewUiViewsWithGroups = ({
                           data: {
                             fields: columnsForSearch.map((c) =>
                               c.id === column.id
-                                ? { ...c, is_search: e.target.checked }
+                                ? {...c, is_search: e.target.checked}
                                 : c
                             ),
                           },
@@ -1015,8 +1004,7 @@ export const NewUiViewsWithGroups = ({
                 tableLan={tableLan}
                 view={view}
                 visibleColumns={visibleColumns}
-                refetchViews={refetchViews}
-              >
+                refetchViews={refetchViews}>
                 <FilterButton view={view} />
               </FilterPopover>
             )}
@@ -1026,10 +1014,9 @@ export const NewUiViewsWithGroups = ({
                 <PopoverTrigger>
                   <Button
                     variant="text"
-                    _hover={{ backgroundColor: "rgba(0, 122, 255, 0.08)" }}
+                    _hover={{backgroundColor: "rgba(0, 122, 255, 0.08)"}}
                     fontWeight={400}
-                    color={"#888"}
-                  >
+                    color={"#888"}>
                     No date ({noDates.length})
                   </Button>
                 </PopoverTrigger>
@@ -1042,12 +1029,11 @@ export const NewUiViewsWithGroups = ({
                         columnGap="8px"
                         alignItems="center"
                         borderRadius={6}
-                        _hover={{ bg: "#EAECF0" }}
+                        _hover={{bg: "#EAECF0"}}
                         cursor="pointer"
                         key={item?.guid}
                         fontSize={12}
-                        onClick={() => handleAddDate(item)}
-                      >
+                        onClick={() => handleAddDate(item)}>
                         {item?.[view?.attributes?.visible_field?.split("/")[0]]}
                       </Box>
                     ))}
@@ -1063,8 +1049,7 @@ export const NewUiViewsWithGroups = ({
                   <Button
                     h={"30px"}
                     rightIcon={<ChevronDownIcon fontSize={18} />}
-                    onClick={() => navigateCreatePage()}
-                  >
+                    onClick={() => navigateCreatePage()}>
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
@@ -1085,11 +1070,12 @@ export const NewUiViewsWithGroups = ({
                   fieldsMap={fieldsMap}
                   visibleRelationColumns={visibleRelationColumns}
                   checkedColumns={checkedColumns}
-                  onDocsClick={() =>
+                  projectId={projectId}
+                  onDocsClick={() => {
                     dispatch(
                       detailDrawerActions.setDrawerTabIndex(views?.length)
-                    )
-                  }
+                    );
+                  }}
                   searchText={searchText}
                   computedVisibleFields={computedVisibleFields}
                   handleOpenPopup={handleOpenPopup}
@@ -1116,23 +1102,21 @@ export const NewUiViewsWithGroups = ({
             defaultIndex={0}
             style={{
               height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
-            }}
-          >
+            }}>
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
               view?.type !== "BOARD" && (
                 <div id="tabsHeight" className={style.tableCardHeader}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="title" style={{ marginRight: "20px" }}>
+                  <div style={{display: "flex", alignItems: "center"}}>
+                    <div className="title" style={{marginRight: "20px"}}>
                       <h3>{view.table_label}</h3>
                     </div>
-                    <TabList style={{ border: "none" }}>
+                    <TabList style={{border: "none"}}>
                       {tabs?.map((tab) => (
                         <Tab
                           key={tab.value}
                           selectedClassName={style.activeTab}
-                          className={`${style.disableTab} react-tabs__tab`}
-                        >
+                          className={`${style.disableTab} react-tabs__tab`}>
                           {tab.label}
                         </Tab>
                       ))}
@@ -1176,122 +1160,19 @@ export const NewUiViewsWithGroups = ({
                   <>
                     {view?.type === "WEBSITE" && <WebsiteView view={view} />}
                     {view?.type === "GRID" && groupTable?.length ? (
-                      <MaterialUIProvider>
-                        {" "}
-                        <AgGridTableView
-                          mainForm={mainForm}
-                          setLoading={setLoading}
-                          relationView={relationView}
-                          projectInfo={projectInfo}
-                          searchText={searchText}
-                          selectedRow={selectedRow}
-                          setLayoutType={setLayoutType}
-                          navigateToEditPage={navigateToEditPage}
-                          selectedTabIndex={selectedTabIndex}
-                          view={view}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                          computedVisibleFields={computedVisibleFields}
-                          checkedColumns={checkedColumns}
-                          setCheckedColumns={setCheckedColumns}
-                          columnsForSearch={columnsForSearch}
-                          updateField={updateField}
-                          visibleColumns={visibleColumns}
-                          visibleRelationColumns={visibleRelationColumns}
-                          visibleForm={visibleForm}
-                          menuItem={menuItem}
-                          layoutType={layoutType}
-                          setFormValue={setFormValue}
-                        />
-                      </MaterialUIProvider>
-                    ) : view.type === "TABLE" && groupTable?.length ? (
-                      <GroupTableView
-                        tableLan={tableLan}
-                        selectedTabIndex={selectedTabIndex}
-                        reset={reset}
-                        sortedDatas={sortedDatas}
-                        menuItem={menuItem}
-                        fields={fields}
-                        setFormValue={setFormValue}
-                        control={control}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        filters={filters}
-                        checkedColumns={checkedColumns}
-                        view={view}
-                        setSortedDatas={setSortedDatas}
-                        fieldsMap={fieldsMap}
-                        searchText={searchText}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        selectedView={selectedView}
-                      />
-                    ) : view.type === "TIMELINE" ? (
-                      <TimeLineView
-                        setFormValue={setFormValue}
-                        projectInfo={projectInfo}
-                        layoutType={layoutType}
-                        view={view}
-                        noDates={noDates}
-                        searchText={searchText}
-                        columnsForSearch={columnsForSearch}
-                        setViews={() => {}}
-                        menuItem={menuItem}
-                        selectedView={selectedView}
-                        selectedTabIndex={selectedTabIndex}
-                        setSelectedTabIndex={setSelectedTabIndex}
-                        views={views}
-                        fieldsMap={fieldsMap}
-                        isViewLoading={isLoading}
-                        setNoDates={setNoDates}
-                        setLayoutType={setLayoutType}
-                        setCenterDate={setCenterDate}
-                      />
-                    ) : null}
-                  </>
-                )}
-                {view.type === VIEW_TYPES_MAP.BOARD && (
-                  <BoardView
-                    setSelectedRow={setSelectedRow}
-                    selectedRow={selectedRow}
-                    relationView={relationView}
-                    layoutType={layoutType}
-                    setFormValue={setFormValue}
-                    setLoading={setLoading}
-                    setLayoutType={setLayoutType}
-                    selectedView={selectedView}
-                    setSelectedView={setSelectedView}
-                    projectInfo={projectInfo}
-                    menuItem={menuItem}
-                    fieldsMapRel={fieldsMapRel}
-                    setViews={setViews}
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    visibleColumns={visibleColumns}
-                    visibleRelationColumns={visibleRelationColumns}
-                    views={views}
-                    fieldsMap={fieldsMap}
-                    view={view}
-                  />
-                )}
-                {view.type === "CALENDAR" && (
-                  <CalendarView
-                    menuItem={menuItem}
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    view={view}
-                    views={views}
-                    key={"calendar"}
-                    layoutType={layoutType}
-                    setLayoutType={setLayoutType}
-                  />
-                )}
-                {!groupTable?.length &&
-                  view.type !== "TIMELINE" &&
-                  view.type !== "BOARD" &&
-                  tabs?.map((tab) => (
-                    <TabPanel key={tab.value}>
-                      {view?.type === "GRID" ? (
+                      <Suspense
+                        fallback={
+                          <div
+                            style={{
+                              height: "90vh",
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <CircularProgress />
+                          </div>
+                        }>
                         <MaterialUIProvider>
                           <AgGridTableView
                             mainForm={mainForm}
@@ -1315,81 +1196,295 @@ export const NewUiViewsWithGroups = ({
                             visibleRelationColumns={visibleRelationColumns}
                             visibleForm={visibleForm}
                             menuItem={menuItem}
-                            setFormValue={setFormValue}
-                          />
-                        </MaterialUIProvider>
-                      ) : view.type === "TREE" ? (
-                        <MaterialUIProvider>
-                          <AggridTreeView
-                            navigateCreatePage={navigateCreatePage}
-                            getRelationFields={getRelationFields}
-                            mainForm={mainForm}
-                            searchText={searchText}
                             layoutType={layoutType}
-                            selectedRow={selectedRow}
-                            projectInfo={projectInfo}
-                            setLayoutType={setLayoutType}
-                            navigateToEditPage={navigateToEditPage}
-                            selectedTabIndex={selectedTabIndex}
-                            view={view}
-                            views={views}
-                            fieldsMap={fieldsMap}
-                            relationView={relationView}
                             setFormValue={setFormValue}
-                            computedVisibleFields={computedVisibleFields}
-                            checkedColumns={checkedColumns}
-                            setCheckedColumns={setCheckedColumns}
-                            columnsForSearch={columnsForSearch}
-                            updateField={updateField}
-                            visibleColumns={visibleColumns}
-                            visibleRelationColumns={visibleRelationColumns}
-                            visibleForm={visibleForm}
-                            menuItem={menuItem}
                           />
                         </MaterialUIProvider>
-                      ) : (
-                        <TableComponent
-                          projectInfo={projectInfo}
-                          setLoading={setLoading}
-                          refetchMenuViews={refetchMenuViews}
-                          setSelectedView={setSelectedView}
-                          relationView={relationView}
-                          selectedRow={selectedRow}
-                          setSelectedRow={setSelectedRow}
-                          setLayoutType={setLayoutType}
-                          layoutType={layoutType}
+                      </Suspense>
+                    ) : view.type === "TABLE" && groupTable?.length ? (
+                      <Suspense
+                        fallback={
+                          <div
+                            style={{
+                              height: "90vh",
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <CircularProgress />
+                          </div>
+                        }>
+                        <GroupTableView
                           tableLan={tableLan}
-                          isVertical
-                          setCurrentPage={setCurrentPage}
-                          currentPage={currentPage}
-                          visibleColumns={visibleColumns}
-                          visibleRelationColumns={visibleRelationColumns}
-                          visibleForm={visibleForm}
-                          filterVisible={filterVisible}
-                          control={control}
-                          getValues={getValues}
-                          setFormVisible={setFormVisible}
-                          formVisible={formVisible}
-                          filters={filters}
-                          setFilterVisible={setFilterVisible}
-                          view={view}
-                          fieldsMap={fieldsMap}
-                          setFormValue={setFormValue}
-                          setSortedDatas={setSortedDatas}
-                          tab={tab}
-                          selectedObjects={selectedObjects}
-                          setSelectedObjects={setSelectedObjects}
-                          menuItem={menuItem}
                           selectedTabIndex={selectedTabIndex}
                           reset={reset}
                           sortedDatas={sortedDatas}
+                          menuItem={menuItem}
                           fields={fields}
+                          setFormValue={setFormValue}
+                          control={control}
+                          setFormVisible={setFormVisible}
+                          formVisible={formVisible}
+                          filters={filters}
                           checkedColumns={checkedColumns}
+                          view={view}
+                          setSortedDatas={setSortedDatas}
+                          fieldsMap={fieldsMap}
                           searchText={searchText}
+                          selectedObjects={selectedObjects}
+                          setSelectedObjects={setSelectedObjects}
                           selectedView={selectedView}
-                          currentView={view}
-                          watch={watch}
                         />
+                      </Suspense>
+                    ) : view.type === "TIMELINE" ? (
+                      <Suspense
+                        fallback={
+                          <div
+                            style={{
+                              height: "90vh",
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <CircularProgress />
+                          </div>
+                        }>
+                        <TimeLineView
+                          setFormValue={setFormValue}
+                          projectInfo={projectInfo}
+                          layoutType={layoutType}
+                          view={view}
+                          noDates={noDates}
+                          searchText={searchText}
+                          columnsForSearch={columnsForSearch}
+                          setViews={() => {}}
+                          menuItem={menuItem}
+                          selectedView={selectedView}
+                          selectedTabIndex={selectedTabIndex}
+                          setSelectedTabIndex={setSelectedTabIndex}
+                          views={views}
+                          fieldsMap={fieldsMap}
+                          isViewLoading={isLoading}
+                          setNoDates={setNoDates}
+                          setLayoutType={setLayoutType}
+                          setCenterDate={setCenterDate}
+                        />
+                      </Suspense>
+                    ) : null}
+                  </>
+                )}
+                {view.type === "BOARD" && (
+                  <Suspense
+                    fallback={
+                      <div
+                        style={{
+                          height: "90vh",
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                        <CircularProgress />
+                      </div>
+                    }>
+                    <BoardView
+                      setSelectedRow={setSelectedRow}
+                      selectedRow={selectedRow}
+                      relationView={relationView}
+                      layoutType={layoutType}
+                      setFormValue={setFormValue}
+                      setLoading={setLoading}
+                      setLayoutType={setLayoutType}
+                      selectedView={selectedView}
+                      setSelectedView={setSelectedView}
+                      projectInfo={projectInfo}
+                      menuItem={menuItem}
+                      fieldsMapRel={fieldsMapRel}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      visibleColumns={visibleColumns}
+                      visibleRelationColumns={visibleRelationColumns}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                      view={view}
+                    />
+                  </Suspense>
+                )}
+                {view.type === "CALENDAR" && (
+                  <Suspense
+                    fallback={
+                      <div
+                        style={{
+                          height: "90vh",
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}>
+                        <CircularProgress />
+                      </div>
+                    }>
+                    <CalendarView
+                      menuItem={menuItem}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      view={view}
+                      views={views}
+                      key={"calendar"}
+                      layoutType={layoutType}
+                      setLayoutType={setLayoutType}
+                    />
+                  </Suspense>
+                )}
+                {!groupTable?.length &&
+                  view.type !== "TIMELINE" &&
+                  view.type !== "BOARD" &&
+                  tabs?.map((tab) => (
+                    <TabPanel key={tab.value}>
+                      {view?.type === "GRID" ? (
+                        <Suspense
+                          fallback={
+                            <div
+                              style={{
+                                height: "90vh",
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}>
+                              <CircularProgress />
+                            </div>
+                          }>
+                          <MaterialUIProvider>
+                            <AgGridTableView
+                              mainForm={mainForm}
+                              setLoading={setLoading}
+                              relationView={relationView}
+                              projectInfo={projectInfo}
+                              searchText={searchText}
+                              selectedRow={selectedRow}
+                              setLayoutType={setLayoutType}
+                              navigateToEditPage={navigateToEditPage}
+                              selectedTabIndex={selectedTabIndex}
+                              view={view}
+                              views={views}
+                              fieldsMap={fieldsMap}
+                              computedVisibleFields={computedVisibleFields}
+                              checkedColumns={checkedColumns}
+                              setCheckedColumns={setCheckedColumns}
+                              columnsForSearch={columnsForSearch}
+                              updateField={updateField}
+                              visibleColumns={visibleColumns}
+                              visibleRelationColumns={visibleRelationColumns}
+                              visibleForm={visibleForm}
+                              menuItem={menuItem}
+                              setFormValue={setFormValue}
+                            />
+                          </MaterialUIProvider>
+                        </Suspense>
+                      ) : view.type === "TREE" ? (
+                        <Suspense
+                          fallback={
+                            <div
+                              style={{
+                                height: "90vh",
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}>
+                              <CircularProgress />
+                            </div>
+                          }>
+                          <MaterialUIProvider>
+                            <AggridTreeView
+                              navigateCreatePage={navigateCreatePage}
+                              getRelationFields={getRelationFields}
+                              mainForm={mainForm}
+                              searchText={searchText}
+                              layoutType={layoutType}
+                              selectedRow={selectedRow}
+                              projectInfo={projectInfo}
+                              setLayoutType={setLayoutType}
+                              navigateToEditPage={navigateToEditPage}
+                              selectedTabIndex={selectedTabIndex}
+                              view={view}
+                              views={views}
+                              fieldsMap={fieldsMap}
+                              relationView={relationView}
+                              setFormValue={setFormValue}
+                              computedVisibleFields={computedVisibleFields}
+                              checkedColumns={checkedColumns}
+                              setCheckedColumns={setCheckedColumns}
+                              columnsForSearch={columnsForSearch}
+                              updateField={updateField}
+                              visibleColumns={visibleColumns}
+                              visibleRelationColumns={visibleRelationColumns}
+                              visibleForm={visibleForm}
+                              menuItem={menuItem}
+                            />
+                          </MaterialUIProvider>
+                        </Suspense>
+                      ) : (
+                        <Suspense
+                          fallback={
+                            <div
+                              style={{
+                                height: "90vh",
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}>
+                              <CircularProgress />
+                            </div>
+                          }>
+                          <TableComponent
+                            projectInfo={projectInfo}
+                            setLoading={setLoading}
+                            refetchMenuViews={refetchMenuViews}
+                            setSelectedView={setSelectedView}
+                            relationView={relationView}
+                            selectedRow={selectedRow}
+                            setSelectedRow={setSelectedRow}
+                            setLayoutType={setLayoutType}
+                            layoutType={layoutType}
+                            tableLan={tableLan}
+                            isVertical
+                            setCurrentPage={setCurrentPage}
+                            currentPage={currentPage}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            filterVisible={filterVisible}
+                            control={control}
+                            getValues={getValues}
+                            setFormVisible={setFormVisible}
+                            formVisible={formVisible}
+                            filters={filters}
+                            setFilterVisible={setFilterVisible}
+                            view={view}
+                            fieldsMap={fieldsMap}
+                            setFormValue={setFormValue}
+                            setSortedDatas={setSortedDatas}
+                            tab={tab}
+                            selectedObjects={selectedObjects}
+                            setSelectedObjects={setSelectedObjects}
+                            menuItem={menuItem}
+                            selectedTabIndex={selectedTabIndex}
+                            reset={reset}
+                            sortedDatas={sortedDatas}
+                            fields={fields}
+                            checkedColumns={checkedColumns}
+                            searchText={searchText}
+                            selectedView={selectedView}
+                            currentView={view}
+                            watch={watch}
+                          />
+                        </Suspense>
                       )}
                     </TabPanel>
                   ))}
@@ -1401,15 +1496,69 @@ export const NewUiViewsWithGroups = ({
                 view.type !== "CALENDAR" ? (
                   <>
                     {view?.type === "GRID" ? (
-                      <MaterialUIProvider>
-                        <AgGridTableView
+                      <Suspense
+                        fallback={
+                          <div
+                            style={{
+                              height: "90vh",
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <CircularProgress />
+                          </div>
+                        }>
+                        <MaterialUIProvider>
+                          <AgGridTableView
+                            mainForm={mainForm}
+                            setLoading={setLoading}
+                            relationView={relationView}
+                            projectInfo={projectInfo}
+                            tableSlug={tableSlug}
+                            searchText={searchText}
+                            selectedRow={selectedRow}
+                            layoutType={layoutType}
+                            setLayoutType={setLayoutType}
+                            navigateToEditPage={navigateToEditPage}
+                            selectedTabIndex={selectedTabIndex}
+                            view={view}
+                            views={views}
+                            fieldsMap={fieldsMap}
+                            computedVisibleFields={computedVisibleFields}
+                            checkedColumns={checkedColumns}
+                            setCheckedColumns={setCheckedColumns}
+                            columnsForSearch={columnsForSearch}
+                            updateField={updateField}
+                            visibleColumns={visibleColumns}
+                            visibleRelationColumns={visibleRelationColumns}
+                            visibleForm={visibleForm}
+                            menuItem={menuItem}
+                            setFormValue={setFormValue}
+                          />
+                        </MaterialUIProvider>
+                      </Suspense>
+                    ) : view.type === "TREE" ? (
+                      <Suspense
+                        fallback={
+                          <div
+                            style={{
+                              height: "90vh",
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <CircularProgress />
+                          </div>
+                        }>
+                        <AggridTreeView
+                          navigateCreatePage={navigateCreatePage}
+                          getRelationFields={getRelationFields}
                           mainForm={mainForm}
-                          setLoading={setLoading}
-                          relationView={relationView}
-                          projectInfo={projectInfo}
-                          tableSlug={tableSlug}
                           searchText={searchText}
                           selectedRow={selectedRow}
+                          projectInfo={projectInfo}
                           layoutType={layoutType}
                           setLayoutType={setLayoutType}
                           navigateToEditPage={navigateToEditPage}
@@ -1417,6 +1566,8 @@ export const NewUiViewsWithGroups = ({
                           view={view}
                           views={views}
                           fieldsMap={fieldsMap}
+                          relationView={relationView}
+                          setFormValue={setFormValue}
                           computedVisibleFields={computedVisibleFields}
                           checkedColumns={checkedColumns}
                           setCheckedColumns={setCheckedColumns}
@@ -1426,78 +1577,64 @@ export const NewUiViewsWithGroups = ({
                           visibleRelationColumns={visibleRelationColumns}
                           visibleForm={visibleForm}
                           menuItem={menuItem}
-                          setFormValue={setFormValue}
                         />
-                      </MaterialUIProvider>
-                    ) : view.type === "TREE" ? (
-                      <AggridTreeView
-                        navigateCreatePage={navigateCreatePage}
-                        getRelationFields={getRelationFields}
-                        mainForm={mainForm}
-                        searchText={searchText}
-                        selectedRow={selectedRow}
-                        projectInfo={projectInfo}
-                        layoutType={layoutType}
-                        setLayoutType={setLayoutType}
-                        navigateToEditPage={navigateToEditPage}
-                        selectedTabIndex={selectedTabIndex}
-                        view={view}
-                        views={views}
-                        fieldsMap={fieldsMap}
-                        relationView={relationView}
-                        setFormValue={setFormValue}
-                        computedVisibleFields={computedVisibleFields}
-                        checkedColumns={checkedColumns}
-                        setCheckedColumns={setCheckedColumns}
-                        columnsForSearch={columnsForSearch}
-                        updateField={updateField}
-                        visibleColumns={visibleColumns}
-                        visibleRelationColumns={visibleRelationColumns}
-                        visibleForm={visibleForm}
-                        menuItem={menuItem}
-                      />
+                      </Suspense>
                     ) : (
-                      <TableComponent
-                        projectInfo={projectInfo}
-                        setLoading={setLoading}
-                        refetchMenuViews={refetchMenuViews}
-                        setSelectedView={setSelectedView}
-                        relationView={relationView}
-                        selectedRow={selectedRow}
-                        setSelectedRow={setSelectedRow}
-                        setLayoutType={setLayoutType}
-                        layoutType={layoutType}
-                        tableLan={tableLan}
-                        visibleColumns={visibleColumns}
-                        setCurrentPage={setCurrentPage}
-                        currentPage={currentPage}
-                        visibleRelationColumns={visibleRelationColumns}
-                        visibleForm={visibleForm}
-                        currentView={view}
-                        filterVisible={filterVisible}
-                        setFilterVisible={setFilterVisible}
-                        getValues={getValues}
-                        selectedTabIndex={selectedTabIndex}
-                        isTableView={true}
-                        reset={reset}
-                        sortedDatas={sortedDatas}
-                        menuItem={menuItem}
-                        fields={fields}
-                        setFormValue={setFormValue}
-                        control={control}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        filters={filters}
-                        checkedColumns={checkedColumns}
-                        view={view}
-                        setSortedDatas={setSortedDatas}
-                        fieldsMap={fieldsMap}
-                        searchText={searchText}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        selectedView={selectedView}
-                        watch={watch}
-                      />
+                      <Suspense
+                        fallback={
+                          <div
+                            style={{
+                              height: "90vh",
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}>
+                            <CircularProgress />
+                          </div>
+                        }>
+                        <TableComponent
+                          projectInfo={projectInfo}
+                          setLoading={setLoading}
+                          refetchMenuViews={refetchMenuViews}
+                          setSelectedView={setSelectedView}
+                          relationView={relationView}
+                          selectedRow={selectedRow}
+                          setSelectedRow={setSelectedRow}
+                          setLayoutType={setLayoutType}
+                          layoutType={layoutType}
+                          tableLan={tableLan}
+                          visibleColumns={visibleColumns}
+                          setCurrentPage={setCurrentPage}
+                          currentPage={currentPage}
+                          visibleRelationColumns={visibleRelationColumns}
+                          visibleForm={visibleForm}
+                          currentView={view}
+                          filterVisible={filterVisible}
+                          setFilterVisible={setFilterVisible}
+                          getValues={getValues}
+                          selectedTabIndex={selectedTabIndex}
+                          isTableView={true}
+                          reset={reset}
+                          sortedDatas={sortedDatas}
+                          menuItem={menuItem}
+                          fields={fields}
+                          setFormValue={setFormValue}
+                          control={control}
+                          setFormVisible={setFormVisible}
+                          formVisible={formVisible}
+                          filters={filters}
+                          checkedColumns={checkedColumns}
+                          view={view}
+                          setSortedDatas={setSortedDatas}
+                          fieldsMap={fieldsMap}
+                          searchText={searchText}
+                          selectedObjects={selectedObjects}
+                          setSelectedObjects={setSelectedObjects}
+                          selectedView={selectedView}
+                          watch={watch}
+                        />
+                      </Suspense>
                     )}
                   </>
                 ) : null}
@@ -1567,7 +1704,7 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const { tableSlug: tableSlugParam } = useParams();
+  const {tableSlug: tableSlugParam} = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
   const {new_list} = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
@@ -1703,7 +1840,7 @@ const FiltersSwitch = ({
   const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
   const tableSlug = view?.table_slug;
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
@@ -1727,8 +1864,8 @@ const FiltersSwitch = ({
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
-    ...checkedColumns.map((c) => ({ ...c, checked: true })),
-    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
+    ...checkedColumns.map((c) => ({...c, checked: true})),
+    ...unCheckedColumns.map((c) => ({...c, checked: false})),
   ].filter((column) =>
     search === ""
       ? true
@@ -1757,7 +1894,7 @@ const FiltersSwitch = ({
 
     await mutation.mutateAsync({
       ...view,
-      attributes: { ...view?.attributes, quick_filters: result },
+      attributes: {...view?.attributes, quick_filters: result},
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -1806,10 +1943,9 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{ bg: "#EAECF0" }}
-          cursor="pointer"
-        >
-          {column?.type && getColumnIcon({ column })}
+          _hover={{bg: "#EAECF0"}}
+          cursor="pointer">
+          {column?.type && getColumnIcon({column})}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -1840,9 +1976,14 @@ const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
   views,
+  projectId,
 }) => {
+  const navigate = useNavigate();
+  const {menuId, appId, tableSlug: tableSlugFromProps} = useParams();
   const queryClient = useQueryClient();
-  const tableSlug = relationView ? view?.relation_table_slug : view?.table_slug;
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromProps ?? view?.table_slug);
   const {i18n, t} = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
@@ -1998,6 +2139,14 @@ const ViewOptions = ({
       return await refetchViews();
     },
   });
+
+  const navigateToOldTemplate = () => {
+    if (localStorage.getItem("new_router") === "true") {
+      navigate(`/${menuId}/object/${tableSlug}/docs`);
+    } else {
+      navigate(`/main/${appId}/object/${tableSlug}/docs`);
+    }
+  };
 
   return (
     <Popover
@@ -2309,7 +2458,11 @@ const ViewOptions = ({
                 borderRadius={6}
                 _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
-                onClick={onDocsClick}>
+                onClick={(e) => {
+                  onDocsClick(e);
+                  projectId === "c7168030-b876-4d01-8063-f7ad9f92e974" &&
+                    navigateToOldTemplate();
+                }}>
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||

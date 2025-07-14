@@ -254,7 +254,8 @@ const TableRow = ({
                   </PermissionWrapperV2>
                 </CTableCell>
                 {projectId === "b9029a9f-9431-4a44-b5e4-be148e4cc573" ||
-                  (projectId === "6fd296f6-9195-4ed3-af84-c1dcca929273" && (
+                  projectId === "6fd296f6-9195-4ed3-af84-c1dcca929273" ||
+                  (projectId === "c7168030-b876-4d01-8063-f7ad9f92e974" && (
                     <GeneratePdfFromTable
                       view={view}
                       row={row}

@@ -24,6 +24,7 @@ export const useViewWithGroupsProps = ({
   views,
   handleClose,
   refetchViews,
+  handleClosePop = () => {},
 }) => {
   const viewsWithSettings = [
     VIEW_TYPES_MAP.CALENDAR,
@@ -101,8 +102,6 @@ export const useViewWithGroupsProps = ({
   const [loading, setLoading] = useState(false);
 
   const createView = (type) => {
-    setLoading(true);
-
     if (
       (type || selectedViewTab) === VIEW_TYPES_MAP.BOARD &&
       watch("group_fields").length === 0
@@ -123,10 +122,10 @@ export const useViewWithGroupsProps = ({
 
     if ((type || selectedViewTab) === VIEW_TYPES_MAP.WEBSITE) {
       if (watch("web_link")) {
-        setLoading(true);
         constructorViewService
           .create(tableSlug, {
             ...newViewJSON,
+            type: type || selectedViewTab,
             table_slug: viewsList?.[0]?.table_slug,
             relation_table_slug: watch("table_slug"),
             attributes: {
@@ -139,8 +138,8 @@ export const useViewWithGroupsProps = ({
             queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
-            setLoading(false);
             handleClose();
+            handleClosePop();
           });
       }
     } else {
@@ -155,6 +154,7 @@ export const useViewWithGroupsProps = ({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
+          type: type || selectedViewTab,
           table_slug: table_slug,
           relation_table_slug: watch("table_slug"),
         })
@@ -169,9 +169,9 @@ export const useViewWithGroupsProps = ({
           } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })
         .finally(() => {
-          setLoading(false);
           refetchViews();
           handleClose();
+          handleClosePop();
         });
     }
   };

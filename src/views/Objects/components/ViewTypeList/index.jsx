@@ -182,6 +182,11 @@ export default function ViewTypeList({
     }
   );
 
+  const table_slug = relationView
+    ? viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+      viewsList?.[viewsList?.length - 1]?.table_slug
+    : tableSlug;
+
   const createView = () => {
     if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
       setError("group_fields", {message: "Please select group"});
@@ -235,9 +240,7 @@ export default function ViewTypeList({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
-          table_slug:
-            viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
-            viewsList?.[viewsList?.length - 1]?.table_slug,
+          table_slug: table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {
@@ -256,9 +259,6 @@ export default function ViewTypeList({
         });
     }
   };
-  const table_slug = relationView
-    ? viewsList?.[viewsList?.length - 1]?.table_slug
-    : tableSlug;
 
   const {data} = useQuery(
     ["GET_TABLE_INFO", {viewsList}],

@@ -299,7 +299,6 @@ const AutoCompleteElement = ({
       if (data && data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
-
       setLocalValue(res?.data?.response ? [res?.data?.response] : []);
 
       if (window.location.pathname?.includes("create")) {
@@ -414,8 +413,10 @@ const AutoCompleteElement = ({
   }, [value]);
 
   useEffect(() => {
-    setLocalValue(computedValueMulti);
-  }, []);
+    if (computedValueMulti?.length && isMulti) {
+      setLocalValue(computedValueMulti);
+    }
+  }, [computedValueMulti]);
 
   useEffect(() => {
     setClientTypeValue();

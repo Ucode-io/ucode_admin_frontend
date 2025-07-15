@@ -31,7 +31,7 @@ function DrawerFormDetailPage({
   rootForm,
 }) {
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const { tableSlug: tableSlugParam, menuId } = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
@@ -137,6 +137,16 @@ function DrawerFormDetailPage({
     }
   };
 
+  // const isMultiLanguage = useMemo(() => {
+  //   const allFields = [];
+  //   selectedTab?.sections?.map((section) => {
+  //     return section?.fields?.map((field) => {
+  //       return allFields.push(field);
+  //     });
+  //   });
+  //   return !!allFields.find((field) => field?.enable_multilanguage === true);
+  // }, [selectedTab]);
+
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
     selectedTab?.sections?.map((section) => {
@@ -144,7 +154,11 @@ function DrawerFormDetailPage({
         return allFields.push(field);
       });
     });
-    return !!allFields.find((field) => field?.enable_multilanguage === true);
+    return !!allFields.find((field) =>
+      field?.enable_multilanguage
+        ? field?.enable_multilanguage
+        : field?.attributes?.enable_multilanguage === true
+    );
   }, [selectedTab]);
 
   useEffect(() => {
@@ -184,7 +198,6 @@ function DrawerFormDetailPage({
   // const microFrontendCallback = (id) => {
   //   setMicroFrontendId(id);
   // };
-
   return (
     <MaterialUIProvider>
       <Box

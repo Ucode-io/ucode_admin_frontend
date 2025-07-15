@@ -150,7 +150,7 @@ const SettingFields = ({
       el?.label ?? el?.attributes?.[`label_${i18n?.language}`] ?? "";
     return label.toLowerCase().includes(sectionSearch?.toLowerCase());
   };
-  console.log("selectedSectionselectedSection", selectedSection);
+
   return (
     <Box mt={"25px"} h={"calc(100vh - 160px)"} pb={5} overflow={"auto"} px={15}>
       <Container

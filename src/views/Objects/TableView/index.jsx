@@ -26,6 +26,7 @@ import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import {useProjectGetByIdQuery} from "../../../services/projectService";
 import {store} from "../../../store";
 import {differenceInCalendarDays, parseISO} from "date-fns";
+import OldModalDetailPage from "../ModalDetailPage/OldModalDetailPage";
 
 const TableView = ({
   filterVisible,
@@ -68,7 +69,8 @@ const TableView = ({
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug, appId} = useParams();
+  const { id, slug, tableSlug: tableSlugParam, appId } = useParams();
+  const tableSlug = tableSlugParam || view?.table_slug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -597,6 +599,7 @@ const TableView = ({
               isVisibleLoading={isVisibleLoading}
               setFilterVisible={setFilterVisible}
               filterChangeHandler={filterChangeHandler}
+              tableSlug={tableSlug}
             />
           </Box>
         </div>
@@ -669,7 +672,7 @@ const TableView = ({
       </div>
 
       {open && (
-        <ModalDetailPage
+        <OldModalDetailPage
           open={open}
           setOpen={setOpen}
           selectedRow={selectedRow}
@@ -712,6 +715,7 @@ const TableView = ({
           getRelationFields={getRelationFields}
           formType={drawerStateField}
           height={`calc(100vh - 48px)`}
+          view={view}
         />
       </Drawer>
     </div>

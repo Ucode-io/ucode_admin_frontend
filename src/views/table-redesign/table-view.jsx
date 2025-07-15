@@ -13,11 +13,10 @@ import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
 import {DynamicTable} from "@/views/table-redesign";
 import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
+import {lazy, useEffect, useMemo, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
@@ -30,6 +29,8 @@ import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
+import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
 
 const TableView = ({
   relationView = false,
@@ -92,10 +93,6 @@ const TableView = ({
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
-
-  const permissions = useSelector(
-    (state) => state.auth.permissions?.[tableSlug]
-  );
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -233,10 +230,10 @@ const TableView = ({
 
   const columns = useMemo(() => {
     const result = [];
-    for (const key in view.attributes.fixedColumns) {
-      if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+    for (const key in view?.attributes.fixedColumns) {
+      if (view?.attributes.fixedColumns.hasOwnProperty(key)) {
+        if (view?.attributes.fixedColumns[key]) {
+          result.push({id: key, value: view?.attributes.fixedColumns[key]});
         }
       }
     }
@@ -540,9 +537,6 @@ const TableView = ({
         .join("&");
 
       const urlTemplate = view?.attributes?.navigate?.url;
-      let query = urlTemplate;
-
-      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
 
       const matches = replaceUrlVariables(urlTemplate, row);
 
@@ -704,22 +698,37 @@ const TableView = ({
             />
           )
         ) : selectedViewType === "CenterPeek" ? (
-          <ModalDetailPage
-            view={view}
-            projectInfo={projectInfo}
-            open={open}
-            setFormValue={setFormValue}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            layoutType={layoutType}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
+          Boolean(new_router === "true") ? (
+            <ModalDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          ) : (
+            <OldModalDetailPage
+              open={open}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          )
         ) : null}
 
         {Boolean(open && !projectInfo?.new_layout) && (

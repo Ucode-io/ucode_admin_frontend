@@ -192,6 +192,15 @@ const RecursiveBlock = ({
     return label?.length > 18 ? `${label?.slice(0, 18)}..` : label;
   };
 
+  function isValidUrl(str) {
+    try {
+      new URL(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   return (
     <Draggable key={index}>
       <Box sx={{padding: `0 0 0 ${level * 10}px`}} style={{marginBottom: 5}}>
@@ -239,14 +248,22 @@ const RecursiveBlock = ({
                       {element?.icon ||
                       element?.data?.microfrontend?.icon ||
                       element?.data?.webpage?.icon ? (
-                        <IconGenerator
-                          icon={
-                            element?.icon ||
-                            element?.data?.microfrontend?.icon ||
-                            element?.data?.webpage?.icon
-                          }
-                          size={20}
-                        />
+                        isValidUrl(element?.icon) ? (
+                          <img
+                            width={"24px"}
+                            height={"24px"}
+                            src={element?.icon}
+                          />
+                        ) : (
+                          <IconGenerator
+                            icon={
+                              element?.icon ||
+                              element?.data?.microfrontend?.icon ||
+                              element?.data?.webpage?.icon
+                            }
+                            size={20}
+                          />
+                        )
                       ) : (
                         <Box
                           sx={{
@@ -274,17 +291,21 @@ const RecursiveBlock = ({
                 element?.data?.webpage?.icon ? (
                   <div
                     style={{
-                      marginRight: "8px",
+                      marginRight: "4px",
                     }}
                     className="childMenuIcon">
-                    <IconGenerator
-                      icon={
-                        element?.icon ||
-                        element?.data?.microfrontend?.icon ||
-                        element?.data?.webpage?.icon
-                      }
-                      size={18}
-                    />
+                    {isValidUrl(element?.icon) ? (
+                      <img width={"24px"} height={"24px"} src={element?.icon} />
+                    ) : (
+                      <IconGenerator
+                        icon={
+                          element?.icon ||
+                          element?.data?.microfrontend?.icon ||
+                          element?.data?.webpage?.icon
+                        }
+                        size={18}
+                      />
+                    )}
                   </div>
                 ) : element?.type !== "FOLDER" ? (
                   <Box

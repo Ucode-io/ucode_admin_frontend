@@ -8,13 +8,14 @@ export default function MicroFrontPdf({
   view,
   projectId,
 }) {
-  const {menuId, tableSlug} = useParams();
+  const {menuId, tableSlug: tableSlugFromProps, appId} = useParams();
   const navigate = useNavigate();
   const replaceUrlVariables = (urlTemplate, data) => {
     return urlTemplate?.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
       return data[variable] || "";
     });
   };
+  const tableSlug = tableSlugFromProps ?? view?.table_slug;
 
   const navigateToDocumentEditPage = (event) => {
     event.stopPropagation();
@@ -24,6 +25,14 @@ export default function MicroFrontPdf({
     const url = replaceUrlVariables(urlTemplate, row);
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const navigateToOldTemplate = () => {
+    if (localStorage.getItem("new_router") === "true") {
+      navigate(`/${menuId}/object/${tableSlug}/docs`);
+    } else {
+      navigate(`/main/${appId}/object/${tableSlug}/docs`);
     }
   };
 
@@ -37,7 +46,9 @@ export default function MicroFrontPdf({
         onClick={(event) => {
           projectId === "6fd296f6-9195-4ed3-af84-c1dcca929273"
             ? navigateTemplates()
-            : navigateToDocumentEditPage(event);
+            : projectId === "c7168030-b876-4d01-8063-f7ad9f92e974"
+              ? navigateToOldTemplate()
+              : navigateToDocumentEditPage(event);
         }}>
         PDF page
       </MenuItem>

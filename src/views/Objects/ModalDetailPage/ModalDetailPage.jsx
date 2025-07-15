@@ -5,24 +5,31 @@ import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
 import menuService from "../../../services/menuService";
-import {store} from "../../../store";
-import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
-import {groupFieldActions} from "../../../store/groupField/groupField.slice";
-import {sortSections} from "../../../utils/sectionsOrderNumber";
-import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
+import { store } from "../../../store";
+import { detailDrawerActions } from "../../../store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "../../../store/groupField/groupField.slice";
+import { sortSections } from "../../../utils/sectionsOrderNumber";
+import { updateQueryWithoutRerender } from "../../../utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "../DrawerDetailPage/DrawerObjectsPage";
 import styles from "./style.module.scss";
+import { showAlert } from "../../../store/alert/alert.thunk";
 
 function ModalDetailPage({
   view,
   layout,
   menuItem,
   selectedRow,
+  modal = false,
   dateInfo = {},
   fullScreen = false,
   projectInfo,
@@ -33,7 +40,7 @@ function ModalDetailPage({
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
@@ -49,10 +56,17 @@ function ModalDetailPage({
     updateQueryWithoutRerender("p", null);
   };
 
-  const {navigateToForm} = useTabRouter();
+  const [searchParams] = useSearchParams();
+
+  const { navigateToForm } = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const {menuId, tableSlug: tableFromParams} = useParams();
+  const {
+    menuId: menuIdFromParams,
+    tableSlug: tableFromParams,
+    appId,
+  } = useParams();
+  const menuId = menuIdFromParams || searchParams.get("menuId");
   const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
@@ -60,16 +74,18 @@ function ModalDetailPage({
 
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [data, setData] = useState({});
 
   const tableSlug =
     tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
+
   const [selectedView, setSelectedView] = useState(null);
 
   const query = new URLSearchParams(window.location.search);
-  const viewId = query.get("v");
-  const itemId = query.get("p");
+  const viewId = query.get("v") ?? view?.id;
+  const itemId = query.get("p") ?? selectedRow?.guid;
+
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
@@ -100,7 +116,10 @@ function ModalDetailPage({
     );
 
     try {
-      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
 
       const layout1 = {
         ...layout,
@@ -163,7 +182,8 @@ function ModalDetailPage({
   };
 
   const getFields = async () => {
-    const getLayout = layoutService.getLayout(tableSlug, menuId, {
+    const id = menuId ?? appId;
+    const getLayout = layoutService.getLayout(tableSlug, id, {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
@@ -247,7 +267,7 @@ function ModalDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
@@ -265,7 +285,7 @@ function ModalDetailPage({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         updateLayout();
         dispatch(detailDrawerActions.closeDrawer());
@@ -389,10 +409,12 @@ function ModalDetailPage({
     <Modal
       open={open}
       onClose={handleClose}
-      sx={{width: "1120px", margin: "0 auto"}}
-      className="child-position-center">
+      sx={{ width: "1120px", margin: "0 auto" }}
+      className="child-position-center"
+    >
       <Card
-        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}>
+        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}
+      >
         <Box zIndex={9}>
           <DrawerObjectsPage
             open={open}

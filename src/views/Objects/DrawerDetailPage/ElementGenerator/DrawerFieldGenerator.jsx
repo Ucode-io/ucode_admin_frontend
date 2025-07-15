@@ -12,11 +12,12 @@ import {
   IconButton,
   InputAdornment,
   Popover,
+  Skeleton,
   TextField,
   Tooltip,
 } from "@mui/material";
 import {Parser} from "hot-formula-parser";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {Suspense, lazy, useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
 import {useQuery} from "react-query";
@@ -34,7 +35,6 @@ import {numberWithSpaces} from "../../../../utils/formatNumbers";
 import listToOptions from "../../../../utils/listToOptions";
 import HFSwitch from "../../../table-redesign/hf-switch";
 import MultiLineInput from "./MultiLineInput";
-import RelationField from "./RelationField";
 import HFCheckbox from "./hf-checkboxField";
 import HFColorPicker from "./hf-colorPicker";
 import {
@@ -45,10 +45,12 @@ import {
 } from "./hf-datePickers";
 import HFIconPicker from "./hf-iconPicker";
 import HFInternationalPhone from "./hf-internationalPhone";
-import HFMoneyField from "./hf-moneyField";
 import HFMultipleAutocomplete from "./hf-multiselectField";
 import HFStatusField from "./hf-statusField";
 import {HFVideoUpload} from "./hf-videoUploadField";
+// import RelationField from "./RelationField";
+
+const RelationField = lazy(() => import("./RelationField"));
 
 function DrawerFieldGenerator({
   field,
@@ -117,16 +119,27 @@ function DrawerFieldGenerator({
     case "Many2Many":
     case "PERSON": {
       return (
-        <RelationField
-          disabled={isDisabled}
-          isRequired={isRequired}
-          field={field}
-          errors={errors}
-          control={control}
-          name={computedSlug}
-          setFormValue={setFormValue}
-          isMulti={field?.relation_type === "Many2Many"}
-        />
+        <Suspense
+          fallback={
+            <>
+              <Skeleton
+                sx={{
+                  height: "23px",
+                }}
+              />
+            </>
+          }>
+          <RelationField
+            disabled={isDisabled}
+            isRequired={isRequired}
+            field={field}
+            errors={errors}
+            control={control}
+            name={computedSlug}
+            setFormValue={setFormValue}
+            isMulti={field?.relation_type === "Many2Many"}
+          />
+        </Suspense>
       );
     }
     case "MULTI_LINE":
@@ -316,17 +329,6 @@ function DrawerFieldGenerator({
         />
       );
 
-    case "MONEY":
-      return (
-        <HFMoneyField
-          disabled={isDisabled}
-          drawerDetail={drawerDetail}
-          control={control}
-          name={computedSlug}
-          field={field}
-          watch={watch}
-        />
-      );
     case "MAP":
       return (
         <HFModalMap

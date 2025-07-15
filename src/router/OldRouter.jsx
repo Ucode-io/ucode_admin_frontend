@@ -76,6 +76,7 @@ import {ClientTypes} from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
+import DocView from "../views/Objects/DocView";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
@@ -386,6 +387,8 @@ const OldRouter = () => {
             path=":appId/object/:tableSlug/templates"
             element={<DocumentTemplates />}
           />
+
+          <Route path=":appId/object/:tableSlug/docs" element={<DocView />} />
 
           <Route
             path=":appId/object/:tableSlug/templates/create"

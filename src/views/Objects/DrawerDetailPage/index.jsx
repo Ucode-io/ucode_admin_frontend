@@ -1,21 +1,20 @@
-import {Box, Drawer, DrawerContent, Spinner} from "@chakra-ui/react";
+import {Box, Drawer, DrawerContent} from "@chakra-ui/react";
 import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import useTabRouter from "../../../hooks/useTabRouter";
+import {useLocation, useParams} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
 import menuService from "../../../services/menuService";
 import {store} from "../../../store";
 import {showAlert} from "../../../store/alert/alert.thunk";
+import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "./DrawerObjectsPage";
-import {groupFieldActions} from "../../../store/groupField/groupField.slice";
-import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 
 function DrawerDetailPage({
   view,
@@ -31,7 +30,7 @@ function DrawerDetailPage({
   setSelectedViewType = () => {},
   modal,
 }) {
-  const navigate = useNavigate();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const {state = {}} = useLocation();
   const menu = store.getState().menu;
@@ -48,21 +47,14 @@ function DrawerDetailPage({
     dispatch(detailDrawerActions.closeDrawer());
     updateQueryWithoutRerender("p", null);
   };
-
-  const {navigateToForm} = useTabRouter();
-  const [btnLoader, setBtnLoader] = useState(false);
-  const isUserId = useSelector((state) => state?.auth?.userId);
   const {menuId, tableSlug: tableFromParams} = useParams();
   const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
-
-  const [summary, setSummary] = useState([]);
-  const [selectedTab, setSelectTab] = useState();
-  const {i18n} = useTranslation();
   const [data, setData] = useState({});
 
+  const isUserId = useSelector((state) => state?.auth?.userId);
   const tableSlug =
     tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
   const [selectedView, setSelectedView] = useState(null);
@@ -135,7 +127,7 @@ function DrawerDetailPage({
       };
       setData(layout2);
       setSections(sortSections(sections));
-      setSummary(layout?.summary_fields ?? []);
+      // setSummary(layout?.summary_fields ?? []);
 
       const relations =
         layout?.tabs?.map((el) => ({
@@ -152,9 +144,7 @@ function DrawerDetailPage({
               : relation.table_from?.slug,
         }))
       );
-
       rootForm.reset(data?.response ?? {});
-      setSelectTab(relations[selectedTabIndex]);
 
       setLoader(false);
     } catch (error) {
@@ -223,27 +213,10 @@ function DrawerDetailPage({
       if (!menuId) {
         setLoader(false);
       }
-      setSelectTab(relations[selectedTabIndex]);
     } catch (error) {
       console.error(error);
     }
   };
-
-  const {
-    reset,
-    watch,
-    control,
-    handleSubmit,
-    formState: {errors},
-    setValue: setFormValue,
-    getValues,
-  } = useForm({
-    defaultValues: {
-      ...state,
-      ...dateInfo,
-      invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
-    },
-  });
 
   useEffect(() => {
     if (defaultValue) {
@@ -261,7 +234,6 @@ function DrawerDetailPage({
 
   const update = (data) => {
     delete data.invite;
-    setBtnLoader(true);
     constructorObjectService
       .update(tableSlug, {data})
       .then(() => {
@@ -273,13 +245,9 @@ function DrawerDetailPage({
         });
       })
       .catch((e) => console.log("ERROR: ", e))
-      .finally(() => {
-        setBtnLoader(false);
-      });
+      .finally(() => {});
   };
   const create = (data) => {
-    setBtnLoader(true);
-
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {
@@ -308,15 +276,12 @@ function DrawerDetailPage({
           );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
-          // navigate(-1);
           handleClose();
-          // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
         dispatch(showAlert("Successfully updated!", "success"));
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
-        setBtnLoader(false);
         rootForm.refetch();
       });
   };
@@ -354,7 +319,7 @@ function DrawerDetailPage({
     if (Boolean(itemId) && selectedView?.type === "SECTION") {
       getAllData();
     } else getFields();
-  }, [itemId, selectedView, viewsPath?.length]);
+  }, [itemId, selectedView]);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -373,7 +338,7 @@ function DrawerDetailPage({
     let newWidth = startWidth.current - deltaX;
 
     if (newWidth < 650) newWidth = 650;
-    if (newWidth > 1050) newWidth = 1050;
+    if (newWidth > 1150) newWidth = 1150;
 
     if (drawerRef.current) {
       drawerRef.current.style.width = `${newWidth}px`;
@@ -393,13 +358,11 @@ function DrawerDetailPage({
 
   useEffect(() => {
     if (drawerRef.current) {
-      drawerRef.current.style.width = `${drawerWidth ?? 650}px`;
+      drawerRef.current.style.width = `${drawerWidth ?? 1050}px`;
       drawerRef.current.closest(".chakra-portal").style.position = "relative";
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
-
-  const setViews = () => {};
 
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose}>
@@ -414,7 +377,7 @@ function DrawerDetailPage({
         style={{
           width: `${drawerWidth}px`,
           maxWidth: "90vw",
-          transition: "width 0.4s ease",
+          transition: "width 0.1s ease",
           overflow: "hidden",
           background: "#fff",
         }}>
@@ -437,7 +400,6 @@ function DrawerDetailPage({
             setFullScreen={setFullScreen}
             fullScreen={fullScreen}
             view={view}
-            setViews={setViews}
             rootForm={rootForm}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}

@@ -13,9 +13,10 @@ import layoutService from "../../services/layoutService";
 import {sortSections} from "../../utils/sectionsOrderNumber";
 import constructorObjectService from "../../services/constructorObjectService";
 import {showAlert} from "../../store/alert/alert.thunk";
-import {useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import constructorRelationService from "../../services/constructorRelationService";
+import useTabRouter from "../../hooks/useTabRouter";
 
 const sortViews = (views = []) => {
   const firstSection = views.find((v) => v.type === "SECTION");
@@ -24,10 +25,10 @@ const sortViews = (views = []) => {
 };
 
 function NewObjectsFormPage() {
-  const {state, pathname} = useLocation();
-  const {menuId} = useParams();
+  const { state, pathname } = useLocation();
+  const { menuId } = useParams();
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [data, setData] = useState();
   const queryClient = useQueryClient();
   const [loader, setLoader] = useState(false);
@@ -38,6 +39,8 @@ function NewObjectsFormPage() {
     (state) => state?.drawer?.drawerTabIndex
   );
   const [selectedViewType, setSelectedViewType] = useState(null);
+
+  const { navigateToForm } = useTabRouter();
 
   const projectInfo = state?.projectInfo;
   const selectedRow = state?.selectedRow;
@@ -53,11 +56,13 @@ function NewObjectsFormPage() {
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
+  const dispatch = useDispatch();
+
   const rootForm = useForm({
     ...state,
   });
 
-  const {data: menuViews} = useQuery(
+  const { data: menuViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
     {
@@ -84,7 +89,7 @@ function NewObjectsFormPage() {
     }
   );
 
-  const {data: relationViews} = useQuery(
+  const { data: relationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
@@ -151,7 +156,7 @@ function NewObjectsFormPage() {
     },
     {
       enabled: Boolean(lastPath?.relation_table_slug),
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -167,7 +172,7 @@ function NewObjectsFormPage() {
     }
   );
 
-  const {data: {relations} = {relations: []}} = useQuery(
+  const { data: { relations } = { relations: [] } } = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],
     () =>
       constructorRelationService.getList(
@@ -187,7 +192,7 @@ function NewObjectsFormPage() {
   );
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -226,7 +231,10 @@ function NewObjectsFormPage() {
     );
 
     try {
-      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
 
       const layout1 = {
         ...layout,
@@ -325,7 +333,7 @@ function NewObjectsFormPage() {
     delete data.invite;
     setLoading(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
@@ -342,7 +350,7 @@ function NewObjectsFormPage() {
     setLoading(true);
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         updateLayout();
         setOpen(false);
@@ -397,7 +405,7 @@ function NewObjectsFormPage() {
 
   useEffect(() => {
     if (pathname.includes("/login")) {
-      navigate("/", {replace: false});
+      navigate("/", { replace: false });
     }
   }, []);
 

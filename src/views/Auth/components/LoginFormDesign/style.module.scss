@@ -1,4 +1,5 @@
 .form {
+  height: 100%;
   // margin-top: 24px;
 
   .label {
@@ -16,6 +17,8 @@
 }
 
 .formArea {
+  height: 100%;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: 15px;

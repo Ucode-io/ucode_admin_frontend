@@ -144,7 +144,6 @@ function DrawerDetailPage({
               : relation.table_from?.slug,
         }))
       );
-
       rootForm.reset(data?.response ?? {});
 
       setLoader(false);

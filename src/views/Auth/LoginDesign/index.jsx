@@ -1,6 +1,7 @@
 import styles from "./styles.module.scss";
 import {useState} from "react";
 import LoginFormDesign from "../components/LoginFormDesign";
+import clsx from "clsx";
 
 const LoginDesign = () => {
   const [index, setIndex] = useState(0);

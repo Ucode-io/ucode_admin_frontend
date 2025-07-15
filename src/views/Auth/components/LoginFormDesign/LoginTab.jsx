@@ -61,10 +61,11 @@ function LoginTab({
                     alignContent: "center",
                     alignItems: "center",
                   }}
-                  onClick={() => setShowPassword(!showPassword)}>
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? (
                     <VisibilityOffIcon
-                      style={{width: "19px", height: "19px"}}
+                      style={{ width: "19px", height: "19px" }}
                     />
                   ) : (
                     <img src="/img/eye.svg" height={"23px"} alt="" />
@@ -82,14 +83,16 @@ function LoginTab({
           alignItems: "center",
           justifyContent: "flex-end",
           marginTop: "16px",
-        }}>
+        }}
+      >
         <Button
-          sx={{fontSize: "14px", fontWeight: 600}}
+          sx={{ fontSize: "14px", fontWeight: 600 }}
           variant="text"
           type="button"
           onClick={() => {
             setFormType("FORGOT_PASSWORD");
-          }}>
+          }}
+        >
           {t("forgot.password")}?
         </Button>
       </Box>
@@ -97,11 +100,11 @@ function LoginTab({
       <PrimaryButton
         data-cy="enter-button"
         size="large"
-        style={{width: "100%", marginTop: "16px", borderRadius: "8px"}}
-        loader={loading}>
+        style={{ width: "100%", marginTop: "16px", borderRadius: "8px" }}
+        loader={loading}
+      >
         {t("enter")}
       </PrimaryButton>
-
       <ExternalAuth getCompany={getCompany} setFormType={setFormType} />
     </>
   );

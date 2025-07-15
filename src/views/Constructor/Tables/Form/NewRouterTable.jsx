@@ -337,9 +337,9 @@ const NewRouterTable = () => {
   }, []);
 
   useEffect(() => {
-    // if (!!id) setLoader(false);
-    // else
-    getData();
+    if (Boolean(tableSlug)) {
+      getData();
+    }
   }, []);
 
   const isWarning =

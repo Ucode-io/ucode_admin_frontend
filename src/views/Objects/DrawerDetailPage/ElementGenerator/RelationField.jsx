@@ -341,9 +341,6 @@ const AutoCompleteElement = ({
       field?.id?.split("#")?.[0] === "client_type"
     ) {
       setValue(value?.guid ?? value?.guid);
-      if (tableSlug === "models") {
-        console.log("first2");
-      }
       setLocalValue(value);
     }
   };
@@ -355,10 +352,6 @@ const AutoCompleteElement = ({
 
   const computedValueMulti = useMemo(() => {
     if (!value) return [];
-
-    // if (tableSlug === "models") {
-    //   console.log({ optionsFromLocale: optionsFromLocale.options, allOptions });
-    // }
 
     if (Array.isArray(value)) {
       return value
@@ -420,11 +413,6 @@ const AutoCompleteElement = ({
   }, [value]);
 
   useEffect(() => {
-    console.log({ computedValueMulti, isMulti });
-    if (tableSlug === "models") {
-      console.log("first3");
-      console.log({ computedValueMulti, isMulti });
-    }
     if (computedValueMulti?.length && isMulti) {
       setLocalValue(computedValueMulti);
     }
@@ -480,9 +468,6 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (localValue?.length === 0 && computedValue?.guid) {
       setLocalValue([computedValue]);
-      if (tableSlug === "models") {
-        console.log("first1");
-      }
       setValue(computedValue?.guid);
     }
   }, [state?.id, computedValue]);
@@ -491,10 +476,6 @@ const AutoCompleteElement = ({
     setLocalValue((prev) => prev.filter((el) => el.guid !== row.guid));
     setValue((prev) => prev.filter((el) => el !== row.guid));
   };
-
-  if (tableSlug === "models") {
-    console.log({ localValue, value });
-  }
 
   return (
     <Tooltip

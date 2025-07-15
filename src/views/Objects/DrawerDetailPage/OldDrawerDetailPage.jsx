@@ -51,10 +51,11 @@ function OldDrawerDetailPage({
   navigateToEditPage = () => {},
   setSelectedViewType = () => {},
   modal,
+  view,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
@@ -62,11 +63,13 @@ function OldDrawerDetailPage({
   const handleClose = () => {
     dispatch(detailDrawerActions.closeDrawer());
   };
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
 
-  const {id: idFromParam, tableSlug, appId} = useParams();
+  const { id: idFromParam, tableSlug: tableSlugParams, appId } = useParams();
+
+  const tableSlug = tableSlugParams || view?.table_slug;
 
   const id = useMemo(() => {
     return idFromParam ?? selectedRow?.guid;
@@ -78,7 +81,7 @@ function OldDrawerDetailPage({
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState({});
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");

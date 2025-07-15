@@ -600,6 +600,7 @@ export const NewUiViewsWithGroups = ({
     views,
     handleClose,
     refetchViews,
+    handleClosePop,
   });
 
   return (
@@ -997,7 +998,7 @@ export const NewUiViewsWithGroups = ({
                     bg="#175CD3"
                     // disabled={loading}
                     onClick={() => {
-                      createView(selectedViewTab);
+                      createView();
                       closeViewSettings();
                       // refetchViews();
                       // refetchRelationViews();

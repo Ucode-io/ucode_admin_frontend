@@ -12,6 +12,7 @@ import RectangleIconButton from "../Buttons/RectangleIconButton";
 import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const style = {
   position: "absolute",
@@ -116,15 +117,18 @@ const ImageUpload = ({
   return (
     <div
       className={`Gallery ${className}`}
-      style={{cursor: disabled ? "not-allowed" : "pointer"}}>
+      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    >
       {value && (
         <>
           <div
-            style={{padding: drawerDetail ? "0 10px" : 0}}
+            style={{ padding: drawerDetail ? "0 10px" : 0 }}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}
-            onClick={handleClick}>
+            // onClick={handleClick}>
+            onClick={() => handleOpenImg()}
+          >
             <div className="img">
               <img
                 src={value}
@@ -141,7 +145,8 @@ const ImageUpload = ({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}>
+              }}
+            >
               {value.split("#")[0].split("_")[1] ?? ""}
             </Typography>
           </div>
@@ -154,22 +159,27 @@ const ImageUpload = ({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}>
+                backgroundColor: "#212B36",
+              }}
+            >
               <Button
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
-                onClick={() => handleOpenImg()}>
+                onClick={() => handleOpenImg()}
+              >
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
@@ -179,20 +189,26 @@ const ImageUpload = ({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
-                onClick={() => imageClickHandler()}>
+                onClick={() => imageClickHandler()}
+              >
                 <DownloadIcon />
                 Dowload
               </Button>
-              <RectangleIconButton
-                color="error"
-                className="removeImg"
-                onClick={closeButtonHandler}>
-                <DeleteIcon
-                  style={{width: "17px", height: "17px", marginRight: "12px"}}
-                />
+              <Button
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  justifyContent: "flex-start",
+                  color: "#fff",
+                }}
+                onClick={closeButtonHandler}
+              >
+                <DeleteIcon style={{ width: "17px", height: "17px" }} />
                 Remove Image
-              </RectangleIconButton>
+              </Button>
 
               <Button
                 sx={{
@@ -200,12 +216,14 @@ const ImageUpload = ({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
                 disabled={disabled}
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}>
+                }}
+              >
                 <ChangeCircleIcon />
                 Change Image
               </Button>
@@ -234,10 +252,11 @@ const ImageUpload = ({
                   transform: `rotate(${degree}deg)`,
                 }}
                 aria-describedby={id}
-                onClick={handleClick}>
+                onClick={handleClick}
+              >
                 <img
                   src={value}
-                  style={{transform: `scale(${imgScale})`}}
+                  style={{ transform: `scale(${imgScale})` }}
                   className="uploadedImage"
                   alt=""
                 />
@@ -245,7 +264,8 @@ const ImageUpload = ({
                   sx={{
                     fontSize: "10px",
                     color: "#747474",
-                  }}>
+                  }}
+                >
                   {value?.split?.("_")?.[1] ?? ""}
                 </Typography>
               </Box>
@@ -256,8 +276,9 @@ const ImageUpload = ({
                   right: "-300px",
                   top: "-50px",
                   color: "white",
-                }}>
-                <ClearIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ClearIcon style={{ width: "30px", height: "30px" }} />
               </Button>
 
               <Button
@@ -266,11 +287,12 @@ const ImageUpload = ({
                 }}
                 sx={{
                   position: "absolute",
-                  right: "-150px",
-                  bottom: "-50px",
+                  right: "-90px",
+                  bottom: "-30px",
                   color: "#eee",
-                }}>
-                <ZoomInIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ZoomInIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={() => {
@@ -278,22 +300,38 @@ const ImageUpload = ({
                 }}
                 sx={{
                   position: "absolute",
-                  right: "-220px",
-                  bottom: "-50px",
+                  right: "-150px",
+                  bottom: "-30px",
                   color: "#eee",
-                }}>
-                <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ZoomOutIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={rotateImg}
                 sx={{
                   position: "absolute",
-                  right: "-300px",
-                  bottom: "-50px",
+                  right: "-215px",
+                  bottom: "-30px",
                   color: "#eee",
-                }}>
+                }}
+              >
                 <Rotate90DegreesCcwIcon
-                  style={{width: "30px", height: "30px"}}
+                  style={{ width: "30px", height: "30px" }}
+                />
+              </Button>
+              <Button
+                onClick={handleClick}
+                sx={{
+                  position: "absolute",
+                  right: "-300px",
+                  bottom: "-30px",
+                  color: "#eee",
+                }}
+              >
+                <MoreHorizIcon
+                  htmlColor="#fff"
+                  style={{ width: "30px", height: "30px" }}
                 />
               </Button>
             </Box>
@@ -314,7 +352,8 @@ const ImageUpload = ({
               minWidth: 40,
               width: 40,
               height: 27,
-            }}>
+            }}
+          >
             <input
               id="img_upload"
               type="file"
@@ -329,7 +368,7 @@ const ImageUpload = ({
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{width: 22, height: 22}}
+              style={{ width: 22, height: 22 }}
             />
           </Button>
         )}

@@ -1,41 +1,19 @@
-import "./style.scss";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {Container} from "react-smooth-dnd";
-import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
-import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
-import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
-import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
-import TemplateModal from "../../layouts/MainLayout/TemplateModal";
-import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import menuService, {
-  useMenuGetByIdQuery,
-  useMenuListQuery,
-} from "../../services/menuService";
-import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
-import menuSettingsService from "../../services/menuSettingsService";
+import InviteModal from "@/components/InviteModal/InviteModal";
 import {
-  useProjectGetByIdQuery,
-  useProjectListQuery,
-} from "../../services/projectService";
-import {store} from "../../store";
-import {mainActions} from "../../store/main/main.slice";
-import {applyDrag} from "../../utils/applyDrag";
-import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
-import AppSidebar from "./AppSidebarComponent";
-import FolderModal from "./FolderModalComponent";
-import ButtonsMenu from "./MenuButtons";
-import SubMenu from "./SubMenu";
-import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import {useNavigate, useParams} from "react-router-dom";
-import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
-import {useChatwoot} from "../ProfilePanel/Chatwoot";
-import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
-import GTranslateIcon from "@mui/icons-material/GTranslate";
+  SidebarActionTooltip,
+  SidebarAppTooltip,
+} from "@/components/LayoutSidebar/sidebar-app-tooltip";
+import authService from "@/services/auth/authService";
+import {useCompanyListQuery} from "@/services/companyService";
+import {useEnvironmentListQuery} from "@/services/environmentService";
+import {authActions} from "@/store/auth/auth.slice";
+import {companyActions} from "@/store/company/company.slice";
+import {
+  AccordionButton,
+  AccordionIcon,
+  SearchIcon,
+  SettingsIcon,
+} from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionItem,
@@ -52,39 +30,52 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import {
-  SidebarActionTooltip,
-  SidebarAppTooltip,
-} from "@/components/LayoutSidebar/sidebar-app-tooltip";
-import InviteModal from "@/components/InviteModal/InviteModal";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {useCompanyListQuery} from "@/services/companyService";
-import {
-  AccordionButton,
-  AccordionIcon,
-  SearchIcon,
-  SettingsIcon,
-} from "@chakra-ui/icons";
-import {useEnvironmentListQuery} from "@/services/environmentService";
-import {companyActions} from "@/store/company/company.slice";
-import authService from "@/services/auth/authService";
-import {authActions} from "@/store/auth/auth.slice";
-import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
-import {useTranslation} from "react-i18next";
-import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {Modal, Skeleton} from "@mui/material";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {clearDB, getAllFromDB} from "../../utils/languageDB";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {GreyLoader} from "../Loaders/GreyLoader";
+import {Modal} from "@mui/material";
 import {differenceInCalendarDays, parseISO} from "date-fns";
-import DocsChatwootModal from "./DocsChatwootModal";
-import {menuAccordionActions} from "../../store/menus/menus.slice";
-import UserIcon from "@/assets/icons/profile.svg";
-import {useRoleListQuery} from "../../services/roleServiceV2";
-import {useClientTypesQuery} from "../../views/client-types/utils";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import InlineSVG from "react-inlinesvg";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Container} from "react-smooth-dnd";
 import useSearchParams from "../../hooks/useSearchParams";
+import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
+import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
+import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
+import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
+import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+import TemplateModal from "../../layouts/MainLayout/TemplateModal";
+import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
+import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
+import menuSettingsService from "../../services/menuSettingsService";
+import {
+  useProjectGetByIdQuery,
+  useProjectListQuery,
+} from "../../services/projectService";
+import {store} from "../../store";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {mainActions} from "../../store/main/main.slice";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
+import {applyDrag} from "../../utils/applyDrag";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {getAllFromDB} from "../../utils/languageDB";
+import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
+import {useChatwoot} from "../ProfilePanel/Chatwoot";
+import AppSidebar from "./AppSidebarComponent";
+import DocsChatwootModal from "./DocsChatwootModal";
+import FolderModal from "./FolderModalComponent";
+import ButtonsMenu from "./MenuButtons";
+import "./style.scss";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},

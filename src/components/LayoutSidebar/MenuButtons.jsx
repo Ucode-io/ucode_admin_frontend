@@ -31,14 +31,16 @@ const ButtonsMenu = ({
   setWebsiteModalLink,
   menuLanguages,
 }) => {
-  console.log("menuIdmenuIdmenuIdmenuId", menuId, element);
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
 
-  const menuID = element?.type === "FOLDER" ? element?.id : menuId;
+  const menuID =
+    element?.type === "FOLDER"
+      ? element?.id
+      : menuId || "c57eedc3-a954-4262-a0af-376c65b5a284";
 
   return (
     <Menu

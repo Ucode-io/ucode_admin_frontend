@@ -62,8 +62,6 @@ const CellElementGeneratorForTableView = ({
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const {i18n} = useTranslation();
   let relationTableSlug = "";
-  // console.log({ startDate: watch("multi.10.start_date") });
-  // console.log({ startDate: watch("multi.10.end_date") });
 
   if (field?.id.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];

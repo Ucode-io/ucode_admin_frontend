@@ -55,16 +55,22 @@ function DrawerDetailPage({
   const [data, setData] = useState({});
 
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const tableSlug =
-    tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
+
   const [selectedView, setSelectedView] = useState(null);
 
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v");
   const itemId = query.get("p");
+  const fieldSlug = query.get("field_slug");
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
+
+  const tableSlug =
+    tableFromParams ||
+    fieldSlug ||
+    selectedV?.relation_table_slug ||
+    view?.table_slug;
 
   const [drawerWidth, setDrawerWidth] = useState(() => {
     const savedWidth = localStorage.getItem("drawerWidth");

@@ -22,7 +22,9 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
+import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -151,6 +153,7 @@ const AutoCompleteElement = ({
   row,
   newUi,
 }) => {
+  const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -364,6 +367,8 @@ const AutoCompleteElement = ({
     setLocalValue(row?.[`${field?.slug}_data`]);
   }, [row]);
 
+  const dispatch = useDispatch();
+
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
@@ -385,7 +390,13 @@ const AutoCompleteElement = ({
             }}
             onClick={(e) => {
               e.stopPropagation();
-              navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+              if (isNewRouter) {
+                dispatch(detailDrawerActions.openDrawer());
+                updateQueryWithoutRerender("p", props?.data?.guid);
+                updateQueryWithoutRerender("field_slug", field?.table_slug);
+              } else {
+                navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+              }
             }}
           >
             <LaunchIcon

@@ -143,7 +143,7 @@ const FieldSettings = ({
   const {mutate: updateOldField, isLoading: updateLoading} =
     useFieldUpdateMutation({
       onSuccess: (res) => {
-        updateFieldInform(field);
+        // updateFieldInform(field);
         closeSettingsBlock(null);
         getRelationFields();
       },

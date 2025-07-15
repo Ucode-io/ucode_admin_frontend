@@ -303,7 +303,11 @@ export const NewUiViewsWithGroups = ({
       });
     } else {
       const url = `/settings/constructor/apps/${menuId}/objects/${menuItem?.table_id}/${menuItem?.data?.table?.slug}?menuId=${menuItem?.id}`;
-      navigate(url);
+      navigate(url, {
+        state: {
+          tableInfo: tableInfo,
+        },
+      });
     }
   };
 

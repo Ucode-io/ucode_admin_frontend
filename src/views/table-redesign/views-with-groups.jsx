@@ -114,6 +114,7 @@ import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import {ViewProvider} from "../../providers/ViewProvider";
 import ViewTypeListNew from "../Objects/components/ViewTypeList/ViewTypeListNew";
+import { TimeTypePopup } from "./components/TimeTypePopup/TimeTypePopup";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -588,11 +589,12 @@ export const NewUiViewsWithGroups = ({
     selectedViewTab,
     closeViewSettings,
     loading,
+    computedColumns,
+    viewErrors,
   } = useViewWithGroupsProps({
     relationView,
     tableSlug,
     viewsList,
-    control,
     fieldsMap,
     fieldsMapRel,
     i18n,
@@ -988,7 +990,15 @@ export const NewUiViewsWithGroups = ({
                   //   "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
                 }}
               >
-                {getViewSettings(selectedViewTab, control)}
+                {/* {(selectedViewTab === VIEW_TYPES_MAP.TIMELINE ||
+                  selectedViewTab === VIEW_TYPES_MAP.CALENDAR) && (
+                  <TimeTypePopup
+                    computedColumns={computedColumns}
+                    control={control}
+                    viewType={selectedViewTab}
+                  />
+                )} */}
+                {getViewSettings(selectedViewTab)}
                 <Box marginTop={"10px"}>
                   <Button
                     w="100%"
@@ -996,14 +1006,9 @@ export const NewUiViewsWithGroups = ({
                     borderRadius="8px"
                     color="#fff"
                     bg="#175CD3"
+                    type="button"
                     // disabled={loading}
-                    onClick={() => {
-                      createView();
-                      closeViewSettings();
-                      // refetchViews();
-                      // refetchRelationViews();
-                      // refetchTableRelations();
-                    }}
+                    onClick={() => createView()}
                   >
                     Save
                   </Button>

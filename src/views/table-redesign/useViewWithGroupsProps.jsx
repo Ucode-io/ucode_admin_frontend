@@ -12,6 +12,7 @@ import { InputAdornment, TextField } from "@mui/material"
 import LanguageIcon from "@mui/icons-material/Language";
 import { groupFieldActions } from "../../store/groupField/groupField.slice"
 import constructorViewService from "../../services/constructorViewService"
+import { showAlert } from "../../store/alert/alert.thunk";
 
 export const useViewWithGroupsProps = ({
   relationView,
@@ -97,11 +98,19 @@ export const useViewWithGroupsProps = ({
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
 
-  const { control, watch, setError, clearErrors, setValue } = useForm({});
+  const {
+    control,
+    watch,
+    setError,
+    clearErrors,
+    setValue,
+    formState: { errors: viewErrors },
+  } = useForm({});
   const [error] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const createView = (type) => {
+    console.log({ type, selectedViewTab });
     if (
       (type || selectedViewTab) === VIEW_TYPES_MAP.BOARD &&
       watch("group_fields").length === 0
@@ -109,16 +118,16 @@ export const useViewWithGroupsProps = ({
       setError("group_fields", { message: "Please select group" });
       return;
     }
-    // if (
-    //   isWithTimeView(type || selectedViewTab) &&
-    //   (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
-    // ) {
-    //   setError("calendar_from_slug", { message: "Please select date range" });
-    //   setError("calendar_to_slug", { message: "Please select date range" });
-    //   return;
-    // } else {
-    //   clearErrors(["calendar_from_slug", "calendar_to_slug"]);
-    // }
+    if (
+      isWithTimeView(type || selectedViewTab) &&
+      (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
+    ) {
+      setError("calendar_from_slug", { message: "Please select date range" });
+      setError("calendar_to_slug", { message: "Please select date range" });
+      return;
+    } else {
+      clearErrors(["calendar_from_slug", "calendar_to_slug"]);
+    }
 
     if ((type || selectedViewTab) === VIEW_TYPES_MAP.WEBSITE) {
       if (watch("web_link")) {
@@ -135,11 +144,13 @@ export const useViewWithGroupsProps = ({
           })
           .then(() => {
             dispatch(groupFieldActions.clearGroupBySlug());
+            dispatch(showAlert("Successful created", "success"));
             queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
             handleClose();
             handleClosePop();
+            closeViewSettings();
           });
       }
     } else {
@@ -160,6 +171,7 @@ export const useViewWithGroupsProps = ({
         })
         .then((res) => {
           dispatch(groupFieldActions.clearGroupBySlug());
+          dispatch(showAlert("Successful created", "success"));
           if (relationView && viewsList?.length > 1) {
             return queryClient.refetchQueries([
               "GET_TABLE_VIEWS_LIST_RELATION",
@@ -172,6 +184,7 @@ export const useViewWithGroupsProps = ({
           refetchViews();
           handleClose();
           handleClosePop();
+          closeViewSettings();
         });
     }
   };
@@ -244,7 +257,7 @@ export const useViewWithGroupsProps = ({
     })
   );
 
-  const getViewSettings = (viewType, control) => {
+  const getViewSettings = (viewType) => {
     switch (viewType) {
       case VIEW_TYPES_MAP.CALENDAR:
       case VIEW_TYPES_MAP.TIMELINE: {
@@ -342,5 +355,7 @@ export const useViewWithGroupsProps = ({
     closeViewSettings,
     loading,
     control,
+    computedColumns,
+    viewErrors,
   };
 };

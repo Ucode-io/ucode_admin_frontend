@@ -18,7 +18,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {groupFieldActions} from "../../../../store/groupField/groupField.slice";
 import {listToMapWithoutRel} from "../../../../utils/listToMap";
 import menuService from "../../../../services/menuService";
-import { VIEW_TYPES_MAP } from "../../../../utils/constants/viewTypes";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -30,7 +29,7 @@ const viewIcons = {
   TREE: "tree.svg",
 };
 
-export default function ViewTypeList({
+export default function ViewTypeListNew({
   view,
   tableRelations = [],
   computedViewTypes,
@@ -42,8 +41,8 @@ export default function ViewTypeList({
   const [selectedViewTab, setSelectedViewTab] = useState("TABLE");
   const [btnLoader, setBtnLoader] = useState(false);
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
-  const { menuId } = useParams();
+  const {i18n} = useTranslation();
+  const {menuId} = useParams();
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const viewsPath = useSelector((state) => state?.groupField?.viewsPath);
   const lastPath = viewsPath?.[viewsPath?.length - 1];
@@ -52,7 +51,7 @@ export default function ViewTypeList({
   );
 
   const queryClient = useQueryClient();
-  const { control, watch, setError, clearErrors, setValue } = useForm({});
+  const {control, watch, setError, clearErrors, setValue} = useForm({});
   const [error] = useState(false);
 
   const tableSlug = Boolean(relationView)
@@ -167,7 +166,7 @@ export default function ViewTypeList({
   }, [menuId, selectedViewTab, tableSlug, views]);
 
   const {
-    data: { fieldsMapRel } = {
+    data: {fieldsMapRel} = {
       fieldsMapRel: {},
     },
     isLoading,
@@ -177,7 +176,7 @@ export default function ViewTypeList({
       menuService.getFieldsListMenu(menuId, lastPath?.id, groupByTableSlug, {}),
     {
       enabled: Boolean(groupByTableSlug),
-      select: ({ data }) => ({
+      select: ({data}) => ({
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
       }),
     }
@@ -190,21 +189,21 @@ export default function ViewTypeList({
 
   const createView = () => {
     if (selectedViewTab === "BOARD" && watch("group_fields").length === 0) {
-      setError("group_fields", { message: "Please select group" });
+      setError("group_fields", {message: "Please select group"});
       return;
     }
     if (
       isWithTimeView &&
       (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
     ) {
-      setError("calendar_from_slug", { message: "Please select date range" });
-      setError("calendar_to_slug", { message: "Please select date range" });
+      setError("calendar_from_slug", {message: "Please select date range"});
+      setError("calendar_to_slug", {message: "Please select date range"});
       return;
     } else {
       clearErrors(["calendar_from_slug", "calendar_to_slug"]);
     }
 
-    if (selectedViewTab === VIEW_TYPES_MAP.WEBSITE) {
+    if (selectedViewTab === "WEBSITE") {
       if (watch("web_link")) {
         setBtnLoader(true);
         constructorViewService
@@ -261,8 +260,8 @@ export default function ViewTypeList({
     }
   };
 
-  const { data } = useQuery(
-    ["GET_TABLE_INFO", { viewsList }],
+  const {data} = useQuery(
+    ["GET_TABLE_INFO", {viewsList}],
     () => {
       return constructorTableService.getTableInfo(table_slug, {
         data: {},
@@ -274,7 +273,7 @@ export default function ViewTypeList({
       select: (res) => {
         const fields = res?.data?.fields ?? [];
 
-        return { fields };
+        return {fields};
       },
     }
   );
@@ -345,8 +344,7 @@ export default function ViewTypeList({
                   "MuiButton-startIcon": {
                     marginLeft: 0,
                   },
-                }}
-              >
+                }}>
                 {type.label}
               </Button>
             ))}
@@ -363,7 +361,7 @@ export default function ViewTypeList({
                 <Controller
                   control={control}
                   name="web_link"
-                  render={({ field: { onChange, value } }) => {
+                  render={({field: {onChange, value}}) => {
                     return (
                       <TextField
                         id="website_link"
@@ -373,7 +371,7 @@ export default function ViewTypeList({
                         value={value}
                         placeholder="website link..."
                         className="webLinkInput"
-                        sx={{ padding: 0 }}
+                        sx={{padding: 0}}
                         fullWidth
                         name="web_link"
                         InputProps={{
@@ -395,13 +393,12 @@ export default function ViewTypeList({
                     label={
                       selectedViewTab === "CALENDAR" ? "Date from" : "Time from"
                     }
-                    required
-                  >
+                    required>
                     <HFSelect
                       options={computedColumns}
                       control={control}
                       name="calendar_from_slug"
-                      MenuProps={{ disablePortal: true }}
+                      MenuProps={{disablePortal: true}}
                       required={true}
                     />
                   </FRow>
@@ -409,13 +406,12 @@ export default function ViewTypeList({
                     label={
                       selectedViewTab === "CALENDAR" ? "Date to" : "Time to"
                     }
-                    required
-                  >
+                    required>
                     <HFSelect
                       options={computedColumns}
                       control={control}
                       name="calendar_to_slug"
-                      MenuProps={{ disablePortal: true }}
+                      MenuProps={{disablePortal: true}}
                       required={true}
                     />
                   </FRow>
@@ -428,7 +424,7 @@ export default function ViewTypeList({
                       options={computedRelFields}
                       control={control}
                       name="table_slug"
-                      MenuProps={{ disablePortal: true }}
+                      MenuProps={{disablePortal: true}}
                       required={true}
                       onChange={(e) => {
                         dispatch(groupFieldActions.addGroupBySlug(e));
@@ -447,7 +443,7 @@ export default function ViewTypeList({
                           options={computedColumnsForTabGroupOptions}
                           control={control}
                           name="group_fields"
-                          MenuProps={{ disablePortal: true }}
+                          MenuProps={{disablePortal: true}}
                           required={true}
                         />
                       </FRow>
@@ -458,7 +454,7 @@ export default function ViewTypeList({
                         options={computedColumnsForTabGroupOptions}
                         control={control}
                         name="group_fields"
-                        MenuProps={{ disablePortal: true }}
+                        MenuProps={{disablePortal: true}}
                         required={true}
                       />
                     </FRow>
@@ -476,8 +472,7 @@ export default function ViewTypeList({
                   // setSelectedView("NEW");
                   // setTypeNewView(selectedViewTab);
                   createView();
-                }}
-              >
+                }}>
                 Create View {selectedViewTab}
               </LoadingButton>
             </div>

@@ -62,7 +62,7 @@ function NewObjectsFormPage() {
     ...state,
   });
 
-  const { data: menuViews } = useQuery(
+  const { data: menuViews, refetch: refetchMenuViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
     {
@@ -89,7 +89,7 @@ function NewObjectsFormPage() {
     }
   );
 
-  const { data: relationViews } = useQuery(
+  const { data: relationViews, refetch: refetchRelationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
@@ -441,6 +441,9 @@ function NewObjectsFormPage() {
                   selectedTab={layout?.tabs?.[0]}
                   data={data}
                   selectedRow={selectedRow}
+                  refetchViews={
+                    !isRelationView ? refetchMenuViews : refetchRelationViews
+                  }
                 />
               </TabPanel>
             );

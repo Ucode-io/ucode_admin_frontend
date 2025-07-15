@@ -186,7 +186,7 @@ const AutoResizeTextarea = ({
         return (
           <textarea
             ref={textareaRef}
-            value={value}
+            value={value || fieldValue}
             onChange={onChange}
             rows={1}
             style={{

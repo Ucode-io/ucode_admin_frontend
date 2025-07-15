@@ -285,7 +285,16 @@ export const useBoardViewProps = ({
         ?.map((el) => el?.slug),
       "guid",
       "board_order",
-    ] ?? ["guid", "board_order"];
+    ];
+
+    if (!fields.includes(groupField?.slug)) {
+      fields.push(groupField?.slug);
+    }
+
+    if (subGroupFieldSlug && !fields.includes(subGroupFieldSlug)) {
+      fields.push(subGroupFieldSlug);
+    }
+
     boardMutation.mutate({
       data: {
         group_by: {

@@ -12,6 +12,7 @@ export const ViewCreate = ({
   views,
   refetchViews,
   handleSelectViewType,
+  loading,
 }) => {
   const { computedViewTypes, viewIcons, selectedViewTab } = useViewCreateProps({
     tableRelations,

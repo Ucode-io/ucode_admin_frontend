@@ -23,13 +23,14 @@ export const useViewWithGroupsProps = ({
   menuId,
   views,
   handleClose,
+  refetchViews,
 }) => {
-
-  const viewsWithSettings = [VIEW_TYPES_MAP.CALENDAR,
+  const viewsWithSettings = [
+    VIEW_TYPES_MAP.CALENDAR,
     VIEW_TYPES_MAP.TIMELINE,
     VIEW_TYPES_MAP.BOARD,
-    VIEW_TYPES_MAP.WEBSITE]
-
+    VIEW_TYPES_MAP.WEBSITE,
+  ];
 
   const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
   const openViewSettings = (event) => {
@@ -40,9 +41,10 @@ export const useViewWithGroupsProps = ({
   };
 
   const [selectedViewTab, setSelectedViewTab] = useState(VIEW_TYPES_MAP.TABLE);
-  const dispatch = useDispatch()
-  const queryClient= useQueryClient()
-  const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const isWithTimeView = (type) =>
+    ["TIMELINE", "CALENDAR"].includes(type || selectedViewTab);
   const newViewJSON = useMemo(() => {
     const menuID = viewsList?.length > 1 ? undefined : menuId;
     return {
@@ -67,7 +69,7 @@ export const useViewWithGroupsProps = ({
         headers: [],
         cookies: [],
       },
-      table_slug: "",
+      table_slug: tableSlug,
       updated_fields: [],
       multiple_insert: false,
       multiple_insert_field: "",
@@ -94,28 +96,34 @@ export const useViewWithGroupsProps = ({
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
 
-  const {control, watch, setError, clearErrors, setValue} = useForm({});
+  const { control, watch, setError, clearErrors, setValue } = useForm({});
   const [error] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const createView = (type) => {
-    if ((type || selectedViewTab) === "BOARD" && watch("group_fields").length === 0) {
-      setError("group_fields", {message: "Please select group"});
-      return;
-    }
-    if (
-      isWithTimeView &&
-      (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
-    ) {
-      setError("calendar_from_slug", {message: "Please select date range"});
-      setError("calendar_to_slug", {message: "Please select date range"});
-      return;
-    } else {
-      clearErrors(["calendar_from_slug", "calendar_to_slug"]);
-    }
+    setLoading(true);
 
-    if ((type || selectedViewTab) === "WEBSITE") {
+    if (
+      (type || selectedViewTab) === VIEW_TYPES_MAP.BOARD &&
+      watch("group_fields").length === 0
+    ) {
+      setError("group_fields", { message: "Please select group" });
+      return;
+    }
+    // if (
+    //   isWithTimeView(type || selectedViewTab) &&
+    //   (!watch("calendar_from_slug") || !watch("calendar_to_slug"))
+    // ) {
+    //   setError("calendar_from_slug", { message: "Please select date range" });
+    //   setError("calendar_to_slug", { message: "Please select date range" });
+    //   return;
+    // } else {
+    //   clearErrors(["calendar_from_slug", "calendar_to_slug"]);
+    // }
+
+    if ((type || selectedViewTab) === VIEW_TYPES_MAP.WEBSITE) {
       if (watch("web_link")) {
-        // setBtnLoader(true);
+        setLoading(true);
         constructorViewService
           .create(tableSlug, {
             ...newViewJSON,
@@ -131,14 +139,11 @@ export const useViewWithGroupsProps = ({
             queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
-            // setBtnLoader(false);
+            setLoading(false);
             handleClose();
           });
-      } else {
-        setError(true);
       }
     } else {
-      // setBtnLoader(true);
       newViewJSON.attributes = {
         ...newViewJSON?.attributes,
         calendar_from_slug: watch("calendar_from_slug") || null,
@@ -150,9 +155,7 @@ export const useViewWithGroupsProps = ({
       constructorViewService
         .create(tableSlug, {
           ...newViewJSON,
-          table_slug:
-            viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
-            viewsList?.[viewsList?.length - 1]?.table_slug,
+          table_slug: table_slug,
           relation_table_slug: watch("table_slug"),
         })
         .then((res) => {
@@ -166,7 +169,8 @@ export const useViewWithGroupsProps = ({
           } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })
         .finally(() => {
-          // setBtnLoader(false);
+          setLoading(false);
+          refetchViews();
           handleClose();
         });
     }
@@ -174,10 +178,11 @@ export const useViewWithGroupsProps = ({
 
   const handleSelectViewType = (e, type) => {
     setSelectedViewTab(type);
-    if(viewsWithSettings.includes(type)) {
+    if (viewsWithSettings.includes(type)) {
       openViewSettings(e);
     } else {
-      createView(type)
+      setLoading(true);
+      createView(type);
     }
   };
 
@@ -239,90 +244,94 @@ export const useViewWithGroupsProps = ({
     })
   );
 
-  const getViewSettings = (viewType) => {
-    switch(viewType) {
+  const getViewSettings = (viewType, control) => {
+    switch (viewType) {
       case VIEW_TYPES_MAP.CALENDAR:
       case VIEW_TYPES_MAP.TIMELINE: {
-        return <MaterialUIProvider>
-        <FRow
-          label={
-            viewType ===  VIEW_TYPES_MAP.CALENDAR ? "Date from" : "Time from"
-          }
-          required
-        >
-          <HFSelect
-            options={computedColumns}
-            control={control}
-            name="calendar_from_slug"
-            MenuProps={{ disablePortal: true }}
-            required={true}
-          />
-        </FRow>
-        <FRow
-          label={
-            viewType === "CALENDAR" ? "Date to" : "Time to"
-          }
-          required
-        >
-          <HFSelect
-            options={computedColumns}
-            control={control}
-            name="calendar_to_slug"
-            MenuProps={{ disablePortal: true }}
-            required={true}
-          />
-        </FRow>
-      </MaterialUIProvider>
+        return (
+          <MaterialUIProvider>
+            <FRow
+              label={
+                viewType === VIEW_TYPES_MAP.CALENDAR ? "Date from" : "Time from"
+              }
+              required
+            >
+              <HFSelect
+                options={computedColumns}
+                control={control}
+                name="calendar_from_slug"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+              />
+            </FRow>
+            <FRow
+              label={viewType === "CALENDAR" ? "Date to" : "Time to"}
+              required
+            >
+              <HFSelect
+                options={computedColumns}
+                control={control}
+                name="calendar_to_slug"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+              />
+            </FRow>
+          </MaterialUIProvider>
+        );
       }
       case VIEW_TYPES_MAP.BOARD: {
-        return <MaterialUIProvider>
-          <FRow label="Group by" required>
-                      <HFSelect
-                        options={computedColumnsForTabGroupOptions}
-                        control={control}
-                        name="group_fields"
-                        MenuProps={{disablePortal: true}}
-                        required={true}
-                      />
-                    </FRow>
-        </MaterialUIProvider>
+        return (
+          <MaterialUIProvider>
+            <FRow label="Group by" required>
+              <HFSelect
+                options={computedColumnsForTabGroupOptions}
+                control={control}
+                name="group_fields"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+              />
+            </FRow>
+          </MaterialUIProvider>
+        );
       }
       case VIEW_TYPES_MAP.WEBSITE: {
-        return <Controller
-        control={control}
-        name="web_link"
-        render={({field: {onChange, value}}) => {
-          return (
-            <TextField
-              id="website_link"
-              onChange={(e) => {
-                onChange(e.target.value);
-              }}
-              value={value}
-              placeholder="website link..."
-              className="webLinkInput"
-              sx={{padding: 0}}
-              fullWidth
-              name="web_link"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LanguageIcon />
-                  </InputAdornment>
-                ),
-              }}
-              error={error}
-            />
-          );
-        }}
-      />
+        return (
+          <Controller
+            control={control}
+            name="web_link"
+            render={({ field: { onChange, value } }) => {
+              return (
+                <TextField
+                  id="website_link"
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                  }}
+                  value={value}
+                  placeholder="website link..."
+                  className="webLinkInput"
+                  sx={{ padding: 0 }}
+                  fullWidth
+                  name="web_link"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LanguageIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  error={error}
+                />
+              );
+            }}
+          />
+        );
       }
       default: {
-        return null
+        return null;
       }
     }
-  }
-  
+  };
+
   return {
     getViewSettings,
     viewsWithSettings,
@@ -331,5 +340,7 @@ export const useViewWithGroupsProps = ({
     selectedViewAnchor,
     selectedViewTab,
     closeViewSettings,
-  }
-}
+    loading,
+    control,
+  };
+};

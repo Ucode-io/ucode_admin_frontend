@@ -1,3 +1,5 @@
+import "./style.scss";
+
 import InviteModal from "@/components/InviteModal/InviteModal";
 import {
   SidebarActionTooltip,
@@ -75,7 +77,6 @@ import AppSidebar from "./AppSidebarComponent";
 import DocsChatwootModal from "./DocsChatwootModal";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
-import "./style.scss";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},

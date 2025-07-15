@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneIcon from "@mui/icons-material/Done";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useLocation, useParams} from "react-router-dom";
@@ -73,6 +73,21 @@ const AddDataColumn = React.memo(
         })
         .finally(() => {});
     };
+
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        console.log("entereddddd");
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          handleSubmit(onSubmit)();
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, []);
 
     return (
       <CTableRow>
@@ -173,7 +188,7 @@ const AddDataColumn = React.memo(
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
           }}>
-          <Box className="group" position="relative" h="25px" w="25px">
+          {/* <Box className="group" position="relative" h="25px" w="25px">
             <Image
               ml="3px"
               src="/table-icons/save-delete.svg"
@@ -214,7 +229,7 @@ const AddDataColumn = React.memo(
                 </RectangleIconButton>
               )}
             </Flex>
-          </Box>
+          </Box> */}
         </CTableCell>
       </CTableRow>
     );

@@ -114,7 +114,6 @@ import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import {ViewProvider} from "../../providers/ViewProvider";
 import ViewTypeListNew from "../Objects/components/ViewTypeList/ViewTypeListNew";
-import { TimeTypePopup } from "./components/TimeTypePopup/TimeTypePopup";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")

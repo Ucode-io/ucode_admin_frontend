@@ -27,15 +27,10 @@ import menuService from "../../services/menuService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import DrawerDetailPage from "../Objects/DrawerDetailPage";
+import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
+import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
-
-const DrawerDetailPage = lazy(() => import("../Objects/DrawerDetailPage"));
-const OldDrawerDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/OldDrawerDetailPage")
-);
-const ModalDetailPage = lazy(
-  () => import("@/views/Objects/ModalDetailPage/ModalDetailPage")
-);
 
 const TableView = ({
   relationView = false,
@@ -235,10 +230,10 @@ const TableView = ({
 
   const columns = useMemo(() => {
     const result = [];
-    for (const key in view.attributes.fixedColumns) {
-      if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+    for (const key in view?.attributes.fixedColumns) {
+      if (view?.attributes.fixedColumns.hasOwnProperty(key)) {
+        if (view?.attributes.fixedColumns[key]) {
+          result.push({id: key, value: view?.attributes.fixedColumns[key]});
         }
       }
     }
@@ -703,26 +698,41 @@ const TableView = ({
             />
           )
         ) : selectedViewType === "CenterPeek" ? (
-          <ModalDetailPage
-            view={view}
-            projectInfo={projectInfo}
-            open={open}
-            setFormValue={setFormValue}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            layoutType={layoutType}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-          />
+          Boolean(new_router === "true") ? (
+            <ModalDetailPage
+              view={view}
+              projectInfo={projectInfo}
+              open={open}
+              setFormValue={setFormValue}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              layoutType={layoutType}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          ) : (
+            <OldModalDetailPage
+              open={open}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+            />
+          )
         ) : null}
 
         {Boolean(open && !projectInfo?.new_layout) && (
-          <OldModalDetailPage
+          <ModalDetailPage
             open={open}
             selectedRow={selectedRow}
             menuItem={menuItem}

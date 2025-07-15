@@ -6,6 +6,7 @@ import {Box} from "@mui/material";
 function HFPhotoUploadCellEditor(props) {
   const {value, setValue, data, colDef} = props;
   const disabled = colDef?.disabled;
+  const field = colDef?.fieldObj;
 
   const onNavigateToDetail = () => {
     colDef?.onRowClick(data);

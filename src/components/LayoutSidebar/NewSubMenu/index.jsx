@@ -1,14 +1,12 @@
-import React, {useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useSearchParams} from "react-router-dom";
-import {store} from "../../../store";
-import menuService, {useMenuListQuery} from "../../../services/menuService";
 import {Box, Skeleton} from "@mui/material";
+import React from "react";
+import {useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
 import {Container} from "react-smooth-dnd";
-import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
+import menuService from "../../../services/menuService";
 import {applyDrag} from "../../../utils/applyDrag";
+import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
+import "./style.scss";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 

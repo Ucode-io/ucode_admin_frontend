@@ -1,5 +1,4 @@
 import "./style.scss";
-
 import {SidebarAppTooltip} from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import {mainActions} from "@/store/main/main.slice";
 import {

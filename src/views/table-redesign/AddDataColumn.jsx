@@ -1,16 +1,11 @@
-import ClearIcon from "@mui/icons-material/Clear";
-import DoneIcon from "@mui/icons-material/Done";
-import React, {useState} from "react";
+import {CTableCell, CTableRow} from "@/components/CTable";
+import NewTableDataForm from "@/components/ElementGenerators/NewTableDataForm";
+import {showAlert} from "@/store/alert/alert.thunk";
+import React, {useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import {showAlert} from "@/store/alert/alert.thunk";
-import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import {CircularProgress} from "@mui/material";
-import {Box, Flex, Image} from "@chakra-ui/react";
-import NewTableDataForm from "@/components/ElementGenerators/NewTableDataForm";
-import {CTableCell, CTableRow} from "@/components/CTable";
 
 const AddDataColumn = React.memo(
   ({
@@ -34,6 +29,7 @@ const AddDataColumn = React.memo(
     isTableView = false,
     tableSlug,
   }) => {
+    const rowRef = useRef();
     const dispatch = useDispatch();
     const {id} = useParams();
     const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
@@ -74,8 +70,35 @@ const AddDataColumn = React.memo(
         .finally(() => {});
     };
 
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          handleSubmit(onSubmit)();
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, []);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (rowRef.current && !rowRef.current.contains(event.target)) {
+          handleSubmit(onSubmit)();
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
     return (
-      <CTableRow>
+      <CTableRow parentRef={rowRef}>
         <CTableCell
           className="data_table__number_cell"
           style={{
@@ -172,50 +195,7 @@ const AddDataColumn = React.memo(
             right: "0",
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
-          }}>
-          <Box className="group" position="relative" h="25px" w="25px">
-            <Image
-              ml="3px"
-              src="/table-icons/save-delete.svg"
-              alt="More"
-              w="25px"
-              h="25px"
-              _groupHover={{display: "none"}}
-            />
-
-            <Flex
-              columnGap="3px"
-              display="none"
-              _groupHover={{display: "flex"}}
-              position="absolute"
-              top={0}
-              right="-3px"
-              bg="#fff"
-              borderRadius={4}>
-              <RectangleIconButton
-                id="cancel-row"
-                color="error"
-                onClick={() => setAddNewRow(false)}
-                style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}>
-                <ClearIcon color="error" />
-              </RectangleIconButton>
-
-              {isLoading ? (
-                <CircularProgress
-                  style={{width: "20px", height: "20px", marginLeft: "4px"}}
-                />
-              ) : (
-                <RectangleIconButton
-                  id="confirm-row"
-                  color="success"
-                  onClick={handleSubmit(onSubmit)}
-                  style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}>
-                  <DoneIcon color="success" />
-                </RectangleIconButton>
-              )}
-            </Flex>
-          </Box>
-        </CTableCell>
+          }}></CTableCell>
       </CTableRow>
     );
   }

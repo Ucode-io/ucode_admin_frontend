@@ -191,8 +191,7 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
-      >
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="/">
@@ -253,12 +252,12 @@ const NewRouter = () => {
           </Route>
 
           <Route
-            path=":appId/microfrontend-playground"
+            path=":menuId/microfrontend-playground"
             element={<MicrofrontendPlayground />}
           />
 
           <Route
-            path=":appId/page/:microfrontendId"
+            path=":menuId/page/:microfrontendId"
             element={<Microfrontend />}
           />
 

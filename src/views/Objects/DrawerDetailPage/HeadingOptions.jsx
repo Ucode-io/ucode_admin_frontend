@@ -33,28 +33,33 @@ const HeadingOptions = ({
     }
   };
 
-  let selectedFieldSlug = watch("attributes.layout_heading");
-
-  if (!watch("attributes.layout_heading")) {
-    if (
+  let selectedFieldSlug = useMemo(() => {
+    if (!watch("attributes.layout_heading")) {
+      if (
+        isMultiLanguage &&
+        typeof selectedTab?.attributes?.layout_heading === "object"
+      ) {
+        return selectedTab?.attributes?.layout_heading?.[activeLang];
+      } else {
+        return selectedTab?.attributes?.layout_heading;
+      }
+    } else if (
       isMultiLanguage &&
-      typeof selectedTab?.attributes?.layout_heading === "object"
+      watch("attributes.layout_heading")?.[activeLang]
     ) {
-      selectedFieldSlug = selectedTab?.attributes?.layout_heading?.[activeLang];
-    } else {
-      selectedFieldSlug = selectedTab?.attributes?.layout_heading;
+      return watch("attributes.layout_heading")?.[activeLang];
+    } else if (
+      isMultiLanguage &&
+      !removeLangFromSlug(watch("attributes.layout_heading"))
+    ) {
+      return watch("attributes.layout_heading");
     }
-  } else if (
-    isMultiLanguage &&
-    watch("attributes.layout_heading")?.[activeLang]
-  ) {
-    selectedFieldSlug = watch("attributes.layout_heading")?.[activeLang];
-  } else if (
-    isMultiLanguage &&
-    !removeLangFromSlug(watch("attributes.layout_heading"))
-  ) {
-    selectedFieldSlug = watch("attributes.layout_heading");
-  }
+  }, [
+    watch("attributes.layout_heading"),
+    activeLang,
+    isMultiLanguage,
+    selectedTab?.attributes?.layout_heading,
+  ]);
 
   const selectedField = Object.values(fieldsMap).find(
     (field) => field?.slug === selectedFieldSlug
@@ -209,13 +214,14 @@ const HeadingOptions = ({
 const AutoResizeTextarea = ({
   control,
   selectedField,
+  selectedFieldSlug,
   fieldValue,
   watch,
   setValue,
   ...props
 }) => {
   const textareaRef = useRef(null);
-  const name = selectedField?.slug;
+  const name = selectedFieldSlug;
 
   const headingValue = name ? watch(name) : "";
 

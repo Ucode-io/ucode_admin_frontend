@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text, useQuery } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SouthWestIcon from "@mui/icons-material/SouthWest";
 import { Container, Draggable } from "react-smooth-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -15,6 +15,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 import { useTranslation } from "react-i18next";
 import layoutService from "../../../services/layoutService";
+import { useSelector } from "react-redux";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
 
 function LayoutSections({
   selectedTab,
@@ -123,38 +125,102 @@ const LayoutHeading = ({
   const { i18n } = useTranslation();
 
   const [layoutHeading, setLayoutHeading] = useState("");
+  const [activeLang, setActiveLang] = useState("");
 
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  const projectId = useSelector((state) => state.auth.projectId);
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = slug?.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = slug?.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
+  const isMultiLanguage = useMemo(() => {
+    const allFields = [];
+    selectedTab?.sections?.map((section) => {
+      return section?.fields?.map((field) => {
+        return allFields.push(field);
+      });
+    });
+    return !!allFields.find((field) =>
+      field?.enable_multilanguage
+        ? field?.enable_multilanguage
+        : field?.attributes?.enable_multilanguage === true
+    );
+  }, [selectedTab]);
+
   const handleClose = (option) => {
-    setAnchorEl(null);
     if (option) {
       setLayoutHeading(option);
-      const updatedTabs = layout.tabs.map((tab, index) =>
-        index === selectedTabIndex
-          ? {
-              ...tab,
-              attributes: {
-                ...tab?.attributes,
-                layout_heading: option?.table_slug,
-              },
-            }
-          : tab
-      );
+      if (isMultiLanguage) {
+        let layoutHeading = {};
 
-      const currentUpdatedLayout = {
-        ...layout,
-        tabs: updatedTabs,
-      };
+        if (removeLangFromSlug(option?.value)) {
+          projectInfo?.language?.forEach((lang) => {
+            layoutHeading[lang?.short_name] = fieldsList?.find(
+              (field) =>
+                field?.value ===
+                `${removeLangFromSlug(option?.value)}_${lang?.short_name}`
+            )?.value;
+          });
+        } else {
+          layoutHeading = option?.value;
+        }
 
-      layoutService.update(currentUpdatedLayout, tableSlug).then(() => {
-        refetchLayout();
-      });
-      // setFormValue("attributes.layout_heading", option.table_slug);
+        const updatedTabs = layout.tabs.map((tab, index) =>
+          index === selectedTabIndex
+            ? {
+                ...tab,
+                attributes: {
+                  ...tab?.attributes,
+                  layout_heading: layoutHeading,
+                },
+              }
+            : tab
+        );
+
+        const currentUpdatedLayout = {
+          ...layout,
+          tabs: updatedTabs,
+        };
+
+        layoutService.update(currentUpdatedLayout, tableSlug).then(() => {
+          refetchLayout();
+        });
+      } else {
+        const updatedTabs = layout.tabs.map((tab, index) =>
+          index === selectedTabIndex
+            ? {
+                ...tab,
+                attributes: {
+                  ...tab?.attributes,
+                  layout_heading: option?.table_slug,
+                },
+              }
+            : tab
+        );
+
+        const currentUpdatedLayout = {
+          ...layout,
+          tabs: updatedTabs,
+        };
+
+        layoutService.update(currentUpdatedLayout, tableSlug).then(() => {
+          refetchLayout();
+        });
+      }
     }
+    setAnchorEl(null);
   };
 
   const fields = sections?.flatMap((item) => [...item.fields]);
@@ -172,6 +238,26 @@ const LayoutHeading = ({
         field?.type === FIELD_TYPES.TEXT ||
         field?.type === FIELD_TYPES.INCREMENT_ID
     );
+
+  useEffect(() => {
+    if (isMultiLanguage) {
+      setActiveLang(projectInfo?.language?.[0]?.short_name);
+    }
+  }, [isMultiLanguage, projectInfo]);
+
+  const label = useMemo(() => {
+    if (isMultiLanguage) {
+      return fieldsList?.find(
+        (item) =>
+          item?.value ===
+            layout?.tabs?.[selectedTabIndex]?.attributes?.layout_heading?.[
+              activeLang
+            ] || layout?.tabs?.[selectedTabIndex]?.attributes?.layout_heading
+      );
+    } else {
+      return layout?.tabs?.[selectedTabIndex]?.attributes?.layout_heading;
+    }
+  }, [fieldsList]);
 
   return (
     <Box
@@ -219,14 +305,15 @@ const LayoutHeading = ({
         </Button>
 
         <Text fontSize={34} fontWeight={700}>
-          {(selectedRow?.[selectedTab?.attributes?.layout_heading] ||
+          {(layoutHeading?.label ||
+            label?.label ||
+            selectedRow?.[selectedTab?.attributes?.layout_heading] ||
             fieldsList?.find(
               (field) =>
                 field?.table_slug ===
                 selectedRow?.tabs?.[selectedTabIndex]?.attributes
                   ?.layout_heading
-            )?.label ||
-            layoutHeading?.label) ??
+            )?.label) ??
             "Select field for title"}
         </Text>
 

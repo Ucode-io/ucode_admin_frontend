@@ -1,24 +1,15 @@
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import ClearIcon from "@mui/icons-material/Clear";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {
-  Box,
-  Button,
-  Modal,
-  Popover,
-  TextField,
-  Typography,
-} from "@mui/material";
-import {useRef, useState} from "react";
-import ClearIcon from "@mui/icons-material/Clear";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Rotate90DegreesCcwIcon from "@mui/icons-material/Rotate90DegreesCcw";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+import {Box, Button, Modal, Popover, Typography} from "@mui/material";
+import {useRef, useState} from "react";
+import useDownloader from "../../../../../hooks/useDownloader";
 import fileService from "../../../../../services/fileService";
-import useDebounce from "../../../../../hooks/useDebounce";
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 
 const style = {
   position: "absolute",
@@ -40,15 +31,16 @@ const ImageUploadCellEditor = ({
   field = {},
 }) => {
   const inputRef = useRef(null);
-  const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
   const splitVal = value?.split("#")?.[1];
+  const {download} = useDownloader();
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenImg = () => setOpenFullImg(true);
   const handleCloseImg = () => setOpenFullImg(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -116,11 +108,12 @@ const ImageUploadCellEditor = ({
     }
   };
 
-  const inputChange = useDebounce((val) => {
-    if (value) {
-      onChange(`${value.split("#")[0]}#${val}`);
-    }
-  }, 500);
+  const downloadPhoto = (url) => {
+    download({
+      link: url,
+      fileName: value?.split?.("_")?.[1] ?? "",
+    });
+  };
 
   return (
     <Box
@@ -140,11 +133,11 @@ const ImageUploadCellEditor = ({
           <div
             className="uploadedImage"
             aria-describedby={id}
-            onClick={handleClick}>
+            onClick={handleOpenImg}>
             <div
               style={{
-                width: "35px",
-                height: "32px",
+                width: "26px",
+                height: "26px",
                 borderRadius: "50%",
                 overflow: "hidden",
               }}
@@ -184,6 +177,7 @@ const ImageUploadCellEditor = ({
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
+                backgroundColor: "#212B36",
               }}>
               <Button
                 sx={{
@@ -191,10 +185,11 @@ const ImageUploadCellEditor = ({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
-                onClick={() => handleOpenImg()}>
-                <OpenInFullIcon />
-                Show Full Image
+                onClick={() => downloadPhoto(value)}>
+                <DownloadIcon />
+                Dowload
               </Button>
               <Button
                 sx={{
@@ -202,20 +197,12 @@ const ImageUploadCellEditor = ({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
-                onClick={() => imageClickHandler()}>
-                <DownloadIcon />
-                Dowload
-              </Button>
-              <RectangleIconButton
-                color="error"
-                className="removeImg"
                 onClick={closeButtonHandler}>
-                <DeleteIcon
-                  style={{width: "17px", height: "17px", marginRight: "12px"}}
-                />
+                <DeleteIcon style={{width: "17px", height: "17px"}} />
                 Remove Image
-              </RectangleIconButton>
+              </Button>
 
               <Button
                 sx={{
@@ -223,6 +210,7 @@ const ImageUploadCellEditor = ({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
                 disabled={disabled}
                 onClick={(e) => {
@@ -234,6 +222,7 @@ const ImageUploadCellEditor = ({
               </Button>
             </Box>
             <input
+              id="image_photo"
               type="file"
               style={{
                 display: "none",
@@ -254,9 +243,12 @@ const ImageUploadCellEditor = ({
                 sx={{
                   border: "0px solid #fff",
                   transform: `rotate(${degree}deg)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
                 }}
-                aria-describedby={id}
-                onClick={handleClick}>
+                aria-describedby={id}>
                 <img
                   src={value}
                   style={{transform: `scale(${imgScale})`}}
@@ -288,7 +280,7 @@ const ImageUploadCellEditor = ({
                 }}
                 sx={{
                   position: "absolute",
-                  right: "-150px",
+                  right: "-30px",
                   bottom: "-50px",
                   color: "#eee",
                 }}>
@@ -300,7 +292,7 @@ const ImageUploadCellEditor = ({
                 }}
                 sx={{
                   position: "absolute",
-                  right: "-220px",
+                  right: "-90px",
                   bottom: "-50px",
                   color: "#eee",
                 }}>
@@ -310,11 +302,39 @@ const ImageUploadCellEditor = ({
                 onClick={rotateImg}
                 sx={{
                   position: "absolute",
-                  right: "-300px",
+                  right: "-150px",
                   bottom: "-50px",
                   color: "#eee",
                 }}>
                 <Rotate90DegreesCcwIcon
+                  style={{width: "30px", height: "30px"}}
+                />
+              </Button>
+
+              <Button
+                onClick={() => downloadPhoto(value)}
+                sx={{
+                  position: "absolute",
+                  right: "-240px",
+                  bottom: "-50px",
+                  color: "#eee",
+                }}>
+                <DownloadIcon
+                  htmlColor="#fff"
+                  style={{width: "30px", height: "30px"}}
+                />
+              </Button>
+
+              <Button
+                onClick={handleClick}
+                sx={{
+                  position: "absolute",
+                  right: "-340px",
+                  bottom: "-50px",
+                  color: "#eee",
+                }}>
+                <MoreHorizIcon
+                  htmlColor="#fff"
                   style={{width: "30px", height: "30px"}}
                 />
               </Button>
@@ -349,12 +369,7 @@ const ImageUploadCellEditor = ({
               disabled={disabled}
               accept=".jpg, .jpeg, .png, .gif"
             />
-            {/* <UploadFileIcon
-            style={{
-              color: "#747474",
-              fontSize: "25px",
-            }}
-          /> */}
+
             <img
               src="/img/newUpload.svg"
               alt="Upload"

@@ -217,7 +217,7 @@ const AutoResizeTextarea = ({
   const textareaRef = useRef(null);
   const name = selectedField?.slug;
 
-  const headingValue = watch(name);
+  const headingValue = name ? watch(name) : "";
 
   const resizeTextarea = () => {
     const textarea = textareaRef.current;

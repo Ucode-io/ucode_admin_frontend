@@ -124,8 +124,6 @@ const LayoutHeading = ({
 
   const [layoutHeading, setLayoutHeading] = useState("");
 
-  console.log({ selectedRow });
-
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

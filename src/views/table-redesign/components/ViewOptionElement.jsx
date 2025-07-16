@@ -55,6 +55,9 @@ export const ColumnsVisibility = ({
         return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
       } else return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
     },
+    onSuccess: () => {
+      refetchViews();
+    },
   });
 
   const visibleFields =

@@ -100,7 +100,7 @@ function DrawerFormDetailPage({
         selectedRow?.[selectedRow?.TO_DATE_SLUG]
       );
     }
-    console.log({ selectedTab });
+
     rootForm.setValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
@@ -230,6 +230,8 @@ function DrawerFormDetailPage({
           selectedTab={selectedTab}
           setFormValue={rootForm.setValue}
           activeLang={activeLang}
+          isMultiLanguage={isMultiLanguage}
+          langs={projectInfo?.language}
         />
 
         <Box

@@ -1,23 +1,30 @@
-import {Box, Button, Flex, Text} from "@chakra-ui/react";
-import React, {useMemo, useState} from "react";
+import { Box, Button, Flex, Text, useQuery } from "@chakra-ui/react";
+import React, { useMemo, useState } from "react";
 import SouthWestIcon from "@mui/icons-material/SouthWest";
-import {Container, Draggable} from "react-smooth-dnd";
+import { Container, Draggable } from "react-smooth-dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import {Dialog, Menu} from "@mui/material";
+import { Dialog, Menu, MenuItem } from "@mui/material";
 import SouthIcon from "@mui/icons-material/South";
 import EastIcon from "@mui/icons-material/East";
 import FieldGenerator from "./FieldGenerator";
-import {applyDrag} from "../../../utils/applyDrag";
+import { applyDrag } from "../../../utils/applyDrag";
 import AddIcon from "@mui/icons-material/Add";
-import {generateID} from "../../../utils/generateID";
+import { generateID } from "../../../utils/generateID";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import { useTranslation } from "react-i18next";
+import layoutService from "../../../services/layoutService";
 
 function LayoutSections({
   selectedTab,
   selectedRow,
   sections,
   sectionIndex,
+  layout,
+  selectedTabIndex,
+  tableSlug,
+  refetchLayout = () => {},
   setSections = () => {},
   setSectionIndex = () => {},
   setSelectedSection = () => {},
@@ -28,7 +35,7 @@ function LayoutSections({
   };
 
   const addSections = () => {
-    const updatedSections = [...sections, {fields: []}];
+    const updatedSections = [...sections, { fields: [] }];
     setSections(updatedSections);
   };
 
@@ -46,21 +53,28 @@ function LayoutSections({
         w={"100%"}
         h={"calc(100vh - 60px)"}
         overflow={"auto"}
-        borderRight={"1px solid #E2EDFB"}>
+        borderRight={"1px solid #E2EDFB"}
+      >
         <Box pt={24} px={20}>
           <LayoutHeading
+            sections={sections}
             selectedTab={selectedTab}
             selectedRow={selectedRow}
             sectionIndex={sectionIndex}
+            layout={layout}
+            selectedTabIndex={selectedTabIndex}
+            tableSlug={tableSlug}
             setSectionIndex={setSectionIndex}
             setSelectedSection={setSelectedSection}
+            refetchLayout={refetchLayout}
           />
 
           <Container onDrop={onDrop} behaviour="contain">
             {sections?.map((section, sectIndex) => (
               <Draggable
-                style={{width: "100%", overflow: "auto"}}
-                key={section?.id}>
+                style={{ width: "100%", overflow: "auto" }}
+                key={section?.id}
+              >
                 <MainSection
                   setSections={setSections}
                   sections={sections}
@@ -82,8 +96,9 @@ function LayoutSections({
               h={42}
               mx={"0 auto"}
               borderRadius={"50%"}
-              bg={"rgba(35, 131, 226, 0.07)"}>
-              <AddIcon style={{color: "#2383E2"}} />
+              bg={"rgba(35, 131, 226, 0.07)"}
+            >
+              <AddIcon style={{ color: "#2383E2" }} />
             </Button>
           </Box>
         </Box>
@@ -94,17 +109,78 @@ function LayoutSections({
 }
 
 const LayoutHeading = ({
+  layout,
+  selectedTabIndex,
+  sections,
   selectedTab,
   selectedRow,
   sectionIndex,
+  tableSlug,
   setSectionIndex = () => {},
   setSelectedSection = () => {},
+  refetchLayout = () => {},
 }) => {
+  const { i18n } = useTranslation();
+
+  const [layoutHeading, setLayoutHeading] = useState("");
+
+  console.log({ selectedRow });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (option) => {
+    setAnchorEl(null);
+    if (option) {
+      setLayoutHeading(option);
+      const updatedTabs = layout.tabs.map((tab, index) =>
+        index === selectedTabIndex
+          ? {
+              ...tab,
+              attributes: {
+                ...tab?.attributes,
+                layout_heading: option?.table_slug,
+              },
+            }
+          : tab
+      );
+
+      const currentUpdatedLayout = {
+        ...layout,
+        tabs: updatedTabs,
+      };
+
+      layoutService.update(currentUpdatedLayout, tableSlug).then(() => {
+        refetchLayout();
+      });
+      // setFormValue("attributes.layout_heading", option.table_slug);
+    }
+  };
+
+  const fields = sections?.flatMap((item) => [...item.fields]);
+
+  const fieldsList = fields
+    ?.map((field) => ({
+      label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,
+      value: field?.slug,
+      type: field?.type,
+      table_slug: field?.slug,
+    }))
+    ?.filter(
+      (field) =>
+        field?.type === FIELD_TYPES.SINGLE_LINE ||
+        field?.type === FIELD_TYPES.TEXT ||
+        field?.type === FIELD_TYPES.INCREMENT_ID
+    );
+
   return (
     <Box
-      onClick={() => {
-        setSelectedSection({fields: [], label: "Heading"});
+      onClick={(e) => {
+        setSelectedSection({ fields: [], label: "Heading" });
         setSectionIndex(101);
+        handleClick(e);
       }}
       cursor={"pointer"}
       width={"99%"}
@@ -123,7 +199,8 @@ const LayoutHeading = ({
       }}
       borderRadius={8}
       minH={150}
-      maxH={250}>
+      maxH={250}
+    >
       <Flex
         p={8}
         alignItems={"center"}
@@ -131,19 +208,27 @@ const LayoutHeading = ({
         color="rgb(35, 131, 226)"
         fontWeight={500}
         fontSize={14}
-        bg={"rgba(35, 131, 226, 0.07)"}>
+        bg={"rgba(35, 131, 226, 0.07)"}
+      >
         Heading
       </Flex>
       <Box pt={15} px={12}>
         <Button my={5} border={"none"} bg={"none"} cursor={"pointer"}>
-          <SouthWestIcon style={{color: "#C7C5C0"}} />
+          <SouthWestIcon style={{ color: "#C7C5C0" }} />
           <Text color={"#C7C5C0"} fontSize={14}>
             No backlinks
           </Text>
         </Button>
 
         <Text fontSize={34} fontWeight={700}>
-          {selectedRow?.[selectedTab?.attributes?.layout_heading] ??
+          {(selectedRow?.[selectedTab?.attributes?.layout_heading] ||
+            fieldsList?.find(
+              (field) =>
+                field?.table_slug ===
+                selectedRow?.tabs?.[selectedTabIndex]?.attributes
+                  ?.layout_heading
+            )?.label ||
+            layoutHeading?.label) ??
             "Select field for title"}
         </Text>
 
@@ -153,10 +238,54 @@ const LayoutHeading = ({
           fontWeight={400}
           color={"#787774"}
           bg={"none"}
-          border={"none"}>
+          border={"none"}
+        >
           View details
         </Button>
       </Box>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={(e) => {
+          e.stopPropagation();
+          handleClose(null);
+        }}
+      >
+        <Box sx={{ width: "180px", padding: "4px 0" }}>
+          {fieldsList?.map((option) => (
+            <MenuItem
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: "6px",
+                color: "#37352f",
+                height: "32px",
+              }}
+              key={option.label}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClose(option);
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                {option.label}
+              </Box>
+
+              <Box>
+                {/* {option.table_slug === selectedFieldSlug ? <Check /> : ""} */}
+              </Box>
+            </MenuItem>
+          ))}
+        </Box>
+      </Menu>
     </Box>
   );
 };
@@ -198,7 +327,8 @@ const MainSection = ({
               : "2px solid #d2e4fb",
         }}
         borderRadius={8}
-        minH={220}>
+        minH={220}
+      >
         <Flex
           p={8}
           h={32}
@@ -208,7 +338,8 @@ const MainSection = ({
           alignItems={"center"}
           justifyContent={"space-between"}
           bg={"rgba(35, 131, 226, 0.07)"}
-          borderTopRadius={6}>
+          borderTopRadius={6}
+        >
           <Button cursor={"grab"} bg={"none"} border="none">
             <DragIndicatorIcon
               style={{
@@ -235,7 +366,7 @@ const MainSection = ({
   );
 };
 
-const PositionUpDown = ({index, removeSection = () => {}}) => {
+const PositionUpDown = ({ index, removeSection = () => {} }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const open = Boolean(anchorEl);
@@ -261,7 +392,8 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
         borderRadius={4}
         cursor={"pointer"}
         bg={"none"}
-        border={"none"}>
+        border={"none"}
+      >
         <MoreHorizIcon
           style={{
             color: "rgb(35, 131, 226)",
@@ -282,7 +414,8 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
         }}
         open={open}
         anchorEl={anchorEl}
-        onClose={handleClose}>
+        onClose={handleClose}
+      >
         <Box p={4}>
           <Flex
             borderRadius={6}
@@ -294,8 +427,9 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
             gap={10}
             h={28}
             w={170}
-            cursor={"pointer"}>
-            <SouthIcon style={{width: "14px", height: "16px"}} />
+            cursor={"pointer"}
+          >
+            <SouthIcon style={{ width: "14px", height: "16px" }} />
             <Text fontSize={14}> Move down</Text>
           </Flex>
           <Flex
@@ -307,8 +441,9 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
             px={8}
             gap={10}
             h={28}
-            cursor={"pointer"}>
-            <EastIcon style={{width: "14px", height: "16px"}} />
+            cursor={"pointer"}
+          >
+            <EastIcon style={{ width: "14px", height: "16px" }} />
             <Text fontSize={14}> Move to panel</Text>
           </Flex>
 
@@ -323,8 +458,9 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
             px={8}
             gap={10}
             h={28}
-            cursor={"pointer"}>
-            <DeleteOutlineIcon style={{width: "16px", height: "16px"}} />
+            cursor={"pointer"}
+          >
+            <DeleteOutlineIcon style={{ width: "16px", height: "16px" }} />
             <Text fontSize={14}> Delete section</Text>
           </Flex>
         </Box>
@@ -334,7 +470,7 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
         <Box w={"400px"} height={"200px"} p={15}>
           <Flex textAlign={"center"} flexDirection={"column"}>
             <DeleteOutlineIcon
-              style={{fontSize: "50px", margin: "0 auto", color: "#91908F"}}
+              style={{ fontSize: "50px", margin: "0 auto", color: "#91908F" }}
             />
             <Text fontSize={"16px"}>Remove property from layout?</Text>
           </Flex>
@@ -343,7 +479,8 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
             mt={20}
             w={"100%"}
             flexDirection={"column"}
-            justifyContent={"space-between"}>
+            justifyContent={"space-between"}
+          >
             <Button
               onClick={() => {
                 removeSection(index);
@@ -353,7 +490,8 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
               borderRadius={6}
               color={"#fff"}
               h={32}
-              bg={"#EB5756"}>
+              bg={"#EB5756"}
+            >
               Remove
             </Button>
             <Button
@@ -362,7 +500,8 @@ const PositionUpDown = ({index, removeSection = () => {}}) => {
               mt={8}
               fontSize={14}
               border="1px solid rgba(55, 53, 47, 0.16)"
-              h={32}>
+              h={32}
+            >
               Cancel
             </Button>
           </Flex>

@@ -16,6 +16,7 @@ const HeadingOptions = ({
   selectedTab,
   selectedRow,
   setFormValue = () => {},
+  activeLang,
 }) => {
   const { i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);

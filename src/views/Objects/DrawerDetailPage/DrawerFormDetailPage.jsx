@@ -229,6 +229,7 @@ function DrawerFormDetailPage({
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
           setFormValue={rootForm.setValue}
+          activeLang={activeLang}
         />
 
         <Box

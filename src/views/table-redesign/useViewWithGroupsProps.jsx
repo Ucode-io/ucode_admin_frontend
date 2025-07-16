@@ -17,7 +17,7 @@ import { showAlert } from "../../store/alert/alert.thunk";
 export const useViewWithGroupsProps = ({
   relationView,
   viewsList,
-  tableSlug,
+  tableSlug: tableSlugProp,
   fieldsMap,
   fieldsMapRel,
   i18n,
@@ -26,6 +26,7 @@ export const useViewWithGroupsProps = ({
   handleClose,
   refetchViews,
   handleClosePop = () => {},
+  tableRelations,
 }) => {
   const viewsWithSettings = [
     VIEW_TYPES_MAP.CALENDAR,
@@ -33,6 +34,19 @@ export const useViewWithGroupsProps = ({
     VIEW_TYPES_MAP.BOARD,
     VIEW_TYPES_MAP.WEBSITE,
   ];
+
+  console.log({ viewsList });
+
+  const {
+    control,
+    watch,
+    setError,
+    clearErrors,
+    setValue,
+    formState: { errors: viewErrors },
+  } = useForm({});
+
+  const tableSlug = Boolean(relationView) ? watch("table_slug") : tableSlugProp;
 
   const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
   const openViewSettings = (event) => {
@@ -98,19 +112,15 @@ export const useViewWithGroupsProps = ({
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
 
-  const {
-    control,
-    watch,
-    setError,
-    clearErrors,
-    setValue,
-    formState: { errors: viewErrors },
-  } = useForm({});
   const [error] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const createView = (type) => {
-    console.log({ type, selectedViewTab });
+    if (Boolean(tableRelations) && !watch("table_slug")) {
+      setError("table_slug", { message: "Please select table" });
+      return;
+    }
+
     if (
       (type || selectedViewTab) === VIEW_TYPES_MAP.BOARD &&
       watch("group_fields").length === 0
@@ -148,7 +158,9 @@ export const useViewWithGroupsProps = ({
             queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
-            handleClose();
+            if (!Boolean(tableRelations)) {
+              handleClose();
+            }
             handleClosePop();
             closeViewSettings();
           });
@@ -181,8 +193,10 @@ export const useViewWithGroupsProps = ({
           } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
         })
         .finally(() => {
+          if (!Boolean(tableRelations)) {
+            handleClose();
+          }
           refetchViews();
-          handleClose();
           handleClosePop();
           closeViewSettings();
         });
@@ -191,7 +205,7 @@ export const useViewWithGroupsProps = ({
 
   const handleSelectViewType = (e, type) => {
     setSelectedViewTab(type);
-    if (viewsWithSettings.includes(type)) {
+    if (viewsWithSettings.includes(type) || Boolean(relationView)) {
       openViewSettings(e);
     } else {
       setLoading(true);
@@ -257,6 +271,16 @@ export const useViewWithGroupsProps = ({
     })
   );
 
+  const computedRelFields = useMemo(() => {
+    const filteredFields = tableRelations
+      ?.filter((el) => el?.type === "Many2One" || el?.type === "Many2Many")
+      .map((item) => ({
+        label: item?.table_from?.label,
+        value: item?.table_from?.slug,
+      }));
+    return filteredFields;
+  }, [tableRelations]);
+
   const getViewSettings = (viewType) => {
     switch (viewType) {
       case VIEW_TYPES_MAP.CALENDAR:
@@ -289,6 +313,21 @@ export const useViewWithGroupsProps = ({
                 required={true}
               />
             </FRow>
+            {Boolean(relationView) && (
+              <FRow label="Relation Field" required>
+                <HFSelect
+                  options={computedRelFields}
+                  control={control}
+                  name="table_slug"
+                  MenuProps={{ disablePortal: true }}
+                  required={true}
+                  onChange={(e) => {
+                    dispatch(groupFieldActions.addGroupBySlug(e));
+                    setValue("table_slug", e);
+                  }}
+                />
+              </FRow>
+            )}
           </MaterialUIProvider>
         );
       }
@@ -304,43 +343,95 @@ export const useViewWithGroupsProps = ({
                 required={true}
               />
             </FRow>
+            {Boolean(relationView) && (
+              <FRow label="Relation Field" required>
+                <HFSelect
+                  options={computedRelFields}
+                  control={control}
+                  name="table_slug"
+                  MenuProps={{ disablePortal: true }}
+                  required={true}
+                  onChange={(e) => {
+                    dispatch(groupFieldActions.addGroupBySlug(e));
+                    setValue("table_slug", e);
+                  }}
+                />
+              </FRow>
+            )}
           </MaterialUIProvider>
         );
       }
       case VIEW_TYPES_MAP.WEBSITE: {
         return (
-          <Controller
-            control={control}
-            name="web_link"
-            render={({ field: { onChange, value } }) => {
-              return (
-                <TextField
-                  id="website_link"
+          <>
+            <Controller
+              control={control}
+              name="web_link"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <TextField
+                    id="website_link"
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                    }}
+                    value={value}
+                    placeholder="website link..."
+                    className="webLinkInput"
+                    sx={{ padding: 0 }}
+                    fullWidth
+                    name="web_link"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LanguageIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    error={error}
+                  />
+                );
+              }}
+            />
+            {Boolean(relationView) && (
+              <FRow label="Relation Field" required>
+                <HFSelect
+                  options={computedRelFields}
+                  control={control}
+                  name="table_slug"
+                  MenuProps={{ disablePortal: true }}
+                  required={true}
                   onChange={(e) => {
-                    onChange(e.target.value);
+                    dispatch(groupFieldActions.addGroupBySlug(e));
+                    setValue("table_slug", e);
                   }}
-                  value={value}
-                  placeholder="website link..."
-                  className="webLinkInput"
-                  sx={{ padding: 0 }}
-                  fullWidth
-                  name="web_link"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LanguageIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  error={error}
                 />
-              );
-            }}
-          />
+              </FRow>
+            )}
+          </>
         );
       }
       default: {
-        return null;
+        return (
+          <>
+            {Boolean(relationView) && (
+              <MaterialUIProvider>
+                <FRow label="Relation Field" required>
+                  <HFSelect
+                    options={computedRelFields}
+                    control={control}
+                    name="table_slug"
+                    MenuProps={{ disablePortal: true }}
+                    required={true}
+                    onChange={(e) => {
+                      dispatch(groupFieldActions.addGroupBySlug(e));
+                      setValue("table_slug", e);
+                    }}
+                  />
+                </FRow>
+              </MaterialUIProvider>
+            )}
+          </>
+        );
       }
     }
   };

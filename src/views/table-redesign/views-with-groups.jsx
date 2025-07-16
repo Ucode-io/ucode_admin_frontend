@@ -606,6 +606,7 @@ export const NewUiViewsWithGroups = ({
     handleClose,
     refetchViews,
     handleClosePop,
+    tableRelations,
   });
 
   return (
@@ -971,7 +972,8 @@ export const NewUiViewsWithGroups = ({
               id={"view-settings"}
               open={
                 !!selectedViewAnchor &&
-                viewsWithSettings.includes(selectedViewTab)
+                (viewsWithSettings.includes(selectedViewTab) ||
+                  Boolean(relationView))
               }
               anchorEl={selectedViewAnchor}
               onClose={closeViewSettings}
@@ -993,14 +995,6 @@ export const NewUiViewsWithGroups = ({
                   //   "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
                 }}
               >
-                {/* {(selectedViewTab === VIEW_TYPES_MAP.TIMELINE ||
-                  selectedViewTab === VIEW_TYPES_MAP.CALENDAR) && (
-                  <TimeTypePopup
-                    computedColumns={computedColumns}
-                    control={control}
-                    viewType={selectedViewTab}
-                  />
-                )} */}
                 {getViewSettings(selectedViewTab)}
                 <Box marginTop={"10px"}>
                   <Button

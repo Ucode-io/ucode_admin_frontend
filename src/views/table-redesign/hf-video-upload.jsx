@@ -1,22 +1,35 @@
-import React, {useEffect, useRef, useState} from "react";
+import "@/components/Upload/style.scss";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import ClearIcon from "@mui/icons-material/Clear";
+import DeleteIcon from "@mui/icons-material/Delete";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import {
   Box,
   Button,
   CircularProgress,
   FormHelperText,
+  Modal,
   Popover,
+  Typography,
 } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import React, {useEffect, useRef, useState} from "react";
 import {Controller} from "react-hook-form";
-
 import fileService from "../../services/fileService";
-import "@/components/Upload/style.scss";
 import "./style.scss";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import DownloadIcon from "@mui/icons-material/Download";
-import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  minWidth: "700px",
+  minHeight: "400px",
+  border: "0px solid #000",
+  p: 4,
+};
 
 export const HFVideoUpload = ({
   control,
@@ -50,7 +63,6 @@ export const HFVideoUpload = ({
             }}
             tabIndex={tabIndex}
             disabled={disabled}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
           {!disabledHelperText && error?.message && (
@@ -67,6 +79,46 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
   const [loading, setLoading] = useState(false);
   const videoRef = useRef(null);
   const fileName = (value ?? "").split("#")[0].split("_")[1] ?? "";
+  const [openFullImg, setOpenFullImg] = useState(false);
+  const handleOpenImg = () => setOpenFullImg(true);
+  const handleCloseImg = () => setOpenFullImg(false);
+  const [degree, setDegree] = useState(0);
+  const [imgScale, setImgScale] = useState(1);
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const rotateImg = () => {
+    if (degree === 360) {
+      setDegree(90);
+    } else {
+      setDegree(degree + 90);
+    }
+  };
+
+  const imageZoom = (type) => {
+    if (type === "down") {
+      if (imgScale === 1) {
+        setImgScale(1);
+      } else {
+        setImgScale(imgScale - 0.5);
+      }
+    } else if (type === "up") {
+      if (imgScale === 4) {
+        setImgScale(imgScale);
+      } else {
+        setImgScale(imgScale + 0.5);
+      }
+    }
+  };
 
   useEffect(() => {
     const listener = () => {
@@ -103,16 +155,11 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
 
   return (
     <>
-      <div
-        className={className}
-        style={{textAlign: "left"}}
-        onClick={(ev) => {
-          if (value) {
-            setAnchorEl(ev.target);
-          }
-        }}>
+      <div className={className} style={{textAlign: "left"}}>
         {value && (
-          <div style={{display: "flex", alignItems: "center", columnGap: 5}}>
+          <div
+            onClick={() => handleOpenImg()}
+            style={{display: "flex", alignItems: "center", columnGap: 5}}>
             <div className="video-block">
               <video ref={videoRef} src={value} />
             </div>
@@ -145,6 +192,84 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
       </div>
 
       <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            padding: "10px",
+            backgroundColor: "#212B36",
+          }}>
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+              color: "#fff",
+            }}
+            onClick={async () => {
+              try {
+                await videoRef.current.requestFullscreen();
+                videoRef.current.play();
+              } catch (err) {
+                videoRef.current.play();
+              }
+            }}>
+            <OpenInFullIcon />
+            Show Full Video
+          </Button>
+
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+              color: "#fff",
+            }}
+            onClick={closeButtonHandler}>
+            <DeleteIcon style={{width: "17px", height: "17px"}} />
+            Remove Video
+          </Button>
+
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+              color: "#fff",
+            }}
+            disabled={disabled}
+            onClick={(e) => {
+              e.stopPropagation();
+              inputRef.current.click();
+            }}>
+            <ChangeCircleIcon />
+            Change Video
+          </Button>
+        </Box>
+        <input
+          type="file"
+          hidden
+          ref={inputRef}
+          tabIndex={tabIndex}
+          autoFocus={tabIndex === 1}
+          onChange={inputChangeHandler}
+          disabled={disabled}
+        />
+      </Popover>
+
+      {/* <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
@@ -202,7 +327,101 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             Change Video
           </Button>
         </Box>
-      </Popover>
+      </Popover> */}
+
+      <Modal open={openFullImg} onClose={handleCloseImg}>
+        <Box sx={style}>
+          <Box
+            sx={{
+              border: "0px solid #fff",
+              transform: `rotate(${degree}deg)`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            aria-describedby={id}
+            // onClick={handleClick}
+          >
+            {/* <img
+              src={value}
+              style={{transform: `scale(${imgScale})`}}
+              className="uploadedImage"
+              alt=""
+            /> */}
+
+            <video
+              controls
+              className="uploadedImage"
+              style={{transform: `scale(${imgScale})`}}
+              src={value}></video>
+            <Typography
+              sx={{
+                fontSize: "10px",
+                color: "#747474",
+              }}>
+              {value?.split?.("_")?.[1] ?? ""}
+            </Typography>
+          </Box>
+          <Button
+            onClick={handleCloseImg}
+            sx={{
+              position: "absolute",
+              right: "-300px",
+              top: "-50px",
+              color: "white",
+            }}>
+            <ClearIcon style={{width: "30px", height: "30px"}} />
+          </Button>
+
+          <Button
+            onClick={() => {
+              imageZoom("up");
+            }}
+            sx={{
+              position: "absolute",
+              right: "-90px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <ZoomInIcon style={{width: "30px", height: "30px"}} />
+          </Button>
+          <Button
+            onClick={() => {
+              imageZoom("down");
+            }}
+            sx={{
+              position: "absolute",
+              right: "-150px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+          </Button>
+          {/* <Button
+            onClick={rotateImg}
+            sx={{
+              position: "absolute",
+              right: "-215px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <Rotate90DegreesCcwIcon style={{width: "30px", height: "30px"}} />
+          </Button> */}
+          <Button
+            onClick={handleClick}
+            sx={{
+              position: "absolute",
+              right: "-300px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <MoreHorizIcon
+              htmlColor="#fff"
+              style={{width: "30px", height: "30px"}}
+            />
+          </Button>
+        </Box>
+      </Modal>
 
       <input
         type="file"

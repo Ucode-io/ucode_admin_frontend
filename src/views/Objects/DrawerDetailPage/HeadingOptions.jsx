@@ -33,6 +33,10 @@ const HeadingOptions = ({
     }
   };
 
+  console.log({
+    selectedTab,
+  });
+
   let selectedFieldSlug = useMemo(() => {
     if (!watch("attributes.layout_heading")) {
       if (
@@ -52,6 +56,8 @@ const HeadingOptions = ({
       isMultiLanguage &&
       !removeLangFromSlug(watch("attributes.layout_heading"))
     ) {
+      return watch("attributes.layout_heading");
+    } else {
       return watch("attributes.layout_heading");
     }
   }, [

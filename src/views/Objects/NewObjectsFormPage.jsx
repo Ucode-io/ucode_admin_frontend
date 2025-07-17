@@ -62,7 +62,7 @@ function NewObjectsFormPage() {
     ...state,
   });
 
-  const { data: menuViews } = useQuery(
+  const { data: menuViews, refetch: refetchMenuViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
     {
@@ -441,6 +441,7 @@ function NewObjectsFormPage() {
                   selectedTab={layout?.tabs?.[0]}
                   data={data}
                   selectedRow={selectedRow}
+                  refetchViews={refetchMenuViews}
                 />
               </TabPanel>
             );

@@ -93,12 +93,15 @@ export default function NewFileUpload({
       {value && (
         <>
           <Box
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpen();
+            }}
             sx={{width: drawerDetail ? "330px" : "100%"}}
             className="uploadedFile">
             <Button
               id="file_upload"
               aria-describedby={id}
-              onClick={handleClick}
               sx={{
                 padding: 0,
                 minWidth: 40,
@@ -114,10 +117,6 @@ export default function NewFileUpload({
             </Button>
 
             <Typography
-              onClick={(e) => {
-                e.stopPropagation();
-                handleOpen();
-              }}
               sx={{
                 fontSize: "10px",
                 color: "#747474",

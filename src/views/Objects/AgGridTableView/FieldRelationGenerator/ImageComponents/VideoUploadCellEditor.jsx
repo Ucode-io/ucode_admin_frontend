@@ -279,6 +279,7 @@ const VideoUploadCellEditor = ({
             }}
             aria-describedby={id}>
             <video
+              onClick={(e) => e.stopPropagation()}
               ref={videoRef}
               autoPlay={false}
               controls
@@ -287,9 +288,6 @@ const VideoUploadCellEditor = ({
                 transform: `scale(${imgScale})`,
                 position: "relative",
                 zIndex: 2,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
               }}
               src={value}
             />

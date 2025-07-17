@@ -235,6 +235,7 @@ const ImageUpload = ({
           <Modal open={openFullImg} onClose={handleCloseImg}>
             <Box sx={style}>
               <Box
+                onClick={handleCloseImg}
                 sx={{
                   border: "0px solid #fff",
                   transform: `rotate(${degree}deg)`,
@@ -245,6 +246,7 @@ const ImageUpload = ({
                 }}
                 aria-describedby={id}>
                 <img
+                  onClick={(e) => e.stopPropagation()}
                   src={value}
                   style={{transform: `scale(${imgScale})`}}
                   className="uploadedImage"

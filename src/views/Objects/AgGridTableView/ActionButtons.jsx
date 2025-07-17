@@ -11,6 +11,33 @@ import ClearIcon from "@mui/icons-material/Clear";
 function ActionButtons(props) {
   const {colDef, data} = props;
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        handleSubmit(onSubmit)();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (rowRef.current && !rowRef.current.contains(event.target)) {
+        colDef?.addRowTree(data, props);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       {data?.new_field ? (
@@ -68,7 +95,7 @@ function ActionButtons(props) {
                 opacity: 0,
                 transition: "opacity 0.3s ease",
               }}>
-              <RectangleIconButton
+              {/* <RectangleIconButton
                 id="cancel-row"
                 color="error"
                 style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
@@ -84,7 +111,7 @@ function ActionButtons(props) {
                   colDef?.addRowTree(data, props);
                 }}>
                 <DoneIcon color="success" />
-              </RectangleIconButton>
+              </RectangleIconButton> */}
             </Box>
           </Box>
         </>

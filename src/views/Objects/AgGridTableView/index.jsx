@@ -435,7 +435,7 @@ function AgGridTableView(props) {
         data: data,
       })
       .then((res) => {
-        delete data?.new_field;
+        // delete data?.new_field;
         refetch();
         setLoadings(false);
       })

@@ -44,7 +44,7 @@ function RowIndexField(props) {
         !isSelected && (
           <Box
             onClick={() => {
-              column?.colDef?.addRow({
+              column?.colDef?.appendNewRow({
                 guid: generateGUID(),
               });
             }}

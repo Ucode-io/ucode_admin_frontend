@@ -274,6 +274,7 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
       <Modal open={openFullImg} onClose={handleCloseVideo}>
         <Box sx={style}>
           <Box
+            onClick={handleCloseVideo}
             sx={{
               border: "0px solid #fff",
               transform: `rotate(${degree}deg)`,
@@ -284,6 +285,7 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             }}
             aria-describedby={id}>
             <video
+              onClick={(e) => e.stopPropagation()}
               controls
               className="uploadedImage"
               style={{transform: `scale(${imgScale})`}}

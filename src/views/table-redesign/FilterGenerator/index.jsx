@@ -5,6 +5,7 @@ import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
 import TableOrderingButton from "@/components/TableOrderingButton";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 const FilterGenerator = ({
   field,
@@ -27,7 +28,7 @@ const FilterGenerator = ({
   };
 
   return (
-    <div style={{display: "flex", alignItems: "center"}}>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
     </div>
   );
@@ -46,6 +47,18 @@ export const Filter = ({
 
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
+    if (field.type === FIELD_TYPES.STATUS) {
+      const { todo, complete, progress } = field.attributes;
+      const options = [
+        ...todo?.options,
+        ...complete?.options,
+        ...progress?.options,
+      ];
+      return options?.map((item) => ({
+        label: item.label,
+        value: item.label,
+      }));
+    }
     return field.attributes.options.map((option) => {
       if (field.type === "PICK_LIST")
         return {
@@ -75,6 +88,7 @@ export const Filter = ({
 
     case "PICK_LIST":
     case "MULTISELECT":
+    case "STATUS":
       return (
         <FilterAutoComplete
           searchText={debouncedValue}

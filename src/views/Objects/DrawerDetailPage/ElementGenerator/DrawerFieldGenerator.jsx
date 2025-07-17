@@ -17,10 +17,17 @@ import {
   Tooltip,
 } from "@mui/material";
 import {Parser} from "hot-formula-parser";
-import React, {Suspense, lazy, useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {NumericFormat} from "react-number-format";
-import {useQuery} from "react-query";
+import React, {
+  Suspense,
+  lazy,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
+import { useQuery } from "react-query";
 import PolygonFieldTable from "../../../../components/ElementGenerators/PolygonFieldTable";
 import HFCodeField from "../../../../components/FormElements/HFCodeField";
 import HFFileUpload from "../../../../components/FormElements/HFFileUpload";
@@ -31,7 +38,7 @@ import HFMultiImage from "../../../../components/FormElements/HFMultiImage";
 import HFPhotoUpload from "../../../../components/FormElements/HFPhotoUpload";
 import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../../../services/constructorFunctionService";
-import {numberWithSpaces} from "../../../../utils/formatNumbers";
+import { numberWithSpaces } from "../../../../utils/formatNumbers";
 import listToOptions from "../../../../utils/listToOptions";
 import HFSwitch from "../../../table-redesign/hf-switch";
 import MultiLineInput from "./MultiLineInput";
@@ -47,7 +54,9 @@ import HFIconPicker from "./hf-iconPicker";
 import HFInternationalPhone from "./hf-internationalPhone";
 import HFMultipleAutocomplete from "./hf-multiselectField";
 import HFStatusField from "./hf-statusField";
-import {HFVideoUpload} from "./hf-videoUploadField";
+import { HFVideoUpload } from "./hf-videoUploadField";
+import { FIELD_TYPES } from "../../../../utils/constants/fieldTypes";
+import cls from "./field-generator.styles.module.scss";
 // import RelationField from "./RelationField";
 
 const RelationField = lazy(() => import("./RelationField"));
@@ -99,7 +108,7 @@ function DrawerFieldGenerator({
     }
   }, [field.type, field.id, field.relation_type]);
 
-  const {data: functions = []} = useQuery(
+  const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -128,7 +137,8 @@ function DrawerFieldGenerator({
                 }}
               />
             </>
-          }>
+          }
+        >
           <RelationField
             disabled={isDisabled}
             isRequired={isRequired}
@@ -402,6 +412,20 @@ function DrawerFieldGenerator({
         />
       );
 
+    case FIELD_TYPES.SINGLE_LINE:
+      return (
+        <InputField
+          watch={watch}
+          disabled={isDisabled}
+          control={control}
+          name={computedSlug}
+          field={field}
+          errors={errors}
+          functions={functions}
+          isTextarea={true}
+        />
+      );
+
     default:
       // if (field?.type === FIELD_TYPES.LOOKUP && !field?.relation_type) {
       //   return (
@@ -441,7 +465,24 @@ const InputField = ({
   errors,
   functions,
   field,
+  isTextarea,
 }) => {
+  const textareaRef = useRef(null);
+
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "31px";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
+  useEffect(() => {
+    if (isTextarea) {
+      resizeTextarea();
+    }
+  }, [watch(name)]);
+
   const inputValue =
     watch(name) ||
     functions?.find((fn) => fn?.value === field?.attributes?.function)?.label;
@@ -462,40 +503,51 @@ const InputField = ({
             field?.type === "EMAIL" ? "Incorrect email format" : undefined,
         },
       }}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <ChakraProvider>
             <ChakraBox position="relative">
               <InputGroup>
-                <Input
-                  disabled={isDisabled}
-                  type={inputType}
-                  value={inputValue ?? value}
-                  onChange={(e) => onChange(e.target.value)}
-                  placeholder={
-                    field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
-                  }
-                  height="30px"
-                  fontSize="13px"
-                  px={"9.6px"}
-                  width="100%"
-                  border="none"
-                  borderRadius={"4px"}
-                  _hover={{
-                    bg: "#F7F7F7",
-                  }}
-                  _placeholder={{
-                    color: "#adb5bd",
-                  }}
-                  _focus={{
-                    backgroundColor: "#F7F7F7",
-                    border: "none",
-                    outline: "none",
-                  }}
-                />
+                {isTextarea ? (
+                  <textarea
+                    ref={textareaRef}
+                    disabled={isDisabled}
+                    value={inputValue ?? value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="Empty"
+                    className={cls.singleLine}
+                  />
+                ) : (
+                  <Input
+                    disabled={isDisabled}
+                    type={inputType}
+                    value={inputValue ?? value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder={
+                      field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
+                    }
+                    height="30px"
+                    fontSize="13px"
+                    px={"9.6px"}
+                    width="100%"
+                    border="none"
+                    borderRadius={"4px"}
+                    _hover={{
+                      bg: "#F7F7F7",
+                    }}
+                    _placeholder={{
+                      color: "#adb5bd",
+                    }}
+                    _focus={{
+                      backgroundColor: "#F7F7F7",
+                      border: "none",
+                      outline: "none",
+                    }}
+                  />
+                )}
                 {isDisabled && (
                   <InputRightElement pointerEvents="none">
-                    <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+                    <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
                   </InputRightElement>
                 )}
               </InputGroup>
@@ -508,7 +560,8 @@ const InputField = ({
                     bottom: "-5px",
                     left: "0",
                     paddingLeft: "9.6px",
-                  }}>
+                  }}
+                >
                   {errors?.[name]?.message}
                 </span>
               )}

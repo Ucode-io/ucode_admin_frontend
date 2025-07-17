@@ -269,10 +269,16 @@ function DrawerFormDetailPage({
                       <Box
                         className={dragAction ? "rowColumnDrag" : "rowColumn"}
                         display="flex"
-                        alignItems="center"
+                        alignItems={
+                          Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
+                            ? "flex-start"
+                            : "center"
+                        }
                         {...(Boolean(field?.type === "MULTISELECT")
                           ? { minHeight: "30px" }
-                          : { height: "34px" })}
+                          : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
+                            ? { height: "auto !important" }
+                            : { height: "34px" })}
                         py="8px"
                       >
                         <Box

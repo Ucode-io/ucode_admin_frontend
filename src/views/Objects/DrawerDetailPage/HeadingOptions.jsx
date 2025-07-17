@@ -33,10 +33,6 @@ const HeadingOptions = ({
     }
   };
 
-  console.log({
-    selectedTab,
-  });
-
   let selectedFieldSlug = useMemo(() => {
     if (!watch("attributes.layout_heading")) {
       if (

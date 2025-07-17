@@ -223,7 +223,9 @@ const LayoutHeading = ({
     setAnchorEl(null);
   };
 
-  const fields = sections?.flatMap((item) => [...item.fields]);
+  const fields = sections?.flatMap((item) =>
+    Array.isArray(item?.fields) ? [...item?.fields] : []
+  );
 
   const fieldsList = fields
     ?.map((field) => ({

@@ -193,7 +193,7 @@ const Form = ({
               </Box>
             )}
 
-            {Number(resurceType) === 11 && (
+            {Number(resurceType) === 11 && isEditPage && (
               <Box
                 sx={{
                   display: "flex",

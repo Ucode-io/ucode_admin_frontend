@@ -237,20 +237,27 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
+      const requestData = {
+        ...autoFiltersValue,
+        additional_request: {
+          additional_field: "guid",
+        },
+        view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+        search: debouncedValue.trim(),
+        limit: 10,
+        offset: pageToOffset(page, 10),
+      };
+
+      if (computedIds || value) {
+        requestData.additional_request.additional_values = [
+          computedIds ?? value,
+        ];
+      }
+
       return constructorObjectService.getListV2(
         tableSlug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [computedIds ?? value],
-            },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,

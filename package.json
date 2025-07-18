@@ -148,6 +148,7 @@
     "react-hook-form": "7.30.0",
     "react-i18next": "^11.16.7",
     "react-icons": "^5.4.0",
+    "react-image-gallery": "^1.4.0",
     "react-infinite-scroll": "^0.1.5",
     "react-infinite-scroll-component": "^6.1.0",
     "react-inlinesvg": "^3.0.0",
@@ -198,7 +199,8 @@
     "tus-js-client": "^3.0.1",
     "use-onclickoutside": "^0.4.1",
     "wkhtmltopdf": "^0.4.0",
-    "yarn": "^1.22.22"
+    "yarn": "^1.22.22",
+    "yet-another-react-lightbox": "^3.24.0"
   },
   "devDependencies": {
     "@originjs/vite-plugin-federation": "1.1.7",

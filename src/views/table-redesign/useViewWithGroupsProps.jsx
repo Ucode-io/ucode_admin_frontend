@@ -35,8 +35,6 @@ export const useViewWithGroupsProps = ({
     VIEW_TYPES_MAP.WEBSITE,
   ];
 
-  console.log({ viewsList });
-
   const {
     control,
     watch,
@@ -116,7 +114,7 @@ export const useViewWithGroupsProps = ({
   const [loading, setLoading] = useState(false);
 
   const createView = (type) => {
-    if (Boolean(tableRelations) && !watch("table_slug")) {
+    if (Boolean(tableRelations) && relationView && !watch("table_slug")) {
       setError("table_slug", { message: "Please select table" });
       return;
     }

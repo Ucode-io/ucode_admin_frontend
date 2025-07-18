@@ -177,6 +177,7 @@ const AutoCompleteElement = ({
       alignItems: "center",
       border: "0px solid #fff",
       outline: "none",
+      minHeight: "30px",
     }),
     input: (provided) => ({
       ...provided,

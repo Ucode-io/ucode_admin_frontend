@@ -216,7 +216,8 @@ const AutoCompleteElement = ({
     clearIndicator: (provided) => ({
       ...provided,
       cursor: "pointer",
-      marginRight: "15px",
+      marginRight: "20px",
+      padding: "0",
     }),
   };
 

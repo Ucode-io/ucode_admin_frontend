@@ -46,8 +46,7 @@ function DrawerObjectsPage({
 
   const viewSelectedIndex = useSelector(
     (state) =>
-      state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
-        ?.tabIndex
+      state?.views?.viewTab?.find((el) => el?.tableSlug === tableSlug)?.tabIndex
   );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);

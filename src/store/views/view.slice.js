@@ -1,9 +1,14 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 export const {actions: viewsActions, reducer: viewsReducer} = createSlice({
-  name: "viewTab",
+  name: "views",
   initialState: {
     viewTab: [],
+    views: [],
+    selectedView: {
+      index: null,
+      view: {}
+    },
   },
   reducers: {
     setViewTab: (state, {payload}) => {
@@ -17,6 +22,20 @@ export const {actions: viewsActions, reducer: viewsReducer} = createSlice({
       } else {
         state.viewTab.push({tableSlug, tabIndex});
       }
+    },
+    setViews: (state, {payload}) => {
+      state.views = payload
+    },
+    updateView: (state, {payload}) => {
+      const {view, index, id} = payload;
+      if(id) {
+        state.views = state.views.map(v => v.id === id ? view : v)
+      } else {
+        state.views[index] = view
+      }
+    },
+    setSelectedView: (state, {payload}) => {
+      state.selectedView = payload
     },
   },
 });

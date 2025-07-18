@@ -13,8 +13,8 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import OldDrawerDetailPage from "../DrawerDetailPage/OldDrawerDetailPage";
 import clsx from "clsx";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
-import {useParams} from "react-router-dom";
-import {useSelector} from "react-redux";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 const BoardView = ({

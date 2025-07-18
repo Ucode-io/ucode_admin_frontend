@@ -1,25 +1,17 @@
-import {Box, Button, Modal} from "@mui/material";
-import React, {useMemo, useRef, useState} from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import styles from "./styles.module.scss";
-import UploadIcon from "@mui/icons-material/Upload";
-import fileService from "../../../services/fileService";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import UploadIcon from "@mui/icons-material/Upload";
+import {Box, Button, Modal} from "@mui/material";
+import React, {useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
-// import ImageGallery from "react-image-gallery";
-// import "react-image-gallery/styles/css/image-gallery.css";
-
-import Lightbox from "yet-another-react-lightbox";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import Download from "yet-another-react-lightbox/plugins/download";
-
+import fileService from "../../../services/fileService";
+import styles from "./styles.module.scss";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/styles.css";
 import TelegramMultiImageViewer from "./TelegramMultiImage";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -157,9 +149,6 @@ function MultiImageUpload({
                       alt="img"
                     />
                   </Box>
-                  {/* <Box sx={{ fontSize: "10px", wordBreak: "keep-all" }}> */}
-                  {/* {parseImgPhoto(value?.[0])} */}
-                  {/* </Box> */}
                 </>
               ))}
             </Box>
@@ -238,13 +227,6 @@ function MultiImageUpload({
                   alt="Upload"
                   style={{width: 22, height: 22}}
                 />
-                {/* <UploadFileIcon
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    color: "rgb(116, 116, 116)",
-                  }}
-                /> */}
               </Box>
             </Box>
           ) : (
@@ -386,53 +368,6 @@ function MultiImageUpload({
           </Box>
         </Box>
       </Modal>
-
-      {/* <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <Lightbox
-            open={openGallery}
-            close={handleCloseGallery}
-            slides={imagesSrc}
-            render={{
-              buttonPrev: () => null,
-              buttonNext: () => null,
-            }}
-            plugins={[Thumbnails, Zoom, Download]}
-            carousel={{finite: true}}
-            styles={{
-              container: {backgroundColor: "transparent"},
-              thumbnailsContainer: {
-                position: "relative",
-                margin: 0,
-                padding: "10px 0",
-                width: "100%",
-                backgroundColor: "rgba(0, 0, 0, 0.1)",
-                justifyContent: "center",
-                display: "flex",
-              },
-              thumbnail: {
-                margin: "0 0px",
-                borderRadius: 4,
-                cursor: "pointer",
-                width: 60,
-                height: 90,
-                objectFit: "cover",
-              },
-            }}
-          />
-        </Box>
-      </Modal> */}
 
       <TelegramMultiImageViewer
         open={fullScreen}

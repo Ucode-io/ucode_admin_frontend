@@ -23,6 +23,10 @@ const style = {
   minHeight: "400px",
   border: "0px solid #000",
   p: 4,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "85vh",
 };
 
 const ImageUpload = ({

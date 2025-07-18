@@ -46,7 +46,6 @@ export const Filter = ({
   const [debouncedValue, setDebouncedValue] = useState("");
 
   const computedOptions = useMemo(() => {
-    if (!field.attributes?.options) return [];
     if (field.type === FIELD_TYPES.STATUS) {
       const { todo, complete, progress } = field.attributes;
       const options = [
@@ -59,6 +58,7 @@ export const Filter = ({
         value: item.label,
       }));
     }
+    if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {
       if (field.type === "PICK_LIST")
         return {

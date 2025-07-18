@@ -224,7 +224,7 @@ function AggridTreeView(props) {
   //     },
   //   }
   // );
-
+console.log({ tableSlug, view });
   const {
     data: { fiedlsarray } = {
       pageCount: 1,

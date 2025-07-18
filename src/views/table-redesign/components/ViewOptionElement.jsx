@@ -30,6 +30,7 @@ import {useParams} from "react-router-dom";
 import useDownloader from "../../../hooks/useDownloader";
 import constructorObjectService from "../../../services/constructorObjectService";
 import { VIEW_TYPES_MAP } from "../../../utils/constants/viewTypes";
+import { viewsActions } from "../../../store/views/view.slice";
 
 export const ColumnsVisibility = ({
   relationView = false,
@@ -45,6 +46,7 @@ export const ColumnsVisibility = ({
   const [search, setSearch] = useState("");
   const allFields = Object.values(fieldsMap);
   const viewsList = useSelector((state) => state.groupField.viewsList);
+  const dispatch = useDispatch();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -52,14 +54,20 @@ export const ColumnsVisibility = ({
 
       if (relationView && viewsList?.length > 1) {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
-      } else if (!relationView) {
-        return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
       } else {
-        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+        dispatch(viewsActions.updateView({ view: data, id: view?.id }));
       }
+
+      // if (relationView && viewsList?.length > 1) {
+      //   return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
+      // } else if (!relationView) {
+      //   return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+      // } else {
+      //   return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+      // }
     },
-    onSuccess: () => {
-      refetchViews();
+    onSuccess: (data) => {
+      // refetchViews();
     },
   });
 

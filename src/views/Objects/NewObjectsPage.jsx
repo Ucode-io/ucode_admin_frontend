@@ -19,6 +19,7 @@ import {DynamicTable} from "../table-redesign";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import { viewsActions } from "../../store/views/view.slice";
 
 const NewObjectsPage = () => {
   const { state, pathname } = useLocation();
@@ -29,6 +30,7 @@ const NewObjectsPage = () => {
   const { i18n } = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  const { views: viewsFromStore } = useSelector((state) => state.views);
 
   const { data: views, refetch } = useQuery(
     ["GET_VIEWS_LIST", menuId],
@@ -46,6 +48,7 @@ const NewObjectsPage = () => {
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
+        dispatch(viewsActions.setViews(data));
 
         if (!pathname.includes("/login")) {
           updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
@@ -130,6 +133,12 @@ const NewObjectsPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    return () => {
+      dispatch(viewsActions.clearViews());
+    };
+  }, []);
+
   const setViews = () => {};
 
   const storageItem = localStorage.getItem("newUi");
@@ -159,7 +168,7 @@ const NewObjectsPage = () => {
     selectedTabIndex: selectedTabIndex,
     setSelectedView: setSelectedView,
     selectedView: selectedView,
-    views: views,
+    views: viewsFromStore,
     fieldsMap: fieldsMap,
     fieldsMapRel,
   };
@@ -189,7 +198,7 @@ const NewObjectsPage = () => {
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {views?.map((view) => {
+          {viewsFromStore?.map((view) => {
             return (
               <TabPanel key={view.id}>
                 {getViewComponent([view?.type])({ view })}

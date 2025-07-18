@@ -446,6 +446,7 @@ export const NewUiViewsWithGroups = ({
   const handleViewClick = (view, index) => {
     viewHandler(view);
     setSelectedView(view);
+    dispatch(viewsActions.setSelectedView({ view, index }));
 
     const isSection = view?.type === "SECTION";
     if (!new_router) {

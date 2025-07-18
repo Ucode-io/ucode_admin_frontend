@@ -238,7 +238,20 @@ const ImageUploadCellEditor = ({
           </Popover>
 
           <Modal open={openFullImg} onClose={handleCloseImg}>
-            <Box sx={style}>
+            <Box
+              sx={{
+                ...style,
+                outline: "none",
+                boxShadow: "none",
+                "&:focus": {
+                  outline: "none",
+                  boxShadow: "none",
+                },
+                "&:focus-visible": {
+                  outline: "none",
+                  boxShadow: "none",
+                },
+              }}>
               <Box
                 onClick={handleCloseImg}
                 sx={{

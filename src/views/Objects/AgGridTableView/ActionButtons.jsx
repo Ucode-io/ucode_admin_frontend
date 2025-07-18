@@ -1,39 +1,31 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import React, {useEffect} from "react";
+import {useParams} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import DoneIcon from "@mui/icons-material/Done";
 import {Box} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import ClearIcon from "@mui/icons-material/Clear";
-import DoneIcon from "@mui/icons-material/Done";
 
 function ActionButtons(props) {
   const {colDef, data} = props;
 
-  // useEffect(() => {
-  //   const handleKeyDown = (event) => {
-  //     if (event.key === "Enter" && !event.shiftKey) {
-  //       event.preventDefault();
-  //       handleSubmit(onSubmit)();
-  //     }
-  //   };
+  useEffect(() => {
+    if (Boolean(data?.new_field)) {
+      const handleKeyDown = (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          colDef?.addRow(data);
+        }
+      };
 
-  //   window.addEventListener("keydown", handleKeyDown);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (rowRef.current && !rowRef.current.contains(event.target)) {
-  //       colDef?.addRowTree(data, props);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, []);
 
   return (
     <>
@@ -53,7 +45,7 @@ function ActionButtons(props) {
                 transition: "opacity 0.3s ease",
               },
             }}>
-            <Box
+            {/* <Box
               className="imageBox"
               sx={{
                 position: "absolute",
@@ -73,9 +65,9 @@ function ActionButtons(props) {
                 width="25px"
                 height="25px"
               />
-            </Box>
+            </Box> */}
 
-            <Box
+            {/* <Box
               className="buttonBox"
               sx={{
                 position: "absolute",
@@ -105,11 +97,11 @@ function ActionButtons(props) {
                 style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
                 onClick={(e) => {
                   e.stopPropagation();
-                  colDef?.addRowTree(data, props);
+                  colDef?.addRow(data);
                 }}>
                 <DoneIcon color="success" />
               </RectangleIconButton>
-            </Box>
+            </Box> */}
           </Box>
         </>
       ) : (

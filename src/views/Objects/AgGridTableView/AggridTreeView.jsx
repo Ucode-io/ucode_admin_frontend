@@ -402,7 +402,7 @@ function AggridTreeView(props) {
           menuItem,
           view,
           treeData: true,
-          addRow,
+          addRow: addRowTree,
           createChildTree,
           appendNewRow,
           valueGetter: (params) => {
@@ -435,8 +435,7 @@ function AggridTreeView(props) {
           menuItem,
           removeRow,
           createChildTree,
-          addRowTree,
-          addRow,
+          addRow: addRowTree,
           deleteFunction: deleteHandler,
           cellClass: Boolean(view?.columns?.length)
             ? "actionBtn"

@@ -52,9 +52,6 @@ function DrawerObjectsPage({
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
-  console.log({ viewsList });
-  console.log({ viewsPath });
-
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
@@ -63,7 +60,7 @@ function DrawerObjectsPage({
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
-  const {data: menuViews} = useQuery(
+  const { data: menuViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
     {
@@ -90,7 +87,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const {data: relationViews} = useQuery(
+  const { data: relationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),

@@ -54,8 +54,10 @@ export const ColumnsVisibility = ({
 
       if (relationView && viewsList?.length > 1) {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
-      } else {
+      } else if(!relationView) {
         dispatch(viewsActions.updateView({ view: data, id: view?.id }));
+      } else {
+        return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
 
       // if (relationView && viewsList?.length > 1) {

@@ -32,8 +32,6 @@ const NewObjectsPage = () => {
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const { views: viewsFromStore } = useSelector((state) => state.views);
 
-  console.log({ viewsFromStore });
-
   const { data: views, refetch } = useQuery(
     ["GET_VIEWS_LIST", menuId],
     () => {
@@ -133,6 +131,12 @@ const NewObjectsPage = () => {
     if (pathname.includes("/login")) {
       navigate("/", { replace: false });
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(viewsActions.clearViews());
+    };
   }, []);
 
   const setViews = () => {};

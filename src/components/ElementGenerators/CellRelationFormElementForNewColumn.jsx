@@ -279,21 +279,27 @@ const AutoCompleteElement = ({
     ],
     () => {
       if (!field?.table_slug) return null;
+
+      const requestData = {
+        ...autoFiltersValue,
+        additional_request: {
+          additional_field: "guid",
+        },
+
+        view_fields: field?.view_fields?.map((f) => f.slug),
+        search: debouncedValue.trim(),
+        limit: 10,
+        offset: pageToOffset(page, 10),
+      };
+
+      if (value) {
+        requestData.additional_request.additional_values = [value];
+      }
+
       return constructorObjectService.getListV2(
         field?.table_slug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [value],
-            },
-
-            view_fields: field?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,

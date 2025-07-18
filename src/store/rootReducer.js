@@ -109,8 +109,8 @@ const relationTab = {
   storage,
 };
 
-const viewTab = {
-  key: "viewSelectedTab",
+const views = {
+  key: "views",
   storage,
 };
 
@@ -162,7 +162,7 @@ const rootReducer = combineReducers({
   relationTab: persistReducer(relationTab, relationTabReducer),
   cashbox: persistReducer(cashboxPersistConfig, cashboxReducer),
   selectedRow: persistReducer(selectedRowPersistConfig, selectedRowReducer),
-  viewSelectedTab: persistReducer(viewTab, viewsReducer),
+  views: persistReducer(views, viewsReducer),
   groupField: groupFieldReducer,
   alert: alertReducer,
   isOnline: persistReducer(isOnline, isOnlineReducer),

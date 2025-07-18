@@ -100,7 +100,7 @@ function DrawerFormDetailPage({
         selectedRow?.[selectedRow?.TO_DATE_SLUG]
       );
     }
-    console.log({ selectedTab });
+
     rootForm.setValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
@@ -227,6 +227,9 @@ function DrawerFormDetailPage({
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
           setFormValue={rootForm.setValue}
+          activeLang={activeLang}
+          isMultiLanguage={isMultiLanguage}
+          langs={projectInfo?.language}
         />
 
         <Box
@@ -260,11 +263,18 @@ function DrawerFormDetailPage({
                       <Box
                         className={dragAction ? "rowColumnDrag" : "rowColumn"}
                         display="flex"
-                        alignItems="center"
+                        alignItems={
+                          Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
+                            ? "flex-start"
+                            : "center"
+                        }
                         {...(Boolean(field?.type === "MULTISELECT")
-                          ? {minHeight: "30px"}
-                          : {height: "34px"})}
-                        py="8px">
+                          ? { minHeight: "30px" }
+                          : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
+                            ? { height: "auto !important" }
+                            : { height: "34px" })}
+                        py="8px"
+                      >
                         <Box
                           display="flex"
                           alignItems="center"

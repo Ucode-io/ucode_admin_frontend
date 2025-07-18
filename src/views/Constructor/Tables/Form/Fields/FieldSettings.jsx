@@ -49,6 +49,7 @@ import ButtonFieldComponents from "./ButtonFieldComponents";
 import StatusFieldSettings from "./StatusFieldSettings";
 import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
+import { useViewContext } from "../../../../../providers/ViewProvider";
 
 const photoFormats = [
   {
@@ -99,8 +100,9 @@ const FieldSettings = ({
   menuItem,
   tableLan,
 }) => {
-  const { id, appId, tableSlug } = useParams();
   const { handleSubmit, control, reset, watch, setValue, register } = useForm();
+  const { view } = useViewContext();
+  const { id, appId, tableSlug: tableSlugParams } = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
@@ -109,6 +111,8 @@ const FieldSettings = ({
   const [folder, setFolder] = useState("");
   const [drawerType, setDrawerType] = useState("SCHEMA");
   const [selectedField, setSelectedField] = useState(null);
+
+  const tableSlug = tableSlugParams || view?.table_slug;
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");

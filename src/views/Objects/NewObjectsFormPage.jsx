@@ -441,9 +441,7 @@ function NewObjectsFormPage() {
                   selectedTab={layout?.tabs?.[0]}
                   data={data}
                   selectedRow={selectedRow}
-                  refetchViews={
-                    !isRelationView ? refetchMenuViews : refetchRelationViews
-                  }
+                  refetchViews={refetchMenuViews}
                 />
               </TabPanel>
             );

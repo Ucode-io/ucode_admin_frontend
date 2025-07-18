@@ -14,6 +14,7 @@ import {showAlert} from "../../../store/alert/alert.thunk";
 import {Dialog} from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useViewContext } from "../../../providers/ViewProvider";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 
 function LayoutSettings() {
   const { state } = useLocation();
@@ -32,11 +33,11 @@ function LayoutSettings() {
   const tableSlug = state?.tableSlug || tableSlugParams;
   const [loader, setLoader] = useState(false);
 
-
   const {
     data: { layout } = {
       layout: [],
     },
+    refetch: refetchLayout,
   } = useQuery({
     queryKey: [
       "GET_LAYOUT",
@@ -112,6 +113,10 @@ function LayoutSettings() {
             selectedTab={layout?.tabs?.[0]}
             selectedRow={selectedRow}
             sectionIndex={sectionIndex}
+            layout={layout}
+            refetchLayout={refetchLayout}
+            selectedTabIndex={0}
+            tableSlug={tableSlug}
             setSectionIndex={setSectionIndex}
             setSelectedSection={setSelectedSection}
           />

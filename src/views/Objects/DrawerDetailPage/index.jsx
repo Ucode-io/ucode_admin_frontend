@@ -43,9 +43,12 @@ function DrawerDetailPage({
   const handleClose = () => {
     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
     dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
+    dispatch(groupFieldActions.clearViews());
+    dispatch(groupFieldActions.clearViewsPath());
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
     updateQueryWithoutRerender("p", null);
+    updateQueryWithoutRerender("field_slug", null);
   };
   const {menuId, tableSlug: tableFromParams} = useParams();
   const [tabRelations, setTableRelations] = useState();

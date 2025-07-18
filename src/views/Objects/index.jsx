@@ -40,8 +40,7 @@ const ObjectsPage = () => {
   const {i18n, t} = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
-      state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
-        ?.tabIndex
+      state?.views?.viewTab?.find((el) => el?.tableSlug === tableSlug)?.tabIndex
   );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(

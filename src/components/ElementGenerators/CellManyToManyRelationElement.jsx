@@ -200,7 +200,6 @@ const AutoCompleteElement = ({
   //     },
   //   }
   // );
-
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field, page],
     () => {
@@ -212,12 +211,12 @@ const AutoCompleteElement = ({
             ...autoFiltersValue,
             additional_request: {
               additional_field: "guid",
-              additional_values: [defaultValue ?? id],
+              additional_values: [defaultValue || value || id],
             },
             view_fields: field.attributes?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),
-            limit: 15,
-            offset: pageToOffset(page, 15),
+            limit: 10,
+            offset: pageToOffset(page, 10),
           },
         },
         {
@@ -229,11 +228,13 @@ const AutoCompleteElement = ({
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
+        const count = res?.data?.count;
         const slugOptions =
           res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
+          count,
         };
       },
       onSuccess: (data) => {
@@ -298,9 +299,6 @@ const AutoCompleteElement = ({
     }
   }, 500);
 
-  const refetchCount = useRef(0);
-  const MAX_REFETCH_COUNT = 15;
-
   const computedValue = useMemo(() => {
     if (!value) {
       return [];
@@ -320,17 +318,8 @@ const AutoCompleteElement = ({
 
       if (foundedValue?.length) {
         return foundedValue;
-      } else if (
-        !foundedValue.length &&
-        value.length > 0 &&
-        refetchCount.current < MAX_REFETCH_COUNT
-      ) {
-        loadMoreItems();
-        refetchCount.current++;
-        return [];
-      } else {
-        return [];
       }
+      return [];
     } else {
       const option = allOptions?.find((el) => el?.guid === value);
 
@@ -364,12 +353,16 @@ const AutoCompleteElement = ({
 
   const handleListOnScroll = (e) => {
     const target = e.target;
+    const count = optionsFromLocale?.count;
 
     const scrollTop = target.scrollTop;
     const scrollHeight = target.scrollHeight;
     const clientHeight = target.clientHeight;
 
-    if (scrollTop + clientHeight >= scrollHeight - 50) {
+    if (
+      scrollTop + clientHeight >= scrollHeight - 50 &&
+      allOptions?.length < count
+    ) {
       loadMoreItems();
     }
 

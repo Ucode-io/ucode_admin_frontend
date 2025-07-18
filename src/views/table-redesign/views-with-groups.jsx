@@ -451,6 +451,7 @@ export const NewUiViewsWithGroups = ({
   const handleViewClick = (view, index) => {
     viewHandler(view);
     setSelectedView(view);
+    dispatch(viewsActions.setSelectedView({ view, index }));
 
     const isSection = view?.type === "SECTION";
     if (!new_router) {
@@ -610,7 +611,7 @@ export const NewUiViewsWithGroups = ({
   });
 
   return (
-    <ViewProvider state={{ view }}>
+    <ViewProvider state={{ view, fieldsMap }}>
       <ChakraProvider theme={chakraUITheme}>
         <Flex
           h={modal ? `100vh` : "100vh"}
@@ -1226,6 +1227,7 @@ export const NewUiViewsWithGroups = ({
                   queryClient={queryClient}
                   settingsForm={settingsForm}
                   views={views}
+                  refetchMenuViews={refetchMenuViews}
                 />
               </>
             )}
@@ -1718,7 +1720,7 @@ const FilterPopover = ({
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Popover>
@@ -1758,14 +1760,14 @@ const FiltersList = ({
   refetchViews,
   tableLan,
 }) => {
-  const {tableSlug: tableSlugParam} = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
-  const {new_list} = useSelector((state) => state.filter);
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
   useEffect(() => {
@@ -1840,12 +1842,14 @@ const FiltersList = ({
       gap="6px"
       borderBottom="1px solid #EAECF0"
       flexWrap="wrap"
-      id="filterHeight">
+      id="filterHeight"
+    >
       <FilterPopover
         tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
-        refetchViews={refetchViews}>
+        refetchViews={refetchViews}
+      >
         <Flex
           alignItems="center"
           columnGap="4px"
@@ -1855,7 +1859,8 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
-          _hover={{bg: "#f3f3f3"}}>
+          _hover={{ bg: "#f3f3f3" }}
+        >
           <InlineSVG
             src="/img/plus-icon.svg"
             width={14}
@@ -1894,7 +1899,7 @@ const FiltersSwitch = ({
   const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
   const tableSlug = view?.table_slug;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
@@ -1918,8 +1923,8 @@ const FiltersSwitch = ({
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const renderColumns = [
-    ...checkedColumns.map((c) => ({...c, checked: true})),
-    ...unCheckedColumns.map((c) => ({...c, checked: false})),
+    ...checkedColumns.map((c) => ({ ...c, checked: true })),
+    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
   ].filter((column) =>
     search === ""
       ? true
@@ -1948,7 +1953,7 @@ const FiltersSwitch = ({
 
     await mutation.mutateAsync({
       ...view,
-      attributes: {...view?.attributes, quick_filters: result},
+      attributes: { ...view?.attributes, quick_filters: result },
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -1997,9 +2002,10 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -2028,17 +2034,18 @@ const ViewOptions = ({
   isChanged,
   selectedTabIndex,
   setIsChanged = () => {},
+  refetchMenuViews = () => {},
   settingsForm,
   views,
   projectId,
 }) => {
   const navigate = useNavigate();
-  const {menuId, appId, tableSlug: tableSlugFromProps} = useParams();
+  const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
   const queryClient = useQueryClient();
   const tableSlug = relationView
     ? view?.relation_table_slug
     : (tableSlugFromProps ?? view?.table_slug);
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
@@ -2077,7 +2084,7 @@ const ViewOptions = ({
         ...view,
         id: view.id,
         columns: view.columns,
-        attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
+        attributes: { ...view?.attributes, [`name_${i18n?.language}`]: value },
       });
       if (relationView && viewsList?.length > 1) {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
@@ -2101,11 +2108,11 @@ const ViewOptions = ({
     view?.attributes?.visible_field?.split("/")?.length ?? 0;
 
   const {
-    data: {fields, visibleColumns} = {data: []},
+    data: { fields, visibleColumns } = { data: [] },
     isLoading: tableInfoLoading,
     refetch: refetchGetTableInfo,
   } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug}],
+    ["GET_TABLE_INFO", { tableSlug }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -2214,7 +2221,8 @@ const ViewOptions = ({
             adaptive: false,
           },
         },
-      ]}>
+      ]}
+    >
       <PopoverTrigger>
         <IconButton
           aria-label="more"
@@ -2226,7 +2234,8 @@ const ViewOptions = ({
       <PopoverContent
         ref={ref}
         w="320px"
-        p={openedMenu === null ? "0px" : "8px"}>
+        p={openedMenu === null ? "0px" : "8px"}
+      >
         {openedMenu === null && (
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
@@ -2240,7 +2249,8 @@ const ViewOptions = ({
                   borderRadius={6}
                   border="1px solid #D0D5DD"
                   alignItems="center"
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -2267,7 +2277,7 @@ const ViewOptions = ({
                 columnGap="4px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 as="span"
                 onClick={handleOpenPopup}
                 // to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}
@@ -2276,7 +2286,8 @@ const ViewOptions = ({
                   minW="36px"
                   h="28px"
                   alignItems="center"
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -2312,9 +2323,10 @@ const ViewOptions = ({
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                onClick={() => setOpenedMenu("columns-visibility")}>
+                onClick={() => setOpenedMenu("columns-visibility")}
+              >
                 <Image src="/img/eye.svg" alt="Visibility" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Columns") ||
@@ -2349,9 +2361,10 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
-                    onClick={() => setOpenedMenu("group")}>
+                    onClick={() => setOpenedMenu("group")}
+                  >
                     <Image src="/img/copy-01.svg" alt="Group by" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -2383,9 +2396,10 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
-                    onClick={() => setOpenedMenu("tab-group")}>
+                    onClick={() => setOpenedMenu("tab-group")}
+                  >
                     <Image src="/img/browser.svg" alt="Group by" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -2417,10 +2431,11 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
                     onClick={() => setOpenedMenu("sub-group")}
-                    color="#475467">
+                    color="#475467"
+                  >
                     <HorizontalSplitOutlinedIcon color="inherit" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -2449,9 +2464,10 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
-                    onClick={() => setOpenedMenu("fix-column")}>
+                    onClick={() => setOpenedMenu("fix-column")}
+                  >
                     <Image src="/img/layout-left.svg" alt="Fix columns" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -2482,13 +2498,14 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
                   onClick={() =>
                     setOpenedMenu(
                       isTimelineView ? "timeline-settings" : "calendar-settings"
                     )
-                  }>
+                  }
+                >
                   <Image src="/img/settings.svg" alt="Settings" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -2510,13 +2527,14 @@ const ViewOptions = ({
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
                 onClick={(e) => {
                   onDocsClick(e);
                   projectId === "c7168030-b876-4d01-8063-f7ad9f92e974" &&
                     navigateToOldTemplate();
-                }}>
+                }}
+              >
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||
@@ -2556,6 +2574,7 @@ const ViewOptions = ({
             columns={computedColumnsFor}
             queryClient={queryClient}
             refetchGetTableInfo={refetchGetTableInfo}
+            refetchMenuViews={refetchMenuViews}
           />
         )}
 

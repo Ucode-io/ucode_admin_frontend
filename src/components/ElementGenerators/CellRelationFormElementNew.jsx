@@ -25,6 +25,7 @@ import styles from "./style.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
 import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
+import { groupFieldActions } from "../../store/groupField/groupField.slice";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -391,7 +392,28 @@ const AutoCompleteElement = ({
             onClick={(e) => {
               e.stopPropagation();
               if (isNewRouter) {
+                const { data } = props;
                 dispatch(detailDrawerActions.openDrawer());
+                dispatch(groupFieldActions.clearViewsPath());
+                dispatch(groupFieldActions.clearViews());
+                dispatch(
+                  groupFieldActions.addView({
+                    id: data?.table_id,
+                    detailId: data?.guid,
+                    is_relation_view: true,
+                    table_slug: data?.table_slug,
+                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                  })
+                );
+                dispatch(
+                  groupFieldActions.addViewPath({
+                    id: data?.table_id,
+                    detailId: data?.guid,
+                    is_relation_view: true,
+                    table_slug: data?.table_slug,
+                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                  })
+                );
                 updateQueryWithoutRerender("p", props?.data?.guid);
                 updateQueryWithoutRerender("field_slug", field?.table_slug);
               } else {

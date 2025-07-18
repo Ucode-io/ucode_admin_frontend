@@ -1,14 +1,16 @@
-import {Box, Button, Modal} from "@mui/material";
-import React, {useRef, useState} from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import styles from "./styles.module.scss";
-import UploadIcon from "@mui/icons-material/Upload";
-import fileService from "../../../services/fileService";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import UploadIcon from "@mui/icons-material/Upload";
+import {Box, Button, Modal} from "@mui/material";
+import React, {useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
+import fileService from "../../../services/fileService";
+import styles from "./styles.module.scss";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "yet-another-react-lightbox/styles.css";
+import TelegramMultiImageViewer from "./TelegramMultiImage";
 
 const style = {
   position: "absolute",
@@ -41,6 +43,7 @@ function MultiImageUpload({
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
+  const [openGallery, setOpenGallery] = useState(false);
 
   const handleClick = () => setUploadImg(true);
   const handleClose = () => setUploadImg(false);
@@ -48,9 +51,21 @@ function MultiImageUpload({
   const handleFullScreen = (imgSrc) => {
     handleClick();
     setFullScreen(imgSrc);
+    handleOpenGallery();
   };
 
-  const handleCloseFullScreen = () => setFullScreen(null);
+  function handleOpenGallery() {
+    setOpenGallery(true);
+  }
+  function handleCloseGallery() {
+    setOpenGallery(false);
+    setFullScreen(null);
+  }
+
+  const handleCloseFullScreen = () => {
+    handleCloseGallery(false);
+    setFullScreen(null);
+  };
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -85,6 +100,13 @@ function MultiImageUpload({
     const photoName = parts[parts.length - 1];
     return photoName?.slice(0, 30);
   };
+
+  const imagesSrc = useMemo(() => {
+    if (!value?.length) return [];
+    return value?.map((item) => ({
+      src: item,
+    }));
+  }, [value]);
 
   return (
     <>
@@ -127,9 +149,6 @@ function MultiImageUpload({
                       alt="img"
                     />
                   </Box>
-                  {/* <Box sx={{ fontSize: "10px", wordBreak: "keep-all" }}> */}
-                  {/* {parseImgPhoto(value?.[0])} */}
-                  {/* </Box> */}
                 </>
               ))}
             </Box>
@@ -208,13 +227,6 @@ function MultiImageUpload({
                   alt="Upload"
                   style={{width: 22, height: 22}}
                 />
-                {/* <UploadFileIcon
-                  style={{
-                    width: "24px",
-                    height: "24px",
-                    color: "rgb(116, 116, 116)",
-                  }}
-                /> */}
               </Box>
             </Box>
           ) : (
@@ -357,34 +369,11 @@ function MultiImageUpload({
         </Box>
       </Modal>
 
-      <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCloseFullScreen();
-            }}
-            sx={{position: "absolute", top: 10, right: 10, color: "white"}}>
-            <CloseIcon />
-          </Button>
-          <img
-            src={fullScreen}
-            alt="Fullscreen"
-            style={{maxWidth: "100%", maxHeight: "100%"}}
-          />
-        </Box>
-      </Modal>
+      <TelegramMultiImageViewer
+        open={fullScreen}
+        onClose={handleCloseFullScreen}
+        images={imagesSrc}
+      />
     </>
   );
 }

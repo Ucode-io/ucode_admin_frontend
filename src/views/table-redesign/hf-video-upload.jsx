@@ -19,6 +19,8 @@ import React, {useEffect, useRef, useState} from "react";
 import {Controller} from "react-hook-form";
 import fileService from "../../services/fileService";
 import "./style.scss";
+import useDownloader from "../../hooks/useDownloader";
+import {Download} from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -74,14 +76,15 @@ export const HFVideoUpload = ({
 };
 
 const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
+  const {download} = useDownloader();
   const inputRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const videoRef = useRef(null);
   const fileName = (value ?? "").split("#")[0].split("_")[1] ?? "";
   const [openFullImg, setOpenFullImg] = useState(false);
-  const handleOpenImg = () => setOpenFullImg(true);
-  const handleCloseImg = () => setOpenFullImg(false);
+  const handleOpenVideo = () => setOpenFullImg(true);
+  const handleCloseVideo = () => setOpenFullImg(false);
   const [degree, setDegree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
 
@@ -94,14 +97,6 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const rotateImg = () => {
-    if (degree === 360) {
-      setDegree(90);
-    } else {
-      setDegree(degree + 90);
-    }
   };
 
   const imageZoom = (type) => {
@@ -153,12 +148,19 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
     setAnchorEl(null);
   };
 
+  const downloadVideo = (url) => {
+    download({
+      link: url,
+      fileName: value?.split?.("_")?.[1] ?? "",
+    });
+  };
+
   return (
     <>
       <div className={className} style={{textAlign: "left"}}>
         {value && (
           <div
-            onClick={() => handleOpenImg()}
+            onClick={() => handleOpenVideo()}
             style={{display: "flex", alignItems: "center", columnGap: 5}}>
             <div className="video-block">
               <video ref={videoRef} src={value} />
@@ -252,6 +254,7 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             disabled={disabled}
             onClick={(e) => {
               e.stopPropagation();
+              handleClose();
               inputRef.current.click();
             }}>
             <ChangeCircleIcon />
@@ -268,88 +271,34 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
           disabled={disabled}
         />
       </Popover>
-
-      {/* <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}>
+      <Modal open={openFullImg} onClose={handleCloseVideo}>
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            padding: "10px",
+            ...style,
+            outline: "none",
+            boxShadow: "none",
+            "&:focus": {
+              outline: "none",
+              boxShadow: "none",
+            },
+            "&:focus-visible": {
+              outline: "none",
+              boxShadow: "none",
+            },
           }}>
-          <Button
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              justifyContent: "flex-start",
-            }}
-            onClick={async () => {
-              try {
-                await videoRef.current.requestFullscreen();
-                videoRef.current.play();
-              } catch (err) {
-                videoRef.current.play();
-              }
-            }}>
-            <OpenInFullIcon />
-            Show full video
-          </Button>
-          <RectangleIconButton
-            className="removeImg"
-            onClick={closeButtonHandler}>
-            <DeleteIcon
-              style={{width: "17px", height: "17px", marginRight: "12px"}}
-            />
-            Remove video
-          </RectangleIconButton>
-
-          <Button
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              justifyContent: "flex-start",
-            }}
-            disabled={disabled}
-            onClick={(e) => {
-              e.stopPropagation();
-              inputRef.current.click();
-            }}>
-            <ChangeCircleIcon />
-            Change Video
-          </Button>
-        </Box>
-      </Popover> */}
-
-      <Modal open={openFullImg} onClose={handleCloseImg}>
-        <Box sx={style}>
           <Box
+            onClick={handleCloseVideo}
             sx={{
               border: "0px solid #fff",
               transform: `rotate(${degree}deg)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              flexDirection: "column",
             }}
-            aria-describedby={id}
-            // onClick={handleClick}
-          >
-            {/* <img
-              src={value}
-              style={{transform: `scale(${imgScale})`}}
-              className="uploadedImage"
-              alt=""
-            /> */}
-
+            aria-describedby={id}>
             <video
+              onClick={(e) => e.stopPropagation()}
               controls
               className="uploadedImage"
               style={{transform: `scale(${imgScale})`}}
@@ -363,7 +312,7 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             </Typography>
           </Box>
           <Button
-            onClick={handleCloseImg}
+            onClick={handleCloseVideo}
             sx={{
               position: "absolute",
               right: "-300px",
@@ -372,14 +321,13 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             }}>
             <ClearIcon style={{width: "30px", height: "30px"}} />
           </Button>
-
           <Button
             onClick={() => {
               imageZoom("up");
             }}
             sx={{
               position: "absolute",
-              right: "-90px",
+              right: "-60px",
               bottom: "-30px",
               color: "#eee",
             }}>
@@ -391,22 +339,24 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             }}
             sx={{
               position: "absolute",
-              right: "-150px",
+              right: "-120px",
               bottom: "-30px",
               color: "#eee",
             }}>
             <ZoomOutIcon style={{width: "30px", height: "30px"}} />
           </Button>
-          {/* <Button
-            onClick={rotateImg}
+          <Button
+            onClick={() => {
+              downloadVideo(value);
+            }}
             sx={{
               position: "absolute",
-              right: "-215px",
+              right: "-200px",
               bottom: "-30px",
               color: "#eee",
             }}>
-            <Rotate90DegreesCcwIcon style={{width: "30px", height: "30px"}} />
-          </Button> */}
+            <Download style={{width: "30px", height: "30px"}} />
+          </Button>{" "}
           <Button
             onClick={handleClick}
             sx={{

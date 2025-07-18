@@ -386,7 +386,6 @@ function AgGridTableView(props) {
           menuItem,
           view,
           addRow,
-          createChildTree,
           appendNewRow,
           valueGetter: (params) => {
             return (
@@ -435,8 +434,8 @@ function AgGridTableView(props) {
         data: data,
       })
       .then((res) => {
-        delete data?.new_field;
         refetch();
+        delete data?.new_field;
         setLoadings(false);
       })
       .catch(() => setLoadings(false));
@@ -526,21 +525,6 @@ function AgGridTableView(props) {
     });
   };
 
-  function createChildTree(parentObj) {
-    const newChild = {
-      guid: generateGUID(),
-      [`${tableSlug}_id`]: parentObj.guid,
-      path: [...parentObj.path, generateGUID()],
-    };
-    gridApi.current.api.applyTransaction({
-      add: [newChild],
-    });
-
-    constructorObjectService.create(tableSlug, {
-      data: newChild,
-    });
-  }
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -602,7 +586,7 @@ function AgGridTableView(props) {
     projectInfo,
     isWarningActive,
   ]);
-
+  console.log("rowDatarowData", rowData);
   return (
     <Box
       className={style.gridWrapper}
@@ -655,23 +639,19 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={20}
+                  rowBuffer={45}
                   theme={myTheme}
                   gridOptions={{
-                    suppressCellSelection: true,
-                    columnBuffer: 10,
-                    rowBuffer: 20,
+                    rowBuffer: 50,
+                    cacheBlockSize: 100,
+                    maxBlocksInCache: 100,
                   }}
-                  suppressRowHoverHighlight={true}
-                  suppressKeyboardEvent={(params) => true}
-                  suppressAggFuncInHeader={true}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
                   loading={loadings}
                   columnDefs={columns}
                   suppressRefresh={true}
                   enableClipboard={true}
-                  getRowId={(params) => params.data?.guid}
                   groupDisplayType="single"
                   paginationPageSize={limit}
                   undoRedoCellEditing={true}
@@ -681,10 +661,11 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
-                  suppressRowVirtualisation={false}
                   suppressColumnVirtualisation={false}
-                  suppressColumnMoveAnimation={false}
+                  treeData={view?.attributes?.treeData}
+                  suppressColumnMoveAnimation={true}
                   autoGroupColumnDef={autoGroupColumnDef}
+                  suppressServerSideFullWidthLoadingRow={true}
                   loadingOverlayComponent={CustomLoadingOverlay}
                   onCellValueChanged={(e) => {
                     updateObject(e.data);

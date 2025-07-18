@@ -8,11 +8,11 @@ import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
 import Rotate90DegreesCcwIcon from "@mui/icons-material/Rotate90DegreesCcw";
-import RectangleIconButton from "../Buttons/RectangleIconButton";
 import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import useDownloader from "../../hooks/useDownloader";
 
 const style = {
   position: "absolute",
@@ -23,6 +23,10 @@ const style = {
   minHeight: "400px",
   border: "0px solid #000",
   p: 4,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "85vh",
 };
 
 const ImageUpload = ({
@@ -35,6 +39,7 @@ const ImageUpload = ({
   field,
   drawerDetail = false,
 }) => {
+  const {download} = useDownloader();
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,6 +119,13 @@ const ImageUpload = ({
     }
   };
 
+  const downloadPhoto = (url) => {
+    download({
+      link: url,
+      fileName: value?.split?.("_")?.[1] ?? "",
+    });
+  };
+
   return (
     <div
       className={`Gallery ${className}`}
@@ -177,18 +189,7 @@ const ImageUpload = ({
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
-              <Button
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  justifyContent: "flex-start",
-                  color: "#fff",
-                }}
-                onClick={() => imageClickHandler()}>
-                <DownloadIcon />
-                Dowload
-              </Button>
+
               <Button
                 sx={{
                   display: "flex",
@@ -236,8 +237,22 @@ const ImageUpload = ({
           </Popover>
 
           <Modal open={openFullImg} onClose={handleCloseImg}>
-            <Box sx={style}>
+            <Box
+              sx={{
+                ...style,
+                outline: "none",
+                boxShadow: "none",
+                "&:focus": {
+                  outline: "none",
+                  boxShadow: "none",
+                },
+                "&:focus-visible": {
+                  outline: "none",
+                  boxShadow: "none",
+                },
+              }}>
               <Box
+                onClick={handleCloseImg}
                 sx={{
                   border: "0px solid #fff",
                   transform: `rotate(${degree}deg)`,
@@ -246,10 +261,9 @@ const ImageUpload = ({
                   justifyContent: "center",
                   flexDirection: "column",
                 }}
-                aria-describedby={id}
-                // onClick={handleClick}
-              >
+                aria-describedby={id}>
                 <img
+                  onClick={(e) => e.stopPropagation()}
                   src={value}
                   style={{transform: `scale(${imgScale})`}}
                   className="uploadedImage"
@@ -280,7 +294,7 @@ const ImageUpload = ({
                 }}
                 sx={{
                   position: "absolute",
-                  right: "-90px",
+                  right: "-10px",
                   bottom: "-30px",
                   color: "#eee",
                 }}>
@@ -292,7 +306,7 @@ const ImageUpload = ({
                 }}
                 sx={{
                   position: "absolute",
-                  right: "-150px",
+                  right: "-70px",
                   bottom: "-30px",
                   color: "#eee",
                 }}>
@@ -302,13 +316,24 @@ const ImageUpload = ({
                 onClick={rotateImg}
                 sx={{
                   position: "absolute",
-                  right: "-215px",
+                  right: "-130px",
                   bottom: "-30px",
                   color: "#eee",
                 }}>
                 <Rotate90DegreesCcwIcon
                   style={{width: "30px", height: "30px"}}
                 />
+              </Button>
+
+              <Button
+                onClick={() => downloadPhoto(value)}
+                sx={{
+                  position: "absolute",
+                  right: "-200px",
+                  bottom: "-30px",
+                  color: "#eee",
+                }}>
+                <DownloadIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
                 onClick={handleClick}

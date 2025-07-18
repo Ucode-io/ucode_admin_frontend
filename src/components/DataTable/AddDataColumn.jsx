@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneIcon from "@mui/icons-material/Done";
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useParams} from "react-router-dom";
@@ -27,6 +27,7 @@ const AddDataColumn = React.memo(
     view,
     isRelationTable,
   }) => {
+    const rowRef = useRef();
     const dispatch = useDispatch();
     const {tableSlug, id} = useParams();
     const [isLoading, setIsLoading] = useState();
@@ -68,8 +69,35 @@ const AddDataColumn = React.memo(
         .finally(() => {});
     };
 
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          handleSubmit(onSubmit)();
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, []);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (rowRef.current && !rowRef.current.contains(event.target)) {
+          handleSubmit(onSubmit)();
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
     return (
-      <CTableRow>
+      <CTableRow parentRef={rowRef}>
         <CTableCell
           align="center"
           className="data_table__number_cell"

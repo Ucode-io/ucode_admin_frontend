@@ -1,12 +1,13 @@
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {Box, Button, Popover, Typography} from "@mui/material";
 import React, {useRef, useState} from "react";
-import fileService from "../../services/fileService";
 import {useTranslation} from "react-i18next";
+import fileService from "../../services/fileService";
+import PdfCompiler from "./PdfCompiler";
+import DownloadIcon from "@mui/icons-material/Download";
+import useDownloader from "../../hooks/useDownloader";
 
 export default function NewFileUpload({
   value,
@@ -17,15 +18,12 @@ export default function NewFileUpload({
   field,
   drawerDetail = false,
 }) {
-
   const inputRef = useRef("");
-  const { i18n, t } = useTranslation();
-  const [previewVisible, setPreviewVisible] = useState(false);
+  const {t} = useTranslation();
+  const {download} = useDownloader();
+  const [openModal, setOpenModal] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const imageClickHandler = (index) => {
-    setPreviewVisible(true);
-  };
 
   const inputChangeHandler = (e) => {
     setLoading(true);
@@ -42,19 +40,21 @@ export default function NewFileUpload({
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setAnchorEl(null);
+        setLoading(false);
+      });
   };
 
   const deleteImage = (id) => {
     onChange(null);
+    handleModalClose();
   };
 
   const closeButtonHandler = (e) => {
     e.stopPropagation();
     deleteImage();
   };
-
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -63,6 +63,9 @@ export default function NewFileUpload({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
 
   const valueGenerate = (value, separator = "_") => {
     const splitted = value?.split(separator);
@@ -76,28 +79,35 @@ export default function NewFileUpload({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+  const downloadFile = (url) => {
+    download({
+      link: url,
+      fileName: valueGenerate(value),
+    });
+  };
+
   return (
     <div
       className={`Gallery ${className}`}
-      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
-    >
+      style={{cursor: disabled ? "not-allowed" : "pointer"}}>
       {value && (
         <>
           <Box
-            sx={{ width: drawerDetail ? "330px" : "100%" }}
-            className="uploadedFile"
-          >
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpen();
+            }}
+            sx={{width: drawerDetail ? "330px" : "100%"}}
+            className="uploadedFile">
             <Button
               id="file_upload"
               aria-describedby={id}
-              onClick={handleClick}
               sx={{
                 padding: 0,
                 minWidth: 40,
                 width: 40,
                 height: 27,
-              }}
-            >
+              }}>
               <AttachFileIcon
                 style={{
                   color: "#747474",
@@ -110,8 +120,7 @@ export default function NewFileUpload({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}
-            >
+              }}>
               {valueGenerate(value)}
             </Typography>
           </Box>
@@ -124,31 +133,26 @@ export default function NewFileUpload({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}
-          >
+            }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px",
                 padding: "10px",
-              }}
-            >
+                backgroundColor: "#212B36",
+              }}>
               <Button
-                href={value}
-                className=""
-                download
-                target="_blank"
-                rel="noreferrer"
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
-              >
-                <OpenInFullIcon />
-                {t("show_file")}
+                onClick={() => downloadFile(value)}>
+                <DownloadIcon />
+                Dowload
               </Button>
               <Button
                 sx={{
@@ -156,36 +160,37 @@ export default function NewFileUpload({
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
-                disabled={disabled}
-                onClick={(e) => closeButtonHandler(e)}
-              >
-                <DeleteIcon />
-                {t("remove_file")}
+                onClick={(e) => closeButtonHandler(e)}>
+                <DeleteIcon style={{width: "17px", height: "17px"}} />
+                Remove Image
               </Button>
+
               <Button
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
                   justifyContent: "flex-start",
+                  color: "#fff",
                 }}
                 disabled={disabled}
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}
-              >
+                }}>
                 <ChangeCircleIcon />
-                {t("change_file")}
+                Change Image
               </Button>
             </Box>
             <input
-              id="fileUpload_field"
+              id="image_photo"
               type="file"
               style={{
                 display: "none",
               }}
+              accept=".jpg, .jpeg, .png, .gif"
               className="hidden"
               ref={inputRef}
               tabIndex={tabIndex}
@@ -203,8 +208,7 @@ export default function NewFileUpload({
           width: "40px",
           display: "flex",
           alignItems: "center",
-        }}
-      >
+        }}>
         {!value && (
           <Button
             id="file_upload_btn"
@@ -215,8 +219,7 @@ export default function NewFileUpload({
               minWidth: 40,
               width: 40,
               height: 27,
-            }}
-          >
+            }}>
             <input
               id="file_upload"
               type="file"
@@ -230,11 +233,19 @@ export default function NewFileUpload({
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{ width: 22, height: 22 }}
+              style={{width: 22, height: 22}}
             />
           </Button>
         )}
       </Box>
+
+      <PdfCompiler
+        value={value}
+        openModal={openModal}
+        handleClick={handleClick}
+        handleClose={handleModalClose}
+        valueGenerate={valueGenerate}
+      />
     </div>
   );
 }

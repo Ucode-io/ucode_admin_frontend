@@ -89,7 +89,6 @@ const LayoutSidebar = ({
   toggleDarkMode = () => {},
   darkMode,
   handleOpenProfileModal = () => {},
-  handleOpenUserInvite = () => {},
 }) => {
   const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -829,26 +828,6 @@ const LayoutSidebar = ({
           />
         )}
       </Flex>
-
-      {/* <SubMenu
-        menuLanguages={menuLanguages}
-        child={child}
-        subMenuIsOpen={subMenuIsOpen}
-        setSubMenuIsOpen={setSubMenuIsOpen}
-        openFolderCreateModal={openFolderCreateModal}
-        setFolderModalType={setFolderModalType}
-        setTableModal={setTableModal}
-        setLinkedTableModal={setLinkedTableModal}
-        setSubSearchText={setSubSearchText}
-        handleOpenNotify={handleOpenNotify}
-        setElement={setElement}
-        selectedApp={selectedApp}
-        isLoading={isLoading}
-        menuStyle={menuStyle}
-        setSelectedApp={setSelectedApp}
-        menuItem={menuItem}
-        languageData={languageData}
-      /> */}
 
       {menu?.type?.length ? (
         <ButtonsMenu

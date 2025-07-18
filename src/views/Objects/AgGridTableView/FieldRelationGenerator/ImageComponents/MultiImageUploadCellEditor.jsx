@@ -1,11 +1,10 @@
-import {Box, Button, Modal} from "@mui/material";
-import React, {useRef, useState} from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import styles from "../style.module.scss";
-import UploadIcon from "@mui/icons-material/Upload";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import {Box, Button, Modal} from "@mui/material";
+import React, {useMemo, useRef, useState} from "react";
 import fileService from "../../../../../services/fileService";
+import styles from "../style.module.scss";
+import TelegramMultiImageViewer from "../../../../../components/FormElements/HFMultiImage/TelegramMultiImage";
 
 const style = {
   position: "absolute",
@@ -27,10 +26,30 @@ function MultiImageUploadCellEditor({
   onChange = () => {},
   disabled = false,
 }) {
+  const [fullScreen, setFullScreen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [uploadImg, setUploadImg] = useState(false);
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
+
+  const handleFullScreen = (imgSrc) => {
+    handleClick();
+    setFullScreen(imgSrc);
+    handleOpenGallery();
+  };
+
+  function handleOpenGallery() {
+    setOpenGallery(true);
+  }
+  function handleCloseGallery() {
+    setOpenModal(false);
+    setFullScreen(false);
+  }
+
+  const handleCloseFullScreen = () => {
+    setFullScreen(false);
+  };
 
   const handleClick = () => {
     setUploadImg(true);
@@ -72,6 +91,13 @@ function MultiImageUploadCellEditor({
     return photoName?.slice(0, 30);
   };
 
+  const imagesSrc = useMemo(() => {
+    if (!value?.length) return [];
+    return value?.map((item) => ({
+      src: item,
+    }));
+  }, [value]);
+  console.log("fullScreenfullScreen", Boolean(fullScreen));
   return (
     <>
       {value && value?.length > 0 ? (
@@ -204,7 +230,10 @@ function MultiImageUploadCellEditor({
           <div className={styles.imageContainer}>
             {value &&
               value?.map((item) => (
-                <div key={item} className={styles.ImageItem}>
+                <div
+                  onClick={setOpenModal}
+                  key={item}
+                  className={styles.ImageItem}>
                   <img src={item} alt="photo" />
 
                   <button
@@ -279,6 +308,12 @@ function MultiImageUploadCellEditor({
           </Box>
         </Box>
       </Modal>
+
+      <TelegramMultiImageViewer
+        open={openModal}
+        onClose={handleCloseGallery}
+        images={imagesSrc}
+      />
     </>
   );
 }

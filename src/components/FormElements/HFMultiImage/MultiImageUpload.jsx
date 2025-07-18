@@ -1,5 +1,5 @@
 import {Box, Button, Modal} from "@mui/material";
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./styles.module.scss";
@@ -9,7 +9,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import {useTranslation} from "react-i18next";
+// import ImageGallery from "react-image-gallery";
+// import "react-image-gallery/styles/css/image-gallery.css";
 
+import Lightbox from "yet-another-react-lightbox";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Download from "yet-another-react-lightbox/plugins/download";
+
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "yet-another-react-lightbox/styles.css";
+import TelegramMultiImageViewer from "./TelegramMultiImage";
 const style = {
   position: "absolute",
   top: "50%",
@@ -41,6 +51,7 @@ function MultiImageUpload({
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
+  const [openGallery, setOpenGallery] = useState(false);
 
   const handleClick = () => setUploadImg(true);
   const handleClose = () => setUploadImg(false);
@@ -48,9 +59,21 @@ function MultiImageUpload({
   const handleFullScreen = (imgSrc) => {
     handleClick();
     setFullScreen(imgSrc);
+    handleOpenGallery();
   };
 
-  const handleCloseFullScreen = () => setFullScreen(null);
+  function handleOpenGallery() {
+    setOpenGallery(true);
+  }
+  function handleCloseGallery() {
+    setOpenGallery(false);
+    setFullScreen(null);
+  }
+
+  const handleCloseFullScreen = () => {
+    handleCloseGallery(false);
+    setFullScreen(null);
+  };
   const inputChangeHandler = (e) => {
     setLoading(true);
     const file = e.target.files[0];
@@ -85,6 +108,13 @@ function MultiImageUpload({
     const photoName = parts[parts.length - 1];
     return photoName?.slice(0, 30);
   };
+
+  const imagesSrc = useMemo(() => {
+    if (!value?.length) return [];
+    return value?.map((item) => ({
+      src: item,
+    }));
+  }, [value]);
 
   return (
     <>
@@ -357,7 +387,7 @@ function MultiImageUpload({
         </Box>
       </Modal>
 
-      <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
+      {/* <Modal open={Boolean(fullScreen)} onClose={handleCloseFullScreen}>
         <Box
           sx={{
             position: "absolute",
@@ -370,21 +400,45 @@ function MultiImageUpload({
             alignItems: "center",
             justifyContent: "center",
           }}>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCloseFullScreen();
+          <Lightbox
+            open={openGallery}
+            close={handleCloseGallery}
+            slides={imagesSrc}
+            render={{
+              buttonPrev: () => null,
+              buttonNext: () => null,
             }}
-            sx={{position: "absolute", top: 10, right: 10, color: "white"}}>
-            <CloseIcon />
-          </Button>
-          <img
-            src={fullScreen}
-            alt="Fullscreen"
-            style={{maxWidth: "100%", maxHeight: "100%"}}
+            plugins={[Thumbnails, Zoom, Download]}
+            carousel={{finite: true}}
+            styles={{
+              container: {backgroundColor: "transparent"},
+              thumbnailsContainer: {
+                position: "relative",
+                margin: 0,
+                padding: "10px 0",
+                width: "100%",
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                justifyContent: "center",
+                display: "flex",
+              },
+              thumbnail: {
+                margin: "0 0px",
+                borderRadius: 4,
+                cursor: "pointer",
+                width: 60,
+                height: 90,
+                objectFit: "cover",
+              },
+            }}
           />
         </Box>
-      </Modal>
+      </Modal> */}
+
+      <TelegramMultiImageViewer
+        open={fullScreen}
+        onClose={handleCloseFullScreen}
+        images={imagesSrc}
+      />
     </>
   );
 }

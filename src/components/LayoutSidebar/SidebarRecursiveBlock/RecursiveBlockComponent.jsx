@@ -23,6 +23,7 @@ import FileUploadMenu from "../Components/Functions/FileUploadMenu";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
+import IconGeneratorIconjs from "../../IconPicker/IconGeneratorIconjs";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -255,6 +256,19 @@ const RecursiveBlock = ({
                             src={element?.icon}
                           />
                         ) : (
+                            element?.icon ||
+                            element?.data?.microfrontend?.icon ||
+                            element?.data?.webpage?.icon
+                          )?.includes(":") ? (
+                          <IconGeneratorIconjs
+                            icon={
+                              element?.icon ||
+                              element?.data?.microfrontend?.icon ||
+                              element?.data?.webpage?.icon
+                            }
+                            size={20}
+                          />
+                        ) : (
                           <IconGenerator
                             icon={
                               element?.icon ||
@@ -265,6 +279,14 @@ const RecursiveBlock = ({
                           />
                         )
                       ) : (
+                        // <IconGenerator
+                        //   icon={
+                        //     element?.icon ||
+                        //     element?.data?.microfrontend?.icon ||
+                        //     element?.data?.webpage?.icon
+                        //   }
+                        //   size={20}
+                        // />
                         <Box
                           sx={{
                             width: "20px",
@@ -294,18 +316,45 @@ const RecursiveBlock = ({
                       marginRight: "4px",
                     }}
                     className="childMenuIcon">
-                    {isValidUrl(element?.icon) ? (
-                      <img width={"24px"} height={"24px"} src={element?.icon} />
-                    ) : (
-                      <IconGenerator
-                        icon={
+                    {
+                      isValidUrl(element?.icon) ? (
+                        <img
+                          width={"24px"}
+                          height={"24px"}
+                          src={element?.icon}
+                        />
+                      ) : (
                           element?.icon ||
                           element?.data?.microfrontend?.icon ||
                           element?.data?.webpage?.icon
-                        }
-                        size={18}
-                      />
-                    )}
+                        )?.includes(":") ? (
+                        <IconGeneratorIconjs
+                          icon={
+                            element?.icon ||
+                            element?.data?.microfrontend?.icon ||
+                            element?.data?.webpage?.icon
+                          }
+                          size={18}
+                        />
+                      ) : (
+                        <IconGenerator
+                          icon={
+                            element?.icon ||
+                            element?.data?.microfrontend?.icon ||
+                            element?.data?.webpage?.icon
+                          }
+                          size={18}
+                        />
+                      )
+                      // <IconGenerator
+                      //   icon={
+                      //     element?.icon ||
+                      //     element?.data?.microfrontend?.icon ||
+                      //     element?.data?.webpage?.icon
+                      //   }
+                      //   size={18}
+                      // />
+                    }
                   </div>
                 ) : element?.type !== "FOLDER" ? (
                   <Box

@@ -25,6 +25,7 @@ import FunctionsIcon from "@mui/icons-material/Functions";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import SingleLine from "./SingleLine";
 import Many2OneValue from "./Many2OneValue";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -239,7 +240,11 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     case "ICON":
       return (
         <Box className={classes.box}>
-          <IconGenerator color={"#007AFF"} icon={value} />
+          {value?.includes(":") ? (
+            <IconGeneratorIconjs icon={value} disabled={field?.disabled} />
+          ) : (
+            <IconGenerator icon={value} disabled={field?.disabled} />
+          )}
         </Box>
       );
 

@@ -11,6 +11,7 @@ import {parseBoolean} from "../../utils/parseBoolean";
 import LogoDisplay from "../LogoDisplay";
 import {generateLink} from "../../utils/generateYandexLink";
 import IconGenerator from "../IconPicker/IconGenerator";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
   const value = useMemo(() => {
@@ -296,7 +297,11 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
           : "";
 
     case "ICON":
-      return <IconGenerator icon={value} />;
+      return value?.includes(":") ? (
+        <IconGeneratorIconjs icon={value} disabled={field?.disabled} />
+      ) : (
+        <IconGenerator icon={value} disabled={field?.disabled} />
+      );
 
     case "PHOTO":
       return (

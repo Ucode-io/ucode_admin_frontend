@@ -1,15 +1,15 @@
-import { format } from "date-fns"
-import { useEffect, useMemo, useState } from "react"
-import constructorObjectService from "../../services/constructorObjectService"
-import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import FRow from "../FormElements/FRow"
-import { Controller } from "react-hook-form"
-import FEditableRow from "../FormElements/FEditableRow"
-import IconGenerator from "../IconPicker/IconGenerator"
-import useDebounce from "../../hooks/useDebounce"
-import useTabRouter from "../../hooks/useTabRouter"
-import { generateGUID } from "../../utils/generateID"
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import {format} from "date-fns";
+import {useEffect, useMemo, useState} from "react";
+import constructorObjectService from "../../services/constructorObjectService";
+import {Autocomplete, CircularProgress, TextField} from "@mui/material";
+import FRow from "../FormElements/FRow";
+import {Controller} from "react-hook-form";
+import FEditableRow from "../FormElements/FEditableRow";
+import IconGenerator from "../IconPicker/IconGenerator";
+import useDebounce from "../../hooks/useDebounce";
+import useTabRouter from "../../hooks/useTabRouter";
+import {generateGUID} from "../../utils/generateID";
+import {getRelationFieldLabel} from "../../utils/getRelationFieldLabel";
 
 const RelationFormElement = ({
   control,
@@ -23,8 +23,8 @@ const RelationFormElement = ({
   ...props
 }) => {
   const tableSlug = useMemo(() => {
-    return field.id.split("#")?.[0] ?? ""
-  }, [field.id])
+    return field.id.split("#")?.[0] ?? "";
+  }, [field.id]);
 
   if (!isLayout)
     return (
@@ -33,7 +33,7 @@ const RelationFormElement = ({
           control={control}
           name={`${tableSlug}_id`}
           defaultValue={null}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({field: {onChange, value}, fieldState: {error}}) => (
             <AutoCompleteElement
               value={value}
               setValue={onChange}
@@ -45,24 +45,23 @@ const RelationFormElement = ({
           )}
         />
       </FRow>
-    )
+    );
 
   return (
     <Controller
       control={mainForm.control}
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={field.required}
-        >
+          required={field.required}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={null}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={({field: {onChange, value}, fieldState: {error}}) => (
               <AutoCompleteElement
                 value={value}
                 setValue={onChange}
@@ -74,10 +73,9 @@ const RelationFormElement = ({
             )}
           />
         </FEditableRow>
-      )}
-    ></Controller>
-  )
-}
+      )}></Controller>
+  );
+};
 
 const AutoCompleteElement = ({
   field,
@@ -87,48 +85,47 @@ const AutoCompleteElement = ({
   error,
   disabledHelperText,
 }) => {
-  const [loader, setLoader] = useState(false)
-  const { navigateToForm } = useTabRouter()
+  const [loader, setLoader] = useState(false);
+  const {navigateToForm} = useTabRouter();
 
-  const [options, setOptions] = useState([])
-  const [searchText, setSearchText] = useState("")
+  const [options, setOptions] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const id = useMemo(() => {
-    return generateGUID()
-  }, [])
-  
+    return generateGUID();
+  }, []);
+
   const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option)
-  }
+    return getRelationFieldLabel(field, option);
+  };
 
   const computedValue = useMemo(() => {
-    const findedOption = options.find((el) => el?.guid === value)
-    return findedOption ? [findedOption] : []
-  }, [options, value])
-
+    const findedOption = options.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [options, value]);
 
   const getOptions = (search) => {
-    setLoader(true)
+    setLoader(true);
     constructorObjectService
-      .getListV2(tableSlug, { data: { search } })
+      .getListV2(tableSlug, {data: {search}})
       .then((res) => {
-        if(JSON.stringify(res.data.response) !== JSON.stringify(options)) setOptions(res.data.response ?? [])
+        if (JSON.stringify(res.data.response) !== JSON.stringify(options))
+          setOptions(res.data.response ?? []);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
-  const debouncedGetOptions = useDebounce(getOptions, 500)
-
+  const debouncedGetOptions = useDebounce(getOptions, 500);
 
   const getValueOption = () => {
-    setLoader(true)
+    setLoader(true);
     constructorObjectService
       .getById(tableSlug, value)
       .then((res) => {
-        setOptions([res.data.response])
+        setOptions([res.data.response]);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   // useDebouncedWatch(
   //   () => {
@@ -139,9 +136,9 @@ const AutoCompleteElement = ({
   // )
 
   useEffect(() => {
-    if (value) getValueOption()
-    else getOptions()
-  }, [])
+    if (value) getValueOption();
+    else getOptions();
+  }, []);
 
   return (
     <Autocomplete
@@ -151,14 +148,14 @@ const AutoCompleteElement = ({
       disableCloseOnSelect
       multiple
       onInputChange={(event, newInputValue) => {
-        debouncedGetOptions(newInputValue)
+        debouncedGetOptions(newInputValue);
         // setSearchText(newInputValue)
       }}
       filterOptions={(x) => x}
       value={computedValue}
       loading={loader}
       onChange={(event, newValue) => {
-        setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
+        setValue(newValue?.[newValue?.length - 1]?.guid ?? null);
       }}
       renderTags={(value, index) => {
         return (
@@ -166,16 +163,16 @@ const AutoCompleteElement = ({
             {getOptionLabel(value[0])}
             <IconGenerator
               icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
+              style={{marginLeft: "10px", cursor: "pointer"}}
               size={15}
               onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                navigateToForm(tableSlug, "EDIT", value[0])
+                e.stopPropagation();
+                e.preventDefault();
+                navigateToForm(tableSlug, "EDIT", value[0]);
               }}
             />
           </>
-        )
+        );
       }}
       renderInput={(params) => {
         return (
@@ -192,16 +189,18 @@ const AutoCompleteElement = ({
               ...params.InputProps,
               endAdornment: (
                 <>
-                  {loader ? <CircularProgress color="primary" size={20} /> : null}
+                  {loader ? (
+                    <CircularProgress color="primary" size={20} />
+                  ) : null}
                   {params.InputProps.endAdornment}
                 </>
               ),
             }}
           />
-        )
+        );
       }}
     />
-  )
-}
+  );
+};
 
-export default RelationFormElement
+export default RelationFormElement;

@@ -50,6 +50,31 @@ const IconPickerField = ({
     300
   );
 
+  useDebouncedWatch(
+    () => {
+      if (!searchText) return;
+
+      axios
+        .get(`https://api.iconify.design/search?query=${searchText}`)
+        .then((res) => {
+          const apiIcons = res?.data?.icons || [];
+
+          const localIcons = iconsList.filter((icon) =>
+            icon.includes(searchText)
+          );
+
+          const merged = [...new Set([...localIcons, ...apiIcons])];
+
+          setComputedIconsList(merged.slice(0, 40));
+        })
+        .catch((err) => {
+          console.error("Failed to fetch icons", err);
+        });
+    },
+    [searchText],
+    500
+  );
+
   if (loading)
     return (
       <IconButton color="primary">
@@ -67,15 +92,13 @@ const IconPickerField = ({
         padding: drawerDetail ? "0 9.6px" : "0",
       }}
       onClick={(e) => e.stopPropagation()}
-      {...props}
-    >
+      {...props}>
       <div
         ref={buttonRef}
         className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
-        style={{ backgroundColor: value ?? "#fff" }}
+        style={{backgroundColor: value ?? "#fff"}}
         aria-describedby={id}
-        onClick={customeClick ? clickItself : !disabled && handleOpen}
-      >
+        onClick={customeClick ? clickItself : !disabled && handleOpen}>
         {disabled ? (
           <Tooltip title="This field is disabled for this role!">
             <Lock
@@ -88,7 +111,7 @@ const IconPickerField = ({
           </Tooltip>
         ) : (
           <IconGenerator
-            style={{ width: "15px", height: "15px" }}
+            style={{width: "15px", height: "15px"}}
             icon={value}
             disabled={disabled}
           />
@@ -100,15 +123,14 @@ const IconPickerField = ({
         anchorEl={buttonRef.current}
         onClose={handleClose}
         open={dropdownIsOpen}
-        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-        classes={{ paper: styles.menuPaper, list: styles.menuList }}
-      >
+        anchorOrigin={{horizontal: "left", vertical: "bottom"}}
+        classes={{paper: styles.menuPaper, list: styles.menuList}}>
         <TextField
           size="small"
           fullWidth
           value={searchText}
           autoFocus={tabIndex === 1}
-          inputProps={{ tabIndex }}
+          inputProps={{tabIndex}}
           onChange={(e) => setSearchText(e.target.value)}
         />
 
@@ -120,8 +142,7 @@ const IconPickerField = ({
               onClick={() => {
                 onChange(icon);
                 handleClose();
-              }}
-            >
+              }}>
               <IconGenerator icon={icon} />
             </div>
           ))}

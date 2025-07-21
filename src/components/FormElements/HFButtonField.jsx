@@ -5,6 +5,7 @@ import request from "../../utils/request";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {showAlert} from "../../store/alert/alert.thunk";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 function HFButtonField({
   row,
@@ -51,6 +52,8 @@ function HFButtonField({
             variant="outlined">
             {btnLoader ? (
               <CircularProgress size={20} />
+            ) : field?.attributes?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={field?.attributes?.icon} />
             ) : (
               <IconGenerator icon={field?.attributes?.icon} />
             )}
@@ -73,6 +76,8 @@ function HFButtonField({
             variant="outlined">
             {btnLoader ? (
               <CircularProgress size={20} />
+            ) : field?.attributes?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={field?.attributes?.icon} />
             ) : (
               <IconGenerator icon={field?.attributes?.icon} />
             )}

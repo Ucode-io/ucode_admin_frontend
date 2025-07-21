@@ -27,6 +27,7 @@ import FRow from "./FRow";
 import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {useParams} from "react-router-dom";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const filter = createFilterOptions();
 
@@ -282,7 +283,12 @@ const AutoCompleteElement = ({
                     ? {color: el?.color, background: `${el?.color}30`}
                     : {}
                 }>
-                {hasIcon && <IconGenerator icon={el?.icon} />}
+                {hasIcon &&
+                  (field?.attributes?.icon?.includes(":") ? (
+                    <IconGeneratorIconjs icon={el?.icon} />
+                  ) : (
+                    <IconGenerator icon={el?.icon} />
+                  ))}
                 <p
                   className={styles.value}
                   style={

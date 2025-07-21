@@ -97,7 +97,7 @@ function MultiImageUploadCellEditor({
       src: item,
     }));
   }, [value]);
-  console.log("fullScreenfullScreen", Boolean(fullScreen));
+
   return (
     <>
       {value && value?.length > 0 ? (
@@ -115,7 +115,7 @@ function MultiImageUploadCellEditor({
               gap: "10px",
               padding: "0 0 0 13px",
             }}>
-            <Box
+            {/* <Box
               sx={{
                 height: "25px",
                 width: "27px",
@@ -130,7 +130,31 @@ function MultiImageUploadCellEditor({
             </Box>
             <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
               {parseImgPhoto(value?.[0])}
-            </Box>
+            </Box> */}
+            {value?.map((img, index) => (
+              <>
+                <Box
+                  key={index}
+                  sx={{
+                    height: "25px",
+                    width: "27px",
+                    borderRadius: "4px",
+                    overflow: "hidden",
+                    padding: "0 0 0 0",
+                  }}
+                  title={parseImgPhoto(img)}>
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    src={img}
+                    alt="img"
+                  />
+                </Box>
+              </>
+            ))}
 
             {disabled && (
               <Box

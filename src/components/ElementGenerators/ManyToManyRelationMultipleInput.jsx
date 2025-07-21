@@ -176,12 +176,28 @@ const AutoCompleteElement = memo(
       const result = {};
       filtersHandler?.forEach((value, index) => {
         const key = autoFilters?.[index]?.field_to;
-        if (key) result[key] = value;
+        if (key && value) result[key] = value;
       });
       return result;
     }, [autoFilters, filtersHandler]);
 
-    const {data: fromInvokeList} = useQuery(
+    const requestDataOpenFaas = {
+      ...autoFiltersValue,
+      view_fields: [`name_langs_${i18n?.language}`],
+      additional_request: {
+        additional_field: "guid",
+      },
+
+      search: debouncedValue,
+      limit: 10,
+      offset: pageToOffset(page, 10),
+    };
+
+    if (value && value?.[0]) {
+      requestDataOpenFaas.additional_request.additional_values = [value];
+    }
+
+    const { data: fromInvokeList } = useQuery(
       ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
       () => {
         return request.post(
@@ -190,18 +206,7 @@ const AutoCompleteElement = memo(
             params: {
               from_input: true,
             },
-            data: {
-              ...autoFiltersValue,
-              view_fields: [`name_langs_${i18n?.language}`],
-              additional_request: {
-                additional_field: "guid",
-                additional_values: value,
-              },
-
-              search: debouncedValue,
-              limit: 10,
-              offset: pageToOffset(page, 10),
-            },
+            data: requestDataOpenFaas,
           }
         );
       },
@@ -220,7 +225,26 @@ const AutoCompleteElement = memo(
       }
     );
 
-    const {data: fromObjectList} = useQuery(
+    const requestData = {
+      ...autoFiltersValue,
+      view_fields:
+        field?.view_fields?.map((field) => field.slug) ??
+        field?.attributes?.view_fields?.map((field) => field.slug),
+
+      additional_request: {
+        additional_field: "guid",
+      },
+
+      search: debouncedValue,
+      limit: 10,
+      offset: pageToOffset(page, 10),
+    };
+
+    if (value && value?.[0]) {
+      requestData.additional_request.additional_values = value;
+    }
+
+    const { data: fromObjectList } = useQuery(
       [
         "GET_OBJECT_LIST",
         tableSlug,
@@ -233,21 +257,7 @@ const AutoCompleteElement = memo(
         return constructorObjectService.getListV2(
           tableSlug,
           {
-            data: {
-              ...autoFiltersValue,
-              view_fields:
-                field?.view_fields?.map((field) => field.slug) ??
-                field?.attributes?.view_fields?.map((field) => field.slug),
-
-              additional_request: {
-                additional_field: "guid",
-                additional_values: value,
-              },
-
-              search: debouncedValue,
-              limit: 10,
-              offset: pageToOffset(page, 10),
-            },
+            data: requestData,
           },
           {
             language_setting: i18n?.language,

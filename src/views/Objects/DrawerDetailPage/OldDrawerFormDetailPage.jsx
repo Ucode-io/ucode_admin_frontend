@@ -142,9 +142,10 @@ function OldDrawerFormDetailPage({
       });
     });
     return !!allFields.find((field) =>
-      field?.enable_multilanguage
-        ? field?.enable_multilanguage
-        : field?.attributes?.enable_multilanguage === true
+      field?.enable_multilanguage || field?.enable_multi_language
+        ? field?.enable_multilanguage || field?.enable_multi_language
+        : (field?.attributes?.enable_multilanguage ||
+            field?.attributes?.enable_multi_language) === true
     );
   }, [selectedTab]);
 
@@ -167,7 +168,7 @@ function OldDrawerFormDetailPage({
 
     return lastPart === lang;
   };
-
+  console.log({ isMultiLanguage });
   return (
     <>
       <Box

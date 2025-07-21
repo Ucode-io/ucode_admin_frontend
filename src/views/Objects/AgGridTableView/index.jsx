@@ -386,7 +386,6 @@ function AgGridTableView(props) {
           menuItem,
           view,
           addRow,
-          createChildTree,
           appendNewRow,
           valueGetter: (params) => {
             return (
@@ -435,8 +434,8 @@ function AgGridTableView(props) {
         data: data,
       })
       .then((res) => {
-        // delete data?.new_field;
         refetch();
+        delete data?.new_field;
         setLoadings(false);
       })
       .catch(() => setLoadings(false));
@@ -526,21 +525,6 @@ function AgGridTableView(props) {
     });
   };
 
-  function createChildTree(parentObj) {
-    const newChild = {
-      guid: generateGUID(),
-      [`${tableSlug}_id`]: parentObj.guid,
-      path: [...parentObj.path, generateGUID()],
-    };
-    gridApi.current.api.applyTransaction({
-      add: [newChild],
-    });
-
-    constructorObjectService.create(tableSlug, {
-      data: newChild,
-    });
-  }
-
   const debouncedUpdateView = useCallback(
     useDebounce((ids) => updateView(undefined, ids), 600),
     []
@@ -602,7 +586,7 @@ function AgGridTableView(props) {
     projectInfo,
     isWarningActive,
   ]);
-
+  console.log("rowDatarowData", rowData);
   return (
     <Box
       className={style.gridWrapper}
@@ -663,7 +647,6 @@ function AgGridTableView(props) {
                     rowBuffer: 20,
                   }}
                   suppressRowHoverHighlight={true}
-                  suppressKeyboardEvent={(params) => true}
                   suppressAggFuncInHeader={true}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
@@ -671,7 +654,6 @@ function AgGridTableView(props) {
                   columnDefs={columns}
                   suppressRefresh={true}
                   enableClipboard={true}
-                  getRowId={(params) => params.data?.guid}
                   groupDisplayType="single"
                   paginationPageSize={limit}
                   undoRedoCellEditing={true}

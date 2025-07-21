@@ -156,11 +156,13 @@ function DrawerFormDetailPage({
       });
     });
     return !!allFields.find((field) =>
-      field?.enable_multilanguage
-        ? field?.enable_multilanguage
-        : field?.attributes?.enable_multilanguage === true
+      field?.enable_multilanguage || field?.enable_multi_language
+        ? field?.enable_multilanguage || field?.enable_multi_language
+        : (field?.attributes?.enable_multilanguage ||
+            field?.attributes?.enable_multi_language) === true
     );
   }, [selectedTab]);
+  console.log(selectedTab?.sections);
 
   useEffect(() => {
     if (isMultiLanguage) {
@@ -278,7 +280,7 @@ function DrawerFormDetailPage({
                           ? { minHeight: "30px" }
                           : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
                             ? { height: "auto !important" }
-                            : { height: "34px" })}
+                            : { height: "32px" })}
                         py="8px"
                       >
                         <Box
@@ -358,6 +360,7 @@ function DrawerFormDetailPage({
           justifyContent="flex-end"
           marginTop="auto"
           marginBottom="12px"
+          gap={"8px"}
         >
           <FormCustomActionButton
             control={rootForm?.control?._formValues}

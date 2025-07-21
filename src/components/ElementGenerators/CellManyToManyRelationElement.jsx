@@ -204,6 +204,7 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field, page],
     () => {
       if (!field?.table_slug) return null;
+      const additionalValues = [defaultValue || value || id];
       return constructorObjectService.getListV2(
         field?.table_slug,
         {
@@ -211,7 +212,7 @@ const AutoCompleteElement = ({
             ...autoFiltersValue,
             additional_request: {
               additional_field: "guid",
-              additional_values: [defaultValue || value || id],
+              additional_values: additionalValues?.flat(),
             },
             view_fields: field.attributes?.view_fields?.map((f) => f.slug),
             search: debouncedValue.trim(),

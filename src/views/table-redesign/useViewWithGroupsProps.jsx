@@ -143,7 +143,7 @@ export const useViewWithGroupsProps = ({
           .create(tableSlug, {
             ...newViewJSON,
             type: type || selectedViewTab,
-            table_slug: viewsList?.[0]?.table_slug,
+            table_slug: viewsList?.[0]?.table_slug || tableSlug,
             relation_table_slug: watch("table_slug"),
             attributes: {
               ...newViewJSON?.attributes,
@@ -153,7 +153,7 @@ export const useViewWithGroupsProps = ({
           .then(() => {
             dispatch(groupFieldActions.clearGroupBySlug());
             dispatch(showAlert("Successful created", "success"));
-            queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+            return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
             if (!Boolean(tableRelations)) {

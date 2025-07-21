@@ -204,24 +204,28 @@ const ObjectsPage = () => {
       <CalendarHourView {...defaultProps} {...props} />
     ),
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
-    DEFAULT: (props) => (
-      <ViewsComponent
-        tableInfo={tableInfo}
-        visibleColumns={visibleColumns}
-        visibleRelationColumns={visibleRelationColumns}
-        menuItem={menuItem}
-        refetchViews={refetch}
-        setOpen={setOpen}
-        open={open}
-        {...defaultProps}
-        {...props}
-      />
-    ),
+    DEFAULT: (props) => {
+      console.log(props);
+      return (
+        <ViewsComponent
+          tableInfo={tableInfo}
+          visibleColumns={visibleColumns}
+          visibleRelationColumns={visibleRelationColumns}
+          menuItem={menuItem}
+          refetchViews={refetch}
+          setOpen={setOpen}
+          open={open}
+          {...defaultProps}
+          {...props}
+        />
+      );
+    },
   };
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  console.log(selectedTabIndex);
 
   return (
     <>

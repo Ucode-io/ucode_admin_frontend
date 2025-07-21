@@ -289,7 +289,8 @@ const AutoCompleteElement = ({
   };
 
   if (computedIds || value) {
-    requestData.additional_request.additional_values = [computedIds ?? value];
+    const additionalValues = [computedIds ?? value];
+    requestData.additional_request.additional_values = additionalValues?.flat();
   }
 
   const { data: optionsFromLocale } = useQuery(

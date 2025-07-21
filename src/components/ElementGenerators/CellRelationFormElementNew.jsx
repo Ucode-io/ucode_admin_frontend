@@ -257,7 +257,9 @@ const AutoCompleteElement = ({
       };
 
       if (value) {
-        requestData.additional_request.additional_values = [value];
+        const additionalValues = [value];
+        requestData.additional_request.additional_values =
+          additionalValues?.flat();
       }
 
       return constructorObjectService.getListV2(

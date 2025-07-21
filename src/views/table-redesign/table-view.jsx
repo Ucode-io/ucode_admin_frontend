@@ -93,11 +93,16 @@ const TableView = ({
   } = useParams();
   const new_router = localStorage.getItem("new_router") === "true";
   const viewId = searchParams.get("v") ?? viewProp?.id;
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const fieldSlug = urlSearchParams.get("field_slug");
 
   const view = viewFromStore?.find((view) => view?.id === viewId);
 
   const tableSlug =
-    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+    fieldSlug ||
+    view?.relation_table_slug ||
+    tableSlugFromParams ||
+    view?.table_slug;
 
   const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 

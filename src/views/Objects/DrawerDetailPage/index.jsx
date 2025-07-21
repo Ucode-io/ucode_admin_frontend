@@ -37,6 +37,7 @@ function DrawerDetailPage({
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
   const viewsPath = useSelector((state) => state.groupField.viewsList);
+  console.log({ viewsPath });
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const selectedV =
     viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];

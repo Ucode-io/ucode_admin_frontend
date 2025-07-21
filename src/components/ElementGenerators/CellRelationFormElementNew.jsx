@@ -410,6 +410,7 @@ const AutoCompleteElement = ({
                     is_relation_view: true,
                     table_slug: data?.table_slug,
                     label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                    relation_table_slug: data?.table_slug,
                   })
                 );
                 dispatch(

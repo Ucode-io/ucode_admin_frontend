@@ -30,7 +30,7 @@ const EditOptionsMenu = ({
       setCoords({ top: 0, left: 0 });
     }
   }, [isMenuOpen, anchorEl]);
-  console.log({ editingField });
+
   console.log(watch(`attributes.options.${editingField.index}.label`));
   return (
     <Portal>

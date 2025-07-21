@@ -324,7 +324,7 @@ const TableView = ({
       };
     },
   });
-  console.log({ filters });
+
   const tableSearch =
     detectStringType(searchText) === "number"
       ? parseInt(searchText)

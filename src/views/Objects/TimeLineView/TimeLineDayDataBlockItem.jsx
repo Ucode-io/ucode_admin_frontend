@@ -412,7 +412,7 @@ export default function TimeLineDayDataBlockItem({
   };
 
   const onDragEnd = ({lastEvent}) => {
-    console.log({lastEvent});
+
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onDragEndToUpdate1(lastEvent, lastEvent.width);

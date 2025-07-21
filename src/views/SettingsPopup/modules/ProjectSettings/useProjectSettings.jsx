@@ -31,12 +31,10 @@ export const useProjectSettings = () => {
 
   const {handleClose} = useSettingsPopupContext();
 
-  const {isLoading} = useProjectGetByIdQuery({
+  const { isLoading } = useProjectGetByIdQuery({
     projectId: company.projectId,
     queryParams: {
       onSuccess: (res) => {
-        console.log({res});
-
         reset({
           ...res,
           language: res?.language?.map((lang) => lang.id),

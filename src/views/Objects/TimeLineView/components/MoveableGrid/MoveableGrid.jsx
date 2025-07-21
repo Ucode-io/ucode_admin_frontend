@@ -11,7 +11,7 @@ export const MoveableGrid = ({
   selectedType,
   setMonths,
 }) => {
-console.log({computedData})
+
   const {
     focusedDays,
     calendarRef,
@@ -19,8 +19,6 @@ console.log({computedData})
     calculatedDays,
     handleScroll,
   } = useMoveableGridProps({ months, setMonths });
-
-  console.log({months})
 
   return <div className={cls.timeLineContainer} ref={calendarRef}>
     <TimeLineDatesRow

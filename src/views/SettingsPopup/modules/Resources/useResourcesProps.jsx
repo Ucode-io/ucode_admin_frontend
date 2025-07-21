@@ -78,7 +78,6 @@ export const useResourcesProps = () => {
         ...(resources || []),
       ];
     }, [data, resources, clickHouseList]);
-    console.log({ computedResources });
   return {
     computedResources,
     i18n,

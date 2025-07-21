@@ -7,6 +7,7 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {updateLevel} from "../../../../utils/level";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import IconGeneratorIconjs from "../../../IconPicker/IconGeneratorIconjs";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -47,7 +48,12 @@ const MicrofrontendSettingSidebar = ({projectSettingLan}) => {
             clickHandler(e);
           }}>
           <div className="label" style={{color: "#475467"}}>
-            <IconGenerator icon={projectFolder?.icon} size={18} />
+            {element?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={projectFolder?.icon} size={18} />
+            ) : (
+              <IconGenerator icon={projectFolder?.icon} size={18} />
+            )}
+            {/* <IconGenerator icon={projectFolder?.icon} size={18} /> */}
             {generateLangaugeText(
               projectSettingLan,
               i18n?.language,

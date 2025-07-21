@@ -31,6 +31,7 @@ import newClickHandler from "./newClickHandler";
 import oldClickHandler from "./oldClickHandler";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -249,22 +250,52 @@ const AppSidebar = ({
               h={36}
               alignItems="center"
               justifyContent="center">
-              {isValidUrl(icon) ? (
-                <img width={"24px"} height={"24px"} src={icon} />
-              ) : (
-                <IconGenerator
-                  icon={
-                    !icon || icon === "folder.svg" ? "folder-new.svg" : icon
-                  }
-                  size={iconSize}
-                  style={{
-                    color:
-                      icon && icon !== "folder.svg"
-                        ? menuStyle?.text || "#475467"
-                        : "#fff",
-                  }}
-                />
-              )}
+              {
+                isValidUrl(icon) ? (
+                  <img width={"24px"} height={"24px"} src={icon} />
+                ) : (!icon || icon === "folder.svg"
+                    ? "folder-new.svg"
+                    : icon
+                  )?.includes(":") ? (
+                  <IconGeneratorIconjs
+                    icon={
+                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                    }
+                    size={iconSize}
+                    style={{
+                      color:
+                        icon && icon !== "folder.svg"
+                          ? menuStyle?.text || "#475467"
+                          : "#fff",
+                    }}
+                  />
+                ) : (
+                  <IconGenerator
+                    icon={
+                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                    }
+                    size={iconSize}
+                    style={{
+                      color:
+                        icon && icon !== "folder.svg"
+                          ? menuStyle?.text || "#475467"
+                          : "#fff",
+                    }}
+                  />
+                )
+                // <IconGenerator
+                //   icon={
+                //     !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                //   }
+                //   size={iconSize}
+                //   style={{
+                //     color:
+                //       icon && icon !== "folder.svg"
+                //         ? menuStyle?.text || "#475467"
+                //         : "#fff",
+                //   }}
+                // />
+              }
             </Flex>
 
             <Box

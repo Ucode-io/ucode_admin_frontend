@@ -1,17 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { numberWithSpaces } from "../../../utils/formatNumbers";
-import { parseBoolean } from "../../../utils/parseBoolean";
-import { formatDate } from "../../../utils/dateFormatter";
+import React, {useEffect, useMemo, useState} from "react";
+import {numberWithSpaces} from "../../../utils/formatNumbers";
+import {parseBoolean} from "../../../utils/parseBoolean";
+import {formatDate} from "../../../utils/dateFormatter";
 import TableTag from "../../../components/TableTag";
 import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement.jsx";
 import IconGenerator from "../../../components/IconPicker";
 import LogoDisplay from "../../../components/LogoDisplay";
-import { useWatch } from "react-hook-form";
+import {useWatch} from "react-hook-form";
 import constructorObjectService from "../../../services/constructorObjectService";
 import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
 import styles from "./style.module.scss";
+import IconGeneratorIconjs from "../../../components/IconPicker/IconGeneratorIconjs";
 
-function ValueGenerator({ field, control, setFormValue }) {
+function ValueGenerator({field, control, setFormValue}) {
   const [data, setData] = useState();
   const value = useWatch({
     control,
@@ -70,7 +71,7 @@ function ValueGenerator({ field, control, setFormValue }) {
       );
 
     case "MULTI_LINE":
-      return <span dangerouslySetInnerHTML={{ __html: value }}></span>;
+      return <span dangerouslySetInnerHTML={{__html: value}}></span>;
 
     case "CHECKBOX":
     case "SWITCH":
@@ -94,7 +95,11 @@ function ValueGenerator({ field, control, setFormValue }) {
     //   return <FormulaCell field={field} row={row} />;
 
     case "ICO":
-      return <IconGenerator icon={value} />;
+      return value?.includes(":") ? (
+        <IconGeneratorIconjs icon={value} />
+      ) : (
+        <IconGenerator icon={value} />
+      );
 
     case "INCREMENT_ID":
       return <div className={styles.incrementVal}>{value}</div>;
@@ -106,8 +111,7 @@ function ValueGenerator({ field, control, setFormValue }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <LogoDisplay url={value} />
         </span>
       );

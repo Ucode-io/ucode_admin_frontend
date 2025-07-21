@@ -7,6 +7,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {updateLevel} from "../../../../utils/level";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {useTranslation} from "react-i18next";
+import IconGeneratorIconjs from "../../../IconPicker/IconGeneratorIconjs";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const apiKeyButton = {
@@ -51,7 +52,12 @@ const ApiKeyButton = ({projectSettingLan}) => {
             clickHandler(e);
           }}>
           <div className="label" style={{fontSize: "13px"}}>
-            <IconGenerator icon={apiKeyButton?.icon} size={18} />
+            {apiKeyButton?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={apiKeyButton?.icon} size={18} />
+            ) : (
+              <IconGenerator icon={apiKeyButton?.icon} size={18} />
+            )}
+            {/* <IconGenerator icon={apiKeyButton?.icon} size={18} /> */}
             {generateLangaugeText(
               projectSettingLan,
               i18n?.language,

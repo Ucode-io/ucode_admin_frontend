@@ -17,6 +17,7 @@ import TableTag from "../TableTag";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 import {isValid, parse} from "date-fns";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const CellElementGenerator = ({
   field = {},
@@ -178,7 +179,12 @@ const CellElementGenerator = ({
         : value === undefined
           ? value
           : "",
-    ICO: () => <IconGenerator icon={value} />,
+    ICON: () =>
+      value?.includes(":") ? (
+        <IconGeneratorIconjs icon={value} disabled={field?.disabled} />
+      ) : (
+        <IconGenerator icon={value} disabled={field?.disabled} />
+      ),
     PHOTO: () =>
       value ? (
         <span

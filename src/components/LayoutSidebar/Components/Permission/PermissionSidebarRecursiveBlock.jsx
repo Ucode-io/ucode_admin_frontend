@@ -14,6 +14,7 @@ import RectangleIconButton from "../../../Buttons/RectangleIconButton";
 import {useClientTypeDeleteMutation} from "../../../../services/clientTypeService";
 import {useQueryClient} from "react-query";
 import DeleteWrapperModal from "../../../DeleteWrapperModal";
+import IconGeneratorIconjs from "../../../IconPicker/IconGeneratorIconjs";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -108,14 +109,37 @@ const PermissionSidebarRecursiveBlock = ({
                   }}
                 />
               )}
-              <IconGenerator
+              {(
+                element?.icon ||
+                element?.data?.microfrontend?.icon ||
+                element?.data?.webpage?.icon
+              )?.includes(":") ? (
+                <IconGeneratorIconjs
+                  icon={
+                    element?.icon ||
+                    element?.data?.microfrontend?.icon ||
+                    element?.data?.webpage?.icon
+                  }
+                  size={18}
+                />
+              ) : (
+                <IconGenerator
+                  icon={
+                    element?.icon ||
+                    element?.data?.microfrontend?.icon ||
+                    element?.data?.webpage?.icon
+                  }
+                  size={18}
+                />
+              )}
+              {/* <IconGenerator
                 icon={
                   element?.icon ||
                   element?.data?.microfrontend?.icon ||
                   element?.data?.webpage?.icon
                 }
                 size={18}
-              />
+              /> */}
 
               <Box
                 sx={{

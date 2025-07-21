@@ -1,6 +1,7 @@
-import { Typography } from "@mui/material";
+import {Typography} from "@mui/material";
 import IconGenerator from "../IconPicker/IconGenerator";
 import "./style.scss";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const FormCard = ({
   visible = true,
@@ -17,12 +18,17 @@ const FormCard = ({
   if (!visible) return null;
 
   return (
-    <div className={`FormCard ${className}`} style={{ maxWidth, ...cardStyle }}>
+    <div className={`FormCard ${className}`} style={{maxWidth, ...cardStyle}}>
       <div className="card" {...props}>
         {title && (
           <div className="header">
             <div className="left-side">
-              <IconGenerator icon={icon} />
+              {icon?.includes(":") ? (
+                <IconGeneratorIconjs icon={icon} />
+              ) : (
+                <IconGenerator icon={icon} />
+              )}
+              {/* <IconGenerator icon={icon} /> */}
               <h4 className="title">{title}</h4>
             </div>
 

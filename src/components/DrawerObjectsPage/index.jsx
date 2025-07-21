@@ -185,6 +185,7 @@ function DrawerObjectsPage({
                   dateInfo={dateInfo}
                   setFullScreen={setFullScreen}
                   fullScreen={fullScreen}
+                  refetchViews={refetch}
                 />
               </TabPanel>
             );

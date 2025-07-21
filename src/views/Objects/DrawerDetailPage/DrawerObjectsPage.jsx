@@ -60,7 +60,7 @@ function DrawerObjectsPage({
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
-  const { data: menuViews } = useQuery(
+  const { data: menuViews, refetch: refetchMenuViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST", menuId],
     () => constructorViewService.getViewListMenuId(menuId),
     {
@@ -87,7 +87,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const { data: relationViews } = useQuery(
+  const { data: relationViews, refetch: refetchRelationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
@@ -194,7 +194,7 @@ function DrawerObjectsPage({
             {loading ? (
               <Flex alignItems={"center"} justifyContent={"center"} h={"100vh"}>
                 <Spinner
-                  style={{width: "50px", height: "50px", color: "#007aff"}}
+                  style={{ width: "50px", height: "50px", color: "#007aff" }}
                   size={"lg"}
                 />
               </Flex>
@@ -229,6 +229,9 @@ function DrawerObjectsPage({
                 dateInfo={dateInfo}
                 setFullScreen={setFullScreen}
                 fullScreen={fullScreen}
+                refetchViews={
+                  !isRelationView ? refetchMenuViews : refetchRelationViews
+                }
               />
             )}
           </TabPanel>

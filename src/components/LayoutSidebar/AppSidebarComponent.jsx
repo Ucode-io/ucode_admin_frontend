@@ -251,12 +251,7 @@ const AppSidebar = ({
               alignItems="center"
               justifyContent="center">
               {
-                isValidUrl(icon) ? (
-                  <img width={"24px"} height={"24px"} src={icon} />
-                ) : (!icon || icon === "folder.svg"
-                    ? "folder-new.svg"
-                    : icon
-                  )?.includes(":") ? (
+                icon?.includes(":") ? (
                   <IconGeneratorIconjs
                     icon={
                       !icon || icon === "folder.svg" ? "folder-new.svg" : icon
@@ -269,6 +264,8 @@ const AppSidebar = ({
                           : "#fff",
                     }}
                   />
+                ) : isValidUrl(icon) ? (
+                  <img width={"24px"} height={"24px"} src={icon} />
                 ) : (
                   <IconGenerator
                     icon={
@@ -512,7 +509,19 @@ const AppSidebar = ({
                     <Box
                       sx={{width: "20px", height: "20px"}}
                       className={sidebarIsOpen ? "accordionFolderIcon" : ""}>
-                      {isValidUrl(icon) ? (
+                      {icon?.includes(":") ? (
+                        <IconGeneratorIconjs
+                          icon={
+                            !icon || icon === "folder.svg"
+                              ? "folder-new.svg"
+                              : icon
+                          }
+                          size={iconSize}
+                          style={{
+                            color: getMenuColor(element, icon),
+                          }}
+                        />
+                      ) : isValidUrl(icon) ? (
                         <img width={"24px"} height={"24px"} src={icon} />
                       ) : (
                         <IconGenerator

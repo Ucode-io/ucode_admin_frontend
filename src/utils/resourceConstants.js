@@ -57,6 +57,11 @@ export const resourceTypes = [
     value: 11,
     icon: SiPostgresql,
   },
+  {
+    label: "Metabase",
+    value: 12,
+    icon: SiPostgresql,
+  },
 ];
 export const resources = [
   {
@@ -173,6 +178,11 @@ export const groupedResources = [
         label: "Superset",
         value: 11,
         icon: "superset",
+      },
+      {
+        label: "Metabase",
+        value: 12,
+        icon: "metabase",
       },
     ],
   },

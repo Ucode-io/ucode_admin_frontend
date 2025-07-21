@@ -42,7 +42,6 @@ import {useSettingsPopupContext} from "../../providers";
 import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
 import PostgresCreate from "./PostgresCreate";
-import {useResourcePostgreCreateMutationV2} from "../../../../services/resourceService";
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},

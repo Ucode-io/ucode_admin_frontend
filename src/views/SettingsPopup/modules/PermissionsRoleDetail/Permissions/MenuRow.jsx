@@ -10,6 +10,7 @@ import { store } from "../../../../../store";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.scss";
 import clsx from "clsx";
+import useSearchParams from "../../../../../hooks/useSearchParams";
 
 const MenuCheckbox = ({ label, onChange, checked }) => {
   return (
@@ -40,10 +41,11 @@ const MenuRow = ({
   changedData,
   setValue,
   allMenus,
-  childIndex,
+  childIndex = null,
   watch,
 }) => {
   const { roleId } = useParams();
+  const [searchParams] = useSearchParams();
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
   const [parentId, setParentId] = useState("");
   const [data, setData] = useState([]);
@@ -64,7 +66,7 @@ const MenuRow = ({
   const { data: permissionData, isLoading: permissionGetByIdLoading } =
     useMenuPermissionGetByIdQuery({
       projectId: projectId,
-      roleId: roleId,
+      roleId: searchParams.get("roleId") || roleId,
       parentId: parentId,
       queryParams: {
         enabled: !!parentId,
@@ -136,7 +138,14 @@ const MenuRow = ({
 
   const handleChange = (e, type) => {
     detectDuplicate(e, type);
-    setValue(`menus.${appIndex}.permission.${type}`, e);
+    if (childIndex !== null) {
+      setValue(
+        `menus.${appIndex}.children.${childIndex}.permission.${type}`,
+        e
+      );
+    } else {
+      setValue(`menus.${appIndex}.permission.${type}`, e);
+    }
   };
 
   return (
@@ -240,6 +249,7 @@ const MenuRow = ({
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                paddingLeft: `${level * 7}px`,
               }}
             >
               {app?.attributes?.[`label_${i18n?.language}`] ??
@@ -252,7 +262,13 @@ const MenuRow = ({
               onChange={(e) => {
                 handleChange(e.target.checked, "read");
               }}
-              checked={watch(`menus.${appIndex}.permission.read`)}
+              checked={
+                childIndex !== null
+                  ? watch(
+                      `menus.${appIndex}.children.${childIndex}.permission.read`
+                    )
+                  : watch(`menus.${appIndex}.permission.read`)
+              }
               label="Read"
             />
           </CTableCell>
@@ -261,7 +277,13 @@ const MenuRow = ({
               onChange={(e) => {
                 handleChange(e.target.checked, "write");
               }}
-              checked={watch(`menus.${appIndex}.permission.write`)}
+              checked={
+                childIndex !== null
+                  ? watch(
+                      `menus.${appIndex}.children.${childIndex}.permission.write`
+                    )
+                  : watch(`menus.${appIndex}.permission.write`)
+              }
               label="Write"
             />
           </CTableCell>
@@ -270,7 +292,13 @@ const MenuRow = ({
               onChange={(e) => {
                 handleChange(e.target.checked, "update");
               }}
-              checked={watch(`menus.${appIndex}.permission.update`)}
+              checked={
+                childIndex !== null
+                  ? watch(
+                      `menus.${appIndex}.children.${childIndex}.permission.update`
+                    )
+                  : watch(`menus.${appIndex}.permission.update`)
+              }
               label="Update"
             />
           </CTableCell>
@@ -279,7 +307,13 @@ const MenuRow = ({
               onChange={(e) => {
                 handleChange(e.target.checked, "delete");
               }}
-              checked={watch(`menus.${appIndex}.permission.delete`)}
+              checked={
+                childIndex !== null
+                  ? watch(
+                      `menus.${appIndex}.children.${childIndex}.permission.delete`
+                    )
+                  : watch(`menus.${appIndex}.permission.delete`)
+              }
               label="Delete"
             />
           </CTableCell>
@@ -288,7 +322,13 @@ const MenuRow = ({
               onChange={(e) => {
                 handleChange(e.target.checked, "menu_settings");
               }}
-              checked={watch(`menus.${appIndex}.permission.menu_settings`)}
+              checked={
+                childIndex !== null
+                  ? watch(
+                      `menus.${appIndex}.children.${childIndex}.permission.menu_settings`
+                    )
+                  : watch(`menus.${appIndex}.permission.menu_settings`)
+              }
               label="Settings"
             />
           </CTableCell>

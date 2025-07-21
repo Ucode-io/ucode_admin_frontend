@@ -153,6 +153,7 @@ export default function FieldButton({
         )
           ? true
           : false,
+        enable_multilanguage: values?.enable_multilanguage ? true : false,
       },
     };
 

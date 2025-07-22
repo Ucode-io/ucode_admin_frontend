@@ -4,7 +4,9 @@ import {
   Button,
   CircularProgress,
   FormHelperText,
+  Modal,
   Popover,
+  Typography,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {Controller} from "react-hook-form";
@@ -14,9 +16,26 @@ import "./style.scss";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import DownloadIcon from "@mui/icons-material/Download";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import fileService from "../../../../services/fileService";
+import useDownloader from "../../../../hooks/useDownloader";
+import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import ClearIcon from "@mui/icons-material/Clear";
+import DeleteIcon from "@mui/icons-material/Delete";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+import {Download} from "@mui/icons-material";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  minWidth: "700px",
+  minHeight: "400px",
+  border: "0px solid #000",
+  p: 4,
+};
 
 export const HFVideoUpload = ({
   control,
@@ -70,11 +89,20 @@ const VideoUpload = ({
   tabIndex,
   drawerDetail = false,
 }) => {
+  const {download} = useDownloader();
   const inputRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const videoRef = useRef(null);
+  const [degree, setDegree] = useState(0);
+  const [imgScale, setImgScale] = useState(1);
+  const [openFullImg, setOpenFullImg] = useState(false);
+  const handleOpenVideo = () => setOpenFullImg(true);
+  const handleCloseVideo = () => setOpenFullImg(false);
   const fileName = (value ?? "").split("#")[0].split("_")[1] ?? "";
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   useEffect(() => {
     const listener = () => {
@@ -109,6 +137,29 @@ const VideoUpload = ({
     setAnchorEl(null);
   };
 
+  const imageZoom = (type) => {
+    if (type === "down") {
+      if (imgScale === 1) {
+        setImgScale(1);
+      } else {
+        setImgScale(imgScale - 0.5);
+      }
+    } else if (type === "up") {
+      if (imgScale === 4) {
+        setImgScale(imgScale);
+      } else {
+        setImgScale(imgScale + 0.5);
+      }
+    }
+  };
+
+  const downloadVideo = (url) => {
+    download({
+      link: url,
+      fileName: value?.split?.("_")?.[1] ?? "",
+    });
+  };
+
   return (
     <>
       <div
@@ -119,7 +170,8 @@ const VideoUpload = ({
         }}
         onClick={(ev) => {
           if (value) {
-            setAnchorEl(ev.target);
+            // setAnchorEl(ev.target);
+            handleOpenVideo();
           }
         }}>
         {value && (
@@ -164,7 +216,7 @@ const VideoUpload = ({
         </Box>
       </div>
 
-      <Popover
+      {/* <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
@@ -222,6 +274,84 @@ const VideoUpload = ({
             Change Video
           </Button>
         </Box>
+      </Popover> */}
+
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            padding: "10px",
+            backgroundColor: "#212B36",
+          }}>
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+              color: "#fff",
+            }}
+            onClick={async () => {
+              try {
+                await videoRef.current.requestFullscreen();
+                videoRef.current.play();
+              } catch (err) {
+                videoRef.current.play();
+              }
+            }}>
+            <OpenInFullIcon />
+            Show Full Video
+          </Button>
+
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+              color: "#fff",
+            }}
+            onClick={closeButtonHandler}>
+            <DeleteIcon style={{width: "17px", height: "17px"}} />
+            Remove Video
+          </Button>
+
+          <Button
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              justifyContent: "flex-start",
+              color: "#fff",
+            }}
+            disabled={disabled}
+            onClick={(e) => {
+              e.stopPropagation();
+              setAnchorEl(null);
+              inputRef.current.click();
+            }}>
+            <ChangeCircleIcon />
+            Change Video
+          </Button>
+        </Box>
+        <input
+          type="file"
+          hidden
+          ref={inputRef}
+          tabIndex={tabIndex}
+          autoFocus={tabIndex === 1}
+          onChange={inputChangeHandler}
+          disabled={disabled}
+        />
       </Popover>
 
       <input
@@ -234,6 +364,110 @@ const VideoUpload = ({
         disabled={disabled}
         accept=".mp4, .mov, .avi, .wmv, .flv, .mpeg, .mpg, .m4v, .webm, .mkv"
       />
+
+      <Modal open={openFullImg} onClose={handleCloseVideo}>
+        <Box
+          sx={{
+            ...style,
+            outline: "none",
+            boxShadow: "none",
+            "&:focus": {
+              outline: "none",
+              boxShadow: "none",
+            },
+            "&:focus-visible": {
+              outline: "none",
+              boxShadow: "none",
+            },
+          }}>
+          <Box
+            onClick={handleCloseVideo}
+            sx={{
+              border: "0px solid #fff",
+              transform: `rotate(${degree}deg)`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+            aria-describedby={id}>
+            <video
+              onClick={(e) => e.stopPropagation()}
+              controls
+              className="uploadedImage"
+              style={{transform: `scale(${imgScale})`}}
+              src={value}></video>
+            <Typography
+              sx={{
+                fontSize: "10px",
+                color: "#747474",
+              }}>
+              {value?.split?.("_")?.[1] ?? ""}
+            </Typography>
+          </Box>
+          <Button
+            onClick={handleCloseVideo}
+            sx={{
+              position: "absolute",
+              right: "-300px",
+              top: "-50px",
+              color: "white",
+            }}>
+            <ClearIcon style={{width: "30px", height: "30px"}} />
+          </Button>
+          <Button
+            onClick={() => {
+              imageZoom("up");
+            }}
+            sx={{
+              position: "absolute",
+              right: "-60px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <ZoomInIcon style={{width: "30px", height: "30px"}} />
+          </Button>
+          <Button
+            onClick={() => {
+              imageZoom("down");
+            }}
+            sx={{
+              position: "absolute",
+              right: "-120px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+          </Button>
+          <Button
+            onClick={() => {
+              downloadVideo(value);
+            }}
+            sx={{
+              position: "absolute",
+              right: "-200px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <Download style={{width: "30px", height: "30px"}} />
+          </Button>{" "}
+          <Button
+            onClick={(e) => {
+              setAnchorEl(e.target);
+            }}
+            sx={{
+              position: "absolute",
+              right: "-300px",
+              bottom: "-30px",
+              color: "#eee",
+            }}>
+            <MoreHorizIcon
+              htmlColor="#fff"
+              style={{width: "30px", height: "30px"}}
+            />
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };

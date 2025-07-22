@@ -447,6 +447,7 @@ function DrawerFieldGenerator({
           errors={errors}
           functions={functions}
           isTextarea={true}
+          updateObject={updateObject}
         />
       );
 
@@ -527,7 +528,10 @@ const InputField = ({
                     ref={textareaRef}
                     disabled={isDisabled}
                     value={inputValue ?? value}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      inputChangeHandler();
+                    }}
                     placeholder="Empty"
                     className={cls.singleLine}
                   />
@@ -536,7 +540,10 @@ const InputField = ({
                     disabled={isDisabled}
                     type={inputType}
                     value={inputValue ?? value}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      inputChangeHandler();
+                    }}
                     placeholder={
                       field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
                     }

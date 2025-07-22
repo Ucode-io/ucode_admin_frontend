@@ -60,6 +60,7 @@ const HFMultipleAutocomplete = ({
   disabled,
   setFormValue,
   newUi,
+  updateObject = () => {},
 }) => {
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
@@ -96,6 +97,7 @@ const HFMultipleAutocomplete = ({
             onFormChange={(el) => {
               onFormChange(el);
               onChange(el);
+              updateObject();
             }}
             disabledHelperText={disabledHelperText}
             error={error}

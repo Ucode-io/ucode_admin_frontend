@@ -22,7 +22,6 @@ export const HFVideoUpload = ({
   control,
   name,
   required,
-  updateObject,
   isNewTableView = false,
   tabIndex,
   rules,
@@ -53,7 +52,6 @@ export const HFVideoUpload = ({
             }}
             tabIndex={tabIndex}
             disabled={disabled}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
           {!disabledHelperText && error?.message && (

@@ -72,17 +72,17 @@ function DrawerDetailPage({
   });
 
   const handleClose = (action = "") => {
-    if (action === "close" && Boolean(!itemId)) {
-      dispatch(detailDrawerActions.closeDrawer());
-    } else if (action !== "close" && Boolean(!itemId)) {
-      onSubmit(rootForm?.getValues());
-    } else {
-      dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
-      dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
-      dispatch(detailDrawerActions.setDrawerTabIndex(0));
-      dispatch(detailDrawerActions.closeDrawer());
-      updateQueryWithoutRerender("p", null);
-    }
+    // if (action === "close" && Boolean(!itemId)) {
+    //   dispatch(detailDrawerActions.closeDrawer());
+    // } else if (action !== "close" && Boolean(!itemId)) {
+    //   onSubmit(rootForm?.getValues());
+    // } else {
+    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
+    dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
+    dispatch(detailDrawerActions.setDrawerTabIndex(0));
+    dispatch(detailDrawerActions.closeDrawer());
+    updateQueryWithoutRerender("p", null);
+    // }
   };
 
   const getAllData = async () => {

@@ -98,11 +98,11 @@ const HeadingOptions = ({
               </Flex>
             </Box>
           )}
-          {/* {Boolean(!itemId) && (
+          {Boolean(!itemId) && (
             <Button variant="contained" type="submit">
               Save
             </Button>
-          )} */}
+          )}
         </Box>
       </Box>
 

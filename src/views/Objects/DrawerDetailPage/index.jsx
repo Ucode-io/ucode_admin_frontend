@@ -40,16 +40,6 @@ function DrawerDetailPage({
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const selectedV =
     viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
-  const handleClose = () => {
-    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
-    dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
-    dispatch(groupFieldActions.clearViews());
-    dispatch(groupFieldActions.clearViewsPath());
-    dispatch(detailDrawerActions.setDrawerTabIndex(0));
-    dispatch(detailDrawerActions.closeDrawer());
-    updateQueryWithoutRerender("p", null);
-    updateQueryWithoutRerender("field_slug", null);
-  };
   const {menuId, tableSlug: tableFromParams} = useParams();
   const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -85,6 +75,20 @@ function DrawerDetailPage({
     ...dateInfo,
     invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
   });
+
+  const handleClose = (action = "") => {
+    if (action === "close" && Boolean(!itemId)) {
+      dispatch(detailDrawerActions.closeDrawer());
+    } else if (action !== "close" && Boolean(!itemId)) {
+      onSubmit(rootForm?.getValues());
+    } else {
+      dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
+      dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      dispatch(detailDrawerActions.closeDrawer());
+      updateQueryWithoutRerender("p", null);
+    }
+  };
 
   const getAllData = async () => {
     setLoader(true);
@@ -241,7 +245,7 @@ function DrawerDetailPage({
     }
   }, [defaultValue]);
 
-  const create = (data) => {
+  function create(data) {
     constructorObjectService
       .create(tableSlug, {data})
       .then((res) => {
@@ -278,7 +282,7 @@ function DrawerDetailPage({
       .finally(() => {
         rootForm.refetch();
       });
-  };
+  }
 
   function updateLayout() {
     const updatedTabs = layout.tabs.map((tab, index) =>
@@ -400,7 +404,7 @@ function DrawerDetailPage({
           sx={{
             position: "absolute",
             height: "calc(100vh - 0px)",
-            width: "4px",
+            width: "6px",
             left: 0,
             top: 0,
             cursor: "col-resize",

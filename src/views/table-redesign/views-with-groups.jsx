@@ -644,7 +644,7 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   onClick={() => {
-                    handleClose();
+                    handleClose("close");
                     if (location?.state?.fullPage) {
                       navigate(-1);
                       setLayoutType("SidePeek");

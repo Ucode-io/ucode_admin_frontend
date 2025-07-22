@@ -61,7 +61,7 @@ export const ContentList = ({
       window.open(url, "_blank", "noopener,noreferrer");
     }
   };
-
+  console.log("groupedResourcesgroupedResources", groupedResources);
   return (
     <>
       {Boolean(!openResource) ? (
@@ -126,7 +126,7 @@ const ResourceButton = ({
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleClose = () => setAnchorEl(null);
-  console.log("computedElementscomputedElements", computedElements);
+
   return (
     <>
       {computedElements?.length === 0 ? (
@@ -224,6 +224,8 @@ const getElementIcon = (element) => {
       return <img src="/img/superset.svg" alt="" />;
     case "clickhouse":
       return <img src="/img/clickhouse.svg" alt="" />;
+    case "metabase":
+      return <img src="/img/metabase.svg" alt="" />;
 
     default:
       return <img src="/img/mongodb.svg" alt="" />;

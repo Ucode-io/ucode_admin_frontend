@@ -3,15 +3,15 @@ import "./style.scss";
 import {Card, CircularProgress, IconButton, Menu, Popover} from "@mui/material";
 import {useState} from "react";
 import {colorList} from "../../../../components/ColorPicker/colorList";
-import { Box } from "@chakra-ui/react";
-import { Lock } from "@mui/icons-material";
+import {Box} from "@chakra-ui/react";
+import {Lock} from "@mui/icons-material";
 
 const HFColorPicker = ({
   control,
   name,
   disabledHelperText = false,
   required = false,
-  updateObject,
+  updateObject = () => {},
   isNewTableView = false,
   rules = {},
   customeClick = false,
@@ -29,7 +29,7 @@ const HFColorPicker = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <ColorPicker
             drawerDetail={drawerDetail}
@@ -75,10 +75,9 @@ const ColorPicker = ({
 
   return (
     <div
-      style={{ width: "318px", padding: drawerDetail ? "0 10px" : "0" }}
+      style={{width: "318px", padding: drawerDetail ? "0 10px" : "0"}}
       className="ColorPicker"
-      onClick={(e) => e.stopPropagation()}
-    >
+      onClick={(e) => e.stopPropagation()}>
       <div
         id="round"
         className="round"
@@ -89,9 +88,8 @@ const ColorPicker = ({
           alignItems: "center",
           justifyContent: "center",
         }}
-        onClick={disabled ? () => {} : handleClick}
-      >
-        {disabled && <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />}
+        onClick={disabled ? () => {} : handleClick}>
+        {disabled && <Lock style={{fontSize: "20px", color: "#adb5bd"}} />}
       </div>
       <Menu
         open={open}
@@ -111,7 +109,7 @@ const ColorPicker = ({
             <div
               className="round"
               key={index}
-              style={{ backgroundColor: color }}
+              style={{backgroundColor: color}}
               onClick={() => {
                 onChange(color);
                 handleClose();

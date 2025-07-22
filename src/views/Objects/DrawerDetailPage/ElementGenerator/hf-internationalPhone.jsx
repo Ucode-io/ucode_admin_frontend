@@ -4,8 +4,8 @@ import PhoneInput from "react-phone-number-input";
 import styles from "./style.module.scss";
 import "react-phone-number-input/style.css";
 import {isString} from "lodash-es";
-import { Box } from "@chakra-ui/react";
-import { Lock } from "@mui/icons-material";
+import {Box} from "@chakra-ui/react";
+import {Lock} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -28,8 +28,8 @@ const HFInternationalPhone = ({
   tabIndex,
   placeholder,
   defaultValue,
-  isTableView,
-  updateObject,
+  isTableView = false,
+  updateObject = () => {},
   isNewTableView,
   newUi,
   ...props
@@ -45,7 +45,7 @@ const HFInternationalPhone = ({
           required: required ? "This is a required field" : false,
           ...rules,
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
+        render={({field: {onChange, value}, fieldState: {error}}) => (
           <PhoneInput
             disabled={disabled}
             placeholder="Enter phone number"
@@ -100,9 +100,8 @@ const HFInternationalPhone = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}
-        >
-          <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+          }}>
+          <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
         </Box>
       )}
     </Box>

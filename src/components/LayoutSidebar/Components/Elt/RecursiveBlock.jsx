@@ -1,9 +1,10 @@
-import { Box, Button, Icon } from "@mui/material";
+import {Box, Button, Icon} from "@mui/material";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { useNavigate, useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { updateLevel } from "../../../../utils/level";
+import {updateLevel} from "../../../../utils/level";
+import IconGeneratorIconjs from "../../../IconPicker/IconGeneratorIconjs";
 
 const RecursiveBlock = ({
   element,
@@ -13,7 +14,7 @@ const RecursiveBlock = ({
   clickHandler,
   childBlockVisible,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const navigate = useNavigate();
 
   const activeStyle = {
@@ -41,8 +42,7 @@ const RecursiveBlock = ({
             element.isChild &&
             (tableSlug !== element.slug ? "active-with-child" : "active")
           }`}
-          onClick={clickHandler}
-        >
+          onClick={clickHandler}>
           <div
             className="label"
             style={{
@@ -54,12 +54,17 @@ const RecursiveBlock = ({
             }}
             // onClick={() => navigate(`/main/resources/${element?.id}`)}
           >
-            <IconGenerator icon={element?.icon} size={18} />
+            {element?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={element?.icon} size={18} />
+            ) : (
+              <IconGenerator icon={element?.icon} size={18} />
+            )}
+            {/* <IconGenerator icon={element?.icon} size={18} /> */}
             <Icon as={element?.icon} size={18} />
 
             {element?.title}
           </div>
-          <Box onClick={(e) => e.stopPropagation()} sx={{ cursor: "pointer" }}>
+          <Box onClick={(e) => e.stopPropagation()} sx={{cursor: "pointer"}}>
             <DeleteIcon />
           </Box>
           {element.type === "FOLDER" && (

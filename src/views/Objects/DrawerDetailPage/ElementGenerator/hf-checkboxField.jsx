@@ -6,7 +6,7 @@ const HFCheckbox = ({
   isBlackBg,
   name,
   label,
-  updateObject,
+  updateObject = () => {},
   isNewTableView = false,
   tabIndex,
   className,
@@ -24,7 +24,7 @@ const HFCheckbox = ({
       control={control}
       name={name}
       defaultValue={defaultValue}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({field: {onChange, value}, fieldState: {error}}) => (
         <div
           className={className}
           style={{
@@ -32,22 +32,17 @@ const HFCheckbox = ({
             color: isBlackBg ? "#fff" : "",
             paddingLeft: drawerDetail ? "3px" : "0px",
             cursor: disabled ? "not-allowed" : "pointer",
-          }}
-        >
+          }}>
           <Checkbox
             id={`checkbox${id}`}
             icon={
-              <img
-                src="/img/checbkox.svg"
-                alt="checkbox"
-                style={{ width: 20 }}
-              />
+              <img src="/img/checbkox.svg" alt="checkbox" style={{width: 20}} />
             }
             checkedIcon={
               <img
                 src="/img/checkbox-checked.svg"
                 alt="checked"
-                style={{ width: 20 }}
+                style={{width: 20}}
               />
             }
             style={{
@@ -71,14 +66,12 @@ const HFCheckbox = ({
           {isShowLable && (
             <label
               htmlFor={`checkbox-${id}`}
-              className={`label ${labelClassName}`}
-            >
+              className={`label ${labelClassName}`}>
               {label}
             </label>
           )}
         </div>
-      )}
-    ></Controller>
+      )}></Controller>
   );
 };
 

@@ -6,6 +6,7 @@ import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
+import IconGeneratorIconjs from "../../../IconPicker/IconGeneratorIconjs";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const projectFolder = {
@@ -45,7 +46,12 @@ const TableSettingSidebar = ({level = 1, projectSettingLan}) => {
             clickHandler(e);
           }}>
           <div className="label" style={{fontSize: "13px"}}>
-            <IconGenerator icon={projectFolder?.icon} size={18} />
+            {projectFolder?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={projectFolder?.icon} size={18} />
+            ) : (
+              <IconGenerator icon={projectFolder?.icon} size={18} />
+            )}
+            {/* <IconGenerator icon={projectFolder?.icon} size={18} /> */}
             {generateLangaugeText(
               projectSettingLan,
               i18n?.language,

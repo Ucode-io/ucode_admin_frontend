@@ -3,8 +3,13 @@ import {Box, Button} from "@mui/material";
 import {isEqual} from "lodash";
 import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import layoutService from "../../../services/layoutService";
@@ -16,10 +21,12 @@ import FormCustomActionButton from "../components/CustomActionsButton/FormCustom
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
 import HeadingOptions from "./HeadingOptions";
 import "./style.scss";
+import constructorObjectService from "../../../services/constructorObjectService";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {useQueryClient} from "react-query";
 
 function DrawerFormDetailPage({
   view,
-  modal = false,
   data,
   layout,
   fieldsMap,
@@ -30,9 +37,11 @@ function DrawerFormDetailPage({
   projectInfo,
   rootForm,
 }) {
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
-  const { tableSlug: tableSlugParam, menuId } = useParams();
+  const {i18n} = useTranslation();
+  const {tableSlug: tableSlugParam, menuId} = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
@@ -41,6 +50,9 @@ function DrawerFormDetailPage({
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
+
+  const query = new URLSearchParams(window.location.search);
+  const itemId = query.get("p");
 
   const slugSplit = (slug) => {
     const parts = slug.split("_");
@@ -138,16 +150,6 @@ function DrawerFormDetailPage({
     }
   };
 
-  // const isMultiLanguage = useMemo(() => {
-  //   const allFields = [];
-  //   selectedTab?.sections?.map((section) => {
-  //     return section?.fields?.map((field) => {
-  //       return allFields.push(field);
-  //     });
-  //   });
-  //   return !!allFields.find((field) => field?.enable_multilanguage === true);
-  // }, [selectedTab]);
-
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
     selectedTab?.sections?.map((section) => {
@@ -186,38 +188,41 @@ function DrawerFormDetailPage({
 
   const getAllData = () => {};
 
-  // const [microFrontendId, setMicroFrontendId] = useState("");
-  // const [isMicroFrontendOpen, setIsMicroFrontendOpen] = useState(false);
-
   const handleNavigateToMicroFrontend = (id) => {
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
 
-  // const handleCloseMicroFrontendModal = () => {
-  //   setIsMicroFrontendOpen(false);
-  //   setMicroFrontendId("");
-  // };
+  const updateObject = (data) => {
+    const computedData = rootForm.watch();
+    delete computedData.invite;
 
-  // const microFrontendCallback = (id) => {
-  //   setMicroFrontendId(id);
-  // };
+    constructorObjectService
+      .update(tableSlug, {data: {...computedData, guid: itemId}})
+      .then((res) => {
+        dispatch(showAlert("Successfully updated", "success"));
+        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
+          table_slug: tableSlug,
+        });
+      })
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => {});
+  };
+
   return (
     <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{ height: "calc(100vh - 94px)" }}
+        sx={{height: "calc(100vh - 94px)"}}
         pb={"10px"}
         overflow={"auto"}
         display="flex"
-        flexDirection="column"
-      >
+        flexDirection="column">
         {isMultiLanguage && (
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
                 className={activeLang === lang?.short_name && "active"}
-                onClick={() => setActiveLang(lang?.short_name)}
-              >
+                onClick={() => setActiveLang(lang?.short_name)}>
                 {lang?.name}
               </Button>
             ))}
@@ -240,15 +245,13 @@ function DrawerFormDetailPage({
           sx={{
             overflow: "auto",
             height: "calc(100vh - 94px)",
-          }}
-        >
+          }}>
           {sections?.map((section, secIndex) => (
             <Box
               sx={{
                 margin: "8px 0 0 0",
               }}
-              key={secIndex}
-            >
+              key={secIndex}>
               <Container
                 behaviour="contain"
                 style={{
@@ -259,15 +262,13 @@ function DrawerFormDetailPage({
                 dragHandleSelector=".drag-handle"
                 dragClass="drag-item"
                 lockAxis="y"
-                onDrop={(dropResult) => onDrop(secIndex, dropResult)}
-              >
+                onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
                 {section?.fields
                   ?.filter((el) => filterFields(el))
                   .map((field, fieldIndex) => (
                     <Draggable
                       className={Boolean(defaultAdmin) ? "drag-handle" : ""}
-                      key={field?.id ?? fieldIndex}
-                    >
+                      key={field?.id ?? fieldIndex}>
                       <Box
                         className={dragAction ? "rowColumnDrag" : "rowColumn"}
                         display="flex"
@@ -277,12 +278,11 @@ function DrawerFormDetailPage({
                             : "center"
                         }
                         {...(Boolean(field?.type === "MULTISELECT")
-                          ? { minHeight: "30px" }
+                          ? {minHeight: "30px"}
                           : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
-                            ? { height: "auto !important" }
-                            : { height: "32px" })}
-                        py="8px"
-                      >
+                            ? {height: "auto !important"}
+                            : {height: "32px"})}
+                        py="8px">
                         <Box
                           display="flex"
                           alignItems="center"
@@ -294,8 +294,7 @@ function DrawerFormDetailPage({
                             "&:hover": {
                               backgroundColor: "#F7F7F7",
                             },
-                          }}
-                        >
+                          }}>
                           <Box
                             width="18px"
                             height="16px"
@@ -303,14 +302,13 @@ function DrawerFormDetailPage({
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
-                            sx={{ color: "#787774" }}
-                          >
+                            sx={{color: "#787774"}}>
                             <span className="drag">
                               <DragIndicatorIcon
-                                style={{ width: "16px", height: "16px" }}
+                                style={{width: "16px", height: "16px"}}
                               />
                             </span>
-                            <span style={{ color: "#787774" }} className="icon">
+                            <span style={{color: "#787774"}} className="icon">
                               {getColumnIcon({
                                 column: {
                                   type: field?.type ?? field?.relation_type,
@@ -326,13 +324,13 @@ function DrawerFormDetailPage({
                             width="100%"
                             overflow="hidden"
                             textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                          >
+                            whiteSpace="nowrap">
                             {getFieldLanguageLabel(field)}
                           </Box>
                         </Box>
-                        <Box sx={{ width: "60%" }}>
+                        <Box sx={{width: "60%"}}>
                           <DrawerFieldGenerator
+                            updateObject={updateObject}
                             activeLang={activeLang}
                             drawerDetail={true}
                             control={rootForm.control}
@@ -360,8 +358,7 @@ function DrawerFormDetailPage({
           justifyContent="flex-end"
           marginTop="auto"
           marginBottom="12px"
-          gap={"8px"}
-        >
+          gap={"8px"}>
           <FormCustomActionButton
             control={rootForm?.control?._formValues}
             tableSlug={tableSlug}
@@ -383,116 +380,9 @@ function DrawerFormDetailPage({
           cursor: "col-resize",
         }}
       />
-      {/* <MicroFrontendPopup
-        open={isMicroFrontendOpen}
-        handleClose={handleCloseMicroFrontendModal}
-        itemId={selectedRow?.guid}
-        microFrontendId={microFrontendId}
-      /> */}
     </MaterialUIProvider>
   );
 }
-
-// const CHTextField = ({
-//   control,
-//   name = "",
-//   defaultValue = "",
-//   placeholder = "",
-// }) => {
-//   return (
-//     <Controller
-//       control={control}
-//       name={name}
-//       defaultValue={defaultValue}
-//       render={({field: {onChange, value}, fieldState: {error}}) => (
-//         <TextField
-//           placeholder={placeholder}
-//           onChange={(e) => onChange(e.target.value)}
-//           className="headingText"
-//           value={value ?? ""}
-//         />
-//       )}
-//     />
-//   );
-// };
-
-// const ScreenOptions = ({
-//   projectInfo,
-//   view,
-//   selectedViewType,
-//   selectedRow,
-//   setSelectedViewType = () => {},
-//   setLayoutType = () => {},
-//   navigateToEditPage = () => {},
-// }) => {
-//   const navigate = useNavigate();
-//   const {menuId} = useParams();
-//   const [anchorEl, setAnchorEl] = useState(null);
-
-//   const options = [
-//     {label: "Side peek", icon: "SidePeek"},
-//     {label: "Center peek", icon: "CenterPeek"},
-//     {label: "Full page", icon: "FullPage"},
-//   ];
-
-//   const handleClick = (event) => {
-//     setAnchorEl(event.currentTarget);
-//   };
-
-//   const handleClose = (option) => {
-//     localStorage.setItem("detailPage", option?.icon);
-//     if (option?.icon === "FullPage") {
-//       setLayoutType("SimpleLayout");
-//       navigate(`/${menuId}/detail?p=${selectedRow?.guid}`, {
-//         state: {
-//           viewId: view?.id,
-//           table_slug: view?.table_slug,
-//           projectInfo: projectInfo,
-//           selectedRow: selectedRow,
-//         },
-//       });
-//     }
-
-//     if (option) setSelectedViewType(option?.icon);
-//     setAnchorEl(null);
-//   };
-
-//   return (
-//     <Box>
-//       <Box onClick={handleClick}>
-//         <span>{getColumnFieldIcon(selectedViewType)}</span>
-//       </Box>
-
-//       <Menu
-//         anchorEl={anchorEl}
-//         open={Boolean(anchorEl)}
-//         onClose={() => handleClose(null)}>
-//         <Box sx={{width: "220px", padding: "4px 0"}}>
-//           {options.map((option) => (
-//             <MenuItem
-//               style={{
-//                 display: "flex",
-//                 alignItems: "center",
-//                 flexDirection: "row",
-//                 justifyContent: "space-between",
-//                 gap: "6px",
-//                 color: "#37352f",
-//               }}
-//               key={option.label}
-//               onClick={() => handleClose(option)}>
-//               <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
-//                 <span>{getColumnFieldIcon(option)}</span>
-//                 {option.label}
-//               </Box>
-
-//               <Box>{option?.icon === selectedViewType ? <Check /> : ""}</Box>
-//             </MenuItem>
-//           ))}
-//         </Box>
-//       </Menu>
-//     </Box>
-//   );
-// };
 
 export const getColumnFieldIcon = (column) => {
   if (column === "SidePeek") {

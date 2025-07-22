@@ -2,6 +2,7 @@ import {useMemo} from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
 import clsx from "clsx";
 import cls from "./style.module.scss";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const MultiselectCellColoredElement = ({
   field,
@@ -16,7 +17,6 @@ const MultiselectCellColoredElement = ({
   columnIndex,
   ...props
 }) => {
-
   const hasColor = field?.attributes?.has_color;
   const hasIcon = field?.attributes?.has_icon;
 
@@ -54,8 +54,7 @@ const MultiselectCellColoredElement = ({
         // justifyContent: "center",
         alignItems: "center",
         minWidth: "150px",
-      }}
-    >
+      }}>
       {tags?.map((tag) => (
         <div
           key={tag.value}
@@ -73,23 +72,29 @@ const MultiselectCellColoredElement = ({
             display: "flex",
             ...style,
           }}
-          {...props}
-        >
-          {hasIcon && (
-            <IconGenerator
-              icon={tag.icon}
-              size={14}
-              className="mr-1"
-              style={{ transform: "translateY(2px)" }}
-            />
-          )}
+          {...props}>
+          {hasIcon &&
+            (tag?.icon?.includes(":") ? (
+              <IconGeneratorIconjs
+                icon={tag?.icon}
+                size={14}
+                className="mr-1"
+                style={{transform: "translateY(2px)"}}
+              />
+            ) : (
+              <IconGenerator
+                icon={tag?.icon}
+                size={14}
+                className="mr-1"
+                style={{transform: "translateY(2px)"}}
+              />
+            ))}
 
           {tag.label ?? tag.value}
           <span
             className={clsx(cls.cellColoredElementLabelPopup, {
               [cls.fromLeft]: columnIndex === 0,
-            })}
-          >
+            })}>
             {field?.label}
           </span>
         </div>

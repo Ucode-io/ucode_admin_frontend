@@ -8,6 +8,7 @@ import {BsThreeDots} from "react-icons/bs";
 import activeStyles from "../MenuUtils/activeStyles";
 import {menuActions} from "../../../../store/menuItem/menuItem.slice";
 import {useDispatch, useSelector} from "react-redux";
+import IconGeneratorIconjs from "../../../IconPicker/IconGeneratorIconjs";
 
 const RecursiveBlock = ({
   element,
@@ -59,7 +60,12 @@ const RecursiveBlock = ({
             }`}
             onClick={clickHandler}>
             <div className="label" style={{fontSize: "13px"}}>
-              <IconGenerator icon={element?.icon} size={18} />
+              {element?.icon?.includes(":") ? (
+                <IconGeneratorIconjs icon={element?.icon} size={18} />
+              ) : (
+                <IconGenerator icon={element?.icon} size={18} />
+              )}
+              {/* <IconGenerator icon={element?.icon} size={18} /> */}
               <Tooltip title={element?.title ?? element?.name} placement="top">
                 <p>{element?.title ?? element?.name}</p>
               </Tooltip>
@@ -98,7 +104,12 @@ const RecursiveBlock = ({
                   `/main/${appId}/resources/${element?.id}/${element.type}`
                 )
               }>
-              <IconGenerator icon={element?.icon} size={18} />
+              {element?.icon?.includes(":") ? (
+                <IconGeneratorIconjs icon={element?.icon} size={18} />
+              ) : (
+                <IconGenerator icon={element?.icon} size={18} />
+              )}
+              {/* <IconGenerator icon={element?.icon} size={18} /> */}
 
               <Tooltip title={element?.title ?? element?.name} placement="top">
                 <p>{element?.title ?? element?.name}</p>
@@ -137,7 +148,12 @@ const RecursiveBlock = ({
                   `/main/${appId}/resources/${element?.id}/${element.type}`
                 )
               }>
-              <IconGenerator icon={element?.icon} size={18} />
+              {element?.icon?.includes(":") ? (
+                <IconGeneratorIconjs icon={element?.icon} size={18} />
+              ) : (
+                <IconGenerator icon={element?.icon} size={18} />
+              )}
+              {/* <IconGenerator icon={element?.icon} size={18} /> */}
 
               <Tooltip title={element?.title ?? element?.name} placement="top">
                 <p>{element?.title ?? element?.name}</p>

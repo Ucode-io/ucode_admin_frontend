@@ -31,6 +31,7 @@ import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDo
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import IconGeneratorIconjs from "../../../components/IconPicker/IconGeneratorIconjs";
 
 const RelationSection = ({
   selectedTabIndex,
@@ -288,7 +289,13 @@ const RelationSection = ({
                       </>
                     ) : ( */}
                       <div className="flex align-center gap-2 text-nowrap">
-                        <IconGenerator icon={relation?.icon} /> {relation.title}
+                        {/* <IconGenerator icon={relation?.icon} />{" "} */}
+                        {relation?.icon?.includes(":") ? (
+                          <IconGeneratorIconjs icon={relation?.icon} />
+                        ) : (
+                          <IconGenerator icon={relation?.icon} />
+                        )}
+                        {relation.title}
                       </div>
                       {/* )} */}
                     </Tab>

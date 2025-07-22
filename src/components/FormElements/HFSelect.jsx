@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   FormControl,
   FormHelperText,
@@ -10,10 +10,11 @@ import {
   TextField,
   Autocomplete,
 } from "@mui/material";
-import { Controller } from "react-hook-form";
+import {Controller} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
 import ClearIcon from "@mui/icons-material/Clear";
-import { columnIcons } from "../../utils/constants/columnIcons";
+import {columnIcons} from "../../utils/constants/columnIcons";
+import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const HFSelect = ({
   control,
@@ -59,12 +60,12 @@ const HFSelect = ({
         ...rules,
       }}
       render={({
-        field: { onChange: onFormChange, value },
-        fieldState: { error },
+        field: {onChange: onFormChange, value},
+        fieldState: {error},
       }) => {
         if (isSearchable) {
           return (
-            <FormControl style={{ width }}>
+            <FormControl style={{width}}>
               <Autocomplete
                 options={options}
                 getOptionLabel={(option) =>
@@ -101,7 +102,7 @@ const HFSelect = ({
         }
 
         return (
-          <FormControl style={{ width }}>
+          <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
             <Select
               value={value || selectedValue}
@@ -110,16 +111,14 @@ const HFSelect = ({
               size="small"
               className="hf-select"
               error={error}
-              inputProps={{ placeholder }}
+              inputProps={{placeholder}}
               fullWidth
               id={idSet}
               displayEmpty={displayEmpty}
               renderValue={
                 value !== ""
                   ? undefined
-                  : () => (
-                      <span style={{ color: "#909EAB" }}>{placeholder}</span>
-                    )
+                  : () => <span style={{color: "#909EAB"}}>{placeholder}</span>
               }
               onChange={(e) => {
                 onFormChange(e.target.value);
@@ -128,8 +127,7 @@ const HFSelect = ({
               }}
               onOpen={() => onOpen()}
               disabled={disabled}
-              {...props}
-            >
+              {...props}>
               {optionType === "GROUP"
                 ? options?.map((group, groupIndex) => [
                     <MenuItem
@@ -139,8 +137,7 @@ const HFSelect = ({
                         fontWeight: 600,
                         color: "#000",
                         fontSize: 15,
-                      }}
-                    >
+                      }}>
                       {group.label}
                     </MenuItem>,
                     group.options?.map((option) => (
@@ -148,14 +145,26 @@ const HFSelect = ({
                         onClick={() => getOnchangeField(option)}
                         key={option.value}
                         value={option.value}
-                        style={{ paddingLeft: 30 }}
-                      >
+                        style={{paddingLeft: 30}}>
                         <div className="flex align-center gap-2">
-                          <IconGenerator
+                          {option?.icon?.includes(":") ? (
+                            <IconGeneratorIconjs
+                              icon={option.icon}
+                              size={15}
+                              style={{color: "#6E8BB7"}}
+                            />
+                          ) : (
+                            <IconGenerator
+                              icon={option.icon}
+                              size={15}
+                              style={{color: "#6E8BB7"}}
+                            />
+                          )}
+                          {/* <IconGenerator
                             icon={option.icon}
                             size={15}
-                            style={{ color: "#6E8BB7" }}
-                          />
+                            style={{color: "#6E8BB7"}}
+                          /> */}
                           {option.label}
                         </div>
                       </MenuItem>
@@ -166,8 +175,7 @@ const HFSelect = ({
                       id={`field_option_${option?.value}`}
                       onClick={() => getOnchangeField(option)}
                       key={option?.value}
-                      value={option?.value}
-                    >
+                      value={option?.value}>
                       <div className="flex align-center gap-2">
                         {option?.icon && columnIcons(option?.value)}
                         {option?.label}
@@ -179,12 +187,11 @@ const HFSelect = ({
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
             {(selectedValue || value || defaultValue) && (
-              <Box sx={{ position: "absolute", right: "20px", top: "3px" }}>
+              <Box sx={{position: "absolute", right: "20px", top: "3px"}}>
                 {isClearable && !disabled && (
                   <IconButton
                     onClick={() => handleClear(onFormChange)}
-                    size="small"
-                  >
+                    size="small">
                     <ClearIcon />
                   </IconButton>
                 )}

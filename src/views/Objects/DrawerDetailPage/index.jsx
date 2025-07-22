@@ -241,21 +241,6 @@ function DrawerDetailPage({
     }
   }, [defaultValue]);
 
-  const update = (data) => {
-    delete data.invite;
-    constructorObjectService
-      .update(tableSlug, {data})
-      .then(() => {
-        updateLayout();
-        dispatch(showAlert("Successfully updated", "success"));
-        handleClose();
-        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
-          table_slug: tableSlug,
-        });
-      })
-      .catch((e) => console.log("ERROR: ", e))
-      .finally(() => {});
-  };
   const create = (data) => {
     constructorObjectService
       .create(tableSlug, {data})
@@ -317,11 +302,7 @@ function DrawerDetailPage({
   }
 
   const onSubmit = (data) => {
-    if (itemId) {
-      update(data);
-    } else {
-      create(data);
-    }
+    create(data);
   };
 
   useEffect(() => {

@@ -15,7 +15,6 @@ const HFTextEditor = ({
   control,
   name = "",
   disabledHelperText = false,
-  updateObject,
   isNewTableView = false,
   required = false,
   isTransparent = false,
@@ -27,6 +26,7 @@ const HFTextEditor = ({
   label,
   drawerDetail = false,
   disabled = false,
+  updateObject = () => {},
   ...props
 }) => {
   const quillRef = useRef(null);

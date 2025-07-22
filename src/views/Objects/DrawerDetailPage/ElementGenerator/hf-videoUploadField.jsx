@@ -22,13 +22,13 @@ export const HFVideoUpload = ({
   control,
   name,
   required,
-  updateObject,
   isNewTableView = false,
   tabIndex,
   rules,
   disabledHelperText = false,
   disabled,
   drawerDetail = false,
+  updateObject = () => {},
   ...props
 }) => {
   return (
@@ -52,7 +52,6 @@ export const HFVideoUpload = ({
             }}
             tabIndex={tabIndex}
             disabled={disabled}
-            // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
           {!disabledHelperText && error?.message && (
@@ -122,8 +121,7 @@ const VideoUpload = ({
           if (value) {
             setAnchorEl(ev.target);
           }
-        }}
-      >
+        }}>
         {value && (
           <div
             style={{
@@ -132,17 +130,16 @@ const VideoUpload = ({
               columnGap: 5,
               width: drawerDetail ? "310px" : "100%",
               margin: drawerDetail ? "0 0 0 10px" : "0",
-            }}
-          >
+            }}>
             <div className="video-block">
               <video ref={videoRef} src={value} />
             </div>
-            <div style={{ fontSize: 10, color: "#747474", fontWeight: 500 }}>
+            <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>
               {fileName}
             </div>
           </div>
         )}
-        <Box sx={{ width: drawerDetail ? "330px" : "" }}>
+        <Box sx={{width: drawerDetail ? "330px" : ""}}>
           {!value && (
             <Button
               id="video_button_field"
@@ -153,13 +150,12 @@ const VideoUpload = ({
                 minWidth: 40,
                 width: 40,
                 height: 27,
-              }}
-            >
+              }}>
               {!loading && (
                 <img
                   src="/img/newUpload.svg"
                   alt="Upload"
-                  style={{ width: 22, height: 22 }}
+                  style={{width: 22, height: 22}}
                 />
               )}
               {loading && <CircularProgress size={20} />}
@@ -175,16 +171,14 @@ const VideoUpload = ({
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}
-      >
+        }}>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
             padding: "10px",
-          }}
-        >
+          }}>
           <Button
             sx={{
               display: "flex",
@@ -199,17 +193,15 @@ const VideoUpload = ({
               } catch (err) {
                 videoRef.current.play();
               }
-            }}
-          >
+            }}>
             <OpenInFullIcon />
             Show full video
           </Button>
           <RectangleIconButton
             className="removeImg"
-            onClick={closeButtonHandler}
-          >
+            onClick={closeButtonHandler}>
             <DeleteIcon
-              style={{ width: "17px", height: "17px", marginRight: "12px" }}
+              style={{width: "17px", height: "17px", marginRight: "12px"}}
             />
             Remove video
           </RectangleIconButton>
@@ -225,8 +217,7 @@ const VideoUpload = ({
             onClick={(e) => {
               e.stopPropagation();
               inputRef.current.click();
-            }}
-          >
+            }}>
             <ChangeCircleIcon />
             Change Video
           </Button>

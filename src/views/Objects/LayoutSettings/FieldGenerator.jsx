@@ -7,6 +7,7 @@ import {Checkbox, Switch} from "@mui/material";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import LogoDisplay from "../../../components/LogoDisplay";
 import {getColumnIcon} from "../../table-redesign/icons";
+import IconGeneratorIconjs from "../../../components/IconPicker/IconGeneratorIconjs";
 
 const FieldGenerator = ({field, selectedRow}) => {
   const {i18n} = useTranslation();
@@ -340,7 +341,12 @@ const FieldGenerator = ({field, selectedRow}) => {
             </Text>
           </Flex>
           <Text fontSize={14} color="#000000">
-            <IconGenerator icon={selectedRow?.[field?.slug]} />
+            {selectedRow?.[field?.slug]?.includes(":") ? (
+              <IconGeneratorIconjs icon={selectedRow?.[field?.slug]} />
+            ) : (
+              <IconGenerator icon={selectedRow?.[field?.slug]} />
+            )}
+            {/* <IconGenerator icon={selectedRow?.[field?.slug]} /> */}
           </Text>
         </Flex>
       );

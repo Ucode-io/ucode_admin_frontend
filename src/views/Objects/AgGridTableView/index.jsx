@@ -639,13 +639,15 @@ function AgGridTableView(props) {
               <>
                 <AgGridReact
                   ref={gridApi}
-                  rowBuffer={45}
+                  rowBuffer={20}
                   theme={myTheme}
                   gridOptions={{
-                    rowBuffer: 50,
-                    cacheBlockSize: 100,
-                    maxBlocksInCache: 100,
+                    suppressCellSelection: true,
+                    columnBuffer: 10,
+                    rowBuffer: 20,
                   }}
+                  suppressRowHoverHighlight={true}
+                  suppressAggFuncInHeader={true}
                   onColumnMoved={getColumnsUpdated}
                   rowData={rowData}
                   loading={loadings}
@@ -661,11 +663,10 @@ function AgGridTableView(props) {
                   defaultColDef={defaultColDef}
                   cellSelection={cellSelection}
                   onColumnPinned={onColumnPinned}
+                  suppressRowVirtualisation={false}
                   suppressColumnVirtualisation={false}
-                  treeData={view?.attributes?.treeData}
-                  suppressColumnMoveAnimation={true}
+                  suppressColumnMoveAnimation={false}
                   autoGroupColumnDef={autoGroupColumnDef}
-                  suppressServerSideFullWidthLoadingRow={true}
                   loadingOverlayComponent={CustomLoadingOverlay}
                   onCellValueChanged={(e) => {
                     updateObject(e.data);

@@ -199,7 +199,7 @@ function DrawerFormDetailPage({
     constructorObjectService
       .update(tableSlug, {data: {...computedData, guid: itemId}})
       .then((res) => {
-        dispatch(showAlert("Successfully updated", "success"));
+        // dispatch(showAlert("Successfully updated", "success"));
         queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
           table_slug: tableSlug,
         });

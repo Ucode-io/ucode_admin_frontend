@@ -114,7 +114,12 @@ export const useViewWithGroupsProps = ({
   const [loading, setLoading] = useState(false);
 
   const createView = (type) => {
-    if (Boolean(tableRelations) && relationView && !watch("table_slug")) {
+    if (
+      Boolean(tableRelations) &&
+      relationView &&
+      type !== VIEW_TYPES_MAP.WEBSITE &&
+      !watch("table_slug")
+    ) {
       setError("table_slug", { message: "Please select table" });
       return;
     }
@@ -223,7 +228,7 @@ export const useViewWithGroupsProps = ({
       });
     },
     {
-      enabled: Boolean(table_slug),
+      enabled: Boolean(table_slug && !relationView),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];
@@ -233,11 +238,30 @@ export const useViewWithGroupsProps = ({
     }
   );
 
+  const { data: tableInfoDataRelation } = useQuery(
+    ["GET_TABLE_INFO_RELATION", watch("table_slug"), { viewsList }],
+    () => {
+      return constructorTableService.getTableInfo(watch("table_slug"), {
+        data: {},
+      });
+    },
+    {
+      enabled: Boolean(watch("table_slug")),
+      cacheTime: 10,
+      select: (res) => {
+        const fields = res?.data?.fields ?? [];
+        return { fields };
+      },
+    }
+  );
+
   const groupByTableSlug = useSelector(
     (state) => state?.groupField?.groupByFieldSlug
   );
 
-  const fieldsData = tableInfoData?.fields ?? [];
+  const fieldsData = relationView
+    ? tableInfoDataRelation?.fields
+    : tableInfoData?.fields;
 
   const computedColumns = useMemo(() => {
     const filteredFields = fieldsData?.filter(
@@ -285,32 +309,6 @@ export const useViewWithGroupsProps = ({
       case VIEW_TYPES_MAP.TIMELINE: {
         return (
           <MaterialUIProvider>
-            <FRow
-              label={
-                viewType === VIEW_TYPES_MAP.CALENDAR ? "Date from" : "Time from"
-              }
-              required
-            >
-              <HFSelect
-                options={computedColumns}
-                control={control}
-                name="calendar_from_slug"
-                MenuProps={{ disablePortal: true }}
-                required={true}
-              />
-            </FRow>
-            <FRow
-              label={viewType === "CALENDAR" ? "Date to" : "Time to"}
-              required
-            >
-              <HFSelect
-                options={computedColumns}
-                control={control}
-                name="calendar_to_slug"
-                MenuProps={{ disablePortal: true }}
-                required={true}
-              />
-            </FRow>
             {Boolean(relationView) && (
               <FRow label="Relation Field" required>
                 <HFSelect
@@ -326,6 +324,34 @@ export const useViewWithGroupsProps = ({
                 />
               </FRow>
             )}
+            <FRow
+              label={
+                viewType === VIEW_TYPES_MAP.CALENDAR ? "Date from" : "Time from"
+              }
+              required
+            >
+              <HFSelect
+                options={computedColumns}
+                control={control}
+                name="calendar_from_slug"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+                disabled={relationView && !watch("table_slug")}
+              />
+            </FRow>
+            <FRow
+              label={viewType === "CALENDAR" ? "Date to" : "Time to"}
+              required
+            >
+              <HFSelect
+                options={computedColumns}
+                control={control}
+                name="calendar_to_slug"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+                disabled={relationView && !watch("table_slug")}
+              />
+            </FRow>
           </MaterialUIProvider>
         );
       }
@@ -390,7 +416,7 @@ export const useViewWithGroupsProps = ({
                 );
               }}
             />
-            {Boolean(relationView) && (
+            {/* {Boolean(relationView) && (
               <FRow label="Relation Field" required>
                 <HFSelect
                   options={computedRelFields}
@@ -404,7 +430,7 @@ export const useViewWithGroupsProps = ({
                   }}
                 />
               </FRow>
-            )}
+            )} */}
           </>
         );
       }

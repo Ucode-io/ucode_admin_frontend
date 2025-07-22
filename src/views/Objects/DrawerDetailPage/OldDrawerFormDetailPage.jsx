@@ -168,7 +168,7 @@ function OldDrawerFormDetailPage({
 
     return lastPart === lang;
   };
-  console.log({ isMultiLanguage });
+
   return (
     <>
       <Box

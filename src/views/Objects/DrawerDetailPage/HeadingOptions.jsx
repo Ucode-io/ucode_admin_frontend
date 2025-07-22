@@ -1,13 +1,13 @@
 import {Flex, Text} from "@chakra-ui/react";
 import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { Check } from "@mui/icons-material";
+import React, {memo, useEffect, useMemo, useRef, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {Check} from "@mui/icons-material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
-import { useSelector } from "react-redux";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import {useSelector} from "react-redux";
 
 const HeadingOptions = ({
   watch,
@@ -17,7 +17,7 @@ const HeadingOptions = ({
   selectedRow,
   setFormValue = () => {},
 }) => {
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
 
   const selectedFieldSlug =
@@ -60,14 +60,12 @@ const HeadingOptions = ({
           justifyContent: "space-between",
           paddingLeft: "3px",
           gap: "10px",
-        }}
-      >
+        }}>
         <Flex
           onClick={(e) => !selectedFieldSlug && handleClick(e)}
           width={"100%"}
           flexDirection={"column"}
-          justifyContent={"flex-start"}
-        >
+          justifyContent={"flex-start"}>
           <AutoResizeTextarea
             control={control}
             selectedField={selectedField}
@@ -77,16 +75,15 @@ const HeadingOptions = ({
           />
         </Flex>
 
-        <Box sx={{ display: "flex", gap: "10px" }}>
+        <Box sx={{display: "flex", gap: "10px"}}>
           {!selectedFieldSlug && (
-            <Box sx={{ cursor: "pointer" }}>
+            <Box sx={{cursor: "pointer"}}>
               <Flex
                 p={"5px"}
                 borderRadius={6}
                 onClick={handleClick}
                 gap={2}
-                alignItems={"center"}
-              >
+                alignItems={"center"}>
                 <Text>
                   {
                     fieldsList?.find(
@@ -99,18 +96,17 @@ const HeadingOptions = ({
               </Flex>
             </Box>
           )}
-          <Button variant="contained" type="submit">
+          {/* <Button variant="contained" type="submit">
             Save
-          </Button>
+          </Button> */}
         </Box>
       </Box>
 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}
-      >
-        <Box sx={{ width: "180px", padding: "4px 0" }}>
+        onClose={() => handleClose(null)}>
+        <Box sx={{width: "180px", padding: "4px 0"}}>
           {fieldsList
             .filter(
               (field) =>
@@ -130,15 +126,13 @@ const HeadingOptions = ({
                   height: "32px",
                 }}
                 key={option.label}
-                onClick={() => handleClose(option)}
-              >
+                onClick={() => handleClose(option)}>
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: "5px",
-                  }}
-                >
+                  }}>
                   {option.label}
                 </Box>
 
@@ -182,7 +176,7 @@ const AutoResizeTextarea = ({
       control={control}
       name={name ?? ""}
       defaultValue={fieldValue}
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
+      render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
           <textarea
             ref={textareaRef}

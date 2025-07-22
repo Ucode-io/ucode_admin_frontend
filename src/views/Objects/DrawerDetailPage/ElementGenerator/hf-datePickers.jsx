@@ -4,6 +4,7 @@ import {format, isValid, parse, parseISO} from "date-fns";
 import "./style.scss";
 import {Box} from "@chakra-ui/react";
 import {Lock} from "@mui/icons-material";
+import useDebounce from "../../../../hooks/useDebounce";
 
 export const HFDatePickerField = ({
   control,
@@ -12,7 +13,9 @@ export const HFDatePickerField = ({
   required,
   disabled,
   drawerDetail = false,
+  updateObject = () => {},
 }) => {
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
   return (
     <Controller
       control={control}
@@ -41,6 +44,7 @@ export const HFDatePickerField = ({
               }
               onChange={(value) => {
                 onChange(value ? format(new Date(value), "yyyy-MM-dd") : "");
+                inputUpdateObject();
               }}
               styles={{
                 input: {
@@ -87,7 +91,9 @@ export const HFDateTimePickerField = ({
   required,
   disabled,
   drawerDetail = false,
+  updateObject = () => {},
 }) => {
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
   return (
     <Controller
       control={control}
@@ -114,6 +120,7 @@ export const HFDateTimePickerField = ({
               }
               onChange={(value) => {
                 onChange(value);
+                inputUpdateObject();
               }}
               styles={{
                 input: {
@@ -158,7 +165,9 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
   required,
   disabled,
   drawerDetail = false,
+  updateObject = () => {},
 }) => {
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
   return (
     <Controller
       control={control}
@@ -187,6 +196,7 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
                 onChange(
                   value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
                 );
+                inputUpdateObject();
               }}
               styles={{
                 input: {
@@ -229,7 +239,9 @@ export const HFTimePickerField = ({
   required,
   disabled,
   drawerDetail = false,
+  updateObject = () => {},
 }) => {
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
   return (
     <Controller
       control={control}
@@ -265,6 +277,7 @@ export const HFTimePickerField = ({
               }
               onChange={(value) => {
                 onChange(value);
+                inputUpdateObject();
               }}
               styles={{
                 input: {

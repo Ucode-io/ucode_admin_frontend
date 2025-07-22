@@ -8,13 +8,13 @@ export default function HFPhotoUpload({
   name,
   required,
   tabIndex,
-  updateObject,
   isNewTableView = false,
   rules,
   disabledHelperText = false,
   disabled,
   field,
   drawerDetail = false,
+  updateObject = () => {},
   ...props
 }) {
   return (

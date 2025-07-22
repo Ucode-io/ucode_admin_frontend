@@ -9,7 +9,7 @@ function HFModalMap({
   control,
   field,
   defaultValue,
-  updateObject,
+  updateObject = () => {},
   isNewTableView = false,
   isTransparent = false,
   isFormEdit,
@@ -38,8 +38,7 @@ function HFModalMap({
     <Box
       sx={{
         padding: drawerDetail ? "0 4.6px" : "0",
-      }}
-    >
+      }}>
       <TextField
         disabled={disabled}
         className="mapField"
@@ -97,9 +96,8 @@ function HFModalMap({
             </Button>
             <Button
               onClick={handleClose}
-              sx={{ marginLeft: "10px" }}
-              variant="outlined"
-            >
+              sx={{marginLeft: "10px"}}
+              variant="outlined">
               Confirm
             </Button>
           </Box>

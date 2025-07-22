@@ -128,7 +128,7 @@ const AutoCompleteElement = ({
   field,
   isBlackBg,
   isNewTableView,
-  newUi = false,
+  updateObject = () => {},
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
@@ -176,8 +176,13 @@ const AutoCompleteElement = ({
       onFormChange([]);
       return;
     }
-    if (isMultiSelect) onFormChange(values?.map((el) => el.value));
-    else onFormChange([values[values?.length - 1]?.value] ?? []);
+    if (isMultiSelect) {
+      onFormChange(values?.map((el) => el.value));
+      updateObject();
+    } else {
+      onFormChange([values[values?.length - 1]?.value] ?? []);
+      updateObject();
+    }
   };
 
   return (

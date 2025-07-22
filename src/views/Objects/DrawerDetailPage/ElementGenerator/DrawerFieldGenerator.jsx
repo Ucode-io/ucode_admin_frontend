@@ -48,6 +48,7 @@ import HFInternationalPhone from "./hf-internationalPhone";
 import HFMultipleAutocomplete from "./hf-multiselectField";
 import HFStatusField from "./hf-statusField";
 import {HFVideoUpload} from "./hf-videoUploadField";
+import useDebounce from "../../../../hooks/useDebounce";
 // import RelationField from "./RelationField";
 
 const RelationField = lazy(() => import("./RelationField"));
@@ -60,6 +61,7 @@ function DrawerFieldGenerator({
   isDisabled,
   activeLang = "",
   setFormValue = () => {},
+  updateObject = () => {},
   errors,
   isRequired,
 }) {
@@ -89,15 +91,15 @@ function DrawerFieldGenerator({
     return field?.slug;
   }, [field?.slug, activeLang, field]);
 
-  const defaultValue = useMemo(() => {
-    if (
-      field?.type === "DATE" ||
-      field?.type === "DATE_TIME" ||
-      field?.type === "DATE_TIME_WITHOUT_TIME_ZONE"
-    ) {
-      return field?.attributes?.defaultValue === "now()" ? new Date() : null;
-    }
-  }, [field.type, field.id, field.relation_type]);
+  // const defaultValue = useMemo(() => {
+  //   if (
+  //     field?.type === "DATE" ||
+  //     field?.type === "DATE_TIME" ||
+  //     field?.type === "DATE_TIME_WITHOUT_TIME_ZONE"
+  //   ) {
+  //     return field?.attributes?.defaultValue === "now()" ? new Date() : null;
+  //   }
+  // }, [field.type, field.id, field.relation_type]);
 
   const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST"],
@@ -130,6 +132,7 @@ function DrawerFieldGenerator({
             </>
           }>
           <RelationField
+            updateObject={updateObject}
             disabled={isDisabled}
             isRequired={isRequired}
             field={field}
@@ -151,11 +154,13 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           watch={watch}
+          updateObject={updateObject}
         />
       );
     case "DATE":
       return (
         <HFDatePickerField
+          updateObject={updateObject}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -173,6 +178,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           drawerDetail={drawerDetail}
+          updateObject={updateObject}
         />
       );
     case "DATE_TIME_WITHOUT_TIME_ZONE":
@@ -183,7 +189,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           drawerDetail={true}
-          x
+          updateObject={updateObject}
         />
       );
     case "TIME":
@@ -194,6 +200,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           drawerDetail={drawerDetail}
+          updateObject={updateObject}
         />
       );
 
@@ -204,6 +211,7 @@ function DrawerFieldGenerator({
           type="password"
           control={control}
           name={computedSlug}
+          updateObject={updateObject}
         />
       );
 
@@ -214,6 +222,8 @@ function DrawerFieldGenerator({
           drawerDetail={drawerDetail}
           control={control}
           name={computedSlug}
+          updateObject={updateObject}
+          isNewTableView={true}
         />
       );
 
@@ -224,6 +234,8 @@ function DrawerFieldGenerator({
           drawerDetail={drawerDetail}
           control={control}
           name={computedSlug}
+          updateObject={updateObject}
+          isNewTableView={true}
         />
       );
 
@@ -234,6 +246,8 @@ function DrawerFieldGenerator({
           drawerDetail={drawerDetail}
           control={control}
           name={computedSlug}
+          updateObject={updateObject}
+          isNewTableView={true}
         />
       );
 
@@ -245,6 +259,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          updateObject={updateObject}
         />
       );
 
@@ -256,6 +271,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           placeholder={"Empty"}
+          updateObject={updateObject}
         />
       );
 
@@ -267,6 +283,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          updateObject={updateObject}
         />
       );
 
@@ -279,6 +296,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          updateObject={updateObject}
         />
       );
 
@@ -291,6 +309,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          updateObject={updateObject}
         />
       );
 
@@ -303,6 +322,8 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           placeholder={"Empty"}
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
 
@@ -315,6 +336,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           placeholder="Empty"
+          updateObject={updateObject}
         />
       );
 
@@ -326,6 +348,8 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
 
@@ -338,6 +362,8 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           placeholder="Empty"
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
     case "POLYGON":
@@ -349,6 +375,8 @@ function DrawerFieldGenerator({
           computedSlug={computedSlug}
           field={field}
           setValue={setFormValue}
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
 
@@ -360,6 +388,8 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
     case "COLOR":
@@ -370,6 +400,8 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
 
@@ -380,6 +412,8 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
+          isNewTableView={true}
+          updateObject={updateObject}
         />
       );
 
@@ -389,34 +423,11 @@ function DrawerFieldGenerator({
           disabled={isDisabled}
           control={control}
           name={computedSlug}
-        />
-      );
-
-    case "JSON":
-      return (
-        <JSONField
-          disabled={isDisabled}
-          control={control}
-          name={computedSlug}
-          field={field}
+          updateObject={updateObject}
         />
       );
 
     default:
-      // if (field?.type === FIELD_TYPES.LOOKUP && !field?.relation_type) {
-      //   return (
-      //     <RelationField
-      //       disabled={isDisabled}
-      //       isRequired={isRequired}
-      //       field={field}
-      //       errors={errors}
-      //       control={control}
-      //       name={computedSlug}
-      //       setFormValue={setFormValue}
-      //       isMulti={field?.relation_type === "Many2Many"}
-      //     />
-      //   );
-      // } else {
       return (
         <InputField
           watch={watch}
@@ -426,6 +437,7 @@ function DrawerFieldGenerator({
           field={field}
           errors={errors}
           functions={functions}
+          updateObject={updateObject}
         />
       );
     // }
@@ -441,6 +453,7 @@ const InputField = ({
   errors,
   functions,
   field,
+  updateObject = () => {},
 }) => {
   const inputValue =
     watch(name) ||
@@ -450,6 +463,8 @@ const InputField = ({
 
   const isDisabled =
     disabled || field?.type === "BUTTON" || field?.type === "INCREMENT_ID";
+
+  const inputChangeHandler = useDebounce(() => updateObject(), 700);
 
   return (
     <Controller
@@ -471,7 +486,10 @@ const InputField = ({
                   disabled={isDisabled}
                   type={inputType}
                   value={inputValue ?? value}
-                  onChange={(e) => onChange(e.target.value)}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                    inputChangeHandler();
+                  }}
                   placeholder={
                     field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
                   }
@@ -526,15 +544,20 @@ const NumberField = ({
   field,
   disabled = false,
   placeholder = "",
+  updateObject = () => {},
 }) => {
+  const inputChangeHandler = useDebounce(() => updateObject(), 700);
+
   const handleChange = (event, onChange = () => {}) => {
     const inputValue = event.target.value.replace(/\s+/g, "");
     const parsedValue = inputValue ? parseFloat(inputValue) : "";
 
     if (parsedValue || parsedValue === 0) {
       onChange(parsedValue);
+      inputChangeHandler();
     } else {
       onChange("");
+      inputChangeHandler();
     }
   };
   return (
@@ -608,6 +631,7 @@ const FormulaField = ({
   disabled,
   defaultValue,
   field,
+  updateObject = () => {},
   ...props
 }) => {
   const parser = new Parser();
@@ -671,13 +695,16 @@ const FormulaField = ({
             const val = e.target.value;
             const valueWithoutSpaces = val.replaceAll(" ", "");
 
-            if (!valueWithoutSpaces) onChange("");
-            else
+            if (!valueWithoutSpaces) {
+              onChange("");
+              updateObject();
+            } else {
               onChange(
                 !isNaN(Number(valueWithoutSpaces))
                   ? Number(valueWithoutSpaces)
                   : ""
               );
+            }
           }}
           error={error}
           fullWidth

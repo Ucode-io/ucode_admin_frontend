@@ -20,6 +20,8 @@ import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import { viewsActions } from "../../store/views/view.slice";
+import NoDataPng from "../../assets/images/no-data.png";
+import { Text } from "@chakra-ui/react";
 
 const NewObjectsPage = () => {
   const { state, pathname } = useLocation();
@@ -205,20 +207,45 @@ const NewObjectsPage = () => {
               </TabPanel>
             );
           })}
-          <TabPanel>
+          {/* <TabPanel>
             <DocView
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
             />
-          </TabPanel>
+          </TabPanel> */}
         </div>
       </Tabs>
 
       {!views?.length && (
-        <FiltersBlock>
-          <ViewTabSelector selectedTabIndex={selectedTabIndex} views={views} />
-        </FiltersBlock>
+        <>
+          <FiltersBlock>
+            <ViewTabSelector
+              menuId={menuId}
+              fieldsMap={fieldsMap}
+              fieldsMapRel={fieldsMapRel}
+              refetchViews={refetch}
+              selectedTabIndex={selectedTabIndex}
+              views={views}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+            />
+          </FiltersBlock>
+          <Box
+            width="100%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+            height="100%"
+            gap="16px"
+          >
+            <img src={NoDataPng} alt="No data" width={250} />
+            <Text fontSize="16px" fontWeight="500" color="#475467">
+              No data found
+            </Text>
+          </Box>
+        </>
       )}
     </>
   );

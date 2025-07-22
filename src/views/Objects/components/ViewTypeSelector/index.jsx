@@ -2,12 +2,12 @@ import {AccountTree, CalendarMonth, TableChart} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import { Box, Button, Modal, Popover } from "@mui/material";
+import { Button, Modal, Popover } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -18,7 +18,6 @@ import {
   viewTypes,
 } from "../../../../utils/constants/viewTypes";
 import ViewSettings from "../ViewSettings";
-import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 import style from "./style.module.scss";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
@@ -26,13 +25,13 @@ import { viewsActions } from "../../../../store/views/view.slice";
 import LanguageIcon from "@mui/icons-material/Language";
 import FiberNewIcon from "@mui/icons-material/FiberNew";
 import { detailDrawerActions } from "../../../../store/detailDrawer/detailDrawer.slice";
-import { ViewCreate } from "../ViewCreate";
-import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
-import FRow from "../../../../components/FormElements/FRow";
-import HFSelect from "../../../../components/FormElements/HFSelect";
 import constructorTableService from "../../../../services/constructorTableService";
 import listToOptions from "../../../../utils/listToOptions";
 import { useForm } from "react-hook-form";
+import { ViewCreatePopup } from "../ViewCreatePopup";
+import { Image } from "@chakra-ui/react";
+import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import { useGetLang } from "../../../../hooks/useGetLang";
 
 const ViewTabSelector = ({
   relationView,
@@ -48,16 +47,25 @@ const ViewTabSelector = ({
   setTab,
   menuItem,
   setSelectedTabIndex = () => {},
+  fieldsMap,
+  fieldsMapRel,
+  menuId,
+  refetchViews,
 }) => {
   const { t } = useTranslation();
-  const { tableSlug, appId } = useParams();
+  const { tableSlug: tableSlugFromProps, appId } = useParams();
+  const { activeTable } = useSelector((state) => state.table);
+  const tableLan = useGetLang("Table");
+
+  const tableSlug = tableSlugFromProps || activeTable?.slug;
   const projectId = useSelector((state) => state.auth.projectId);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const [typeNewView, setTypeNewView] = useState(null);
-  const open = Boolean(anchorEl);
+  const [viewAnchorEl, setViewAnchorEl] = useState(null);
+  const open = Boolean(viewAnchorEl);
   const new_router = localStorage.getItem("new_router") === "true";
   const id = open ? "simple-popover" : undefined;
   const { i18n } = useTranslation();
@@ -79,11 +87,11 @@ const ViewTabSelector = ({
 
   const handleClick = (event) => {
     setSelectedView("NEW");
-    setAnchorEl(event.currentTarget);
+    setViewAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setViewAnchorEl(null);
   };
 
   const openModal = (data) => {
@@ -144,6 +152,9 @@ const ViewTabSelector = ({
     }
   );
 
+  const handleClosePop = () => {
+    setViewAnchorEl(null);
+  };
   const fields = data?.fields ?? [];
 
   const computedColumns = useMemo(() => {
@@ -264,7 +275,17 @@ const ViewTabSelector = ({
         </div>
 
         <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-          <div
+          <Button
+            leftIcon={<Image src="/img/plus-icon.svg" alt="Add" />}
+            variant="ghost"
+            colorScheme="gray"
+            color="#475467"
+            onClick={handleClick}
+          >
+            <AddIcon htmlColor="#475467" />
+            {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
+          </Button>
+          {/* <div
             className={style.element}
             aria-describedby={id}
             variant="contained"
@@ -272,10 +293,24 @@ const ViewTabSelector = ({
           >
             <AddIcon className={style.icon} style={{ color: "#000" }} />
             <strong style={{ color: "#000" }}>{t("add")}</strong>
-          </div>
+          </div> */}
         </PermissionWrapperV2>
 
-        <Popover
+        <ViewCreatePopup
+          fieldsMap={fieldsMap}
+          fieldsMapRel={fieldsMapRel}
+          handleClose={handleClose}
+          handleClosePop={handleClosePop}
+          menuId={menuId}
+          refetchViews={refetchViews}
+          relationView={relationView}
+          setSelectedView={setSelectedView}
+          tableSlug={tableSlug}
+          viewAnchorEl={viewAnchorEl}
+          views={views}
+        />
+
+        {/* <Popover
           id={id}
           open={open}
           anchorEl={anchorEl}
@@ -294,14 +329,6 @@ const ViewTabSelector = ({
             setTypeNewView={setTypeNewView}
             handleSelectViewType={handleSelectViewType}
           />
-          {/* <ViewTypeList
-            views={views}
-            computedViewTypes={computedViewTypes}
-            handleClose={handleClose}
-            openModal={openModal}
-            setSelectedView={setSelectedView}
-            setTypeNewView={setTypeNewView}
-          /> */}
         </Popover>
         <Popover
           id={"view-settings"}
@@ -347,7 +374,7 @@ const ViewTabSelector = ({
               </FRow>
             </MaterialUIProvider>
           </Box>
-        </Popover>
+        </Popover> */}
       </div>
 
       <Modal

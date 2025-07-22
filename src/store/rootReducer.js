@@ -24,6 +24,7 @@ import {permissionsReducer} from "./permissions/permissions.slice";
 import {menuAccordionReducer} from "./menus/menus.slice";
 import {groupFieldReducer} from "./groupField/groupField.slice";
 import {detailDrawerReducer} from "./detailDrawer/detailDrawer.slice";
+import { tableReducer } from "./table/table.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -168,6 +169,7 @@ const rootReducer = combineReducers({
   isOnline: persistReducer(isOnline, isOnlineReducer),
   drawer: detailDrawerReducer,
   permissions: persistReducer(permissions, permissionsReducer),
+  table: tableReducer,
 });
 
 export default rootReducer;

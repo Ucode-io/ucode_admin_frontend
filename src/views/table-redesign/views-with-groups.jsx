@@ -114,6 +114,7 @@ import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import {ViewProvider} from "../../providers/ViewProvider";
 import ViewTypeListNew from "../Objects/components/ViewTypeList/ViewTypeListNew";
+import { ViewCreatePopup } from "../Objects/components/ViewCreatePopup";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -942,7 +943,22 @@ export const NewUiViewsWithGroups = ({
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
             )}
 
-            <MuiPopover
+            <ViewCreatePopup
+              fieldsMap={fieldsMap}
+              fieldsMapRel={fieldsMapRel}
+              handleClose={handleClose}
+              handleClosePop={handleClosePop}
+              menuId={menuId}
+              refetchViews={refetchViews}
+              relationFields={relationFields}
+              relationView={relationView}
+              setSelectedView={setSelectedView}
+              tableSlug={tableSlug}
+              viewAnchorEl={viewAnchorEl}
+              views={views}
+            />
+
+            {/* <MuiPopover
               open={Boolean(viewAnchorEl)}
               anchorEl={viewAnchorEl}
               anchorPosition={{ top: 200, left: 600 }}
@@ -992,8 +1008,6 @@ export const NewUiViewsWithGroups = ({
                   width: "250px",
                   border: "1px solid #D0D5DD",
                   padding: "10px",
-                  // boxShadow:
-                  //   "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
                 }}
               >
                 {getViewSettings(selectedViewTab)}
@@ -1012,55 +1026,7 @@ export const NewUiViewsWithGroups = ({
                   </Button>
                 </Box>
               </Box>
-              {/* <ViewTypeListNew
-                tableRelations={tableRelations}
-                relationView={relationView}
-                view={view}
-                fieldsMap={fieldsMap}
-                tableSlug={tableSlug}
-                views={views}
-                refetchViews={refetchViews}
-                computedViewTypes={computedViewTypes}
-                handleClose={() => setViewAnchorEl(null)}
-                openModal={(data) => {
-                  setIsChanged(false);
-                  setSettingsModalVisible(true);
-                  setSelectedView(data);
-                }}
-              /> */}
-              {/* <Box
-                sx={{
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  width: "250px",
-                  border: "1px solid #D0D5DD",
-                  padding: "10px",
-                  // boxShadow:
-                  //   "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
-                }}
-              >
-                {getViewSettings(selectedViewTab)}
-                <Box marginTop={"10px"}>
-                  <Button
-                    w="100%"
-                    h="32px"
-                    borderRadius="8px"
-                    color="#fff"
-                    bg="#175CD3"
-                    onClick={() => {
-                      createView();
-                      // closeViewSettings();
-                      // refetchViews();
-                      // refetchRelationViews();
-                      // refetchTableRelations();
-                    }}
-                  >
-                    Save
-                  </Button>
-                </Box>
-              </Box> */}
-            </MuiPopover>
+            </MuiPopover> */}
 
             <Popover placement="bottom-end">
               <InputGroup ml="auto" w="320px">

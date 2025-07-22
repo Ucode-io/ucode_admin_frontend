@@ -440,7 +440,6 @@ function DrawerFieldGenerator({
           updateObject={updateObject}
         />
       );
-    // }
   }
 }
 

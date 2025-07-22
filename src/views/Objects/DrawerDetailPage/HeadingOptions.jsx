@@ -19,6 +19,8 @@ const HeadingOptions = ({
 }) => {
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
+  const query = new URLSearchParams(window.location.search);
+  const itemId = query.get("p");
 
   const selectedFieldSlug =
     watch("attributes.layout_heading") ||
@@ -96,9 +98,11 @@ const HeadingOptions = ({
               </Flex>
             </Box>
           )}
-          {/* <Button variant="contained" type="submit">
-            Save
-          </Button> */}
+          {Boolean(!itemId) && (
+            <Button variant="contained" type="submit">
+              Save
+            </Button>
+          )}
         </Box>
       </Box>
 

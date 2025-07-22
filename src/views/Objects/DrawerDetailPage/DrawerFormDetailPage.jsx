@@ -193,6 +193,7 @@ function DrawerFormDetailPage({
   };
 
   const updateObject = (data) => {
+    if (Boolean(!itemId)) return;
     const computedData = rootForm.watch();
     delete computedData.invite;
 

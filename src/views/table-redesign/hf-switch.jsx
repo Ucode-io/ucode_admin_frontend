@@ -1,6 +1,7 @@
 import {Switch, ChakraProvider} from "@chakra-ui/react";
 import {useId} from "react";
 import {Controller} from "react-hook-form";
+import useDebounce from "../../hooks/useDebounce";
 
 const HFSwitch = ({
   control,
@@ -18,9 +19,11 @@ const HFSwitch = ({
   isShowLable = true,
   newColumn,
   drawerDetail = false,
+  updateObject = () => {},
   ...props
 }) => {
   const id = useId();
+
   return (
     <Controller
       control={control}

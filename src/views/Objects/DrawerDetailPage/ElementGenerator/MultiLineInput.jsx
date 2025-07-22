@@ -1,8 +1,9 @@
-import { Box, Popover, Tooltip } from "@mui/material";
-import { useState } from "react";
-import { useWatch } from "react-hook-form";
+import {Box, Popover, Tooltip} from "@mui/material";
+import {useState} from "react";
+import {useWatch} from "react-hook-form";
 import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
-import { Lock } from "@mui/icons-material";
+import {Lock} from "@mui/icons-material";
+import useDebounce from "../../../../hooks/useDebounce";
 
 const MultiLineInput = ({
   control,
@@ -13,6 +14,7 @@ const MultiLineInput = ({
   watch,
   props,
   placeholder = "",
+  updateObject = () => {},
 }) => {
   const value = watch(name);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -32,6 +34,8 @@ const MultiLineInput = ({
     return input.replace(/<[^>]*>/g, "");
   };
 
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
+
   return (
     <>
       <Box
@@ -45,8 +49,7 @@ const MultiLineInput = ({
           "&:hover": {
             backgroundColor: "#F7F7F7",
           },
-        }}
-      >
+        }}>
         <Tooltip
           title={
             value
@@ -54,8 +57,7 @@ const MultiLineInput = ({
                   `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
                 )
               : ""
-          }
-        >
+          }>
           <Box
             sx={{
               width: "100%",
@@ -68,14 +70,13 @@ const MultiLineInput = ({
             id="textAreaInput"
             onClick={(e) => {
               handleClick(e);
-            }}
-          >
+            }}>
             {value ? (
               stripHtmlTags(
                 `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
               )
             ) : (
-              <span style={{ color: "#adb5bd" }}>Empty</span>
+              <span style={{color: "#adb5bd"}}>Empty</span>
             )}
           </Box>
         </Tooltip>
@@ -91,9 +92,8 @@ const MultiLineInput = ({
               right: "1px",
               top: "50%",
               transform: "translateY(-50%)",
-            }}
-          >
-            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+            }}>
+            <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
           </Box>
         )}
 
@@ -109,9 +109,9 @@ const MultiLineInput = ({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}
-        >
+          }}>
           <HFTextEditor
+            updateObject={inputUpdateObject}
             drawerDetail={true}
             id="multi_line"
             control={control}
@@ -120,6 +120,7 @@ const MultiLineInput = ({
             fullWidth
             multiline
             rows={4}
+            isNewTableView={true}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
             key={name}

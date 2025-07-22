@@ -2,6 +2,7 @@ import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
+import useDebounce from "../../../../hooks/useDebounce";
 
 function HFStatusField({
   field = {},
@@ -10,7 +11,9 @@ function HFStatusField({
   newUi,
   disabled = false,
   drawerDetail = false,
+  updateObject = () => {},
 }) {
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
   return (
     <Box sx={{width: "100%"}}>
       <Controller
@@ -40,6 +43,7 @@ function HFStatusField({
               value={value || ""}
               onChange={(e) => {
                 onChange(e.target.value);
+                inputUpdateObject();
               }}
               fullWidth
               renderValue={(selected) => {
@@ -69,13 +73,11 @@ function HFStatusField({
                       padding: "4px 8px",
                       borderRadius: "4px",
                       fontSize: "11px",
-                    }}
-                  >
+                    }}>
                     {selected}
                   </Box>
                 );
-              }}
-            >
+              }}>
               <ListSubheader className={styles.selectGroup}>
                 To do
               </ListSubheader>
@@ -88,8 +90,7 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}
-                >
+                  value={el?.label}>
                   {el?.label}
                 </MenuItem>
               ))}
@@ -106,8 +107,7 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}
-                >
+                  value={el?.label}>
                   {el?.label}
                 </MenuItem>
               ))}
@@ -124,8 +124,7 @@ function HFStatusField({
                   }}
                   className={styles.optionField}
                   key={el?.label}
-                  value={el?.label}
-                >
+                  value={el?.label}>
                   {el?.label}
                 </MenuItem>
               ))}

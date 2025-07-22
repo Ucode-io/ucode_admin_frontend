@@ -11,6 +11,8 @@ import {Lock} from "@mui/icons-material";
 import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
 import {iconsList} from "../../../../utils/constants/iconsList";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import IconGeneratorIconjs from "../../../../components/IconPicker/IconGeneratorIconjs";
+import axios from "axios";
 
 const IconPickerField = ({
   value = "",
@@ -109,6 +111,12 @@ const IconPickerField = ({
               }}
             />
           </Tooltip>
+        ) : value?.includes(":") ? (
+          <IconGeneratorIconjs
+            style={{width: "15px", height: "15px"}}
+            icon={value}
+            disabled={disabled}
+          />
         ) : (
           <IconGenerator
             style={{width: "15px", height: "15px"}}
@@ -143,7 +151,11 @@ const IconPickerField = ({
                 onChange(icon);
                 handleClose();
               }}>
-              <IconGenerator icon={icon} />
+              {icon?.includes(":") ? (
+                <IconGeneratorIconjs icon={icon} />
+              ) : (
+                <IconGenerator icon={icon} />
+              )}
             </div>
           ))}
         </div>

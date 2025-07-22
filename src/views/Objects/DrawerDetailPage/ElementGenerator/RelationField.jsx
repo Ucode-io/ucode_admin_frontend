@@ -13,9 +13,9 @@ import useTabRouter from "../../../../hooks/useTabRouter";
 import useDebounce from "../../../../hooks/useDebounce";
 // import {Select} from "@chakra-ui/react";
 import Select from "react-select";
-import { Box, Tooltip } from "@mui/material";
+import {Box, Tooltip} from "@mui/material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
-import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel";
+import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 
 const RelationField = ({
   control,
@@ -32,6 +32,7 @@ const RelationField = ({
   isLayout = false,
   isMulti,
   isRequired,
+  updateObject = () => {},
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -54,7 +55,7 @@ const RelationField = ({
         rules={{
           required: required || isRequired ? "This field is required!" : "",
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
+        render={({field: {onChange, value}, fieldState: {error}}) => (
           <AutoCompleteElement
             value={isMulti ? value : Array.isArray(value) ? value[0] : value}
             setValue={onChange}
@@ -93,6 +94,8 @@ const AutoCompleteElement = ({
   required = false,
   activeLang,
   isMulti,
+  updateObject = () => {},
+  watch = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -102,13 +105,13 @@ const AutoCompleteElement = ({
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-  const { i18n } = useTranslation();
-  const { state } = useLocation();
+  const {i18n} = useTranslation();
+  const {state} = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
   const [searchParams] = useSearchParams();
@@ -189,7 +192,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -233,7 +236,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -315,7 +318,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -326,12 +329,14 @@ const AutoCompleteElement = ({
       setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
     }
   };
+
+  const inputUpdateObject = useDebounce(() => updateObject(), 500);
 
   const setClientTypeValue = () => {
     const value = options?.find((item) => item?.guid === clientTypeID);
@@ -394,7 +399,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -504,8 +509,7 @@ const AutoCompleteElement = ({
               return "";
             })
           : ""
-      }
-    >
+      }>
       <Box
         sx={{
           width: "330px",
@@ -513,8 +517,7 @@ const AutoCompleteElement = ({
           cursor: disabled ? "not-allowed" : "pointer",
           border: errors?.[field?.slug] ? "1px solid red" : "none",
           borderRadius: "4px",
-        }}
-      >
+        }}>
         <Select
           placeholder="Empty"
           id={`relationField`}
@@ -552,7 +555,7 @@ const AutoCompleteElement = ({
             DropdownIndicator: () => null,
             MultiValue: (option) => {
               return (
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{display: "flex", alignItems: "center"}}>
                   <span>
                     {computedViewFields?.map((el, index) => {
                       if (field?.attributes?.enable_multi_language) {
@@ -573,7 +576,7 @@ const AutoCompleteElement = ({
                   <Box display="flex" alignItems="center">
                     <IconGenerator
                       icon="arrow-up-right-from-square.svg"
-                      style={{ marginLeft: "10px", cursor: "pointer" }}
+                      style={{marginLeft: "10px", cursor: "pointer"}}
                       size={15}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -589,16 +592,14 @@ const AutoCompleteElement = ({
                         e.stopPropagation();
                         e.preventDefault();
                         deleteHandler(option.data);
-                      }}
-                    >
+                      }}>
                       <svg
                         height="16"
                         width="16"
                         viewBox="0 0 20 20"
                         aria-hidden="true"
                         focusable="false"
-                        class="css-tj5bde-Svg"
-                      >
+                        class="css-tj5bde-Svg">
                         <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
                       </svg>
                     </span>
@@ -625,8 +626,7 @@ const AutoCompleteElement = ({
               fontSize: "10px",
               // textAlign: "center",
               marginTop: "5px",
-            }}
-          >
+            }}>
             {errors?.[field?.slug]?.message ?? "This field is required!"}
           </div>
         )}

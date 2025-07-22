@@ -18,7 +18,7 @@ const style = {
 function PolygonFieldTable({
   control,
   field,
-  updateObject,
+  updateObject = () => {},
   computedSlug,
   isNewTableView = false,
   row,
@@ -56,15 +56,13 @@ function PolygonFieldTable({
         onClick={() => {
           if (disabled) return;
           handleOpen();
-        }}
-      >
+        }}>
         <Box
           sx={{
             fontSize: drawerDetail ? "13px" : "11px",
             color: polygonValue ? "#212b36" : "#adb5bd",
             cursor: disabled ? "not-allowed" : "pointer",
-          }}
-        >
+          }}>
           Polygon
         </Box>
         <img src="/table-icons/polygon.svg" alt="Polygon" />
@@ -94,22 +92,19 @@ function PolygonFieldTable({
               alignItems: "center",
               justifyContent: "space-between",
               margin: "20px 0 0 0",
-            }}
-          >
+            }}>
             <Button
-              sx={{ width: "150px" }}
+              sx={{width: "150px"}}
               variant="outlined"
               color="error"
-              onClick={handleClose}
-            >
+              onClick={handleClose}>
               Cancel
             </Button>
             <Button
               disabled={disabled}
-              sx={{ width: "150px" }}
+              sx={{width: "150px"}}
               variant="contained"
-              onClick={updatePolygon}
-            >
+              onClick={updatePolygon}>
               Save
             </Button>
           </Box>

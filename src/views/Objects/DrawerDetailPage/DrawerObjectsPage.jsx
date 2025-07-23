@@ -53,6 +53,8 @@ function DrawerObjectsPage({
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
+  console.log({ viewsList });
+
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
@@ -87,7 +89,7 @@ function DrawerObjectsPage({
       },
     }
   );
-
+  console.log(selectedV?.relation_table_slug);
   const { data: relationViews, refetch: refetchRelationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
@@ -154,7 +156,7 @@ function DrawerObjectsPage({
     {
       enabled:
         Boolean(lastPath?.relation_table_slug) || Boolean(lastPath?.table_slug),
-      select: ({data}) => ({
+      select: ({ data }) => ({
         fieldsMap: listToMap(data?.fields),
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
         visibleColumns: data?.fields ?? [],
@@ -168,7 +170,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const {data: {relations} = {relations: []}} = useQuery(
+  const { data: { relations } = { relations: [] } } = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],
     () =>
       constructorRelationService.getList(
@@ -234,6 +236,7 @@ function DrawerObjectsPage({
                 refetchViews={
                   !isRelationView ? refetchMenuViews : refetchRelationViews
                 }
+                refetchRelationViews={refetchRelationViews}
               />
             )}
           </TabPanel>

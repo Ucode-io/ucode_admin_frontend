@@ -252,7 +252,7 @@ const ViewsWithGroups = ({
     setSearchText(val);
     saveSearchTextToDB(tableSlug, val);
   }, 300);
-
+  console.log({checkedColumns});
   const selectAll = () => {
     setCheckedColumns(
       columnsForSearch

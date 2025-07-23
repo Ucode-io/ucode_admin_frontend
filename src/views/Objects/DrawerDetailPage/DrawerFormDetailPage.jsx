@@ -31,6 +31,7 @@ function DrawerFormDetailPage({
   handleMouseDown,
   projectInfo,
   rootForm,
+  updateLayout = () => {},
 }) {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -187,7 +188,7 @@ function DrawerFormDetailPage({
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
 
-  const updateObject = (data) => {
+  const updateObject = () => {
     if (Boolean(!itemId)) return;
     const computedData = rootForm.watch();
     delete computedData.invite;
@@ -225,6 +226,8 @@ function DrawerFormDetailPage({
         )}
 
         <HeadingOptions
+          updateObject={updateObject}
+          updateLayout={updateLayout}
           selectedRow={selectedRow}
           watch={rootForm.watch}
           control={rootForm.control}

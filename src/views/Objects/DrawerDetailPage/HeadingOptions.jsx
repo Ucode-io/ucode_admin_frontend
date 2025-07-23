@@ -8,6 +8,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import {useSelector} from "react-redux";
+import useDebounce from "../../../hooks/useDebounce";
 
 const HeadingOptions = ({
   watch,
@@ -19,6 +20,8 @@ const HeadingOptions = ({
   activeLang,
   isMultiLanguage,
   langs,
+  updateObject = () => {},
+  updateLayout = () => {},
 }) => {
   const {i18n} = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -113,8 +116,11 @@ const HeadingOptions = ({
         setFormValue("attributes.layout_heading", option.value);
       }
     }
+    updateLayout();
     setAnchorEl(null);
   };
+
+  console.log("selectedTabselectedTab", selectedTab);
 
   return (
     <>
@@ -134,6 +140,7 @@ const HeadingOptions = ({
           flexDirection={"column"}
           justifyContent={"flex-start"}>
           <AutoResizeTextarea
+            updateObject={updateObject}
             control={control}
             selectedField={selectedField}
             selectedFieldSlug={selectedFieldSlug}
@@ -218,6 +225,7 @@ const AutoResizeTextarea = ({
   fieldValue,
   watch,
   setValue,
+  updateObject = () => {},
   ...props
 }) => {
   const textareaRef = useRef(null);
@@ -237,6 +245,8 @@ const AutoResizeTextarea = ({
     resizeTextarea();
   }, [headingValue]);
 
+  const inputChangeHandler = useDebounce(() => updateObject(), 500);
+
   return (
     <Controller
       control={control}
@@ -247,7 +257,10 @@ const AutoResizeTextarea = ({
           <textarea
             ref={textareaRef}
             value={headingValue}
-            onChange={onChange}
+            onChange={(e) => {
+              onChange(e.target.value);
+              inputChangeHandler();
+            }}
             rows={1}
             style={{
               resize: "none",

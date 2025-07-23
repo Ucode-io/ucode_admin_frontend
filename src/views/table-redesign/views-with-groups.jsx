@@ -167,6 +167,7 @@ export const NewUiViewsWithGroups = ({
   setFullScreen = () => {},
   handleMouseDown = () => {},
   setSelectedViewType = () => {},
+  refetchRelationViews = () => {},
 }) => {
   const location = useLocation();
   const {
@@ -1195,6 +1196,7 @@ export const NewUiViewsWithGroups = ({
                   settingsForm={settingsForm}
                   views={views}
                   refetchMenuViews={refetchMenuViews}
+                  refetchRelationViews={refetchRelationViews}
                 />
               </>
             )}
@@ -1375,6 +1377,7 @@ export const NewUiViewsWithGroups = ({
                           setNoDates={setNoDates}
                           setLayoutType={setLayoutType}
                           setCenterDate={setCenterDate}
+                          relationView={relationView}
                         />
                       </Suspense>
                     ) : null}
@@ -1444,6 +1447,7 @@ export const NewUiViewsWithGroups = ({
                       key={"calendar"}
                       layoutType={layoutType}
                       setLayoutType={setLayoutType}
+                      relationView={relationView}
                     />
                   </Suspense>
                 )}
@@ -2006,6 +2010,7 @@ const ViewOptions = ({
   settingsForm,
   views,
   projectId,
+  refetchRelationViews,
 }) => {
   const navigate = useNavigate();
   const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
@@ -2543,6 +2548,7 @@ const ViewOptions = ({
             queryClient={queryClient}
             refetchGetTableInfo={refetchGetTableInfo}
             refetchMenuViews={refetchMenuViews}
+            refetchRelationViews={refetchRelationViews}
           />
         )}
 

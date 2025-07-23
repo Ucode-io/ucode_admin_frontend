@@ -120,7 +120,7 @@ const HeadingOptions = ({
     setAnchorEl(null);
   };
 
-  console.log("selectedTabselectedTab", selectedTab);
+  console.log("selectedTab", selectedTab);
 
   return (
     <>

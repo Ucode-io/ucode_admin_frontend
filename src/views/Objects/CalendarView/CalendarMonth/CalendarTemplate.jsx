@@ -32,14 +32,23 @@ const CalendarTemplate = ({
   fieldsMap,
   menuItem,
   setLayoutType,
+  relationView,
 }) => {
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
 
   const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
+  const { tableSlug: tableSlugFromParams, appId } = useParams();
 
-  const {tableSlug, appId} = useParams();
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const fieldSlug = urlSearchParams.get("field_slug");
+
+  const tableSlug =
+    fieldSlug ||
+    view?.relation_table_slug ||
+    tableSlugFromParams ||
+    view?.table_slug;
 
   const projectId = useSelector((state) => state.company?.projectId);
 
@@ -65,7 +74,7 @@ const CalendarTemplate = ({
     return view?.columns?.map((id) => fieldsMap[id])?.filter((el) => el);
   }, [fieldsMap, view]);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
@@ -74,7 +83,7 @@ const CalendarTemplate = ({
   );
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -108,13 +117,15 @@ const CalendarTemplate = ({
               {
                 // borderColor: new Date().getDay() === index ? "#007AFF" : "",
               }
-            }>
+            }
+          >
             {date}
           </Box>
         ))}
       </Box>
       <Box
-        className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}>
+        className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}
+      >
         {Array.isArray(month) &&
           month?.map((date, index) => (
             <>
@@ -133,11 +144,13 @@ const CalendarTemplate = ({
                   //     : "",
                   background:
                     date.getDay() === 0 || date.getDay() === 6 ? "#f5f4f4" : "",
-                }}>
+                }}
+              >
                 {!data?.includes(date) && (
                   <Box
                     className={styles.desc}
-                    onClick={() => navigateToCreatePage(date)}>
+                    onClick={() => navigateToCreatePage(date)}
+                  >
                     <Box className={`${styles.addButton}`}>
                       <AddIcon color="inherit" />
                     </Box>
@@ -180,23 +193,25 @@ const CalendarTemplate = ({
       </Box>
 
       <MaterialUIProvider>
-        <DrawerDetailPage
-          view={view}
-          projectInfo={projectInfo}
-          open={open}
-          setOpen={setOpen}
-          selectedRow={selectedRow}
-          menuItem={menuItem}
-          layout={layout}
-          fieldsMap={fieldsMap}
-          // refetch={refetch}
-          setLayoutType={setLayoutType}
-          selectedViewType={selectedViewType}
-          setSelectedViewType={setSelectedViewType}
-          navigateToEditPage={navigateToEditPage}
-          dateInfo={dateInfo}
-          defaultValue={defaultValue}
-        />
+        {!relationView && (
+          <DrawerDetailPage
+            view={view}
+            projectInfo={projectInfo}
+            open={open}
+            setOpen={setOpen}
+            selectedRow={selectedRow}
+            menuItem={menuItem}
+            layout={layout}
+            fieldsMap={fieldsMap}
+            // refetch={refetch}
+            setLayoutType={setLayoutType}
+            selectedViewType={selectedViewType}
+            setSelectedViewType={setSelectedViewType}
+            navigateToEditPage={navigateToEditPage}
+            dateInfo={dateInfo}
+            defaultValue={defaultValue}
+          />
+        )}
       </MaterialUIProvider>
 
       {/* <ModalDetailPage

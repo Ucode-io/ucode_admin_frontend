@@ -383,15 +383,6 @@ export const useViewCreatePopupProps = ({
       case VIEW_TYPES_MAP.BOARD: {
         return (
           <MaterialUIProvider>
-            <FRow label="Group by" required>
-              <HFSelect
-                options={computedColumnsForTabGroupOptions}
-                control={control}
-                name="group_fields"
-                MenuProps={{ disablePortal: true }}
-                required={true}
-              />
-            </FRow>
             {Boolean(relationView) && (
               <FRow label="Relation Field" required>
                 <HFSelect
@@ -407,6 +398,15 @@ export const useViewCreatePopupProps = ({
                 />
               </FRow>
             )}
+            <FRow label="Group by" required>
+              <HFSelect
+                options={computedColumnsForTabGroupOptions}
+                control={control}
+                name="group_fields"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+              />
+            </FRow>
           </MaterialUIProvider>
         );
       }

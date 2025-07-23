@@ -13,6 +13,7 @@ const CalendarMonth = ({
   layoutType,
   setLayoutType,
   menuItem,
+  relationView,
 }) => {
   const parentRef = useRef(null);
 
@@ -35,6 +36,7 @@ const CalendarMonth = ({
         layoutType={layoutType}
         setLayoutType={setLayoutType}
         menuItem={menuItem}
+        relationView={relationView}
       />
       <div
         style={{

@@ -289,7 +289,8 @@ export default function TimeLineView({
             // height: "100vh",
           }}
           ref={calendarRef}
-          onScroll={handleScroll}>
+          onScroll={handleScroll}
+        >
           {tableInfoLoading || isViewLoading ? (
             <PageFallback />
           ) : (
@@ -325,6 +326,7 @@ export default function TimeLineView({
               navigateToDetailPage={navigateToDetailPage}
               setNoDates={setNoDates}
               noDates={noDates}
+              relationView={relationView}
             />
           )}
         </div>

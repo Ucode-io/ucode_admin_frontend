@@ -160,7 +160,6 @@ function DrawerFormDetailPage({
             field?.attributes?.enable_multi_language) === true
     );
   }, [selectedTab]);
-  console.log(selectedTab?.sections);
 
   useEffect(() => {
     if (isMultiLanguage) {

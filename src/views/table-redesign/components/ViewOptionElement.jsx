@@ -40,6 +40,7 @@ export const ColumnsVisibility = ({
   onBackClick,
   tableLan,
   tableSlug,
+  refetchRelationViews = () => {},
 }) => {
   const queryClient = useQueryClient();
   const { i18n, t } = useTranslation();
@@ -53,8 +54,9 @@ export const ColumnsVisibility = ({
       await constructorViewService.update(tableSlug, data);
 
       if (relationView && viewsList?.length > 1) {
+        refetchRelationViews();
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
-      } else if(!relationView) {
+      } else if (!relationView) {
         dispatch(viewsActions.updateView({ view: data, id: view?.id }));
       } else {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);

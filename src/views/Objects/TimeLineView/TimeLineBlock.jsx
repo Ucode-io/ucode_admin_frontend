@@ -51,6 +51,7 @@ export default function TimeLineBlock({
   selectedView,
   projectInfo,
   setFormValue = () => {},
+  relationView = false,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -101,7 +102,7 @@ export default function TimeLineBlock({
       }
 
       for (let i = 0; i < record.data.length; i++) {
-        let {start_date, end_date} = record.data[i];
+        let { start_date, end_date } = record.data[i];
         let startDate = start_date ? new Date(start_date) : null;
         let endDate = end_date ? new Date(end_date) : null;
 
@@ -109,7 +110,7 @@ export default function TimeLineBlock({
           continue;
 
         for (let j = i + 1; j < record.data.length; j++) {
-          let {start_date: otherStartDate, end_date: otherEndDate} =
+          let { start_date: otherStartDate, end_date: otherEndDate } =
             record.data[j];
           let otherStart = otherStartDate ? new Date(otherStartDate) : null;
           let otherEnd = otherEndDate ? new Date(otherEndDate) : null;
@@ -127,15 +128,15 @@ export default function TimeLineBlock({
       }
 
       if (shouldDuplicate) {
-        result.push({...record, data: record.data.slice(1)});
+        result.push({ ...record, data: record.data.slice(1) });
 
-        result.push({...record, data: [record.data[0]]});
+        result.push({ ...record, data: [record.data[0]] });
       } else {
         result.push(record);
       }
     });
 
-    const {refData, refGroupByFields} = computedDataRef.current;
+    const { refData, refGroupByFields } = computedDataRef.current;
 
     if (
       refData.length > result.length &&
@@ -179,7 +180,7 @@ export default function TimeLineBlock({
   }, [computedData]);
 
   function safeIsWithinInterval(date, interval) {
-    const {start, end} = interval || {};
+    const { start, end } = interval || {};
     const isValidDate = (d) => d instanceof Date && !isNaN(d);
 
     if (!isValidDate(date) || !isValidDate(start) || !isValidDate(end)) {
@@ -191,7 +192,7 @@ export default function TimeLineBlock({
     }
 
     try {
-      return isWithinInterval(date, {start, end});
+      return isWithinInterval(date, { start, end });
     } catch (err) {
       console.error("safeIsWithinInterval error:", err);
       return false;
@@ -214,12 +215,12 @@ export default function TimeLineBlock({
           start: startDate1,
           end: endDate1,
         }) ||
-        safeIsWithinInterval(endDate2, {start: startDate1, end: endDate1}) ||
+        safeIsWithinInterval(endDate2, { start: startDate1, end: endDate1 }) ||
         safeIsWithinInterval(startDate1, {
           start: startDate2,
           end: endDate2,
         }) ||
-        safeIsWithinInterval(endDate1, {start: startDate2, end: endDate2})
+        safeIsWithinInterval(endDate1, { start: startDate2, end: endDate2 })
       );
     }
 
@@ -247,7 +248,7 @@ export default function TimeLineBlock({
 
   const openType = Boolean(anchorElType);
 
-  const {appId, menuId} = useParams();
+  const { appId, menuId } = useParams();
 
   const [hoveredRowId, setHoveredRowId] = useState(null);
 
@@ -282,7 +283,7 @@ export default function TimeLineBlock({
   }, [selectedType]);
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -317,7 +318,8 @@ export default function TimeLineBlock({
         setOpenDrawerModal,
         calendar_from_slug,
         calendar_to_slug,
-      }}>
+      }}
+    >
       <div className={styles.main_container}>
         {view?.attributes?.group_by_columns?.length !== 0 && (
           <Sidebar
@@ -392,7 +394,8 @@ export default function TimeLineBlock({
             style={{
               display: "flex",
               alignItems: "center",
-            }}>
+            }}
+          >
             <Button
               onClick={handleClickType}
               style={{
@@ -403,7 +406,8 @@ export default function TimeLineBlock({
                 alignItems: "center",
                 gap: "3px",
                 padding: "0px",
-              }}>
+              }}
+            >
               <span>
                 {types.find((item) => item.value === selectedType).title}
               </span>
@@ -438,13 +442,15 @@ export default function TimeLineBlock({
                     zIndex: 0,
                   },
                 },
-              }}>
+              }}
+            >
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   gap: "5px",
-                }}>
+                }}
+              >
                 {types.map((el) => (
                   <Button
                     onClick={() => setSelectedType(el.value)}
@@ -456,7 +462,8 @@ export default function TimeLineBlock({
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                    }}>
+                    }}
+                  >
                     {el.title}
                     {el.value === selectedType && <CheckIcon />}
                   </Button>
@@ -473,13 +480,14 @@ export default function TimeLineBlock({
               fontSize: "14px",
               fontWeight: "400",
             }}
-            onClick={() => scrollToToday()}>
+            onClick={() => scrollToToday()}
+          >
             Today
           </Button>
         </div>
       </div>
 
-      {Boolean(open && projectInfo?.new_layout) &&
+      {Boolean(open && projectInfo?.new_layout && !relationView) &&
       selectedViewType === "SidePeek" ? (
         new_router ? (
           <DrawerDetailPage

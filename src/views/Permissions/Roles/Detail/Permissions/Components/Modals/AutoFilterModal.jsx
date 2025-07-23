@@ -20,7 +20,7 @@ const AutoFilterModal = ({
   const basePath = `data.tables.${tableIndex}.automatic_filters.${type}`;
   const projectId = store.getState().company.projectId;
   const envId = store.getState().company.environmentId;
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const tableSlug = useWatch({
     control,
     name: `data.tables.${tableIndex}.slug`,
@@ -73,6 +73,7 @@ const AutoFilterModal = ({
             };
           }),
     },
+    tableSlug,
   });
 
   const {data: connections} = useObjectsListQuery({

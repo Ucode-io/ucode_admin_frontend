@@ -9,7 +9,6 @@ const HFSwitch = ({
   label,
   disabledHelperText,
   tabIndex,
-  updateObject,
   isNewTableView = false,
   isBlackBg,
   onChange = () => {},

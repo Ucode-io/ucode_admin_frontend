@@ -155,6 +155,7 @@ export const NewUiViewsWithGroups = ({
   selectedViewType,
   selectedTabIndex,
   relationFields = [],
+  updateLayout = () => {},
   setLoading = () => {},
   refetchMenuViews = () => {},
   setSelectedTabIndex = () => {},
@@ -644,7 +645,7 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   onClick={() => {
-                    handleClose();
+                    handleClose("close");
                     if (location?.state?.fullPage) {
                       navigate(-1);
                       setLayoutType("SidePeek");
@@ -1294,26 +1295,27 @@ export const NewUiViewsWithGroups = ({
                       view={view}
                       modal={modal}
                       tableInfo={tableInfo}
-                      navigateToEditPage={navigateToEditPage}
-                      setLayoutType={setLayoutType}
                       layoutType={layoutType}
                       selectedViewType={selectedViewType}
-                      setSelectedViewType={setSelectedViewType}
-                      onSubmit={onSubmit}
                       rootForm={rootForm}
-                      handleMouseDown={handleMouseDown}
                       layout={layout}
                       selectedTab={layout?.tabs?.[0]}
                       selectedTabIndex={selectedTabIndex}
                       menuItem={menuItem}
                       data={data}
                       selectedRow={row}
-                      handleClose={handleClose}
                       dateInfo={dateInfo}
-                      setFullScreen={setFullScreen}
                       fullScreen={fullScreen}
                       fieldsMap={fieldsMap}
                       projectInfo={projectInfo}
+                      onSubmit={onSubmit}
+                      setFullScreen={setFullScreen}
+                      updateLayout={updateLayout}
+                      handleClose={handleClose}
+                      setLayoutType={setLayoutType}
+                      handleMouseDown={handleMouseDown}
+                      navigateToEditPage={navigateToEditPage}
+                      setSelectedViewType={setSelectedViewType}
                     />
                   </Suspense>
                 </form>

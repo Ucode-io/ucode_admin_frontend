@@ -243,6 +243,7 @@ const ImageUploadCellEditor = ({
 
           <Modal open={openFullImg} onClose={handleCloseImg}>
             <Box
+              onClick={handleCloseImg}
               sx={{
                 ...style,
                 outline: "none",
@@ -257,7 +258,6 @@ const ImageUploadCellEditor = ({
                 },
               }}>
               <Box
-                onClick={handleCloseImg}
                 sx={{
                   border: "0px solid #fff",
                   transform: `rotate(${degree}deg)`,
@@ -294,7 +294,8 @@ const ImageUploadCellEditor = ({
               </Button>
 
               <Button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   imageZoom("up");
                 }}
                 sx={{
@@ -306,7 +307,8 @@ const ImageUploadCellEditor = ({
                 <ZoomInIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   imageZoom("down");
                 }}
                 sx={{
@@ -318,7 +320,10 @@ const ImageUploadCellEditor = ({
                 <ZoomOutIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
-                onClick={rotateImg}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  rotateImg();
+                }}
                 sx={{
                   position: "absolute",
                   right: "-150px",
@@ -345,7 +350,10 @@ const ImageUploadCellEditor = ({
               </Button>
 
               <Button
-                onClick={handleClick}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClick(e);
+                }}
                 sx={{
                   position: "absolute",
                   right: "-340px",

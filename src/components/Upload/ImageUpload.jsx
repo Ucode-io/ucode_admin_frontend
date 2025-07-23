@@ -13,6 +13,7 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import useDownloader from "../../hooks/useDownloader";
+import {E} from "@formulajs/formulajs";
 
 const style = {
   position: "absolute",
@@ -238,6 +239,7 @@ const ImageUpload = ({
 
           <Modal open={openFullImg} onClose={handleCloseImg}>
             <Box
+              onClick={handleCloseImg}
               sx={{
                 ...style,
                 outline: "none",
@@ -252,7 +254,6 @@ const ImageUpload = ({
                 },
               }}>
               <Box
-                onClick={handleCloseImg}
                 sx={{
                   border: "0px solid #fff",
                   transform: `rotate(${degree}deg)`,
@@ -289,7 +290,8 @@ const ImageUpload = ({
               </Button>
 
               <Button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   imageZoom("up");
                 }}
                 sx={{
@@ -301,7 +303,8 @@ const ImageUpload = ({
                 <ZoomInIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   imageZoom("down");
                 }}
                 sx={{
@@ -313,7 +316,10 @@ const ImageUpload = ({
                 <ZoomOutIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
-                onClick={rotateImg}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  rotateImg();
+                }}
                 sx={{
                   position: "absolute",
                   right: "-130px",
@@ -326,7 +332,10 @@ const ImageUpload = ({
               </Button>
 
               <Button
-                onClick={() => downloadPhoto(value)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  downloadPhoto(value);
+                }}
                 sx={{
                   position: "absolute",
                   right: "-200px",
@@ -336,7 +345,10 @@ const ImageUpload = ({
                 <DownloadIcon style={{width: "30px", height: "30px"}} />
               </Button>
               <Button
-                onClick={handleClick}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClick(e);
+                }}
                 sx={{
                   position: "absolute",
                   right: "-300px",

@@ -4,12 +4,7 @@ import {isEqual} from "lodash";
 import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useDispatch, useSelector} from "react-redux";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Container, Draggable} from "react-smooth-dnd";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import layoutService from "../../../services/layoutService";
@@ -36,6 +31,7 @@ function DrawerFormDetailPage({
   handleMouseDown,
   projectInfo,
   rootForm,
+  updateLayout = () => {},
 }) {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -192,7 +188,7 @@ function DrawerFormDetailPage({
     navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
   };
 
-  const updateObject = (data) => {
+  const updateObject = () => {
     if (Boolean(!itemId)) return;
     const computedData = rootForm.watch();
     delete computedData.invite;
@@ -230,6 +226,8 @@ function DrawerFormDetailPage({
         )}
 
         <HeadingOptions
+          updateObject={updateObject}
+          updateLayout={updateLayout}
           selectedRow={selectedRow}
           watch={rootForm.watch}
           control={rootForm.control}

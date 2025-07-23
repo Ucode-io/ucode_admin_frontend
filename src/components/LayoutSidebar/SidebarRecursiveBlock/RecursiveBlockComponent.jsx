@@ -195,9 +195,9 @@ const RecursiveBlock = ({
 
   function isValidUrl(str) {
     try {
-      new URL(str);
-      return true;
-    } catch (e) {
+      const url = new URL(str);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) {
       return false;
     }
   }

@@ -5,27 +5,35 @@ import {useFunctionDeleteMutation} from "@/services/functionService";
 import useDebounce from "@/hooks/useDebounce";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
-
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useFunctionsProps = () => {
+  const dispatch = useDispatch();
 
   const queryClient = useQueryClient();
 
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
-  
+
   const [debounceValue, setDebouncedValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
-  const {searchParams, setSearchParams} = useSettingsPopupContext();
+  const { searchParams, setSearchParams } = useSettingsPopupContext();
 
   const navigateToEditForm = (id) => {
-    setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, functionId: id });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL)
+    );
+    // setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, functionId: id });
     // navigate(`${location.pathname}/${id}`);
   };
 
   const navigateToCreateForm = () => {
-    setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, create: true });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL)
+    );
+    setSearchParams({ create: true });
     // navigate(`${location.pathname}/create`);
   };
 
@@ -51,7 +59,7 @@ export const useFunctionsProps = () => {
       });
   };
 
-  const {mutate: deleteFunction, isLoading: deleteFunctionLoading} =
+  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
     useFunctionDeleteMutation({
       onSuccess: () => getList(),
     });
@@ -61,7 +69,6 @@ export const useFunctionsProps = () => {
   useEffect(() => {
     getList();
   }, [debounceValue, currentPage]);
-
 
   return {
     loader,

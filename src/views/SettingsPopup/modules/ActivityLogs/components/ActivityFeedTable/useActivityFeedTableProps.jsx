@@ -9,6 +9,8 @@ import { useSettingsPopupContext } from "../../../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../../../store/settingsModal/settingsModal.slice";
 
 const actionOptions = [
   { label: "Create", value: "CREATE" },
@@ -57,6 +59,7 @@ export const useActivityFeedTableProps = ({
   actionType,
   setActionType,
 }) => {
+  const dispatch = useDispatch();
   const { i18n } = useTranslation();
 
   const tableLan = useGetLang("Activity Logs");
@@ -101,8 +104,12 @@ export const useActivityFeedTableProps = ({
   };
 
   const handleActivityClick = (id) => {
+    dispatch(
+      settingsModalActions.setTab(
+        TAB_COMPONENTS.ACTIVITY_LOGS.ACTIVITY_LOGS_DETAIL
+      )
+    );
     setSearchParams({
-      tab: TAB_COMPONENTS.ACTIVITY_LOGS.ACTIVITY_LOGS_DETAIL,
       id,
     });
   };

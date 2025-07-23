@@ -2,20 +2,21 @@ import { useGetLang } from "@/hooks/useGetLang"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import {endOfMonth, startOfMonth} from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { useSettingsPopupContext } from "../../providers";
 import apiKeyService from "../../../../services/apiKey.service";
 import roleServiceV2 from "../../../../services/roleServiceV2";
 import { useParams } from "react-router-dom";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useApiKeysDetail = () => {
-
+  const dispatch = useDispatch();
   const { appId } = useParams();
 
   const lang = useGetLang("Setting");
-  const {t, i18n} = useTranslation()
+  const { t, i18n } = useTranslation();
 
   const authStore = useSelector((state) => state.auth);
 
@@ -35,12 +36,16 @@ export const useApiKeysDetail = () => {
   const [clientType, setClientType] = useState([]);
   const [platformList, setPlatformList] = useState([]);
 
-  const {searchParams, setSearchParams} = useSettingsPopupContext();
+  const { searchParams, setSearchParams } = useSettingsPopupContext();
 
-  const apiKeyId = searchParams.get("apiKeyId");
-  const view = searchParams.get("view");
-  const edit = searchParams.get("edit");
-  const create = searchParams.get("create");
+  // const apiKeyId = searchParams.get("apiKeyId");
+  // const view = searchParams.get("view");
+  // const edit = searchParams.get("edit");
+  // const create = searchParams.get("create");
+
+  const { apiKeyId, view, edit, create } = useSelector(
+    (state) => state.settingsModal
+  );
 
   const mainForm = useForm({
     defaultValues: {
@@ -54,7 +59,7 @@ export const useApiKeysDetail = () => {
   const apiKey = mainForm.getValues("app_id");
 
   const onBackBtnClick = () => {
-    setSearchParams({});
+    dispatch(settingsModalActions.resetParams());
   };
 
   const getById = () => {
@@ -70,15 +75,15 @@ export const useApiKeysDetail = () => {
   };
 
   const getClientTypeList = () => {
-      clientTypeServiceV2
-        .getList({})
-        .then((res) => {
-          setClientType(res.data);
-        })
-        .catch((err) => {
-          console.log("exportToJson error", err);
-        });
-    };
+    clientTypeServiceV2
+      .getList({})
+      .then((res) => {
+        setClientType(res.data);
+      })
+      .catch((err) => {
+        console.log("exportToJson error", err);
+      });
+  };
 
   const getClientPlatformList = () => {
     apiKeyService.getClientPlatform().then((res) =>
@@ -105,17 +110,17 @@ export const useApiKeysDetail = () => {
   };
 
   const createApp = (data) => {
-      setBtnLoader(true);
-  
-      apiKeyService
-        .create(authStore.projectId, data)
-        .then(() => {
-          setSearchParams({})
-          getRoleList();
-        })
-        .catch(() => setBtnLoader(false));
-    };
-  
+    setBtnLoader(true);
+
+    apiKeyService
+      .create(authStore.projectId, data)
+      .then(() => {
+        dispatch(settingsModalActions.resetParams());
+        getRoleList();
+      })
+      .catch(() => setBtnLoader(false));
+  };
+
   const updateApp = (data) => {
     setBtnLoader(true);
 
@@ -124,7 +129,7 @@ export const useApiKeysDetail = () => {
         ...data,
       })
       .then(() => {
-        setSearchParams({})
+        dispatch(settingsModalActions.resetParams());
         getRoleList();
       })
       .catch(() => setBtnLoader(false));
@@ -168,6 +173,5 @@ export const useApiKeysDetail = () => {
     platformList,
     apiKey,
     onBackBtnClick,
-  }
-
-}
+  };
+};

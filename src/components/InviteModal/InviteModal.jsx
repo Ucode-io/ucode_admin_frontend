@@ -19,8 +19,6 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { generateLangaugeText } from "@/utils/generateLanguageText";
-import { useTranslation } from "react-i18next";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import styles from "./style.module.scss";
 import { Select } from "chakra-react-select";
@@ -32,12 +30,12 @@ import {
   useUserGetByIdQuery,
   useUserUpdateMutation,
 } from "@/services/auth/userService";
-import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import LinkIcon from "@mui/icons-material/Link";
 import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import { settingsModalActions } from "../../store/settingsModal/settingsModal.slice";
 
 function InviteModal({
   userInviteLan,
@@ -47,21 +45,27 @@ function InviteModal({
   guid = "",
   users = [],
   selectedClientType,
+  invite: inviteProps,
 }) {
+  const dispatch = useDispatch();
+
   const finalRef = useRef(null);
-  const { i18n } = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const project_id = useSelector((state) => state.auth.projectId);
   const env_id = useSelector((state) => state.auth?.environmentId);
+  const inviteStore = useSelector((state) => state.settingsModal.invite);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const invite = inviteProps || inviteStore;
+
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
 
   const handleClose = () => {
     onClose();
-    setSearchParams({});
+    if (inviteStore) {
+      dispatch(settingsModalActions.resetParams());
+    }
   };
 
   const createMutation = useUserCreateMutation({
@@ -240,7 +244,7 @@ function InviteModal({
                 </Box>
                 <TabPanels>
                   <TabPanel minH={"300px"} mt={0} p={"0"}>
-                    <LoginForm guid={guid} form={mainForm} />
+                    <LoginForm guid={guid} form={mainForm} invite={invite} />
                   </TabPanel>
                   <TabPanel minH={"300px"} mt={0} p={"0"}>
                     <Controller
@@ -391,10 +395,9 @@ const LinkComponent = ({ form, placeholder = "Link", guid }) => {
   );
 };
 
-const LoginForm = ({ form, placeholder = "", guid }) => {
+const LoginForm = ({ form, placeholder = "", guid, invite }) => {
   const [changePassword, setChangePassword] = useState(false);
   const errors = form.formState.errors;
-  const [searchParams] = useSearchParams();
 
   return (
     <>
@@ -425,7 +428,7 @@ const LoginForm = ({ form, placeholder = "", guid }) => {
         )}
       </Flex>
       {changePassword ||
-        (searchParams.get("invite") === "true" && (
+        (invite && (
           <Box mt={2}>
             <PasswordInput
               placeholder="Enter new password"

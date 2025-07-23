@@ -20,9 +20,16 @@ export const ContentList = ({
   resources,
   ...props
 }) => {
+
+  const navigate = useNavigate();
+  const { appId } = useParams();
+  const [openResource, setOpenResource] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [resourceVal, setResourceVal] = useState();
+
   if (isLoading) {
     return (
-      <Box sx={{marginTop: "36px"}}>
+      <Box sx={{ marginTop: "36px" }}>
         <Skeleton height="49px" width="100%" />
         <Skeleton height="49px" width="100%" />
         <Skeleton height="49px" width="100%" />
@@ -30,11 +37,6 @@ export const ContentList = ({
       </Box>
     );
   }
-  const navigate = useNavigate();
-  const {appId} = useParams();
-  const [openResource, setOpenResource] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [resourceVal, setResourceVal] = useState();
 
   const clickHandler = (element) => {
     if (element?.id) {
@@ -61,7 +63,7 @@ export const ContentList = ({
       window.open(url, "_blank", "noopener,noreferrer");
     }
   };
-  console.log("groupedResourcesgroupedResources", groupedResources);
+
   return (
     <>
       {Boolean(!openResource) ? (

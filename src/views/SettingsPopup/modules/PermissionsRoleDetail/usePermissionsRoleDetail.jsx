@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { store } from "@/store";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useMenuPermissionGetByIdQuery,
   useMenuPermissionUpdateMutation,
@@ -16,6 +16,7 @@ import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { useQuery } from "react-query";
 import roleServiceV2 from "@/services/roleServiceV2";
 import cls from "./styles.module.scss";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const usePermissionsRoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit } = useForm();
@@ -30,16 +31,19 @@ export const usePermissionsRoleDetail = () => {
 
   const [activeTab, setActiveTab] = useState("table");
   const [isCategoryOpen, setCategoryOpen] = useState(false);
+  // const [activeRoleId, setActiveRoleId] = useState("");
+
+  const activeRoleId = useSelector((state) => state.settingsModal.roleId);
 
   const dispatch = useDispatch();
+
+  const permissionId = useSelector((state) => state.settingsModal.permissionId);
 
   const { searchParams, setSearchParams, updateSearchParam, permissionChild } =
     useSettingsPopupContext();
 
-  const roleId = searchParams.get("roleId");
-
   const activeClientType = permissionChild?.find(
-    (item) => item?.id === searchParams?.get("permissionId")
+    (item) => item?.id === permissionId
   );
 
   const handleOpenRoleModal = () => setCreateRoleModalOpen(true);
@@ -63,17 +67,20 @@ export const usePermissionsRoleDetail = () => {
   const { data: rolePermissionData, isLoading: rolePermissionGetByIdLoading } =
     useRolePermissionGetByIdQuery({
       projectId: projectId,
-      roleId: roleId,
+      roleId: activeRoleId,
       queryParams: {
-        enabled: Boolean(roleId),
+        enabled: Boolean(activeRoleId),
       },
     });
 
   const { data: permissionData, isLoading: permissionGetByIdLoading } =
     useMenuPermissionGetByIdQuery({
       projectId: projectId,
-      roleId: roleId,
+      roleId: activeRoleId,
       parentId: "c57eedc3-a954-4262-a0af-376c65b5a284",
+      queryParams: {
+        enabled: Boolean(activeRoleId),
+      },
     });
 
   const {
@@ -92,16 +99,17 @@ export const usePermissionsRoleDetail = () => {
       },
     });
 
-  const { data: roles, isRolesLoading } = useQuery(
-    ["GET_ROLE_LIST", searchParams?.get("permissionId")],
+  const { data: roles } = useQuery(
+    ["GET_ROLE_LIST", permissionId],
     () => {
       return roleServiceV2.getList({
-        "client-type-id": searchParams?.get("permissionId"),
+        "client-type-id": permissionId,
       });
     },
     {
       onSuccess(res) {
-        updateSearchParam("roleId", res?.data?.response[0]?.guid);
+        // setActiveRoleId(res?.data?.response[0]?.guid);
+        dispatch(settingsModalActions.setRoleId(res?.data?.response[0]?.guid));
       },
     }
   );
@@ -112,24 +120,26 @@ export const usePermissionsRoleDetail = () => {
         ...values?.data,
       },
       project_id: values?.project_id,
-      role_id: roleId,
+      role_id: activeRoleId,
     });
     updatePermissionMutate({
       menus: [...changedData],
       project_id: values?.project_id,
-      role_id: roleId,
+      role_id: activeRoleId,
     });
 
     queryClient.refetchQueries([
       "rolePermissionGetById",
-      { projectId, roleId },
+      { projectId, activeRoleId },
     ]);
   };
 
   const onTabClick = (element, index) => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("roleId", element?.guid);
-    setSearchParams(newSearchParams);
+    dispatch(settingsModalActions.setActiveChildId(element?.guid));
+    // setActiveRoleId(element?.guid);
+    // const newSearchParams = new URLSearchParams(searchParams);
+    // newSearchParams.set("roleId", element?.guid);
+    // setSearchParams(newSearchParams);
 
     // updateSearchParam("roleId", element?.guid);
     // updateSearchParam(
@@ -177,7 +187,7 @@ export const usePermissionsRoleDetail = () => {
     onBackClick,
     onTabClick,
     roles: roles?.data?.response,
-    activeTabId: searchParams.get("roleId"),
+    activeTabId: activeRoleId,
     handleOpenRoleModal,
     handleCloseRoleModal,
     isCreateRoleModalOpen,

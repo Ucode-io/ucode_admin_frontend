@@ -47,7 +47,8 @@ export const SettingsPopup = ({open, onClose}) => {
     handleCloseClientTypeModal,
     isClientTypeModalOpen,
     permissionChild,
-  } = useSettingsPopupProps({onClose});
+    tab,
+  } = useSettingsPopupProps({ onClose });
 
   return (
     <SettingsPopupProvider
@@ -59,7 +60,8 @@ export const SettingsPopup = ({open, onClose}) => {
         updateSearchParam,
         handleClose,
         permissionChild,
-      }}>
+      }}
+    >
       <Dialog
         open={open}
         onClose={handleClose}
@@ -70,8 +72,9 @@ export const SettingsPopup = ({open, onClose}) => {
             maxWidth: "1150px !important",
             width: "100% !important",
           },
-        }}>
-        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
+        }}
+      >
+        <DialogContent className={cls.dialogContent} sx={{ padding: 0 }}>
           <Box className={cls.content}>
             <Box className={cls.leftBarWrapper}>
               <Box className={cls.leftBar}>
@@ -180,12 +183,12 @@ export const SettingsPopup = ({open, onClose}) => {
             <Box
               className={clsx(cls.rightContent, {
                 [cls.smPadding]:
-                  searchParams.get("tab") ===
-                  TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
-              })}>
+                  tab === TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
+              })}
+            >
               {isValidElement(tabComponents[activeTab])
                 ? tabComponents[activeTab]
-                : (tabComponents[activeTab]?.[searchParams.get("tab")] ??
+                : (tabComponents[activeTab]?.[tab] ??
                   tabComponents[activeTab]?.[activeTab])}
             </Box>
           </Box>

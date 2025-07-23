@@ -305,7 +305,11 @@ function DrawerDetailPage({
   };
 
   useEffect(() => {
-    if (Boolean(itemId) && selectedView?.type === "SECTION") {
+    if (
+      Boolean(itemId) &&
+      selectedView?.type === "SECTION" &&
+      Boolean(tableSlug)
+    ) {
       getAllData();
     } else getFields();
   }, [itemId, selectedView]);
@@ -390,6 +394,7 @@ function DrawerDetailPage({
             fullScreen={fullScreen}
             view={view}
             rootForm={rootForm}
+            updateLayout={updateLayout}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}
           />

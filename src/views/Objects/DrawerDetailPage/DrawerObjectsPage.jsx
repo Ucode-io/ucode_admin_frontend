@@ -35,6 +35,7 @@ function DrawerObjectsPage({
   handleMouseDown = () => {},
   selectedViewType,
   selectedView,
+  updateLayout = () => {},
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
@@ -227,6 +228,7 @@ function DrawerObjectsPage({
                 handleClose={handleClose}
                 modal={true}
                 dateInfo={dateInfo}
+                updateLayout={updateLayout}
                 setFullScreen={setFullScreen}
                 fullScreen={fullScreen}
               />

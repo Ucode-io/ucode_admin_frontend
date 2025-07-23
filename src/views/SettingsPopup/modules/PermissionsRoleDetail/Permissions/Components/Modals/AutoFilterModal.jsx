@@ -1,13 +1,13 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Modal, Typography } from "@mui/material";
+import {Box, Card, Modal, Typography} from "@mui/material";
 import AutoFilterRow from "../AutoFilterRow";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { store } from "@/store";
-import { useRelationsListQuery } from "@/services/relationService";
-import { useObjectsListQuery } from "@/services/constructorObjectService";
-import { useTranslation } from "react-i18next";
-import { generateLangaugeText } from "@/utils/generateLanguageText";
-import { Button } from "../../../../../components/Button/Button";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {store} from "@/store";
+import {useRelationsListQuery} from "@/services/relationService";
+import {useObjectsListQuery} from "@/services/constructorObjectService";
+import {useTranslation} from "react-i18next";
+import {generateLangaugeText} from "@/utils/generateLanguageText";
+import {Button} from "../../../../../components/Button/Button";
 import cls from "./styles.module.scss";
 
 const AutoFilterModal = ({
@@ -22,7 +22,7 @@ const AutoFilterModal = ({
   const basePath = `data.tables.${tableIndex}.automatic_filters.${type}`;
   const projectId = store.getState().company.projectId;
   const envId = store.getState().company.environmentId;
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const tableSlug = useWatch({
     control,
     name: `data.tables.${tableIndex}.slug`,
@@ -50,7 +50,7 @@ const AutoFilterModal = ({
       object_field: "",
     });
 
-  const { data: relations } = useRelationsListQuery({
+  const {data: relations} = useRelationsListQuery({
     params: {
       table_slug: tableSlug,
       "project-id": projectId,
@@ -75,9 +75,10 @@ const AutoFilterModal = ({
             };
           }),
     },
+    tableSlug,
   });
 
-  const { data: connections } = useObjectsListQuery({
+  const {data: connections} = useObjectsListQuery({
     params: {
       envId: envId,
       "project-id": projectId,
@@ -89,7 +90,7 @@ const AutoFilterModal = ({
     queryParams: {
       select: (res) => {
         return [
-          { value: "user_id", label: "user" },
+          {value: "user_id", label: "user"},
           ...(res.data?.response?.map((connection) => ({
             value: `${connection.table_slug}_id`,
             label: connection.table_slug,
@@ -126,8 +127,7 @@ const AutoFilterModal = ({
               gap="10px"
               pt={1}
               maxHeight="360px"
-              overflow="auto"
-            >
+              overflow="auto">
               {filters?.map((filter, index) => (
                 <AutoFilterRow
                   key={filter.key}

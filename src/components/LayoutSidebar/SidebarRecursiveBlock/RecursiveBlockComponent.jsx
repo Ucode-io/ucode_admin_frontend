@@ -24,6 +24,7 @@ import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import {NavigateByTypeOldRoute} from "../Components/OldMenuSwitchCase";
 import IconGeneratorIconjs from "../../IconPicker/IconGeneratorIconjs";
+import Permissions from "../Components/Permission";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -479,6 +480,17 @@ const RecursiveBlock = ({
               buttonProps={buttonProps}
             />
           ))}
+
+          {/* {selectedApp?.id === adminId && ( */}
+          {/* <Permissions
+            projectSettingLan={projectSettingLan}
+            menuStyle={{
+              ...menuStyles,
+              background: "#fff",
+            }}
+            setElement={setElement}
+          /> */}
+          {/* )} */}
 
           {element.id === folderIds.data_base_folder_id && (
             <>

@@ -39,7 +39,7 @@ const CalendarTemplate = ({
 
   const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
-  const { tableSlug: tableSlugFromParams, appId } = useParams();
+  const { tableSlug: tableSlugFromParams, appId, menuId } = useParams();
 
   const urlSearchParams = new URLSearchParams(window.location.search);
   const fieldSlug = urlSearchParams.get("field_slug");
@@ -82,6 +82,8 @@ const CalendarTemplate = ({
       : localStorage?.getItem("detailPage")
   );
 
+  console.log({ data });
+
   const {
     data: { layout } = {
       layout: [],
@@ -94,7 +96,7 @@ const CalendarTemplate = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, appId);
+      return layoutService.getLayout(tableSlug, menuId);
     },
     select: (data) => {
       return {

@@ -222,6 +222,7 @@ const ObjectsPage = () => {
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  console.log(selectedTabIndex);
 
   return (
     <>

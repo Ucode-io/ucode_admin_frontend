@@ -53,9 +53,6 @@ function DrawerObjectsPage({
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
-  console.log({ viewsList });
-  console.log({ viewsPath });
-
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );

@@ -7,48 +7,57 @@ import { useEnvironmentDeleteMutation, useEnvironmentListQuery } from "../../../
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useEnvironmentProps = () => {
   const { i18n } = useTranslation();
   const lang = useGetLang("Setting");
 
-  const {
-    setSearchParams,
-  } = useSettingsPopupContext();
+  const dispatch = useDispatch();
+
+  const { setSearchParams } = useSettingsPopupContext();
 
   const queryClient = useQueryClient();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const projectId = store.getState().company.projectId;
-  
-    const navigateToEditForm = (id) => {
-      setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.EDIT_ENVIRONMENT, envId: id });
-    };
-  
-    const navigateToCreateForm = (e) => {
-      setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT });
-    };
-  
-    const {data: environments, isLoading: environmentLoading} =
-      useEnvironmentListQuery({
-        params: {
-          project_id: projectId,
-        },
-      });
-  
-    const {mutateAsync: deleteEnv, isLoading: createLoading} =
-      useEnvironmentDeleteMutation({
-        onSuccess: () => {
-          queryClient.refetchQueries(["ENVIRONMENT"]);
-          store.dispatch(showAlert("Успешно", "success"));
-        },
-      });
-  
-    const deleteEnvironment = (id) => {
-      deleteEnv(id);
-    };
+  const projectId = store.getState().company.projectId;
 
-  return { 
+  const navigateToEditForm = (id) => {
+    dispatch(settingsModalActions.setEnvId(id));
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.ENVIRONMENTS.EDIT_ENVIRONMENT)
+    );
+    // setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.EDIT_ENVIRONMENT, envId: id });
+  };
+
+  const navigateToCreateForm = (e) => {
+    dispatch(
+      settingsModalActions.setTab(
+        TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT
+      )
+    );
+    // setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT });
+  };
+
+  const { data: environments, isLoading: environmentLoading } =
+    useEnvironmentListQuery({
+      params: {
+        project_id: projectId,
+      },
+    });
+
+  const { mutateAsync: deleteEnv, isLoading: createLoading } =
+    useEnvironmentDeleteMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries(["ENVIRONMENT"]);
+        store.dispatch(showAlert("Успешно", "success"));
+      },
+    });
+
+  const deleteEnvironment = (id) => {
+    deleteEnv(id);
+  };
+
+  return {
     lang,
     i18n,
     environmentLoading,
@@ -56,5 +65,5 @@ export const useEnvironmentProps = () => {
     navigateToEditForm,
     deleteEnvironment,
     navigateToCreateForm,
-  }
-}
+  };
+};

@@ -630,10 +630,10 @@ export default function FieldCreateModal({
             "ADD COLUMN"}
         </Typography> */}
 
-        <form
-          onSubmit={handleSubmit(
-            format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-          )}
+        <div
+          // onSubmit={handleSubmit(
+          //   format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+          // )}
           className={style.form}
         >
           <MaterialUIProvider>
@@ -1360,7 +1360,13 @@ export default function FieldCreateModal({
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}
             </Button> */}
-            <FormElementButton primary type="submit">
+            <FormElementButton
+              onClick={handleSubmit(
+                format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+              )}
+              primary
+              type="button"
+            >
               {fieldData
                 ? generateLangaugeText(
                     tableLan,
@@ -1374,7 +1380,7 @@ export default function FieldCreateModal({
                   ) || "Add column"}
             </FormElementButton>
           </Box>
-        </form>
+        </div>
       </div>
     </Popover>
   );

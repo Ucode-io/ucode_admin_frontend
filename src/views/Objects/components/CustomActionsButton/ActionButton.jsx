@@ -8,6 +8,7 @@ import request from "../../../../utils/request";
 import {useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
 import useDownloader from "../../../../hooks/useDownloader";
+import cls from "./style.module.scss";
 
 const ActionButton = ({
   event,
@@ -126,6 +127,7 @@ const ActionButton = ({
       disabled={disabled}
       loader={btnLoader}
       onClick={invokeFunction}
+      className={cls.actionButton}
     >
       <IconGenerator icon={event.icon} /> {event.label}
     </PrimaryButton>

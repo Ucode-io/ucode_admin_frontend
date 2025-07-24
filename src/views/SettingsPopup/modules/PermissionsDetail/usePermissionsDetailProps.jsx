@@ -57,7 +57,6 @@ export const usePermissionsDetailProps = () => {
   };
 
   const onTabClick = (element, index) => {
-    console.log({ element });
     updateSearchParam("roleId", element?.guid);
     updateSearchParam(
       "tab",

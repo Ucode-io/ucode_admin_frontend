@@ -93,11 +93,16 @@ const TableView = ({
   } = useParams();
   const new_router = localStorage.getItem("new_router") === "true";
   const viewId = searchParams.get("v") ?? viewProp?.id;
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const fieldSlug = urlSearchParams.get("field_slug");
 
   const view = viewFromStore?.find((view) => view?.id === viewId);
 
   const tableSlug =
-    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+    fieldSlug ||
+    view?.relation_table_slug ||
+    tableSlugFromParams ||
+    view?.table_slug;
 
   const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 
@@ -334,7 +339,7 @@ const TableView = ({
         data: {},
       });
     },
-    enabled: Boolean(!tableSlug),
+    enabled: Boolean(tableSlug),
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields ?? [],
@@ -394,7 +399,7 @@ const TableView = ({
         },
       });
     },
-    enabled: Boolean(tableSlug),
+    enabled: Boolean(tableSlug && menuId && viewId),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -426,6 +431,7 @@ const TableView = ({
         tableSlug,
       },
     ],
+    enabled: Boolean(tableSlug && menuId),
     queryFn: () => {
       return layoutService.getLayout(tableSlug, menuId);
     },
@@ -588,7 +594,9 @@ const TableView = ({
   }, [reset, tableData]);
 
   useEffect(() => {
-    refetch();
+    if (tableSlug) {
+      refetch();
+    }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
         view?.attributes?.quick_filters?.length ?? 0

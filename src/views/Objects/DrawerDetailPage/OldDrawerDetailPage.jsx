@@ -328,9 +328,9 @@ function OldDrawerDetailPage({
           );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
-          navigate(-1);
+          // navigate(-1);
           handleClose();
-          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
+          // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
         dispatch(showAlert("Successfully updated!", "success"));
       })

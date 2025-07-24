@@ -10,19 +10,19 @@ import {
   useRedirectUpdateMutation,
 } from "@/services/redirectService";
 import { useState } from "react";
-import { useSettingsPopupContext } from "../../providers";
+import { useDispatch, useSelector } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useRedirectFormProps = () => {
-  const { searchParams, setSearchParams } = useSettingsPopupContext();
+  const dispatch = useDispatch();
 
-  // const {redirectId} = useParams();
-  const redirectId = searchParams.get("redirectId");
+  const redirectId = useSelector((state) => state.settingsModal.redirectId);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [computedData, setComputedData] = useState();
 
   const onBackClick = () => {
-    setSearchParams({});
+    dispatch(settingsModalActions.resetParams());
   };
 
   const mainForm = useForm({

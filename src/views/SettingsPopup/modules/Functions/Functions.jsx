@@ -9,18 +9,13 @@ import {
   CTableHead,
   CTableRow,
 } from "@/components/CTable";
-import FiltersBlock from "@/components/FiltersBlock";
-import HeaderSettings from "@/components/HeaderSettings";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import SearchInput from "@/components/SearchInput";
 import TableCard from "@/components/TableCard";
-import TableRowButton from "@/components/TableRowButton";
 import {Box, Pagination} from "@mui/material";
 import {StatusPipeline} from "../../components/StatusPipeline";
 import {ContentTitle} from "../../components/ContentTitle";
-import {Button} from "../../components/Button";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import ChartDb from "../../../ChartDb";
+import { Button } from "../../components/Button";
 
 export const Functions = () => {
   const {

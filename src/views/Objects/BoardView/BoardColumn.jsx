@@ -195,7 +195,7 @@ const BoardColumn = ({
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (Boolean(new_router === "true")) {
+      if (new_router) {
         updateQueryWithoutRerender("p", row?.guid);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);

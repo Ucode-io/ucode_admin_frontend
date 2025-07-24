@@ -1,39 +1,47 @@
-import { useQuery, useQueryClient } from "react-query"
-import FRow from "../../components/FormElements/FRow"
-import HFSelect from "../../components/FormElements/HFSelect"
-import MaterialUIProvider from "../../providers/MaterialUIProvider"
-import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes"
-import constructorTableService from "../../services/constructorTableService"
-import { useMemo, useState } from "react"
-import listToOptions from "../../utils/listToOptions"
-import { useDispatch, useSelector } from "react-redux"
-import { Controller, useForm } from "react-hook-form"
-import { InputAdornment, TextField } from "@mui/material"
+import { Controller, useForm } from "react-hook-form";
+import { VIEW_TYPES_MAP } from "../../../../utils/constants/viewTypes";
+import { useDispatch, useSelector } from "react-redux";
+import { useMemo, useState } from "react";
+import constructorViewService from "../../../../services/constructorViewService";
+import { groupFieldActions } from "../../../../store/groupField/groupField.slice";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import { useQuery, useQueryClient } from "react-query";
+import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import { InputAdornment, TextField } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
-import { groupFieldActions } from "../../store/groupField/groupField.slice"
-import constructorViewService from "../../services/constructorViewService"
-import { showAlert } from "../../store/alert/alert.thunk";
+import listToOptions from "../../../../utils/listToOptions";
+import constructorTableService from "../../../../services/constructorTableService";
+import { useTranslation } from "react-i18next";
 
-export const useViewWithGroupsProps = ({
+export const useViewCreatePopupProps = ({
+  relationFields = [],
   relationView,
-  viewsList,
   tableSlug: tableSlugProp,
-  fieldsMap,
-  fieldsMapRel,
-  i18n,
   menuId,
   views,
-  handleClose,
-  refetchViews,
+  fieldsMapRel = {},
+  fieldsMap = {},
+  handleClose = () => {},
   handleClosePop = () => {},
-  tableRelations,
+  refetchViews = () => {},
 }) => {
-  const viewsWithSettings = [
-    VIEW_TYPES_MAP.CALENDAR,
-    VIEW_TYPES_MAP.TIMELINE,
-    VIEW_TYPES_MAP.BOARD,
-    VIEW_TYPES_MAP.WEBSITE,
-  ];
+
+  const [selectedViewTab, setSelectedViewTab] = useState(VIEW_TYPES_MAP.TABLE);
+
+  const queryClient = useQueryClient()
+  const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
+
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const groupByTableSlug = useSelector(
+    (state) => state?.groupField?.groupByFieldSlug
+  );
+
+  const {i18n} = useTranslation();
+
+  const dispatch = useDispatch()
 
   const {
     control,
@@ -45,20 +53,35 @@ export const useViewWithGroupsProps = ({
   } = useForm({});
 
   const tableSlug = Boolean(relationView) ? watch("table_slug") : tableSlugProp;
+  const table_slug = relationView
+    ? viewsList?.[viewsList?.length - 1]?.table_slug
+    : tableSlug;
 
-  const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
-  const openViewSettings = (event) => {
-    setSelectedViewAnchor(event.currentTarget);
-  };
-  const closeViewSettings = () => {
-    setSelectedViewAnchor(null);
-  };
+  const viewsWithSettings = [
+    VIEW_TYPES_MAP.CALENDAR,
+    VIEW_TYPES_MAP.TIMELINE,
+    VIEW_TYPES_MAP.BOARD,
+    VIEW_TYPES_MAP.WEBSITE,
+  ];
 
-  const [selectedViewTab, setSelectedViewTab] = useState(VIEW_TYPES_MAP.TABLE);
-  const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const isWithTimeView = (type) =>
-    ["TIMELINE", "CALENDAR"].includes(type || selectedViewTab);
+    [VIEW_TYPES_MAP.TIMELINE, VIEW_TYPES_MAP.CALENDAR].includes(type || selectedViewTab);
+
+  function getTableRelations(relationFields, tableSlug) {
+    return relationFields?.filter((relation) => {
+      return !(
+        (relation.type === "Many2One" &&
+          relation.table_from?.slug === tableSlug) ||
+        (relation.type === "One2Many" &&
+          relation.table_to?.slug === tableSlug) ||
+        relation.type === "Recursive" ||
+        (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+        (relation.type === "Many2Dynamic" &&
+          relation.table_from?.slug === tableSlug)
+      );
+    });
+  }
+
   const newViewJSON = useMemo(() => {
     const menuID = viewsList?.length > 1 ? undefined : menuId;
     return {
@@ -110,8 +133,28 @@ export const useViewWithGroupsProps = ({
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
 
-  const [error] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const openViewSettings = (event) => {
+    setSelectedViewAnchor(event.currentTarget);
+  };
+
+  const closeViewSettings = () => {
+    setSelectedViewAnchor(null);
+  };
+
+  const handleSelectViewType = (e, type) => {
+    setSelectedViewTab(type);
+    if (viewsWithSettings.includes(type) || Boolean(relationView)) {
+      openViewSettings(e);
+    } else {
+      // setLoading(true);
+      createView(type);
+    }
+  };
+
+  const tableRelations = getTableRelations(
+    relationFields,
+    viewsList?.[0]?.table_slug
+  );
 
   const createView = (type) => {
     if (
@@ -206,19 +249,28 @@ export const useViewWithGroupsProps = ({
     }
   };
 
-  const handleSelectViewType = (e, type) => {
-    setSelectedViewTab(type);
-    if (viewsWithSettings.includes(type) || Boolean(relationView)) {
-      openViewSettings(e);
-    } else {
-      setLoading(true);
-      createView(type);
-    }
-  };
+  const computedColumnsForTabGroup = (
+    Object.values(groupByTableSlug ? fieldsMapRel : fieldsMap) ?? []
+  ).filter((column) =>
+    ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
+      column.type
+    )
+  );
 
-  const table_slug = relationView
-    ? viewsList?.[viewsList?.length - 1]?.table_slug
-    : tableSlug;
+  const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
+    (el) => ({
+      label:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.attributes?.[`label_${i18n.language}`] ||
+            el?.attributes?.label ||
+            el?.label
+          : el.label,
+      value:
+        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+          ? el?.relation_id
+          : el?.id,
+    })
+  );
 
   const { data: tableInfoData } = useQuery(
     ["GET_TABLE_INFO", { viewsList }],
@@ -255,13 +307,9 @@ export const useViewWithGroupsProps = ({
     }
   );
 
-  const groupByTableSlug = useSelector(
-    (state) => state?.groupField?.groupByFieldSlug
-  );
-
   const fieldsData = relationView
-    ? tableInfoDataRelation?.fields
-    : tableInfoData?.fields;
+  ? tableInfoDataRelation?.fields
+  : tableInfoData?.fields;
 
   const computedColumns = useMemo(() => {
     const filteredFields = fieldsData?.filter(
@@ -269,29 +317,6 @@ export const useViewWithGroupsProps = ({
     );
     return listToOptions(filteredFields, "label", "slug");
   }, [fieldsData]);
-
-  const computedColumnsForTabGroup = (
-    Object.values(groupByTableSlug ? fieldsMapRel : fieldsMap) ?? []
-  ).filter((column) =>
-    ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
-      column.type
-    )
-  );
-
-  const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
-    (el) => ({
-      label:
-        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
-          ? el?.attributes?.[`label_${i18n.language}`] ||
-            el?.attributes?.label ||
-            el?.label
-          : el.label,
-      value:
-        el?.type === "LOOKUP" || el?.type === "LOOKUPS"
-          ? el?.relation_id
-          : el?.id,
-    })
-  );
 
   const computedRelFields = useMemo(() => {
     const filteredFields = tableRelations
@@ -411,26 +436,10 @@ export const useViewWithGroupsProps = ({
                         </InputAdornment>
                       ),
                     }}
-                    error={error}
                   />
                 );
               }}
             />
-            {/* {Boolean(relationView) && (
-              <FRow label="Relation Field" required>
-                <HFSelect
-                  options={computedRelFields}
-                  control={control}
-                  name="table_slug"
-                  MenuProps={{ disablePortal: true }}
-                  required={true}
-                  onChange={(e) => {
-                    dispatch(groupFieldActions.addGroupBySlug(e));
-                    setValue("table_slug", e);
-                  }}
-                />
-              </FRow>
-            )} */}
           </>
         );
       }
@@ -460,7 +469,7 @@ export const useViewWithGroupsProps = ({
     }
   };
 
-  return {
+  return  {
     getViewSettings,
     viewsWithSettings,
     createView,
@@ -468,9 +477,7 @@ export const useViewWithGroupsProps = ({
     selectedViewAnchor,
     selectedViewTab,
     closeViewSettings,
-    loading,
-    control,
     computedColumns,
     viewErrors,
-  };
-};
+  }
+}

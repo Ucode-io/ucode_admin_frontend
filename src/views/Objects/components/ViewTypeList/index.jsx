@@ -51,13 +51,15 @@ export default function ViewTypeList({
     (state) => state?.groupField?.groupByFieldSlug
   );
 
+  const { tableSlug: tableSlugParam } = useParams();
+
   const queryClient = useQueryClient();
   const { control, watch, setError, clearErrors, setValue } = useForm({});
   const [error] = useState(false);
 
   const tableSlug = Boolean(relationView)
     ? watch("table_slug")
-    : view?.table_slug;
+    : view?.table_slug || tableSlugParam;
 
   const isWithTimeView = ["TIMELINE", "CALENDAR"].includes(selectedViewTab);
 

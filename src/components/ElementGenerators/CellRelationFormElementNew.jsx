@@ -216,7 +216,8 @@ const AutoCompleteElement = ({
     clearIndicator: (provided) => ({
       ...provided,
       cursor: "pointer",
-      marginRight: "15px",
+      marginRight: "20px",
+      padding: "0",
     }),
   };
 
@@ -242,21 +243,29 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
+
+      const requestData = {
+        ...autoFiltersValue,
+        additional_request: {
+          additional_field: "guid",
+        },
+        view_fields: field?.view_fields?.map((f) => f.slug),
+        search: debouncedValue.trim(),
+        limit: 10,
+        offset: pageToOffset(page, 10),
+        with_relations: false,
+      };
+
+      if (value) {
+        const additionalValues = [value];
+        requestData.additional_request.additional_values =
+          additionalValues?.flat();
+      }
+
       return constructorObjectService.getListV2(
         field?.table_slug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [value],
-            },
-            view_fields: field?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-            with_relations: false,
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,
@@ -403,6 +412,7 @@ const AutoCompleteElement = ({
                     is_relation_view: true,
                     table_slug: data?.table_slug,
                     label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                    relation_table_slug: data?.table_slug,
                   })
                 );
                 dispatch(

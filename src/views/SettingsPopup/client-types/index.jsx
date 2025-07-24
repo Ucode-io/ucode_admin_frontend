@@ -29,6 +29,8 @@ import { generateLangaugeText } from "../../../utils/generateLanguageText";
 import styles from "./style.module.scss";
 import useSearchParams from "../../../hooks/useSearchParams";
 import InviteModal from "@/components/InviteModal/InviteModal";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../store/settingsModal/settingsModal.slice";
 
 const templateColumns =
   "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
@@ -41,11 +43,9 @@ const limitOptions = [
 ];
 
 export const UserClientTypes = () => {
+  const dispatch = useDispatch();
   const [tabIndex, setTabIndex] = useState(0);
   const [editUserGuid, setEditUserGuid] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const isDefaultOpen = Boolean(searchParams.get("defaultOpenModal"));
 
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
@@ -124,7 +124,7 @@ export const UserClientTypes = () => {
               borderRadius={8}
               onClick={() => {
                 onOpen();
-                setSearchParams({ invite: true });
+                dispatch(settingsModalActions.setInvite(true));
               }}
             >
               {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
@@ -133,7 +133,7 @@ export const UserClientTypes = () => {
           </Box>
           <InviteModal
             selectedClientType={selectedClientType}
-            isOpen={isDefaultOpen || isOpen}
+            isOpen={isOpen}
             onClose={() => {
               onClose();
               setEditUserGuid(null);

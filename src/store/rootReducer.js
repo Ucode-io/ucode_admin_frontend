@@ -3,6 +3,7 @@ import persistReducer from "redux-persist/es/persistReducer";
 import {alertReducer} from "./alert/alert.slice";
 import {authReducer} from "./auth/auth.slice";
 import storage from "redux-persist/lib/storage";
+import sessionStorage from "redux-persist/lib/storage/session";
 import {constructorTableReducer} from "./constructorTable/constructorTable.slice";
 import {tableColumnReducer} from "./tableColumn/tableColumn.slice";
 import {tabRouterReducer} from "./tabRouter/tabRouter.slice";
@@ -24,6 +25,8 @@ import {permissionsReducer} from "./permissions/permissions.slice";
 import {menuAccordionReducer} from "./menus/menus.slice";
 import {groupFieldReducer} from "./groupField/groupField.slice";
 import {detailDrawerReducer} from "./detailDrawer/detailDrawer.slice";
+import { tableReducer } from "./table/table.slice";
+import { settingsModalReducer } from "./settingsModal/settingsModal.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -124,6 +127,11 @@ const permissions = {
   storage,
 };
 
+const settingsModal = {
+  key: "settingsModal",
+  storage: sessionStorage,
+};
+
 const groupFieldPersistConfig = {
   key: "view",
   storage,
@@ -168,6 +176,8 @@ const rootReducer = combineReducers({
   isOnline: persistReducer(isOnline, isOnlineReducer),
   drawer: detailDrawerReducer,
   permissions: persistReducer(permissions, permissionsReducer),
+  settingsModal: persistReducer(settingsModal, settingsModalReducer),
+  table: tableReducer,
 });
 
 export default rootReducer;

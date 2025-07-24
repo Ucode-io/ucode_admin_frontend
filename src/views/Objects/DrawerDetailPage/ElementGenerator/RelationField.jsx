@@ -240,20 +240,27 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
+      const requestData = {
+        ...autoFiltersValue,
+        additional_request: {
+          additional_field: "guid",
+        },
+        view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+        search: debouncedValue.trim(),
+        limit: 10,
+        offset: pageToOffset(page, 10),
+      };
+
+      if (computedIds || value) {
+        const additionalValues = [computedIds ?? value];
+        requestData.additional_request.additional_values =
+          additionalValues?.flat();
+      }
+
       return constructorObjectService.getListV2(
         tableSlug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [computedIds ?? value],
-            },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,
@@ -318,7 +325,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -329,7 +336,7 @@ const AutoCompleteElement = ({
       setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -399,7 +406,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -418,7 +425,11 @@ const AutoCompleteElement = ({
   }, [value]);
 
   useEffect(() => {
-    if (computedValueMulti?.length && isMulti) {
+    if (
+      computedValueMulti?.length &&
+      isMulti &&
+      computedValueMulti?.length > localValue?.length
+    ) {
       setLocalValue(computedValueMulti);
     }
   }, [computedValueMulti]);

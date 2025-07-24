@@ -154,11 +154,13 @@ function DrawerFormDetailPage({
       });
     });
     return !!allFields.find((field) =>
-      field?.enable_multilanguage
-        ? field?.enable_multilanguage
-        : field?.attributes?.enable_multilanguage === true
+      field?.enable_multilanguage || field?.enable_multi_language
+        ? field?.enable_multilanguage || field?.enable_multi_language
+        : (field?.attributes?.enable_multilanguage ||
+            field?.attributes?.enable_multi_language) === true
     );
   }, [selectedTab]);
+  console.log(selectedTab?.sections);
 
   useEffect(() => {
     if (isMultiLanguage) {
@@ -353,7 +355,8 @@ function DrawerFormDetailPage({
           display="flex"
           justifyContent="flex-end"
           marginTop="auto"
-          marginBottom="12px">
+          marginBottom="12px"
+          gap={"8px"}>
           <FormCustomActionButton
             control={rootForm?.control?._formValues}
             tableSlug={tableSlug}

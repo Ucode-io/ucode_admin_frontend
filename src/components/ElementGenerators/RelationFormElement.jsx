@@ -228,12 +228,12 @@ const AutoCompleteElement = ({
     const result = {};
     filtersHandler?.forEach((value, index) => {
       const key = autoFilters?.[index]?.field_to;
-      if (key) result[key] = value;
+      if (key && value) result[key] = value;
     });
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -276,24 +276,31 @@ const AutoCompleteElement = ({
       },
     }
   );
-  const {data: optionsFromLocale} = useQuery(
+
+  const requestData = {
+    ...autoFiltersValue,
+    additional_request: {
+      additional_field: "guid",
+    },
+    view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+    search: debouncedValue.trim(),
+    limit: 10,
+    offset: pageToOffset(page, 10),
+  };
+
+  if (computedIds || value) {
+    const additionalValues = [computedIds ?? value];
+    requestData.additional_request.additional_values = additionalValues?.flat();
+  }
+
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
       return constructorObjectService.getListV2(
         tableSlug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [computedIds ?? value],
-            },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,

@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { store } from "@/store";
-import { 
-  useVersionHistoryListQuery 
-} from "@/services/environmentService";
+import { useVersionHistoryListQuery } from "@/services/environmentService";
 import { pageToOffset } from "@/utils/pageToOffset";
 import { format } from "date-fns";
-import { useSettingsPopupContext } from "../../../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
@@ -74,23 +71,18 @@ export const useActivityFeedTableProps = ({
   const [isCollectionOpen, setIsCollectionOpen] = useState(false);
   const [isUserInfoOpen, setIsUserInfoOpen] = useState(false);
 
-  const { searchParams, setSearchParams, updateSearchParam } =
-    useSettingsPopupContext();
-
-  // const [collectionText, setCollectionText] = useState("");
-  // const [userInfoText, setUserInfoText] = useState("");
+  const [collectionText, setCollectionText] = useState("");
+  const [userInfoText, setUserInfoText] = useState("");
 
   const collectionRef = useRef();
   const userInfoRef = useRef();
 
   const onCollectionChange = (e) => {
-    updateSearchParam("collection", e.target.value);
-    // setCollectionText(e.target.value);
+    setCollectionText(e.target.value);
   };
 
   const onUserInfoChange = (e) => {
-    updateSearchParam("user_info", e.target.value);
-    // setUserInfoText(e.target.value);
+    setUserInfoText(e.target.value);
   };
 
   const onCollectionClick = () => {
@@ -109,9 +101,7 @@ export const useActivityFeedTableProps = ({
         TAB_COMPONENTS.ACTIVITY_LOGS.ACTIVITY_LOGS_DETAIL
       )
     );
-    setSearchParams({
-      id,
-    });
+    dispatch(settingsModalActions.setActivityLogId(id));
   };
 
   const changeHandler = (newValue) => {
@@ -128,8 +118,8 @@ export const useActivityFeedTableProps = ({
         offset: actionValue?.value ? 0 : pageToOffset(currentPage),
         api_key: apiKey,
         action_type: actionValue?.value || "",
-        collection: searchParams.get("collection") || "",
-        user_info: searchParams.get("user_info") || "",
+        collection: collectionText || "",
+        user_info: userInfoText || "",
         from_date: dateFilters?.$gte
           ? format(dateFilters?.$gte, "yyyy-MM-dd")
           : undefined,
@@ -180,8 +170,8 @@ export const useActivityFeedTableProps = ({
     i18n,
     onCollectionChange,
     onUserInfoChange,
-    collectionText: searchParams.get("collection") || "",
-    userInfoText: searchParams.get("user_info") || "",
+    collectionText,
+    userInfoText,
     onCollectionClick,
     isCollectionOpen,
     isUserInfoOpen,

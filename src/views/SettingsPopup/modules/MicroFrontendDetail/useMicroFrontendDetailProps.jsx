@@ -11,16 +11,15 @@ import {
   useGithubRepositoriesQuery,
 } from "@/services/githubService";
 import {showAlert} from "@/store/alert/alert.thunk";
-import {useDispatch} from "react-redux";
-import { useSettingsPopupContext } from "../../providers";
+import { useDispatch, useSelector } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useMicroFrontendDetailProps = () => {
+  const microfrontendId = useSelector(
+    (state) => state.settingsModal.microfrontendId
+  );
 
-  const { setSearchParams, searchParams } = useSettingsPopupContext();
-
-  const microfrontendId = searchParams.get("microfrontendId")
-
-  const { appId} = useParams();
+  const { appId } = useParams();
   const navigate = useNavigate();
 
   const [btnLoader, setBtnLoader] = useState();
@@ -56,7 +55,7 @@ export const useMicroFrontendDetailProps = () => {
     },
   ];
 
-  const {data: resources} = useResourceListQueryV2({
+  const { data: resources } = useResourceListQueryV2({
     params: {
       type: "GITHUB",
     },
@@ -67,7 +66,7 @@ export const useMicroFrontendDetailProps = () => {
 
   const resourceOptions = useMemo(() => {
     return [
-      {value: "ucode_gitlab", label: "Ucode GitLab"},
+      { value: "ucode_gitlab", label: "Ucode GitLab" },
       ...listToOptions(resources, "name", "id", " (GitHub)"),
     ];
   }, [resources]);
@@ -79,10 +78,10 @@ export const useMicroFrontendDetailProps = () => {
   }, [resources, resourceId]);
 
   const handleBackClick = () => {
-    setSearchParams({})
-  }
+    dispatch(settingsModalActions.resetParams());
+  };
 
-  const {data: repositories} = useGithubRepositoriesQuery({
+  const { data: repositories } = useGithubRepositoriesQuery({
     username: selectedResource?.settings?.github?.username,
     token: selectedResource?.settings?.github?.token,
     queryParams: {
@@ -91,7 +90,7 @@ export const useMicroFrontendDetailProps = () => {
     },
   });
 
-  const {data: branches} = useGithubBranchesQuery({
+  const { data: branches } = useGithubBranchesQuery({
     username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.github?.token,
@@ -101,7 +100,7 @@ export const useMicroFrontendDetailProps = () => {
     },
   });
 
-  const {mutate: createWebHook, isLoading: createWebHookIsLoading} =
+  const { mutate: createWebHook, isLoading: createWebHookIsLoading } =
     useMicrofrontendCreateWebhookMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -178,5 +177,5 @@ export const useMicroFrontendDetailProps = () => {
     branches,
     frameworkOptions,
     handleBackClick,
-  }
-}
+  };
+};

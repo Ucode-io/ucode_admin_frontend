@@ -25,9 +25,10 @@ export const useRedirectProps = () => {
     dispatch(
       settingsModalActions.setTab(TAB_COMPONENTS.REDIRECT.REDIRECT_FORM)
     );
-    setSearchParams({
-      redirectId: id,
-    });
+    dispatch(settingsModalActions.setRedirectId(id));
+    // setSearchParams({
+    //   redirectId: id,
+    // });
   };
 
   const navigateToCreateForm = () => {

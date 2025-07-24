@@ -9,11 +9,8 @@ import {
   CTableHead,
   CTableRow,
 } from "@/components/CTable";
-import FiltersBlock from "@/components/FiltersBlock";
-import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import SearchInput from "@/components/SearchInput";
 import TableCard from "@/components/TableCard";
-import TableRowButton from "@/components/TableRowButton";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { useMicroFrontendProps } from "./useMicroFrontendProps";
 import { StatusPipeline } from "../../components/StatusPipeline";

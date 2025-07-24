@@ -1,9 +1,7 @@
 import {useEffect, useState} from "react";
 import constructorFunctionService from "@/services/constructorFunctionService";
-import {useQueryClient} from "react-query";
-import {useFunctionDeleteMutation} from "@/services/functionService";
+import { useFunctionDeleteMutation } from "@/services/functionService";
 import useDebounce from "@/hooks/useDebounce";
-import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { useDispatch } from "react-redux";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
@@ -11,20 +9,17 @@ import { settingsModalActions } from "../../../../store/settingsModal/settingsMo
 export const useFunctionsProps = () => {
   const dispatch = useDispatch();
 
-  const queryClient = useQueryClient();
-
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
 
   const [debounceValue, setDebouncedValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
-  const { searchParams, setSearchParams } = useSettingsPopupContext();
-
   const navigateToEditForm = (id) => {
     dispatch(
       settingsModalActions.setTab(TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL)
     );
+    dispatch(settingsModalActions.setFunctionId(id));
     // setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, functionId: id });
     // navigate(`${location.pathname}/${id}`);
   };
@@ -33,7 +28,7 @@ export const useFunctionsProps = () => {
     dispatch(
       settingsModalActions.setTab(TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL)
     );
-    setSearchParams({ create: true });
+    dispatch(settingsModalActions.setCreate(true));
     // navigate(`${location.pathname}/create`);
   };
 

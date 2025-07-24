@@ -9,13 +9,15 @@ const initialState = {
   envId: "",
   invite: false,
   roleId: "",
-  resource_type: "",
+  resourceType: "",
   edit: false,
   resourceId: "",
+  redirectId: "",
   apiKeyId: "",
   view: false,
-  id: "",
+  activityLogId: "",
   functionId: "",
+  microfrontendId: "",
   activeChildId: "",
   create: false,
 }
@@ -61,7 +63,7 @@ export const {reducer: settingsModalReducer, actions: settingsModalActions} = cr
     },
     
     setResourceType: (state, {payload}) => {
-      state.resource_type = payload
+      state.resourceType = payload
     },
     
     setResourceId: (state, {payload}) => {
@@ -72,8 +74,8 @@ export const {reducer: settingsModalReducer, actions: settingsModalActions} = cr
       state.apiKeyId = payload
     },
     
-    setId: (state, {payload}) => {
-      state.id = payload
+    setActivityLogId: (state, {payload}) => {
+      state.activityLogId = payload
     },
     
     setFunctionId: (state, {payload}) => {
@@ -86,6 +88,14 @@ export const {reducer: settingsModalReducer, actions: settingsModalActions} = cr
 
     setCreate: (state, {payload}) => {
       state.create = payload
+    },
+
+    setRedirectId: (state, {payload}) => {
+      state.redirectId = payload
+    },
+
+    setMicrofrontendId: (state, {payload}) => {
+      state.microfrontendId = payload
     },
     
     reset: (state) => {

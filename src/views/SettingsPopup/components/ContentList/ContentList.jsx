@@ -5,6 +5,8 @@ import {groupedResources} from "../../../../utils/resourceConstants";
 import AddIcon from "@mui/icons-material/Add";
 import {ResourcesDetail} from "../../modules/ResourcesDetail";
 import {useQueryClient} from "react-query";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const ContentList = ({
   arr,
@@ -20,12 +22,13 @@ export const ContentList = ({
   resources,
   ...props
 }) => {
-
   const navigate = useNavigate();
   const { appId } = useParams();
   const [openResource, setOpenResource] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [resourceVal, setResourceVal] = useState();
+
+  const dispatch = useDispatch();
 
   if (isLoading) {
     return (
@@ -44,7 +47,9 @@ export const ContentList = ({
       setOpenResource(true);
     } else if (element?.value !== 5 && element?.value !== 8 && !element?.id) {
       setOpenResource(element?.value);
-      setSearchParams({tab: "resources", resource_type: element?.value});
+      dispatch(settingsModalActions.setTab("resources"));
+      dispatch(settingsModalActions.setResourceType(element?.value));
+      // setSearchParams({tab: "resources", resource_type: element?.value});
     }
 
     if (element?.value === 5) {
@@ -68,9 +73,9 @@ export const ContentList = ({
     <>
       {Boolean(!openResource) ? (
         groupedResources?.map((element) => (
-          <Box sx={{padding: "20px 16px 16px"}}>
+          <Box sx={{ padding: "20px 16px 16px" }}>
             <FRLabel children={<>{element?.head}</>} />
-            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
               {element?.items?.map((val) => (
                 <ResourceButton
                   setResourceVal={setResourceVal}
@@ -78,7 +83,8 @@ export const ContentList = ({
                   arr={arr}
                   val={val}
                   onItemClick={onItemClick}
-                  resources={resources}>
+                  resources={resources}
+                >
                   {getElementIcon(val?.icon)}
                   <p>{val?.label}</p>
                 </ResourceButton>
@@ -97,9 +103,9 @@ export const ContentList = ({
   );
 };
 
-const FRLabel = ({children}) => {
+const FRLabel = ({ children }) => {
   return (
-    <Box sx={{color: "#344054", fontWeight: 600, fontSize: "12px"}}>
+    <Box sx={{ color: "#344054", fontWeight: 600, fontSize: "12px" }}>
       {children}
     </Box>
   );
@@ -122,6 +128,8 @@ const ResourceButton = ({
       )?.toLowerCase()
   );
 
+  const dispatch = useDispatch();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [chosenResource, setChosenResource] = useState();
@@ -136,7 +144,8 @@ const ResourceButton = ({
           onClick={() => {
             clickHandler(val);
           }}
-          className={"resourceBtn"}>
+          className={"resourceBtn"}
+        >
           {getElementIcon(val?.icon)}
           <p>{val?.label}</p>
         </Box>
@@ -145,33 +154,48 @@ const ResourceButton = ({
           onClick={(e) => {
             handleClick(e);
             setChosenResource(val);
-            setSearchParams({tab: "resources"});
+            dispatch(settingsModalActions.setTab("resources"));
+            // setSearchParams({tab: "resources"});
           }}
-          sx={{marginTop: "20px"}}
+          sx={{ marginTop: "20px" }}
           badgeContent={computedElements?.length}
-          color="primary">
+          color="primary"
+        >
           <Box className={"resourceDisabled"}>{children}</Box>
         </Badge>
       )}
 
       <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
-        <Box sx={{minWidth: "140px"}}>
+        <Box sx={{ minWidth: "140px" }}>
           {computedElements?.map((el) => (
             <Box
               key={el?.id}
               onClick={() => {
                 clickHandler(el);
-                setSearchParams({
-                  tab: "resources",
-                  resource_type: val?.value,
-                  edit: true,
-                  resourceId:
+                dispatch(settingsModalActions.setTab("resources"));
+                dispatch(settingsModalActions.setResourceType(val?.value));
+                dispatch(
+                  settingsModalActions.setResourceId(
                     val?.type === "CLICK_HOUSE"
                       ? resources?.find(
                           (resource) => resource?.resource_type === 2
                         )?.id
-                      : el?.id,
-                });
+                      : el?.id
+                  )
+                );
+                dispatch(settingsModalActions.setEdit(true));
+
+                // setSearchParams({
+                //   tab: "resources",
+                //   resource_type: val?.value,
+                //   edit: true,
+                //   resourceId:
+                //     val?.type === "CLICK_HOUSE"
+                //       ? resources?.find(
+                //           (resource) => resource?.resource_type === 2
+                //         )?.id
+                //       : el?.id,
+                // });
                 setChosenResource(val);
               }}
               sx={{
@@ -183,7 +207,8 @@ const ResourceButton = ({
                   background: "#efefef",
                 },
                 cursor: "pointer",
-              }}>
+              }}
+            >
               {getElementIcon(chosenResource?.icon)}
               <p>{el?.name ?? el?.settings?.postgres?.connection_name}</p>
             </Box>
@@ -200,7 +225,8 @@ const ResourceButton = ({
               display: "flex",
               alignItems: "center",
               gap: "5px",
-            }}>
+            }}
+          >
             <AddIcon />
             <p>Add resource</p>
           </Box>

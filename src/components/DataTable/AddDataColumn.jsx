@@ -71,7 +71,17 @@ const AddDataColumn = React.memo(
 
     useEffect(() => {
       const handleKeyDown = (event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
+        const activeEl = document.activeElement;
+
+        const isTextInput =
+          activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
+        const isContentEditable = activeEl?.isContentEditable;
+
+        if (
+          event.key === "Enter" &&
+          !event.shiftKey &&
+          (isTextInput || isContentEditable)
+        ) {
           event.preventDefault();
           handleSubmit(onSubmit)();
         }
@@ -85,7 +95,12 @@ const AddDataColumn = React.memo(
 
     useEffect(() => {
       const handleClickOutside = (event) => {
-        if (rowRef.current && !rowRef.current.contains(event.target)) {
+        const clickedInsideRow = rowRef.current?.contains(event.target);
+        const isInDropdown = event.target.closest(
+          ".MuiPopover-root, .MuiMenu-paper, .MuiAutocomplete-popper, .dropdown-menu, [role='listbox']"
+        );
+
+        if (!clickedInsideRow && !isInDropdown) {
           handleSubmit(onSubmit)();
         }
       };

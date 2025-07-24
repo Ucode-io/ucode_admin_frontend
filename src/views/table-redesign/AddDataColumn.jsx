@@ -78,10 +78,15 @@ const AddDataColumn = React.memo(
           activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
         const isContentEditable = activeEl?.isContentEditable;
 
+        const isInMantineDateField = activeEl?.closest(
+          ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root"
+        );
+
         if (
           event.key === "Enter" &&
           !event.shiftKey &&
-          (isTextInput || isContentEditable)
+          (isTextInput || isContentEditable) &&
+          !isInMantineDateField
         ) {
           event.preventDefault();
           handleSubmit(onSubmit)();
@@ -97,8 +102,18 @@ const AddDataColumn = React.memo(
     useEffect(() => {
       const handleClickOutside = (event) => {
         const clickedInsideRow = rowRef.current?.contains(event.target);
+
         const isInDropdown = event.target.closest(
-          ".MuiPopover-root, .MuiMenu-paper, .MuiAutocomplete-popper, .dropdown-menu, [role='listbox']"
+          [
+            ".MuiPopover-root",
+            ".MuiMenu-paper",
+            ".MuiAutocomplete-popper",
+            ".dropdown-menu",
+            "[role='listbox']",
+            ".mantine-Popover-root",
+            ".mantine-Popover-dropdown",
+            "[data-mantine-portal]",
+          ].join(", ")
         );
 
         if (!clickedInsideRow && !isInDropdown) {

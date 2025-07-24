@@ -49,14 +49,15 @@ export default function TimeLineDayDataBlockItem({
   layoutType,
   selectedView,
   projectInfo,
+  setSelectedView = () => {},
 }) {
   const ref = useRef();
   const dispatch = useDispatch();
-  const {tableSlug: tableSlugFromProps, appId, menuId: menuid} = useParams();
+  const { tableSlug: tableSlugFromProps, appId, menuId: menuid } = useParams();
   const tableSlug = relationView
     ? view?.relation_table_slug
     : (tableSlugFromProps ?? view?.table_slug);
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [target, setTarget] = useState();
   const [isFocus, setIsFocus] = useState(false);
   const queryClient = useQueryClient();
@@ -73,48 +74,54 @@ export default function TimeLineDayDataBlockItem({
     setOpenDrawerModal(true);
     setSelectedRow(data);
 
-    dispatch(
-      groupFieldActions.addView({
-        id: view?.id,
-        label: view?.table_label || initialTableInf?.label,
-        table_slug: view?.table_slug,
-        relation_table_slug: view.relation_table_slug ?? null,
-        is_relation_view: view?.is_relation_view,
-        detailId: data?.guid,
-      })
-    );
-    if (Boolean(selectedView?.is_relation_view)) {
-      setSelectedRow(data);
-      dispatch(detailDrawerActions.openDrawer());
+    if (Boolean(view?.relation_table_slug)) {
+      dispatch(
+        groupFieldActions.addView({
+          id: view?.id,
+          label: view?.table_label || initialTableInf?.label,
+          table_slug: view?.table_slug,
+          relation_table_slug: view.relation_table_slug ?? null,
+          is_relation_view: view?.is_relation_view,
+          detailId: data?.guid,
+        })
+      );
+      setSelectedView(view);
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
       updateQueryWithoutRerender("p", data?.guid);
     } else {
-      if (new_router) {
+      if (Boolean(selectedView?.is_relation_view)) {
+        setSelectedRow(data);
+        dispatch(detailDrawerActions.openDrawer());
         updateQueryWithoutRerender("p", data?.guid);
-        if (view?.attributes?.url_object) {
-          navigateToDetailPage(data);
-        } else if (projectInfo?.new_layout) {
-          setSelectedRow(data);
-          dispatch(detailDrawerActions.openDrawer());
-        } else {
-          if (layoutType === "PopupLayout") {
-            setSelectedRow(data);
-            dispatch(detailDrawerActions.openDrawer());
-          } else {
-            navigateToDetailPage(data);
-          }
-        }
       } else {
-        if (view?.attributes?.url_object) {
-          navigateToDetailPage(data);
-        } else if (projectInfo?.new_layout) {
-          setSelectedRow(data);
-          dispatch(detailDrawerActions.openDrawer());
-        } else {
-          if (layoutType === "PopupLayout") {
+        if (new_router) {
+          updateQueryWithoutRerender("p", data?.guid);
+          if (view?.attributes?.url_object) {
+            navigateToDetailPage(data);
+          } else if (projectInfo?.new_layout) {
             setSelectedRow(data);
             dispatch(detailDrawerActions.openDrawer());
           } else {
+            if (layoutType === "PopupLayout") {
+              setSelectedRow(data);
+              dispatch(detailDrawerActions.openDrawer());
+            } else {
+              navigateToDetailPage(data);
+            }
+          }
+        } else {
+          if (view?.attributes?.url_object) {
             navigateToDetailPage(data);
+          } else if (projectInfo?.new_layout) {
+            setSelectedRow(data);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            if (layoutType === "PopupLayout") {
+              setSelectedRow(data);
+              dispatch(detailDrawerActions.openDrawer());
+            } else {
+              navigateToDetailPage(data);
+            }
           }
         }
       }
@@ -259,7 +266,7 @@ export default function TimeLineDayDataBlockItem({
         queryClient.setQueryData(
           [
             "GET_OBJECTS_LIST_WITH_RELATIONS",
-            {tableSlug, filters, dateFilters, view},
+            { tableSlug, filters, dateFilters, view },
           ],
           (oldData) => {
             if (!oldData) return oldData;
@@ -323,7 +330,7 @@ export default function TimeLineDayDataBlockItem({
         queryClient.setQueryData(
           [
             "GET_OBJECTS_LIST_WITH_RELATIONS",
-            {tableSlug, filters, dateFilters, view},
+            { tableSlug, filters, dateFilters, view },
           ],
           (oldData) => {
             if (!oldData) return oldData;
@@ -391,7 +398,7 @@ export default function TimeLineDayDataBlockItem({
     // });
   };
 
-  const onDrag = ({target, width, beforeTranslate}) => {
+  const onDrag = ({ target, width, beforeTranslate }) => {
     if (beforeTranslate[1] < 0) return null;
     const [x] = beforeTranslate;
     target.style.transform = `translate(${x}px, 0)`;
@@ -411,8 +418,7 @@ export default function TimeLineDayDataBlockItem({
     ]);
   };
 
-  const onDragEnd = ({lastEvent}) => {
-
+  const onDragEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate;
       onDragEndToUpdate1(lastEvent, lastEvent.width);
@@ -422,7 +428,7 @@ export default function TimeLineDayDataBlockItem({
 
   // ----------RESIZE ACTIONS----------------------
 
-  const onResize = ({target, width, drag, direction}) => {
+  const onResize = ({ target, width, drag, direction }) => {
     const beforeTranslate = drag.beforeTranslate;
 
     const minWidth = selectedType === "month" ? 20 : 60;
@@ -450,7 +456,7 @@ export default function TimeLineDayDataBlockItem({
     ]);
   };
 
-  const onResizeEnd = ({lastEvent}) => {
+  const onResizeEnd = ({ lastEvent }) => {
     if (lastEvent) {
       // frame.translate = lastEvent.drag.beforeTranslate;
       onResizeEndToUpdate1(lastEvent, lastEvent.width);
@@ -482,7 +488,7 @@ export default function TimeLineDayDataBlockItem({
     }
   };
 
-  const {setHoveredRowId} = useTimelineBlockContext();
+  const { setHoveredRowId } = useTimelineBlockContext();
 
   const handleMouseEnter1 = () => {
     setHoveredRowId(data?.guid);
@@ -514,7 +520,7 @@ export default function TimeLineDayDataBlockItem({
     transformX: 0,
   });
 
-  const onDrag1 = ({target, width, beforeTranslate, transform}) => {
+  const onDrag1 = ({ target, width, beforeTranslate, transform }) => {
     if (beforeTranslate[1] < 0) return null;
     const [x] = beforeTranslate;
     target.style.transform = `${transform?.split(" ")[0]} translateY(0) translate(${x}px, 0)`;
@@ -545,7 +551,7 @@ export default function TimeLineDayDataBlockItem({
     ]);
   };
 
-  const onResizeStart = ({target}) => {
+  const onResizeStart = ({ target }) => {
     const style = window.getComputedStyle(target);
     const matrix = new DOMMatrixReadOnly(style.transform);
 
@@ -555,8 +561,8 @@ export default function TimeLineDayDataBlockItem({
     };
   };
 
-  const onResize1 = ({target, width, direction}) => {
-    const {width: initialWidth, transformX} = initialRef.current;
+  const onResize1 = ({ target, width, direction }) => {
+    const { width: initialWidth, transformX } = initialRef.current;
 
     if (direction[0] === -1) {
       const dx = initialWidth - width;
@@ -585,12 +591,14 @@ export default function TimeLineDayDataBlockItem({
         }}
         onClick={handleOpen}
         ref={targetRef}
-        key={data?.id_order}>
+        key={data?.id_order}
+      >
         <div
-          className={clsx(styles.dataBlockInner, {[styles.focus]: isFocus})}
+          className={clsx(styles.dataBlockInner, { [styles.focus]: isFocus })}
           onClick={handleOpen}
           onMouseEnter={handleMouseEnter1}
-          onMouseLeave={() => setHoveredRowId(null)}>
+          onMouseLeave={() => setHoveredRowId(null)}
+        >
           {visible_field?.split("/")?.length > 1 ? (
             visible_field
               ?.split("/")

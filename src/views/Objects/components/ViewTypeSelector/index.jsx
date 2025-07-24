@@ -184,98 +184,117 @@ const ViewTabSelector = ({
             <h3>{menuItem?.label ?? menuItem?.title}</h3>
           </div>
         </div>
-        <div className={style.appTabs}>
-          <Container
-            lockAxis="x"
-            onDrop={onDrop}
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            style={{ display: "flex", alignItems: "center" }}
-            getChildPayload={(i) => views[i]}
-            orientation="horizontal"
-          >
-            {views.map((view, index) => (
-              <Draggable key={view.id}>
-                <div
-                  onClick={() => {
-                    dispatch(
-                      viewsActions.setViewTab({
-                        tableSlug: tableSlug,
-                        tabIndex: index,
-                      })
-                    );
-                    if (new_router) {
-                      relationView
-                        ? dispatch(detailDrawerActions.setDrawerTabIndex(index))
-                        : dispatch(detailDrawerActions.setMainTabIndex(index));
-                    } else {
-                      setSelectedTabIndex(index);
-                    }
-                  }}
-                  className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}
-                >
-                  {view.type === "TABLE" && (
-                    <TableChart className={style.icon} />
-                  )}
-                  {view.type === "CALENDAR" && (
-                    <CalendarMonth className={style.icon} />
-                  )}
-                  {view.type === "CALENDAR HOUR" && (
-                    <IconGenerator
-                      className={style.icon}
-                      icon="chart-gantt.svg"
-                    />
-                  )}
-                  {view.type === "GANTT" && (
-                    <IconGenerator
-                      className={style.icon}
-                      icon="chart-gantt.svg"
-                    />
-                  )}
-                  {view.type === "TREE" && (
-                    <AccountTree className={style.icon} />
-                  )}
-                  {view.type === "BOARD" && (
-                    <IconGenerator
-                      className={style.icon}
-                      icon="brand_trello.svg"
-                    />
-                  )}
-                  {view.type === "FINANCE CALENDAR" && (
-                    <MonetizationOnIcon className={style.icon} />
-                  )}
-                  {view.type === "TIMELINE" && (
-                    <ClearAllIcon className={style.icon} />
-                  )}
-                  {view.type === "WEBSITE" && (
-                    <LanguageIcon className={style.icon} />
-                  )}
-                  {view.type === "GRID" && (
-                    <FiberNewIcon className={style.icon} />
-                  )}
-                  <span>
-                    {(view?.attributes?.[`name_${i18n.language}`]
-                      ? view?.attributes?.[`name_${i18n.language}`]
-                      : view.type) ?? view?.name}
-                  </span>
+        {views?.length > 0 && (
+          <div className={style.appTabs}>
+            <Container
+              lockAxis="x"
+              onDrop={onDrop}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              style={{ display: "flex", alignItems: "center" }}
+              getChildPayload={(i) => views[i]}
+              orientation="horizontal"
+            >
+              {views.map((view, index) => (
+                <Draggable key={view.id}>
+                  <div
+                    onClick={() => {
+                      dispatch(
+                        viewsActions.setViewTab({
+                          tableSlug: tableSlug,
+                          tabIndex: index,
+                        })
+                      );
+                      if (new_router) {
+                        relationView
+                          ? dispatch(
+                              detailDrawerActions.setDrawerTabIndex(index)
+                            )
+                          : dispatch(
+                              detailDrawerActions.setMainTabIndex(index)
+                            );
+                      } else {
+                        setSelectedTabIndex(index);
+                      }
+                    }}
+                    className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}
+                  >
+                    {view.type === "TABLE" && (
+                      <TableChart className={style.icon} />
+                    )}
+                    {view.type === "CALENDAR" && (
+                      <CalendarMonth className={style.icon} />
+                    )}
+                    {view.type === "CALENDAR HOUR" && (
+                      <IconGenerator
+                        className={style.icon}
+                        icon="chart-gantt.svg"
+                      />
+                    )}
+                    {view.type === "GANTT" && (
+                      <IconGenerator
+                        className={style.icon}
+                        icon="chart-gantt.svg"
+                      />
+                    )}
+                    {view.type === "TREE" && (
+                      <AccountTree className={style.icon} />
+                    )}
+                    {view.type === "BOARD" && (
+                      <IconGenerator
+                        className={style.icon}
+                        icon="brand_trello.svg"
+                      />
+                    )}
+                    {view.type === "FINANCE CALENDAR" && (
+                      <MonetizationOnIcon className={style.icon} />
+                    )}
+                    {view.type === "TIMELINE" && (
+                      <ClearAllIcon className={style.icon} />
+                    )}
+                    {view.type === "WEBSITE" && (
+                      <LanguageIcon className={style.icon} />
+                    )}
+                    {view.type === "GRID" && (
+                      <FiberNewIcon className={style.icon} />
+                    )}
+                    <span>
+                      {(view?.attributes?.[`name_${i18n.language}`]
+                        ? view?.attributes?.[`name_${i18n.language}`]
+                        : view.type) ?? view?.name}
+                    </span>
 
-                  {view?.attributes?.view_permission?.edit && (
-                    <div className={style.popoverElement}>
-                      {selectedTabIndex === index && (
-                        <MoreButtonViewType
-                          onEditClick={() => openModal(view)}
-                          onDeleteClick={() => deleteView(view.id)}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </Draggable>
-            ))}
-          </Container>
-        </div>
-
+                    {view?.attributes?.view_permission?.edit && (
+                      <div className={style.popoverElement}>
+                        {selectedTabIndex === index && (
+                          <MoreButtonViewType
+                            onEditClick={() => openModal(view)}
+                            onDeleteClick={() => deleteView(view.id)}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </Draggable>
+              ))}
+            </Container>
+          </div>
+        )}
         <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-          <Button
+          <div className={style.button}>
+            <Button
+              startIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+              style={{
+                height: "100%",
+                color: "#475467",
+                fontSize: "14px",
+              }}
+              onClick={handleClick}
+            >
+              {/* <ArrowBackIcon style={{ color: "#000" }} /> */}
+              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
+            </Button>
+          </div>
+          {/* <Button
             leftIcon={<Image src="/img/plus-icon.svg" alt="Add" />}
             variant="ghost"
             colorScheme="gray"
@@ -284,7 +303,7 @@ const ViewTabSelector = ({
           >
             <AddIcon htmlColor="#475467" />
             {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
-          </Button>
+          </Button> */}
           {/* <div
             className={style.element}
             aria-describedby={id}

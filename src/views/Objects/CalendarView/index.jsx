@@ -65,23 +65,34 @@ const CalendarView = ({
   menuItem,
   layoutType,
   setLayoutType,
+  relationView,
 }) => {
   const queryClient = useQueryClient();
   const visibleForm = useForm();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const {tableSlug, appId} = useParams();
+  const { tableSlug: tableSlugFromParams, appId } = useParams();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
+
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const fieldSlug = urlSearchParams.get("field_slug");
+
   const [dateFilters, setDateFilters] = useState([
-    startOfWeek(new Date(), {weekStartsOn: 1}),
-    endOfWeek(new Date(), {weekStartsOn: 1}),
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
   const [date, setDate] = useState(
     views?.[selectedTabIndex]?.attributes?.period ?? "MONTH"
   );
+
+  const tableSlug =
+    fieldSlug ||
+    view?.relation_table_slug ||
+    tableSlugFromParams ||
+    view?.table_slug;
 
   const [tab, setTab] = useState();
   const [currentDay, setCurrentDay] = useState(new Date());
@@ -141,27 +152,27 @@ const CalendarView = ({
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], {days: i}));
+      result.push(add(dateFilters[0], { days: i }));
     }
     return result;
   }, [dateFilters]);
 
-  const {filters, dataFilters} = useFilters(tableSlug, view.id);
+  const { filters, dataFilters } = useFilters(tableSlug, view.id);
   const groupFieldIds = view?.group_fields || [];
   const groupFields = groupFieldIds
     ?.map((id) => fieldsMap?.[id])
     .filter((el) => el);
 
-  const {data: {data} = {data: []}, isLoading} = useQuery(
+  const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date},
+      { tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date },
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
           with_relations: true,
-          [view.calendar_from_slug]: {
+          [view.calendar_from_slug || view?.attributes?.calendar_from_slug]: {
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
             $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
@@ -185,14 +196,37 @@ const CalendarView = ({
         const data = res.data?.response?.map((row) => ({
           ...row,
           calendar: {
-            date: row[view.calendar_from_slug]
-              ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy")
+            date: row[
+              view.calendar_from_slug ?? view?.attributes?.calendar_from_slug
+            ]
+              ? format(
+                  new Date(
+                    row[
+                      view.calendar_from_slug ??
+                        view?.attributes?.calendar_from_slug
+                    ]
+                  ),
+                  "dd.MM.yyyy"
+                )
               : null,
-            elementFromTime: row[view.calendar_from_slug]
-              ? new Date(row[view.calendar_from_slug])
+            elementFromTime: row[
+              view.calendar_from_slug ?? view?.attributes?.calendar_from_slug
+            ]
+              ? new Date(
+                  row[
+                    view.calendar_from_slug ??
+                      view?.attributes?.calendar_from_slug
+                  ]
+                )
               : null,
-            elementToTime: row[view.calendar_to_slug]
-              ? new Date(row[view.calendar_to_slug])
+            elementToTime: row[
+              view.calendar_to_slug ?? view?.attributes?.calendar_to_slug
+            ]
+              ? new Date(
+                  row[
+                    view.calendar_to_slug ?? view?.attributes?.calendar_to_slug
+                  ]
+                )
               : null,
           },
         }));
@@ -208,7 +242,7 @@ const CalendarView = ({
     }
   );
 
-  const {data: workingDays} = useQuery(
+  const { data: workingDays } = useQuery(
     [
       "GET_OBJECTS_LIST",
       view?.disable_dates?.table_slug,
@@ -264,7 +298,7 @@ const CalendarView = ({
   );
 
   const {
-    data: {visibleViews, visibleColumns, visibleRelationColumns} = {
+    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
       visibleViews: [],
       visibleColumns: [],
       visibleRelationColumns: [],
@@ -272,14 +306,14 @@ const CalendarView = ({
     isVisibleLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: {limit: 10, offset: 0},
+        data: { limit: 10, offset: 0 },
       });
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           visibleViews: data?.views ?? [],
           visibleColumns: data?.fields ?? [],
@@ -303,7 +337,7 @@ const CalendarView = ({
         },
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", {tableSlug}]);
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS", { tableSlug }]);
       });
   };
 
@@ -313,47 +347,6 @@ const CalendarView = ({
 
   return (
     <div>
-      {/* <FiltersBlock
-        extra={
-          <>
-            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
-              <ShareModal />
-            </PermissionWrapperV2>
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <Button
-                variant="outlined"
-                onClick={navigateToSettingsPage}
-                style={{
-                  borderColor: "#A8A8A8",
-                  width: "35px",
-                  height: "35px",
-                  padding: "0px",
-                  minWidth: "35px",
-                }}>
-                <SettingsIcon
-                  style={{
-                    color: "#A8A8A8",
-                  }}
-                />
-              </Button>
-            </PermissionWrapperV2>
-          </>
-        }>
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          selectedTable={selectedTable}
-          settingsModalVisible={settingsModalVisible}
-          setSettingsModalVisible={setSettingsModalVisible}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          selectedView={selectedView}
-          setSelectedView={setSelectedView}
-          setTab={setTab}
-        />
-      </FiltersBlock> */}
       <Box className={style.navbar}>
         {date === "DAY" && (
           <CalendarDayRange
@@ -472,6 +465,7 @@ const CalendarView = ({
               layoutType={layoutType}
               setLayoutType={setLayoutType}
               menuItem={menuItem}
+              relationView={relationView}
             />
           )}
           {date !== "WEEK" && date !== "DAY" && date !== "MONTH" ? (

@@ -154,7 +154,7 @@ function DrawerObjectsPage({
     {
       enabled:
         Boolean(lastPath?.relation_table_slug) || Boolean(lastPath?.table_slug),
-      select: ({data}) => ({
+      select: ({ data }) => ({
         fieldsMap: listToMap(data?.fields),
         fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
         visibleColumns: data?.fields ?? [],
@@ -168,7 +168,7 @@ function DrawerObjectsPage({
     }
   );
 
-  const {data: {relations} = {relations: []}} = useQuery(
+  const { data: { relations } = { relations: [] } } = useQuery(
     ["GET_VIEWS_AND_FIELDS", viewsList?.length],
     () =>
       constructorRelationService.getList(
@@ -234,6 +234,7 @@ function DrawerObjectsPage({
                 refetchViews={
                   !isRelationView ? refetchMenuViews : refetchRelationViews
                 }
+                refetchRelationViews={refetchRelationViews}
               />
             )}
           </TabPanel>

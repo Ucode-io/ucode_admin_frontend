@@ -14,6 +14,8 @@ import LanguageIcon from "@mui/icons-material/Language";
 import listToOptions from "../../../../utils/listToOptions";
 import constructorTableService from "../../../../services/constructorTableService";
 import { useTranslation } from "react-i18next";
+import menuService from "../../../../services/menuService";
+import { listToMapWithoutRel } from "../../../../utils/listToMap";
 
 export const useViewCreatePopupProps = ({
   relationFields = [],
@@ -27,21 +29,22 @@ export const useViewCreatePopupProps = ({
   handleClosePop = () => {},
   refetchViews = () => {},
 }) => {
-
   const [selectedViewTab, setSelectedViewTab] = useState(VIEW_TYPES_MAP.TABLE);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
 
   const viewsList = useSelector((state) => state.groupField.viewsList);
+  const viewsPath = useSelector((state) => state?.groupField?.viewsPath);
+  const lastPath = viewsPath?.[viewsPath?.length - 1];
 
   const groupByTableSlug = useSelector(
     (state) => state?.groupField?.groupByFieldSlug
   );
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const {
     control,
@@ -65,7 +68,9 @@ export const useViewCreatePopupProps = ({
   ];
 
   const isWithTimeView = (type) =>
-    [VIEW_TYPES_MAP.TIMELINE, VIEW_TYPES_MAP.CALENDAR].includes(type || selectedViewTab);
+    [VIEW_TYPES_MAP.TIMELINE, VIEW_TYPES_MAP.CALENDAR].includes(
+      type || selectedViewTab
+    );
 
   function getTableRelations(relationFields, tableSlug) {
     return relationFields?.filter((relation) => {
@@ -160,7 +165,7 @@ export const useViewCreatePopupProps = ({
     if (
       Boolean(tableRelations) &&
       relationView &&
-      type !== VIEW_TYPES_MAP.WEBSITE &&
+      (type || selectedViewTab) !== VIEW_TYPES_MAP.WEBSITE &&
       !watch("table_slug")
     ) {
       setError("table_slug", { message: "Please select table" });
@@ -201,7 +206,13 @@ export const useViewCreatePopupProps = ({
           .then(() => {
             dispatch(groupFieldActions.clearGroupBySlug());
             dispatch(showAlert("Successful created", "success"));
-            return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+            if (relationView && viewsList?.length > 1) {
+              return queryClient.refetchQueries([
+                "GET_TABLE_VIEWS_LIST_RELATION",
+              ]);
+            } else if (relationView && viewsList?.length <= 1) {
+              return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+            } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
           })
           .finally(() => {
             if (!Boolean(tableRelations)) {
@@ -249,8 +260,26 @@ export const useViewCreatePopupProps = ({
     }
   };
 
+  const { data, isLoading, refetch } = useQuery(
+    ["GET_VIEW_FIELDS_CREATE", i18n?.language, groupByTableSlug],
+    () =>
+      menuService.getFieldsListMenu(menuId, lastPath?.id, groupByTableSlug, {}),
+    {
+      enabled: Boolean(groupByTableSlug && relationView),
+      select: ({ data }) => ({
+        fieldsMapRelRelation: listToMapWithoutRel(data?.fields ?? []),
+      }),
+    }
+  );
+
   const computedColumnsForTabGroup = (
-    Object.values(groupByTableSlug ? fieldsMapRel : fieldsMap) ?? []
+    Object.values(
+      relationView
+        ? data?.fieldsMapRelRelation || {}
+        : groupByTableSlug
+          ? fieldsMapRel
+          : fieldsMap
+    ) ?? []
   ).filter((column) =>
     ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
       column.type
@@ -308,8 +337,8 @@ export const useViewCreatePopupProps = ({
   );
 
   const fieldsData = relationView
-  ? tableInfoDataRelation?.fields
-  : tableInfoData?.fields;
+    ? tableInfoDataRelation?.fields
+    : tableInfoData?.fields;
 
   const computedColumns = useMemo(() => {
     const filteredFields = fieldsData?.filter(
@@ -383,15 +412,6 @@ export const useViewCreatePopupProps = ({
       case VIEW_TYPES_MAP.BOARD: {
         return (
           <MaterialUIProvider>
-            <FRow label="Group by" required>
-              <HFSelect
-                options={computedColumnsForTabGroupOptions}
-                control={control}
-                name="group_fields"
-                MenuProps={{ disablePortal: true }}
-                required={true}
-              />
-            </FRow>
             {Boolean(relationView) && (
               <FRow label="Relation Field" required>
                 <HFSelect
@@ -403,10 +423,23 @@ export const useViewCreatePopupProps = ({
                   onChange={(e) => {
                     dispatch(groupFieldActions.addGroupBySlug(e));
                     setValue("table_slug", e);
+                    if (relationView) {
+                      refetch();
+                    }
                   }}
                 />
               </FRow>
             )}
+            <FRow label="Group by" required>
+              <HFSelect
+                options={computedColumnsForTabGroupOptions}
+                control={control}
+                name="group_fields"
+                MenuProps={{ disablePortal: true }}
+                required={true}
+                disabled={relationView && !watch("table_slug")}
+              />
+            </FRow>
           </MaterialUIProvider>
         );
       }
@@ -469,7 +502,7 @@ export const useViewCreatePopupProps = ({
     }
   };
 
-  return  {
+  return {
     getViewSettings,
     viewsWithSettings,
     createView,
@@ -479,5 +512,5 @@ export const useViewCreatePopupProps = ({
     closeViewSettings,
     computedColumns,
     viewErrors,
-  }
-}
+  };
+};

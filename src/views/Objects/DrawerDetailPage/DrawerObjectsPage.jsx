@@ -53,8 +53,6 @@ function DrawerObjectsPage({
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
-  console.log({ viewsList });
-
   const selectedTabIndex = useSelector(
     (state) => state?.drawer?.drawerTabIndex
   );
@@ -89,7 +87,7 @@ function DrawerObjectsPage({
       },
     }
   );
-  console.log(selectedV?.relation_table_slug);
+
   const { data: relationViews, refetch: refetchRelationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>

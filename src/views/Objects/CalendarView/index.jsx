@@ -172,7 +172,7 @@ const CalendarView = ({
       return constructorObjectService.getList(tableSlug, {
         data: {
           with_relations: true,
-          [view.calendar_from_slug]: {
+          [view.calendar_from_slug || view?.attributes?.calendar_from_slug]: {
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
             $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
@@ -196,14 +196,37 @@ const CalendarView = ({
         const data = res.data?.response?.map((row) => ({
           ...row,
           calendar: {
-            date: row[view.calendar_from_slug]
-              ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy")
+            date: row[
+              view.calendar_from_slug ?? view?.attributes?.calendar_from_slug
+            ]
+              ? format(
+                  new Date(
+                    row[
+                      view.calendar_from_slug ??
+                        view?.attributes?.calendar_from_slug
+                    ]
+                  ),
+                  "dd.MM.yyyy"
+                )
               : null,
-            elementFromTime: row[view.calendar_from_slug]
-              ? new Date(row[view.calendar_from_slug])
+            elementFromTime: row[
+              view.calendar_from_slug ?? view?.attributes?.calendar_from_slug
+            ]
+              ? new Date(
+                  row[
+                    view.calendar_from_slug ??
+                      view?.attributes?.calendar_from_slug
+                  ]
+                )
               : null,
-            elementToTime: row[view.calendar_to_slug]
-              ? new Date(row[view.calendar_to_slug])
+            elementToTime: row[
+              view.calendar_to_slug ?? view?.attributes?.calendar_to_slug
+            ]
+              ? new Date(
+                  row[
+                    view.calendar_to_slug ?? view?.attributes?.calendar_to_slug
+                  ]
+                )
               : null,
           },
         }));

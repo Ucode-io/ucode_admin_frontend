@@ -1378,6 +1378,7 @@ export const NewUiViewsWithGroups = ({
                           setLayoutType={setLayoutType}
                           setCenterDate={setCenterDate}
                           relationView={relationView}
+                          setSelectedView={setSelectedView}
                         />
                       </Suspense>
                     ) : null}

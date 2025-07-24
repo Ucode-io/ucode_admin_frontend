@@ -304,6 +304,7 @@ function AggridTreeView(props) {
   });
 
   const navigateToEditPage = (row) => {
+    dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(
       groupFieldActions.addView({
         id: view?.id,

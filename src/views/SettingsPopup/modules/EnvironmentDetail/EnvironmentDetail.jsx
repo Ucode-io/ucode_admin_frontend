@@ -10,7 +10,7 @@ import cls from "./styles.module.scss";
 
 export const EnvironmentDetail = () => {
 
-  const { 
+  const {
     lang,
     i18n,
     mainForm,
@@ -18,36 +18,34 @@ export const EnvironmentDetail = () => {
     onSubmit,
     navigate,
     createLoading,
-   } = useEnvironmentDetailProps();
+    handleCancelClick,
+  } = useEnvironmentDetailProps();
 
   return (
     <div>
       <ContentTitle
-        subtitle={envId ? mainForm.watch("name") : generateLangaugeText(
-          lang,
-          i18n?.language,
-          "Create new"
-        )}
+        subtitle={
+          envId
+            ? mainForm.watch("name")
+            : generateLangaugeText(lang, i18n?.language, "Create new")
+        }
       >
-          {
-            generateLangaugeText(
-              lang,
-              i18n?.language,
-              "Environments"
-            ) || "Environments"
-          }
-        </ContentTitle>
+        {generateLangaugeText(lang, i18n?.language, "Environments") ||
+          "Environments"}
+      </ContentTitle>
 
       <Box>
         <form
           onSubmit={mainForm.handleSubmit(onSubmit)}
-          style={{overflow: "auto"}}>
+          style={{ overflow: "auto" }}
+        >
           {/* <ContentTitle>{generateLangaugeText(lang, i18n?.language, "Details") || "Details"}</ContentTitle> */}
           <Box maxWidth={500}>
             <FRow
               label={"Названия"}
               componentClassName="flex gap-2 align-center"
-              required>
+              required
+            >
               <HFTextField
                 disabledHelperText
                 name="name"
@@ -59,9 +57,13 @@ export const EnvironmentDetail = () => {
             <FRow
               label={"Цвет"}
               componentClassName="flex gap-2 align-center"
-              required>
+              required
+            >
               <Box className={cls.colorpicker}>
-                <NewColorInput control={mainForm.control} name="display_color" />
+                <NewColorInput
+                  control={mainForm.control}
+                  name="display_color"
+                />
                 <HFTextField
                   control={mainForm.control}
                   name="display_color"
@@ -85,7 +87,7 @@ export const EnvironmentDetail = () => {
 
       <SaveCancelBtns
         cancelProps={{
-          onClick: () => navigate(-1)
+          onClick: handleCancelClick,
         }}
         saveProps={{
           onClick: mainForm.handleSubmit(onSubmit),

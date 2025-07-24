@@ -12,20 +12,24 @@ import {useSearchParams} from "react-router-dom";
 import menuService from "../../../../services/menuService";
 
 const MinioPage = ({modal = false}) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
+  const menuIdFromStore = useSelector((state) => state.settingsModal.menuId);
+
+  const menuId = modal ? menuIdFromStore : searchParams.get("menuId");
+
   useEffect(() => {
-    if (searchParams.get("menuId")) {
+    if (menuId) {
       menuService
         .getByID({
-          menuId: searchParams.get("menuId"),
+          menuId,
         })
         .then((res) => {
           setMenuItem(res);
         });
     }
-  }, []);
+  }, [menuId]);
 
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectAll, setSelectAll] = useState(false);

@@ -10,6 +10,8 @@ import { applyDrag } from "@/utils/applyDrag";
 import { useState } from "react";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useRedirectProps = () => {
   const queryClient = useQueryClient();
@@ -17,15 +19,22 @@ export const useRedirectProps = () => {
 
   const { setSearchParams } = useSettingsPopupContext();
 
+  const dispatch = useDispatch();
+
   const navigateToEditForm = (id) => {
-    setSearchParams({
-      tab: TAB_COMPONENTS.REDIRECT.REDIRECT_FORM,
-      redirectId: id,
-    });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.REDIRECT.REDIRECT_FORM)
+    );
+    dispatch(settingsModalActions.setRedirectId(id));
+    // setSearchParams({
+    //   redirectId: id,
+    // });
   };
 
   const navigateToCreateForm = () => {
-    setSearchParams({ tab: TAB_COMPONENTS.REDIRECT.REDIRECT_FORM });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.REDIRECT.REDIRECT_FORM)
+    );
   };
 
   const { isLoading: redirectLoading } = useRedirectListQuery({

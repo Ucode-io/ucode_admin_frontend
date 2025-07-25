@@ -47,6 +47,8 @@ const resourceService = {
     });
   },
   resourceCreate: (data) => requestV2.post(`company/project/resource`, data),
+  metabaseResource: (data) => request.post(`metabase/dashboard`, data),
+  metabaseGetUrl: (data) => request.post(`metabase/public-url`, data),
 };
 
 export const useResourceListQuery = ({params = {}, queryParams} = {}) => {

@@ -21,7 +21,7 @@ export const Resources = ({handleClose = () => {}}) => {
     <Box>
       <ContentList
         handleClose={handleClose}
-        sx={{ marginTop: "36px" }}
+        sx={{marginTop: "36px"}}
         arr={computedResources}
         onItemClick={(row) => handleItemClick(row)}
         handleDelete={(row) => console.log(row)}

@@ -1,4 +1,3 @@
-import HFNumberField from "@/components/FormElements/HFNumberField";
 import HFSelect from "@/components/FormElements/HFSelect";
 import HFTextField from "@/components/FormElements/HFTextField";
 import VariableResources from "@/components/LayoutSidebar/Components/Resources/VariableResource";
@@ -12,7 +11,11 @@ import {useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useDispatch} from "react-redux";
 import {useSearchParams} from "react-router-dom";
-import HFResourceField from "../../../../components/FormElements/HFResourceField";
+import MetabaseContent from "./MetabaseContent";
+import SmtpResource from "./ResourceContents/SmtpResource";
+import SupersetContent from "./ResourceContents/SupersetContent";
+import GitLabContent from "./ResourceContents/GitlabContent";
+import GithubContent from "./ResourceContents/GithubContent";
 
 const Form = ({
   control,
@@ -20,11 +23,9 @@ const Form = ({
   projectEnvironments,
   isEditPage,
   settingLan,
-  watch = () => {},
   setValue = () => {},
 }) => {
   const dispatch = useDispatch();
-  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const {i18n} = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("access_token");
@@ -194,449 +195,27 @@ const Form = ({
             )}
 
             {Number(resurceType) === 11 && isEditPage && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  gap: "20px",
-                }}>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Link"
-                      ) || "Link"
-                    }
-                  />
-                  <HFResourceField
-                    isLink={true}
-                    control={control}
-                    required
-                    disabled
-                    name="settings.superset.url"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "URL",
-                    }}
-                  />
-                </Box>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Username"
-                      ) || "Username"
-                    }
-                  />
-                  <HFResourceField
-                    control={control}
-                    required
-                    disabled
-                    name="settings.superset.username"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Username",
-                    }}
-                  />
-                </Box>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Password"
-                      ) || "Password"
-                    }
-                  />
-                  <HFResourceField
-                    control={control}
-                    required
-                    disabled
-                    name="settings.superset.password"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Password",
-                    }}
-                  />
-                </Box>
-              </Box>
+              <SupersetContent control={control} settingLan={settingLan} />
             )}
 
             {Number(resurceType) === 12 && isEditPage && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  gap: "20px",
-                  marginTop: "10px",
-                }}>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Link"
-                      ) || "Link"
-                    }
-                  />
-                  <HFResourceField
-                    isLink={true}
-                    control={control}
-                    required
-                    disabled
-                    name="settings.metabase.url"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "URL",
-                    }}
-                  />
-                </Box>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Username"
-                      ) || "Username"
-                    }
-                  />
-                  <HFResourceField
-                    control={control}
-                    required
-                    disabled
-                    name="settings.metabase.username"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Username",
-                    }}
-                  />
-                </Box>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Password"
-                      ) || "Password"
-                    }
-                  />
-                  <HFResourceField
-                    control={control}
-                    required
-                    disabled
-                    name="settings.metabase.password"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Password",
-                    }}
-                  />
-                </Box>
-              </Box>
+              <MetabaseContent control={control} settingLan={settingLan} />
             )}
 
             {Boolean(Number(resurceType) === 7 || type === "SMTP") && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  gap: "20px",
-                }}>
-                <Box width={"48%"}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Email"
-                      ) || "Email"
-                    }
-                  />
-                  <HFTextField
-                    control={control}
-                    required
-                    name={`settings.smtp.email`}
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Email",
-                    }}
-                  />
-                </Box>
-
-                <Box width={"48%"}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Password"
-                      ) || "Password"
-                    }
-                  />
-
-                  <HFTextField
-                    control={control}
-                    required
-                    name="settings.smtp.password"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Password",
-                    }}
-                  />
-                </Box>
-
-                <Box width={"48%"}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Default otp"
-                      ) || "Default otp"
-                    }
-                  />
-                  <HFTextField
-                    control={control}
-                    required
-                    name={`settings.smtp.default_otp`}
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Default otp",
-                    }}
-                  />
-                </Box>
-
-                <Box width={"48%"}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Number of otp"
-                      ) || "Number of otp"
-                    }
-                  />
-                  <HFNumberField
-                    control={control}
-                    required
-                    name="settings.smtp.number_of_otp"
-                    fullWidth
-                    type="number"
-                    inputProps={{
-                      placeholder: "Number of otp",
-                    }}
-                  />
-                </Box>
-              </Box>
+              <SmtpResource control={control} settingLan={settingLan} />
             )}
 
             {Boolean(Number(resurceType) === 6 || type === "SMS") && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "20px",
-                  justifyContent: "space-between",
-                }}>
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Default otp"
-                      ) || "Default otp"
-                    }
-                  />
-                  <HFTextField
-                    control={control}
-                    required
-                    name={`settings.sms.default_otp`}
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Default otp",
-                    }}
-                  />
-                </Box>
-
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Login"
-                      ) || "Login"
-                    }
-                  />
-                  <HFTextField
-                    control={control}
-                    required
-                    name="settings.sms.login"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Login",
-                    }}
-                  />
-                </Box>
-
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Number of otp"
-                      ) || "Number of otp"
-                    }
-                  />
-                  <HFNumberField
-                    control={control}
-                    required
-                    name="settings.sms.number_of_otp"
-                    fullWidth
-                    type="number"
-                    inputProps={{
-                      placeholder: "Number of otp",
-                    }}
-                  />
-                </Box>
-
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Originator"
-                      ) || "Originator"
-                    }
-                  />
-                  <HFTextField
-                    control={control}
-                    required
-                    name="settings.sms.originator"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Originator",
-                    }}
-                  />
-                </Box>
-
-                <Box sx={{width: "48%"}}>
-                  <FieldLabel
-                    children={
-                      generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Password"
-                      ) || "Password"
-                    }
-                  />
-                  <HFTextField
-                    control={control}
-                    required
-                    name="settings.sms.password"
-                    fullWidth
-                    inputProps={{
-                      placeholder: "Password",
-                    }}
-                  />
-                </Box>
-              </Box>
+              <SmsContent settingLan={settingLan} control={control} />
             )}
 
             {Number(resurceType) === 5 || type === "GITHUB" ? (
-              <>
-                <FieldLabel
-                  children={
-                    generateLangaugeText(
-                      settingLan,
-                      i18n?.language,
-                      "Github username"
-                    ) || "Github username"
-                  }
-                />
-                <HFTextField
-                  control={control}
-                  name="integration_resource.username"
-                  fullWidth
-                  inputProps={{
-                    placeholder: "Github username",
-                  }}
-                />
-
-                <FieldLabel
-                  children={
-                    generateLangaugeText(settingLan, i18n?.language, "Token") ||
-                    "Token"
-                  }
-                />
-                <HFTextField
-                  control={control}
-                  required
-                  disabled={Boolean(token)}
-                  name="token"
-                  fullWidth
-                  inputProps={{
-                    placeholder: "Token",
-                  }}
-                />
-              </>
+              <GithubContent settingLan={settingLan} control={control} />
             ) : null}
 
             {Number(resurceType) === 8 ? (
-              <>
-                <FieldLabel
-                  children={
-                    generateLangaugeText(
-                      settingLan,
-                      i18n?.language,
-                      "Github username"
-                    ) || "Github username"
-                  }
-                />
-                <HFTextField
-                  control={control}
-                  // required
-                  name="integration_resource.username"
-                  fullWidth
-                  disabled
-                  inputProps={{
-                    placeholder: "Github username",
-                  }}
-                />
-
-                <FieldLabel
-                  children={
-                    generateLangaugeText(settingLan, i18n?.language, "Token") ||
-                    "Token"
-                  }
-                />
-                <HFTextField
-                  control={control}
-                  required
-                  disabled
-                  name="token"
-                  fullWidth
-                  inputProps={{
-                    placeholder: "Token",
-                  }}
-                />
-              </>
+              <GitLabContent settingLan={settingLan} control={control} />
             ) : null}
           </Box>
         </Stack>
@@ -649,7 +228,7 @@ const Form = ({
   );
 };
 
-const FieldLabel = ({children}) => {
+export const FieldLabel = ({children}) => {
   return (
     <>
       <Box sx={{fontSize: "14px", marginBottom: "15px"}}>{children}</Box>

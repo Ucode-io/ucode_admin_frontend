@@ -608,13 +608,13 @@ export const ResourcesDetail = ({
             </ContentTitle>
 
             <Box sx={{display: "flex"}}>
-              {isEditPage && (
+              {/* {isEditPage && (
                 <ResourceeEnvironments
                   control={control}
                   selectedEnvironment={selectedEnvironment}
                   setSelectedEnvironment={setSelectedEnvironment}
                 />
-              )}
+              )} */}
               {formLoading || isLoading ? (
                 <Box sx={{maxWidth: "289px", width: "100%"}}>
                   <GreyLoader />

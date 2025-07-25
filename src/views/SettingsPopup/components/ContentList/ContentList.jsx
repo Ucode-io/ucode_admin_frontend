@@ -30,8 +30,6 @@ export const ContentList = ({
       </Box>
     );
   }
-  const navigate = useNavigate();
-  const {appId} = useParams();
   const [openResource, setOpenResource] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [resourceVal, setResourceVal] = useState();
@@ -61,7 +59,6 @@ export const ContentList = ({
       window.open(url, "_blank", "noopener,noreferrer");
     }
   };
-  console.log("groupedResourcesgroupedResources", groupedResources);
   return (
     <>
       {Boolean(!openResource) ? (

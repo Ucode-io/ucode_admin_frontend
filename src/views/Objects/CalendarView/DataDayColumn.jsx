@@ -9,7 +9,7 @@ import {
 import {useMemo, useState} from "react";
 import {useSearchParams, useNavigate} from "react-router-dom";
 import constructorObjectService from "../../../services/constructorObjectService.js";
-import useTimeList from "../../../hooks/useTimeList";
+import useTimeList from "../../../hooks/useTimeList.js";
 import styles from "./day.module.scss";
 import {useQueryClient} from "react-query";
 import DataDayCard from "./DataDayCard.jsx";

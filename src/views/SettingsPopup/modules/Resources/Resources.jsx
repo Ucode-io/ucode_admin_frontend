@@ -1,9 +1,6 @@
 import {Box} from "@mui/material";
-import {useResourcesProps} from "./useResourcesProps";
-import {ContentTitle} from "../../components/ContentTitle";
-import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {ContentList} from "../../components/ContentList";
-import {Button} from "../../components/Button";
+import {useResourcesProps} from "./useResourcesProps";
 
 export const Resources = ({handleClose = () => {}}) => {
   const {

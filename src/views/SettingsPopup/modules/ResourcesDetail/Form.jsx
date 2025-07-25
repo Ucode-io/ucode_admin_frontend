@@ -23,6 +23,7 @@ const Form = ({
   projectEnvironments,
   isEditPage,
   settingLan,
+  watch = () => {},
   setValue = () => {},
 }) => {
   const dispatch = useDispatch();
@@ -199,7 +200,11 @@ const Form = ({
             )}
 
             {Number(resurceType) === 12 && isEditPage && (
-              <MetabaseContent control={control} settingLan={settingLan} />
+              <MetabaseContent
+                control={control}
+                settingLan={settingLan}
+                watch={watch}
+              />
             )}
 
             {Boolean(Number(resurceType) === 7 || type === "SMTP") && (

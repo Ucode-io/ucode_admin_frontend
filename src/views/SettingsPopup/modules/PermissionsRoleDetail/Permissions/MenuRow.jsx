@@ -1,8 +1,7 @@
 import {useState} from "react";
-import {useWatch} from "react-hook-form";
-import {useParams} from "react-router-dom";
-import {useMemo} from "react";
-import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
+import { useWatch } from "react-hook-form";
+import { useMemo } from "react";
+import { CTableCell, CTableHeadRow } from "../../../../../components/CTable";
 import { Box, Button } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useMenuPermissionGetByIdQuery } from "../../../../../services/rolePermissionService";
@@ -10,7 +9,7 @@ import { store } from "../../../../../store";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.scss";
 import clsx from "clsx";
-import useSearchParams from "../../../../../hooks/useSearchParams";
+import { useSelector } from "react-redux";
 
 const MenuCheckbox = ({ label, onChange, checked }) => {
   return (
@@ -44,8 +43,8 @@ const MenuRow = ({
   childIndex = null,
   watch,
 }) => {
-  const { roleId } = useParams();
-  const [searchParams] = useSearchParams();
+  const roleId = useSelector((state) => state.settingsModal.roleId);
+
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
   const [parentId, setParentId] = useState("");
   const [data, setData] = useState([]);
@@ -66,7 +65,7 @@ const MenuRow = ({
   const { data: permissionData, isLoading: permissionGetByIdLoading } =
     useMenuPermissionGetByIdQuery({
       projectId: projectId,
-      roleId: searchParams.get("roleId") || roleId,
+      roleId: roleId,
       parentId: parentId,
       queryParams: {
         enabled: !!parentId,

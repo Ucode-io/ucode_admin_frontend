@@ -1,25 +1,24 @@
 import { zonedTimeToUtc } from "date-fns-tz"
-import { useDispatch } from "react-redux"
-import { showAlert } from "@/store/alert/alert.thunk"
+import { useDispatch, useSelector } from "react-redux";
+import { showAlert } from "@/store/alert/alert.thunk";
 import { store } from "@/store";
 import { useVersionHistoryByIdQuery } from "@/services/environmentService";
-import { useSettingsPopupContext } from "../../providers";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useActivityLogsDetailProps = () => {
-  const { searchParams, setSearchParams } = useSettingsPopupContext();
-  const id = searchParams.get("id");
+  const id = useSelector((state) => state.settingsModal.activityLogId);
 
   const company = store.getState().company;
 
-  const dispatch = useDispatch()
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  
+  const dispatch = useDispatch();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const copyJson = (text) => {
     dispatch(showAlert("Copied to clipboard", "success"));
-    navigator.clipboard.writeText(JSON.stringify(text, null, 2))
-  }
+    navigator.clipboard.writeText(JSON.stringify(text, null, 2));
+  };
 
-  const onBackClick = () => setSearchParams({})
+  const onBackClick = () => dispatch(settingsModalActions.resetParams());
   
   const {data: history, isLoading: versionHistoryByIdLoader} =
     useVersionHistoryByIdQuery({

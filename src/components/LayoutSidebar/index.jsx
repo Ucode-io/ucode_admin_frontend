@@ -385,7 +385,6 @@ const LayoutSidebar = ({
 
   const onOpenInviteModal = () => {
     setIsOpenInviteModal(true);
-    updateSearchParam("invite", true);
   };
 
   const onCloseInviteModal = () => {
@@ -858,6 +857,7 @@ const LayoutSidebar = ({
           isOpen={isOpenInviteModal}
           onClose={onCloseInviteModal}
           onOpen={onOpenInviteModal}
+          invite={true}
         />
       </ChakraBaseProvider>
     </>

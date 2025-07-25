@@ -10,6 +10,7 @@ import {BillingTable} from "../../components/BillingTable";
 import {TopUpBalance} from "../../components/TopUpBalance";
 import {Fares} from "../Fares";
 import {useSearchParams} from "react-router-dom";
+import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
 
 export const Billing = () => {
   const {
@@ -24,6 +25,7 @@ export const Billing = () => {
     onSubmit,
     loading,
     reset,
+    dispatch,
   } = useBillingProps();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,7 +52,7 @@ export const Billing = () => {
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
                   {/* <AccountBalance color="primary" fontSize="large" /> */}
                   <img
-                    src="/public/img/bank.svg"
+                    src="img/bank.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""
@@ -95,7 +97,7 @@ export const Billing = () => {
                     UZS
                   </Typography> */}
                   <img
-                    src="/public/img/cash.svg"
+                    src="img/cash.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""
@@ -105,7 +107,7 @@ export const Billing = () => {
                     <Typography
                       sx={{cursor: "pointer"}}
                       onClick={() => {
-                        setSearchParams({tab: "fares"});
+                        dispatch(settingsModalActions.setTab("fares"));
                       }}
                       variant="h6"
                       color="success.main">
@@ -139,7 +141,7 @@ export const Billing = () => {
                 <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
                   {/* <HourglassBottom color="warning" fontSize="large" /> */}
                   <img
-                    src="/public/img/time.svg"
+                    src="img/time.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""

@@ -13,40 +13,41 @@ import ModelsIcon from "@/assets/icons/share.svg";
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LanguageControl from "../../components/LayoutSidebar/Components/LanguageControl";
-import {useGetLang} from "../../hooks/useGetLang";
+import { useGetLang } from "../../hooks/useGetLang";
 import useSearchParams from "../../hooks/useSearchParams";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import {store} from "../../store";
-import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {UserClientTypes} from "./client-types";
-import {Account} from "./modules/Account";
-import {ActivityLogs} from "./modules/ActivityLogs";
-import {ActivityLogsDetail} from "./modules/ActivityLogsDetail";
-import {ApiKeys} from "./modules/ApiKeys";
-import {ApiKeysDetail} from "./modules/ApiKeysDetail";
-import {Billing} from "./modules/Billing";
-import {BillingFares} from "./modules/Billing/BillingFares";
-import {Environment} from "./modules/Environment";
-import {EnvironmentDetail} from "./modules/EnvironmentDetail";
-import {Functions} from "./modules/Functions";
-import {FunctionsDetail} from "./modules/FunctionsDetail";
-import {MicroFrontend} from "./modules/MicroFrontend";
-import {MicroFrontendDetail} from "./modules/MicroFrontendDetail";
-import {Models} from "./modules/Models";
-import {PermissionsRoleDetail} from "./modules/PermissionsRoleDetail";
-import {ProjectSettings} from "./modules/ProjectSettings";
-import {Redirect} from "./modules/Redirect";
-import {RedirectForm} from "./modules/RedirectForm";
-import {Resources} from "./modules/Resources";
+import { store } from "../../store";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { UserClientTypes } from "./client-types";
+import { Account } from "./modules/Account";
+import { ActivityLogs } from "./modules/ActivityLogs";
+import { ActivityLogsDetail } from "./modules/ActivityLogsDetail";
+import { ApiKeys } from "./modules/ApiKeys";
+import { ApiKeysDetail } from "./modules/ApiKeysDetail";
+import { Billing } from "./modules/Billing";
+import { BillingFares } from "./modules/Billing/BillingFares";
+import { Environment } from "./modules/Environment";
+import { EnvironmentDetail } from "./modules/EnvironmentDetail";
+import { Functions } from "./modules/Functions";
+import { FunctionsDetail } from "./modules/FunctionsDetail";
+import { MicroFrontend } from "./modules/MicroFrontend";
+import { MicroFrontendDetail } from "./modules/MicroFrontendDetail";
+import { Models } from "./modules/Models";
+import { PermissionsRoleDetail } from "./modules/PermissionsRoleDetail";
+import { ProjectSettings } from "./modules/ProjectSettings";
+import { Redirect } from "./modules/Redirect";
+import { RedirectForm } from "./modules/RedirectForm";
+import { Resources } from "./modules/Resources";
 import NewResourceDetail from "./modules/ResourcesDetail/NewResourceDetail";
 import cls from "./styles.module.scss";
 import AddConnectionDetail from "../ExternalDatabases/AddConnectionDetail";
-import {useMenuListQuery} from "../../services/menuService";
+import { useMenuListQuery } from "../../services/menuService";
 import MinioPage from "../../components/LayoutSidebar/Components/Minio";
 import FilesSinglePage from "./Files/FilesSinglePage";
+import { settingsModalActions } from "../../store/settingsModal/settingsModal.slice";
 
 const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -66,21 +67,30 @@ const permissionFolder = {
   },
 };
 
-export const useSettingsPopupProps = ({onClose}) => {
-  const {t, i18n} = useTranslation();
+export const useSettingsPopupProps = ({ onClose }) => {
+  const { t, i18n } = useTranslation();
 
-  const userInfo = useSelector((state) => state?.auth?.userInfo);
+  const dispatch = useDispatch();
+
   const globalPermissions = useSelector(
     (state) => state?.permissions?.globalPermissions
+  );
+  const userInfo = useSelector((state) => state?.auth?.userInfo);
+  const activeTab = useSelector((state) => state.settingsModal.activeTab);
+  const tab = useSelector((state) => state.settingsModal.tab);
+  const activeChildId = useSelector(
+    (state) => state.settingsModal.activeChildId
   );
 
   const showSettings = globalPermissions?.settings_button;
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
 
-  const defaultTab = searchParams.get("activeTab");
+  // const [activeTab, setActiveTab] = useState("profile");
 
-  const [activeTab, setActiveTab] = useState("profile");
+  const setActiveTab = (tab) => {
+    dispatch(settingsModalActions.setActiveTab(tab));
+  };
 
   const [isClientTypeModalOpen, setIsClientTypeModalOpen] = useState(false);
 
@@ -126,7 +136,7 @@ export const useSettingsPopupProps = ({onClose}) => {
     }
   );
 
-  const {isLoading: loading} = useMenuListQuery({
+  const { isLoading: loading } = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
     },
@@ -283,7 +293,7 @@ export const useSettingsPopupProps = ({onClose}) => {
   };
 
   const handleChangeTab = (key) => {
-    setSearchParams({});
+    dispatch(settingsModalActions.resetParams());
     if (key !== activeTab) {
       setActiveTab(key);
     }
@@ -291,12 +301,17 @@ export const useSettingsPopupProps = ({onClose}) => {
 
   const handlePermissionClick = (element) => {
     setActiveTab(TAB_COMPONENTS?.PERMISSIONS.PERMISSIONS);
-    updateSearchParam("permissionId", element?.guid);
+    dispatch(settingsModalActions.setActiveChildId(element?.guid));
+    dispatch(settingsModalActions.setPermissionId(element?.guid));
+    dispatch(settingsModalActions.setRoleId(""));
+    // updateSearchParam("permissionId", element?.guid);
   };
 
   const handleFilesClick = (element) => {
     setActiveTab(TAB_COMPONENTS?.FILES?.FILES);
-    updateSearchParam("menuId", element?.id);
+    dispatch(settingsModalActions.setMenuId(element?.id));
+    dispatch(settingsModalActions.setActiveChildId(element?.guid));
+    // updateSearchParam("menuId", element?.id);
   };
 
   const handleOpenClientTypeModal = () => {
@@ -364,10 +379,10 @@ export const useSettingsPopupProps = ({onClose}) => {
   };
 
   useEffect(() => {
-    if (defaultTab) {
-      setActiveTab(defaultTab);
-    }
-  }, [defaultTab]);
+    return () => {
+      setActiveTab("profile");
+    };
+  }, []);
 
   return {
     handleClose,
@@ -382,10 +397,11 @@ export const useSettingsPopupProps = ({onClose}) => {
     isDefaultAdmin,
     handlePermissionClick,
     handleFilesClick,
-    activeChildId: searchParams.get("permissionId"),
+    activeChildId,
     handleOpenClientTypeModal,
     handleCloseClientTypeModal,
     isClientTypeModalOpen,
     permissionChild,
+    tab,
   };
 };

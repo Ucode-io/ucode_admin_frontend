@@ -7,16 +7,20 @@ import { store } from "../../../../store";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { showAlert } from "../../../../store/alert/alert.thunk";
+import { useDispatch, useSelector } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useEnvironmentDetailProps = () => {
   const { i18n } = useTranslation();
 
+  const dispatch = useDispatch();
+
   const { searchParams, setSearchParams } = useSettingsPopupContext();
 
-  const projectId = store.getState().company.projectId
+  const projectId = store.getState().company.projectId;
   const companyId = store.getState().company?.companyId;
 
-  const envId = searchParams.get("envId")
+  const envId = useSelector((state) => state.settingsModal.envId);
 
   const lang = useGetLang("Setting");
 
@@ -31,7 +35,11 @@ export const useEnvironmentDetailProps = () => {
     },
   });
 
-  const {isLoading} = useEnvironmentGetByIdQuery({
+  const handleCancelClick = () => {
+    dispatch(settingsModalActions.resetParams());
+  };
+
+  const { isLoading } = useEnvironmentGetByIdQuery({
     envId: envId,
     queryParams: {
       enabled: Boolean(envId),
@@ -41,22 +49,23 @@ export const useEnvironmentDetailProps = () => {
     },
   });
 
-  const {mutateAsync: createEnv, isLoading: createLoading} = useEnvironmentCreateMutation({
-    onSuccess: () => {
-      queryClient.refetchQueries(["ENVIRONMENT"]);
-      setSearchParams({});
-      store.dispatch(showAlert("Успешно", "success"));
-    },
-  });
+  const { mutateAsync: createEnv, isLoading: createLoading } =
+    useEnvironmentCreateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries(["ENVIRONMENT"]);
+        // setSearchParams({});
+        store.dispatch(showAlert("Успешно", "success"));
+      },
+    });
 
-  const {mutateAsync: updateEnv, isLoading: updateLoading} = useEnvironmentUpdateMutation({
-
-    onSuccess: () => {
-      queryClient.refetchQueries(["ENVIRONMENT"]);
-      setSearchParams({});
-      store.dispatch(showAlert("Успешно", "success"));
-    },
-  });
+  const { mutateAsync: updateEnv, isLoading: updateLoading } =
+    useEnvironmentUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries(["ENVIRONMENT"]);
+        // setSearchParams({});
+        store.dispatch(showAlert("Успешно", "success"));
+      },
+    });
 
   const onSubmit = (data) => {
     const createdData = {
@@ -76,6 +85,6 @@ export const useEnvironmentDetailProps = () => {
     navigate,
     createLoading,
     updateLoading,
-  }
-
+    handleCancelClick,
+  };
 };

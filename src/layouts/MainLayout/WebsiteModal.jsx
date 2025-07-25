@@ -33,7 +33,7 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   });
 
   const onSubmit = (data) => {
-    if (selectedFolder?.type === "MICROFRONTEND") {
+    if (selectedFolder?.data) {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -63,6 +63,7 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
       })
       .then(() => {
         closeModal();
+        getMenuList();
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
       })
       .catch((err) => {
@@ -71,7 +72,7 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   };
 
   useEffect(() => {
-    if (selectedFolder?.type === "MICROFRONTEND")
+    if (selectedFolder?.data)
       menuSettingsService
         .getById(selectedFolder?.id, company.projectId)
         .then((res) => {

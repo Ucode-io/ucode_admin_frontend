@@ -1,5 +1,4 @@
-import {Box, Card, Modal, Typography} from "@mui/material";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Box, Card, Modal, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -14,13 +13,13 @@ import {
   useRoleUpdateMutation,
 } from "@/services/roleServiceV2";
 import HFSelect from "@/components/FormElements/HFSelect";
+import { useSelector } from "react-redux";
 
 const RoleCreateModal = ({ closeModal, modalType, roleId }) => {
   const queryClient = useQueryClient();
-  const [searchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
 
-  const clientId = searchParams.get("permissionId");
+  const clientId = useSelector((state) => state.settingsModal.permissionId);
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: {

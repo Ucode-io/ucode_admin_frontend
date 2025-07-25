@@ -1,32 +1,37 @@
-import {useEffect, useState} from "react";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import microfrontendService from "@/services/microfrontendService";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useGetLang } from "@/hooks/useGetLang";
-import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "../../../../utils/constants/settingsPopup";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useMicroFrontendProps = () => {
+  const dispatch = useDispatch();
 
-  const {searchParams, setSearchParams} = useSettingsPopupContext();
-
-  const navigate = useNavigate();
-  const {appId} = useParams();
-  const location = useLocation();
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
   const [debounceValue, setDebouncedValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const microLan = useGetLang("Setting");
 
   const navigateToEditForm = (id) => {
-    setSearchParams({ tab: TAB_COMPONENTS.MICROFRONTEND.MICROFRONTEND_DETAIL, microfrontendId: id })
+    dispatch(
+      settingsModalActions.setTab(
+        TAB_COMPONENTS.MICROFRONTEND.MICROFRONTEND_DETAIL
+      )
+    );
+    dispatch(settingsModalActions.setMicrofrontendId(id));
   };
 
   const navigateToCreateForm = () => {
-    setSearchParams({ tab: TAB_COMPONENTS.MICROFRONTEND.MICROFRONTEND_DETAIL })
+    dispatch(
+      settingsModalActions.setTab(
+        TAB_COMPONENTS.MICROFRONTEND.MICROFRONTEND_DETAIL
+      )
+    );
   };
 
   const deleteTable = (id) => {
@@ -62,5 +67,5 @@ export const useMicroFrontendProps = () => {
     navigateToCreateForm,
     deleteTable,
     inputChangeHandler,
-  }
-}
+  };
+};

@@ -1,29 +1,81 @@
-import React, {useMemo, useState} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./month.module.scss";
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
 import DataMonthCard from "./DataMonthCard";
-import {dateValidFormat} from "../../../../utils/dateValidFormat";
+import { dateValidFormat } from "../../../../utils/dateValidFormat";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import {format, setHours, setMinutes} from "date-fns";
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  format,
+  setHours,
+  setMinutes,
+  startOfMonth,
+  subMonths,
+} from "date-fns";
 import DrawerDetailPage from "../../DrawerDetailPage";
-import {useProjectGetByIdQuery} from "../../../../services/projectService";
-import {useSelector} from "react-redux";
-import {useQuery} from "react-query";
+import { useProjectGetByIdQuery } from "../../../../services/projectService";
+import { useSelector } from "react-redux";
+import { useQuery } from "react-query";
 import layoutService from "../../../../services/layoutService";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import MaterialUIProvider from "../../../../providers/MaterialUIProvider";
 import AddIcon from "@mui/icons-material/Add";
 import clsx from "clsx";
+import { useCalendarViewContext } from "../Providers";
 const daysOfWeek = [
-  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday",
 ];
+
+const startOfMonthAligned = (date) => {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  const dayOfWeek = (start.getDay() + 6) % 7; // Понедельник = 0
+  start.setDate(start.getDate() - dayOfWeek);
+  return start;
+};
+
+const endOfMonthAligned = (date) => {
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0); // Последний день месяца
+  const dayOfWeek = (end.getDay() + 6) % 7; // Понедельник = 0
+  end.setDate(end.getDate() + (6 - dayOfWeek));
+  return end;
+};
+
+const getDaysRange = (centerDate, monthsBefore, monthsAfter) => {
+  const start = startOfMonthAligned(
+    new Date(centerDate.getFullYear(), centerDate.getMonth() - monthsBefore, 1)
+  );
+
+  const end = endOfMonthAligned(
+    new Date(centerDate.getFullYear(), centerDate.getMonth() + monthsAfter, 1)
+  );
+
+  const days = [];
+  let current = new Date(start);
+
+  while (current <= end) {
+    days.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  return days;
+};
+
+const getCalendarMatrix = (dates) => {
+  const weeks = [];
+  for (let i = 0; i < dates.length; i += 7) {
+    weeks.push(dates.slice(i, i + 7));
+  }
+  return weeks;
+};
 
 const CalendarTemplate = ({
   month = [],
@@ -32,23 +84,15 @@ const CalendarTemplate = ({
   fieldsMap,
   menuItem,
   setLayoutType,
-  relationView,
+  currentDay,
 }) => {
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
 
   const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
-  const { tableSlug: tableSlugFromParams, appId, menuId } = useParams();
 
-  const urlSearchParams = new URLSearchParams(window.location.search);
-  const fieldSlug = urlSearchParams.get("field_slug");
-
-  const tableSlug =
-    fieldSlug ||
-    view?.relation_table_slug ||
-    tableSlugFromParams ||
-    view?.table_slug;
+  const { tableSlug, appId } = useParams();
 
   const projectId = useSelector((state) => state.company?.projectId);
 
@@ -82,8 +126,6 @@ const CalendarTemplate = ({
       : localStorage?.getItem("detailPage")
   );
 
-  console.log({ data });
-
   const {
     data: { layout } = {
       layout: [],
@@ -96,7 +138,7 @@ const CalendarTemplate = ({
       },
     ],
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, menuId);
+      return layoutService.getLayout(tableSlug, appId);
     },
     select: (data) => {
       return {
@@ -107,6 +149,56 @@ const CalendarTemplate = ({
       console.error("Error", error);
     },
   });
+
+  const formattedToday = dateValidFormat(new Date(), "dd.MM.yyyy");
+
+  const { calendarRef = {}, setDateRangeFilter = () => {} } =
+    useCalendarViewContext();
+
+  const [dates, setDates] = useState([]);
+  const today = new Date();
+
+  useEffect(() => {
+    const initial = getDaysRange(today, 2, 2);
+    setDates(initial);
+  }, []);
+
+  const addMorePast = () => {
+    const first = dates[0];
+    const newDates = getDaysRange(subMonths(first, 2), 0, 2);
+    const filtered = newDates.filter((d) => d.getTime() < first.getTime());
+    const combined = [...filtered, ...dates];
+    setDates(combined);
+    setDateRangeFilter([combined[0], combined[combined.length - 1]]);
+
+    setTimeout(() => {
+      if (calendarRef.current) {
+        calendarRef.current.scrollTop += 500;
+      }
+    }, 0);
+  };
+
+  const addMoreFuture = () => {
+    const last = dates[dates.length - 1];
+    const newDates = getDaysRange(addMonths(last, -1), 0, 2);
+    const filtered = newDates.filter((d) => d.getTime() > last.getTime());
+    const combined = [...dates, ...filtered];
+    setDates(combined);
+    setDateRangeFilter([combined[0], combined[combined.length - 1]]);
+  };
+
+  const handleScroll = (e) => {
+    const el = e.target;
+
+    if (el.scrollTop <= 100) {
+      addMorePast();
+    }
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 100) {
+      addMoreFuture();
+    }
+  };
+
+  const weeks = getCalendarMatrix(dates);
 
   return (
     <>
@@ -127,101 +219,98 @@ const CalendarTemplate = ({
       </Box>
       <Box
         className={clsx(styles.calendarTemplate, styles.calendarTemplateData)}
+        onScroll={handleScroll}
+        ref={calendarRef}
       >
-        {Array.isArray(month) &&
-          month?.map((date, index) => (
+        {Array.isArray(weeks) &&
+          weeks?.map((week, index) => (
             <>
-              <Box
-                key={index}
-                className={clsx(styles.calendar, {
-                  [styles.today]:
-                    dateValidFormat(new Date(), "dd.MM.yyyy") ===
-                    dateValidFormat(date, "dd.MM.yyyy"),
-                })}
-                style={{
-                  // borderColor:
-                  //   dateValidFormat(new Date(), "dd.MM.yyyy") ===
-                  //   dateValidFormat(date, "dd.MM.yyyy")
-                  //     ? "#007AFF"
-                  //     : "",
-                  background:
-                    date.getDay() === 0 || date.getDay() === 6 ? "#f5f4f4" : "",
-                }}
-              >
-                {!data?.includes(date) && (
-                  <Box
-                    className={styles.desc}
-                    onClick={() => navigateToCreatePage(date)}
-                  >
-                    <Box className={`${styles.addButton}`}>
-                      <AddIcon color="inherit" />
+              {week?.map((date, index) => (
+                <Box
+                  key={index}
+                  data-week-start={week[0].toISOString()}
+                  data-is-today={
+                    formattedToday === dateValidFormat(date, "dd.MM.yyyy")
+                  }
+                  className={clsx(styles.calendar, {
+                    [styles.today]:
+                      formattedToday === dateValidFormat(date, "dd.MM.yyyy"),
+                    [styles.activeMonth]:
+                      currentDay.getMonth() === date?.getMonth(),
+                  })}
+                  style={{
+                    background:
+                      date?.getDay() === 0 || date?.getDay() === 6
+                        ? "#f5f4f4"
+                        : "",
+                  }}
+                >
+                  {!data?.includes(date) && (
+                    <Box
+                      className={styles.desc}
+                      onClick={() => navigateToCreatePage(date)}
+                    >
+                      <Box className={`${styles.addButton}`}>
+                        <AddIcon color="inherit" />
+                      </Box>
                     </Box>
-                  </Box>
-                )}
-                <div className={styles.dateNumber}>
-                  {new Date(date).toLocaleDateString(
-                    "en-US",
-                    dateValidFormat(date, "dd") === "01"
-                      ? {
-                          day: "numeric",
-                          //   month: "short",
-                        }
-                      : {
-                          day: "numeric",
-                        }
                   )}
-                </div>
+                  <div className={styles.dateNumber}>
+                    {new Date(date).toLocaleDateString(
+                      "en-US",
+                      dateValidFormat(date, "dd") === "01"
+                        ? {
+                            day: "numeric",
+                            //   month: "short",
+                          }
+                        : {
+                            day: "numeric",
+                          }
+                    )}
+                  </div>
 
-                <Box className={styles.card}>
-                  {data?.map((el, idx) =>
-                    dateValidFormat(date, "dd.MM.yyyy") === el?.calendar.date ||
-                    dateValidFormat(date, "dd.MM.yyyy") ===
-                      dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
-                      <DataMonthCard
-                        key={el.id}
-                        date={date}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                        data={el}
-                        viewFields={viewFields}
-                        navigateToEditPage={navigateToEditPage}
-                      />
-                    ) : null
-                  )}
+                  <Box className={styles.card}>
+                    {data?.map((el, idx) =>
+                      dateValidFormat(date, "dd.MM.yyyy") ===
+                        el?.calendar.date ||
+                      dateValidFormat(date, "dd.MM.yyyy") ===
+                        dateValidFormat(el?.date_to, "dd.MM.yyyy") ? (
+                        <DataMonthCard
+                          key={el.id}
+                          date={date}
+                          view={view}
+                          fieldsMap={fieldsMap}
+                          data={el}
+                          viewFields={viewFields}
+                          navigateToEditPage={navigateToEditPage}
+                        />
+                      ) : null
+                    )}
+                  </Box>
                 </Box>
-              </Box>
+              ))}
             </>
           ))}
       </Box>
 
       <MaterialUIProvider>
-        {!relationView && (
-          <DrawerDetailPage
-            view={view}
-            projectInfo={projectInfo}
-            open={open}
-            setOpen={setOpen}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            // refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToEditPage}
-            dateInfo={dateInfo}
-            defaultValue={defaultValue}
-          />
-        )}
+        <DrawerDetailPage
+          projectInfo={projectInfo}
+          open={open}
+          setOpen={setOpen}
+          selectedRow={selectedRow}
+          menuItem={menuItem}
+          layout={layout}
+          fieldsMap={fieldsMap}
+          // refetch={refetch}
+          setLayoutType={setLayoutType}
+          selectedViewType={selectedViewType}
+          setSelectedViewType={setSelectedViewType}
+          navigateToEditPage={navigateToEditPage}
+          dateInfo={dateInfo}
+          defaultValue={defaultValue}
+        />
       </MaterialUIProvider>
-
-      {/* <ModalDetailPage
-        open={open}
-        setOpen={setOpen}
-        dateInfo={dateInfo}
-        selectedRow={selectedRow}
-      /> */}
     </>
   );
 };

@@ -3,10 +3,10 @@ import { addMinutes, differenceInMinutes, format, parse, setHours, setMinutes } 
 import { useMemo } from "react";
 import { useQueryClient } from "react-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import useTabRouter from "../../../hooks/useTabRouter";
-import useTimeList from "../../../hooks/useTimeList";
+import useTabRouter from "../../../hooks/useTabRouter.js";
+import useTimeList from "../../../hooks/useTimeList.js";
 import constructorObjectService from "../../../services/constructorObjectService.js";
-import DataCard from "./DataCard";
+import DataCard from "./DataCard.jsx";
 import styles from "./style.module.scss";
 
 const DataColumn = ({ date, data, categoriesTab, parentTab, fieldsMap, view, workingDays }) => {

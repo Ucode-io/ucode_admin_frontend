@@ -20,27 +20,24 @@ import { settingsModalActions } from "../../../../store/settingsModal/settingsMo
 
 export const usePermissionsRoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit } = useForm();
-  const { clientId } = useParams();
   const projectId = store.getState().company.projectId;
 
   const [changedData, setChangedData] = useState([]);
-  const [tabIndex, setTabIndex] = useState(0);
 
   const [isCreateRoleModalOpen, setCreateRoleModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState("table");
   const [isCategoryOpen, setCategoryOpen] = useState(false);
-  // const [activeRoleId, setActiveRoleId] = useState("");
+  const [activeRoleId, setActiveRoleId] = useState("");
 
-  const activeRoleId = useSelector((state) => state.settingsModal.roleId);
+  // const activeRoleId = useSelector((state) => state.settingsModal.roleId);
 
   const dispatch = useDispatch();
 
   const permissionId = useSelector((state) => state.settingsModal.permissionId);
 
-  const { searchParams, setSearchParams, updateSearchParam, permissionChild } =
-    useSettingsPopupContext();
+  const { permissionChild } = useSettingsPopupContext();
 
   const activeClientType = permissionChild?.find(
     (item) => item?.id === permissionId
@@ -58,10 +55,7 @@ export const usePermissionsRoleDetail = () => {
   const handleCloseCategory = () => setCategoryOpen(false);
 
   const onBackClick = () => {
-    setSearchParams({
-      tab: TAB_COMPONENTS?.PERMISSIONS?.PERMISSIONS_DETAIL,
-      permissionId: searchParams?.permissionId,
-    });
+    dispatch(settingsModalActions.resetParams());
   };
 
   const { data: rolePermissionData, isLoading: rolePermissionGetByIdLoading } =
@@ -108,7 +102,7 @@ export const usePermissionsRoleDetail = () => {
     },
     {
       onSuccess(res) {
-        // setActiveRoleId(res?.data?.response[0]?.guid);
+        setActiveRoleId(res?.data?.response[0]?.guid);
         dispatch(settingsModalActions.setRoleId(res?.data?.response[0]?.guid));
       },
     }
@@ -135,8 +129,8 @@ export const usePermissionsRoleDetail = () => {
   };
 
   const onTabClick = (element, index) => {
-    dispatch(settingsModalActions.setActiveChildId(element?.guid));
-    // setActiveRoleId(element?.guid);
+    dispatch(settingsModalActions.setRoleId(element?.guid));
+    setActiveRoleId(element?.guid);
     // const newSearchParams = new URLSearchParams(searchParams);
     // newSearchParams.set("roleId", element?.guid);
     // setSearchParams(newSearchParams);
@@ -182,8 +176,6 @@ export const usePermissionsRoleDetail = () => {
     changedData,
     setValue,
     watch,
-    searchParams,
-    setSearchParams,
     onBackClick,
     onTabClick,
     roles: roles?.data?.response,

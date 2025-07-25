@@ -68,6 +68,8 @@ const LookupCellEditor = (props) => {
   const [inputValue, setInputValue] = useState(null);
   const [autoFiltersValue, setAutoFiltersValue] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [openOnEdit, setOpenOnEdit] = useState(false);
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
@@ -127,6 +129,7 @@ const LookupCellEditor = (props) => {
     setInputValue(selectedOption);
     setLocalValue(selectedOption);
     setValue(selectedOption?.guid || null);
+    setEditing(false);
   };
 
   const calculateAutoFilter = (dataVal) => {
@@ -147,6 +150,20 @@ const LookupCellEditor = (props) => {
       calculateAutoFilter(props?.node?.data);
     } else {
       refetch();
+    }
+  };
+
+  const handleClickToEdit = () => {
+    console.log("entereddddd");
+    if (!disabled) {
+      setEditing(true);
+      setOpenOnEdit(true);
+      refetch();
+
+      if (autoFilters?.[0]?.field_from) {
+        calculateAutoFilter(props?.node?.data);
+      } else {
+      }
     }
   };
 
@@ -195,37 +212,84 @@ const LookupCellEditor = (props) => {
   );
 
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 500);
-
+  console.log("editingeditingeditingediting", editing);
   return (
     <>
       <Box
         sx={{
           position: "relative",
-          // height: "100%",
           width: "100%",
           overflow: "hidden",
-        }}>
-        <Select
-          onInputChange={inputChangeHandler}
-          onMenuScrollToBottom={loadMoreItems}
-          disabled={disabled}
-          isClearable={true}
-          placeholder="Select..."
-          menuPortalTarget={document.body}
-          styles={customStyles}
-          value={inputValue ?? localValue}
-          options={computedOptions}
-          getOptionValue={(option) => option?.guid === value}
-          getOptionLabel={(option) =>
-            `${getRelationFieldTabsLabel(field, option)}`
-          }
-          components={{
-            SingleValue: CustomSingleValue,
-          }}
-          onChange={handleChange}
-          onMenuOpen={onMenuOpen}
-        />
+          cursor: disabled ? "default" : "pointer",
+        }}
+        onClick={handleClickToEdit}>
+        {!editing ? (
+          <Box
+            sx={{
+              padding: "0 5px",
+              display: "flex",
+              alignItems: "center",
+              height: "30px",
+              width: "100%",
+            }}
+            onClick={handleClickToEdit}>
+            {getRelationFieldTabsLabel(field, localValue) || "dasdasds"}
+            {Boolean(localValue) && (
+              <Box
+                sx={{
+                  position: "relative",
+                  zIndex: 99999,
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+                }}>
+                <LaunchIcon
+                  style={{
+                    fontSize: "18px",
+                    marginLeft: "5px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <Select
+            onInputChange={inputChangeHandler}
+            onMenuScrollToBottom={loadMoreItems}
+            disabled={disabled}
+            menuIsOpen={openOnEdit}
+            autoFocus
+            onBlur={() => setEditing(false)}
+            isClearable={true}
+            placeholder="Select..."
+            menuPortalTarget={document.body}
+            styles={customStyles}
+            value={inputValue ?? localValue}
+            options={computedOptions}
+            getOptionValue={(option) => option?.guid === value}
+            getOptionLabel={(option) =>
+              `${getRelationFieldTabsLabel(field, option)}`
+            }
+            components={{
+              SingleValue: CustomSingleValue,
+            }}
+            onMenuClose={() => setOpenOnEdit(false)}
+            onChange={handleChange}
+            onMenuOpen={onMenuOpen}
+          />
+        )}
       </Box>
+
       {props?.colDef?.colIndex === 0 && (
         <RowClickButton onRowClick={onNavigateToDetail} />
       )}

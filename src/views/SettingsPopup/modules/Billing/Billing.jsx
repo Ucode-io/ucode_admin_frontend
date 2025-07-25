@@ -54,7 +54,7 @@ export const Billing = () => {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   {/* <AccountBalance color="primary" fontSize="large" /> */}
                   <img
-                    src="/public/img/bank.svg"
+                    src="img/bank.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""
@@ -101,7 +101,7 @@ export const Billing = () => {
                     UZS
                   </Typography> */}
                   <img
-                    src="/public/img/cash.svg"
+                    src="img/cash.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""
@@ -148,7 +148,7 @@ export const Billing = () => {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   {/* <HourglassBottom color="warning" fontSize="large" /> */}
                   <img
-                    src="/public/img/time.svg"
+                    src="img/time.svg"
                     width={"26px"}
                     height={"26px"}
                     alt=""

@@ -61,6 +61,7 @@ const AppSidebar = ({
   subSearchText,
   menuDraggable,
   setMenuDraggable,
+  getMenuList,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -597,6 +598,7 @@ const AppSidebar = ({
                           id={"create_folder"}
                           className="extra_icon"
                           onClick={(e) => {
+                            e.stopPropagation();
                             handleOpenNotify(e, "CREATE_TO_FOLDER");
                           }}
                         >
@@ -650,6 +652,8 @@ const AppSidebar = ({
                       setSelectedApp={setSelectedApp}
                       menuItem={menuItem}
                       languageData={languageData}
+                      folderItem={folderItem}
+                      getMenuList={getMenuList}
                     />
                   )}
                 </AccordionPanel>

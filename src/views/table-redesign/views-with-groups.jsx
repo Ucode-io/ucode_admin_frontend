@@ -2522,6 +2522,7 @@ const ViewOptions = ({
                 searchText={searchText}
                 checkedColumns={checkedColumns}
                 computedVisibleFields={computedVisibleFields}
+                tableSlug={tableSlug}
               />
             </Box>
             <Box px="8px" py="4px">

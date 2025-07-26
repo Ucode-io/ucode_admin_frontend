@@ -280,10 +280,31 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
+    const { removedIndex, addedIndex, payload } = dropResult;
+
+    // if dropped inside
+    if (addedIndex == null && typeof removedIndex === "number" && payload) {
+      return;
+    } else if (
+      removedIndex == null &&
+      typeof addedIndex === "number" &&
+      payload
+    ) {
+      const addedData = { ...payload };
+      addedData.parent_id = menuList?.[0]?.parent_id;
+      if (addedData) {
+        menuService.update(addedData).then(() => {
+          queryClient.refetchQueries(["MENU"]);
+          getMenuList();
+        });
+      }
+      return;
+    }
+
     setMenuDraggable(true);
     const result = applyDrag(menuList, dropResult);
-    setMenuList(result);
     if (result) {
+      setMenuList(result);
       menuService.updateOrder({
         menus: result,
       });
@@ -521,7 +542,9 @@ const LayoutSidebar = ({
             >
               <Container
                 dragHandleSelector=".column-drag-handle"
+                groupName="main-menu"
                 onDrop={onDrop}
+                getChildPayload={(index) => menuList[index]}
               >
                 {menuList.map((element, index) => (
                   <AppSidebar
@@ -550,6 +573,7 @@ const LayoutSidebar = ({
                     subSearchText={subSearchText}
                     menuDraggable={menuDraggable}
                     setMenuDraggable={setMenuDraggable}
+                    getMenuList={getMenuList}
                   />
                 ))}
               </Container>

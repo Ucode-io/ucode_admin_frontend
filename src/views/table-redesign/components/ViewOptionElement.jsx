@@ -696,14 +696,15 @@ export const ExcelImportButton = ({
   checkedColumns,
   computedVisibleFields,
   tableLan,
+  tableSlug,
 }) => {
-  const {tableSlug} = useParams();
-  const {download} = useDownloader();
-  const {i18n} = useTranslation();
+  // const {tableSlug} = useParams();
+  const { download } = useDownloader();
+  const { i18n } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const {data} = await constructorObjectService.downloadExcel(tableSlug, {
+      const { data } = await constructorObjectService.downloadExcel(tableSlug, {
         data: {
           field_ids: computedVisibleFields,
           language: i18n.language,
@@ -725,9 +726,10 @@ export const ExcelImportButton = ({
       columnGap="8px"
       alignItems="center"
       borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
+      _hover={{ bg: "#EAECF0" }}
       cursor="pointer"
-      onClick={mutation.mutate}>
+      onClick={mutation.mutate}
+    >
       {mutation.isLoading ? (
         <Spinner w="20px" h="20px" />
       ) : (

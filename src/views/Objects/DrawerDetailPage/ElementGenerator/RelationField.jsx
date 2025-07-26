@@ -192,7 +192,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -236,7 +236,21 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const autoFiltersFirstValues = useMemo(() => {
+    if (!autoFiltersValue) return "";
+    return Object.values(autoFiltersValue).join(",");
+  }, []);
+
+  const autoFiltersNewValues = useMemo(() => {
+    if (!autoFiltersValue) return "";
+    return Object.values(autoFiltersValue).join(",");
+  }, [autoFiltersValue]);
+
+  // if (field?.slug === "metrics_category_values_id") {
+  //   console.log({ autoFiltersFirstValues, autoFiltersNewValues });
+  // }
+
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -251,10 +265,19 @@ const AutoCompleteElement = ({
         offset: pageToOffset(page, 10),
       };
 
-      if (computedIds || value) {
+      if (
+        (computedIds || value) &&
+        autoFiltersFirstValues === autoFiltersNewValues
+      ) {
         const additionalValues = [computedIds ?? value];
         requestData.additional_request.additional_values =
           additionalValues?.flat();
+      } else if (
+        (computedIds || value) &&
+        autoFiltersFirstValues !== autoFiltersNewValues
+      ) {
+        setLocalValue([]);
+        delete requestData.additional_request.additional_field;
       }
 
       return constructorObjectService.getListV2(
@@ -270,12 +293,14 @@ const AutoCompleteElement = ({
     {
       enabled: !field?.attributes?.function_path && !isSettings,
       select: (res) => {
+        const count = res?.data?.count;
         const options = res?.data?.response ?? [];
         const slugOptions =
           res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
+          count,
         };
       },
       onSuccess: (data) => {
@@ -445,6 +470,7 @@ const AutoCompleteElement = ({
   }, [autoFiltersValue]);
 
   function loadMoreItems() {
+    if (allOptions?.length >= optionsFromLocale?.count) return;
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
     } else {

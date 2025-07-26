@@ -52,6 +52,7 @@ export default function TimeLineBlock({
   projectInfo,
   setFormValue = () => {},
   relationView = false,
+  setSelectedView,
   // setMonths,
 }) {
   const scrollContainerRef = useRef(null);
@@ -386,6 +387,7 @@ export default function TimeLineBlock({
               calendarRef={calendarRef}
               setOpenDrawerModal={setOpenDrawerModal}
               setSelectedRow={setSelectedRow}
+              setSelectedView={setSelectedView}
             />
           )}
         </div>

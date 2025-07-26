@@ -34,6 +34,7 @@ export default function TimeLineDayDataBlock({
   layoutType,
   selectedView,
   projectInfo,
+  setSelectedView = () => {},
 }) {
   return (
     <>
@@ -41,7 +42,8 @@ export default function TimeLineDayDataBlock({
         className={styles.container}
         style={{
           position: "relative",
-        }}>
+        }}
+      >
         <div className={styles.days} id="timelineDays">
           {datesList.map((date, index) => (
             <TimeLineDays
@@ -89,6 +91,7 @@ export default function TimeLineDayDataBlock({
                 setOpenDrawerModal={setOpenDrawerModal}
                 setSelectedRow={setSelectedRow}
                 deepLength={view?.attributes?.group_by_columns?.length}
+                setSelectedView={setSelectedView}
               />
             ))}
             {/* <div className={styles.addNewTask}></div> */}
@@ -106,7 +109,8 @@ export default function TimeLineDayDataBlock({
                     width: "100%",
                     height: "32px",
                   }}
-                  key={item?.label}>
+                  key={item?.label}
+                >
                   <TimeLineDayDataBlockItem
                     projectInfo={projectInfo}
                     selectedView={selectedView}
@@ -131,6 +135,7 @@ export default function TimeLineDayDataBlock({
                     navigateToDetailPage={navigateToDetailPage}
                     setOpenDrawerModal={setOpenDrawerModal}
                     setSelectedRow={setSelectedRow}
+                    setSelectedView={setSelectedView}
                   />
                 </div>
               ))}

@@ -319,7 +319,14 @@ const BoardColumn = ({
   );
 
   useEffect(() => {
-    if (boardData?.length !== computedBoardData?.length) {
+    if (boardData?.length && computedBoardData?.length) {
+      if (
+        Object.keys(boardData?.[0])?.length !==
+        Object.keys(computedBoardData?.[0])?.length
+      ) {
+        setComputedBoardData(boardData);
+      }
+    } else if (boardData?.length !== computedBoardData?.length) {
       setComputedBoardData(boardData);
     }
   }, [boardData]);

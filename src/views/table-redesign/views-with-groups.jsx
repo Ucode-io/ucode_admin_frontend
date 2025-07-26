@@ -1378,6 +1378,7 @@ export const NewUiViewsWithGroups = ({
                           setLayoutType={setLayoutType}
                           setCenterDate={setCenterDate}
                           relationView={relationView}
+                          setSelectedView={setSelectedView}
                         />
                       </Suspense>
                     ) : null}
@@ -2521,6 +2522,7 @@ const ViewOptions = ({
                 searchText={searchText}
                 checkedColumns={checkedColumns}
                 computedVisibleFields={computedVisibleFields}
+                tableSlug={tableSlug}
               />
             </Box>
             <Box px="8px" py="4px">

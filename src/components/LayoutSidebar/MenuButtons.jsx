@@ -52,19 +52,20 @@ const ButtonsMenu = ({
         sx: {
           overflow: "visible",
           filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
-          padding: "5px",
+          padding: "2px",
           "& .MuiList-root": {
             padding: 0,
           },
         },
       }}
       key={element?.id}
-      transitionDuration={"auto"}>
+      transitionDuration={"auto"}
+    >
       {menuType === "FOLDER" && (
         <Box className="menu">
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<RiPencilFill size={13} color="#475467" />}
               title={
                 generateLangaugeText(
                   menuLanguages,
@@ -95,7 +96,7 @@ const ButtonsMenu = ({
                 }}
               />
               <MenuItemComponent
-                icon={<BsFillTrashFill size={13} />}
+                icon={<BsFillTrashFill size={13} color="#475467" />}
                 title={
                   generateLangaugeText(
                     menuLanguages,
@@ -133,7 +134,15 @@ const ButtonsMenu = ({
       {menuType === "CREATE_TO_FOLDER" && (
         <Box className="menu">
           <MenuItemComponent
-            icon={<TableChartIcon size={13} />}
+            icon={
+              <SVG
+                src="/img/layout-alt-01.svg"
+                color="#475467"
+                width={18}
+                height={18}
+              />
+              // <TableChartIcon size={13} color="#475467" />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -148,7 +157,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<SyncAltIcon size={13} />}
+            icon={
+              <img
+                src="/img/layout-alt-03.svg"
+                alt="table"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -163,7 +179,9 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<DeveloperBoardIcon size={13} />}
+            icon={
+              <img src="/img/cpu-chip.svg" alt="table" width={18} height={18} />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -179,7 +197,14 @@ const ButtonsMenu = ({
           />
 
           <MenuItemComponent
-            icon={<img src="/img/terminal-browser.svg" alt="table" />}
+            icon={
+              <img
+                src="/img/terminal-browser.svg"
+                alt="table"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -200,7 +225,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<CreateNewFolderIcon size={13} />}
+            icon={
+              <img
+                src="/img/folder-plus.svg"
+                alt="table"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -216,7 +248,6 @@ const ButtonsMenu = ({
           />
         </Box>
       )}
-
       {menuType === "TABLE" && (
         <Box className="menu">
           {element?.data?.permission?.menu_settings || permissionButton ? (
@@ -275,7 +306,7 @@ const ButtonsMenu = ({
             element?.data?.permission?.update) ||
           permissionButton ? (
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<RiPencilFill size={13} color="#475467" />}
               title={
                 generateLangaugeText(
                   menuLanguages,
@@ -302,7 +333,7 @@ const ButtonsMenu = ({
                 }}
               />
               <MenuItemComponent
-                icon={<BsFillTrashFill size={13} />}
+                icon={<BsFillTrashFill size={13} color="#475467" />}
                 title={
                   generateLangaugeText(
                     menuLanguages,
@@ -456,7 +487,6 @@ const ButtonsMenu = ({
           ) : null}
         </Box>
       )}
-
       {menuType === "CREATE_TO_MINIO" && (
         <Box className="menu">
           <MenuItemComponent
@@ -480,7 +510,7 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "ROOT" && (
-        <Box className="menu" style={{width: 224, rowGap: 4}}>
+        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
           <MenuItemComponent
             icon={<SVG src="/img/layout-alt-01.svg" color="#475467" />}
             title={
@@ -577,9 +607,16 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "CREATE" && (
-        <Box className="menu" style={{width: 224, rowGap: 4}}>
+        <Box className="menu" style={{ width: 190 }}>
           <MenuItemComponent
-            icon={<SVG src="/img/layout-alt-01.svg" color="#475467" />}
+            icon={
+              <SVG
+                src="/img/layout-alt-01.svg"
+                color="#475467"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -598,7 +635,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/layout-alt-03.svg" alt="table" />}
+            icon={
+              <img
+                src="/img/layout-alt-03.svg"
+                alt="table"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -608,7 +652,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              setTableModal({id: "c57eedc3-a954-4262-a0af-376c65b5a284"});
+              setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
               handleCloseNotify();
             }}
           />
@@ -619,7 +663,9 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/cpu-chip.svg" alt="table" />}
+            icon={
+              <img src="/img/cpu-chip.svg" alt="table" width={18} height={18} />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -636,7 +682,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/terminal-browser.svg" alt="table" />}
+            icon={
+              <img
+                src="/img/terminal-browser.svg"
+                alt="table"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -659,7 +712,14 @@ const ButtonsMenu = ({
             }}
           />
           <MenuItemComponent
-            icon={<img src="/img/folder-plus.svg" alt="table" />}
+            icon={
+              <img
+                src="/img/folder-plus.svg"
+                alt="table"
+                width={18}
+                height={18}
+              />
+            }
             title={
               generateLangaugeText(
                 menuLanguages,
@@ -678,7 +738,6 @@ const ButtonsMenu = ({
           />
         </Box>
       )}
-
       {menuType === "WIKI_FOLDER" && (
         <Box className="menu">
           <MenuItemComponent

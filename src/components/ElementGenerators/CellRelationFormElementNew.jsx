@@ -504,7 +504,7 @@ const AutoCompleteElement = ({
             inputChangeHandler(newInputValue);
           }
         }}
-        isDisabled={disabled || autofilterDisable}
+        isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}

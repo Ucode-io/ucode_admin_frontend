@@ -8,11 +8,16 @@ import {
   subMonths,
 } from "date-fns";
 import { useProjectGetByIdQuery } from "@/services/projectService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import layoutService from "@/services/layoutService";
 import { useCalendarViewContext } from "../../Providers";
+import { groupFieldActions } from "../../../../../store/groupField/groupField.slice";
+import { detailDrawerActions } from "../../../../../store/detailDrawer/detailDrawer.slice";
+import { updateQueryWithoutRerender } from "../../../../../utils/useSafeQueryUpdater";
+import { mergeStringAndState } from "../../../../../utils/jsonPath";
+import useTabRouter from "../../../../../hooks/useTabRouter";
 
 export const useCalendarTemplateProps = () => {
   const {
@@ -24,9 +29,16 @@ export const useCalendarTemplateProps = () => {
     currentDay,
     setFocusedDate,
     tableSlug,
+    selectedView,
+    layoutType,
+    setSelectedView,
   } = useCalendarViewContext();
 
+  const [searchParams] = useSearchParams();
+
   const projectId = useSelector((state) => state.company?.projectId);
+  const new_router = localStorage.getItem("new_router") === "true";
+  const viewId = searchParams.get("v") ?? view?.id;
 
   const [open, setOpen] = useState();
   const [defaultValue, setDefaultValue] = useState({});
@@ -262,6 +274,105 @@ export const useCalendarTemplateProps = () => {
   //   lastScrollTime.current = now;
   // };
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { navigateToForm } = useTabRouter();
+
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+      let query = urlTemplate;
+
+      const variablePattern = /\{\{\$\.(.*?)\}\}/g;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      if (new_router)
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
+  const handleOpen = (data) => {
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInf?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: data?.guid,
+      })
+    );
+    if (Boolean(view?.is_relation_view)) {
+      setSelectedRow(data);
+      setSelectedView(view);
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      dispatch(detailDrawerActions.openDrawer());
+      updateQueryWithoutRerender("p", data?.guid);
+    } else {
+      if (new_router) {
+        updateQueryWithoutRerender("p", data?.guid);
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(data);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(data);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(data);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(data);
+          }
+        }
+      } else {
+        if (view?.attributes?.url_object) {
+          navigateToDetailPage(data);
+        } else if (projectInfo?.new_layout) {
+          setSelectedRow(data);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          if (layoutType === "PopupLayout") {
+            setSelectedRow(data);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            navigateToDetailPage(data);
+          }
+        }
+      }
+    }
+  };
+
   const handleScroll = (e) => {
     const el = e.target;
 
@@ -356,5 +467,6 @@ export const useCalendarTemplateProps = () => {
     monthRefs,
     defaultValue,
     dateInfo,
+    handleOpen,
   };
-}
+};

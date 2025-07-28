@@ -411,6 +411,9 @@ const CalendarView = ({
         focusedDate,
         setFocusedDate,
         tableSlug,
+        selectedView,
+        setSelectedView,
+        layoutType,
       }}
     >
       <div>

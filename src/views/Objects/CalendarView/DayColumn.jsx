@@ -2,7 +2,7 @@ import {Add} from "@mui/icons-material";
 import {differenceInMinutes, format, setHours, setMinutes} from "date-fns";
 import {useMemo, useState} from "react";
 import {useSearchParams} from "react-router-dom";
-import useTimeList from "../../../hooks/useTimeList";
+import useTimeList from "../../../hooks/useTimeList.js";
 import styles from "./day.module.scss";
 import DataDayCard from "./DataDayCard.jsx";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage.jsx";

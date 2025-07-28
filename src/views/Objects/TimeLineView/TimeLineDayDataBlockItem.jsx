@@ -1,7 +1,7 @@
 import {addDays, format} from "date-fns";
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import Moveable from "react-moveable";
-import {useParams, useSearchParams} from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
 import constructorObjectService from "@/services/constructorObjectService";
 import styles from "./styles.module.scss";
@@ -14,6 +14,7 @@ import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {mergeStringAndState} from "../../../utils/jsonPath";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
+import useTabRouter from "../../../hooks/useTabRouter";
 
 const getTranslateXFromMatrix = (element) => {
   const transform = window.getComputedStyle(element).transform;
@@ -133,6 +134,9 @@ export default function TimeLineDayDataBlockItem({
       return data[variable] || "";
     });
   };
+
+  const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
 
   const navigateToDetailPage = (row) => {
     if (

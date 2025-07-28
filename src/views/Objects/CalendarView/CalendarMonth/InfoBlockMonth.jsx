@@ -37,36 +37,36 @@ const InfoBlockMonth = ({viewFields, data, isSingleLine}) => {
 
       {/* {viewFields?.map((field) => ( */}
       <>
-        {viewFields?.[0]?.type === "LOOKUP" ? (
+        {viewFields[0]?.type === "LOOKUP" ? (
           <Box style={flex}>
-            <p>{viewFields[0]?.label}</p>{" "}
+            <p className={styles.infoText}>{viewFields[0]?.label}</p>{" "}
             {getRelationFieldTableCellLabel(
               viewFields[0],
               data,
               viewFields[0].slug + "_data"
             )}
           </Box>
-        ) : viewFields?.[0]?.type === "DATE_TIME" ? (
+        ) : viewFields[0]?.type === "DATE_TIME" ? (
           <Box style={flex}>
-            <p>{viewFields[0]?.label}:</p>{" "}
-            {dateValidFormat(data[viewFields?.[0]?.slug], "dd.MM.yyyy HH:mm")}
+            <p className={styles.infoText}>{viewFields[0]?.label}:</p>{" "}
+            {dateValidFormat(data[viewFields[0]?.slug], "dd.MM.yyyy HH:mm")}
           </Box>
-        ) : viewFields?.[0]?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
+        ) : viewFields[0]?.type === "DATE_TIME_WITHOUT_TIME_ZONE" ? (
           <Box style={flex}>
-            <p>{viewFields[0]?.label}:</p>{" "}
-            {dateValidFormat(data[viewFields?.[0]?.slug], "dd.MM.yyyy HH:mm")}
+            <p className={styles.infoText}>{viewFields[0]?.label}:</p>{" "}
+            {dateValidFormat(data[viewFields[0]?.slug], "dd.MM.yyyy HH:mm")}
           </Box>
-        ) : viewFields?.[0]?.type === "MULTISELECT" ? (
+        ) : viewFields[0]?.type === "MULTISELECT" ? (
           <MultiselectCellColoredElement
             style={{ padding: "2px 5px", marginBottom: 4 }}
-            value={data[viewFields?.[0]?.slug]}
+            value={data[viewFields[0]?.slug]}
             field={viewFields[0]}
           />
         ) : (
           <Box style={flex}>
             <p className={styles.infoText}>
               {/* {viewFields[0]?.label}: */}
-              {data[viewFields?.[0]?.slug]}
+              {data[viewFields[0]?.slug]}
             </p>{" "}
           </Box>
         )}

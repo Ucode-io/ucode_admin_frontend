@@ -920,7 +920,7 @@ export const NewUiViewsWithGroups = ({
                   onClick={() => handleViewClick(view, index)}
                 >
                   {view?.is_relation_view
-                    ? view?.table_label
+                    ? view?.table_label || view.type
                     : view?.attributes?.[`name_${i18n?.language}`] ||
                       view?.name ||
                       view.type}

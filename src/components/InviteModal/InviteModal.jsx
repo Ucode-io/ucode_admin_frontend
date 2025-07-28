@@ -32,7 +32,7 @@ import {
   useUserGetByIdQuery,
   useUserUpdateMutation,
 } from "@/services/auth/userService";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useSearchParams} from "react-router-dom";
 import LinkIcon from "@mui/icons-material/Link";
 import {toast} from "react-toastify";

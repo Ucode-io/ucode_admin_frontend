@@ -68,7 +68,7 @@ function NewSubMenu({
     height: "32px",
     marginTop: "5px",
   };
-
+console.log(menuChilds?.[element?.id]?.children?.length);
   return (
     <div
       className={``}
@@ -95,7 +95,7 @@ function NewSubMenu({
                     <Skeleton height={42} animation="wave" />
                     <Skeleton height={42} animation="wave" />
                   </Box>
-                ) : menuChilds?.[element?.id]?.children?.length ? (
+                ) : (
                   <Container
                     dragHandleSelector=".column-drag-handle"
                     groupName="main-menu"
@@ -104,43 +104,43 @@ function NewSubMenu({
                     }
                     onDrop={onDrop}
                   >
-                    {menuChilds?.[element?.id]?.children?.map(
-                      (childElement, index) => (
-                        <RecursiveBlock
-                          menuStyles={menuStyles}
-                          projectSettingLan={projectSettingLan}
-                          key={childElement.id}
-                          element={childElement}
-                          openFolderCreateModal={openFolderCreateModal}
-                          setFolderModalType={setFolderModalType}
-                          sidebarIsOpen={subMenuIsOpen}
-                          setTableModal={setTableModal}
-                          setLinkedTableModal={setLinkedTableModal}
-                          handleOpenNotify={handleOpenNotify}
-                          setElement={setElement}
-                          setSubMenuIsOpen={setSubMenuIsOpen}
-                          menuStyle={menuStyleNew}
-                          index={index}
-                          selectedApp={selectedApp}
-                          buttonProps={{ className: "highlight-on-hover" }}
-                        />
+                    {menuChilds?.[element?.id]?.children?.length ? (
+                      menuChilds?.[element?.id]?.children?.map(
+                        (childElement, index) => (
+                          <RecursiveBlock
+                            menuStyles={menuStyles}
+                            projectSettingLan={projectSettingLan}
+                            key={childElement.id}
+                            element={childElement}
+                            openFolderCreateModal={openFolderCreateModal}
+                            setFolderModalType={setFolderModalType}
+                            sidebarIsOpen={subMenuIsOpen}
+                            setTableModal={setTableModal}
+                            setLinkedTableModal={setLinkedTableModal}
+                            handleOpenNotify={handleOpenNotify}
+                            setElement={setElement}
+                            setSubMenuIsOpen={setSubMenuIsOpen}
+                            menuStyle={menuStyleNew}
+                            index={index}
+                            selectedApp={selectedApp}
+                            buttonProps={{ className: "highlight-on-hover" }}
+                          />
+                        )
                       )
+                    ) : (
+                      <Box
+                        sx={{
+                          color: "#9f9898",
+                          paddingLeft: "25px",
+                          height: "30px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        No pages inside
+                      </Box>
                     )}
                   </Container>
-                ) : (
-                  <>
-                    <Box
-                      sx={{
-                        color: "#9f9898",
-                        paddingLeft: "25px",
-                        height: "30px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      No pages inside
-                    </Box>
-                  </>
                 )}
               </div>
             </Box>

@@ -88,6 +88,19 @@
   }
 }
 
+.multipleAutocompleteTagsValue {
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 4px;
+  height: 20px;
+
+  .value {
+    margin-right: 4px;
+  }
+}
+
 .valuesWrapper {
   display: flex;
   align-items: center;

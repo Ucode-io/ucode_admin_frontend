@@ -25,6 +25,7 @@ import {
   FormHelperText,
   InputAdornment,
   createFilterOptions,
+  ClickAwayListener,
 } from "@mui/material";
 import RowClickButton from "../RowClickButton";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
@@ -51,12 +52,30 @@ const HFAggridMultiselect = React.memo((props) => {
   const hasIcon = field?.attributes?.has_icon;
   const isMultiSelect = field?.attributes?.is_multiselect;
 
-  const onNavigateToDetail = () => {
-    colDef?.onRowClick(data);
+  const [editMode, setEditMode] = useState(false);
+
+  const computedValue = useMemo(() => {
+    if (!value?.length) return [];
+
+    if (isMultiSelect && Array.isArray(value)) {
+      return (
+        value?.map((el) => options?.find((option) => option.value === el)) ?? []
+      );
+    } else {
+      return [options?.find((option) => option.value === value?.[0])];
+    }
+  }, [value, options, isMultiSelect]);
+
+  const handleDisplayClick = () => {
+    if (!disabled) setEditMode(true);
   };
 
+  const onNavigateToDetail = () => {
+    colDef?.onRowClick?.(data);
+  };
+  console.log("fieldddddd", computedValue, field);
+
   return (
-    // <MaterialUIProvider>
     <Box
       sx={{
         position: "absolute",
@@ -65,24 +84,75 @@ const HFAggridMultiselect = React.memo((props) => {
         left: 0,
         top: 0,
       }}>
-      <AutoCompleteElement
-        value={value}
-        width={width}
-        field={field}
-        classes={classes}
-        options={options}
-        hasIcon={hasIcon}
-        hasColor={hasColor}
-        className="hf-select"
-        onFormChange={setValue}
-        required={field?.required}
-        disabled={disabled}
-        isMultiSelect={isMultiSelect}
-        props={props}
-        onNavigateToDetail={onNavigateToDetail}
-      />
+      {editMode ? (
+        <ClickAwayListener onClickAway={() => setEditMode(false)}>
+          <AutoCompleteElement
+            value={value}
+            width={width}
+            field={field}
+            classes={classes}
+            options={options}
+            hasIcon={hasIcon}
+            hasColor={hasColor}
+            className="hf-select"
+            onFormChange={(val) => {
+              setValue(val);
+              setEditMode(false);
+            }}
+            setEditMode={setEditMode}
+            editMode={editMode}
+            required={field?.required}
+            disabled={disabled}
+            isMultiSelect={isMultiSelect}
+            props={props}
+            onNavigateToDetail={onNavigateToDetail}
+          />
+        </ClickAwayListener>
+      ) : (
+        <Box
+          onClick={handleDisplayClick}
+          sx={{
+            height: "100%",
+            width: "100%",
+            cursor: disabled ? "not-allowed" : "pointer",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            padding: "0px 8px 0px 12px",
+            borderRadius: "4px",
+            backgroundColor: "#fff",
+            gap: "4px",
+          }}>
+          {computedValue?.map((el) => (
+            <Box
+              key={el?.value}
+              className={styles.multipleAutocompleteTagsValue}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "2px 6px",
+                borderRadius: "4px",
+                background: hasColor ? `${el?.color}30` : "#e0e0e0",
+                color: hasColor ? el?.color : "inherit",
+              }}>
+              {hasIcon && <IconGenerator icon={el?.icon} />}
+              <span className={styles.value}>{el?.label ?? el?.value}</span>
+              <Close
+                fontSize="10"
+                style={{cursor: "pointer"}}
+                onClick={() => {
+                  // getTagProps({index})?.onDelete();
+                }}
+              />
+            </Box>
+          ))}
+          {computedValue?.length === 0 && (
+            <span style={{color: "#aaa"}}>Select</span>
+          )}
+        </Box>
+      )}
     </Box>
-    // </MaterialUIProvider>
   );
 });
 
@@ -101,13 +171,15 @@ const AutoCompleteElement = ({
   disabled = false,
   placeholder = "",
   isBlackBg = false,
+  editMode = false,
   disabledHelperText = "",
+  setEditMode = () => {},
   onFormChange = () => {},
   onNavigateToDetail = () => {},
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
-
+  console.log("editModeeditMode", editMode);
   const editPermission = field?.attributes?.field_permission?.edit_permission;
 
   const handleClose = () => {
@@ -177,6 +249,9 @@ const AutoCompleteElement = ({
             isOptionEqualToValue={(option, value) =>
               option?.value === value?.value
             }
+            open={editMode}
+            onClose={() => setEditMode(false)}
+            openOnFocus={editMode}
             onChange={changeHandler}
             filterOptions={(options, params) => {
               const filtered = filter(options, params);

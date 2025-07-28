@@ -1,5 +1,6 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import requestAuth from "../utils/requestAuth";
+import requestV2 from "../utils/requestV2";
 
 const userService = {
   getList: (params) =>
@@ -18,9 +19,10 @@ const userService = {
   create: (data) => requestAuth.post("v2/user", data),
   upsert: (data) =>
     requestAuth.post(`v2/upsert-user-info/${data.id}`, data, {}),
+  userCheck: (data) => requestAuth.post(`v2/user/check`, data),
 };
 
-export const useUsersListQuery = ({ params = {}, queryParams } = {}) => {
+export const useUsersListQuery = ({params = {}, queryParams} = {}) => {
   return useQuery(
     ["USERS", params],
     () => {
@@ -30,9 +32,9 @@ export const useUsersListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useUserGetByIdQuery = ({ id, ...params }, queryParams) => {
+export const useUserGetByIdQuery = ({id, ...params}, queryParams) => {
   return useQuery(
-    ["USER_GET_BY_ID", { id, ...params }],
+    ["USER_GET_BY_ID", {id, ...params}],
     () => {
       return userService.getByID(id, params);
     },

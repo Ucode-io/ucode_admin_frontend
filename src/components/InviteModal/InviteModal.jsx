@@ -18,26 +18,34 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { generateLangaugeText } from "@/utils/generateLanguageText";
-import { useTranslation } from "react-i18next";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {generateLangaugeText} from "@/utils/generateLanguageText";
+import {useTranslation} from "react-i18next";
+import {Controller, useForm, useWatch} from "react-hook-form";
 import styles from "./style.module.scss";
-import { Select } from "chakra-react-select";
-import { useRoleListQuery } from "@/services/roleServiceV2";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {Select} from "chakra-react-select";
+import {useRoleListQuery} from "@/services/roleServiceV2";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 import PhoneNumberInput from "react-phone-number-input";
 import {
   useUserCreateMutation,
   useUserGetByIdQuery,
   useUserUpdateMutation,
 } from "@/services/auth/userService";
-import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import {useSelector} from "react-redux";
+import {useSearchParams} from "react-router-dom";
 import LinkIcon from "@mui/icons-material/Link";
-import { toast } from "react-toastify";
-import { useQuery } from "react-query";
+import {toast} from "react-toastify";
+import {useQuery} from "react-query";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import userService from "../../services/userService";
+import useDebounce from "../../hooks/useDebounce";
+import {useFieldsListQuery} from "../../services/constructorFieldService";
+import FormElementGenerator from "../ElementGenerators/FormElementGenerator";
+import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
+import CellElementGeneratorForTable from "../ElementGenerators/CellElementGeneratorForTable";
+import CellElementGeneratorForTableView from "../ElementGenerators/CellElementGeneratorForTableView";
+import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 
 function InviteModal({
   userInviteLan,
@@ -49,7 +57,7 @@ function InviteModal({
   selectedClientType,
 }) {
   const finalRef = useRef(null);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
@@ -57,11 +65,13 @@ function InviteModal({
   const env_id = useSelector((state) => state.auth?.environmentId);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [allowPassword, setAllowPassword] = useState("noShow");
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
 
   const handleClose = () => {
     onClose();
     setSearchParams({});
+    mainForm.reset({});
   };
 
   const createMutation = useUserCreateMutation({
@@ -156,6 +166,24 @@ function InviteModal({
     });
   }
 
+  const checkUser = useDebounce((type = "login", searchText) => {
+    if (Boolean(!searchText)) setAllowPassword("noShow");
+
+    userService
+      .userCheck({[type]: searchText})
+      .then((res) => {
+        if (Boolean(res?.user_id)) {
+          setAllowPassword("noShow");
+        }
+      })
+      .catch((err) => {
+        console.log("errerrerr", err);
+        if (Boolean(searchText)) {
+          setAllowPassword("show");
+        }
+      });
+  }, 800);
+
   return (
     <>
       <Modal
@@ -163,8 +191,7 @@ function InviteModal({
         finalFocusRef={finalRef}
         isOpen={isOpen}
         onClose={handleClose}
-        isCentered
-      >
+        isCentered>
         <ModalOverlay />
 
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>
@@ -184,8 +211,7 @@ function InviteModal({
               <Tabs
                 index={tabIndex}
                 onChange={onTabChange}
-                className={styles.react_tab}
-              >
+                className={styles.react_tab}>
                 <Box display="flex" justifyContent={"space-between"}>
                   <TabList borderBottom={"none"}>
                     <Flex
@@ -194,26 +220,21 @@ function InviteModal({
                       borderRadius={"8px"}
                       h={"32px"}
                       mb={"5px"}
-                      border={"1px solid #EAECF0"}
-                    >
+                      border={"1px solid #EAECF0"}>
                       <Tab
-                        className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
+                        className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
                         Login
                       </Tab>
                       <Tab
-                        className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
+                        className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
                         Phone
                       </Tab>
                       <Tab
-                        className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
+                        className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
                         Email
                       </Tab>
                       <Tab
-                        className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
+                        className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}>
                         Invite Link
                       </Tab>
                     </Flex>
@@ -226,8 +247,7 @@ function InviteModal({
                         isDisabled={
                           !mainForm.watch("client_type_id") ||
                           !mainForm.watch("role_id")
-                        }
-                      >
+                        }>
                         <LinkIcon
                           style={{
                             transform: "rotate(140deg)",
@@ -240,13 +260,19 @@ function InviteModal({
                 </Box>
                 <TabPanels>
                   <TabPanel minH={"300px"} mt={0} p={"0"}>
-                    <LoginForm guid={guid} form={mainForm} />
+                    <LoginForm
+                      guid={guid}
+                      mainForm={mainForm}
+                      allowPassword={allowPassword}
+                      setAllowPassword={setAllowPassword}
+                      checkUser={checkUser}
+                    />
                   </TabPanel>
                   <TabPanel minH={"300px"} mt={0} p={"0"}>
                     <Controller
                       name="phone"
                       control={mainForm.control}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <Box
                           mt={2}
                           px={"0px"}
@@ -273,8 +299,8 @@ function InviteModal({
                               borderRight: "1px solid",
                               borderColor: "inherit",
                               bg: "transparent",
-                              _hover: { bg: "gray.50" },
-                              _focus: { outline: "none" },
+                              _hover: {bg: "gray.50"},
+                              _focus: {outline: "none"},
                               backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
                               backgroundRepeat: "no-repeat",
                               backgroundPosition: "right 0.5rem center",
@@ -283,10 +309,9 @@ function InviteModal({
                             ".PhoneInputInput": {
                               border: "none !important",
                               boxShadow: "none !important",
-                              _focus: { boxShadow: "none !important" },
+                              _focus: {boxShadow: "none !important"},
                             },
-                          }}
-                        >
+                          }}>
                           <PhoneNumberInput
                             numberInputProps={{
                               size: "lg",
@@ -322,8 +347,7 @@ function InviteModal({
                     w={"100px"}
                     type="submit"
                     bg={"#007aff"}
-                    color={"#fff"}
-                  >
+                    color={"#fff"}>
                     {guid ? "Save" : "Invite"}
                   </Button>
                 )}
@@ -352,13 +376,13 @@ const PasswordInput = forwardRef(
             <Visibility
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{ color: "#667085" }}
+              style={{color: "#667085"}}
             />
           ) : (
             <VisibilityOff
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{ color: "#667085" }}
+              style={{color: "#667085"}}
             />
           )}
         </InputRightElement>
@@ -367,7 +391,7 @@ const PasswordInput = forwardRef(
   }
 );
 
-const EmailComponent = ({ form, placeholder = "Email", guid }) => {
+const EmailComponent = ({form, placeholder = "Email", guid}) => {
   const errors = form.formState.errors;
   return (
     <Box mt={2}>
@@ -383,7 +407,7 @@ const EmailComponent = ({ form, placeholder = "Email", guid }) => {
   );
 };
 
-const LinkComponent = ({ form, placeholder = "Link", guid }) => {
+const LinkComponent = ({form, placeholder = "Link", guid}) => {
   return (
     <Box mt={2}>
       <TypesComponent guid={guid} form={form} />
@@ -391,10 +415,25 @@ const LinkComponent = ({ form, placeholder = "Link", guid }) => {
   );
 };
 
-const LoginForm = ({ form, placeholder = "", guid }) => {
+const LoginForm = ({
+  mainForm,
+  placeholder = "",
+  allowPassword = "",
+  guid,
+  checkUser = () => {},
+  setAllowPassword = () => {},
+}) => {
   const [changePassword, setChangePassword] = useState(false);
-  const errors = form.formState.errors;
+  const errors = mainForm.formState.errors;
   const [searchParams] = useSearchParams();
+  const [login, setLogin] = useState("");
+  const client_type_id = mainForm?.watch()?.client_type_id;
+
+  const shouldShowPassword =
+    changePassword ||
+    (searchParams.get("invite") === "true" &&
+      Boolean(allowPassword === "show") &&
+      Boolean(login));
 
   return (
     <>
@@ -402,8 +441,12 @@ const LoginForm = ({ form, placeholder = "", guid }) => {
         <Input
           placeholder="Login"
           size="lg"
-          {...form.register("login", { required: true })}
+          {...mainForm.register("login", {required: true})}
           isInvalid={errors?.name}
+          onChange={(e) => {
+            setLogin(e.target.value);
+            checkUser("login", e.target.value);
+          }}
         />
       </Box>
       <Flex w={"100%"}>
@@ -418,78 +461,124 @@ const LoginForm = ({ form, placeholder = "", guid }) => {
             h={"26px"}
             _hover={{
               background: "#fff",
-            }}
-          >
+            }}>
             Change Password
           </Button>
         )}
       </Flex>
-      {changePassword ||
-        (searchParams.get("invite") === "true" && (
-          <Box mt={2}>
-            <PasswordInput
-              placeholder="Enter new password"
-              size="lg"
-              {...form.register("new_password", { required: true })}
-              isInvalid={errors?.password}
-            />
-          </Box>
-        ))}
+      {shouldShowPassword && (
+        <Box mt={2}>
+          <PasswordInput
+            placeholder="Enter new password"
+            size="lg"
+            {...mainForm.register("new_password", {required: true})}
+            isInvalid={errors?.password}
+          />
+        </Box>
+      )}
 
-      <TypesComponent guid={guid} form={form} />
+      <TypesComponent
+        client_type_id={client_type_id}
+        guid={guid}
+        form={mainForm}
+      />
     </>
   );
 };
 
-const TypesComponent = ({ form, disabledOptionName, guid }) => {
+const TypesComponent = ({form, disabledOptionName, guid, client_type_id}) => {
+  const project_id = useSelector((state) => state.auth.projectId);
+  const {data: fieldsData} = useFieldsListQuery(
+    {
+      queryParams: {
+        enabled: Boolean(client_type_id?.table_slug),
+      },
+      params: {
+        table_slug: client_type_id?.table_slug,
+        "project-id": project_id,
+      },
+    },
+    client_type_id?.table_slug
+  );
+
+  const computedFields = useMemo(() => {
+    return fieldsData?.fields?.filter((item) =>
+      client_type_id?.columns?.includes(item?.id)
+    );
+  }, [fieldsData, client_type_id]);
+
   return (
-    <Box
-      sx={{
-        marginTop: "7px",
-        flexWrap: "wrap",
-        gap: "15px",
-        paddingTop: "10px",
-        // padding: "15px",
-        // border: "1px solid #eee",
-        // borderRadius: "8px",
-        // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-    >
+    <>
       <Box
         sx={{
-          fontSize: "13px",
-          fontWeight: 600,
-          color: "#91918E",
-        }}
-      >
-        User Info
-      </Box>
-      <Box mt={2}>
-        <UserType
-          disabledOptionName={disabledOptionName}
-          placeholder="User type"
-          form={form}
-          control={form.control}
-        />
-      </Box>
-      <Box mt={2}>
-        <Role
-          placeholder="Role"
-          form={form}
-          control={form.control}
-          disabledRoleOptionName={"DEFAULT ADMIN"}
-        />
-      </Box>
-      {Boolean(guid) && (
-        <Box mt={2}>
-          <Statuses placeholder="Status" form={form} control={form.control} />
+          marginTop: "7px",
+          flexWrap: "wrap",
+          gap: "15px",
+          paddingTop: "10px",
+        }}>
+        <Box
+          sx={{
+            fontSize: "13px",
+            fontWeight: 600,
+            color: "#91918E",
+          }}>
+          User Info
         </Box>
-      )}
-    </Box>
+        <Box mt={2}>
+          <UserType
+            disabledOptionName={disabledOptionName}
+            placeholder="User type"
+            form={form}
+            control={form.control}
+          />
+        </Box>
+        <Box mt={2}>
+          <Role
+            placeholder="Role"
+            form={form}
+            control={form.control}
+            disabledRoleOptionName={"DEFAULT ADMIN"}
+          />
+        </Box>
+        {computedFields?.map((item) => (
+          <Box mt={2} mb={2}>
+            <p
+              style={{
+                color: "#91918E",
+                fontWeight: "600",
+                margin: "6px 0px",
+                fontSize: "14px",
+              }}>
+              {item?.label}
+            </p>
+            <Box
+              sx={{
+                border: "1px solid #eee",
+                borderRadius: "6px",
+                height: "34px",
+              }}>
+              <DrawerFieldGenerator
+                drawerDetail={true}
+                field={item}
+                name={item?.slug}
+                control={form.control}
+                setFormValue={form.setValue}
+              />
+            </Box>
+          </Box>
+        ))}
+
+        {Boolean(guid) && (
+          <Box mt={2}>
+            <Statuses placeholder="Status" form={form} control={form.control} />
+          </Box>
+        )}
+      </Box>
+    </>
   );
 };
 
-const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
+const UserType = ({control, placeholder = "", form, disabledOptionName}) => {
   const useClientTypesQuery = () =>
     useQuery({
       queryKey: ["GET_CLIENT_TYPES"],
@@ -515,14 +604,14 @@ const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
     <Controller
       name="client_type_id"
       control={control}
-      render={({ field }) => (
+      render={({field}) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={clientTypes}
-          getOptionLabel={({ name }) => name}
-          getOptionValue={({ guid }) => guid}
+          getOptionLabel={({name}) => name}
+          getOptionValue={({guid}) => guid}
           menuPlacement="top"
           size="lg"
           isOptionDisabled={(option) => option?.name === disabledOptionName}
@@ -532,13 +621,13 @@ const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
   );
 };
 
-const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
-  const clientTypeId = useWatch({ control, name: "client_type_id" });
+const Role = ({control, placeholder = "", form, disabledRoleOptionName}) => {
+  const clientTypeId = useWatch({control, name: "client_type_id"});
   const id =
     typeof clientTypeId === "string" ? clientTypeId : clientTypeId?.guid;
   const rolesQuery = useRoleListQuery({
-    params: id ? { "client-type-id": id } : {},
-    queryParams: { enabled: Boolean(id) },
+    params: id ? {"client-type-id": id} : {},
+    queryParams: {enabled: Boolean(id)},
   });
   const roles = rolesQuery.data?.data?.response ?? [];
 
@@ -555,14 +644,14 @@ const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
     <Controller
       name="role_id"
       control={control}
-      render={({ field }) => (
+      render={({field}) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={roles}
-          getOptionLabel={({ name }) => name}
-          getOptionValue={({ guid }) => guid}
+          getOptionLabel={({name}) => name}
+          getOptionValue={({guid}) => guid}
           isOptionDisabled={(option) => option?.name === disabledRoleOptionName}
           menuPlacement="top"
           size="lg"
@@ -572,7 +661,7 @@ const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
   );
 };
 
-const Statuses = ({ control, placeholder = "", form }) => {
+const Statuses = ({control, placeholder = "", form}) => {
   const options = [
     {
       label: "Active",
@@ -604,14 +693,14 @@ const Statuses = ({ control, placeholder = "", form }) => {
     <Controller
       name="status"
       control={control}
-      render={({ field }) => (
+      render={({field}) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={(e) => field.onChange(e?.value)}
           options={options}
-          getOptionLabel={({ label }) => label}
-          getOptionValue={({ value }) => value}
+          getOptionLabel={({label}) => label}
+          getOptionValue={({value}) => value}
           menuPlacement="top"
           size="lg"
           defaultValue={options[0]}

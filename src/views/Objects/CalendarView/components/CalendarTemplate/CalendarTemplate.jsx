@@ -38,6 +38,7 @@ export const CalendarTemplate = ({ relationView }) => {
     monthRefs,
     defaultValue,
     dateInfo,
+    handleOpen,
   } = useCalendarTemplateProps();
 
   return (
@@ -133,7 +134,7 @@ export const CalendarTemplate = ({ relationView }) => {
                             fieldsMap={fieldsMap}
                             data={el}
                             viewFields={viewFields}
-                            navigateToEditPage={navigateToEditPage}
+                            navigateToEditPage={handleOpen}
                           />
                         ) : null
                       )}

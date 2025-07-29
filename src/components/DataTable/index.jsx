@@ -404,7 +404,7 @@ const DataTable = ({
                             color="success"
                             className="mr-1"
                             size="small"
-                            onClick={() => onEditClick(row, rowIndex)}
+                            onClick={(e) => onEditClick(row, rowIndex, e)}
                           >
                             <Edit color="success" />
                           </RectangleIconButton>
@@ -438,8 +438,8 @@ const DataTable = ({
                             disabled={
                               isDisabledEdit ? isDisabledEdit(row) : false
                             }
-                            onClick={() => {
-                              onEditClick(row, rowIndex);
+                            onClick={(e) => {
+                              onEditClick(row, rowIndex, e);
                               setSelectedField(row);
                             }}
                           >

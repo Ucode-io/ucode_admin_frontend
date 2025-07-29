@@ -1,0 +1,15 @@
+.langButton {
+  height: 100%;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0%;
+}
+
+.langButtonInner {
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+}

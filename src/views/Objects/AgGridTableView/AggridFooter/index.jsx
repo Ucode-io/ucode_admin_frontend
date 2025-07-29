@@ -7,6 +7,8 @@ import {useParams, useSearchParams} from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {useTranslation} from "react-i18next";
+import {paginationActions} from "../../../../store/pagination/pagination.slice";
+import {useDispatch} from "react-redux";
 
 function AggridFooter({
   view,
@@ -22,10 +24,13 @@ function AggridFooter({
   updateTreeData = () => {},
   onChange = () => {},
 }) {
-  const {tableSlug, appId} = useParams();
+  const dispatch = useDispatch();
+  const {tableSlug: tableSlugFromParams, appId, menuId: menuID} = useParams();
+  const tableSlug = tableSlugFromParams ?? view?.table_slug;
+
   const {navigateToForm} = useTabRouter();
   const [searchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
+  const menuId = searchParams.get("menuId") ?? menuID;
   const {i18n, t} = useTranslation();
 
   const options = [
@@ -71,6 +76,13 @@ function AggridFooter({
                   limit: e.target.value,
                   offset: 0,
                 });
+
+                dispatch(
+                  paginationActions.setTablePages({
+                    tableSlug: tableSlug,
+                    pageLimit: e.target.value,
+                  })
+                );
               }}
               inputProps={{style: {borderRadius: 50}}}
               style={{fontWeight: "600", color: "#344054"}}

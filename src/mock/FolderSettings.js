@@ -11,4 +11,8 @@ export const LoginStrategy = [
     value: "login",
     label: "Login",
   },
+  {
+    value: "e-imzo",
+    label: "E-Imzo",
+  },
 ];

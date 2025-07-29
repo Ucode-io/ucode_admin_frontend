@@ -127,6 +127,10 @@ function AgGridTableView(props) {
     ? view?.relation_table_slug
     : (tableSlugFromParams ?? view?.table_slug);
 
+  const paginationInfo = useSelector(
+    (state) => state?.pagination?.paginationInfo
+  );
+
   const {i18n, t} = useTranslation();
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -164,6 +168,14 @@ function AgGridTableView(props) {
       ? parseInt(searchText)
       : searchText;
 
+  const paginiation = useMemo(() => {
+    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
+
+    return getObject?.pageLimit ?? limit;
+  }, [paginationInfo, tableSlug]);
+
+  console.log("paginiationpaginiation", paginiation, tableSlug);
+
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
   const {data: tabs} = useQuery(queryGenerator(groupField, filters));
 
@@ -174,7 +186,7 @@ function AgGridTableView(props) {
         tableSlug,
         filters: {
           offset,
-          limit,
+          paginiation,
           ...filters,
           searchText,
           [groupTab?.slug]: groupTab?.value,
@@ -185,7 +197,7 @@ function AgGridTableView(props) {
       constructorObjectService.getListV2(tableSlug, {
         data: {
           ...filters,
-          limit,
+          limit: paginiation ?? limit,
           search: tableSearch,
           view_fields: checkedColumns,
           [groupTab?.slug]: groupTab
@@ -655,7 +667,7 @@ function AgGridTableView(props) {
                   suppressRefresh={true}
                   enableClipboard={true}
                   groupDisplayType="single"
-                  paginationPageSize={limit}
+                  paginationPageSize={paginiation ?? limit}
                   undoRedoCellEditing={true}
                   rowSelection={rowSelection}
                   rowModelType={"clientSide"}
@@ -684,7 +696,7 @@ function AgGridTableView(props) {
 
       <AggridFooter
         view={view}
-        limit={limit}
+        limit={paginiation ?? limit}
         count={count}
         rowData={rowData}
         refetch={refetch}

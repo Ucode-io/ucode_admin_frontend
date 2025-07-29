@@ -41,10 +41,6 @@ import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import userService from "../../services/userService";
 import useDebounce from "../../hooks/useDebounce";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
-import FormElementGenerator from "../ElementGenerators/FormElementGenerator";
-import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
-import CellElementGeneratorForTable from "../ElementGenerators/CellElementGeneratorForTable";
-import CellElementGeneratorForTableView from "../ElementGenerators/CellElementGeneratorForTableView";
 import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 
 function InviteModal({
@@ -57,20 +53,23 @@ function InviteModal({
   selectedClientType,
 }) {
   const finalRef = useRef(null);
-  const {i18n} = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const project_id = useSelector((state) => state.auth.projectId);
   const env_id = useSelector((state) => state.auth?.environmentId);
+  const [userId, setUserId] = useState("");
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [allowPassword, setAllowPassword] = useState("noShow");
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
+  const clientId = mainForm.watch().client_type_id?.guid;
+  const roleId = mainForm.watch().role_id?.guid;
 
   const handleClose = () => {
     onClose();
     setSearchParams({});
+    setTabIndex(0);
     mainForm.reset({});
   };
 
@@ -107,6 +106,11 @@ function InviteModal({
       project_id,
       status: data?.status || "ACTIVE",
     };
+
+    // if (Boolean(allowPassword === "noShow") && Boolean(userId)) {
+    //   setLoading(false);
+    //   return null;
+    // } else
 
     if (Boolean(guid)) {
       updateMutation.mutate(data);
@@ -174,6 +178,7 @@ function InviteModal({
       .then((res) => {
         if (Boolean(res?.user_id)) {
           setAllowPassword("noShow");
+          setUserId(res?.user_id);
         }
       })
       .catch((err) => {
@@ -198,145 +203,158 @@ function InviteModal({
           <ModalContent borderRadius={"12px"} maxW={"500px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
-            {/* {selectedClientType?.name !== "DEFAULT ADMIN" && (
-              <Button onClick={copyToClipboard} className={styles.copyButton}>
-                <LinkIcon
-                  style={{ transform: "rotate(140deg)", color: "#A09F9D" }}
-                />
-                Invite Link
-              </Button>
-            )} */}
 
             <ModalBody>
-              <Tabs
-                index={tabIndex}
-                onChange={onTabChange}
-                className={styles.react_tab}>
-                <Box display="flex" justifyContent={"space-between"}>
-                  <TabList borderBottom={"none"}>
-                    <Flex
-                      p={"4px"}
-                      bg={"#f9fafb"}
-                      borderRadius={"8px"}
-                      h={"32px"}
-                      mb={"5px"}
-                      border={"1px solid #EAECF0"}>
-                      <Tab
-                        className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                        Login
-                      </Tab>
-                      <Tab
-                        className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                        Phone
-                      </Tab>
-                      <Tab
-                        className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                        Email
-                      </Tab>
-                      <Tab
-                        className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                        Invite Link
-                      </Tab>
-                    </Flex>
-                  </TabList>
-                  {tabIndex === 3 &&
-                    mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
-                      <Button
-                        onClick={copyToClipboard}
-                        className={styles.copyButton}
-                        isDisabled={
-                          !mainForm.watch("client_type_id") ||
-                          !mainForm.watch("role_id")
-                        }>
-                        <LinkIcon
-                          style={{
-                            transform: "rotate(140deg)",
-                            color: "#A09F9D",
-                          }}
+              <>
+                {tabIndex === 3 &&
+                  mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
+                    <Button
+                      onClick={copyToClipboard}
+                      className={styles.copyButton}
+                      isDisabled={
+                        !mainForm.watch("client_type_id") ||
+                        !mainForm.watch("role_id")
+                      }>
+                      <LinkIcon
+                        style={{
+                          transform: "rotate(140deg)",
+                          color: "#A09F9D",
+                        }}
+                      />
+                      Invite Link
+                    </Button>
+                  )}
+                <UserInfo form={mainForm} />
+                {Boolean(clientId && roleId) && (
+                  <Tabs
+                    index={tabIndex}
+                    onChange={onTabChange}
+                    className={styles.react_tab}>
+                    <Box display="flex" alignItems={"flex-end"}>
+                      <TabList borderBottom={"none"} marginLeft={"auto"}>
+                        <Flex
+                          p={"4px"}
+                          bg={"#f9fafb"}
+                          borderRadius={"8px"}
+                          h={"32px"}
+                          mb={"5px"}
+                          border={"1px solid #EAECF0"}>
+                          <Tab
+                            className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                            Login
+                          </Tab>
+                          <Tab
+                            className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                            Phone
+                          </Tab>
+                          <Tab
+                            className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                            Email
+                          </Tab>
+                          <Tab
+                            className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                            Invite Link
+                          </Tab>
+                        </Flex>
+                      </TabList>
+                    </Box>
+                    <TabPanels>
+                      <TabPanel minH={"100px"} mt={0} p={"0"}>
+                        <LoginForm
+                          guid={guid}
+                          userId={userId}
+                          mainForm={mainForm}
+                          allowPassword={allowPassword}
+                          setAllowPassword={setAllowPassword}
+                          checkUser={checkUser}
                         />
-                        Invite Link
-                      </Button>
-                    )}
-                </Box>
-                <TabPanels>
-                  <TabPanel minH={"300px"} mt={0} p={"0"}>
-                    <LoginForm
-                      guid={guid}
-                      mainForm={mainForm}
-                      allowPassword={allowPassword}
-                      setAllowPassword={setAllowPassword}
-                      checkUser={checkUser}
-                    />
-                  </TabPanel>
-                  <TabPanel minH={"300px"} mt={0} p={"0"}>
-                    <Controller
-                      name="phone"
-                      control={mainForm.control}
-                      render={({field}) => (
-                        <Box
-                          mt={2}
-                          px={"0px"}
-                          style={{
-                            ".PhoneInput": {
-                              display: "flex",
-                              alignItems: "center",
-                              border: "1px solid",
-                              borderColor: "gray.200",
-                              borderRadius: "md",
-                              _focusWithin: {
-                                borderColor: "#007AFF",
-                                boxShadow: "0 0 0 1px #007AFF",
-                              },
-                              transition: "box-shadow 200ms",
-                            },
-                            ".PhoneInputCountry": {
-                              ml: "12.8px",
-                            },
-                            ".PhoneInputCountrySelect": {
-                              px: 3,
-                              pr: 8,
-                              height: "full",
-                              borderRight: "1px solid",
-                              borderColor: "inherit",
-                              bg: "transparent",
-                              _hover: {bg: "gray.50"},
-                              _focus: {outline: "none"},
-                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
-                              backgroundRepeat: "no-repeat",
-                              backgroundPosition: "right 0.5rem center",
-                              backgroundSize: "1.5em",
-                            },
-                            ".PhoneInputInput": {
-                              border: "none !important",
-                              boxShadow: "none !important",
-                              _focus: {boxShadow: "none !important"},
-                            },
-                          }}>
-                          <PhoneNumberInput
-                            numberInputProps={{
-                              size: "lg",
-                              isInvalid: errors?.phone,
-                            }}
-                            defaultCountry="UZ"
-                            international
-                            value={field.value}
-                            onChange={field.onChange}
-                            inputComponent={Input}
-                            limitMaxLength={true}
-                          />
-                        </Box>
-                      )}
-                    />
-                    <TypesComponent guid={guid} form={mainForm} />
-                  </TabPanel>
-                  <TabPanel p={"0"} minH={"300px"}>
-                    <EmailComponent guid={guid} form={mainForm} />
-                  </TabPanel>
-                  <TabPanel p={"0"} minH={"300px"}>
-                    <LinkComponent guid={guid} form={mainForm} />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                      </TabPanel>
+                      <TabPanel minH={"100px"} mt={0} p={"0"}>
+                        <Controller
+                          name="phone"
+                          control={mainForm.control}
+                          render={({field}) => (
+                            <Box
+                              mt={2}
+                              px={"0px"}
+                              style={{
+                                ".PhoneInput": {
+                                  display: "flex",
+                                  alignItems: "center",
+                                  border: "1px solid",
+                                  borderColor: "gray.200",
+                                  borderRadius: "md",
+                                  _focusWithin: {
+                                    borderColor: "#007AFF",
+                                    boxShadow: "0 0 0 1px #007AFF",
+                                  },
+                                  transition: "box-shadow 200ms",
+                                },
+                                ".PhoneInputCountry": {
+                                  ml: "12.8px",
+                                },
+                                ".PhoneInputCountrySelect": {
+                                  px: 3,
+                                  pr: 8,
+                                  height: "full",
+                                  borderRight: "1px solid",
+                                  borderColor: "inherit",
+                                  bg: "transparent",
+                                  _hover: {bg: "gray.50"},
+                                  _focus: {outline: "none"},
+                                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                  backgroundRepeat: "no-repeat",
+                                  backgroundPosition: "right 0.5rem center",
+                                  backgroundSize: "1.5em",
+                                },
+                                ".PhoneInputInput": {
+                                  border: "none !important",
+                                  boxShadow: "none !important",
+                                  _focus: {boxShadow: "none !important"},
+                                },
+                              }}>
+                              <PhoneNumberInput
+                                numberInputProps={{
+                                  size: "lg",
+                                  isInvalid: errors?.phone,
+                                }}
+                                defaultCountry="UZ"
+                                international
+                                value={field.value}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  checkUser("phone", e);
+                                }}
+                                inputComponent={Input}
+                                limitMaxLength={true}
+                              />
+                            </Box>
+                          )}
+                        />
+                        <TypesComponent
+                          guid={guid}
+                          form={mainForm}
+                          client_type_id={mainForm?.watch()?.client_type_id}
+                        />
+                      </TabPanel>
+                      <TabPanel p={"0"} minH={"100px"}>
+                        <EmailComponent
+                          checkUser={checkUser}
+                          guid={guid}
+                          form={mainForm}
+                        />
+                      </TabPanel>
+                      <TabPanel p={"0"} minH={"100px"}>
+                        <LinkComponent
+                          checkUser={checkUser}
+                          guid={guid}
+                          form={mainForm}
+                        />
+                      </TabPanel>
+                    </TabPanels>
+                  </Tabs>
+                )}
+              </>
             </ModalBody>
             <ModalFooter>
               <Box>
@@ -393,6 +411,7 @@ const PasswordInput = forwardRef(
 
 const EmailComponent = ({form, placeholder = "Email", guid}) => {
   const errors = form.formState.errors;
+  const client_type_id = form.watch()?.client_type_id;
   return (
     <Box mt={2}>
       <Input
@@ -402,21 +421,23 @@ const EmailComponent = ({form, placeholder = "Email", guid}) => {
         {...form.register("email")}
         isInvalid={errors?.email}
       />
-      <TypesComponent guid={guid} form={form} />
+      <TypesComponent client_type_id={client_type_id} guid={guid} form={form} />
     </Box>
   );
 };
 
 const LinkComponent = ({form, placeholder = "Link", guid}) => {
+  const client_type_id = form.watch()?.client_type_id;
   return (
     <Box mt={2}>
-      <TypesComponent guid={guid} form={form} />
+      <TypesComponent client_type_id={client_type_id} guid={guid} form={form} />
     </Box>
   );
 };
 
 const LoginForm = ({
   mainForm,
+  userId = "",
   placeholder = "",
   allowPassword = "",
   guid,
@@ -448,6 +469,17 @@ const LoginForm = ({
             checkUser("login", e.target.value);
           }}
         />
+        {allowPassword === "noShow" && Boolean(userId) && (
+          <span
+            style={{
+              width: "100%",
+              margin: "0 0 0 10px",
+              color: "#91918e",
+              fontSize: "10px",
+            }}>
+            {"The user already exists!"}
+          </span>
+        )}
       </Box>
       <Flex w={"100%"}>
         {!changePassword && Boolean(guid) && (
@@ -486,7 +518,7 @@ const LoginForm = ({
   );
 };
 
-const TypesComponent = ({form, disabledOptionName, guid, client_type_id}) => {
+const TypesComponent = ({form, guid, client_type_id}) => {
   const project_id = useSelector((state) => state.auth.projectId);
   const {data: fieldsData} = useFieldsListQuery(
     {
@@ -516,30 +548,6 @@ const TypesComponent = ({form, disabledOptionName, guid, client_type_id}) => {
           gap: "15px",
           paddingTop: "10px",
         }}>
-        <Box
-          sx={{
-            fontSize: "13px",
-            fontWeight: 600,
-            color: "#91918E",
-          }}>
-          User Info
-        </Box>
-        <Box mt={2}>
-          <UserType
-            disabledOptionName={disabledOptionName}
-            placeholder="User type"
-            form={form}
-            control={form.control}
-          />
-        </Box>
-        <Box mt={2}>
-          <Role
-            placeholder="Role"
-            form={form}
-            control={form.control}
-            disabledRoleOptionName={"DEFAULT ADMIN"}
-          />
-        </Box>
         {computedFields?.map((item) => (
           <Box mt={2} mb={2}>
             <p
@@ -612,9 +620,10 @@ const UserType = ({control, placeholder = "", form, disabledOptionName}) => {
           options={clientTypes}
           getOptionLabel={({name}) => name}
           getOptionValue={({guid}) => guid}
-          menuPlacement="top"
-          size="lg"
+          menuPlacement="bottom"
           isOptionDisabled={(option) => option?.name === disabledOptionName}
+          height="20px"
+          borderRadius="12px"
         />
       )}
     />
@@ -653,11 +662,50 @@ const Role = ({control, placeholder = "", form, disabledRoleOptionName}) => {
           getOptionLabel={({name}) => name}
           getOptionValue={({guid}) => guid}
           isOptionDisabled={(option) => option?.name === disabledRoleOptionName}
-          menuPlacement="top"
-          size="lg"
+          menuPlacement="bottom"
+          borderRadius="12px"
         />
       )}
     />
+  );
+};
+
+const UserInfo = ({form, disabledOptionName}) => {
+  return (
+    <Box mb={4}>
+      <Box
+        sx={{
+          fontSize: "13px",
+          fontWeight: 600,
+          color: "#91918E",
+        }}>
+        User Info
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "10px",
+        }}>
+        <Box mt={2} w={"100%"}>
+          <UserType
+            disabledOptionName={disabledOptionName}
+            placeholder="User type"
+            form={form}
+            control={form.control}
+          />
+        </Box>
+        <Box mt={2} w="100%">
+          <Role
+            placeholder="Role"
+            form={form}
+            control={form.control}
+            disabledRoleOptionName={"DEFAULT ADMIN"}
+          />
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

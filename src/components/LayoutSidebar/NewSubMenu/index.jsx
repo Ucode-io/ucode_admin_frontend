@@ -68,7 +68,7 @@ function NewSubMenu({
     height: "32px",
     marginTop: "5px",
   };
-console.log(menuChilds?.[element?.id]?.children?.length);
+
   return (
     <div
       className={``}

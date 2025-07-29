@@ -1,0 +1,15 @@
+.closeButton {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+
+  & span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background-color: #F5F5F5;
+  }
+}

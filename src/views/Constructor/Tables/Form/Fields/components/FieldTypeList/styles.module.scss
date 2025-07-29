@@ -1,0 +1,31 @@
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: #101828;
+}
+
+.label {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  color: #101828;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(243, 243, 243, 0.5);
+  }
+}
+
+.item.active {
+  background-color: rgba(243, 243, 243, 0.5);
+}

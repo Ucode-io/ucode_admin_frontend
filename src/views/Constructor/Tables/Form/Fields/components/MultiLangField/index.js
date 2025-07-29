@@ -1,0 +1,1 @@
+export { MultiLangField } from "./MultiLangField";

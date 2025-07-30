@@ -1,4 +1,10 @@
 import {
+  useUserCreateMutation,
+  useUserGetByIdQuery,
+  useUserUpdateMutation,
+} from "@/services/auth/userService";
+import {useRoleListQuery} from "@/services/roleServiceV2";
+import {
   Box,
   Button,
   Flex,
@@ -18,30 +24,22 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
-import {useTranslation} from "react-i18next";
-import {Controller, useForm, useWatch} from "react-hook-form";
-import styles from "./style.module.scss";
-import {Select} from "chakra-react-select";
-import {useRoleListQuery} from "@/services/roleServiceV2";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
+import LinkIcon from "@mui/icons-material/Link";
+import {Select} from "chakra-react-select";
+import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {Controller, useForm, useWatch} from "react-hook-form";
 import PhoneNumberInput from "react-phone-number-input";
-import {
-  useUserCreateMutation,
-  useUserGetByIdQuery,
-  useUserUpdateMutation,
-} from "@/services/auth/userService";
+import {useQuery} from "react-query";
 import {useSelector} from "react-redux";
 import {useSearchParams} from "react-router-dom";
-import LinkIcon from "@mui/icons-material/Link";
 import {toast} from "react-toastify";
-import {useQuery} from "react-query";
-import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import userService from "../../services/userService";
 import useDebounce from "../../hooks/useDebounce";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import {useFieldsListQuery} from "../../services/constructorFieldService";
+import userService from "../../services/userService";
 import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
+import styles from "./style.module.scss";
 
 function InviteModal({
   userInviteLan,
@@ -53,8 +51,6 @@ function InviteModal({
   selectedClientType,
   invite: inviteProps,
 }) {
-  const dispatch = useDispatch();
-
   const finalRef = useRef(null);
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);

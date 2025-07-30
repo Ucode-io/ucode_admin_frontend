@@ -20,6 +20,14 @@ import SaveButton from "../../../../components/Buttons/SaveButton";
 import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 import {useFieldsListQuery} from "../../../../services/constructorFieldService";
 
+const noPermittedFields = [
+  "guid",
+  "folder_id",
+  "client_type_id",
+  "role_id",
+  " user_id_auth",
+];
+
 export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const company = store.getState().company;
   const queryClient = useQueryClient();
@@ -117,10 +125,12 @@ export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   }, [projectTables]);
 
   const computedFieldsListOptions = useMemo(() => {
-    return fieldsData?.fields?.map((field) => ({
-      label: field?.label || field?.view_fields?.[0]?.label,
-      value: field?.id,
-    }));
+    return fieldsData?.fields
+      ?.filter((el) => !noPermittedFields?.includes(el?.slug))
+      ?.map((field) => ({
+        label: field?.label || field?.view_fields?.[0]?.label,
+        value: field?.id,
+      }));
   }, [fieldsData]);
 
   return (

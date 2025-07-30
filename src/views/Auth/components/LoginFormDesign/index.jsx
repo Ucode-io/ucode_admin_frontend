@@ -423,7 +423,7 @@ const LoginFormDesign = ({
   }, [connectionCheck, getFormValue?.tables]);
 
   return (
-    <Box sx={{ height: "100%" }}>
+    <Box sx={{height: "100%"}}>
       {Boolean(
         formType !== "REGISTER" &&
           formType !== "OTP" &&
@@ -446,11 +446,10 @@ const LoginFormDesign = ({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
           <Tabs
-            style={{ height: "100%" }}
+            style={{height: "100%"}}
             selected={selectedTabIndex}
             direction={"ltr"}
-            onSelect={(index) => setSelectedTabIndex(index)}
-          >
+            onSelect={(index) => setSelectedTabIndex(index)}>
             {formType === "OTP" ? (
               <PhoneOtpInput
                 watch={watch}
@@ -470,31 +469,27 @@ const LoginFormDesign = ({
                   marginTop: "20px",
                   display: "flex",
                   flexDirection: "column",
-                }}
-              >
+                }}>
                 <TabList>
                   <Tab
                     onClick={() => setFormType("LOGIN")}
-                    style={{ padding: "10px 8px 10px 8px" }}
-                  >
+                    style={{padding: "10px 8px 10px 8px"}}>
                     {t("login")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("phone")}
-                    style={{ padding: "10px 12px 10px 12px" }}
-                  >
+                    style={{padding: "10px 12px 10px 12px"}}>
                     {t("phone")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("email")}
-                    style={{ padding: "10px 12px 10px 12px" }}
-                  >
+                    style={{padding: "10px 12px 10px 12px"}}>
                     {t("email.address")}
                   </Tab>
                 </TabList>
 
-                <div className={classes.formArea} style={{ marginTop: "10px" }}>
-                  <TabPanel style={{ height: "calc(100% - 50px)" }}>
+                <div className={classes.formArea} style={{marginTop: "10px"}}>
+                  <TabPanel style={{height: "calc(100% - 50px)"}}>
                     <LoginTab
                       loading={loading}
                       setFormType={setFormType}
@@ -547,8 +542,7 @@ const LoginFormDesign = ({
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             backdropFilter: "blur(5px)",
           },
-        }}
-      >
+        }}>
         <LoginCompaniesList
           computedProjects={computedProjects}
           computedCompanies={computedCompanies}
@@ -569,14 +563,13 @@ const LoginFormDesign = ({
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{ marginTop: "20px" }}
+          style={{marginTop: "20px"}}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"
               ? setFormType("LOGIN")
               : setFormType("RESET_PASSWORD");
-          }}
-        >
+          }}>
           Back to login
         </SecondaryButton>
       )}

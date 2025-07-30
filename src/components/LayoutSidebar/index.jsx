@@ -1,9 +1,9 @@
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { Container } from "react-smooth-dnd";
+import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {useQuery, useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {Container} from "react-smooth-dnd";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
@@ -15,24 +15,24 @@ import menuService, {
   useMenuGetByIdQuery,
   useMenuListQuery,
 } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import {
   useProjectGetByIdQuery,
   useProjectListQuery,
 } from "../../services/projectService";
-import { store } from "../../store";
-import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
+import {store} from "../../store";
+import {mainActions} from "../../store/main/main.slice";
+import {applyDrag} from "../../utils/applyDrag";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import AppSidebar from "./AppSidebarComponent";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
-import { useNavigate, useParams } from "react-router-dom";
-import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
-import { useChatwoot } from "../ProfilePanel/Chatwoot";
+import {useNavigate, useParams} from "react-router-dom";
+import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
+import {useChatwoot} from "../ProfilePanel/Chatwoot";
 import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {
@@ -57,33 +57,36 @@ import {
 } from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import InviteModal from "@/components/InviteModal/InviteModal";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useCompanyListQuery } from "@/services/companyService";
+import {useCompanyListQuery} from "@/services/companyService";
 import {
   AccordionButton,
   AccordionIcon,
   SearchIcon,
   SettingsIcon,
 } from "@chakra-ui/icons";
-import { useEnvironmentListQuery } from "@/services/environmentService";
-import { companyActions } from "@/store/company/company.slice";
+import {useEnvironmentListQuery} from "@/services/environmentService";
+import {companyActions} from "@/store/company/company.slice";
 import authService from "@/services/auth/authService";
-import { authActions } from "@/store/auth/auth.slice";
+import {authActions} from "@/store/auth/auth.slice";
 import InlineSVG from "react-inlinesvg";
-import { Logout } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
-import { Modal, Skeleton } from "@mui/material";
+import {Logout} from "@mui/icons-material";
+import {useTranslation} from "react-i18next";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {Dialog, Modal, Skeleton} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { clearDB, getAllFromDB } from "../../utils/languageDB";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import { GreyLoader } from "../Loaders/GreyLoader";
-import { differenceInCalendarDays, parseISO } from "date-fns";
+import {clearDB, getAllFromDB} from "../../utils/languageDB";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {GreyLoader} from "../Loaders/GreyLoader";
+import {differenceInCalendarDays, parseISO} from "date-fns";
 import DocsChatwootModal from "./DocsChatwootModal";
-import { menuAccordionActions } from "../../store/menus/menus.slice";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
 import UserIcon from "@/assets/icons/profile.svg";
-import { useRoleListQuery } from "../../services/roleServiceV2";
-import { useClientTypesQuery } from "../../views/client-types/utils";
+import {useRoleListQuery} from "../../services/roleServiceV2";
+import {useClientTypesQuery} from "../../views/client-types/utils";
 import useSearchParams from "../../hooks/useSearchParams";
+import connectionServiceV2 from "../../services/auth/connectionService";
+import DynamicConnections from "./DynamicConnections";
+import {useForm} from "react-hook-form";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -94,13 +97,13 @@ const LayoutSidebar = ({
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const { appId } = useParams();
+  const {appId} = useParams();
 
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
   const projectId = store.getState().company.projectId;
 
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState(null);
@@ -119,9 +122,9 @@ const LayoutSidebar = ({
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  const [menu, setMenu] = useState({ event: "", type: "", root: false });
+  const [menu, setMenu] = useState({event: "", type: "", root: false});
   const openSidebarMenu = Boolean(menu?.event);
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
@@ -134,11 +137,11 @@ const LayoutSidebar = ({
     dispatch(mainActions.setSubMenuIsOpen(val));
   };
 
-  const { data: menuById } = useMenuGetByIdQuery({
+  const {data: menuById} = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
       template_id:
         menuById?.attributes?.menu_settings_id ||
@@ -152,7 +155,7 @@ const LayoutSidebar = ({
   const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
   const handleOpenNotify = (event, type, root) => {
-    setMenu({ event: event?.currentTarget, type: type, root: root });
+    setMenu({event: event?.currentTarget, type: type, root: root});
   };
   const handleCloseNotify = () => {
     setMenu(null);
@@ -254,7 +257,7 @@ const LayoutSidebar = ({
       });
   };
 
-  const { isLoadingUser } = useQuery(
+  const {isLoadingUser} = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -280,7 +283,7 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
-    const { removedIndex, addedIndex, payload } = dropResult;
+    const {removedIndex, addedIndex, payload} = dropResult;
 
     // if dropped inside
     if (addedIndex == null && typeof removedIndex === "number" && payload) {
@@ -290,7 +293,7 @@ const LayoutSidebar = ({
       typeof addedIndex === "number" &&
       payload
     ) {
-      const addedData = { ...payload };
+      const addedData = {...payload};
       addedData.parent_id = menuList?.[0]?.parent_id;
       if (addedData) {
         menuService.update(addedData).then(() => {
@@ -342,7 +345,7 @@ const LayoutSidebar = ({
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -412,12 +415,6 @@ const LayoutSidebar = ({
     setIsOpenInviteModal(false);
   };
 
-  // const {
-  // isOpen: isOpenInviteModal,
-  // onOpen: onOpenInviteModal,
-  // onClose: onCloseInviteModal,
-  // } = useDisclosure();
-
   return (
     <>
       <Flex
@@ -428,8 +425,7 @@ const LayoutSidebar = ({
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
         bg={menuStyle?.background ?? "#fff"}
-        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}
-      >
+        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}>
         <Flex
           position="absolute"
           zIndex={999}
@@ -446,12 +442,11 @@ const LayoutSidebar = ({
           cursor="pointer"
           onClick={() =>
             dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))
-          }
-        >
+          }>
           {sidebarIsOpen ? (
-            <KeyboardDoubleArrowLeftIcon style={{ color: "#007aff" }} />
+            <KeyboardDoubleArrowLeftIcon style={{color: "#007aff"}} />
           ) : (
-            <KeyboardDoubleArrowRightIcon style={{ color: "#007aff" }} />
+            <KeyboardDoubleArrowRightIcon style={{color: "#007aff"}} />
           )}
         </Flex>
 
@@ -471,21 +466,18 @@ const LayoutSidebar = ({
           className="scrollbarNone"
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
-          overflowX="hidden"
-        >
+          overflowX="hidden">
           {Array.isArray(menuList) && (
             <div
               className="menu-element"
               onMouseLeave={() =>
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
-              }
-            >
+              }>
               <Container
                 dragHandleSelector=".column-drag-handle"
                 groupName="main-menu"
                 onDrop={onDrop}
-                getChildPayload={(index) => menuList[index]}
-              >
+                getChildPayload={(index) => menuList[index]}>
                 {menuList.map((element, index) => (
                   <AppSidebar
                     index={index}
@@ -525,7 +517,7 @@ const LayoutSidebar = ({
                     h={30}
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
+                    _hover={{bg: "#EAECF0"}}
                     cursor="pointer"
                     mx={8}
                     marginTop={"5px"}
@@ -533,15 +525,13 @@ const LayoutSidebar = ({
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
                     }}
-                    {...itemConditionalProps}
-                  >
+                    {...itemConditionalProps}>
                     <Flex
                       position="absolute"
                       w={32}
                       h={32}
                       alignItems="center"
-                      justifyContent="center"
-                    >
+                      justifyContent="center">
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
@@ -552,8 +542,7 @@ const LayoutSidebar = ({
                         "#475467"
                       }
                       pl={35}
-                      fontSize={14}
-                    >
+                      fontSize={14}>
                       {generateLangaugeText(
                         menuLanguages,
                         i18n?.language,
@@ -597,13 +586,11 @@ const LayoutSidebar = ({
                             dispatch(
                               mainActions.setSidebarHighlightedAction(null)
                             )
-                    }
-                  >
+                    }>
                     <SidebarActionTooltip id="ai-chat" title="AI Chat">
                       <AIChat
                         sidebarOpen={sidebarIsOpen}
-                        {...getActionProps("ai-chat")}
-                      >
+                        {...getActionProps("ai-chat")}>
                         <Flex w="100%" alignItems="center" gap={8}>
                           <Box pl="6px">
                             <SearchIcon color="#475467" fontSize={20} />
@@ -644,8 +631,7 @@ const LayoutSidebar = ({
                             dispatch(
                               mainActions.setSidebarHighlightedAction(null)
                             )
-                    }
-                  >
+                    }>
                     <SidebarActionTooltip id="settings" title="Settings">
                       <Flex
                         w={sidebarIsOpen ? "100%" : 36}
@@ -653,14 +639,12 @@ const LayoutSidebar = ({
                         justifyContent={sidebarIsOpen ? "flex-start" : "center"}
                         gap={8}
                         onClick={handleOpenProfileModal}
-                        {...getActionProps("settings")}
-                      >
+                        {...getActionProps("settings")}>
                         <Box
                           pl={sidebarIsOpen ? "5px" : 0}
                           display="flex"
                           alignItems="center"
-                          justifyContent="center"
-                        >
+                          justifyContent="center">
                           {/* <SettingsIcon color="#475467" fontSize={16} /> */}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -668,8 +652,7 @@ const LayoutSidebar = ({
                             y="0px"
                             width="20"
                             height="20"
-                            viewBox="0,0,256,256"
-                          >
+                            viewBox="0,0,256,256">
                             <g
                               fill="rgba(55, 53, 47, 0.85)"
                               fillRule="nonzero"
@@ -684,8 +667,7 @@ const LayoutSidebar = ({
                               fontWeight="none"
                               fontSize="none"
                               textAnchor="none"
-                              style={{ mixBlendMode: "normal" }}
-                            >
+                              style={{mixBlendMode: "normal"}}>
                               <g transform="scale(10.66667,10.66667)">
                                 <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
                               </g>
@@ -721,8 +703,7 @@ const LayoutSidebar = ({
               sidebarIsOpen
                 ? undefined
                 : () => dispatch(mainActions.setSidebarHighlightedAction(null))
-            }
-          >
+            }>
             {/* {Boolean(permissions?.settings) && ( */}
             <>
               <SidebarActionTooltip id="user-invite" title="User Invite">
@@ -741,8 +722,7 @@ const LayoutSidebar = ({
                     },
                   }}
                   // onClick={handleOpenUserInvite}
-                  onClick={onOpenInviteModal}
-                >
+                  onClick={onOpenInviteModal}>
                   {/* color: rgb(161, 160, 156) */}
                   {/* <img src={UserIcon} alt="user" /> */}
                   <svg
@@ -750,8 +730,7 @@ const LayoutSidebar = ({
                     height="20"
                     viewBox="0 0 20 20"
                     fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M7.63314 9.68341C7.60814 9.68341 7.59147 9.68341 7.56647 9.68341C7.5248 9.67508 7.46647 9.67508 7.41647 9.68341C4.9998 9.60841 3.1748 7.70841 3.1748 5.36675C3.1748 2.98341 5.11647 1.04175 7.4998 1.04175C9.88314 1.04175 11.8248 2.98341 11.8248 5.36675C11.8165 7.70841 9.98314 9.60841 7.65814 9.68341C7.6498 9.68341 7.64147 9.68341 7.63314 9.68341ZM7.4998 2.29175C5.80814 2.29175 4.4248 3.67508 4.4248 5.36675C4.4248 7.03341 5.7248 8.37508 7.38314 8.43341C7.43314 8.42508 7.54147 8.42508 7.64981 8.43341C9.28314 8.35841 10.5665 7.01675 10.5748 5.36675C10.5748 3.67508 9.19147 2.29175 7.4998 2.29175Z"
                       fill="rgb(161, 160, 156)"
@@ -770,7 +749,7 @@ const LayoutSidebar = ({
                     />
                   </svg>
                   {sidebarIsOpen ? (
-                    <span style={{ color: "rgb(161, 160, 156)" }}>
+                    <span style={{color: "rgb(161, 160, 156)"}}>
                       User Invite
                     </span>
                   ) : null}
@@ -888,8 +867,8 @@ const LayoutSidebar = ({
   );
 };
 
-const Chatwoot = forwardRef(({ open, ...props }, ref) => {
-  const { originalButtonFunction } = useChatwoot();
+const Chatwoot = forwardRef(({open, ...props}, ref) => {
+  const {originalButtonFunction} = useChatwoot();
 
   return (
     <Flex
@@ -899,18 +878,17 @@ const Chatwoot = forwardRef(({ open, ...props }, ref) => {
       alignItems="center"
       justifyContent="center"
       borderRadius={6}
-      _hover={{ bg: "#EAECF0" }}
+      _hover={{bg: "#EAECF0"}}
       cursor="pointer"
       mb={open ? 0 : 4}
       {...props}
-      onClick={originalButtonFunction}
-    >
+      onClick={originalButtonFunction}>
       <img src="/img/message-text-square.svg" alt="chat" />
     </Flex>
   );
 });
 
-const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
+const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -952,8 +930,7 @@ const AIChat = forwardRef(({ sidebarOpen, children, ...props }, ref) => {
         {...props}
         onClick={handleClick}
         justifyContent="center"
-        alignItems="center"
-      >
+        alignItems="center">
         {sidebarOpen ? children : <SearchIcon color="#475467" fontSize={16} />}
         {/* <img src="/img/magic-wand.svg" alt="magic" /> */}
       </Flex>
@@ -994,10 +971,25 @@ const Header = ({
 }) => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const [connections, setConnections] = useState([]);
+  const clientTypeId = auth?.clientType?.id;
+  const projectId = auth?.projectId;
+  const userId = auth?.userInfo?.id;
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const {control, watch, setValue} = useForm();
 
   const handleClose = () => {
     onClose();
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
   };
 
   const onSelectEnvironment = (environment) => {
@@ -1011,7 +1003,7 @@ const Header = ({
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
     authService
-      .updateToken({ ...params, env_id: environment.id }, { ...params })
+      .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
@@ -1022,95 +1014,129 @@ const Header = ({
       });
   };
 
+  const getConnections = (env) => {
+    console.log("envenv", env);
+    const environment = env;
+    connectionServiceV2
+      .getList(
+        {
+          "project-id": environment?.project_id,
+          client_type_id: clientTypeId,
+          "user-id": userId,
+        },
+        {"environment-id": environment?.id}
+      )
+      .then((res) => {
+        // if (res?.data?.response?.length > 1) {
+        //   handleDialogOpen();
+        // } else {
+        //   onSelectEnvironment(environment);
+        // }
+      });
+  };
+
   return (
-    <Popover
-      offset={[sidebarIsOpen ? 50 : 95, 5]}
-      isOpen={isOpen}
-      onClose={handleClose}
-    >
-      <PopoverTrigger>
-        <Flex
-          w="calc(100% - 0px)"
-          maxWidth={sidebarIsOpen ? "220px" : "36px"}
-          position="relative"
-          overflow="hidden"
-          alignItems="center"
-          p={5}
-          borderRadius={8}
-          bg="#fff"
-          _hover={{ bg: "#EAECF0" }}
-          cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}
-          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
-        >
+    <>
+      <Popover
+        offset={[sidebarIsOpen ? 50 : 95, 5]}
+        isOpen={isOpen}
+        onClose={handleClose}>
+        <PopoverTrigger>
           <Flex
-            w={36}
-            h={36}
-            position="absolute"
-            left={0}
-            alignItems="center"
-            justifyContent="center"
-          >
-            {Boolean(projectInfo?.logo) && (
-              <img src={projectInfo?.logo} alt="" width={20} height={20} />
-            )}
-
-            {!projectInfo?.logo && (
-              <Flex
-                w={20}
-                h={20}
-                borderRadius={4}
-                bg="#06AED4"
-                color="#fff"
-                alignItems="center"
-                justifyContent="center"
-                fontSize={14}
-                fontWeight={500}
-              >
-                {projectInfo?.title?.[0]?.toUpperCase()}
-              </Flex>
-            )}
-          </Flex>
-
-          <Box
-            pl={30}
-            whiteSpace="nowrap"
-            color="#344054"
-            fontSize={13}
-            fontWeight={500}
+            w="calc(100% - 0px)"
+            maxWidth={sidebarIsOpen ? "220px" : "36px"}
+            position="relative"
             overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {projectInfo?.title}
-          </Box>
-          <KeyboardArrowDownIcon style={{ marginLeft: "10px", fontSize: 20 }} />
-        </Flex>
-      </PopoverTrigger>
-      <PopoverContent
-        w="300px"
-        bg="#fff"
-        borderRadius={8}
-        border="1px solid #EAECF0"
-        outline="none"
-        boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}
-        onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
-        onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}
-      >
-        <>
-          <ProfilePanel
-            menuLanguages={menuLanguages}
-            handleOpenProfileModal={handleOpenProfileModal}
-            onClose={onClose}
-          />
-          <Companies onSelectEnvironment={onSelectEnvironment} />
-          <ProfileBottom
-            projectInfo={projectInfo}
-            menuLanguages={profileSettingLan}
-          />
-        </>
-      </PopoverContent>
-    </Popover>
+            alignItems="center"
+            p={5}
+            borderRadius={8}
+            bg="#fff"
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer"
+            onClick={() => (!isOpen ? onOpen() : null)}
+            onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}>
+            <Flex
+              w={36}
+              h={36}
+              position="absolute"
+              left={0}
+              alignItems="center"
+              justifyContent="center">
+              {Boolean(projectInfo?.logo) && (
+                <img src={projectInfo?.logo} alt="" width={20} height={20} />
+              )}
+
+              {!projectInfo?.logo && (
+                <Flex
+                  w={20}
+                  h={20}
+                  borderRadius={4}
+                  bg="#06AED4"
+                  color="#fff"
+                  alignItems="center"
+                  justifyContent="center"
+                  fontSize={14}
+                  fontWeight={500}>
+                  {projectInfo?.title?.[0]?.toUpperCase()}
+                </Flex>
+              )}
+            </Flex>
+
+            <Box
+              pl={30}
+              whiteSpace="nowrap"
+              color="#344054"
+              fontSize={13}
+              fontWeight={500}
+              overflow="hidden"
+              textOverflow="ellipsis">
+              {projectInfo?.title}
+            </Box>
+            <KeyboardArrowDownIcon style={{marginLeft: "10px", fontSize: 20}} />
+          </Flex>
+        </PopoverTrigger>
+        <PopoverContent
+          w="300px"
+          bg="#fff"
+          borderRadius={8}
+          border="1px solid #EAECF0"
+          outline="none"
+          boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
+          zIndex={999}
+          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+          onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}>
+          <>
+            <ProfilePanel
+              menuLanguages={menuLanguages}
+              handleOpenProfileModal={handleOpenProfileModal}
+              onClose={onClose}
+            />
+            <Companies onSelectEnvironment={getConnections} />
+            <ProfileBottom
+              projectInfo={projectInfo}
+              menuLanguages={profileSettingLan}
+            />
+          </>
+        </PopoverContent>
+      </Popover>
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        {connections.length
+          ? connections?.map((connection, idx) => (
+              <DynamicConnections
+                key={connection?.guid}
+                table={connections}
+                connection={connection}
+                index={idx}
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                options={connection?.options}
+                // setSelectedCollection={setSelectedCollection}
+              />
+            ))
+          : null}
+      </Dialog>
+    </>
   );
 };
 
@@ -1121,7 +1147,7 @@ const ProfilePanel = ({
 }) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
       <Flex gap={10} alignItems={"center"}>
@@ -1131,11 +1157,10 @@ const ProfilePanel = ({
           justifyContent={"center"}
           w={36}
           h={36}
-          style={{ border: "1px solid #eee", fontSize: "24px" }}
+          style={{border: "1px solid #eee", fontSize: "24px"}}
           borderRadius={"5px"}
           bg={"#04ADD4"}
-          color={"white"}
-        >
+          color={"white"}>
           {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
@@ -1149,7 +1174,7 @@ const ProfilePanel = ({
       </Flex>
 
       <Flex
-        _hover={{ background: "#eeee" }}
+        _hover={{background: "#eeee"}}
         alignItems={"center"}
         h={25}
         minW={86}
@@ -1166,7 +1191,7 @@ const ProfilePanel = ({
         //   onClose();
         // }}
       >
-        <SettingsIcon style={{ color: "#475467" }} />
+        <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
         </Box>
@@ -1175,14 +1200,14 @@ const ProfilePanel = ({
   );
 };
 
-const ProfileBottom = ({ projectInfo, menuLanguages }) => {
+const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
   const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = useSelector(
     (state) => state.languages.defaultLanguage
   );
@@ -1237,7 +1262,7 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    authService.sendAccessToken({ access_token: accessToken }).then((res) => {
+    authService.sendAccessToken({access_token: accessToken}).then((res) => {
       indexedDB.deleteDatabase("SearchTextDB");
       indexedDB.deleteDatabase("ChartDB");
       dispatch(menuAccordionActions.toggleMenuChilds({}));
@@ -1265,8 +1290,7 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
         isOpen={isOpen}
         onClose={onClose}
         placement="right-start"
-        closeOnBlur={false}
-      >
+        closeOnBlur={false}>
         <PopoverTrigger>
           <Box
             sx={{
@@ -1279,13 +1303,12 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
               cursor: "pointer",
               color: "#475467",
             }}
-            _hover={{ background: "#eeee" }}
+            _hover={{background: "#eeee"}}
             onClick={(e) => {
               e.stopPropagation();
               onOpen();
-            }}
-          >
-            <GTranslateIcon style={{ color: "#475467" }} />
+            }}>
+            <GTranslateIcon style={{color: "#475467"}} />
             <span>
               {" "}
               {generateLangaugeText(
@@ -1304,8 +1327,7 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
             bg={"white"}
             p={4}
             borderRadius={5}
-            boxShadow="0 0 5px rgba(145, 158, 171, 0.3)"
-          >
+            boxShadow="0 0 5px rgba(145, 158, 171, 0.3)">
             <PopoverBody>
               {languages?.map((item) => (
                 <Box
@@ -1315,9 +1337,8 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
                   cursor="pointer"
                   color={item.slug === defaultLanguage ? "#000" : "#333"}
                   bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
-                  _hover={{ bg: "#F0F0F0" }}
-                  onClick={() => changeLanguage(item.slug)}
-                >
+                  _hover={{bg: "#F0F0F0"}}
+                  onClick={() => changeLanguage(item.slug)}>
                   {item.title}
                 </Box>
               ))}
@@ -1337,10 +1358,9 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
           cursor: "pointer",
           color: "#475467",
         }}
-        _hover={{ background: "#eeee" }}
-        onClick={onOpenModal}
-      >
-        <Logout style={{ color: "#475467" }} />
+        _hover={{background: "#eeee"}}
+        onClick={onOpenModal}>
+        <Logout style={{color: "#475467"}} />
         <span>
           {generateLangaugeText(menuLanguages, i18n?.language, "Log out") ||
             "Log out"}
@@ -1361,10 +1381,9 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
             padding: "20px",
             boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
             textAlign: "center",
-          }}
-        >
+          }}>
           <Box display="flex" justifyContent="center" mb={2}>
-            <LogoutIcon style={{ width: "48", height: "28px" }} />
+            <LogoutIcon style={{width: "48", height: "28px"}} />
           </Box>
 
           <Box fontWeight={700} fontSize={"18px"}>
@@ -1392,10 +1411,9 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
               fullWidth
               bg={"#a63431"}
               color="#fff"
-              _hover={{ bg: "#a63400" }}
-              style={{ height: "40px" }}
-              onClick={logoutClickHandler}
-            >
+              _hover={{bg: "#a63400"}}
+              style={{height: "40px"}}
+              onClick={logoutClickHandler}>
               {generateLangaugeText(menuLanguages, i18n?.language, "Logout") ||
                 "Logout"}
             </Button>
@@ -1406,11 +1424,10 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
               fontSize={14}
               fullWidth
               bg={"#fff"}
-              _hover={{ bg: "#eee" }}
+              _hover={{bg: "#eee"}}
               border="2px solid #eee"
-              style={{ height: "40px" }}
-              onClick={onCloseModal}
-            >
+              style={{height: "40px"}}
+              onClick={onCloseModal}>
               {generateLangaugeText(menuLanguages, i18n?.language, "Cancel") ||
                 "Cancel"}
             </Button>
@@ -1421,11 +1438,12 @@ const ProfileBottom = ({ projectInfo, menuLanguages }) => {
   );
 };
 
-const Companies = ({ onSelectEnvironment }) => {
+const Companies = ({onSelectEnvironment}) => {
   const userId = useSelector((state) => state.auth?.userId);
+  const authStore = store.getState().auth;
   const companiesQuery = useCompanyListQuery({
-    params: { owner_id: userId },
-    queryParams: { enabled: Boolean(userId) },
+    params: {owner_id: authStore?.userInfo?.id},
+    queryParams: {enabled: Boolean(userId)},
   });
   const companies = companiesQuery.data?.companies ?? [];
 
@@ -1443,8 +1461,7 @@ const Companies = ({ onSelectEnvironment }) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{ bg: "#EAECF0" }}
-            >
+              _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}
                 h={20}
@@ -1454,8 +1471,7 @@ const Companies = ({ onSelectEnvironment }) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff"
-              >
+                color="#fff">
                 {company?.name?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">
@@ -1474,10 +1490,10 @@ const Companies = ({ onSelectEnvironment }) => {
   );
 };
 
-const Projects = ({ company, onSelectEnvironment }) => {
+const Projects = ({company, onSelectEnvironment}) => {
   const projectsQuery = useProjectListQuery({
-    params: { company_id: company?.id },
-    queryParams: { enabled: Boolean(company?.id) },
+    params: {company_id: company?.id},
+    queryParams: {enabled: Boolean(company?.id)},
   });
   const projects = projectsQuery.data?.projects ?? [];
 
@@ -1495,8 +1511,7 @@ const Projects = ({ company, onSelectEnvironment }) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{ bg: "#EAECF0" }}
-            >
+              _hover={{bg: "#EAECF0"}}>
               <Flex
                 w={20}
                 h={20}
@@ -1506,8 +1521,7 @@ const Projects = ({ company, onSelectEnvironment }) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff"
-              >
+                color="#fff">
                 {project.title?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">
@@ -1527,10 +1541,10 @@ const Projects = ({ company, onSelectEnvironment }) => {
   );
 };
 
-const Environments = ({ project, onSelectEnvironment }) => {
+const Environments = ({project, onSelectEnvironment}) => {
   const environmentsQuery = useEnvironmentListQuery({
-    params: { project_id: project?.project_id },
-    queryParams: { enabled: Boolean(project?.project_id) },
+    params: {project_id: project?.project_id},
+    queryParams: {enabled: Boolean(project?.project_id)},
   });
   const environments = environmentsQuery.data?.environments ?? [];
 
@@ -1545,9 +1559,8 @@ const Environments = ({ project, onSelectEnvironment }) => {
             alignItems="center"
             cursor="pointer"
             borderRadius={6}
-            _hover={{ bg: "#EAECF0" }}
-            onClick={() => onSelectEnvironment(environment)}
-          >
+            _hover={{bg: "#EAECF0"}}
+            onClick={() => onSelectEnvironment(environment)}>
             <Flex columnGap={8} alignItems="center">
               <Flex
                 w={20}
@@ -1558,8 +1571,7 @@ const Environments = ({ project, onSelectEnvironment }) => {
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff"
-              >
+                color="#fff">
                 {environment.name?.[0]?.toUpperCase()}
               </Flex>
               <Box mr={36}>

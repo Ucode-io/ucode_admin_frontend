@@ -410,12 +410,15 @@ const TableView = ({
       };
     },
     onSuccess: (data) => {
-      const checkdublicate = combinedTableData?.filter((item) => {
-        return data?.tableData?.find((el) => el.guid === item.guid);
-      });
-      const result = data?.tableData?.filter((item) => {
-        return !checkdublicate?.find((el) => el.guid === item.guid);
-      });
+      console.log({ data });
+      const checkdublicate =
+        combinedTableData?.filter((item) => {
+          return data?.tableData?.find((el) => el.guid === item.guid);
+        }) ?? [];
+      const result =
+        data?.tableData?.filter((item) => {
+          return !checkdublicate?.find((el) => el.guid === item.guid);
+        }) ?? [];
       setCombinedTableData((prev) => [...prev, ...result]);
     },
   });

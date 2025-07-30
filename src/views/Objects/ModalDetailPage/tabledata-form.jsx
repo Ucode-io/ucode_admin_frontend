@@ -4,7 +4,7 @@ import CellElementGeneratorForTable from "../../../components/ElementGenerators/
 import CellElementGeneratorForRelation from "../../../components/ElementGenerators/CellElementGeneratorForRelation";
 import CellElementGeneratorForTableView from "../../../components/ElementGenerators/CellElementGeneratorForTableView";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { useMutation } from "react-query";
+import {useMutation} from "react-query";
 
 const TableDataForm = ({
   row,
@@ -26,11 +26,11 @@ const TableDataForm = ({
   newUi,
   selectedTab,
 }) => {
-  const { mutate: updateObject } = useMutation(() =>
+  const {mutate: updateObject} = useMutation(() =>
     constructorObjectService.update(
       selectedTab?.relation?.relation_table_slug,
       {
-        data: { ...getValues(`multi.${index}`) },
+        data: {...getValues(`multi.${index}`)},
       }
     )
   );
@@ -57,8 +57,7 @@ const TableDataForm = ({
         position: "relative",
         minWidth: "150px",
         boxSizing: "border-box",
-      }}
-    >
+      }}>
       {view?.attributes?.table_editable ? (
         <CellElementGeneratorForTable field={field} row={row} />
       ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (

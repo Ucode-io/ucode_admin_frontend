@@ -1,20 +1,21 @@
 .wrapper {
   button {
-    border: 1px solid #E5E9EB;
+    border: 1px solid #e5e9eb;
     border-radius: 4px;
     min-width: 32px;
     min-width: 32px;
-    height: 32px;
-    min-height: 32px;
+    height: 26px;
+    min-height: 26px;
+    margin: 3px 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background-color: #fff;
     cursor: pointer;
-    transition-duration: .2s;
+    transition-duration: 0.2s;
 
     &:hover {
-      border-color: #0067F4;
+      border-color: #0067f4;
     }
   }
 }

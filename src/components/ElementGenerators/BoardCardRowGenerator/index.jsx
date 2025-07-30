@@ -163,9 +163,10 @@ const BoardCardRowGenerator = ({
           isEmpty={!value?.length}
         >
           <Box display="flex" gap="3px">
-            {value?.map((photo) => (
-              <img className={styles.miniImage} src={photo} alt="" />
-            ))}
+            {value &&
+              value?.map((photo) => (
+                <img className={styles.miniImage} src={photo} alt="" />
+              ))}
           </Box>
         </FieldContainer>
       );

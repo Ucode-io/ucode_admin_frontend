@@ -1,10 +1,10 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useDispatch} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {useResourceListQueryV2} from "@/services/resourceService";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { useResourceListQueryV2 } from "@/services/resourceService";
 import listToOptions from "@/utils/listToOptions";
-import {useMicrofrontendCreateWebhookMutation} from "@/services/microfrontendService";
+import { useMicrofrontendCreateWebhookMutation } from "@/services/microfrontendService";
 import {
   useGithubBranchesQuery,
   useGithubRepositoriesQuery,
@@ -18,19 +18,17 @@ import {
   useGitlabBranchesQuery,
   useGitlabRepositoriesQuery,
 } from "@/services/githubService";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-import {showAlert} from "@/store/alert/alert.thunk";
-import {useGetLang} from "@/hooks/useGetLang";
-import {useSettingsPopupContext} from "../../providers";
+import { showAlert } from "@/store/alert/alert.thunk";
+import { useGetLang } from "@/hooks/useGetLang";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useFunctionsDetailProps = () => {
   const lang = useGetLang("Functions");
-  const {appId} = useParams();
+  const { appId } = useParams();
 
-  const {searchParams, setSearchParams} = useSettingsPopupContext();
-
-  const functionId = searchParams.get("functionId");
+  const functionId = useSelector((state) => state.settingsModal.functionId);
 
   const navigate = useNavigate();
 
@@ -40,7 +38,7 @@ export const useFunctionsDetailProps = () => {
   const [formerScale, setFormerScale] = useState();
 
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const microfrontendListPageLink = `/main/${appId}/openfaas-functions`;
 
@@ -58,8 +56,8 @@ export const useFunctionsDetailProps = () => {
 
   const resourceId = mainForm.watch("resource_id");
   const selectedRepo = mainForm.watch("repo_name");
-  console.log("resourceIdresourceId", resourceId, mainForm.watch());
-  const {data: resources} = useResourceListQueryV2({
+
+  const { data: resources } = useResourceListQueryV2({
     params: {
       type: "GIT",
     },
@@ -70,13 +68,13 @@ export const useFunctionsDetailProps = () => {
 
   const resourceOptions = useMemo(() => {
     return [
-      {value: "ucode_gitlab", label: "Ucode GitLab"},
+      { value: "ucode_gitlab", label: "Ucode GitLab" },
       ...listToOptions(resources, "name", "id"),
     ];
   }, [resources]);
 
   const handleBackClick = () => {
-    setSearchParams({});
+    dispatch(settingsModalActions.resetParams());
   };
 
   const selectedResource = useMemo(() => {
@@ -85,7 +83,7 @@ export const useFunctionsDetailProps = () => {
     return resources?.find((resource) => resource.id === resourceId);
   }, [resources, resourceId]);
 
-  const {data: repositories} = useGithubRepositoriesQuery({
+  const { data: repositories } = useGithubRepositoriesQuery({
     username: selectedResource?.settings?.github?.username,
     token: selectedResource?.settings?.github?.token,
     queryParams: {
@@ -94,7 +92,7 @@ export const useFunctionsDetailProps = () => {
     },
   });
 
-  const {data: repositoriesGitlab} = useGitlabRepositoriesQuery({
+  const { data: repositoriesGitlab } = useGitlabRepositoriesQuery({
     username: selectedResource?.settings?.gitlab?.username,
     token: selectedResource?.settings?.gitlab?.token,
     resource_id: selectedResource?.id,
@@ -104,7 +102,7 @@ export const useFunctionsDetailProps = () => {
     },
   });
 
-  const {data: branches} = useGithubBranchesQuery({
+  const { data: branches } = useGithubBranchesQuery({
     username: selectedResource?.settings?.github?.username,
     repo: selectedRepo,
     token: selectedResource?.settings?.github?.token,
@@ -118,7 +116,7 @@ export const useFunctionsDetailProps = () => {
     (item) => item?.name === selectedRepo
   )?.id;
 
-  const {data: branchesGitlab} = useGitlabBranchesQuery({
+  const { data: branchesGitlab } = useGitlabBranchesQuery({
     username: selectedResource?.settings?.gitlab?.username,
     repo_id: gitlabRepoId,
     token: selectedResource?.settings?.gitlab?.token,
@@ -132,7 +130,7 @@ export const useFunctionsDetailProps = () => {
     },
   });
 
-  const {mutate: createWebHook, isLoading: createWebHookIsLoading} =
+  const { mutate: createWebHook, isLoading: createWebHookIsLoading } =
     useMicrofrontendCreateWebhookMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -140,7 +138,7 @@ export const useFunctionsDetailProps = () => {
       },
     });
 
-  const {mutate: createFunction, isLoading: createFunctionIsLoading} =
+  const { mutate: createFunction, isLoading: createFunctionIsLoading } =
     useFunctionCreateMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -148,7 +146,7 @@ export const useFunctionsDetailProps = () => {
       },
     });
 
-  const {mutate: updateFunction, isLoading: updateFunctionIsLoading} =
+  const { mutate: updateFunction, isLoading: updateFunctionIsLoading } =
     useFunctionUpdateMutation({
       onSuccess: () => {
         dispatch(showAlert("Successfully updated", "success"));
@@ -156,7 +154,7 @@ export const useFunctionsDetailProps = () => {
       },
     });
 
-  const {isLoading} = useFunctionByIdQuery({
+  const { isLoading } = useFunctionByIdQuery({
     functionId,
     queryParams: {
       enabled: Boolean(functionId),
@@ -173,8 +171,8 @@ export const useFunctionsDetailProps = () => {
         knativeForm.setValue("path", res?.path);
         setFormerScale(res?.max_scale);
         if (!Boolean(res?.resource_id)) {
-          mainForm.reset({...res, resource_id: "ucode_gitlab"});
-        } else mainForm.reset({...res});
+          mainForm.reset({ ...res, resource_id: "ucode_gitlab" });
+        } else mainForm.reset({ ...res });
       },
     },
   });

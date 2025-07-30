@@ -195,7 +195,7 @@ const BoardColumn = ({
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (Boolean(new_router === "true")) {
+      if (new_router) {
         updateQueryWithoutRerender("p", row?.guid);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
@@ -319,7 +319,14 @@ const BoardColumn = ({
   );
 
   useEffect(() => {
-    if (boardData?.length !== computedBoardData?.length) {
+    if (boardData?.length && computedBoardData?.length) {
+      if (
+        Object.keys(boardData?.[0])?.length !==
+        Object.keys(computedBoardData?.[0])?.length
+      ) {
+        setComputedBoardData(boardData);
+      }
+    } else if (boardData?.length !== computedBoardData?.length) {
       setComputedBoardData(boardData);
     }
   }, [boardData]);

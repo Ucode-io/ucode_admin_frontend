@@ -1,31 +1,34 @@
 import {useEffect, useState} from "react";
 import constructorFunctionService from "@/services/constructorFunctionService";
-import {useQueryClient} from "react-query";
-import {useFunctionDeleteMutation} from "@/services/functionService";
+import { useFunctionDeleteMutation } from "@/services/functionService";
 import useDebounce from "@/hooks/useDebounce";
-import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
-
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useFunctionsProps = () => {
-
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   const [loader, setLoader] = useState(false);
   const [list, setList] = useState([]);
-  
+
   const [debounceValue, setDebouncedValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
-  const {searchParams, setSearchParams} = useSettingsPopupContext();
-
   const navigateToEditForm = (id) => {
-    setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, functionId: id });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL)
+    );
+    dispatch(settingsModalActions.setFunctionId(id));
+    // setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, functionId: id });
     // navigate(`${location.pathname}/${id}`);
   };
 
   const navigateToCreateForm = () => {
-    setSearchParams({ tab: TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL, create: true });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.FUNCTIONS.FUNCTIONS_DETAIL)
+    );
+    dispatch(settingsModalActions.setCreate(true));
     // navigate(`${location.pathname}/create`);
   };
 
@@ -51,7 +54,7 @@ export const useFunctionsProps = () => {
       });
   };
 
-  const {mutate: deleteFunction, isLoading: deleteFunctionLoading} =
+  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
     useFunctionDeleteMutation({
       onSuccess: () => getList(),
     });
@@ -61,7 +64,6 @@ export const useFunctionsProps = () => {
   useEffect(() => {
     getList();
   }, [debounceValue, currentPage]);
-
 
   return {
     loader,

@@ -10,6 +10,7 @@ import {BillingTable} from "../../components/BillingTable";
 import {TopUpBalance} from "../../components/TopUpBalance";
 import {Fares} from "../Fares";
 import {useSearchParams} from "react-router-dom";
+import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
 
 export const Billing = () => {
   const {
@@ -24,6 +25,7 @@ export const Billing = () => {
     onSubmit,
     loading,
     reset,
+    dispatch,
   } = useBillingProps();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -105,7 +107,7 @@ export const Billing = () => {
                     <Typography
                       sx={{cursor: "pointer"}}
                       onClick={() => {
-                        setSearchParams({tab: "fares"});
+                        dispatch(settingsModalActions.setTab("fares"));
                       }}
                       variant="h6"
                       color="success.main">

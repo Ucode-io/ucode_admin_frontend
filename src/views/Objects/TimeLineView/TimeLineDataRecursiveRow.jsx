@@ -36,6 +36,7 @@ export default function TimeLineDataRecursiveRow({
   deepLength,
   layoutType,
   selectedView,
+  setSelectedView = () => {},
 }) {
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -138,7 +139,8 @@ export default function TimeLineDataRecursiveRow({
             setIsHintTaskShow(false);
           }
         }}
-        ref={timelineRecursiveRowRef}>
+        ref={timelineRecursiveRowRef}
+      >
         {isHintTaskShow && (
           <TimelineRowNewDateLine
             left={cursorPosX}
@@ -174,6 +176,7 @@ export default function TimeLineDataRecursiveRow({
             navigateToDetailPage={navigateToDetailPage}
             setOpenDrawerModal={setOpenDrawerModal}
             setSelectedRow={setSelectedRow}
+            setSelectedView={setSelectedView}
           />
         )}
       </div>
@@ -187,7 +190,8 @@ export default function TimeLineDataRecursiveRow({
                 in={open}
                 timeout="auto"
                 unmountOnExit
-                key={optionItem?.title}>
+                key={optionItem?.title}
+              >
                 <TimeLineDataRecursiveRow
                   lastLabels={
                     lastLabels?.length

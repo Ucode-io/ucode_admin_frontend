@@ -22,7 +22,10 @@ import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
+import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
+import { groupFieldActions } from "../../store/groupField/groupField.slice";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -151,6 +154,7 @@ const AutoCompleteElement = ({
   row,
   newUi,
 }) => {
+  const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -212,7 +216,8 @@ const AutoCompleteElement = ({
     clearIndicator: (provided) => ({
       ...provided,
       cursor: "pointer",
-      marginRight: "15px",
+      marginRight: "20px",
+      padding: "0",
     }),
   };
 
@@ -238,21 +243,29 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
     () => {
       if (!field?.table_slug) return null;
+
+      const requestData = {
+        ...autoFiltersValue,
+        additional_request: {
+          additional_field: "guid",
+        },
+        view_fields: field?.view_fields?.map((f) => f.slug),
+        search: debouncedValue.trim(),
+        limit: 10,
+        offset: pageToOffset(page, 10),
+        with_relations: false,
+      };
+
+      if (value) {
+        const additionalValues = [value];
+        requestData.additional_request.additional_values =
+          additionalValues?.flat();
+      }
+
       return constructorObjectService.getListV2(
         field?.table_slug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [value],
-            },
-            view_fields: field?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-            with_relations: false,
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,
@@ -364,6 +377,8 @@ const AutoCompleteElement = ({
     setLocalValue(row?.[`${field?.slug}_data`]);
   }, [row]);
 
+  const dispatch = useDispatch();
+
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
@@ -385,7 +400,35 @@ const AutoCompleteElement = ({
             }}
             onClick={(e) => {
               e.stopPropagation();
-              navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+              if (isNewRouter) {
+                const { data } = props;
+                dispatch(detailDrawerActions.openDrawer());
+                dispatch(groupFieldActions.clearViewsPath());
+                dispatch(groupFieldActions.clearViews());
+                dispatch(
+                  groupFieldActions.addView({
+                    id: data?.table_id,
+                    detailId: data?.guid,
+                    is_relation_view: true,
+                    table_slug: data?.table_slug,
+                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                    relation_table_slug: data?.table_slug,
+                  })
+                );
+                dispatch(
+                  groupFieldActions.addViewPath({
+                    id: data?.table_id,
+                    detailId: data?.guid,
+                    is_relation_view: true,
+                    table_slug: data?.table_slug,
+                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                  })
+                );
+                updateQueryWithoutRerender("p", props?.data?.guid);
+                updateQueryWithoutRerender("field_slug", field?.table_slug);
+              } else {
+                navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+              }
             }}
           >
             <LaunchIcon
@@ -461,7 +504,7 @@ const AutoCompleteElement = ({
             inputChangeHandler(newInputValue);
           }
         }}
-        isDisabled={disabled || autofilterDisable}
+        isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}

@@ -17,7 +17,14 @@ import {
   Tooltip,
 } from "@mui/material";
 import {Parser} from "hot-formula-parser";
-import React, {Suspense, lazy, useEffect, useMemo, useState} from "react";
+import React, {
+  Suspense,
+  lazy,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {NumericFormat} from "react-number-format";
 import {useQuery} from "react-query";
@@ -48,6 +55,8 @@ import HFInternationalPhone from "./hf-internationalPhone";
 import HFMultipleAutocomplete from "./hf-multiselectField";
 import HFStatusField from "./hf-statusField";
 import {HFVideoUpload} from "./hf-videoUploadField";
+import {FIELD_TYPES} from "../../../../utils/constants/fieldTypes";
+import cls from "./field-generator.styles.module.scss";
 import useDebounce from "../../../../hooks/useDebounce";
 // import RelationField from "./RelationField";
 
@@ -427,6 +436,21 @@ function DrawerFieldGenerator({
         />
       );
 
+    case FIELD_TYPES.SINGLE_LINE:
+      return (
+        <InputField
+          watch={watch}
+          disabled={isDisabled}
+          control={control}
+          name={computedSlug}
+          field={field}
+          errors={errors}
+          functions={functions}
+          isTextarea={true}
+          updateObject={updateObject}
+        />
+      );
+
     default:
       return (
         <InputField
@@ -452,8 +476,25 @@ const InputField = ({
   errors,
   functions,
   field,
+  isTextarea,
   updateObject = () => {},
 }) => {
+  const textareaRef = useRef(null);
+
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "31px";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
+  useEffect(() => {
+    if (isTextarea) {
+      resizeTextarea();
+    }
+  }, [watch(name)]);
+
   const inputValue =
     watch(name) ||
     functions?.find((fn) => fn?.value === field?.attributes?.function)?.label;
@@ -481,35 +522,49 @@ const InputField = ({
           <ChakraProvider>
             <ChakraBox position="relative">
               <InputGroup>
-                <Input
-                  disabled={isDisabled}
-                  type={inputType}
-                  value={inputValue ?? value}
-                  onChange={(e) => {
-                    onChange(e.target.value);
-                    inputChangeHandler();
-                  }}
-                  placeholder={
-                    field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
-                  }
-                  height="30px"
-                  fontSize="13px"
-                  px={"9.6px"}
-                  width="100%"
-                  border="none"
-                  borderRadius={"4px"}
-                  _hover={{
-                    bg: "#F7F7F7",
-                  }}
-                  _placeholder={{
-                    color: "#adb5bd",
-                  }}
-                  _focus={{
-                    backgroundColor: "#F7F7F7",
-                    border: "none",
-                    outline: "none",
-                  }}
-                />
+                {isTextarea ? (
+                  <textarea
+                    ref={textareaRef}
+                    disabled={isDisabled}
+                    value={inputValue ?? value}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      inputChangeHandler();
+                    }}
+                    placeholder="Empty"
+                    className={cls.singleLine}
+                  />
+                ) : (
+                  <Input
+                    disabled={isDisabled}
+                    type={inputType}
+                    value={inputValue ?? value}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      inputChangeHandler();
+                    }}
+                    placeholder={
+                      field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
+                    }
+                    height="30px"
+                    fontSize="13px"
+                    px={"9.6px"}
+                    width="100%"
+                    border="none"
+                    borderRadius={"4px"}
+                    _hover={{
+                      bg: "#F7F7F7",
+                    }}
+                    _placeholder={{
+                      color: "#adb5bd",
+                    }}
+                    _focus={{
+                      backgroundColor: "#F7F7F7",
+                      border: "none",
+                      outline: "none",
+                    }}
+                  />
+                )}
                 {isDisabled && (
                   <InputRightElement pointerEvents="none">
                     <Lock style={{fontSize: "20px", color: "#adb5bd"}} />

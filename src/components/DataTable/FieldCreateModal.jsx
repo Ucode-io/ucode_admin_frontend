@@ -57,6 +57,7 @@ import DropdownSelect from "../NewFormElements/DropdownSelect";
 import TextField from "../NewFormElements/TextField/TextField";
 import { Image } from "@chakra-ui/react";
 import clsx from "clsx";
+import { useViewContext } from "../../providers/ViewProvider";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -106,7 +107,9 @@ export default function FieldCreateModal({
   setFieldData = () => {},
 }) {
   const { id, tableSlug: tableSlugParam } = useParams();
-  const tableSlug = tableSlugParam || view?.table_slug;
+  const { view: viewFromContext } = useViewContext();
+  const tableSlug =
+    tableSlugParam || view?.table_slug || viewFromContext?.table_slug;
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -130,6 +133,7 @@ export default function FieldCreateModal({
           table_slug: tableSlug,
           relation_table_slug: tableSlug,
         },
+        {},
         tableSlug
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
@@ -285,7 +289,9 @@ export default function FieldCreateModal({
     params: {
       table_id: menuItem?.table_id,
       tableSlug: tableSlug,
+      table_slug: tableSlug,
     },
+    tableSlug,
     queryParams: {
       enabled: Boolean(menuItem?.table_id),
       onSuccess: (res) => {
@@ -624,10 +630,10 @@ export default function FieldCreateModal({
             "ADD COLUMN"}
         </Typography> */}
 
-        <form
-          onSubmit={handleSubmit(
-            format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-          )}
+        <div
+          // onSubmit={handleSubmit(
+          //   format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+          // )}
           className={style.form}
         >
           <MaterialUIProvider>
@@ -1354,7 +1360,13 @@ export default function FieldCreateModal({
               {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                 "Cancel"}
             </Button> */}
-            <FormElementButton primary type="submit">
+            <FormElementButton
+              onClick={handleSubmit(
+                format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+              )}
+              primary
+              type="button"
+            >
               {fieldData
                 ? generateLangaugeText(
                     tableLan,
@@ -1368,7 +1380,7 @@ export default function FieldCreateModal({
                   ) || "Add column"}
             </FormElementButton>
           </Box>
-        </form>
+        </div>
       </div>
     </Popover>
   );

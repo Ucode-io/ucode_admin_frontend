@@ -51,7 +51,10 @@ function InviteModal({
   guid = "",
   users = [],
   selectedClientType,
+  invite: inviteProps,
 }) {
+  const dispatch = useDispatch();
+
   const finalRef = useRef(null);
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);

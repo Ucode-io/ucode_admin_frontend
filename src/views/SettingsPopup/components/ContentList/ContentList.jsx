@@ -5,6 +5,8 @@ import {groupedResources} from "../../../../utils/resourceConstants";
 import AddIcon from "@mui/icons-material/Add";
 import {ResourcesDetail} from "../../modules/ResourcesDetail";
 import {useQueryClient} from "react-query";
+import {useDispatch} from "react-redux";
+import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
 
 export const ContentList = ({
   arr,
@@ -20,6 +22,14 @@ export const ContentList = ({
   resources,
   ...props
 }) => {
+  const navigate = useNavigate();
+  const {appId} = useParams();
+  const [openResource, setOpenResource] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [resourceVal, setResourceVal] = useState();
+
+  const dispatch = useDispatch();
+
   if (isLoading) {
     return (
       <Box sx={{marginTop: "36px"}}>
@@ -30,9 +40,6 @@ export const ContentList = ({
       </Box>
     );
   }
-  const [openResource, setOpenResource] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [resourceVal, setResourceVal] = useState();
 
   const clickHandler = (element) => {
     if (element?.id) {
@@ -40,7 +47,9 @@ export const ContentList = ({
       setOpenResource(true);
     } else if (element?.value !== 5 && element?.value !== 8 && !element?.id) {
       setOpenResource(element?.value);
-      setSearchParams({tab: "resources", resource_type: element?.value});
+      dispatch(settingsModalActions.setTab("resources"));
+      dispatch(settingsModalActions.setResourceType(element?.value));
+      // setSearchParams({tab: "resources", resource_type: element?.value});
     }
 
     if (element?.value === 5) {
@@ -117,6 +126,8 @@ const ResourceButton = ({
       )?.toLowerCase()
   );
 
+  const dispatch = useDispatch();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [chosenResource, setChosenResource] = useState();
@@ -140,7 +151,8 @@ const ResourceButton = ({
           onClick={(e) => {
             handleClick(e);
             setChosenResource(val);
-            setSearchParams({tab: "resources"});
+            dispatch(settingsModalActions.setTab("resources"));
+            // setSearchParams({tab: "resources"});
           }}
           sx={{marginTop: "20px"}}
           badgeContent={computedElements?.length}
@@ -156,17 +168,30 @@ const ResourceButton = ({
               key={el?.id}
               onClick={() => {
                 clickHandler(el);
-                setSearchParams({
-                  tab: "resources",
-                  resource_type: val?.value,
-                  edit: true,
-                  resourceId:
+                dispatch(settingsModalActions.setTab("resources"));
+                dispatch(settingsModalActions.setResourceType(val?.value));
+                dispatch(
+                  settingsModalActions.setResourceId(
                     val?.type === "CLICK_HOUSE"
                       ? resources?.find(
                           (resource) => resource?.resource_type === 2
                         )?.id
-                      : el?.id,
-                });
+                      : el?.id
+                  )
+                );
+                dispatch(settingsModalActions.setEdit(true));
+
+                // setSearchParams({
+                //   tab: "resources",
+                //   resource_type: val?.value,
+                //   edit: true,
+                //   resourceId:
+                //     val?.type === "CLICK_HOUSE"
+                //       ? resources?.find(
+                //           (resource) => resource?.resource_type === 2
+                //         )?.id
+                //       : el?.id,
+                // });
                 setChosenResource(val);
               }}
               sx={{

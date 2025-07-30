@@ -19,6 +19,9 @@ import {DynamicTable} from "../table-redesign";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import { viewsActions } from "../../store/views/view.slice";
+import NoDataPng from "../../assets/images/no-data.png";
+import { Text } from "@chakra-ui/react";
 
 const NewObjectsPage = () => {
   const { state, pathname } = useLocation();
@@ -29,6 +32,7 @@ const NewObjectsPage = () => {
   const { i18n } = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  const { views: viewsFromStore } = useSelector((state) => state.views);
 
   const { data: views, refetch } = useQuery(
     ["GET_VIEWS_LIST", menuId],
@@ -46,6 +50,7 @@ const NewObjectsPage = () => {
       },
       onSuccess: (data) => {
         setSelectedView(data?.[selectedTabIndex]);
+        dispatch(viewsActions.setViews(data));
 
         if (!pathname.includes("/login")) {
           updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
@@ -130,6 +135,12 @@ const NewObjectsPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    return () => {
+      dispatch(viewsActions.clearViews());
+    };
+  }, []);
+
   const setViews = () => {};
 
   const storageItem = localStorage.getItem("newUi");
@@ -159,7 +170,7 @@ const NewObjectsPage = () => {
     selectedTabIndex: selectedTabIndex,
     setSelectedView: setSelectedView,
     selectedView: selectedView,
-    views: views,
+    views: viewsFromStore,
     fieldsMap: fieldsMap,
     fieldsMapRel,
   };
@@ -189,27 +200,52 @@ const NewObjectsPage = () => {
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {views?.map((view) => {
+          {viewsFromStore?.map((view) => {
             return (
               <TabPanel key={view.id}>
                 {getViewComponent([view?.type])({ view })}
               </TabPanel>
             );
           })}
-          <TabPanel>
+          {/* <TabPanel>
             <DocView
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}
             />
-          </TabPanel>
+          </TabPanel> */}
         </div>
       </Tabs>
 
       {!views?.length && (
-        <FiltersBlock>
-          <ViewTabSelector selectedTabIndex={selectedTabIndex} views={views} />
-        </FiltersBlock>
+        <>
+          <FiltersBlock>
+            <ViewTabSelector
+              menuId={menuId}
+              fieldsMap={fieldsMap}
+              fieldsMapRel={fieldsMapRel}
+              refetchViews={refetch}
+              selectedTabIndex={selectedTabIndex}
+              views={views}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+            />
+          </FiltersBlock>
+          <Box
+            width="100%"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+            height="100%"
+            gap="16px"
+          >
+            <img src={NoDataPng} alt="No data" width={250} />
+            <Text fontSize="16px" fontWeight="500" color="#475467">
+              No data found
+            </Text>
+          </Box>
+        </>
       )}
     </>
   );

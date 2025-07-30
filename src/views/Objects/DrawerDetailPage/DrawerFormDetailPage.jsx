@@ -108,6 +108,7 @@ function DrawerFormDetailPage({
         selectedRow?.[selectedRow?.TO_DATE_SLUG]
       );
     }
+
     rootForm.setValue(
       "attributes.layout_heading",
       selectedTab?.attributes?.layout_heading
@@ -153,9 +154,10 @@ function DrawerFormDetailPage({
       });
     });
     return !!allFields.find((field) =>
-      field?.enable_multilanguage
-        ? field?.enable_multilanguage
-        : field?.attributes?.enable_multilanguage === true
+      field?.enable_multilanguage || field?.enable_multi_language
+        ? field?.enable_multilanguage || field?.enable_multi_language
+        : (field?.attributes?.enable_multilanguage ||
+            field?.attributes?.enable_multi_language) === true
     );
   }, [selectedTab]);
 
@@ -231,6 +233,9 @@ function DrawerFormDetailPage({
           fieldsMap={fieldsMap}
           selectedTab={selectedTab}
           setFormValue={rootForm.setValue}
+          activeLang={activeLang}
+          isMultiLanguage={isMultiLanguage}
+          langs={projectInfo?.language}
         />
 
         <Box
@@ -264,10 +269,16 @@ function DrawerFormDetailPage({
                       <Box
                         className={dragAction ? "rowColumnDrag" : "rowColumn"}
                         display="flex"
-                        alignItems="center"
+                        alignItems={
+                          Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
+                            ? "flex-start"
+                            : "center"
+                        }
                         {...(Boolean(field?.type === "MULTISELECT")
                           ? {minHeight: "30px"}
-                          : {height: "34px"})}
+                          : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
+                            ? {height: "auto !important"}
+                            : {height: "32px"})}
                         py="8px">
                         <Box
                           display="flex"
@@ -343,7 +354,8 @@ function DrawerFormDetailPage({
           display="flex"
           justifyContent="flex-end"
           marginTop="auto"
-          marginBottom="12px">
+          marginBottom="12px"
+          gap={"8px"}>
           <FormCustomActionButton
             control={rootForm?.control?._formValues}
             tableSlug={tableSlug}

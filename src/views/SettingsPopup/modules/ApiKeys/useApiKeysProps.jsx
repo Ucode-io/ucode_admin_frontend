@@ -6,9 +6,9 @@ import fileService from "@/services/fileService";
 import exportToJsonService from "@/services/exportToJson";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useApiKeysProps = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -24,15 +24,35 @@ export const useApiKeysProps = () => {
   const { setSearchParams } = useSettingsPopupContext();
 
   const navigateToEditForm = (id) => {
-    setSearchParams({ tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL, apiKeyId: id, edit: true });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+    );
+    dispatch(settingsModalActions.setApiKeyId(id));
+    dispatch(settingsModalActions.setEdit(true));
+    dispatch(settingsModalActions.setView(false));
+    // setSearchParams({
+    //   tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL,
+    //   apiKeyId: id,
+    //   edit: true,
+    // });
   };
 
   const navigateToForm = (id) => {
-    setSearchParams({ tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL, apiKeyId: id, view: true });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+    );
+    dispatch(settingsModalActions.setApiKeyId(id));
+    dispatch(settingsModalActions.setView(true));
+    dispatch(settingsModalActions.setCreate(false));
+    // setSearchParams({ apiKeyId: id, view: true });
   };
-  
+
   const navigateToCreateForm = () => {
-    setSearchParams({ tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL, create: true });
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+    );
+    dispatch(settingsModalActions.setCreate(true));
+    // setSearchParams({ tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL, create: true });
   };
 
   const deleteTable = (id) => {
@@ -100,5 +120,5 @@ export const useApiKeysProps = () => {
     deleteTable,
     navigateToCreateForm,
     list,
-  }
-}
+  };
+};

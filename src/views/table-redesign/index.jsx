@@ -843,7 +843,7 @@ const FieldButton = ({
       table_to: values?.table_to?.split("/")?.[1],
       relation_table_slug: tableSlug,
       label: values?.table_from,
-      type: values?.relation_type,
+      type: values?.relation_type || "Many2One",
       required: false,
       multiple_insert: false,
       show_label: true,

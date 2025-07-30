@@ -4,8 +4,8 @@ import {useMemo, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 import styles from "./week.module.scss";
 import DataWeekCard from "./DataWeekCard.jsx";
-import useTimeList from "../../../../hooks/useTimeList";
-import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
+import useTimeList from "../../../../hooks/useTimeList.js";
+import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage.jsx";
 
 const WeekColumn = ({
   date,

@@ -2,7 +2,7 @@ import chakraUITheme from "@/theme/chakraUITheme";
 import {useEffect, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
   useLocation,
   useNavigate,
@@ -27,11 +27,13 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import {viewTypes, VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
 import {DynamicTable} from "../table-redesign";
 import ViewTypeList from "./components/ViewTypeList";
+import {viewsActions} from "../../store/views/view.slice";
 
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
   const {appId} = useParams();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
@@ -40,8 +42,7 @@ const ObjectsPage = () => {
   const {i18n, t} = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
-      state?.viewSelectedTab?.viewTab?.find((el) => el?.tableSlug === tableSlug)
-        ?.tabIndex
+      state?.views?.viewTab?.find((el) => el?.tableSlug === tableSlug)?.tabIndex
   );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
@@ -52,6 +53,7 @@ const ObjectsPage = () => {
   const projectId = store.getState().company.projectId;
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
+  const {views: viewsFromStore} = useSelector((state) => state.views);
 
   const parts = auth?.clientType?.default_page
     ? auth?.clientType?.default_page?.split("/")
@@ -128,6 +130,7 @@ const ObjectsPage = () => {
         };
       },
       onSuccess: ({views}) => {
+        dispatch(viewsActions.setViews(views));
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }
@@ -138,6 +141,13 @@ const ObjectsPage = () => {
       ? setSelectedTabIndex(parseInt(queryTab - 1))
       : setSelectedTabIndex(viewSelectedIndex || 0);
   }, [queryTab]);
+
+  useEffect(() => {
+    return () => {
+      console.log("unmount");
+      dispatch(viewsActions.clearViews());
+    };
+  }, []);
 
   const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
@@ -183,7 +193,7 @@ const ObjectsPage = () => {
     setViews: setViews,
     selectedTabIndex: selectedTabIndex,
     setSelectedTabIndex: setSelectedTabIndex,
-    views: views,
+    views: viewsFromStore,
     fieldsMap: fieldsMap,
     menuItem,
     fieldsMapRel,
@@ -212,12 +222,13 @@ const ObjectsPage = () => {
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
   const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  console.log(selectedTabIndex);
 
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {views?.map((view) => {
+          {viewsFromStore?.map((view) => {
             return (
               <TabPanel key={view.id}>
                 {getViewComponent([view?.type])({view})}

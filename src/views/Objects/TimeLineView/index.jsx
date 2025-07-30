@@ -33,6 +33,7 @@ export default function TimeLineView({
   selectedView,
   projectInfo,
   setFormValue = () => {},
+  setSelectedView = () => {},
 }) {
   const {
     handleScroll,
@@ -43,15 +44,15 @@ export default function TimeLineView({
     datesList,
     selectedType,
     setSelectedType,
-  } = useDateLineProps({setCenterDate});
+  } = useDateLineProps({ setCenterDate });
 
-  const {tableSlug: tableSlugFromProps, appId, menuId} = useParams();
+  const { tableSlug: tableSlugFromProps, appId, menuId } = useParams();
 
   const tableSlug = relationView
     ? view?.relation_table_slug
     : (tableSlugFromProps ?? view?.table_slug);
 
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
     endOfMonth(new Date()),
@@ -86,7 +87,7 @@ export default function TimeLineView({
     });
   };
 
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
 
   const replaceUrlVariables = (urlTemplate, data) => {
@@ -122,13 +123,13 @@ export default function TimeLineView({
 
   // FOR DATA
   const {
-    data: {data} = {data: []},
+    data: { data } = { data: [] },
     isLoading,
     refetch: refetchData,
   } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug, filters, dateFilters, view, months, selectedType},
+      { tableSlug, filters, dateFilters, view, months, selectedType },
     ],
     () => {
       let data = {
@@ -176,11 +177,11 @@ export default function TimeLineView({
 
   // FOR TABLE INFO
   const {
-    data: {visibleColumns, visibleRelationColumns} = {data: []},
+    data: { visibleColumns, visibleRelationColumns } = { data: [] },
     isLoading: tableInfoLoading,
     refetch: refetchTableInfo,
   } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug, filters, dateFilters}],
+    ["GET_TABLE_INFO", { tableSlug, filters, dateFilters }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -289,7 +290,8 @@ export default function TimeLineView({
             // height: "100vh",
           }}
           ref={calendarRef}
-          onScroll={handleScroll}>
+          onScroll={handleScroll}
+        >
           {tableInfoLoading || isViewLoading ? (
             <PageFallback />
           ) : (
@@ -325,6 +327,8 @@ export default function TimeLineView({
               navigateToDetailPage={navigateToDetailPage}
               setNoDates={setNoDates}
               noDates={noDates}
+              relationView={relationView}
+              setSelectedView={setSelectedView}
             />
           )}
         </div>

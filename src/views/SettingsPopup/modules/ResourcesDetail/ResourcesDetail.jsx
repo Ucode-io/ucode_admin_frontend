@@ -42,6 +42,7 @@ import {useSettingsPopupContext} from "../../providers";
 import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
 import PostgresCreate from "./PostgresCreate";
+import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},
@@ -56,9 +57,13 @@ export const ResourcesDetail = ({
   } = useSettingsPopupContext();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const resourceId = settingSearchParams.get("resourceId");
-  const resourceType = settingSearchParams.get("resourceType");
+  // const resourceId = settingSearchParams.get("resourceId");
+  // const resourceType = settingSearchParams.get("resourceType");
   const projectId = useSelector((state) => state?.auth?.projectId);
+
+  const resourceType = useSelector((state) => state.settingsModal.resourceType);
+  const resourceId = useSelector((state) => state.settingsModal.resourceId);
+  const edit = useSelector((state) => state.settingsModal.edit);
 
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -385,8 +390,7 @@ export const ResourcesDetail = ({
       environment_id: authStore.environmentId,
       is_configured: true,
     };
-
-    if (Boolean(searchParams.get("edit"))) {
+    if (edit) {
       updateResourceV2({
         name: values?.name,
         type: values?.type || undefined,
@@ -479,8 +483,7 @@ export const ResourcesDetail = ({
   }, []);
 
   useEffect(() => {
-    const setNum =
-      Number(searchParams.get("resource_type")) || location?.state?.id;
+    const setNum = Number(resourceType) || location?.state?.id;
 
     if (setNum) {
       setValue("resource_type", setNum);
@@ -491,13 +494,14 @@ export const ResourcesDetail = ({
     if (resourceVal?.id) {
       reset({
         ...resourceVal,
-        resource_type: searchParams.get("resource_type"),
+        resource_type: resourceType,
       });
     }
   }, []);
 
   function backBtn() {
-    setSearchParams({tab: "resources"});
+    // setSearchParams({ tab: "resources" });
+    dispatch(settingsModalActions.resetParams());
     setOpenResource(null);
     setResourceVal(null);
     queryClient.refetchQueries(["RESOURCESV2"]);
@@ -572,7 +576,11 @@ export const ResourcesDetail = ({
                       isLoading={createLoading}>
                       {loading ? (
                         <CircularProgress
-                          style={{color: "#fff", width: "20px", height: "20px"}}
+                          style={{
+                            color: "#fff",
+                            width: "20px",
+                            height: "20px",
+                          }}
                         />
                       ) : (
                         generateLangaugeText(
@@ -651,7 +659,7 @@ export const ResourcesDetail = ({
                   isEditPage={isEditPage}
                   watch={watch}
                 />
-              ) : Number(searchParams.get("resource_type")) === 3 ? (
+              ) : Number(resourceType) === 3 ? (
                 <PostgresCreate
                   settingLan={settingLan}
                   control={control}

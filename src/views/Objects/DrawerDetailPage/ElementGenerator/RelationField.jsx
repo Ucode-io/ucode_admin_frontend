@@ -192,7 +192,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const {data: optionsFromFunctions} = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -236,24 +236,54 @@ const AutoCompleteElement = ({
     }
   );
 
-  const {data: optionsFromLocale} = useQuery(
+  const autoFiltersFirstValues = useMemo(() => {
+    if (!autoFiltersValue) return "";
+    return Object.values(autoFiltersValue).join(",");
+  }, []);
+
+  const autoFiltersNewValues = useMemo(() => {
+    if (!autoFiltersValue) return "";
+    return Object.values(autoFiltersValue).join(",");
+  }, [autoFiltersValue]);
+
+  // if (field?.slug === "metrics_category_values_id") {
+  //   console.log({ autoFiltersFirstValues, autoFiltersNewValues });
+  // }
+
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
+      const requestData = {
+        ...autoFiltersValue,
+        additional_request: {
+          additional_field: "guid",
+        },
+        view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+        search: debouncedValue.trim(),
+        limit: 10,
+        offset: pageToOffset(page, 10),
+      };
+
+      if (
+        (computedIds || value) &&
+        autoFiltersFirstValues === autoFiltersNewValues
+      ) {
+        const additionalValues = [computedIds ?? value];
+        requestData.additional_request.additional_values =
+          additionalValues?.flat();
+      } else if (
+        (computedIds || value) &&
+        autoFiltersFirstValues !== autoFiltersNewValues
+      ) {
+        setLocalValue([]);
+        delete requestData.additional_request.additional_field;
+      }
+
       return constructorObjectService.getListV2(
         tableSlug,
         {
-          data: {
-            ...autoFiltersValue,
-            additional_request: {
-              additional_field: "guid",
-              additional_values: [computedIds ?? value],
-            },
-            view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-            search: debouncedValue.trim(),
-            limit: 10,
-            offset: pageToOffset(page, 10),
-          },
+          data: requestData,
         },
         {
           language_setting: i18n?.language,
@@ -263,12 +293,14 @@ const AutoCompleteElement = ({
     {
       enabled: !field?.attributes?.function_path && !isSettings,
       select: (res) => {
+        const count = res?.data?.count;
         const options = res?.data?.response ?? [];
         const slugOptions =
           res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
+          count,
         };
       },
       onSuccess: (data) => {
@@ -318,7 +350,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -329,7 +361,7 @@ const AutoCompleteElement = ({
       setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({field_from, field_to}) => {
+      field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -399,7 +431,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -418,7 +450,11 @@ const AutoCompleteElement = ({
   }, [value]);
 
   useEffect(() => {
-    if (computedValueMulti?.length && isMulti) {
+    if (
+      computedValueMulti?.length &&
+      isMulti &&
+      computedValueMulti?.length > localValue?.length
+    ) {
       setLocalValue(computedValueMulti);
     }
   }, [computedValueMulti]);
@@ -434,6 +470,7 @@ const AutoCompleteElement = ({
   }, [autoFiltersValue]);
 
   function loadMoreItems() {
+    if (allOptions?.length >= optionsFromLocale?.count) return;
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
     } else {
@@ -490,7 +527,8 @@ const AutoCompleteElement = ({
         cursor: disabled ? "not-allowed" : "pointer",
         border: errors?.[field?.slug] ? "1px solid red" : "none",
         borderRadius: "4px",
-      }}>
+      }}
+    >
       <Select
         placeholder="Empty"
         id={`relationField`}
@@ -529,10 +567,13 @@ const AutoCompleteElement = ({
           DropdownIndicator: () => null,
           MultiValue: (option) => {
             return (
-              <div style={{display: "flex", alignItems: "center"}}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <span>
                   {computedViewFields?.map((el, index) => {
-                    if (field?.attributes?.enable_multi_language) {
+                    if (
+                      field?.attributes?.enable_multi_language ||
+                      field?.attributes?.enable_multilanguage
+                    ) {
                       return getRelationFieldTabsLabel(
                         field,
                         option.data,
@@ -550,7 +591,7 @@ const AutoCompleteElement = ({
                 <Box display="flex" alignItems="center">
                   <IconGenerator
                     icon="arrow-up-right-from-square.svg"
-                    style={{marginLeft: "10px", cursor: "pointer"}}
+                    style={{ marginLeft: "10px", cursor: "pointer" }}
                     size={15}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -566,14 +607,16 @@ const AutoCompleteElement = ({
                       e.stopPropagation();
                       e.preventDefault();
                       deleteHandler(option.data);
-                    }}>
+                    }}
+                  >
                     <svg
                       height="16"
                       width="16"
                       viewBox="0 0 20 20"
                       aria-hidden="true"
                       focusable="false"
-                      class="css-tj5bde-Svg">
+                      class="css-tj5bde-Svg"
+                    >
                       <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
                     </svg>
                   </span>
@@ -600,7 +643,8 @@ const AutoCompleteElement = ({
             fontSize: "10px",
             // textAlign: "center",
             marginTop: "5px",
-          }}>
+          }}
+        >
           {errors?.[field?.slug]?.message ?? "This field is required!"}
         </div>
       )}

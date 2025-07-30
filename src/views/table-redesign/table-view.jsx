@@ -46,7 +46,7 @@ const TableView = ({
   visibleForm,
   filterAnchor,
   tab,
-  view,
+  view: viewProp,
   shouldGet,
   isTableView = false,
   selectedView,
@@ -78,10 +78,13 @@ const TableView = ({
   setSelectedView = () => {},
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
   const open = useSelector((state) => state?.drawer?.openDrawer);
+  const { views: viewFromStore } = useSelector((state) => state.views);
+  const [searchParams] = useSearchParams();
+
   const {
     id,
     menuId: menuid,
@@ -89,10 +92,19 @@ const TableView = ({
     appId,
   } = useParams();
   const new_router = localStorage.getItem("new_router") === "true";
-  const tableSlug =
-    view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
+  const viewId = searchParams.get("v") ?? viewProp?.id;
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const fieldSlug = urlSearchParams.get("field_slug");
 
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
+  const view = viewFromStore?.find((view) => view?.id === viewId);
+
+  const tableSlug =
+    fieldSlug ||
+    view?.relation_table_slug ||
+    tableSlugFromParams ||
+    view?.table_slug;
+
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -106,8 +118,6 @@ const TableView = ({
   const queryClient = useQueryClient();
   const sortValues = useSelector((state) => state.pagination.sortValues);
   const [combinedTableData, setCombinedTableData] = useState([]);
-  const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
-  const viewId = searchParams.get("v") ?? view?.id;
   const menuId = menuid ?? searchParams.get("menuId");
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
@@ -142,7 +152,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const {update} = useFieldArray({
+  const { update } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -168,7 +178,7 @@ const TableView = ({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -233,7 +243,7 @@ const TableView = ({
     for (const key in view?.attributes.fixedColumns) {
       if (view?.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view?.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view?.attributes.fixedColumns[key]});
+          result.push({ id: key, value: view?.attributes.fixedColumns[key] });
         }
       }
     }
@@ -282,7 +292,7 @@ const TableView = ({
       );
 
       if (matchingSort) {
-        const {field, order} = matchingSort;
+        const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -309,7 +319,7 @@ const TableView = ({
   }, [filters]);
 
   const {
-    data: {fiedlsarray, fieldView, custom_events} = {
+    data: { fiedlsarray, fieldView, custom_events } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -329,7 +339,7 @@ const TableView = ({
         data: {},
       });
     },
-    enabled: Boolean(!tableSlug),
+    enabled: Boolean(tableSlug),
     select: (res) => {
       return {
         fiedlsarray: res?.data?.fields ?? [],
@@ -345,7 +355,7 @@ const TableView = ({
       : searchText;
 
   const {
-    data: {tableData, pageCount, dataCount} = {
+    data: { tableData, pageCount, dataCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -363,7 +373,7 @@ const TableView = ({
         sortedDatas,
         currentPage,
         limit,
-        filters: {...filters, [tab?.slug]: tab?.value},
+        filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
         paginiation,
         // currentView,
@@ -389,7 +399,7 @@ const TableView = ({
         },
       });
     },
-    enabled: Boolean(tableSlug),
+    enabled: Boolean(tableSlug && menuId && viewId),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -411,7 +421,7 @@ const TableView = ({
   });
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -421,6 +431,7 @@ const TableView = ({
         tableSlug,
       },
     ],
+    enabled: Boolean(tableSlug && menuId),
     queryFn: () => {
       return layoutService.getLayout(tableSlug, menuId);
     },
@@ -583,7 +594,9 @@ const TableView = ({
   }, [reset, tableData]);
 
   useEffect(() => {
-    refetch();
+    if (tableSlug) {
+      refetch();
+    }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
         view?.attributes?.quick_filters?.length ?? 0
@@ -750,7 +763,8 @@ const TableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -769,7 +783,8 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

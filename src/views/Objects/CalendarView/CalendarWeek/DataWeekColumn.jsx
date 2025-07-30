@@ -12,9 +12,9 @@ import {useSearchParams, useNavigate} from "react-router-dom";
 import styles from "./week.module.scss";
 import {useQueryClient} from "react-query";
 import DataWeekCard from "./DataWeekCard.jsx";
-import constructorObjectService from "../../../../services/constructorObjectService";
-import useTimeList from "../../../../hooks/useTimeList";
-import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage";
+import constructorObjectService from "../../../../services/constructorObjectService.js";
+import useTimeList from "../../../../hooks/useTimeList.js";
+import ModalDetailPage from "../../ModalDetailPage/ModalDetailPage.jsx";
 
 const DataWeekColumn = ({
   date,

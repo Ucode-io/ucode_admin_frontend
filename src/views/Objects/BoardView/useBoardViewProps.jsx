@@ -285,7 +285,16 @@ export const useBoardViewProps = ({
         ?.map((el) => el?.slug),
       "guid",
       "board_order",
-    ] ?? ["guid", "board_order"];
+    ];
+
+    if (!fields.includes(groupField?.slug)) {
+      fields.push(groupField?.slug);
+    }
+
+    if (subGroupFieldSlug && !fields.includes(subGroupFieldSlug)) {
+      fields.push(subGroupFieldSlug);
+    }
+
     boardMutation.mutate({
       data: {
         group_by: {
@@ -308,6 +317,7 @@ export const useBoardViewProps = ({
     {
       onSuccess: (data) => {
         const attributesTabs = view?.attributes?.tabs;
+        console.log({ data });
 
         if (attributesTabs?.length === data?.data?.groups?.length) {
           setGroups(() => {
@@ -331,55 +341,55 @@ export const useBoardViewProps = ({
 
   const isLoading = boardStructureMutation.isLoading;
 
-  const groupMutationForCounts = useGetBoardStructureMutation(
-    {
-      onSuccess: (data) => {
-        const result = {};
-        data?.data?.groups?.forEach((el) => {
-          result[el?.name] = el?.count;
-        });
-        setGroupsCounts(result);
-      },
+const groupMutationForCounts = useGetBoardStructureMutation(
+  {
+    onSuccess: (data) => {
+      const result = {};
+      data?.data?.groups?.forEach((el) => {
+        result[el?.name] = el?.count;
+      });
+      setGroupsCounts(result);
     },
-    tableSlug
-  );
+  },
+  tableSlug
+);
 
-  useEffect(() => {
-    if (subGroupById && currentSubgroupIndex < subgroupsQueue.length) {
-      const currentSubgroup = subgroupsQueue[currentSubgroupIndex];
+useEffect(() => {
+  if (subGroupById && currentSubgroupIndex < subgroupsQueue.length) {
+    const currentSubgroup = subgroupsQueue[currentSubgroupIndex];
 
-      if (boardData[currentSubgroup?.name]) {
-        const dataLength = Object.values(
-          boardData[currentSubgroup?.name]
-        ).flat().length;
+    if (boardData[currentSubgroup?.name]) {
+      const dataLength = Object.values(boardData[currentSubgroup?.name]).flat()
+        .length;
 
-        if (dataLength >= currentSubgroup.count) {
-          setCurrentSubgroupIndex((prev) => prev + 1);
-        } else {
-          setOffset((prev) => prev + limit);
-        }
+      if (dataLength >= currentSubgroup.count) {
+        setCurrentSubgroupIndex((prev) => prev + 1);
+      } else {
+        setOffset((prev) => prev + limit);
       }
     }
-  }, [boardData]);
+  }
+}, [boardData]);
 
-  const mutateBoardStructure = () => {
-    if (!groupField?.slug) return;
-    const mutateBody = {
-      data: {
-        group_by: {
-          field: groupField?.slug,
-        },
+const mutateBoardStructure = () => {
+  console.log({ groupField });
+  if (!groupField?.slug) return;
+  const mutateBody = {
+    data: {
+      group_by: {
+        field: groupField?.slug,
       },
-    };
-
-    if (subGroupById) {
-      mutateBody.data.subgroup_by = {
-        field: subGroupFieldSlug,
-      };
-    }
-
-    boardStructureMutation.mutate(mutateBody);
+    },
   };
+
+  if (subGroupById) {
+    mutateBody.data.subgroup_by = {
+      field: subGroupFieldSlug,
+    };
+  }
+
+  boardStructureMutation.mutate(mutateBody);
+};
 
   const refetchAfterChangeBoard = () => {
     mutateBoardStructure();

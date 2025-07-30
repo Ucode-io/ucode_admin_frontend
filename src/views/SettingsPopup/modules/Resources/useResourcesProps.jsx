@@ -6,11 +6,15 @@ import { useGetLang } from "../../../../hooks/useGetLang";
 import { useTranslation } from "react-i18next";
 import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
+import { useDispatch } from "react-redux";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useResourcesProps = () => {
 
   const company = store.getState().company;
   const authStore = store.getState().auth;
+
+  const dispatch = useDispatch();
 
   const { setSearchParams } = useSettingsPopupContext();
 
@@ -19,11 +23,16 @@ export const useResourcesProps = () => {
   const { t, i18n } = useTranslation()
 
   const handleItemClick = (row) => {
-    setSearchParams({
-      tab: TAB_COMPONENTS?.RESOURCES?.RESOURCES_DETAIL,
-      resourceId: row?.id,
-      resourceType: row?.type,
-    })
+    dispatch(
+      settingsModalActions.setTab(TAB_COMPONENTS?.RESOURCES?.RESOURCES_DETAIL)
+    );
+    dispatch(settingsModalActions.setResourceId(row?.id));
+    dispatch(settingsModalActions.setResourceType(row?.type));
+    // setSearchParams({
+    //   tab: TAB_COMPONENTS?.RESOURCES?.RESOURCES_DETAIL,
+    //   resourceId: row?.id,
+    //   resourceType: row?.type,
+    // })
   }
 
   const handleAddClick = () => {
@@ -78,7 +87,6 @@ export const useResourcesProps = () => {
         ...(resources || []),
       ];
     }, [data, resources, clickHouseList]);
-    console.log({ computedResources });
   return {
     computedResources,
     i18n,

@@ -18,12 +18,12 @@ import AddIcon from "@mui/icons-material/Add";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {Menu} from "@mui/material";
 import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import constructorTableService from "../../services/constructorTableService";
-import {getColumnIcon} from "../../views/table-redesign/icons";
-import {useTranslation} from "react-i18next";
+import { getColumnIcon } from "../../views/table-redesign/icons";
+import { useTranslation } from "react-i18next";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import {applyDrag} from "../../utils/applyDrag";
+import { applyDrag } from "../../utils/applyDrag";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 function PageSettings({
@@ -65,14 +65,16 @@ const SettingFields = ({
   const [sectionFields, setSectionFields] = useState(selectedSection?.fields);
   const [dragAction, setDragAction] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const {tableSlug} = useParams();
-  const {i18n} = useTranslation();
+  const { tableSlug: tableSlugParams } = useParams();
+  const { state } = useLocation();
+  const tableSlug = tableSlugParams ?? state?.tableSlug;
+  const { i18n } = useTranslation();
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
   const {
-    data: {fields} = {
+    data: { fields } = {
       fields: [],
     },
   } = useQuery({
@@ -107,7 +109,7 @@ const SettingFields = ({
 
   const addFieldSections = (field) => {
     const updatedSection = [...selectedSection?.fields, field];
-    setSelectedSection({...selectedSection, fields: updatedSection});
+    setSelectedSection({ ...selectedSection, fields: updatedSection });
     updateSectionFields(updatedSection);
   };
 
@@ -126,7 +128,7 @@ const SettingFields = ({
         : field
     );
 
-    setSelectedSection({...selectedSection, fields: updatedFields});
+    setSelectedSection({ ...selectedSection, fields: updatedFields });
     updateSectionFields(updatedFields);
   };
 
@@ -137,7 +139,7 @@ const SettingFields = ({
       (field) => field?.slug !== fieldSlug
     );
 
-    setSelectedSection({...selectedSection, fields: updatedFields});
+    setSelectedSection({ ...selectedSection, fields: updatedFields });
     updateSectionFields(updatedFields);
   };
 

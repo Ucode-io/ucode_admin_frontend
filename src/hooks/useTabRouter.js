@@ -37,7 +37,7 @@ export default function useTabRouter() {
       navigate(link, {state});
       return;
     }
-console.log({isNewRouter})
+
     if(isNewRouter) {
       const link = `/${menuId}/detail/${menuId}/${tableSlug}/${row.guid}?menuId=${menuId}&itemId=${itemId}`;
 

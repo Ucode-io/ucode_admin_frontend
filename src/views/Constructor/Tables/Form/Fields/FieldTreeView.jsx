@@ -3,7 +3,14 @@ import { useState } from "react";
 import { useMenuListQuery } from "../../../../../services/menuService";
 import { TreeItem } from "@mui/x-tree-view";
 
-const FieldTreeView = ({ element, setCheck, check, folder }) => {
+const FieldTreeView = ({
+  element,
+  setCheck,
+  itemStyles,
+  check,
+  folder,
+  ...props
+}) => {
   const [child, setChild] = useState();
 
   const { isLoading } = useMenuListQuery({
@@ -24,22 +31,32 @@ const FieldTreeView = ({ element, setCheck, check, folder }) => {
       key={element?.id}
       nodeId={element?.attributes?.path}
       label={element?.label}
-      sx={{
-        "& .MuiTreeItem-content.Mui-selected": {
-          background: "#007AFF",
-          color: "#fff",
-          padding: "8.5px 14px",
-          "&:hover": {
-            background: "#007AFF",
-          },
-        },
-        "& .MuiTreeItem-content": {
-          padding: "8.5px 14px",
-        },
-      }}
+      sx={
+        itemStyles
+          ? itemStyles
+          : {
+              "& .MuiTreeItem-content.Mui-selected": {
+                background: "#007AFF",
+                color: "#fff",
+                padding: "8.5px 14px",
+                "&:hover": {
+                  background: "#007AFF",
+                },
+              },
+              "& .MuiTreeItem-content": {
+                padding: "8.5px 14px",
+              },
+            }
+      }
+      {...props}
     >
       {child?.map((item) => (
-        <FieldTreeView nodes={child} element={item} setCheck={setCheck} />
+        <FieldTreeView
+          nodes={child}
+          element={item}
+          setCheck={setCheck}
+          itemStyles={itemStyles}
+        />
       ))}
     </TreeItem>
   );

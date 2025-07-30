@@ -154,6 +154,7 @@ const CellElementGeneratorForTableView = ({
           name={computedSlug}
           fullWidth
           field={field}
+          inputHeight={20}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}

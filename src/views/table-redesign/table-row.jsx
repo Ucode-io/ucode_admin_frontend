@@ -67,7 +67,11 @@ const TableRow = ({
     <>
       {!relationAction ? (
         <>
-          <CTableRow key={key} style={style} className="new-ui" ref={parentRef}>
+          <CTableRow
+            key={key}
+            style={{...style, height: "28px"}}
+            className="new-ui"
+            ref={parentRef}>
             <CTableCell
               align="center"
               className="data_table__number_cell"
@@ -77,6 +81,7 @@ const TableRow = ({
                 left: "0",
                 backgroundColor: "#F6F6F6",
                 zIndex: "1",
+                height: "22px",
               }}>
               <div
                 style={{
@@ -123,6 +128,7 @@ const TableRow = ({
                       fontWeight: 400,
                       lineHeight: "normal",
                       padding: "0 5px",
+                      height: "26px",
                       position: `${
                         tableSettings?.[pageName]?.find(
                           (item) => item?.id === virtualColumn?.id
@@ -157,6 +163,8 @@ const TableRow = ({
                           ? "1"
                           : "0"
                       }`,
+                      height: "24px",
+                      overflow: "hidden",
                     }}>
                     {isTableView ? (
                       <TableDataForm
@@ -230,7 +238,6 @@ const TableRow = ({
                 style={{
                   display: "flex",
                   gap: "5px",
-                  padding: "3px",
                   justifyContent: "center",
                   alignItems: "center",
                 }}>
@@ -398,7 +405,6 @@ const TableRow = ({
               style={{
                 display: "flex",
                 gap: "5px",
-                padding: "3px",
                 justifyContent: "center",
                 alignItems: "center",
               }}>

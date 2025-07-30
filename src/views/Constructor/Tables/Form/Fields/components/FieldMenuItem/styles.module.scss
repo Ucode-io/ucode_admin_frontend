@@ -1,5 +1,4 @@
 .item {
-  position: relative;
   display: flex;
   justify-content: space-between;
   padding: 6px 8px;
@@ -37,13 +36,13 @@
 }
 
 .content {
-  width: 300px;
+  min-width: 200px;
   max-height: 376px;
   position: absolute;
-  top: 0;
-  right: calc(100% + 22px);
+  right: calc(100% + 4px);
   overflow: auto;
   background-color: #fff;
   border: 1px solid #e5e9eb;
   border-radius: 8px;
+  transform: translateY(-32px);
 }

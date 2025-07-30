@@ -42,18 +42,94 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
   const [folder, setFolder] = useState("Choose backet");
 
   const [isCreateOptionOpen, setIsCreateOptionOpen] = useState(false);
+  const [isTodoOptionOpen, setIsTodoOptionOpen] = useState(false);
+  const [isProgressOptionOpen, setIsProgressOptionOpen] = useState(false);
+  const [isCompleteOptionOpen, setIsCompleteOptionOpen] = useState(false);
 
-  const toggleCreateOptionField = () => setIsCreateOptionOpen(!isCreateOptionOpen)
+  const toggleCreateOptionField = () =>
+    setIsCreateOptionOpen(!isCreateOptionOpen);
+  const toggleTodoOptionField = () => setIsTodoOptionOpen(!isTodoOptionOpen);
+  const toggleProgressOptionField = () =>
+    setIsProgressOptionOpen(!isProgressOptionOpen);
+  const toggleCompleteOptionField = () =>
+    setIsCompleteOptionOpen(!isCompleteOptionOpen);
 
   const {
     fields: multiSelectFields,
     append: multiSelectAppend,
-    remove: multiSelectRemove
+    remove: multiSelectRemove,
   } = useFieldArray({
     control,
     name: "attributes.options",
     keyName: "key",
   });
+
+  const {
+    fields: todoFields,
+    append: todoAppend,
+    remove: todoRemove,
+  } = useFieldArray({
+    control,
+    name: "attributes.todo.options",
+    keyName: "key",
+  });
+
+  const {
+    fields: progressFields,
+    append: progressAppend,
+    remove: progressRemove,
+  } = useFieldArray({
+    control,
+    name: "attributes.progress.options",
+    keyName: "key",
+  });
+
+  const {
+    fields: completeFields,
+    append: completeAppend,
+    remove: completeRemove,
+  } = useFieldArray({
+    control,
+    name: "attributes.complete.options",
+    keyName: "key",
+  });
+
+  const addTodo = (value) => {
+    const randomIndex = Math.floor(Math.random() * colors?.length);
+    todoAppend({
+      label: value,
+      color: colors[randomIndex].color,
+      colorName: colors[randomIndex].name,
+    });
+  };
+
+  const addProgress = (value) => {
+    const randomIndex = Math.floor(Math.random() * colors?.length);
+    progressAppend({
+      label: value,
+      color: colors[randomIndex].color,
+      colorName: colors[randomIndex].name,
+    });
+  };
+
+  const addComplete = (value) => {
+    const randomIndex = Math.floor(Math.random() * colors?.length);
+    completeAppend({
+      label: value,
+      color: colors[randomIndex].color,
+      colorName: colors[randomIndex].name,
+    });
+  };
+
+  const addNewOption = (value) => {
+    const randomIndex = Math.floor(Math.random() * colors?.length);
+    multiSelectAppend({
+      value,
+      icon: "",
+      color: colors[randomIndex].color,
+      colorName: colors[randomIndex].name,
+    });
+  };
 
   const hasIcon = useWatch({
     control,
@@ -64,17 +140,6 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     control,
     name: "attributes.has_color",
   });
-
-  const addNewOption = (value) => {
-    const randomIndex = Math.floor(Math.random() * colors?.length - 1);
-    multiSelectAppend({
-      value,
-      icon: "",
-      color: colors[randomIndex].color,
-      colorName: colors[randomIndex].name,
-    });
-  };
-
   const { data: backetOptions } = useMenuListQuery({
     params: {
       parent_id: "8a6f913a-e3d4-4b73-9fc0-c942f343d0b9",
@@ -103,5 +168,25 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     addNewOption,
     isCreateOptionOpen,
     toggleCreateOptionField,
-  }
+    toggleTodoOptionField,
+    toggleProgressOptionField,
+    toggleCompleteOptionField,
+    multiSelectRemove,
+    colors,
+    todoFields,
+    todoAppend,
+    todoRemove,
+    progressFields,
+    progressAppend,
+    progressRemove,
+    completeFields,
+    completeAppend,
+    completeRemove,
+    isTodoOptionOpen,
+    isProgressOptionOpen,
+    isCompleteOptionOpen,
+    addTodo,
+    addProgress,
+    addComplete,
+  };
 }

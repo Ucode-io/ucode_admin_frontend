@@ -65,45 +65,47 @@ export const FieldPopover = ({
         },
       }}
     >
-      <Box
-        padding="12px 8px"
-        minWidth="292px"
-        maxHeight="500px"
-        overflow="auto"
-      >
-        {selectedSettings ? (
-          <AdvancedSettings
-            title={selectedSettings}
-            onClose={() => {
-              onClose();
-              handleSelectSetting("");
-            }}
-            onBackClick={() => handleSelectSetting("")}
-          >
-            {getSelectedSettings(selectedSettings)}
-          </AdvancedSettings>
-        ) : (
-          <FieldParams
-            onClose={onClose}
-            control={control}
-            languages={languages}
-            tableName={tableName}
-            setValue={setValue}
-            watch={watch}
-            register={register}
-            SETTING_TYPES={SETTING_TYPES}
-            handleSelectSetting={handleSelectSetting}
-            handleSubmit={handleSubmit}
-            onSubmit={onSubmit}
-            reset={reset}
-            tableLan={tableLan}
-            field={field}
-            formType={formType}
-            menuItem={menuItem}
-            selectedAutofillFieldSlug={selectedField?.slug}
-            tableSlug={slug}
-          />
-        )}
+      <Box position="relative">
+        <Box
+          padding="12px 8px"
+          minWidth="292px"
+          maxHeight="500px"
+          overflow="auto"
+        >
+          {selectedSettings ? (
+            <AdvancedSettings
+              title={selectedSettings}
+              onClose={() => {
+                onClose();
+                handleSelectSetting("");
+              }}
+              onBackClick={() => handleSelectSetting("")}
+            >
+              {getSelectedSettings(selectedSettings)}
+            </AdvancedSettings>
+          ) : (
+            <FieldParams
+              onClose={onClose}
+              control={control}
+              languages={languages}
+              tableName={tableName}
+              setValue={setValue}
+              watch={watch}
+              register={register}
+              SETTING_TYPES={SETTING_TYPES}
+              handleSelectSetting={handleSelectSetting}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              reset={reset}
+              tableLan={tableLan}
+              field={field}
+              formType={formType}
+              menuItem={menuItem}
+              selectedAutofillFieldSlug={selectedField?.slug}
+              tableSlug={slug}
+            />
+          )}
+        </Box>
       </Box>
     </Popover>
   );

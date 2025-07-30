@@ -14,6 +14,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
 import { AddOption } from "../AddOption";
 import { FieldChip } from "../FieldChip";
+import { StatusFieldSettings } from "../StatusFieldSettings";
+import { useState } from "react";
 
 export const FieldParams = ({
   tableName = "",
@@ -44,7 +46,31 @@ export const FieldParams = ({
     hasIcon,
     isCreateOptionOpen,
     toggleCreateOptionField,
+    toggleTodoOptionField,
+    toggleProgressOptionField,
+    toggleCompleteOptionField,
+    multiSelectRemove,
+    colors,
+    todoFields,
+    todoAppend,
+    todoRemove,
+    progressFields,
+    progressAppend,
+    progressRemove,
+    completeFields,
+    completeAppend,
+    completeRemove,
+    isTodoOptionOpen,
+    isProgressOptionOpen,
+    isCompleteOptionOpen,
+    addTodo,
+    addProgress,
+    addComplete,
   } = useFieldParamsProps({ watch, setValue, control });
+
+  const [activeId, setActiveId] = useState(null);
+
+  console.log(activeId);
 
   return (
     <Box>
@@ -197,17 +223,38 @@ export const FieldParams = ({
             {activeType?.value === FIELD_TYPES.MULTISELECT && (
               <Box>
                 <AddOption onClick={() => toggleCreateOptionField()} />
-                {multiSelectFields?.map((item) => (
+                {multiSelectFields?.map((item, index) => (
                   <FieldMenuItem
-                    key={item?.id}
+                    key={item?.key}
+                    id={index}
+                    isOpen={activeId === index}
+                    setActiveId={setActiveId}
                     title={
                       hasColor ? (
-                        <FieldChip value={item?.value} color={item?.color} />
+                        <FieldChip
+                          value={watch(`attributes.options.${index}.value`)}
+                          color={watch(`attributes.options.${index}.color`)}
+                        />
                       ) : (
                         item?.value
                       )
                     }
                     value={hasColor ? item?.colorName : ""}
+                    content={
+                      <StatusFieldSettings
+                        item={item}
+                        index={index}
+                        type={activeType?.value}
+                        remove={multiSelectRemove}
+                        control={control}
+                        name={`attributes.options.${index}`}
+                        setValue={setValue}
+                        colors={colors}
+                        hasColor={hasColor}
+                        watch={watch}
+                        setActiveId={setActiveId}
+                      />
+                    }
                   />
                 ))}
                 {isCreateOptionOpen && (
@@ -215,8 +262,9 @@ export const FieldParams = ({
                     <input
                       className={cls.addInput}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          addNewOption(e.target.value);
+                        const value = e.target.value;
+                        if (e.key === "Enter" && value?.trim()) {
+                          addNewOption(value);
                           e.target.value = "";
                         }
                       }}
@@ -226,6 +274,184 @@ export const FieldParams = ({
                   </Box>
                 )}
               </Box>
+            )}
+            {activeType?.value === FIELD_TYPES.STATUS && (
+              <>
+                <Box>
+                  <AddOption
+                    label="Todo"
+                    onClick={() => toggleTodoOptionField()}
+                  />
+                  {todoFields?.map((item, index) => (
+                    <FieldMenuItem
+                      key={item?.key}
+                      id={item?.key}
+                      isOpen={activeId === item?.key}
+                      setActiveId={setActiveId}
+                      title={
+                        <FieldChip
+                          value={watch(
+                            `attributes.todo.options.${index}.label`
+                          )}
+                          color={watch(
+                            `attributes.todo.options.${index}.color`
+                          )}
+                        />
+                      }
+                      value={item?.colorName}
+                      content={
+                        <StatusFieldSettings
+                          item={item}
+                          index={index}
+                          type={activeType?.value}
+                          remove={todoRemove}
+                          control={control}
+                          name={`attributes.todo.options.${index}`}
+                          optionName={"label"}
+                          setValue={setValue}
+                          colors={colors}
+                          hasColor={true}
+                          watch={watch}
+                          setActiveId={setActiveId}
+                          group="Todo"
+                        />
+                      }
+                    />
+                  ))}
+                  {isTodoOptionOpen && (
+                    <Box marginTop="8px">
+                      <input
+                        className={cls.addInput}
+                        onKeyDown={(e) => {
+                          const value = e.target.value;
+                          if (e.key === "Enter" && value?.trim()) {
+                            addTodo(value);
+                            e.target.value = "";
+                          }
+                        }}
+                        type="text"
+                        autoFocus
+                      />
+                    </Box>
+                  )}
+                </Box>
+                <Box>
+                  <AddOption
+                    label="Progress"
+                    onClick={() => toggleProgressOptionField()}
+                  />
+                  {isProgressOptionOpen && (
+                    <Box marginTop="8px">
+                      <input
+                        className={cls.addInput}
+                        onKeyDown={(e) => {
+                          const value = e.target.value;
+                          if (e.key === "Enter" && value?.trim()) {
+                            addProgress(value);
+                            e.target.value = "";
+                          }
+                        }}
+                        type="text"
+                        autoFocus
+                      />
+                    </Box>
+                  )}
+                  {progressFields?.map((item, index) => (
+                    <FieldMenuItem
+                      key={item?.key}
+                      id={item?.key}
+                      isOpen={activeId === item?.key}
+                      setActiveId={setActiveId}
+                      title={
+                        <FieldChip
+                          value={watch(
+                            `attributes.progress.options.${index}.label`
+                          )}
+                          color={watch(
+                            `attributes.progress.options.${index}.color`
+                          )}
+                        />
+                      }
+                      value={item?.colorName}
+                      content={
+                        <StatusFieldSettings
+                          item={item}
+                          index={index}
+                          type={activeType?.value}
+                          remove={progressRemove}
+                          control={control}
+                          name={`attributes.progress.options.${index}`}
+                          optionName={"label"}
+                          setValue={setValue}
+                          colors={colors}
+                          hasColor={true}
+                          watch={watch}
+                          setActiveId={setActiveId}
+                          group="Progress"
+                        />
+                      }
+                    />
+                  ))}
+                </Box>
+                <Box>
+                  <AddOption
+                    label="Complete"
+                    onClick={() => toggleCompleteOptionField()}
+                  />
+                  {completeFields?.map((item, index) => (
+                    <FieldMenuItem
+                      key={item?.key}
+                      id={item?.key}
+                      isOpen={activeId === item?.key}
+                      setActiveId={setActiveId}
+                      title={
+                        <FieldChip
+                          value={watch(
+                            `attributes.complete.options.${index}.label`
+                          )}
+                          color={watch(
+                            `attributes.complete.options.${index}.color`
+                          )}
+                        />
+                      }
+                      value={item?.colorName}
+                      content={
+                        <StatusFieldSettings
+                          item={item}
+                          index={index}
+                          type={activeType?.value}
+                          remove={completeRemove}
+                          control={control}
+                          name={`attributes.complete.options.${index}`}
+                          optionName={"label"}
+                          setValue={setValue}
+                          colors={colors}
+                          hasColor={true}
+                          watch={watch}
+                          setActiveId={setActiveId}
+                          group="Complete"
+                        />
+                      }
+                    />
+                  ))}
+                  {isCompleteOptionOpen && (
+                    <Box marginTop="8px">
+                      <input
+                        className={cls.addInput}
+                        onKeyDown={(e) => {
+                          const value = e.target.value;
+                          if (e.key === "Enter" && value?.trim()) {
+                            addComplete(value);
+                            e.target.value = "";
+                          }
+                        }}
+                        type="text"
+                        autoFocus
+                      />
+                    </Box>
+                  )}
+                </Box>
+              </>
             )}
             <Box display="flex" flexDirection="column">
               {activeType?.value === FIELD_TYPES.MULTISELECT && (

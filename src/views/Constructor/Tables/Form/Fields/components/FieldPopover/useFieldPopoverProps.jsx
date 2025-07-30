@@ -53,6 +53,36 @@ export const useFieldPopoverProps = ({
 
   const { i18n } = useTranslation();
 
+  const defaultOptions = {
+    todo: {
+      options: [
+        {
+          label: "In process",
+          color: "#EAECF0",
+          colorName: "Gray",
+        },
+      ],
+    },
+    progress: {
+      options: [
+        {
+          label: "Ready for test",
+          color: "#FFD6AE",
+          colorName: "Orange",
+        },
+      ],
+    },
+    complete: {
+      options: [
+        {
+          label: "Done",
+          color: "#AAF0C4",
+          colorName: "Green",
+        },
+      ],
+    },
+  };
+
   const languages = useSelector((state) => state.languages.list);
   const { handleSubmit, control, reset, watch, setValue, register } = useForm();
 
@@ -238,6 +268,7 @@ export const useFieldPopoverProps = ({
         label_en: "",
         label_ru: "",
         label_uz: "",
+        ...defaultOptions,
       },
       default: "",
       index: "string",

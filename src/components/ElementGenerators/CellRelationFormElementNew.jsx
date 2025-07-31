@@ -59,6 +59,8 @@ const CellRelationFormElementNew = ({
 }) => {
   const classes = useStyles();
 
+  console.log({ field });
+
   if (!isLayout)
     return (
       <Controller

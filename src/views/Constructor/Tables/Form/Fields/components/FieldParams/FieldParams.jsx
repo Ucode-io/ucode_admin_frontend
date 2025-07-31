@@ -277,47 +277,11 @@ export const FieldParams = ({
             )}
             {activeType?.value === FIELD_TYPES.STATUS && (
               <>
-                <Box>
+                <Box marginTop="8px">
                   <AddOption
                     label="Todo"
                     onClick={() => toggleTodoOptionField()}
                   />
-                  {todoFields?.map((item, index) => (
-                    <FieldMenuItem
-                      key={item?.key}
-                      id={item?.key}
-                      isOpen={activeId === item?.key}
-                      setActiveId={setActiveId}
-                      title={
-                        <FieldChip
-                          value={watch(
-                            `attributes.todo.options.${index}.label`
-                          )}
-                          color={watch(
-                            `attributes.todo.options.${index}.color`
-                          )}
-                        />
-                      }
-                      value={item?.colorName}
-                      content={
-                        <StatusFieldSettings
-                          item={item}
-                          index={index}
-                          type={activeType?.value}
-                          remove={todoRemove}
-                          control={control}
-                          name={`attributes.todo.options.${index}`}
-                          optionName={"label"}
-                          setValue={setValue}
-                          colors={colors}
-                          hasColor={true}
-                          watch={watch}
-                          setActiveId={setActiveId}
-                          group="Todo"
-                        />
-                      }
-                    />
-                  ))}
                   {isTodoOptionOpen && (
                     <Box marginTop="8px">
                       <input
@@ -334,6 +298,44 @@ export const FieldParams = ({
                       />
                     </Box>
                   )}
+                  <Box paddingY="8px">
+                    {todoFields?.map((item, index) => (
+                      <FieldMenuItem
+                        key={item?.key}
+                        id={item?.key}
+                        isOpen={activeId === item?.key}
+                        setActiveId={setActiveId}
+                        title={
+                          <FieldChip
+                            value={watch(
+                              `attributes.todo.options.${index}.label`
+                            )}
+                            color={watch(
+                              `attributes.todo.options.${index}.color`
+                            )}
+                          />
+                        }
+                        value={item?.colorName}
+                        content={
+                          <StatusFieldSettings
+                            item={item}
+                            index={index}
+                            type={activeType?.value}
+                            remove={todoRemove}
+                            control={control}
+                            name={`attributes.todo.options.${index}`}
+                            optionName={"label"}
+                            setValue={setValue}
+                            colors={colors}
+                            hasColor={true}
+                            watch={watch}
+                            setActiveId={setActiveId}
+                            group="Todo"
+                          />
+                        }
+                      />
+                    ))}
+                  </Box>
                 </Box>
                 <Box>
                   <AddOption
@@ -356,84 +358,50 @@ export const FieldParams = ({
                       />
                     </Box>
                   )}
-                  {progressFields?.map((item, index) => (
-                    <FieldMenuItem
-                      key={item?.key}
-                      id={item?.key}
-                      isOpen={activeId === item?.key}
-                      setActiveId={setActiveId}
-                      title={
-                        <FieldChip
-                          value={watch(
-                            `attributes.progress.options.${index}.label`
-                          )}
-                          color={watch(
-                            `attributes.progress.options.${index}.color`
-                          )}
-                        />
-                      }
-                      value={item?.colorName}
-                      content={
-                        <StatusFieldSettings
-                          item={item}
-                          index={index}
-                          type={activeType?.value}
-                          remove={progressRemove}
-                          control={control}
-                          name={`attributes.progress.options.${index}`}
-                          optionName={"label"}
-                          setValue={setValue}
-                          colors={colors}
-                          hasColor={true}
-                          watch={watch}
-                          setActiveId={setActiveId}
-                          group="Progress"
-                        />
-                      }
-                    />
-                  ))}
+                  <Box paddingY="8px">
+                    {progressFields?.map((item, index) => (
+                      <FieldMenuItem
+                        key={item?.key}
+                        id={item?.key}
+                        isOpen={activeId === item?.key}
+                        setActiveId={setActiveId}
+                        title={
+                          <FieldChip
+                            value={watch(
+                              `attributes.progress.options.${index}.label`
+                            )}
+                            color={watch(
+                              `attributes.progress.options.${index}.color`
+                            )}
+                          />
+                        }
+                        value={item?.colorName}
+                        content={
+                          <StatusFieldSettings
+                            item={item}
+                            index={index}
+                            type={activeType?.value}
+                            remove={progressRemove}
+                            control={control}
+                            name={`attributes.progress.options.${index}`}
+                            optionName={"label"}
+                            setValue={setValue}
+                            colors={colors}
+                            hasColor={true}
+                            watch={watch}
+                            setActiveId={setActiveId}
+                            group="Progress"
+                          />
+                        }
+                      />
+                    ))}
+                  </Box>
                 </Box>
                 <Box>
                   <AddOption
                     label="Complete"
                     onClick={() => toggleCompleteOptionField()}
                   />
-                  {completeFields?.map((item, index) => (
-                    <FieldMenuItem
-                      key={item?.key}
-                      id={item?.key}
-                      isOpen={activeId === item?.key}
-                      setActiveId={setActiveId}
-                      title={
-                        <FieldChip
-                          value={watch(
-                            `attributes.complete.options.${index}.label`
-                          )}
-                          color={watch(
-                            `attributes.complete.options.${index}.color`
-                          )}
-                        />
-                      }
-                      value={item?.colorName}
-                      content={
-                        <StatusFieldSettings
-                          item={item}
-                          index={index}
-                          type={activeType?.value}
-                          remove={completeRemove}
-                          control={control}
-                          name={`attributes.complete.options.${index}`}
-                          optionName={"label"}
-                          setValue={setValue}
-                          colors={colors}
-                          hasColor={true}
-                          watch={watch}
-                          setActiveId={setActiveId}
-                          group="Complete"
-                        />
-                      }
-                    />
-                  ))}
                   {isCompleteOptionOpen && (
                     <Box marginTop="8px">
                       <input
@@ -450,6 +418,44 @@ export const FieldParams = ({
                       />
                     </Box>
                   )}
+                  <Box paddingY="8px">
+                    {completeFields?.map((item, index) => (
+                      <FieldMenuItem
+                        key={item?.key}
+                        id={item?.key}
+                        isOpen={activeId === item?.key}
+                        setActiveId={setActiveId}
+                        title={
+                          <FieldChip
+                            value={watch(
+                              `attributes.complete.options.${index}.label`
+                            )}
+                            color={watch(
+                              `attributes.complete.options.${index}.color`
+                            )}
+                          />
+                        }
+                        value={item?.colorName}
+                        content={
+                          <StatusFieldSettings
+                            item={item}
+                            index={index}
+                            type={activeType?.value}
+                            remove={completeRemove}
+                            control={control}
+                            name={`attributes.complete.options.${index}`}
+                            optionName={"label"}
+                            setValue={setValue}
+                            colors={colors}
+                            hasColor={true}
+                            watch={watch}
+                            setActiveId={setActiveId}
+                            group="Complete"
+                          />
+                        }
+                      />
+                    ))}
+                  </Box>
                 </Box>
               </>
             )}

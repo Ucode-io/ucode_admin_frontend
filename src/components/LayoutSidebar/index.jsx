@@ -684,7 +684,7 @@ const LayoutSidebar = ({
           )}
         </Box>
 
-        {userRoleName === DEFAULT_ADMIN && (
+        {userRoleName !== DEFAULT_ADMIN && (
           <Flex
             display={sidebarIsOpen ? "flex" : "block"}
             mt="auto"
@@ -1006,9 +1006,9 @@ const Header = ({
     authService
       .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {
+        dispatch(companyActions.setProjectId(environment.project_id));
         store.dispatch(authActions.setTokens(res));
         window.location.reload();
-        dispatch(companyActions.setEnvironmentId(environment.id));
       })
       .catch((err) => {
         console.log(err);

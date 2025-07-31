@@ -55,7 +55,7 @@ function InviteModal({
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const project_id = useSelector((state) => state.auth.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
   const env_id = useSelector((state) => state.auth?.environmentId);
   const [userId, setUserId] = useState("");
 
@@ -518,7 +518,8 @@ const LoginForm = ({
 };
 
 const TypesComponent = ({form, guid, client_type_id}) => {
-  const project_id = useSelector((state) => state.auth.projectId);
+  const project_id = useSelector((state) => state.company.projectId);
+  console.log("project_idproject_id", project_id);
   const {data: fieldsData} = useFieldsListQuery(
     {
       queryParams: {
@@ -607,6 +608,7 @@ const UserType = ({control, placeholder = "", form, disabledOptionName}) => {
       );
     return result;
   }, [form.watch("client_type_id")]);
+
   return (
     <Controller
       name="client_type_id"
@@ -615,7 +617,9 @@ const UserType = ({control, placeholder = "", form, disabledOptionName}) => {
         <Select
           placeholder={placeholder}
           value={value}
-          onChange={field.onChange}
+          onChange={(e) => {
+            e?.table_slug && field.onChange(e.guid);
+          }}
           options={clientTypes}
           getOptionLabel={({name}) => name}
           getOptionValue={({guid}) => guid}

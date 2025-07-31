@@ -56,6 +56,7 @@ const CellRelationFormElementNew = ({
   isTableView = false,
   row,
   newUi,
+  objectIdFromJWT,
 }) => {
   const classes = useStyles();
 
@@ -128,6 +129,7 @@ const CellRelationFormElementNew = ({
               relationfields={relationfields}
               data={data}
               newUi={newUi}
+              objectIdFromJWT={objectIdFromJWT}
             />
           );
         }}
@@ -153,6 +155,7 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   row,
   newUi,
+  objectIdFromJWT,
 }) => {
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
@@ -304,6 +307,13 @@ const AutoCompleteElement = ({
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
+
+    if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
+      return uniqueObjects?.filter((item) => {
+        return item?.guid === objectIdFromJWT;
+      });
+    }
+
     return uniqueObjects ?? [];
   }, [allOptions]);
 

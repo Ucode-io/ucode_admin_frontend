@@ -21,6 +21,7 @@ import connectionServiceV2, {
 } from "../../../services/auth/connectionService";
 import {useTranslation} from "react-i18next";
 import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import {useSelector} from "react-redux";
 
 const ConnectionPage = ({settingLan}) => {
   const {clientId} = useParams();
@@ -28,11 +29,15 @@ const ConnectionPage = ({settingLan}) => {
   const [modalType, setModalType] = useState();
   const [connectionId, setConnectionId] = useState();
   const {i18n} = useTranslation();
+  const auth = useSelector((state) => state.auth);
 
   const {data: connections, isLoading} = useQuery(
     ["GET_CONNECTION_LIST", clientId],
     () => {
-      return connectionServiceV2.getList({client_type_id: clientId});
+      return connectionServiceV2.getList(
+        {client_type_id: clientId},
+        {"Environment-id": auth.environmentId}
+      );
     },
     {
       cacheTime: 10,

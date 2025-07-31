@@ -977,6 +977,7 @@ const Header = ({
   const projectId = auth?.projectId;
   const userId = auth?.userInfo?.id;
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [env, setEnv] = useState("");
 
   const {control, watch, setValue} = useForm();
 
@@ -992,7 +993,7 @@ const Header = ({
     setDialogOpen(true);
   };
 
-  const onSelectEnvironment = (environment) => {
+  const onSelectEnvironment = (environment = {}) => {
     const params = {
       refresh_token: auth?.refreshToken,
       env_id: environment.id,
@@ -1015,23 +1016,28 @@ const Header = ({
   };
 
   const getConnections = (env) => {
-    console.log("envenv", env);
-    const environment = env;
+    const clientTypeId = env?.client_types?.response?.[0]?.guid;
+    if (!clientTypeId) {
+      console.warn("client_type_id is missing", env);
+      return;
+    }
+
     connectionServiceV2
       .getList(
         {
-          "project-id": environment?.project_id,
+          "project-id": env?.project_id,
           client_type_id: clientTypeId,
           "user-id": userId,
         },
-        {"environment-id": environment?.id}
+        {"Environment-id": env?.id}
       )
       .then((res) => {
-        // if (res?.data?.response?.length > 1) {
-        //   handleDialogOpen();
-        // } else {
-        //   onSelectEnvironment(environment);
-        // }
+        setConnections(res?.data?.response);
+        if (res?.data?.response?.length > 1) {
+          handleDialogOpen();
+        } else {
+          onSelectEnvironment(env);
+        }
       });
   };
 
@@ -1111,7 +1117,10 @@ const Header = ({
               handleOpenProfileModal={handleOpenProfileModal}
               onClose={onClose}
             />
-            <Companies onSelectEnvironment={getConnections} />
+            <Companies
+              onSelectEnvironment={getConnections}
+              setEnvirId={setEnv}
+            />
             <ProfileBottom
               projectInfo={projectInfo}
               menuLanguages={profileSettingLan}
@@ -1119,10 +1128,28 @@ const Header = ({
           </>
         </PopoverContent>
       </Popover>
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+      <Dialog
+        PaperProps={{
+          style: {
+            padding: "30px",
+            width: "550px",
+            maxHeight: "70vh",
+            borderRadius: "12px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(5px)",
+          },
+        }}
+        open={dialogOpen}
+        onClose={handleDialogClose}>
         {connections.length
           ? connections?.map((connection, idx) => (
               <DynamicConnections
+                env={env}
                 key={connection?.guid}
                 table={connections}
                 connection={connection}
@@ -1131,7 +1158,7 @@ const Header = ({
                 setValue={setValue}
                 watch={watch}
                 options={connection?.options}
-                // setSelectedCollection={setSelectedCollection}
+                onSelectEnvironment={onSelectEnvironment}
               />
             ))
           : null}
@@ -1438,7 +1465,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   );
 };
 
-const Companies = ({onSelectEnvironment}) => {
+const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
   const userId = useSelector((state) => state.auth?.userId);
   const authStore = store.getState().auth;
   const companiesQuery = useCompanyListQuery({
@@ -1481,6 +1508,7 @@ const Companies = ({onSelectEnvironment}) => {
             </AccordionButton>
             <Projects
               company={company}
+              setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
             />
           </AccordionItem>
@@ -1490,7 +1518,7 @@ const Companies = ({onSelectEnvironment}) => {
   );
 };
 
-const Projects = ({company, onSelectEnvironment}) => {
+const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
     queryParams: {enabled: Boolean(company?.id)},
@@ -1532,6 +1560,7 @@ const Projects = ({company, onSelectEnvironment}) => {
 
             <Environments
               project={project}
+              setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
             />
           </AccordionItem>
@@ -1541,7 +1570,7 @@ const Projects = ({company, onSelectEnvironment}) => {
   );
 };
 
-const Environments = ({project, onSelectEnvironment}) => {
+const Environments = ({project, onSelectEnvironment, setEnvirId}) => {
   const environmentsQuery = useEnvironmentListQuery({
     params: {project_id: project?.project_id},
     queryParams: {enabled: Boolean(project?.project_id)},
@@ -1560,7 +1589,10 @@ const Environments = ({project, onSelectEnvironment}) => {
             cursor="pointer"
             borderRadius={6}
             _hover={{bg: "#EAECF0"}}
-            onClick={() => onSelectEnvironment(environment)}>
+            onClick={() => {
+              onSelectEnvironment(environment);
+              setEnvirId(environment);
+            }}>
             <Flex columnGap={8} alignItems="center">
               <Flex
                 w={20}

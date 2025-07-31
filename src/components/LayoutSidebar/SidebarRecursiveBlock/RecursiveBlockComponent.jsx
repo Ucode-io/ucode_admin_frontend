@@ -482,14 +482,14 @@ const RecursiveBlock = ({
           ))}
 
           {/* {selectedApp?.id === adminId && ( */}
-          {/* <Permissions
+          <Permissions
             projectSettingLan={projectSettingLan}
             menuStyle={{
               ...menuStyles,
               background: "#fff",
             }}
             setElement={setElement}
-          /> */}
+          />
           {/* )} */}
 
           {element.id === folderIds.data_base_folder_id && (

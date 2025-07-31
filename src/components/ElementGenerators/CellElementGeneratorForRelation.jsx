@@ -62,8 +62,9 @@ const CellElementGeneratorForRelation = ({
   }, [field, i18n?.language]);
 
   const isDisabled =
-    field.attributes?.disabled ||
-    !field.attributes?.field_permission?.edit_permission;
+    (field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission) &&
+    !isNewRow;
 
   const defaultValue = useMemo(() => {
     const defaultValue =

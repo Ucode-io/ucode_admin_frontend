@@ -180,7 +180,11 @@ const AutoCompleteElement = ({
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
+      background: isBlackBg
+        ? "#2A2D34"
+        : disabled
+          ? "rgb(248, 248, 248)"
+          : "transparent",
       color: isBlackBg ? "#fff" : "",
       width: "100%",
       display: "flex",

@@ -95,98 +95,104 @@ const CellElementGeneratorForRelation = ({
       }
     });
   }, [tables, relationTableSlug, field]);
+if (objectIdFromJWT) {
+  console.log({ field, objectIdFromJWT, defaultValue });
+}
+useEffect(() => {
+  if (!row?.[field.slug]) {
+    setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
+  }
+}, [row, computedSlug, defaultValue]);
 
-  useEffect(() => {
-    if (!row?.[field.slug]) {
-      setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
-    }
-  }, [row, computedSlug, defaultValue]);
-
-  const renderInputValues = {
-    LOOKUP: () => {
-      return newColumn ? (
-        <Suspense
-          fallback={
-            <Skeleton
-              variant="rectangular"
-              style={{borderRadius: "6px"}}
-              width={"100%"}
-              height={20}
-            />
-          }>
-          <CellRelationFormElementForNewColumn
-            isFormEdit
-            row={row}
-            data={data}
-            field={field}
-            index={index}
-            control={control}
-            name={computedSlug}
-            mainForm={mainForm}
-            isNewRow={isNewRow}
-            tableView={tableView}
-            disabled={isDisabled}
-            isBlackBg={isBlackBg}
-            isNewTableView={true}
-            updateObject={updateObject}
-            setFormValue={setFormValue}
-            defaultValue={defaultValue}
-            relationfields={relationfields}
-            placeholder={field.attributes?.placeholder}
-          />
-        </Suspense>
-      ) : (
-        <CellRelationFormElementNew
-          row={row}
-          isFormEdit
-          data={data}
-          index={index}
-          field={field}
-          control={control}
-          isTableView={isTableView}
-          name={computedSlug}
-          tableView={tableView}
-          disabled={isDisabled}
-          isBlackBg={isBlackBg}
-          isNewTableView={true}
-          setFormValue={setFormValue}
-          updateObject={updateObject}
-          defaultValue={defaultValue}
-          relationfields={relationfields}
-          placeholder={field.attributes?.placeholder}
-          newUi={newUi}
-        />
-      );
-    },
-    LOOKUPS: () => (
+const renderInputValues = {
+  LOOKUP: () => {
+    return newColumn ? (
       <Suspense
         fallback={
           <Skeleton
             variant="rectangular"
-            style={{borderRadius: "6px"}}
+            style={{ borderRadius: "6px" }}
             width={"100%"}
             height={20}
           />
-        }>
-        <CellManyToManyRelationElement
-          newUi={newUi}
-          row={row}
+        }
+      >
+        <CellRelationFormElementForNewColumn
           isFormEdit
+          row={row}
+          data={data}
           field={field}
           index={index}
           control={control}
           name={computedSlug}
+          mainForm={mainForm}
+          isNewRow={isNewRow}
+          tableView={tableView}
           disabled={isDisabled}
-          isNewTableView={true}
           isBlackBg={isBlackBg}
+          isNewTableView={true}
+          updateObject={updateObject}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
-          updateObject={updateObject}
+          relationfields={relationfields}
           placeholder={field.attributes?.placeholder}
+          objectIdFromJWT={objectIdFromJWT}
         />
       </Suspense>
-    ),
-  };
+    ) : (
+      <CellRelationFormElementNew
+        row={row}
+        isFormEdit
+        data={data}
+        index={index}
+        field={field}
+        control={control}
+        isTableView={isTableView}
+        name={computedSlug}
+        tableView={tableView}
+        disabled={isDisabled}
+        isBlackBg={isBlackBg}
+        isNewTableView={true}
+        setFormValue={setFormValue}
+        updateObject={updateObject}
+        defaultValue={defaultValue}
+        relationfields={relationfields}
+        placeholder={field.attributes?.placeholder}
+        newUi={newUi}
+        objectIdFromJWT={objectIdFromJWT}
+      />
+    );
+  },
+  LOOKUPS: () => (
+    <Suspense
+      fallback={
+        <Skeleton
+          variant="rectangular"
+          style={{ borderRadius: "6px" }}
+          width={"100%"}
+          height={20}
+        />
+      }
+    >
+      <CellManyToManyRelationElement
+        newUi={newUi}
+        row={row}
+        isFormEdit
+        field={field}
+        index={index}
+        control={control}
+        name={computedSlug}
+        disabled={isDisabled}
+        isNewTableView={true}
+        isBlackBg={isBlackBg}
+        setFormValue={setFormValue}
+        defaultValue={defaultValue}
+        updateObject={updateObject}
+        placeholder={field.attributes?.placeholder}
+      />
+    </Suspense>
+  ),
+};
 
   return renderInputValues[field?.type] ? renderInputValues[field?.type]() : "";
 };

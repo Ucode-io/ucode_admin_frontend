@@ -53,6 +53,7 @@ const CellRelationFormElementForNewColumn = ({
   data,
   isNewRow,
   mainForm,
+  objectIdFromJWT,
 }) => {
   const classes = useStyles();
 
@@ -123,6 +124,7 @@ const CellRelationFormElementForNewColumn = ({
               index={index}
               relationfields={relationfields}
               data={data}
+              objectIdFromJWT={objectIdFromJWT}
             />
           );
         }}
@@ -146,6 +148,7 @@ const AutoCompleteElement = ({
   isNewRow,
   mainForm,
   setFormValue = () => {},
+  objectIdFromJWT,
 }) => {
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
@@ -331,9 +334,16 @@ const AutoCompleteElement = ({
   );
 
   const computedOptions = useMemo(() => {
-    const uniqueObjects = Array.from(
+    let uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
+
+    if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
+      uniqueObjects = uniqueObjects?.filter(
+        (el) => el?.guid === objectIdFromJWT
+      );
+    }
+
     return (
       uniqueObjects?.map((option) => ({
         label: option?.attributes?.enable_multi_language

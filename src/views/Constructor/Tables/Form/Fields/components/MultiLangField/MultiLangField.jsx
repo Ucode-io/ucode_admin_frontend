@@ -75,13 +75,26 @@ export const MultiLangField = ({
         placeholder={fieldPlaceholder}
         defaultValue={defaultValue}
         id={id}
+        required={required}
         endAdornment={
           <Box paddingLeft="8px" marginY="5px" borderLeft="1px solid #EAECF0">
             <button className={cls.langButton} onClick={handleClick}>
               <span className={cls.langButtonInner}>
                 <span>{selectedLanguage}</span>
-                <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 1L5 5L9 1" stroke="#D0D5DD" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg
+                  width="10"
+                  height="6"
+                  viewBox="0 0 10 6"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 1L5 5L9 1"
+                    stroke="#D0D5DD"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
               </span>
             </button>
@@ -94,15 +107,18 @@ export const MultiLangField = ({
               }}
               MenuListProps={{
                 "aria-labelledby": "basic-button",
-              }}>
+              }}
+            >
               {languages?.map((language) => (
                 <MenuItem
                   onClick={() => {
                     handleClose(language?.slug);
                   }}
                   style={{
-                    background: selectedLanguage === language?.slug ? "#f0f0f0" : "",
-                  }}>
+                    background:
+                      selectedLanguage === language?.slug ? "#f0f0f0" : "",
+                  }}
+                >
                   {language?.title}
                 </MenuItem>
               ))}

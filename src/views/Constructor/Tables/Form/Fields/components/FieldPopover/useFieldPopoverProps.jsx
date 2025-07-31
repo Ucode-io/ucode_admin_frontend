@@ -18,6 +18,7 @@ import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { AutoFill } from "../AutoFill";
 import { AutoFilter } from "../AutoFilter";
 import { FieldHide } from "../FieldHide";
+import { Field } from "../Field";
 
 export const useFieldPopoverProps = ({
   mainForm,
@@ -37,6 +38,7 @@ export const useFieldPopoverProps = ({
     AUTO_FILL: "Autofill",
     AUTO_FILTER: "Auto Filter",
     FIELD_HIDE: "Field Hide",
+    FIELD: "Field",
     TYPE: "Type",
   };
 
@@ -256,6 +258,8 @@ export const useFieldPopoverProps = ({
         );
       case SETTING_TYPES.FIELD_HIDE:
         return <FieldHide control={control} />;
+      case SETTING_TYPES.FIELD:
+        return <Field control={control} />;
       default:
         return null;
     }

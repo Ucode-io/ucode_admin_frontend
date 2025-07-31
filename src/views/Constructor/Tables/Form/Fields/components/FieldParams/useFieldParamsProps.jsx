@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { FIELD_TYPES, newFieldTypes } from "@/utils/constants/fieldTypes";
 import { useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
+import { applyDrag } from "../../../../../../../utils/applyDrag";
 
 export const useFieldParamsProps = ({ watch, setValue, control }) => {
-  
   const { i18n } = useTranslation();
 
   const activeType = newFieldTypes?.find(
@@ -29,15 +29,15 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
       name: "Red",
       color: "#FECDCA",
     },
-  ]
-  
+  ];
+
   const mediaTypes = [
     FIELD_TYPES.FILE,
     FIELD_TYPES.VIDEO,
     FIELD_TYPES.PHOTO,
     FIELD_TYPES.CUSTOM_IMAGE,
-  ]
-  
+  ];
+
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("Choose backet");
 
@@ -152,6 +152,13 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     setFolder(item);
   };
 
+  const onDrop = (dropResult, name) => {
+    const result = applyDrag(watch(name), dropResult);
+    if (result) {
+      setValue(name, result);
+    }
+  };
+
   return {
     backetOptions: backetOptions?.menus,
     i18n,
@@ -188,5 +195,6 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     addTodo,
     addProgress,
     addComplete,
+    onDrop,
   };
-}
+};

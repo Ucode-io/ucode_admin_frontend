@@ -11,11 +11,13 @@ import FieldTreeView from "../../FieldTreeView";
 import { TreeView } from "@mui/x-tree-view";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
 import { AddOption } from "../AddOption";
 import { FieldChip } from "../FieldChip";
 import { StatusFieldSettings } from "../StatusFieldSettings";
 import { useState } from "react";
+import { Container, Draggable } from "react-smooth-dnd";
 
 export const FieldParams = ({
   tableName = "",
@@ -66,6 +68,7 @@ export const FieldParams = ({
     addTodo,
     addProgress,
     addComplete,
+    onDrop,
   } = useFieldParamsProps({ watch, setValue, control });
 
   const [activeId, setActiveId] = useState(null);
@@ -223,40 +226,60 @@ export const FieldParams = ({
             {activeType?.value === FIELD_TYPES.MULTISELECT && (
               <Box>
                 <AddOption onClick={() => toggleCreateOptionField()} />
-                {multiSelectFields?.map((item, index) => (
-                  <FieldMenuItem
-                    key={item?.key}
-                    id={index}
-                    isOpen={activeId === index}
-                    setActiveId={setActiveId}
-                    title={
-                      hasColor ? (
-                        <FieldChip
-                          value={watch(`attributes.options.${index}.value`)}
-                          color={watch(`attributes.options.${index}.color`)}
-                        />
-                      ) : (
-                        item?.value
-                      )
-                    }
-                    value={hasColor ? item?.colorName : ""}
-                    content={
-                      <StatusFieldSettings
-                        item={item}
-                        index={index}
-                        type={activeType?.value}
-                        remove={multiSelectRemove}
-                        control={control}
-                        name={`attributes.options.${index}`}
-                        setValue={setValue}
-                        colors={colors}
-                        hasColor={hasColor}
-                        watch={watch}
+                <Container
+                  lockAxis="y"
+                  orientation="vertical"
+                  onDrop={(dropResult) =>
+                    onDrop(dropResult, "attributes.options")
+                  }
+                >
+                  {multiSelectFields?.map((item, index) => (
+                    <Draggable key={item?.key}>
+                      <FieldMenuItem
+                        icon={
+                          <DragIndicatorIcon
+                            htmlColor="#101828"
+                            sx={{
+                              cursor: "grab",
+                              ":active": { cursor: "grabbing" },
+                            }}
+                          />
+                        }
+                        isDraggable={true}
+                        key={item?.key}
+                        id={index}
+                        isOpen={activeId === index}
                         setActiveId={setActiveId}
+                        title={
+                          hasColor ? (
+                            <FieldChip
+                              value={watch(`attributes.options.${index}.value`)}
+                              color={watch(`attributes.options.${index}.color`)}
+                            />
+                          ) : (
+                            item?.value
+                          )
+                        }
+                        value={hasColor ? item?.colorName : ""}
+                        content={
+                          <StatusFieldSettings
+                            item={item}
+                            index={index}
+                            type={activeType?.value}
+                            remove={multiSelectRemove}
+                            control={control}
+                            name={`attributes.options.${index}`}
+                            setValue={setValue}
+                            colors={colors}
+                            hasColor={hasColor}
+                            watch={watch}
+                            setActiveId={setActiveId}
+                          />
+                        }
                       />
-                    }
-                  />
-                ))}
+                    </Draggable>
+                  ))}
+                </Container>
                 {isCreateOptionOpen && (
                   <Box marginTop="8px">
                     <input
@@ -299,42 +322,62 @@ export const FieldParams = ({
                     </Box>
                   )}
                   <Box paddingY="8px">
-                    {todoFields?.map((item, index) => (
-                      <FieldMenuItem
-                        key={item?.key}
-                        id={item?.key}
-                        isOpen={activeId === item?.key}
-                        setActiveId={setActiveId}
-                        title={
-                          <FieldChip
-                            value={watch(
-                              `attributes.todo.options.${index}.label`
-                            )}
-                            color={watch(
-                              `attributes.todo.options.${index}.color`
-                            )}
-                          />
-                        }
-                        value={item?.colorName}
-                        content={
-                          <StatusFieldSettings
-                            item={item}
-                            index={index}
-                            type={activeType?.value}
-                            remove={todoRemove}
-                            control={control}
-                            name={`attributes.todo.options.${index}`}
-                            optionName={"label"}
-                            setValue={setValue}
-                            colors={colors}
-                            hasColor={true}
-                            watch={watch}
+                    <Container
+                      lockAxis="y"
+                      orientation="vertical"
+                      onDrop={(dropResult) =>
+                        onDrop(dropResult, "attributes.todo.options")
+                      }
+                    >
+                      {todoFields?.map((item, index) => (
+                        <Draggable key={item?.key}>
+                          <FieldMenuItem
+                            icon={
+                              <DragIndicatorIcon
+                                htmlColor="#101828"
+                                sx={{
+                                  cursor: "grab",
+                                  ":active": { cursor: "grabbing" },
+                                }}
+                              />
+                            }
+                            isDraggable={true}
+                            key={item?.key}
+                            id={item?.key}
+                            isOpen={activeId === item?.key}
                             setActiveId={setActiveId}
-                            group="Todo"
+                            title={
+                              <FieldChip
+                                value={watch(
+                                  `attributes.todo.options.${index}.label`
+                                )}
+                                color={watch(
+                                  `attributes.todo.options.${index}.color`
+                                )}
+                              />
+                            }
+                            value={item?.colorName}
+                            content={
+                              <StatusFieldSettings
+                                item={item}
+                                index={index}
+                                type={activeType?.value}
+                                remove={todoRemove}
+                                control={control}
+                                name={`attributes.todo.options.${index}`}
+                                optionName={"label"}
+                                setValue={setValue}
+                                colors={colors}
+                                hasColor={true}
+                                watch={watch}
+                                setActiveId={setActiveId}
+                                group="Todo"
+                              />
+                            }
                           />
-                        }
-                      />
-                    ))}
+                        </Draggable>
+                      ))}
+                    </Container>
                   </Box>
                 </Box>
                 <Box>
@@ -359,42 +402,62 @@ export const FieldParams = ({
                     </Box>
                   )}
                   <Box paddingY="8px">
-                    {progressFields?.map((item, index) => (
-                      <FieldMenuItem
-                        key={item?.key}
-                        id={item?.key}
-                        isOpen={activeId === item?.key}
-                        setActiveId={setActiveId}
-                        title={
-                          <FieldChip
-                            value={watch(
-                              `attributes.progress.options.${index}.label`
-                            )}
-                            color={watch(
-                              `attributes.progress.options.${index}.color`
-                            )}
-                          />
-                        }
-                        value={item?.colorName}
-                        content={
-                          <StatusFieldSettings
-                            item={item}
-                            index={index}
-                            type={activeType?.value}
-                            remove={progressRemove}
-                            control={control}
-                            name={`attributes.progress.options.${index}`}
-                            optionName={"label"}
-                            setValue={setValue}
-                            colors={colors}
-                            hasColor={true}
-                            watch={watch}
+                    <Container
+                      lockAxis="y"
+                      orientation="vertical"
+                      onDrop={(dropResult) =>
+                        onDrop(dropResult, "attributes.progress.options")
+                      }
+                    >
+                      {progressFields?.map((item, index) => (
+                        <Draggable key={item?.key}>
+                          <FieldMenuItem
+                            icon={
+                              <DragIndicatorIcon
+                                htmlColor="#101828"
+                                sx={{
+                                  cursor: "grab",
+                                  ":active": { cursor: "grabbing" },
+                                }}
+                              />
+                            }
+                            isDraggable={true}
+                            key={item?.key}
+                            id={item?.key}
+                            isOpen={activeId === item?.key}
                             setActiveId={setActiveId}
-                            group="Progress"
+                            title={
+                              <FieldChip
+                                value={watch(
+                                  `attributes.progress.options.${index}.label`
+                                )}
+                                color={watch(
+                                  `attributes.progress.options.${index}.color`
+                                )}
+                              />
+                            }
+                            value={item?.colorName}
+                            content={
+                              <StatusFieldSettings
+                                item={item}
+                                index={index}
+                                type={activeType?.value}
+                                remove={progressRemove}
+                                control={control}
+                                name={`attributes.progress.options.${index}`}
+                                optionName={"label"}
+                                setValue={setValue}
+                                colors={colors}
+                                hasColor={true}
+                                watch={watch}
+                                setActiveId={setActiveId}
+                                group="Progress"
+                              />
+                            }
                           />
-                        }
-                      />
-                    ))}
+                        </Draggable>
+                      ))}
+                    </Container>
                   </Box>
                 </Box>
                 <Box>
@@ -419,42 +482,62 @@ export const FieldParams = ({
                     </Box>
                   )}
                   <Box paddingY="8px">
-                    {completeFields?.map((item, index) => (
-                      <FieldMenuItem
-                        key={item?.key}
-                        id={item?.key}
-                        isOpen={activeId === item?.key}
-                        setActiveId={setActiveId}
-                        title={
-                          <FieldChip
-                            value={watch(
-                              `attributes.complete.options.${index}.label`
-                            )}
-                            color={watch(
-                              `attributes.complete.options.${index}.color`
-                            )}
-                          />
-                        }
-                        value={item?.colorName}
-                        content={
-                          <StatusFieldSettings
-                            item={item}
-                            index={index}
-                            type={activeType?.value}
-                            remove={completeRemove}
-                            control={control}
-                            name={`attributes.complete.options.${index}`}
-                            optionName={"label"}
-                            setValue={setValue}
-                            colors={colors}
-                            hasColor={true}
-                            watch={watch}
+                    <Container
+                      lockAxis="y"
+                      orientation="vertical"
+                      onDrop={(dropResult) =>
+                        onDrop(dropResult, "attributes.complete.options")
+                      }
+                    >
+                      {completeFields?.map((item, index) => (
+                        <Draggable key={item?.key}>
+                          <FieldMenuItem
+                            icon={
+                              <DragIndicatorIcon
+                                htmlColor="#101828"
+                                sx={{
+                                  cursor: "grab",
+                                  ":active": { cursor: "grabbing" },
+                                }}
+                              />
+                            }
+                            isDraggable={true}
+                            key={item?.key}
+                            id={item?.key}
+                            isOpen={activeId === item?.key}
                             setActiveId={setActiveId}
-                            group="Complete"
+                            title={
+                              <FieldChip
+                                value={watch(
+                                  `attributes.complete.options.${index}.label`
+                                )}
+                                color={watch(
+                                  `attributes.complete.options.${index}.color`
+                                )}
+                              />
+                            }
+                            value={item?.colorName}
+                            content={
+                              <StatusFieldSettings
+                                item={item}
+                                index={index}
+                                type={activeType?.value}
+                                remove={completeRemove}
+                                control={control}
+                                name={`attributes.complete.options.${index}`}
+                                optionName={"label"}
+                                setValue={setValue}
+                                colors={colors}
+                                hasColor={true}
+                                watch={watch}
+                                setActiveId={setActiveId}
+                                group="Complete"
+                              />
+                            }
                           />
-                        }
-                      />
-                    ))}
+                        </Draggable>
+                      ))}
+                    </Container>
                   </Box>
                 </Box>
               </>

@@ -9,6 +9,7 @@ export const FieldMenuItem = ({
   content,
   id,
   isOpen,
+  isDraggable,
   setActiveId = () => {},
   onClick = () => {},
 }) => {

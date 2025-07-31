@@ -1,12 +1,14 @@
 import {useMutation, useQuery} from "react-query";
 import requestAuthV2 from "../../utils/requestAuthV2";
+import requestAuthV2NoEnv from "../../utils/requestAuthV2NoEnv";
 
 const connectionServiceV2 = {
   getList: (params, headers) =>
-    requestAuthV2.get(`/connection`, {
+    requestAuthV2NoEnv.get(`/connection`, {
       params: {limit: 10, offset: 0, ...params},
       headers,
     }),
+
   getById: (params, id) => requestAuthV2.get(`/connection/${id}`, {params}),
   create: (data) => requestAuthV2.post("/connection", data),
   update: (data) => requestAuthV2.put("/connection", data),

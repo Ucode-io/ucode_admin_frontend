@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import DynamicFields from "../DynamicFields";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
@@ -21,6 +21,11 @@ function LoginCompaniesList({
   setValue = () => {},
 }) {
   const {t} = useTranslation();
+  // useEffect(() => {
+  //   if (computedCompanies?.length) {
+  //     setValue("company_id", computedCompanies?.[0]?.value);
+  //   }
+  // }, []);
   return (
     <>
       <div className={classes.dialogContainer}>

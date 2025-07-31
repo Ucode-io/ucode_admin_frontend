@@ -72,7 +72,7 @@ import InlineSVG from "react-inlinesvg";
 import {Logout} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {Modal, Skeleton} from "@mui/material";
+import {Dialog, Modal, Skeleton} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {clearDB, getAllFromDB} from "../../utils/languageDB";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
@@ -84,6 +84,9 @@ import UserIcon from "@/assets/icons/profile.svg";
 import {useRoleListQuery} from "../../services/roleServiceV2";
 import {useClientTypesQuery} from "../../views/client-types/utils";
 import useSearchParams from "../../hooks/useSearchParams";
+import connectionServiceV2 from "../../services/auth/connectionService";
+import DynamicConnections from "./DynamicConnections";
+import {useForm} from "react-hook-form";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -413,12 +416,6 @@ const LayoutSidebar = ({
     setIsOpenInviteModal(false);
   };
 
-  // const {
-  // isOpen: isOpenInviteModal,
-  // onOpen: onOpenInviteModal,
-  // onClose: onCloseInviteModal,
-  // } = useDisclosure();
-
   return (
     <>
       <Flex
@@ -647,13 +644,11 @@ const LayoutSidebar = ({
                             dispatch(
                               mainActions.setSidebarHighlightedAction(null)
                             )
-                    }
-                  >
+                    }>
                     <SidebarActionTooltip id="ai-chat" title="AI Chat">
                       <AIChat
                         sidebarOpen={sidebarIsOpen}
-                        {...getActionProps("ai-chat")}
-                      >
+                        {...getActionProps("ai-chat")}>
                         <Flex w="100%" alignItems="center" gap={8}>
                           <Box pl="6px">
                             <SearchIcon color="#475467" fontSize={20} />
@@ -1046,12 +1041,28 @@ const Header = ({
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
+  const [connections, setConnections] = useState([]);
+  const clientTypeId = auth?.clientType?.id;
+  const projectId = auth?.projectId;
+  const userId = auth?.userInfo?.id;
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [env, setEnv] = useState("");
+
+  const {control, watch, setValue} = useForm();
 
   const handleClose = () => {
     onClose();
   };
 
-  const onSelectEnvironment = (environment) => {
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const onSelectEnvironment = (environment = {}) => {
     const params = {
       refresh_token: auth?.refreshToken,
       env_id: environment.id,
@@ -1073,89 +1084,155 @@ const Header = ({
       });
   };
 
+  const getConnections = (env) => {
+    const clientTypeId = env?.client_types?.response?.[0]?.guid;
+    if (!clientTypeId) {
+      console.warn("client_type_id is missing", env);
+      return;
+    }
+
+    connectionServiceV2
+      .getList(
+        {
+          "project-id": env?.project_id,
+          client_type_id: clientTypeId,
+          "user-id": userId,
+        },
+        {"Environment-id": env?.id}
+      )
+      .then((res) => {
+        setConnections(res?.data?.response);
+        if (res?.data?.response?.length > 1) {
+          handleDialogOpen();
+        } else {
+          onSelectEnvironment(env);
+        }
+      });
+  };
+
   return (
-    <Popover
-      offset={[sidebarIsOpen ? 50 : 95, 5]}
-      isOpen={isOpen}
-      onClose={handleClose}>
-      <PopoverTrigger>
-        <Flex
-          w="calc(100% - 0px)"
-          maxWidth={sidebarIsOpen ? "220px" : "36px"}
-          position="relative"
-          overflow="hidden"
-          alignItems="center"
-          p={5}
-          borderRadius={8}
-          bg="#fff"
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer"
-          onClick={() => (!isOpen ? onOpen() : null)}
-          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}>
+    <>
+      <Popover
+        offset={[sidebarIsOpen ? 50 : 95, 5]}
+        isOpen={isOpen}
+        onClose={handleClose}>
+        <PopoverTrigger>
           <Flex
-            w={36}
-            h={36}
-            position="absolute"
-            left={0}
-            alignItems="center"
-            justifyContent="center">
-            {Boolean(projectInfo?.logo) && (
-              <img src={projectInfo?.logo} alt="" width={20} height={20} />
-            )}
-
-            {!projectInfo?.logo && (
-              <Flex
-                w={20}
-                h={20}
-                borderRadius={4}
-                bg="#06AED4"
-                color="#fff"
-                alignItems="center"
-                justifyContent="center"
-                fontSize={14}
-                fontWeight={500}>
-                {projectInfo?.title?.[0]?.toUpperCase()}
-              </Flex>
-            )}
-          </Flex>
-
-          <Box
-            pl={30}
-            whiteSpace="nowrap"
-            color="#344054"
-            fontSize={13}
-            fontWeight={500}
+            w="calc(100% - 0px)"
+            maxWidth={sidebarIsOpen ? "220px" : "36px"}
+            position="relative"
             overflow="hidden"
-            textOverflow="ellipsis">
-            {projectInfo?.title}
-          </Box>
-          <KeyboardArrowDownIcon style={{marginLeft: "10px", fontSize: 20}} />
-        </Flex>
-      </PopoverTrigger>
-      <PopoverContent
-        w="300px"
-        bg="#fff"
-        borderRadius={8}
-        border="1px solid #EAECF0"
-        outline="none"
-        boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
-        zIndex={999}
-        onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
-        onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}>
-        <>
-          <ProfilePanel
-            menuLanguages={menuLanguages}
-            handleOpenProfileModal={handleOpenProfileModal}
-            onClose={onClose}
-          />
-          <Companies onSelectEnvironment={onSelectEnvironment} />
-          <ProfileBottom
-            projectInfo={projectInfo}
-            menuLanguages={profileSettingLan}
-          />
-        </>
-      </PopoverContent>
-    </Popover>
+            alignItems="center"
+            p={5}
+            borderRadius={8}
+            bg="#fff"
+            _hover={{bg: "#EAECF0"}}
+            cursor="pointer"
+            onClick={() => (!isOpen ? onOpen() : null)}
+            onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}>
+            <Flex
+              w={36}
+              h={36}
+              position="absolute"
+              left={0}
+              alignItems="center"
+              justifyContent="center">
+              {Boolean(projectInfo?.logo) && (
+                <img src={projectInfo?.logo} alt="" width={20} height={20} />
+              )}
+
+              {!projectInfo?.logo && (
+                <Flex
+                  w={20}
+                  h={20}
+                  borderRadius={4}
+                  bg="#06AED4"
+                  color="#fff"
+                  alignItems="center"
+                  justifyContent="center"
+                  fontSize={14}
+                  fontWeight={500}>
+                  {projectInfo?.title?.[0]?.toUpperCase()}
+                </Flex>
+              )}
+            </Flex>
+
+            <Box
+              pl={30}
+              whiteSpace="nowrap"
+              color="#344054"
+              fontSize={13}
+              fontWeight={500}
+              overflow="hidden"
+              textOverflow="ellipsis">
+              {projectInfo?.title}
+            </Box>
+            <KeyboardArrowDownIcon style={{marginLeft: "10px", fontSize: 20}} />
+          </Flex>
+        </PopoverTrigger>
+        <PopoverContent
+          w="300px"
+          bg="#fff"
+          borderRadius={8}
+          border="1px solid #EAECF0"
+          outline="none"
+          boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
+          zIndex={999}
+          onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+          onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}>
+          <>
+            <ProfilePanel
+              menuLanguages={menuLanguages}
+              handleOpenProfileModal={handleOpenProfileModal}
+              onClose={onClose}
+            />
+            <Companies
+              onSelectEnvironment={getConnections}
+              setEnvirId={setEnv}
+            />
+            <ProfileBottom
+              projectInfo={projectInfo}
+              menuLanguages={profileSettingLan}
+            />
+          </>
+        </PopoverContent>
+      </Popover>
+      <Dialog
+        PaperProps={{
+          style: {
+            padding: "30px",
+            width: "550px",
+            maxHeight: "70vh",
+            borderRadius: "12px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(5px)",
+          },
+        }}
+        open={dialogOpen}
+        onClose={handleDialogClose}>
+        {connections.length
+          ? connections?.map((connection, idx) => (
+              <DynamicConnections
+                env={env}
+                key={connection?.guid}
+                table={connections}
+                connection={connection}
+                index={idx}
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                options={connection?.options}
+                onSelectEnvironment={onSelectEnvironment}
+              />
+            ))
+          : null}
+      </Dialog>
+    </>
   );
 };
 
@@ -1457,10 +1534,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   );
 };
 
-const Companies = ({onSelectEnvironment}) => {
+const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
   const userId = useSelector((state) => state.auth?.userId);
+  const authStore = store.getState().auth;
   const companiesQuery = useCompanyListQuery({
-    params: {owner_id: userId},
+    params: {owner_id: authStore?.userInfo?.id},
     queryParams: {enabled: Boolean(userId)},
   });
   const companies = companiesQuery.data?.companies ?? [];
@@ -1499,6 +1577,7 @@ const Companies = ({onSelectEnvironment}) => {
             </AccordionButton>
             <Projects
               company={company}
+              setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
             />
           </AccordionItem>
@@ -1508,7 +1587,7 @@ const Companies = ({onSelectEnvironment}) => {
   );
 };
 
-const Projects = ({company, onSelectEnvironment}) => {
+const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
     queryParams: {enabled: Boolean(company?.id)},
@@ -1550,6 +1629,7 @@ const Projects = ({company, onSelectEnvironment}) => {
 
             <Environments
               project={project}
+              setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
             />
           </AccordionItem>
@@ -1559,7 +1639,7 @@ const Projects = ({company, onSelectEnvironment}) => {
   );
 };
 
-const Environments = ({project, onSelectEnvironment}) => {
+const Environments = ({project, onSelectEnvironment, setEnvirId}) => {
   const environmentsQuery = useEnvironmentListQuery({
     params: {project_id: project?.project_id},
     queryParams: {enabled: Boolean(project?.project_id)},
@@ -1578,7 +1658,10 @@ const Environments = ({project, onSelectEnvironment}) => {
             cursor="pointer"
             borderRadius={6}
             _hover={{bg: "#EAECF0"}}
-            onClick={() => onSelectEnvironment(environment)}>
+            onClick={() => {
+              onSelectEnvironment(environment);
+              setEnvirId(environment);
+            }}>
             <Flex columnGap={8} alignItems="center">
               <Flex
                 w={20}

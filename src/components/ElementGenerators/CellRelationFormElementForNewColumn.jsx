@@ -221,7 +221,7 @@ const AutoCompleteElement = ({
     const result = {};
     filtersHandler?.forEach((value, index) => {
       const key = autoFilters?.[index]?.field_to;
-      if (key) result[key] = value;
+      if (key && value) result[key] = value;
     });
     return result;
   }, [autoFilters, filtersHandler, value]);

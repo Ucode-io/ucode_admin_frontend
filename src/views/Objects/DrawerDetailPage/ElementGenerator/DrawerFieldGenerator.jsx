@@ -570,7 +570,7 @@ const InputField = ({
                         ? "Increment ID"
                         : placeholder
                     }
-                    height="30px"
+                    height="38px"
                     fontSize="13px"
                     px={"9.6px"}
                     width="100%"

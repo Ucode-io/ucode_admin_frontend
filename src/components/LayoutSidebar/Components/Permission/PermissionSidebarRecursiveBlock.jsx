@@ -64,7 +64,11 @@ const PermissionSidebarRecursiveBlock = ({
   };
 
   const navigateMenu = () => {
-    return navigate(`/main/${adminId}/permission/${element?.guid}`);
+    if (localStorage.getItem("new_router") === "true") {
+      return navigate(`/${adminId}/permission/${element?.guid}`);
+    } else {
+      return navigate(`/main/${adminId}/permission/${element?.guid}`);
+    }
   };
 
   const clickHandler = (e) => {

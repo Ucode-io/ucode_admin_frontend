@@ -32,6 +32,7 @@ const RelationField = ({
   isLayout = false,
   isMulti,
   isRequired,
+  placeholder = "",
   updateObject = () => {},
   ...props
 }) => {
@@ -60,6 +61,7 @@ const RelationField = ({
             value={isMulti ? value : Array.isArray(value) ? value[0] : value}
             setValue={onChange}
             field={field}
+            placeholder={placeholder}
             disabled={disabled}
             tableSlug={tableSlug}
             error={error}
@@ -94,6 +96,7 @@ const AutoCompleteElement = ({
   required = false,
   activeLang,
   isMulti,
+  placeholder = "",
   updateObject = () => {},
   watch = () => {},
 }) => {
@@ -192,7 +195,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -250,7 +253,7 @@ const AutoCompleteElement = ({
   //   console.log({ autoFiltersFirstValues, autoFiltersNewValues });
   // }
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -350,7 +353,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -361,7 +364,7 @@ const AutoCompleteElement = ({
       setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -431,7 +434,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);

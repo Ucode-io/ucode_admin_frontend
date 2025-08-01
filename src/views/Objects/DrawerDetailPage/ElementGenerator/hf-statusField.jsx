@@ -10,6 +10,7 @@ function HFStatusField({
   name,
   newUi,
   disabled = false,
+  placeholder = "",
   drawerDetail = false,
   updateObject = () => {},
 }) {
@@ -22,7 +23,7 @@ function HFStatusField({
         render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
             <Select
-              placeholder="Empty"
+              placeholder={placeholder}
               disabled={disabled}
               id="statusField"
               className={styles.statusSelect}

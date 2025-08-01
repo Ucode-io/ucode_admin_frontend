@@ -111,6 +111,7 @@ const MultiLineInput = ({
             horizontal: "left",
           }}>
           <HFTextEditor
+            placeholder={placeholder}
             updateObject={inputUpdateObject}
             drawerDetail={true}
             id="multi_line"

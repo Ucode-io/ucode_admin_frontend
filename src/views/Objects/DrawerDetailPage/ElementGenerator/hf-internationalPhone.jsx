@@ -26,9 +26,9 @@ const HFInternationalPhone = ({
   mask,
   disabled,
   tabIndex,
-  placeholder,
   defaultValue,
   isTableView = false,
+  placeholder = "Enter phone number",
   updateObject = () => {},
   isNewTableView,
   newUi,
@@ -48,7 +48,7 @@ const HFInternationalPhone = ({
         render={({field: {onChange, value}, fieldState: {error}}) => (
           <PhoneInput
             disabled={disabled}
-            placeholder="Enter phone number"
+            placeholder={placeholder}
             value={
               isString(value)
                 ? value?.includes("+")

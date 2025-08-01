@@ -169,19 +169,28 @@ function OldDrawerFormDetailPage({
     return lastPart === lang;
   };
 
+  const isDisabled = (field) => {
+    return (
+      !field.attributes?.field_permission?.edit_permission ||
+      field.attributes?.disabled
+    );
+  };
+
   return (
     <>
       <Box
         mt="10px"
-        sx={{height: "calc(100vh - 44px)"}}
+        sx={{ height: "calc(100vh - 44px)" }}
         pb={"10px"}
-        overflow={"auto"}>
+        overflow={"auto"}
+      >
         {isMultiLanguage && (
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
                 className={activeLang === lang?.short_name && "active"}
-                onClick={() => setActiveLang(lang?.short_name)}>
+                onClick={() => setActiveLang(lang?.short_name)}
+              >
                 {lang?.name}
               </Button>
             ))}
@@ -202,7 +211,8 @@ function OldDrawerFormDetailPage({
             sx={{
               margin: "8px 0 0 0",
             }}
-            key={secIndex}>
+            key={secIndex}
+          >
             <Container
               behaviour="contain"
               style={{
@@ -213,21 +223,24 @@ function OldDrawerFormDetailPage({
               dragHandleSelector=".drag-handle"
               dragClass="drag-item"
               lockAxis="y"
-              onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
+              onDrop={(dropResult) => onDrop(secIndex, dropResult)}
+            >
               {section?.fields
                 ?.filter((el) => filterFields(el))
                 .map((field, fieldIndex) => (
                   <Draggable
                     className={Boolean(defaultAdmin) ? "drag-handle" : ""}
-                    key={field?.id ?? fieldIndex}>
+                    key={field?.id ?? fieldIndex}
+                  >
                     <Box
                       className={dragAction ? "rowColumnDrag" : "rowColumn"}
                       display="flex"
                       alignItems="center"
                       {...(Boolean(field?.type === "MULTISELECT")
-                        ? {minHeight: "30px"}
-                        : {height: "34px"})}
-                      py="8px">
+                        ? { minHeight: "30px" }
+                        : { height: "34px" })}
+                      py="8px"
+                    >
                       <Box
                         display="flex"
                         alignItems="center"
@@ -239,7 +252,8 @@ function OldDrawerFormDetailPage({
                           "&:hover": {
                             backgroundColor: "#F7F7F7",
                           },
-                        }}>
+                        }}
+                      >
                         <Box
                           width="18px"
                           height="16px"
@@ -247,13 +261,14 @@ function OldDrawerFormDetailPage({
                           display="flex"
                           alignItems="center"
                           justifyContent="center"
-                          sx={{color: "#787774"}}>
+                          sx={{ color: "#787774" }}
+                        >
                           <span className="drag">
                             <DragIndicatorIcon
-                              style={{width: "16px", height: "16px"}}
+                              style={{ width: "16px", height: "16px" }}
                             />
                           </span>
-                          <span style={{color: "#787774"}} className="icon">
+                          <span style={{ color: "#787774" }} className="icon">
                             {getColumnIcon({
                               column: {
                                 type: field?.type ?? field?.relation_type,
@@ -266,11 +281,12 @@ function OldDrawerFormDetailPage({
                           fontSize="14px"
                           color="#787774"
                           fontWeight="500"
-                          width="100%">
+                          width="100%"
+                        >
                           {getFieldLanguageLabel(field)}
                         </Box>
                       </Box>
-                      <Box sx={{width: "60%"}}>
+                      <Box sx={{ width: "60%" }}>
                         <DrawerFieldGenerator
                           reset={reset}
                           activeLang={activeLang}
@@ -278,7 +294,7 @@ function OldDrawerFormDetailPage({
                           control={control}
                           field={field}
                           watch={watch}
-                          isDisabled={field?.attributes?.disabled}
+                          isDisabled={isDisabled(field)}
                           setFormValue={setFormValue}
                           errors={errors}
                         />

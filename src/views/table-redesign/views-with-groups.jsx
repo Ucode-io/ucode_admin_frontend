@@ -1803,11 +1803,11 @@ const FiltersList = ({
     );
   };
 
-  useEffect(() => {
-    if (filtersRef.current) {
-      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
-    }
-  }, []);
+useEffect(() => {
+  if (filtersRef.current) {
+    localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
+  }
+}, [computedFields]);
 
   if (!filtersOpen) {
     return;

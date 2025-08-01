@@ -49,7 +49,12 @@ const NewObjectsPage = () => {
         );
       },
       onSuccess: (data) => {
-        setSelectedView(data?.[selectedTabIndex]);
+        if (
+          !selectedView ||
+          selectedView?.id !== data?.[selectedTabIndex]?.id
+        ) {
+          setSelectedView(data?.[selectedTabIndex]);
+        }
         dispatch(viewsActions.setViews(data));
 
         if (!pathname.includes("/login")) {

@@ -61,23 +61,6 @@ export const PermissionsRoleDetail = () => {
             </button>
           </Box>
 
-          {/* <div>
-            <HFTextField
-              control={control}
-              name="data.name"
-              fullWidth
-              sx={{
-                "& .MuiInputBase-root": {
-                  border: "none !important",
-                  color: "#101828 !important",
-                  fontSize: "18px !important",
-                  lineHeight: "28px !important",
-                  fontWeight: "600 !important",
-                  outline: "none",
-                },
-              }}
-            />
-          </div> */}
           <Button
             className={cls.saveBtn}
             primary

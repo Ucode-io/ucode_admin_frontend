@@ -5,17 +5,20 @@ import {
   Box,
   Button,
   Card,
+  Checkbox,
   Divider,
+  FormControlLabel,
   IconButton,
+  Switch,
   Typography,
 } from "@mui/material";
-import {TreeView} from "@mui/x-tree-view";
-import {useEffect, useMemo, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import { TreeView } from "@mui/x-tree-view";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
@@ -30,12 +33,12 @@ import constructorFieldService, {
 } from "../../../../../services/constructorFieldService";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import {useMenuListQuery} from "../../../../../services/menuService";
+import { useMenuListQuery } from "../../../../../services/menuService";
 import {
   fieldButtons,
   fieldTypesOptions,
 } from "../../../../../utils/constants/fieldTypes";
-import {generateGUID} from "../../../../../utils/generateID";
+import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import AttributesButton from "./Attributes/AttributesButton";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
@@ -44,8 +47,44 @@ import styles from "./style.module.scss";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 import ButtonFieldComponents from "./ButtonFieldComponents";
 import StatusFieldSettings from "./StatusFieldSettings";
-import {generateLangaugeText} from "../../../../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import { useViewContext } from "../../../../../providers/ViewProvider";
+
+const photoFormats = [
+  {
+    label: "PNG",
+    value: "png",
+  },
+  {
+    label: "WebP",
+    value: "webp",
+  },
+];
+
+const photoRatios = [
+  {
+    label: "4:3",
+    value: "1.3",
+  },
+  {
+    label: "1:1",
+    value: "1",
+  },
+  {
+    label: "3:2",
+    value: "1.5",
+  },
+
+  {
+    label: "16:9",
+    value: "1.7",
+  },
+  {
+    label: "2:3",
+    value: "0.7",
+  },
+];
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -61,9 +100,9 @@ const FieldSettings = ({
   menuItem,
   tableLan,
 }) => {
+  const { handleSubmit, control, reset, watch, setValue, register } = useForm();
   const { view } = useViewContext();
   const { id, appId, tableSlug: tableSlugParams } = useParams();
-  const { handleSubmit, control, reset, watch, setValue } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
@@ -204,11 +243,13 @@ const FieldSettings = ({
   };
 
   const submitHandler = (values) => {
-    console.log("formTypeformTypeformType", formType, values);
     const data = {
       ...values,
       attributes: {
         ...values?.attributes,
+        ratio: customRatio
+          ? Number(values?.ratio1) / Number(values?.ratio2)
+          : values?.attributes?.ratio,
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
@@ -315,6 +356,12 @@ const FieldSettings = ({
       value: "min",
     },
   ];
+
+  const [customRatio, setCustomRatio] = useState(false);
+
+  const handleCustomRatio = (e) => {
+    setCustomRatio(e.target.checked);
+  };
 
   return (
     <div className={styles.settingsBlock}>
@@ -472,6 +519,108 @@ const FieldSettings = ({
 
                   {fieldType === "STATUS" && (
                     <StatusFieldSettings control={control} />
+                  )}
+
+                  {fieldType === "PHOTO" && (
+                    <>
+                      <FRow
+                        required={true}
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Photo formats"
+                          ) || "Photo format"
+                        }
+                      >
+                        <HFSelect
+                          required={true}
+                          defaultValue="png"
+                          control={control}
+                          options={photoFormats}
+                          name={"attributes.format"}
+                        />
+                      </FRow>
+
+                      <FRow
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Ratio"
+                          ) || "Ratio"
+                        }
+                      >
+                        <HFSelect
+                          disabled={customRatio}
+                          control={control}
+                          options={photoRatios}
+                          name={"attributes.ratio"}
+                        />
+                      </FRow>
+                      <FormControlLabel
+                        style={{
+                          marginLeft: "0",
+                          columnGap: "5px",
+                          marginBottom: "10px",
+                        }}
+                        labelPlacement="start"
+                        label={
+                          <span style={{ fontWeight: "bold" }}>
+                            Custom ratio:{" "}
+                          </span>
+                        }
+                        control={
+                          <Checkbox
+                            icon={
+                              <img
+                                src="/img/checbkox.svg"
+                                alt="checkbox"
+                                style={{ width: 20 }}
+                              />
+                            }
+                            checkedIcon={
+                              <img
+                                src="/img/checkbox-checked.svg"
+                                alt="checked"
+                                style={{ width: 20 }}
+                              />
+                            }
+                            style={{
+                              transform: "translate(-1px)",
+                              marginRight: "8px",
+                              padding: "4px",
+                            }}
+                            checked={customRatio}
+                            onChange={handleCustomRatio}
+                            color="primary"
+                          />
+                        }
+                      />
+                      {customRatio && (
+                        <Box display="flex" columnGap="5px" marginBottom="10px">
+                          <input
+                            className={styles.ratioInput}
+                            {...register("ratio1")}
+                            type="number"
+                          />
+                          <span
+                            style={{
+                              margin: "0 5px",
+                              fontWeight: "bold",
+                              alignSelf: "center",
+                            }}
+                          >
+                            :
+                          </span>
+                          <input
+                            className={styles.ratioInput}
+                            {...register("ratio2")}
+                            type="number"
+                          />
+                        </Box>
+                      )}
+                    </>
                   )}
 
                   {(fieldType === "FILE" ||

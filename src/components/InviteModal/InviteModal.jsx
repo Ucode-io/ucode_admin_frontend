@@ -1,4 +1,10 @@
 import {
+  useUserCreateMutation,
+  useUserGetByIdQuery,
+  useUserUpdateMutation,
+} from "@/services/auth/userService";
+import {useRoleListQuery} from "@/services/roleServiceV2";
+import {
   Box,
   Button,
   Flex,
@@ -18,54 +24,47 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import styles from "./style.module.scss";
-import { Select } from "chakra-react-select";
-import { useRoleListQuery } from "@/services/roleServiceV2";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import PhoneNumberInput from "react-phone-number-input";
-import {
-  useUserCreateMutation,
-  useUserGetByIdQuery,
-  useUserUpdateMutation,
-} from "@/services/auth/userService";
-import { useDispatch, useSelector } from "react-redux";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 import LinkIcon from "@mui/icons-material/Link";
-import { toast } from "react-toastify";
-import { useQuery } from "react-query";
+import {Select} from "chakra-react-select";
+import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import {Controller, useForm, useWatch} from "react-hook-form";
+import PhoneNumberInput from "react-phone-number-input";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
+import {useSearchParams} from "react-router-dom";
+import {toast} from "react-toastify";
+import useDebounce from "../../hooks/useDebounce";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import { settingsModalActions } from "../../store/settingsModal/settingsModal.slice";
+import {useFieldsListQuery} from "../../services/constructorFieldService";
+import userService from "../../services/userService";
+import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
+import styles from "./style.module.scss";
 
 function InviteModal({
-  userInviteLan,
   isOpen,
   onOpen,
   onClose,
   guid = "",
   users = [],
   selectedClientType,
-  invite: inviteProps,
 }) {
-  const dispatch = useDispatch();
-
   const finalRef = useRef(null);
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const project_id = useSelector((state) => state.auth.projectId);
   const env_id = useSelector((state) => state.auth?.environmentId);
-  const inviteStore = useSelector((state) => state.settingsModal.invite);
+  const [userId, setUserId] = useState("");
 
-  const invite = inviteProps || inviteStore;
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [allowPassword, setAllowPassword] = useState("noShow");
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
 
   const handleClose = () => {
     onClose();
-    if (inviteStore) {
-      dispatch(settingsModalActions.resetParams());
-    }
+    setSearchParams({});
+    setTabIndex(0);
+    mainForm.reset({});
   };
 
   const createMutation = useUserCreateMutation({
@@ -160,6 +159,25 @@ function InviteModal({
     });
   }
 
+  const checkUser = useDebounce((type = "login", searchText) => {
+    if (Boolean(!searchText)) setAllowPassword("noShow");
+
+    userService
+      .userCheck({[type]: searchText})
+      .then((res) => {
+        if (Boolean(res?.user_id)) {
+          setAllowPassword("noShow");
+          setUserId(res?.user_id);
+        }
+      })
+      .catch((err) => {
+        console.log("errerrerr", err);
+        if (Boolean(searchText)) {
+          setAllowPassword("show");
+        }
+      });
+  }, 800);
+
   return (
     <>
       <Modal
@@ -167,157 +185,164 @@ function InviteModal({
         finalFocusRef={finalRef}
         isOpen={isOpen}
         onClose={handleClose}
-        isCentered
-      >
+        isCentered>
         <ModalOverlay />
 
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>
-          <ModalContent borderRadius={"12px"} maxW={"500px"}>
+          <ModalContent borderRadius={"12px"} maxW={"530px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
-            {/* {selectedClientType?.name !== "DEFAULT ADMIN" && (
-              <Button onClick={copyToClipboard} className={styles.copyButton}>
-                <LinkIcon
-                  style={{ transform: "rotate(140deg)", color: "#A09F9D" }}
-                />
-                Invite Link
-              </Button>
-            )} */}
 
-            <ModalBody>
-              <Tabs
-                index={tabIndex}
-                onChange={onTabChange}
-                className={styles.react_tab}
-              >
-                <Box display="flex" justifyContent={"space-between"}>
-                  <TabList borderBottom={"none"}>
-                    <Flex
-                      p={"4px"}
-                      bg={"#f9fafb"}
-                      borderRadius={"8px"}
-                      h={"32px"}
-                      mb={"5px"}
-                      border={"1px solid #EAECF0"}
-                    >
-                      <Tab
-                        className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
-                        Login
-                      </Tab>
-                      <Tab
-                        className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
-                        Phone
-                      </Tab>
-                      <Tab
-                        className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
-                        Email
-                      </Tab>
-                      <Tab
-                        className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}
-                      >
-                        Invite Link
-                      </Tab>
-                    </Flex>
-                  </TabList>
-                  {tabIndex === 3 &&
-                    mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
-                      <Button
-                        onClick={copyToClipboard}
-                        className={styles.copyButton}
-                        isDisabled={
-                          !mainForm.watch("client_type_id") ||
-                          !mainForm.watch("role_id")
-                        }
-                      >
-                        <LinkIcon
-                          style={{
-                            transform: "rotate(140deg)",
-                            color: "#A09F9D",
-                          }}
-                        />
-                        Invite Link
-                      </Button>
-                    )}
-                </Box>
-                <TabPanels>
-                  <TabPanel minH={"300px"} mt={0} p={"0"}>
-                    <LoginForm guid={guid} form={mainForm} invite={invite} />
-                  </TabPanel>
-                  <TabPanel minH={"300px"} mt={0} p={"0"}>
-                    <Controller
-                      name="phone"
-                      control={mainForm.control}
-                      render={({ field }) => (
-                        <Box
-                          mt={2}
-                          px={"0px"}
-                          style={{
-                            ".PhoneInput": {
-                              display: "flex",
-                              alignItems: "center",
-                              border: "1px solid",
-                              borderColor: "gray.200",
-                              borderRadius: "md",
-                              _focusWithin: {
-                                borderColor: "#007AFF",
-                                boxShadow: "0 0 0 1px #007AFF",
+            <ModalBody padding={"0 15px"}>
+              <>
+                {tabIndex === 3 &&
+                  mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
+                    <Button
+                      onClick={copyToClipboard}
+                      className={styles.copyButton}
+                      isDisabled={
+                        !mainForm.watch("client_type_id") ||
+                        !mainForm.watch("role_id")
+                      }>
+                      <LinkIcon
+                        style={{
+                          transform: "rotate(140deg)",
+                          color: "#A09F9D",
+                        }}
+                      />
+                      Invite Link
+                    </Button>
+                  )}
+                <Tabs
+                  isLazy={false}
+                  index={tabIndex}
+                  onChange={onTabChange}
+                  className={styles.react_tab}>
+                  <Box display="flex" alignItems="center">
+                    <UserInfo form={mainForm} />
+
+                    <TabList borderBottom={"none"} marginLeft={"auto"}>
+                      <Flex
+                        p={"4px"}
+                        bg={"#f9fafb"}
+                        borderRadius={"8px"}
+                        h={"32px"}
+                        border={"1px solid #EAECF0"}>
+                        <Tab
+                          className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Login
+                        </Tab>
+                        <Tab
+                          className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Phone
+                        </Tab>
+                        <Tab
+                          className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Email
+                        </Tab>
+                        <Tab
+                          className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Invite Link
+                        </Tab>
+                      </Flex>
+                    </TabList>
+                    {/* )} */}
+                  </Box>
+                  <TabPanels>
+                    <TabPanel minH={"50px"} mt={0} p={"0"}>
+                      <LoginForm
+                        guid={guid}
+                        userId={userId}
+                        mainForm={mainForm}
+                        allowPassword={allowPassword}
+                        setAllowPassword={setAllowPassword}
+                        checkUser={checkUser}
+                      />
+                    </TabPanel>
+                    <TabPanel minH={"50px"} mt={0} p={"0"}>
+                      <Controller
+                        name="phone"
+                        control={mainForm.control}
+                        render={({field}) => (
+                          <Box
+                            mt={4}
+                            px={"0px"}
+                            style={{
+                              ".PhoneInput": {
+                                display: "flex",
+                                alignItems: "center",
+                                border: "1px solid",
+                                borderColor: "gray.200",
+                                borderRadius: "md",
+                                _focusWithin: {
+                                  borderColor: "#007AFF",
+                                  boxShadow: "0 0 0 1px #007AFF",
+                                },
+                                transition: "box-shadow 200ms",
                               },
-                              transition: "box-shadow 200ms",
-                            },
-                            ".PhoneInputCountry": {
-                              ml: "12.8px",
-                            },
-                            ".PhoneInputCountrySelect": {
-                              px: 3,
-                              pr: 8,
-                              height: "full",
-                              borderRight: "1px solid",
-                              borderColor: "inherit",
-                              bg: "transparent",
-                              _hover: { bg: "gray.50" },
-                              _focus: { outline: "none" },
-                              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
-                              backgroundRepeat: "no-repeat",
-                              backgroundPosition: "right 0.5rem center",
-                              backgroundSize: "1.5em",
-                            },
-                            ".PhoneInputInput": {
-                              border: "none !important",
-                              boxShadow: "none !important",
-                              _focus: { boxShadow: "none !important" },
-                            },
-                          }}
-                        >
-                          <PhoneNumberInput
-                            numberInputProps={{
-                              size: "lg",
-                              isInvalid: errors?.phone,
-                            }}
-                            defaultCountry="UZ"
-                            international
-                            value={field.value}
-                            onChange={field.onChange}
-                            inputComponent={Input}
-                            limitMaxLength={true}
-                          />
-                        </Box>
-                      )}
+                              ".PhoneInputCountry": {
+                                ml: "12.8px",
+                              },
+                              ".PhoneInputCountrySelect": {
+                                px: 3,
+                                pr: 8,
+                                height: "full",
+                                borderRight: "1px solid",
+                                borderColor: "inherit",
+                                bg: "transparent",
+                                _hover: {bg: "gray.50"},
+                                _focus: {outline: "none"},
+                                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                backgroundRepeat: "no-repeat",
+                                backgroundPosition: "right 0.5rem center",
+                                backgroundSize: "1.5em",
+                              },
+                              ".PhoneInputInput": {
+                                border: "none !important",
+                                boxShadow: "none !important",
+                                _focus: {boxShadow: "none !important"},
+                              },
+                            }}>
+                            <PhoneNumberInput
+                              numberInputProps={{
+                                size: "lg",
+                                isInvalid: errors?.phone,
+                              }}
+                              defaultCountry="UZ"
+                              international
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                checkUser("phone", e);
+                              }}
+                              inputComponent={Input}
+                              limitMaxLength={true}
+                            />
+                          </Box>
+                        )}
+                      />
+                    </TabPanel>
+                    <TabPanel p={"0"} minH={"50px"}>
+                      <EmailComponent
+                        checkUser={checkUser}
+                        guid={guid}
+                        form={mainForm}
+                      />
+                    </TabPanel>
+
+                    <TabPanel pt={"2px"}></TabPanel>
+
+                    <TypesComponent
+                      tabIndex={tabIndex}
+                      guid={guid}
+                      form={mainForm}
+                      client_type_id={mainForm?.watch()?.client_type_id}
                     />
-                    <TypesComponent guid={guid} form={mainForm} />
-                  </TabPanel>
-                  <TabPanel p={"0"} minH={"300px"}>
-                    <EmailComponent guid={guid} form={mainForm} />
-                  </TabPanel>
-                  <TabPanel p={"0"} minH={"300px"}>
-                    <LinkComponent guid={guid} form={mainForm} />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                  </TabPanels>
+                </Tabs>
+              </>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter padding={"5px 10px 10px 10px"}>
               <Box>
                 {tabIndex !== 3 && (
                   <Button
@@ -326,8 +351,7 @@ function InviteModal({
                     w={"100px"}
                     type="submit"
                     bg={"#007aff"}
-                    color={"#fff"}
-                  >
+                    color={"#fff"}>
                     {guid ? "Save" : "Invite"}
                   </Button>
                 )}
@@ -356,13 +380,13 @@ const PasswordInput = forwardRef(
             <Visibility
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{ color: "#667085" }}
+              style={{color: "#667085"}}
             />
           ) : (
             <VisibilityOff
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{ color: "#667085" }}
+              style={{color: "#667085"}}
             />
           )}
         </InputRightElement>
@@ -371,43 +395,74 @@ const PasswordInput = forwardRef(
   }
 );
 
-const EmailComponent = ({ form, placeholder = "Email", guid }) => {
+const EmailComponent = ({form, guid}) => {
   const errors = form.formState.errors;
   return (
-    <Box mt={2}>
+    <Box mt={4}>
       <Input
-        placeholder={placeholder}
+        placeholder={"Email"}
+        _placeholder={{
+          fontWeight: "500",
+          color: "#787773",
+          fontSize: "14px",
+        }}
         type="email"
         size="lg"
         {...form.register("email")}
         isInvalid={errors?.email}
       />
-      <TypesComponent guid={guid} form={form} />
     </Box>
   );
 };
 
-const LinkComponent = ({ form, placeholder = "Link", guid }) => {
-  return (
-    <Box mt={2}>
-      <TypesComponent guid={guid} form={form} />
-    </Box>
-  );
-};
-
-const LoginForm = ({ form, placeholder = "", guid, invite }) => {
+const LoginForm = ({
+  mainForm,
+  userId = "",
+  allowPassword = "",
+  guid,
+  checkUser = () => {},
+  setAllowPassword = () => {},
+}) => {
   const [changePassword, setChangePassword] = useState(false);
-  const errors = form.formState.errors;
+  const errors = mainForm.formState.errors;
+  const [searchParams] = useSearchParams();
+  const [login, setLogin] = useState("");
+
+  const shouldShowPassword =
+    changePassword ||
+    (searchParams.get("invite") === "true" &&
+      Boolean(allowPassword === "show") &&
+      Boolean(login));
 
   return (
     <>
-      <Box mt={2}>
+      <Box mt={4}>
         <Input
+          _placeholder={{
+            fontWeight: "500",
+            color: "#787773",
+            fontSize: "14px",
+          }}
           placeholder="Login"
           size="lg"
-          {...form.register("login", { required: true })}
+          {...mainForm.register("login", {required: true})}
           isInvalid={errors?.name}
+          onChange={(e) => {
+            setLogin(e.target.value);
+            checkUser("login", e.target.value);
+          }}
         />
+        {allowPassword === "noShow" && Boolean(userId) && (
+          <span
+            style={{
+              width: "100%",
+              margin: "0 0 0 10px",
+              color: "#91918e",
+              fontSize: "10px",
+            }}>
+            {"The user already exists!"}
+          </span>
+        )}
       </Box>
       <Flex w={"100%"}>
         {!changePassword && Boolean(guid) && (
@@ -421,78 +476,87 @@ const LoginForm = ({ form, placeholder = "", guid, invite }) => {
             h={"26px"}
             _hover={{
               background: "#fff",
-            }}
-          >
+            }}>
             Change Password
           </Button>
         )}
       </Flex>
-      {changePassword ||
-        (invite && (
-          <Box mt={2}>
-            <PasswordInput
-              placeholder="Enter new password"
-              size="lg"
-              {...form.register("new_password", { required: true })}
-              isInvalid={errors?.password}
-            />
-          </Box>
-        ))}
-
-      <TypesComponent guid={guid} form={form} />
+      {shouldShowPassword && (
+        <Box mt={2}>
+          <PasswordInput
+            placeholder="Enter new password"
+            size="lg"
+            {...mainForm.register("new_password", {required: true})}
+            isInvalid={errors?.password}
+          />
+        </Box>
+      )}
     </>
   );
 };
 
-const TypesComponent = ({ form, disabledOptionName, guid }) => {
+const TypesComponent = ({form, guid, client_type_id}) => {
+  const project_id = useSelector((state) => state.company.projectId);
+
+  const {data: fieldsData} = useFieldsListQuery(
+    {
+      queryParams: {
+        enabled: Boolean(client_type_id?.table_slug),
+      },
+      params: {
+        table_slug: client_type_id?.table_slug,
+        "project-id": project_id,
+      },
+    },
+    client_type_id?.table_slug
+  );
+
+  const computedFields = useMemo(() => {
+    return fieldsData?.fields?.filter((item) =>
+      client_type_id?.columns?.includes(item?.id)
+    );
+  }, [fieldsData, client_type_id]);
+
   return (
-    <Box
-      sx={{
-        marginTop: "7px",
-        flexWrap: "wrap",
-        gap: "15px",
-        paddingTop: "10px",
-        // padding: "15px",
-        // border: "1px solid #eee",
-        // borderRadius: "8px",
-        // boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-    >
+    <>
       <Box
         sx={{
-          fontSize: "13px",
-          fontWeight: 600,
-          color: "#91918E",
-        }}
-      >
-        User Info
+          flexWrap: "wrap",
+          gap: "15px",
+        }}>
+        {computedFields?.map((item, index) => (
+          <Box
+            key={index}
+            sx={{
+              margin: "0 0 10px 0",
+              borderRadius: "4px",
+              height: "38px",
+              border: "1px solid #e2e8f0",
+              display: "flex",
+              alignItems: "center",
+            }}>
+            <DrawerFieldGenerator
+              inviteModal={true}
+              drawerDetail={true}
+              field={item}
+              name={item?.slug}
+              control={form.control}
+              setFormValue={form.setValue}
+            />
+          </Box>
+        ))}
+
+        {Boolean(guid) && (
+          <Box mt={2}>
+            <Statuses placeholder="Status" form={form} control={form.control} />
+          </Box>
+        )}
       </Box>
-      <Box mt={2}>
-        <UserType
-          disabledOptionName={disabledOptionName}
-          placeholder="User type"
-          form={form}
-          control={form.control}
-        />
-      </Box>
-      <Box mt={2}>
-        <Role
-          placeholder="Role"
-          form={form}
-          control={form.control}
-          disabledRoleOptionName={"DEFAULT ADMIN"}
-        />
-      </Box>
-      {Boolean(guid) && (
-        <Box mt={2}>
-          <Statuses placeholder="Status" form={form} control={form.control} />
-        </Box>
-      )}
-    </Box>
+    </>
   );
 };
 
-const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
+const UserType = ({control, placeholder = "", form, disabledOptionName}) => {
   const useClientTypesQuery = () =>
     useQuery({
       queryKey: ["GET_CLIENT_TYPES"],
@@ -514,34 +578,77 @@ const UserType = ({ control, placeholder = "", form, disabledOptionName }) => {
       );
     return result;
   }, [form.watch("client_type_id")]);
+
   return (
     <Controller
       name="client_type_id"
       control={control}
-      render={({ field }) => (
+      render={({field}) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={clientTypes}
-          getOptionLabel={({ name }) => name}
-          getOptionValue={({ guid }) => guid}
-          menuPlacement="top"
-          size="lg"
+          getOptionLabel={({name}) => name}
+          getOptionValue={({guid}) => guid}
+          menuPlacement="bottom"
           isOptionDisabled={(option) => option?.name === disabledOptionName}
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: "110px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: "#f9fafb",
+              border: "1px solid #d0d5dd",
+              boxShadow: state.isFocused
+                ? "0 0 0 2px rgba(0, 122, 255, 0.4)"
+                : "none",
+              fontWeight: "500",
+              color: "#344054",
+              cursor: "pointer",
+              minHeight: "36px",
+              paddingLeft: "8px",
+              "&:hover": {
+                backgroundColor: "#e4e7ec",
+              },
+            }),
+            placeholder: (base) => ({
+              ...base,
+              color: "#667085",
+              fontSize: "14px",
+            }),
+            dropdownIndicator: (base) => ({
+              ...base,
+              color: "#667085",
+              padding: "4px",
+            }),
+            indicatorSeparator: () => ({
+              display: "none",
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+            singleValue: (base) => ({
+              ...base,
+              color: "#344054",
+              fontSize: "14px",
+            }),
+          }}
         />
       )}
     />
   );
 };
 
-const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
-  const clientTypeId = useWatch({ control, name: "client_type_id" });
+const Role = ({control, placeholder = "", form, disabledRoleOptionName}) => {
+  const clientTypeId = useWatch({control, name: "client_type_id"});
   const id =
     typeof clientTypeId === "string" ? clientTypeId : clientTypeId?.guid;
   const rolesQuery = useRoleListQuery({
-    params: id ? { "client-type-id": id } : {},
-    queryParams: { enabled: Boolean(id) },
+    params: id ? {"client-type-id": id} : {},
+    queryParams: {enabled: Boolean(id)},
   });
   const roles = rolesQuery.data?.data?.response ?? [];
 
@@ -558,24 +665,96 @@ const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
     <Controller
       name="role_id"
       control={control}
-      render={({ field }) => (
+      render={({field}) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={roles}
-          getOptionLabel={({ name }) => name}
-          getOptionValue={({ guid }) => guid}
-          isOptionDisabled={(option) => option?.name === disabledRoleOptionName}
-          menuPlacement="top"
-          size="lg"
+          getOptionLabel={({name}) => name}
+          getOptionValue={({guid}) => guid}
+          menuPlacement="bottom"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: "110px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: "#f2f4f7",
+              border: "1px solid #d0d5dd",
+              boxShadow: state.isFocused
+                ? "0 0 0 2px rgba(0, 122, 255, 0.4)"
+                : "none",
+              fontWeight: "500",
+              color: "#344054",
+              cursor: "pointer",
+              minHeight: "36px",
+              paddingLeft: "8px",
+              "&:hover": {
+                backgroundColor: "#e4e7ec",
+              },
+            }),
+            placeholder: (base) => ({
+              ...base,
+              color: "#667085",
+              fontSize: "14px",
+            }),
+            dropdownIndicator: (base) => ({
+              ...base,
+              color: "#667085",
+              padding: "4px",
+            }),
+            indicatorSeparator: () => ({
+              display: "none",
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+            singleValue: (base) => ({
+              ...base,
+              color: "#344054",
+              fontSize: "14px",
+            }),
+          }}
         />
       )}
     />
   );
 };
 
-const Statuses = ({ control, placeholder = "", form }) => {
+const UserInfo = ({form, disabledOptionName}) => {
+  return (
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "5px",
+        }}>
+        <Box w={"122px"}>
+          <UserType
+            disabledOptionName={disabledOptionName}
+            placeholder="User type"
+            form={form}
+            control={form.control}
+          />
+        </Box>
+        <Box w="122px">
+          <Role
+            placeholder="Role"
+            form={form}
+            control={form.control}
+            disabledRoleOptionName={"DEFAULT ADMIN"}
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+const Statuses = ({control, placeholder = "", form}) => {
   const options = [
     {
       label: "Active",
@@ -607,14 +786,14 @@ const Statuses = ({ control, placeholder = "", form }) => {
     <Controller
       name="status"
       control={control}
-      render={({ field }) => (
+      render={({field}) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={(e) => field.onChange(e?.value)}
           options={options}
-          getOptionLabel={({ label }) => label}
-          getOptionValue={({ value }) => value}
+          getOptionLabel={({label}) => label}
+          getOptionValue={({value}) => value}
           menuPlacement="top"
           size="lg"
           defaultValue={options[0]}

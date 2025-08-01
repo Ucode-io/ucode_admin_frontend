@@ -1,4 +1,4 @@
-import {Box, Popover} from "@mui/material";
+import {Box, Popover, Tooltip} from "@mui/material";
 import {useState} from "react";
 import {useWatch} from "react-hook-form";
 import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
@@ -50,27 +50,36 @@ const MultiLineInput = ({
             backgroundColor: "#F7F7F7",
           },
         }}>
-        <Box
-          sx={{
-            width: "100%",
-            fontSize: "14px",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            cursor: isDisabled ? "not-allowed" : "pointer",
-          }}
-          id="textAreaInput"
-          onClick={(e) => {
-            handleClick(e);
-          }}>
-          {value ? (
-            stripHtmlTags(
-              `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
-            )
-          ) : (
-            <span style={{color: "#adb5bd"}}>Empty</span>
-          )}
-        </Box>
+        <Tooltip
+          title={
+            value
+              ? stripHtmlTags(
+                  `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
+                )
+              : ""
+          }>
+          <Box
+            sx={{
+              width: "100%",
+              fontSize: "14px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              cursor: isDisabled ? "not-allowed" : "pointer",
+            }}
+            id="textAreaInput"
+            onClick={(e) => {
+              handleClick(e);
+            }}>
+            {value ? (
+              stripHtmlTags(
+                `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
+              )
+            ) : (
+              <span style={{color: "#adb5bd"}}>Empty</span>
+            )}
+          </Box>
+        </Tooltip>
         {isDisabled && (
           <Box
             sx={{
@@ -102,6 +111,7 @@ const MultiLineInput = ({
             horizontal: "left",
           }}>
           <HFTextEditor
+            placeholder={placeholder}
             updateObject={inputUpdateObject}
             drawerDetail={true}
             id="multi_line"

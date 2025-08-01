@@ -1,0 +1,49 @@
+.item {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(243, 243, 243, 0.5);
+  }
+}
+
+.item.active {
+  background-color: rgba(243, 243, 243, 0.5);
+}
+
+.value {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;  
+  color: #8F8E8B;
+}
+
+.title {
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;  
+  color: #101828;
+}
+
+.arrow {
+  transform: rotate(-90deg);
+}
+
+.content {
+  width: 300px;
+  max-height: 376px;
+  position: absolute;
+  top: 0;
+  right: calc(100% + 22px);
+  overflow: auto;
+  background-color: #fff;
+  border: 1px solid #e5e9eb;
+  border-radius: 8px;
+}

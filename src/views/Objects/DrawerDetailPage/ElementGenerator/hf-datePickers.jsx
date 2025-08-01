@@ -13,6 +13,7 @@ export const HFDatePickerField = ({
   required,
   disabled,
   drawerDetail = false,
+  placeholder = "",
   updateObject = () => {},
 }) => {
   const inputUpdateObject = useDebounce(() => updateObject(), 500);
@@ -29,7 +30,7 @@ export const HFDatePickerField = ({
         return (
           <Box position="relative">
             <DatePickerInput
-              placeholder="Empty"
+              placeholder={placeholder}
               id="dateField"
               value={
                 value && isValid(new Date(value))
@@ -90,6 +91,7 @@ export const HFDateTimePickerField = ({
   defaultValue = "",
   required,
   disabled,
+  placeholder = "",
   drawerDetail = false,
   updateObject = () => {},
 }) => {
@@ -107,7 +109,7 @@ export const HFDateTimePickerField = ({
         return (
           <Box position="relative">
             <DateTimePicker
-              placeholder="Empty"
+              placeholder={placeholder}
               id="dateTimeField"
               value={getValue(value) ?? defaultValue}
               valueFormat="DD.MM.YYYY HH:mm"
@@ -164,6 +166,7 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
   defaultValue = "",
   required,
   disabled,
+  placeholder = "",
   drawerDetail = false,
   updateObject = () => {},
 }) => {
@@ -181,7 +184,7 @@ export const HFDateDatePickerWithoutTimeZoneTableField = ({
         return (
           <Box position="relative">
             <DateTimePicker
-              placeholder="Empty"
+              placeholder={placeholder}
               id="dateTimeZoneField"
               value={value ? getNoTimezoneValue(value) : defaultValue}
               valueFormat="DD.MM.YYYY HH:mm"
@@ -238,6 +241,7 @@ export const HFTimePickerField = ({
   name,
   required,
   disabled,
+  placeholder = "",
   drawerDetail = false,
   updateObject = () => {},
 }) => {
@@ -288,7 +292,7 @@ export const HFTimePickerField = ({
                   color: "#787774",
                 },
               }}
-              placeholder="Empty"
+              placeholder={placeholder}
               disabled={disabled}
             />
           </Box>

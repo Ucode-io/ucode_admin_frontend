@@ -33,11 +33,11 @@ function NewSubMenu({
   const projectSettingLan = languageData?.find((el) => el?.key === "Setting");
 
   const onDrop = (dropResult) => {
-    const { removedIndex, addedIndex, payload } = dropResult;
+    const {removedIndex, addedIndex, payload} = dropResult;
 
     // if dropped outside
     if (removedIndex == null && typeof addedIndex === "number" && payload) {
-      const addedData = { ...payload };
+      const addedData = {...payload};
       addedData.parent_id = element?.id;
 
       if (addedData) {
@@ -68,7 +68,7 @@ function NewSubMenu({
     height: "32px",
     marginTop: "5px",
   };
-console.log(menuChilds?.[element?.id]?.children?.length);
+
   return (
     <div
       className={``}
@@ -76,16 +76,14 @@ console.log(menuChilds?.[element?.id]?.children?.length);
         position: "relative",
         minHeight: "32px",
         padding: "0 0 0 15px",
-      }}
-    >
+      }}>
       <div className="body">
         <Box
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-          }}
-        >
+          }}>
           <div>
             <Box className="nav-block">
               <div className="menu-element">
@@ -102,8 +100,7 @@ console.log(menuChilds?.[element?.id]?.children?.length);
                     getChildPayload={(index) =>
                       menuChilds?.[element?.id]?.children[index]
                     }
-                    onDrop={onDrop}
-                  >
+                    onDrop={onDrop}>
                     {menuChilds?.[element?.id]?.children?.length ? (
                       menuChilds?.[element?.id]?.children?.map(
                         (childElement, index) => (
@@ -123,7 +120,7 @@ console.log(menuChilds?.[element?.id]?.children?.length);
                             menuStyle={menuStyleNew}
                             index={index}
                             selectedApp={selectedApp}
-                            buttonProps={{ className: "highlight-on-hover" }}
+                            buttonProps={{className: "highlight-on-hover"}}
                           />
                         )
                       )
@@ -135,8 +132,7 @@ console.log(menuChilds?.[element?.id]?.children?.length);
                           height: "30px",
                           display: "flex",
                           alignItems: "center",
-                        }}
-                      >
+                        }}>
                         No pages inside
                       </Box>
                     )}

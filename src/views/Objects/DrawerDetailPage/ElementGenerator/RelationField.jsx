@@ -13,7 +13,7 @@ import useTabRouter from "../../../../hooks/useTabRouter";
 import useDebounce from "../../../../hooks/useDebounce";
 // import {Select} from "@chakra-ui/react";
 import Select from "react-select";
-import {Box} from "@mui/material";
+import {Box, Tooltip} from "@mui/material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
 
@@ -32,6 +32,7 @@ const RelationField = ({
   isLayout = false,
   isMulti,
   isRequired,
+  placeholder = "",
   updateObject = () => {},
   ...props
 }) => {
@@ -60,6 +61,7 @@ const RelationField = ({
             value={isMulti ? value : Array.isArray(value) ? value[0] : value}
             setValue={onChange}
             field={field}
+            placeholder={placeholder}
             disabled={disabled}
             tableSlug={tableSlug}
             error={error}
@@ -94,6 +96,7 @@ const AutoCompleteElement = ({
   required = false,
   activeLang,
   isMulti,
+  placeholder = "",
   updateObject = () => {},
   watch = () => {},
 }) => {
@@ -192,7 +195,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -250,7 +253,7 @@ const AutoCompleteElement = ({
   //   console.log({ autoFiltersFirstValues, autoFiltersNewValues });
   // }
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
@@ -350,7 +353,7 @@ const AutoCompleteElement = ({
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(value, field_from));
       });
       setPage(1);
@@ -361,7 +364,7 @@ const AutoCompleteElement = ({
       setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
-      field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
       });
       setPage(1);
@@ -431,7 +434,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -520,108 +523,128 @@ const AutoCompleteElement = ({
   };
 
   return (
-    <Box
-      sx={{
-        width: "330px",
-        height: "32px",
-        cursor: disabled ? "not-allowed" : "pointer",
-        border: errors?.[field?.slug] ? "1px solid red" : "none",
-        borderRadius: "4px",
-      }}
-    >
-      <Select
-        placeholder="Empty"
-        id={`relationField`}
-        isDisabled={disabled}
-        options={allOptions ?? []}
-        isClearable={true}
-        styles={customStyles}
-        value={localValue ?? []}
-        required={required}
-        defaultValue={value ?? ""}
-        className=""
-        isMulti={isMulti}
-        onChange={(e) => {
-          changeHandler(e);
-        }}
-        onMenuScrollToBottom={loadMoreItems}
-        // inputChangeHandler={(e) => inputChangeHandler(e)}
-        onInputChange={(e, newValue) => {
-          inputChangeHandler(e);
-          setInputValue(e ?? null);
-          inputUpdateObject();
-        }}
-        getOptionLabel={(option) =>
-          computedViewFields?.map((el) => {
-            if (field?.attributes?.enable_multi_language) {
-              return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
-            } else {
-              return `${option[el]} `;
-            }
-          })
-        }
-        getOptionValue={(option) =>
-          option?.guid ?? option?.id ?? option?.client_type_id
-        }
-        components={{
-          DropdownIndicator: () => null,
-          MultiValue: (option) => {
-            return (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span>
-                  {computedViewFields?.map((el, index) => {
-                    if (
-                      field?.attributes?.enable_multi_language ||
-                      field?.attributes?.enable_multilanguage
-                    ) {
-                      return getRelationFieldTabsLabel(
-                        field,
-                        option.data,
-                        activeLang ?? i18n?.language
-                      );
-                      // return (
-                      //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
-                      //   option?.[`${el}`]
-                      // );
-                    } else {
-                      return isMulti ? el : option?.[el];
-                    }
-                  })}
-                </span>
-                <Box display="flex" alignItems="center">
-                  <IconGenerator
-                    icon="arrow-up-right-from-square.svg"
-                    style={{ marginLeft: "10px", cursor: "pointer" }}
-                    size={15}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      navigateToForm(tableSlug, "EDIT", option.data);
-                    }}
-                  />
-                  <span
-                    style={{
-                      cursor: "pointer",
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      deleteHandler(option.data);
-                    }}
-                  >
-                    <svg
-                      height="16"
-                      width="16"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                      focusable="false"
-                      class="css-tj5bde-Svg"
-                    >
-                      <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
-                    </svg>
+    <Tooltip
+      title={
+        localValue.length
+          ? localValue?.map((option) => {
+              const value = computedViewFields?.map((el, index) => {
+                if (field?.attributes?.enable_multi_language) {
+                  return getRelationFieldTabsLabel(
+                    field,
+                    option,
+                    activeLang ?? i18n?.language
+                  );
+                  // return (
+                  //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
+                  //   option?.[`${el}`]
+                  // );
+                } else {
+                  return isMulti ? el : option?.[el];
+                }
+              });
+
+              if (Array.isArray(value) && value?.length > 0) {
+                return value.join(",");
+              }
+              return "";
+            })
+          : ""
+      }>
+      <Box
+        sx={{
+          width: "330px",
+          height: "32px",
+          cursor: disabled ? "not-allowed" : "pointer",
+          border: errors?.[field?.slug] ? "1px solid red" : "none",
+          borderRadius: "4px",
+        }}>
+        <Select
+          placeholder="Empty"
+          id={`relationField`}
+          isDisabled={disabled}
+          options={allOptions ?? []}
+          isClearable={true}
+          styles={customStyles}
+          value={localValue ?? []}
+          required={required}
+          defaultValue={value ?? ""}
+          className=""
+          isMulti={isMulti}
+          onChange={(e) => {
+            changeHandler(e);
+          }}
+          onMenuScrollToBottom={loadMoreItems}
+          // inputChangeHandler={(e) => inputChangeHandler(e)}
+          onInputChange={(e, newValue) => {
+            setInputValue(e ?? null);
+            inputChangeHandler(e);
+          }}
+          getOptionLabel={(option) =>
+            computedViewFields?.map((el) => {
+              if (field?.attributes?.enable_multi_language) {
+                return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
+              } else {
+                return `${option[el]} `;
+              }
+            })
+          }
+          getOptionValue={(option) =>
+            option?.guid ?? option?.id ?? option?.client_type_id
+          }
+          components={{
+            DropdownIndicator: () => null,
+            MultiValue: (option) => {
+              return (
+                <div style={{display: "flex", alignItems: "center"}}>
+                  <span>
+                    {computedViewFields?.map((el, index) => {
+                      if (field?.attributes?.enable_multi_language) {
+                        return getRelationFieldTabsLabel(
+                          field,
+                          option.data,
+                          activeLang ?? i18n?.language
+                        );
+                        // return (
+                        //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
+                        //   option?.[`${el}`]
+                        // );
+                      } else {
+                        return isMulti ? el : option?.[el];
+                      }
+                    })}
                   </span>
-                </Box>
-                {/* <IconGenerator
+                  <Box display="flex" alignItems="center">
+                    <IconGenerator
+                      icon="arrow-up-right-from-square.svg"
+                      style={{marginLeft: "10px", cursor: "pointer"}}
+                      size={15}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        navigateToForm(tableSlug, "EDIT", option.data);
+                      }}
+                    />
+                    <span
+                      style={{
+                        cursor: "pointer",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        deleteHandler(option.data);
+                      }}>
+                      <svg
+                        height="16"
+                        width="16"
+                        viewBox="0 0 20 20"
+                        aria-hidden="true"
+                        focusable="false"
+                        class="css-tj5bde-Svg">
+                        <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path>
+                      </svg>
+                    </span>
+                  </Box>
+                  {/* <IconGenerator
                   icon="delete.svg"
                   style={{ marginLeft: "10px", cursor: "pointer" }}
                   size={15}
@@ -631,24 +654,24 @@ const AutoCompleteElement = ({
                     deleteHandler(option.data);
                   }}
                 /> */}
-              </div>
-            );
-          },
-        }}
-      />
-      {errors?.[field?.slug] && (
-        <div
-          style={{
-            color: "red",
-            fontSize: "10px",
-            // textAlign: "center",
-            marginTop: "5px",
+                </div>
+              );
+            },
           }}
-        >
-          {errors?.[field?.slug]?.message ?? "This field is required!"}
-        </div>
-      )}
-    </Box>
+        />
+        {errors?.[field?.slug] && (
+          <div
+            style={{
+              color: "red",
+              fontSize: "10px",
+              // textAlign: "center",
+              marginTop: "5px",
+            }}>
+            {errors?.[field?.slug]?.message ?? "This field is required!"}
+          </div>
+        )}
+      </Box>
+    </Tooltip>
   );
 };
 

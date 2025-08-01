@@ -50,7 +50,7 @@ const HFMultipleAutocomplete = ({
   isBlackBg = false,
   width = "100%",
   disabledHelperText,
-  placeholder,
+  placeholder = "",
   tabIndex,
   required = false,
   onChange = () => {},

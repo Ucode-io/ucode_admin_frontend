@@ -52,9 +52,20 @@
   &:hover {
     background-color: rgba(35, 131, 226, 0.8);
   }
+
+  &:disabled {
+    background-color: #f0f0f0;
+    color: #999;
+    cursor: not-allowed;
+    border: 1px solid rgba(55, 53, 47, 0.1);
+  }
 }
 
 .button.loading {
   cursor: wait;
   pointer-events: none;
+}
+
+.label {
+  color: #222428,
 }

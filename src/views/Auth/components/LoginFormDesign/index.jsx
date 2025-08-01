@@ -274,6 +274,7 @@ const LoginFormDesign = ({
         !getFormValue?.environment_id ||
         !getFormValue?.client_type
       ) {
+        console.log("entereddddd!!!!");
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 0) {
@@ -287,7 +288,8 @@ const LoginFormDesign = ({
       ) {
         onSubmitDialog(getFormValue);
       } else {
-        handleClickOpen();
+        console.log("entereddddd!!!!");
+        // handleClickOpen();
       }
     }
   };
@@ -407,6 +409,7 @@ const LoginFormDesign = ({
       computedClientTypes?.length > 1;
 
     if (shouldOpen) {
+      console.log("ENTEREDDDDDD 2");
       handleClickOpen();
     }
   }, [

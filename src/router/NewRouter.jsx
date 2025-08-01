@@ -277,7 +277,7 @@ const NewRouter = () => {
             <Route path=":userId" element={<ClientUserForm />} />
           </Route>
 
-          <Route path=":appId/permission/:clientId">
+          <Route path=":menuId/permission/:clientId">
             <Route index element={<PermissionDetail />} />
             <Route path="role/:roleId" element={<RoleDetail />} />
           </Route>

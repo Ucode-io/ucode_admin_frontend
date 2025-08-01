@@ -26,7 +26,7 @@ const projectFolder = {
   },
 };
 
-const MicrofrontendSettingSidebar = ({projectSettingLan}) => {
+const MicrofrontendSettingSidebar = ({projectSettingLan, element = {}}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {appId} = useParams();

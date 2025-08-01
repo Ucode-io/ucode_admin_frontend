@@ -176,7 +176,10 @@ export const NewUiViewsWithGroups = ({
     tableSlug: tableSlugFromProps,
     appId,
   } = useParams();
-  const tableSlug = tableSlugFromProps || view?.table_slug;
+  // const tableSlug = tableSlugFromProps || view?.table_slug;
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromProps ?? view?.table_slug);
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();
   const menuId = menuid ?? searchParams.get("menuId");
@@ -1114,6 +1117,7 @@ export const NewUiViewsWithGroups = ({
                 view={view}
                 visibleColumns={visibleColumns}
                 refetchViews={refetchViews}
+                tableSlug={tableSlug}
               >
                 <FilterButton view={view} />
               </FilterPopover>
@@ -1209,6 +1213,7 @@ export const NewUiViewsWithGroups = ({
               fieldsMap={fieldsMap}
               visibleColumns={visibleColumns}
               refetchViews={refetchViews}
+              tableSlug={tableSlug}
             />
           )}
 
@@ -1690,6 +1695,7 @@ const FilterPopover = ({
   refetchViews,
   children,
   tableLan,
+  tableSlug,
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
@@ -1720,6 +1726,7 @@ const FilterPopover = ({
           visibleColumns={visibleColumns}
           refetchViews={refetchViews}
           search={search}
+          tableSlug={tableSlug}
         />
       </PopoverContent>
     </Popover>
@@ -1732,9 +1739,9 @@ const FiltersList = ({
   visibleColumns,
   refetchViews,
   tableLan,
+  tableSlug,
 }) => {
-  const { tableSlug: tableSlugParam } = useParams();
-  const tableSlug = tableSlugParam || view?.table_slug;
+  // const tableSlug = tableSlugParam || view?.table_slug;
   const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
@@ -1822,6 +1829,7 @@ const FiltersList = ({
         view={view}
         visibleColumns={visibleColumns}
         refetchViews={refetchViews}
+        tableSlug={tableSlug}
       >
         <Flex
           alignItems="center"
@@ -1868,10 +1876,11 @@ const FiltersSwitch = ({
   refetchViews,
   search,
   relationView = false,
+  tableSlug,
 }) => {
   const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
-  const tableSlug = view?.table_slug;
+  // const tableSlug = view?.table_slug;
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
@@ -1935,6 +1944,8 @@ const FiltersSwitch = ({
       dispatch(mainActions.setTableViewFiltersOpen(false));
     }
   };
+
+  console.log({ tableSlug });
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];

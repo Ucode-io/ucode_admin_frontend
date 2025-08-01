@@ -42,7 +42,6 @@ import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGe
 import styles from "./style.module.scss";
 
 function InviteModal({
-  userInviteLan,
   isOpen,
   onOpen,
   onClose,
@@ -55,15 +54,12 @@ function InviteModal({
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const projectId = useSelector((state) => state.company.projectId);
   const env_id = useSelector((state) => state.auth?.environmentId);
   const [userId, setUserId] = useState("");
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [allowPassword, setAllowPassword] = useState("noShow");
   const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
-  const clientId = mainForm.watch().client_type_id?.guid;
-  const roleId = mainForm.watch().role_id?.guid;
 
   const handleClose = () => {
     onClose();
@@ -105,11 +101,6 @@ function InviteModal({
       project_id,
       status: data?.status || "ACTIVE",
     };
-
-    // if (Boolean(allowPassword === "noShow") && Boolean(userId)) {
-    //   setLoading(false);
-    //   return null;
-    // } else
 
     if (Boolean(guid)) {
       updateMutation.mutate(data);
@@ -199,11 +190,11 @@ function InviteModal({
         <ModalOverlay />
 
         <form onSubmit={mainForm.handleSubmit(onSubmit)}>
-          <ModalContent borderRadius={"12px"} maxW={"500px"}>
+          <ModalContent borderRadius={"12px"} maxW={"530px"}>
             <ModalHeader>Invite User</ModalHeader>
             <ModalCloseButton />
 
-            <ModalBody>
+            <ModalBody padding={"0 15px"}>
               <>
                 {tabIndex === 3 &&
                   mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
@@ -223,139 +214,134 @@ function InviteModal({
                       Invite Link
                     </Button>
                   )}
-                <UserInfo form={mainForm} />
-                {Boolean(clientId && roleId) && (
-                  <Tabs
-                    index={tabIndex}
-                    onChange={onTabChange}
-                    className={styles.react_tab}>
-                    <Box display="flex" alignItems={"flex-end"}>
-                      <TabList borderBottom={"none"} marginLeft={"auto"}>
-                        <Flex
-                          p={"4px"}
-                          bg={"#f9fafb"}
-                          borderRadius={"8px"}
-                          h={"32px"}
-                          mb={"5px"}
-                          border={"1px solid #EAECF0"}>
-                          <Tab
-                            className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                            Login
-                          </Tab>
-                          <Tab
-                            className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                            Phone
-                          </Tab>
-                          <Tab
-                            className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                            Email
-                          </Tab>
-                          <Tab
-                            className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}>
-                            Invite Link
-                          </Tab>
-                        </Flex>
-                      </TabList>
-                    </Box>
-                    <TabPanels>
-                      <TabPanel minH={"100px"} mt={0} p={"0"}>
-                        <LoginForm
-                          guid={guid}
-                          userId={userId}
-                          mainForm={mainForm}
-                          allowPassword={allowPassword}
-                          setAllowPassword={setAllowPassword}
-                          checkUser={checkUser}
-                        />
-                      </TabPanel>
-                      <TabPanel minH={"100px"} mt={0} p={"0"}>
-                        <Controller
-                          name="phone"
-                          control={mainForm.control}
-                          render={({field}) => (
-                            <Box
-                              mt={2}
-                              px={"0px"}
-                              style={{
-                                ".PhoneInput": {
-                                  display: "flex",
-                                  alignItems: "center",
-                                  border: "1px solid",
-                                  borderColor: "gray.200",
-                                  borderRadius: "md",
-                                  _focusWithin: {
-                                    borderColor: "#007AFF",
-                                    boxShadow: "0 0 0 1px #007AFF",
-                                  },
-                                  transition: "box-shadow 200ms",
+                <Tabs
+                  isLazy={false}
+                  index={tabIndex}
+                  onChange={onTabChange}
+                  className={styles.react_tab}>
+                  <Box display="flex" alignItems="center">
+                    <UserInfo form={mainForm} />
+
+                    <TabList borderBottom={"none"} marginLeft={"auto"}>
+                      <Flex
+                        p={"4px"}
+                        bg={"#f9fafb"}
+                        borderRadius={"8px"}
+                        h={"32px"}
+                        border={"1px solid #EAECF0"}>
+                        <Tab
+                          className={`${tabIndex === 0 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Login
+                        </Tab>
+                        <Tab
+                          className={`${tabIndex === 1 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Phone
+                        </Tab>
+                        <Tab
+                          className={`${tabIndex === 2 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Email
+                        </Tab>
+                        <Tab
+                          className={`${tabIndex === 3 ? styles.reactTabIteActive : styles.reactTabItem}`}>
+                          Invite Link
+                        </Tab>
+                      </Flex>
+                    </TabList>
+                    {/* )} */}
+                  </Box>
+                  <TabPanels>
+                    <TabPanel minH={"50px"} mt={0} p={"0"}>
+                      <LoginForm
+                        guid={guid}
+                        userId={userId}
+                        mainForm={mainForm}
+                        allowPassword={allowPassword}
+                        setAllowPassword={setAllowPassword}
+                        checkUser={checkUser}
+                      />
+                    </TabPanel>
+                    <TabPanel minH={"50px"} mt={0} p={"0"}>
+                      <Controller
+                        name="phone"
+                        control={mainForm.control}
+                        render={({field}) => (
+                          <Box
+                            mt={2}
+                            px={"0px"}
+                            style={{
+                              ".PhoneInput": {
+                                display: "flex",
+                                alignItems: "center",
+                                border: "1px solid",
+                                borderColor: "gray.200",
+                                borderRadius: "md",
+                                _focusWithin: {
+                                  borderColor: "#007AFF",
+                                  boxShadow: "0 0 0 1px #007AFF",
                                 },
-                                ".PhoneInputCountry": {
-                                  ml: "12.8px",
-                                },
-                                ".PhoneInputCountrySelect": {
-                                  px: 3,
-                                  pr: 8,
-                                  height: "full",
-                                  borderRight: "1px solid",
-                                  borderColor: "inherit",
-                                  bg: "transparent",
-                                  _hover: {bg: "gray.50"},
-                                  _focus: {outline: "none"},
-                                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
-                                  backgroundRepeat: "no-repeat",
-                                  backgroundPosition: "right 0.5rem center",
-                                  backgroundSize: "1.5em",
-                                },
-                                ".PhoneInputInput": {
-                                  border: "none !important",
-                                  boxShadow: "none !important",
-                                  _focus: {boxShadow: "none !important"},
-                                },
-                              }}>
-                              <PhoneNumberInput
-                                numberInputProps={{
-                                  size: "lg",
-                                  isInvalid: errors?.phone,
-                                }}
-                                defaultCountry="UZ"
-                                international
-                                value={field.value}
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  checkUser("phone", e);
-                                }}
-                                inputComponent={Input}
-                                limitMaxLength={true}
-                              />
-                            </Box>
-                          )}
-                        />
-                        <TypesComponent
-                          guid={guid}
-                          form={mainForm}
-                          client_type_id={mainForm?.watch()?.client_type_id}
-                        />
-                      </TabPanel>
-                      <TabPanel p={"0"} minH={"100px"}>
-                        <EmailComponent
-                          checkUser={checkUser}
-                          guid={guid}
-                          form={mainForm}
-                        />
-                      </TabPanel>
-                      <TabPanel p={"0"} minH={"100px"}>
-                        <LinkComponent
-                          checkUser={checkUser}
-                          guid={guid}
-                          form={mainForm}
-                        />
-                      </TabPanel>
-                    </TabPanels>
-                  </Tabs>
-                )}
+                                transition: "box-shadow 200ms",
+                              },
+                              ".PhoneInputCountry": {
+                                ml: "12.8px",
+                              },
+                              ".PhoneInputCountrySelect": {
+                                px: 3,
+                                pr: 8,
+                                height: "full",
+                                borderRight: "1px solid",
+                                borderColor: "inherit",
+                                bg: "transparent",
+                                _hover: {bg: "gray.50"},
+                                _focus: {outline: "none"},
+                                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
+                                backgroundRepeat: "no-repeat",
+                                backgroundPosition: "right 0.5rem center",
+                                backgroundSize: "1.5em",
+                              },
+                              ".PhoneInputInput": {
+                                border: "none !important",
+                                boxShadow: "none !important",
+                                _focus: {boxShadow: "none !important"},
+                              },
+                            }}>
+                            <PhoneNumberInput
+                              numberInputProps={{
+                                size: "lg",
+                                isInvalid: errors?.phone,
+                              }}
+                              defaultCountry="UZ"
+                              international
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                checkUser("phone", e);
+                              }}
+                              inputComponent={Input}
+                              limitMaxLength={true}
+                            />
+                          </Box>
+                        )}
+                      />
+                    </TabPanel>
+                    <TabPanel p={"0"} minH={"50px"}>
+                      <EmailComponent
+                        checkUser={checkUser}
+                        guid={guid}
+                        form={mainForm}
+                      />
+                    </TabPanel>
+
+                    <TypesComponent
+                      tabIndex={tabIndex}
+                      guid={guid}
+                      form={mainForm}
+                      client_type_id={mainForm?.watch()?.client_type_id}
+                    />
+                  </TabPanels>
+                </Tabs>
               </>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter padding={"5px 10px 10px 10px"}>
               <Box>
                 {tabIndex !== 3 && (
                   <Button
@@ -408,28 +394,19 @@ const PasswordInput = forwardRef(
   }
 );
 
-const EmailComponent = ({form, placeholder = "Email", guid}) => {
+const EmailComponent = ({form, guid}) => {
   const errors = form.formState.errors;
   const client_type_id = form.watch()?.client_type_id;
   return (
     <Box mt={2}>
       <Input
-        placeholder={placeholder}
+        placeholder={"Email"}
         type="email"
         size="lg"
         {...form.register("email")}
         isInvalid={errors?.email}
       />
-      <TypesComponent client_type_id={client_type_id} guid={guid} form={form} />
-    </Box>
-  );
-};
-
-const LinkComponent = ({form, placeholder = "Link", guid}) => {
-  const client_type_id = form.watch()?.client_type_id;
-  return (
-    <Box mt={2}>
-      <TypesComponent client_type_id={client_type_id} guid={guid} form={form} />
+      {/* <TypesComponent client_type_id={client_type_id} guid={guid} form={form} /> */}
     </Box>
   );
 };
@@ -437,7 +414,6 @@ const LinkComponent = ({form, placeholder = "Link", guid}) => {
 const LoginForm = ({
   mainForm,
   userId = "",
-  placeholder = "",
   allowPassword = "",
   guid,
   checkUser = () => {},
@@ -457,7 +433,7 @@ const LoginForm = ({
 
   return (
     <>
-      <Box mt={2}>
+      <Box mt={4}>
         <Input
           placeholder="Login"
           size="lg"
@@ -508,18 +484,18 @@ const LoginForm = ({
         </Box>
       )}
 
-      <TypesComponent
+      {/* <TypesComponent
         client_type_id={client_type_id}
         guid={guid}
         form={mainForm}
-      />
+      /> */}
     </>
   );
 };
 
 const TypesComponent = ({form, guid, client_type_id}) => {
   const project_id = useSelector((state) => state.company.projectId);
-  console.log("project_idproject_id", project_id);
+
   const {data: fieldsData} = useFieldsListQuery(
     {
       queryParams: {
@@ -543,36 +519,26 @@ const TypesComponent = ({form, guid, client_type_id}) => {
     <>
       <Box
         sx={{
-          marginTop: "7px",
           flexWrap: "wrap",
           gap: "15px",
-          paddingTop: "10px",
         }}>
-        {computedFields?.map((item) => (
-          <Box mt={2} mb={2}>
-            <p
-              style={{
-                color: "#91918E",
-                fontWeight: "600",
-                margin: "6px 0px",
-                fontSize: "14px",
-              }}>
-              {item?.label}
-            </p>
-            <Box
-              sx={{
-                border: "1px solid #eee",
-                borderRadius: "6px",
-                height: "34px",
-              }}>
-              <DrawerFieldGenerator
-                drawerDetail={true}
-                field={item}
-                name={item?.slug}
-                control={form.control}
-                setFormValue={form.setValue}
-              />
-            </Box>
+        {computedFields?.map((item, index) => (
+          <Box
+            key={index}
+            sx={{
+              margin: "7px 0",
+              border: "1px solid #eee",
+              borderRadius: "4px",
+              height: "34px",
+            }}>
+            <DrawerFieldGenerator
+              inviteModal={true}
+              drawerDetail={true}
+              field={item}
+              name={item?.slug}
+              control={form.control}
+              setFormValue={form.setValue}
+            />
           </Box>
         ))}
 
@@ -617,16 +583,55 @@ const UserType = ({control, placeholder = "", form, disabledOptionName}) => {
         <Select
           placeholder={placeholder}
           value={value}
-          onChange={(e) => {
-            e?.table_slug && field.onChange(e.guid);
-          }}
+          onChange={field.onChange}
           options={clientTypes}
           getOptionLabel={({name}) => name}
           getOptionValue={({guid}) => guid}
           menuPlacement="bottom"
           isOptionDisabled={(option) => option?.name === disabledOptionName}
-          height="20px"
-          borderRadius="12px"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: "110px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: "#f9fafb",
+              border: "1px solid #d0d5dd",
+              boxShadow: state.isFocused
+                ? "0 0 0 2px rgba(0, 122, 255, 0.4)"
+                : "none",
+              fontWeight: "500",
+              color: "#344054",
+              cursor: "pointer",
+              minHeight: "36px",
+              paddingLeft: "8px",
+              "&:hover": {
+                backgroundColor: "#e4e7ec",
+              },
+            }),
+            placeholder: (base) => ({
+              ...base,
+              color: "#667085",
+              fontSize: "14px",
+            }),
+            dropdownIndicator: (base) => ({
+              ...base,
+              color: "#667085",
+              padding: "4px",
+            }),
+            indicatorSeparator: () => ({
+              display: "none",
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+            singleValue: (base) => ({
+              ...base,
+              color: "#344054",
+              fontSize: "14px",
+            }),
+          }}
         />
       )}
     />
@@ -664,9 +669,50 @@ const Role = ({control, placeholder = "", form, disabledRoleOptionName}) => {
           options={roles}
           getOptionLabel={({name}) => name}
           getOptionValue={({guid}) => guid}
-          isOptionDisabled={(option) => option?.name === disabledRoleOptionName}
           menuPlacement="bottom"
-          borderRadius="12px"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: "110px",
+              height: "36px",
+              borderRadius: "8px",
+              backgroundColor: "#f2f4f7",
+              border: "1px solid #d0d5dd",
+              boxShadow: state.isFocused
+                ? "0 0 0 2px rgba(0, 122, 255, 0.4)"
+                : "none",
+              fontWeight: "500",
+              color: "#344054",
+              cursor: "pointer",
+              minHeight: "36px",
+              paddingLeft: "8px",
+              "&:hover": {
+                backgroundColor: "#e4e7ec",
+              },
+            }),
+            placeholder: (base) => ({
+              ...base,
+              color: "#667085",
+              fontSize: "14px",
+            }),
+            dropdownIndicator: (base) => ({
+              ...base,
+              color: "#667085",
+              padding: "4px",
+            }),
+            indicatorSeparator: () => ({
+              display: "none",
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+            singleValue: (base) => ({
+              ...base,
+              color: "#344054",
+              fontSize: "14px",
+            }),
+          }}
         />
       )}
     />
@@ -675,23 +721,15 @@ const Role = ({control, placeholder = "", form, disabledRoleOptionName}) => {
 
 const UserInfo = ({form, disabledOptionName}) => {
   return (
-    <Box mb={4}>
-      <Box
-        sx={{
-          fontSize: "13px",
-          fontWeight: 600,
-          color: "#91918E",
-        }}>
-        User Info
-      </Box>
+    <Box>
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: "10px",
+          gap: "5px",
         }}>
-        <Box mt={2} w={"100%"}>
+        <Box w={"122px"}>
           <UserType
             disabledOptionName={disabledOptionName}
             placeholder="User type"
@@ -699,7 +737,7 @@ const UserInfo = ({form, disabledOptionName}) => {
             control={form.control}
           />
         </Box>
-        <Box mt={2} w="100%">
+        <Box w="122px">
           <Role
             placeholder="Role"
             form={form}

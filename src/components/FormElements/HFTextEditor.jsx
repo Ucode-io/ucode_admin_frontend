@@ -26,6 +26,7 @@ const HFTextEditor = ({
   label,
   drawerDetail = false,
   disabled = false,
+  placeholder = "",
   updateObject = () => {},
   ...props
 }) => {
@@ -135,6 +136,7 @@ const HFTextEditor = ({
           return (
             <Suspense fallback={<RingLoaderWithWrapper />}>
               <ReactQuill
+                placeholder={placeholder}
                 value={computedVal}
                 ref={quillRef}
                 readOnly={disabled}

@@ -265,7 +265,7 @@ function InviteModal({
                         control={mainForm.control}
                         render={({field}) => (
                           <Box
-                            mt={2}
+                            mt={4}
                             px={"0px"}
                             style={{
                               ".PhoneInput": {
@@ -329,6 +329,8 @@ function InviteModal({
                         form={mainForm}
                       />
                     </TabPanel>
+
+                    <TabPanel pt={"2px"}></TabPanel>
 
                     <TypesComponent
                       tabIndex={tabIndex}
@@ -395,17 +397,20 @@ const PasswordInput = forwardRef(
 
 const EmailComponent = ({form, guid}) => {
   const errors = form.formState.errors;
-  const client_type_id = form.watch()?.client_type_id;
   return (
-    <Box mt={2}>
+    <Box mt={4}>
       <Input
         placeholder={"Email"}
+        _placeholder={{
+          fontWeight: "500",
+          color: "#787773",
+          fontSize: "14px",
+        }}
         type="email"
         size="lg"
         {...form.register("email")}
         isInvalid={errors?.email}
       />
-      {/* <TypesComponent client_type_id={client_type_id} guid={guid} form={form} /> */}
     </Box>
   );
 };
@@ -422,7 +427,6 @@ const LoginForm = ({
   const errors = mainForm.formState.errors;
   const [searchParams] = useSearchParams();
   const [login, setLogin] = useState("");
-  const client_type_id = mainForm?.watch()?.client_type_id;
 
   const shouldShowPassword =
     changePassword ||
@@ -434,6 +438,11 @@ const LoginForm = ({
     <>
       <Box mt={4}>
         <Input
+          _placeholder={{
+            fontWeight: "500",
+            color: "#787773",
+            fontSize: "14px",
+          }}
           placeholder="Login"
           size="lg"
           {...mainForm.register("login", {required: true})}
@@ -482,12 +491,6 @@ const LoginForm = ({
           />
         </Box>
       )}
-
-      {/* <TypesComponent
-        client_type_id={client_type_id}
-        guid={guid}
-        form={mainForm}
-      /> */}
     </>
   );
 };
@@ -525,10 +528,12 @@ const TypesComponent = ({form, guid, client_type_id}) => {
           <Box
             key={index}
             sx={{
-              margin: "7px 0",
-              border: "1px solid #eee",
+              margin: "0 0 10px 0",
               borderRadius: "4px",
-              height: "34px",
+              height: "38px",
+              border: "1px solid #e2e8f0",
+              display: "flex",
+              alignItems: "center",
             }}>
             <DrawerFieldGenerator
               inviteModal={true}

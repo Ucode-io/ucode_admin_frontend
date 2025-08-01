@@ -252,6 +252,7 @@ const LoginFormDesign = ({
       type: googleAuth?.type ? googleAuth?.type : getFormValue?.type,
       sms_id: codeAppValue?.sms_id,
     };
+
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -274,7 +275,6 @@ const LoginFormDesign = ({
         !getFormValue?.environment_id ||
         !getFormValue?.client_type
       ) {
-        console.log("entereddddd!!!!");
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 0) {
@@ -288,8 +288,9 @@ const LoginFormDesign = ({
       ) {
         onSubmitDialog(getFormValue);
       } else {
-        console.log("entereddddd!!!!");
-        // handleClickOpen();
+        if (connections?.length > 1) {
+          handleClickOpen();
+        }
       }
     }
   };
@@ -366,6 +367,12 @@ const LoginFormDesign = ({
     }
   };
 
+  const setCompanyId = () => {
+    if (computedCompanies?.length) {
+      setValue("company_id", computedCompanies?.[0]?.value);
+    }
+  };
+
   useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
@@ -409,8 +416,9 @@ const LoginFormDesign = ({
       computedClientTypes?.length > 1;
 
     if (shouldOpen) {
-      console.log("ENTEREDDDDDD 2");
-      handleClickOpen();
+      console.log("Connection Check");
+      setCompanyId();
+      // handleClickOpen();
     }
   }, [
     computedCompanies,

@@ -63,6 +63,7 @@ const AppSidebar = ({
   setMenuDraggable,
   getMenuList,
 }) => {
+  console.log({ element });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
@@ -593,25 +594,27 @@ const AppSidebar = ({
                         </Tooltip>
                       )}
 
-                      <Tooltip title="Create folder" placement="top">
-                        <div
-                          id={"create_folder"}
-                          className="extra_icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenNotify(e, "CREATE_TO_FOLDER");
-                          }}
-                        >
-                          <AddIcon
-                            size={13}
-                            style={{
-                              color: activeMenu
-                                ? "#32302B"
-                                : menuStyle?.text || "",
+                      {element?.data?.permission?.write && (
+                        <Tooltip title="Create folder" placement="top">
+                          <div
+                            id={"create_folder"}
+                            className="extra_icon"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenNotify(e, "CREATE_TO_FOLDER");
                             }}
-                          />
-                        </div>
-                      </Tooltip>
+                          >
+                            <AddIcon
+                              size={13}
+                              style={{
+                                color: activeMenu
+                                  ? "#32302B"
+                                  : menuStyle?.text || "",
+                              }}
+                            />
+                          </div>
+                        </Tooltip>
+                      )}
                     </>
                   ) : (
                     ""

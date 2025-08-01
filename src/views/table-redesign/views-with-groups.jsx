@@ -1174,34 +1174,36 @@ export const NewUiViewsWithGroups = ({
                     ) || "Create item"}
                   </Button>
                 </PermissionWrapperV2>
-                <ViewOptions
-                  relationView={relationView}
-                  refetchViews={refetchViews}
-                  selectedTabIndex={selectedTabIndex}
-                  isChanged={isChanged}
-                  setIsChanged={setIsChanged}
-                  selectedView={selectedView}
-                  tableLan={tableLan}
-                  view={view}
-                  viewName={viewName}
-                  fieldsMap={fieldsMap}
-                  visibleRelationColumns={visibleRelationColumns}
-                  checkedColumns={checkedColumns}
-                  projectId={projectId}
-                  onDocsClick={() => {
-                    dispatch(
-                      detailDrawerActions.setDrawerTabIndex(views?.length)
-                    );
-                  }}
-                  searchText={searchText}
-                  computedVisibleFields={computedVisibleFields}
-                  handleOpenPopup={handleOpenPopup}
-                  queryClient={queryClient}
-                  settingsForm={settingsForm}
-                  views={views}
-                  refetchMenuViews={refetchMenuViews}
-                  refetchRelationViews={refetchRelationViews}
-                />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <ViewOptions
+                    relationView={relationView}
+                    refetchViews={refetchViews}
+                    selectedTabIndex={selectedTabIndex}
+                    isChanged={isChanged}
+                    setIsChanged={setIsChanged}
+                    selectedView={selectedView}
+                    tableLan={tableLan}
+                    view={view}
+                    viewName={viewName}
+                    fieldsMap={fieldsMap}
+                    visibleRelationColumns={visibleRelationColumns}
+                    checkedColumns={checkedColumns}
+                    projectId={projectId}
+                    onDocsClick={() => {
+                      dispatch(
+                        detailDrawerActions.setDrawerTabIndex(views?.length)
+                      );
+                    }}
+                    searchText={searchText}
+                    computedVisibleFields={computedVisibleFields}
+                    handleOpenPopup={handleOpenPopup}
+                    queryClient={queryClient}
+                    settingsForm={settingsForm}
+                    views={views}
+                    refetchMenuViews={refetchMenuViews}
+                    refetchRelationViews={refetchRelationViews}
+                  />
+                </PermissionWrapperV2>
               </>
             )}
           </Flex>
@@ -1944,8 +1946,6 @@ const FiltersSwitch = ({
       dispatch(mainActions.setTableViewFiltersOpen(false));
     }
   };
-
-  console.log({ tableSlug });
 
   const onChange = (column, checked) => {
     const quickFilters = view?.attributes?.quick_filters ?? [];

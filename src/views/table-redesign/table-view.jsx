@@ -410,7 +410,6 @@ const TableView = ({
       };
     },
     onSuccess: (data) => {
-      console.log({ data });
       const checkdublicate =
         combinedTableData?.filter((item) => {
           return data?.tableData?.find((el) => el.guid === item.guid);

@@ -50,6 +50,8 @@ function DrawerFormDetailPage({
   const query = new URLSearchParams(window.location.search);
   const itemId = query.get("p");
 
+  const isEditing = Boolean(itemId);
+
   const slugSplit = (slug) => {
     const parts = slug.split("_");
     return parts[parts.length - 1];
@@ -193,7 +195,7 @@ function DrawerFormDetailPage({
     delete computedData.invite;
 
     constructorObjectService
-      .update(tableSlug, {data: {...computedData, guid: itemId}})
+      .update(tableSlug, { data: { ...computedData, guid: itemId } })
       .then((res) => {
         queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
           table_slug: tableSlug,
@@ -207,17 +209,19 @@ function DrawerFormDetailPage({
     <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{height: "calc(100vh - 94px)"}}
+        sx={{ height: "calc(100vh - 94px)" }}
         pb={"10px"}
         overflow={"auto"}
         display="flex"
-        flexDirection="column">
+        flexDirection="column"
+      >
         {isMultiLanguage && (
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
                 className={activeLang === lang?.short_name && "active"}
-                onClick={() => setActiveLang(lang?.short_name)}>
+                onClick={() => setActiveLang(lang?.short_name)}
+              >
                 {lang?.name}
               </Button>
             ))}
@@ -242,13 +246,15 @@ function DrawerFormDetailPage({
           sx={{
             overflow: "auto",
             height: "calc(100vh - 94px)",
-          }}>
+          }}
+        >
           {sections?.map((section, secIndex) => (
             <Box
               sx={{
                 margin: "8px 0 0 0",
               }}
-              key={secIndex}>
+              key={secIndex}
+            >
               <Container
                 behaviour="contain"
                 style={{
@@ -259,13 +265,15 @@ function DrawerFormDetailPage({
                 dragHandleSelector=".drag-handle"
                 dragClass="drag-item"
                 lockAxis="y"
-                onDrop={(dropResult) => onDrop(secIndex, dropResult)}>
+                onDrop={(dropResult) => onDrop(secIndex, dropResult)}
+              >
                 {section?.fields
                   ?.filter((el) => filterFields(el))
                   .map((field, fieldIndex) => (
                     <Draggable
                       className={Boolean(defaultAdmin) ? "drag-handle" : ""}
-                      key={field?.id ?? fieldIndex}>
+                      key={field?.id ?? fieldIndex}
+                    >
                       <Box
                         className={dragAction ? "rowColumnDrag" : "rowColumn"}
                         display="flex"
@@ -275,11 +283,12 @@ function DrawerFormDetailPage({
                             : "center"
                         }
                         {...(Boolean(field?.type === "MULTISELECT")
-                          ? {minHeight: "30px"}
+                          ? { minHeight: "30px" }
                           : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
-                            ? {height: "auto !important"}
-                            : {height: "34px"})}
-                        py="8px">
+                            ? { height: "auto !important" }
+                            : { height: "32px" })}
+                        py="8px"
+                      >
                         <Box
                           display="flex"
                           alignItems="center"
@@ -291,7 +300,8 @@ function DrawerFormDetailPage({
                             "&:hover": {
                               backgroundColor: "#F7F7F7",
                             },
-                          }}>
+                          }}
+                        >
                           <Box
                             width="18px"
                             height="16px"
@@ -299,13 +309,14 @@ function DrawerFormDetailPage({
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
-                            sx={{color: "#787774"}}>
+                            sx={{ color: "#787774" }}
+                          >
                             <span className="drag">
                               <DragIndicatorIcon
-                                style={{width: "16px", height: "16px"}}
+                                style={{ width: "16px", height: "16px" }}
                               />
                             </span>
-                            <span style={{color: "#787774"}} className="icon">
+                            <span style={{ color: "#787774" }} className="icon">
                               {getColumnIcon({
                                 column: {
                                   type: field?.type ?? field?.relation_type,
@@ -321,11 +332,12 @@ function DrawerFormDetailPage({
                             width="100%"
                             overflow="hidden"
                             textOverflow="ellipsis"
-                            whiteSpace="nowrap">
+                            whiteSpace="nowrap"
+                          >
                             {getFieldLanguageLabel(field)}
                           </Box>
                         </Box>
-                        <Box sx={{width: "60%"}}>
+                        <Box sx={{ width: "60%" }}>
                           <DrawerFieldGenerator
                             updateObject={updateObject}
                             activeLang={activeLang}
@@ -335,9 +347,10 @@ function DrawerFormDetailPage({
                             watch={rootForm.watch}
                             isRequired={field?.attributes?.required}
                             isDisabled={
-                              field?.attributes?.disabled ||
-                              !field?.attributes?.field_permission
-                                ?.edit_permission
+                              (field?.attributes?.disabled ||
+                                !field?.attributes?.field_permission
+                                  ?.edit_permission) &&
+                              isEditing
                             }
                             setFormValue={rootForm.setValue}
                             errors={rootForm.errors}
@@ -355,7 +368,8 @@ function DrawerFormDetailPage({
           justifyContent="flex-end"
           marginTop="auto"
           marginBottom="12px"
-          gap={"8px"}>
+          gap={"8px"}
+        >
           <FormCustomActionButton
             control={rootForm?.control?._formValues}
             tableSlug={tableSlug}

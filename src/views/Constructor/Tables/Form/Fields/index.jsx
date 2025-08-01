@@ -154,7 +154,7 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
         tableSlug={"app"}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
-        isDisabledEdit={isDisabledEdit}
+        // isDisabledEdit={isDisabledEdit}
         additionalRow={
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>

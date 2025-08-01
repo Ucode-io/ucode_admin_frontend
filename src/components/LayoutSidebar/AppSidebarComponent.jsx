@@ -63,7 +63,7 @@ const AppSidebar = ({
   setMenuDraggable,
   getMenuList,
 }) => {
-  console.log({ element });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
@@ -215,6 +215,10 @@ const AppSidebar = ({
     } catch (_) {
       return false;
     }
+  }
+
+  if (element?.label === "Settings" && element?.is_static) {
+    return;
   }
 
   return (

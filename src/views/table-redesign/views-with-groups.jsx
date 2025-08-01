@@ -1891,29 +1891,47 @@ const FiltersSwitch = ({
   const quickFiltersIds = view?.attributes?.quick_filters?.map(
     (item) => item?.id
   );
-  const checkedColumns =
-    view?.attributes?.quick_filters?.filter((checkedField) =>
-      columnsIds?.includes(checkedField?.id)
-    ) ?? [];
-  const unCheckedColumns =
-    (view?.attributes?.quick_filters?.length === 0 ||
-    view?.attributes?.quick_filters?.length === undefined
-      ? visibleColumns
-      : visibleColumns?.filter(
-          (column) => !quickFiltersIds?.includes(column?.id)
-        )) ?? [];
 
   const getLabel = (column) =>
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
-  const renderColumns = [
-    ...checkedColumns.map((c) => ({ ...c, checked: true })),
-    ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
-  ].filter((column) =>
-    search === ""
-      ? true
-      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
-  );
+  const checkedColumns = useMemo(() => {
+    return (
+      view?.attributes?.quick_filters?.filter((checkedField) =>
+        search
+          ? columnsIds?.includes(checkedField?.id) &&
+            getLabel(checkedField)?.toLowerCase().includes(search.toLowerCase())
+          : columnsIds?.includes(checkedField?.id)
+      ) ?? []
+    );
+  }, [view, search]);
+
+  const unCheckedColumns = useMemo(() => {
+    return (
+      (view?.attributes?.quick_filters?.length === 0 ||
+      view?.attributes?.quick_filters?.length === undefined
+        ? search
+          ? visibleColumns?.filter((column) =>
+              getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+            )
+          : visibleColumns
+        : visibleColumns?.filter((column) =>
+            search
+              ? !quickFiltersIds?.includes(column?.id) &&
+                getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+              : !quickFiltersIds?.includes(column?.id)
+          )) ?? []
+    );
+  }, [view, search]);
+
+  // const renderColumns = [
+  //   ...checkedColumns.map((c) => ({ ...c, checked: true })),
+  //   ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
+  // ].filter((column) =>
+  //   search === ""
+  //     ? true
+  //     : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+  // );
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -1978,7 +1996,7 @@ const FiltersSwitch = ({
 
   return (
     <Flex flexDirection="column" maxHeight="300px" overflow="auto">
-      {renderColumns.map((column) => (
+      {checkedColumns.map((column) => (
         <Flex
           key={column.id}
           as="label"
@@ -1993,7 +2011,28 @@ const FiltersSwitch = ({
           {getLabel(column)}
           <Switch
             ml="auto"
-            isChecked={column.is_checked}
+            isChecked={true}
+            onChange={(ev) => onChange(column, ev.target.checked)}
+          />
+        </Flex>
+      ))}
+
+      {unCheckedColumns.map((column) => (
+        <Flex
+          key={column.id}
+          as="label"
+          p="8px"
+          columnGap="8px"
+          alignItems="center"
+          borderRadius={6}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
+          {getLabel(column)}
+          <Switch
+            ml="auto"
+            isChecked={false}
             onChange={(ev) => onChange(column, ev.target.checked)}
           />
         </Flex>

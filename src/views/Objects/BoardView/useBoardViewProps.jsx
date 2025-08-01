@@ -271,6 +271,8 @@ export const useBoardViewProps = ({
     tableSlug
   );
 
+  console.log({ list, view });
+
   const mutateBoardData = (offsetProp) => {
     if (!groupField?.slug) return;
     const fields = [

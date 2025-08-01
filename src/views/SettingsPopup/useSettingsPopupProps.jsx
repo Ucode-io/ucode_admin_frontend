@@ -288,7 +288,6 @@ export const useSettingsPopupProps = ({ onClose }) => {
 
   const handleClose = () => {
     onClose();
-    setSearchParams({});
     setActiveTab("profile");
   };
 

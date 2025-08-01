@@ -346,7 +346,9 @@ const LoginFormDesign = ({
       ) {
         onSubmitDialog(getFormValue);
       } else {
-        handleClickOpen();
+        if (connections?.length > 1) {
+          handleClickOpen();
+        }
       }
     }
   };
@@ -423,6 +425,12 @@ const LoginFormDesign = ({
     }
   };
 
+  const setCompanyId = () => {
+    if (computedCompanies?.length) {
+      setValue("company_id", computedCompanies?.[0]?.value);
+    }
+  };
+
   useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
@@ -466,7 +474,9 @@ const LoginFormDesign = ({
       computedClientTypes?.length > 1;
 
     if (shouldOpen) {
-      handleClickOpen();
+      console.log("Connection Check");
+      setCompanyId();
+      // handleClickOpen();
     }
   }, [
     computedCompanies,

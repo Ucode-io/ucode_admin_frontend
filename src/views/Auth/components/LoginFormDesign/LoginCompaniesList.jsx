@@ -21,11 +21,7 @@ function LoginCompaniesList({
   setValue = () => {},
 }) {
   const {t} = useTranslation();
-  useEffect(() => {
-    if (computedCompanies?.length) {
-      setValue("company_id", computedCompanies?.[0]?.value);
-    }
-  }, []);
+
   return (
     <>
       <div className={classes.dialogContainer}>

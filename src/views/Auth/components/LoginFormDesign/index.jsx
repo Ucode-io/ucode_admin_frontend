@@ -188,6 +188,7 @@ const LoginFormDesign = ({
     companyService
       .getCompanyList(data)
       .then((res) => {
+        console.log("resssssssssss", res);
         if (res?.companies) {
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});
@@ -416,9 +417,11 @@ const LoginFormDesign = ({
       computedClientTypes?.length > 1;
 
     if (shouldOpen) {
-      console.log("Connection Check");
-      setCompanyId();
-      // handleClickOpen();
+      if (computedEnvironments?.length > 1) {
+        handleClickOpen();
+      } else {
+        setCompanyId();
+      }
     }
   }, [
     computedCompanies,

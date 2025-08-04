@@ -43,7 +43,7 @@ const YYearPicker = ({onChange, value: defaultValue, withTime = false}) => {
 
   return (
     <YearPicker
-      size="lg"
+      size="sm"
       type="range"
       allowSingleDateInRange
       value={range}

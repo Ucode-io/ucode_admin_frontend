@@ -72,8 +72,8 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
           }}>
           <Box
             sx={{
-              width: "275px",
-              height: "310px",
+              width: "205px",
+              height: "250px",
               //   padding: "5px 16px",
               border: "1px solid #eee",
               borderRadius: "8px",
@@ -104,7 +104,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   withTime={true}
                 />
               </TabPanel> */}
-              <TabPanel sx={{height: "200px", width: "100%"}}>
+              <TabPanel sx={{height: "100px", width: "100%"}}>
                 <YMonthPicker
                   field={field}
                   placeholder={field?.label}
@@ -113,7 +113,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   withTime={true}
                 />
               </TabPanel>
-              <TabPanel sx={{height: "200px", width: "100%"}}>
+              <TabPanel sx={{height: "100px", width: "100%"}}>
                 <YQuarterPicker
                   field={field}
                   placeholder={field?.label}
@@ -122,7 +122,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   withTime={true}
                 />
               </TabPanel>
-              <TabPanel sx={{height: "200px", width: "100%"}}>
+              <TabPanel sx={{height: "100px", width: "100%"}}>
                 <YYearPicker
                   field={field}
                   placeholder={field?.label}

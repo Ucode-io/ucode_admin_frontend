@@ -59,7 +59,7 @@ const YDatePicker = ({
 
   return (
     <DatePicker
-      size="lg"
+      size="sm"
       type="range"
       allowSingleDateInRange
       value={range}

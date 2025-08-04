@@ -19,6 +19,7 @@ import { AutoFill } from "../AutoFill";
 import { AutoFilter } from "../AutoFilter";
 import { FieldHide } from "../FieldHide";
 import { Field } from "../Field";
+import { FormulaField } from "../FormulaField";
 
 export const useFieldPopoverProps = ({
   mainForm,
@@ -259,7 +260,24 @@ export const useFieldPopoverProps = ({
       case SETTING_TYPES.FIELD_HIDE:
         return <FieldHide control={control} />;
       case SETTING_TYPES.FIELD:
-        return <Field control={control} />;
+        if (
+          activeType?.value === FIELD_TYPES.FORMULA ||
+          activeType?.value === FIELD_TYPES.FORMULA_FRONTEND
+        ) {
+          return (
+            <FormulaField
+              control={control}
+              mainForm={mainForm}
+              fieldType={activeType?.value}
+              menuItem={menuItem}
+              tableSlug={tableSlug}
+              setValue={setValue}
+              watch={watch}
+            />
+          );
+        } else {
+          return <Field control={control} />;
+        }
       default:
         return null;
     }
@@ -272,6 +290,7 @@ export const useFieldPopoverProps = ({
         label_en: "",
         label_ru: "",
         label_uz: "",
+        math: { label: "plus", value: "+" },
         ...defaultOptions,
       },
       default: "",

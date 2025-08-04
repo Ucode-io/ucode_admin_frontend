@@ -73,8 +73,6 @@ export const FieldParams = ({
 
   const [activeId, setActiveId] = useState(null);
 
-  console.log(activeType?.value);
-
   return (
     <Box>
       <Box className={cls.header}>
@@ -664,7 +662,9 @@ export const FieldParams = ({
               }
             />
             {(activeType?.value === FIELD_TYPES.MAP ||
-              activeType?.value === FIELD_TYPES.POLYGON) && (
+              activeType?.value === FIELD_TYPES.POLYGON ||
+              activeType?.value === FIELD_TYPES.FORMULA ||
+              activeType?.value === FIELD_TYPES.FORMULA_FRONTEND) && (
               <FieldMenuItem
                 title="Field"
                 icon={

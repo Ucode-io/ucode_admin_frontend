@@ -154,11 +154,14 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
         tableSlug={"app"}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
-        // isDisabledEdit={isDisabledEdit}
+        isDisabledEdit={isDisabledEdit}
         additionalRow={
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>
-              <div className={styles.createButton} onClick={openAddForm}>
+              <div
+                className={styles.createButton}
+                onClick={() => setDrawerState("CREATE")}
+              >
                 <Add color="primary" />
                 <p>
                   {generateLangaugeText(tableLan, i18n?.language, "Add") ||
@@ -170,7 +173,7 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
         }
       />
 
-      <FieldPopover
+      {/* <FieldPopover
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
@@ -183,9 +186,9 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
         field={drawerState}
         selectedField={selectedField}
         // menuItem={menuItem}
-      />
+      /> */}
 
-      {/* <Drawer
+      <Drawer
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
@@ -203,7 +206,7 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
           selectedField={selectedField}
           slug={tableSlug}
         />
-      </Drawer> */}
+      </Drawer>
     </TableCard>
   );
 };

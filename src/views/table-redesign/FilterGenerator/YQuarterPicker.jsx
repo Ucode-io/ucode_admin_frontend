@@ -1,10 +1,11 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import useDebounce from "@/hooks/useDebounce";
 import {useTranslation} from "react-i18next";
 import styles from "./style.module.scss";
 
 const quarters = ["Q1", "Q2", "Q3", "Q4"];
 const currentYear = new Date().getFullYear();
+const currentQuarter = `Q${Math.floor(new Date().getMonth() / 3) + 1}`;
 const years = Array.from({length: 20}, (_, i) => currentYear - 10 + i);
 
 const getQuarterIndex = (year, quarter) => {
@@ -18,11 +19,19 @@ const getQuarterRange = (year, quarter) => {
   return [start, end];
 };
 
-const YQuarterPicker = ({onChange, withTime = false}) => {
+const parseTimeFromString = (value, fallbackHours, fallbackMinutes) => {
+  if (!value) return {hours: fallbackHours, minutes: fallbackMinutes};
+  const [hours, minutes] = value.split(":");
+  return {hours: Number(hours), minutes: Number(minutes)};
+};
+
+const YQuarterPicker = ({onChange, withTime = false, value}) => {
+  const quarterRefs = useRef({});
   const {i18n} = useTranslation();
   const [range, setRange] = useState([]);
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("23:59");
+  const [hoveredQuarter, setHoveredQuarter] = useState(null);
 
   const handleQuarterClick = (year, quarter) => {
     if (range.length === 0 || range.length === 2) {
@@ -69,6 +78,23 @@ const YQuarterPicker = ({onChange, withTime = false}) => {
     handleTimeChange();
   }, [startTime, endTime]);
 
+  useEffect(() => {
+    if (value?.$gte && value?.$lt) {
+      const start = new Date(value.$gte);
+      const end = new Date(value.$lt);
+
+      const startQ = `Q${Math.floor(start.getMonth() / 3) + 1}`;
+      const endQ = `Q${Math.floor(end.getMonth() / 3) + 1}`;
+
+      setRange([
+        {year: start.getFullYear(), quarter: startQ},
+        {year: end.getFullYear(), quarter: endQ},
+      ]);
+    } else {
+      setRange([{year: currentYear, quarter: currentQuarter}]);
+    }
+  }, []);
+
   const isQuarterStart = (year, quarter) =>
     range[0] && range[0].year === year && range[0].quarter === quarter;
 
@@ -83,6 +109,25 @@ const YQuarterPicker = ({onChange, withTime = false}) => {
     return index > start && index < end;
   };
 
+  const isQuarterHoveredInRange = (year, quarter) => {
+    if (range.length !== 1 || !hoveredQuarter) return false;
+    const start = getQuarterIndex(range[0].year, range[0].quarter);
+    const end = getQuarterIndex(hoveredQuarter.year, hoveredQuarter.quarter);
+    const index = getQuarterIndex(year, quarter);
+    return (start <= index && index <= end) || (end <= index && index <= start);
+  };
+
+  useEffect(() => {
+    if (range.length > 0) {
+      const {year, quarter} = range[0];
+      const key = `${year}-${quarter}`;
+      const node = quarterRefs.current[key];
+      if (node && typeof node.scrollIntoView === "function") {
+        node.scrollIntoView({behavior: "smooth", block: "center"});
+      }
+    }
+  }, [range]);
+
   return (
     <div className={styles.wrapper}>
       {years.map((year) => (
@@ -95,12 +140,25 @@ const YQuarterPicker = ({onChange, withTime = false}) => {
 
             return (
               <button
+                ref={(el) => {
+                  const key = `${year}-${qtr}`;
+                  quarterRefs.current[key] = el;
+                }}
                 key={qtr}
                 className={`${styles.quarterButton} 
                   ${isStart ? styles.startQuarter : ""}
                   ${isEnd ? styles.endQuarter : ""}
-                  ${isMiddle ? styles.inRange : ""}`}
-                onClick={() => handleQuarterClick(year, qtr)}>
+                  ${isMiddle ? styles.inRange : ""}
+                  ${isQuarterHoveredInRange(year, qtr) ? styles.hoveredRange : ""}`}
+                onClick={() => handleQuarterClick(year, qtr)}
+                onMouseEnter={() => {
+                  if (range.length === 1) {
+                    setHoveredQuarter({year, quarter: qtr});
+                  }
+                }}
+                onMouseLeave={() => {
+                  setHoveredQuarter(null);
+                }}>
                 {qtr}
               </button>
             );
@@ -109,12 +167,6 @@ const YQuarterPicker = ({onChange, withTime = false}) => {
       ))}
     </div>
   );
-};
-
-const parseTimeFromString = (value, fallbackHours, fallbackMinutes) => {
-  if (!value) return {hours: fallbackHours, minutes: fallbackMinutes};
-  const [hours, minutes] = value.split(":");
-  return {hours: Number(hours), minutes: Number(minutes)};
 };
 
 export default YQuarterPicker;

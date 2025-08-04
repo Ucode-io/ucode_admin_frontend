@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useFieldsListQuery } from "@/services/constructorFieldService";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
+import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
 
 export const useFormulaFieldProps = ({
   mainForm,
@@ -14,17 +15,79 @@ export const useFormulaFieldProps = ({
   const { i18n } = useTranslation();
   const tableLan = useGetLang("Table");
 
+  const [search, setSearch] = useState("");
+
   const [fields, setFields] = useState([]);
 
-  const [mathEl, setMathEl] = useState(null);
+  const mirrorRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const mathType = watch("attributes.math");
 
-  const openMath = Boolean(mathEl);
+  const suggestionsFields =
+    mainForm
+      .getValues("fields")
+      ?.filter((item) => item?.type !== FIELD_TYPES.UUID) ?? [];
 
   const fieldsList = useMemo(() => {
-    return mainForm.getValues("fields") ?? [];
-  }, []);
+    if (search) {
+      return suggestionsFields.filter((item) =>
+        item.label?.toLowerCase()?.includes(search?.toLowerCase())
+      );
+    }
+    return suggestionsFields;
+  }, [search]);
+
+  const [code, setCode] = useState(watch("attributes.formula") ?? "");
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const updateMirrorStyle = (el) => {
+    const div = mirrorRef.current;
+    const style = getComputedStyle(textareaRef.current || el);
+
+    div.style.position = "absolute";
+    div.style.visibility = "hidden";
+    div.style.whiteSpace = "pre-wrap";
+    div.style.wordWrap = "break-word";
+    div.style.overflow = "hidden";
+    div.style.padding = style.padding;
+    div.style.border = style.border;
+    div.style.font = style.font;
+    div.style.lineHeight = style.lineHeight;
+    div.style.letterSpacing = style.letterSpacing;
+    div.style.width = el.offsetWidth + "px";
+    div.style.zIndex = -1;
+  };
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setCode(value);
+
+    updateMirrorStyle(e.target);
+
+    const words = value.split(/\s|\n/);
+    const lastWord = words[words.length - 1];
+
+    if (lastWord.length > 0) {
+      const filtered = suggestionsFields.filter((s) =>
+        s?.slug?.startsWith(lastWord)
+      );
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    const words = code.split(/\s|\n/);
+    words[words.length - 1] = suggestion;
+    const updated = words.join(" ").replace(/\s+/g, " ");
+    setCode(updated);
+    setShowSuggestions(false);
+    textareaRef.current.focus();
+  };
 
   const formulaTypes = [
     { label: "Сумма", value: "SUMM" },
@@ -40,6 +103,8 @@ export const useFormulaFieldProps = ({
     control,
     name: "attributes.formula_filters",
   });
+
+  const handleSearch = (e) => setSearch(e.target.value);
 
   const deleteSummary = (index) => {
     remove(index);
@@ -97,10 +162,6 @@ export const useFormulaFieldProps = ({
     },
   });
 
-  const handleCloseMath = () => {
-    setMathEl(null);
-  };
-
   return {
     formulaTypes,
     fieldsList,
@@ -113,10 +174,15 @@ export const useFormulaFieldProps = ({
     type,
     i18n,
     tableLan,
-    mathEl,
-    setMathEl,
     mathType,
-    openMath,
-    handleCloseMath,
+    handleSearch,
+    search,
+    code,
+    handleChange,
+    showSuggestions,
+    filteredSuggestions,
+    handleSuggestionClick,
+    textareaRef,
+    mirrorRef,
   };
 };

@@ -1,14 +1,15 @@
+import clsx from "clsx";
 import cls from "./styles.module.scss";
+import SearchIcon from "@mui/icons-material/Search";
 import { useFormulaFieldProps } from "./useFormulaFieldProps";
-import { Box, Menu } from "@mui/material";
+import { Box } from "@mui/material";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import DropdownSelect from "@/components/NewFormElements/DropdownSelect";
 import FormulaFilters from "../../Attributes/FormulaFilters";
 import HFTextField from "@/components/FormElements/HFTextField";
-import HFTextArea from "@/components/FormElements/HFTextArea";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { math } from "@/utils/constants/fieldTypes";
-import clsx from "clsx";
+import { getColumnIconPath } from "../../../../../../table-redesign/icons";
 
 export const FormulaField = ({
   control,
@@ -31,11 +32,16 @@ export const FormulaField = ({
     type,
     i18n,
     tableLan,
-    handleCloseMath,
-    mathEl,
     mathType,
-    openMath,
-    setMathEl,
+    handleSearch,
+    search,
+    code,
+    handleChange,
+    showSuggestions,
+    filteredSuggestions,
+    handleSuggestionClick,
+    textareaRef,
+    mirrorRef,
   } = useFormulaFieldProps({ control, mainForm, menuItem, tableSlug, watch });
 
   return (
@@ -171,8 +177,61 @@ export const FormulaField = ({
               </Box>
             </Menu> */}
           </Box>
-          <Box className={cls.formula}>
-            <HFTextArea
+          <Box className={cls.suggestionsContainer}>
+            <div
+              ref={mirrorRef}
+              style={{
+                visibility: "hidden",
+                position: "absolute",
+                zIndex: -1,
+                pointerEvents: "none",
+              }}
+            />
+
+            <textarea
+              className={cls.textArea}
+              ref={textareaRef}
+              disabledHelperText
+              id="formula_textarea"
+              required
+              placeholder={
+                generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Write or tick  formula"
+                ) || "Write or tick  formula"
+              }
+              value={code}
+              onChange={(e) => {
+                handleChange(e);
+                setValue("attributes.formula", e.target.value);
+              }}
+            />
+            {showSuggestions && (
+              <ul
+                className={cls.suggestions}
+                style={{
+                  top: `${Math.ceil(textareaRef.current?.value?.length / 35) * 25}px`,
+                }}
+              >
+                {filteredSuggestions.map((s, i) => (
+                  <li
+                    key={i}
+                    onClick={() => handleSuggestionClick(s?.slug)}
+                    className={cls.suggestion}
+                  >
+                    <img
+                      src={getColumnIconPath({ column: s })}
+                      width={"12px"}
+                      height={"12px"}
+                      alt=""
+                    />
+                    {s?.slug}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {/* <HFTextArea
               className={cls.input}
               disabledHelperText
               name="attributes.formula"
@@ -187,20 +246,46 @@ export const FormulaField = ({
                   "Write or tick  formula"
                 ) || "Write or tick  formula"
               }
-            />
+            /> */}
           </Box>
-          <h2 className={cls.fieldHeading}>
+          {/* <h2 className={cls.fieldHeading}>
             {generateLangaugeText(tableLan, i18n?.language, "Fields list") ||
               "Fields list"}
             :
-          </h2>
-          {fields.map((field) => (
-            <div className={cls.fieldsList} key={field.id}>
-              <span className={cls.fieldTitle}>{field.label}</span>{" "}
-              <span className={cls.dot}></span>{" "}
-              <span className={cls.fieldValue}>{field.value}</span>
-            </div>
-          ))}
+          </h2> */}
+          <Box className={cls.fieldSearchContainer}>
+            <input
+              className={cls.fieldSearch}
+              type="text"
+              value={search}
+              onChange={handleSearch}
+              placeholder="Search field"
+            />
+            <span>
+              <SearchIcon htmlColor="#6E8BB7" />
+            </span>
+          </Box>
+          <Box display="flex" gap="8px" flexWrap="wrap">
+            {fieldsList.map((field) => (
+              <Box
+                className={cls.fieldChip}
+                key={field.slug}
+                onClick={() => {
+                  const newValue = watch("attributes.formula") + field.slug;
+                  handleChange({ target: { value: newValue } });
+                  setValue(newValue);
+                }}
+              >
+                <img
+                  src={getColumnIconPath({ column: field })}
+                  width={"16px"}
+                  height={"16px"}
+                  alt=""
+                />
+                <span>{field.label}</span>
+              </Box>
+            ))}
+          </Box>
           {/* {fieldsList.map((field) => (
           <div>
             {field.label} - <strong>{field.slug}</strong>{" "}

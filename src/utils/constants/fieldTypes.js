@@ -31,6 +31,7 @@ export const FIELD_TYPES = {
   TEXT: "TEXT",
   INCREMENT_ID: "INCREMENT_ID",
   DATE_TIME_WITHOUT_TIME_ZONE: "DATE_TIME_WITHOUT_TIME_ZONE",
+  UUID: "UUID",
 };
 
 export const fieldTypes = [

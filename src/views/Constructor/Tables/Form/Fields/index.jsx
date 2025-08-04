@@ -173,7 +173,6 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
             </CTableRow>
           }
         />
-
         <FieldPopover
           open={open}
           anchorEl={anchorEl}
@@ -188,7 +187,6 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
           selectedField={selectedField}
           // menuItem={menuItem}
         />
-
         {/* <Drawer
           open={drawerState}
           anchor="right"

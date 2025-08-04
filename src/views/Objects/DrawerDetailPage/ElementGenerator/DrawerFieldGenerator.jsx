@@ -474,7 +474,7 @@ function DrawerFieldGenerator({
     default:
       return (
         <InputField
-          placeholder={placeholder}
+          placeholder={placeholderField}
           watch={watch}
           disabled={isDisabled}
           control={control}

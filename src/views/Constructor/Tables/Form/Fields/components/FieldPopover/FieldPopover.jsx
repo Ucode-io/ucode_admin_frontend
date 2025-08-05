@@ -1,7 +1,7 @@
 import { Box, Popover } from "@mui/material"
 import { FieldParams } from "../FieldParams";
 import { useFieldPopoverProps } from "./useFieldPopoverProps";
-import { AdvancedSettings } from "../AdvancedSettings";
+import { AdvancedSettings } from "../../../components/AdvancedSettings";
 
 export const FieldPopover = ({
   open,

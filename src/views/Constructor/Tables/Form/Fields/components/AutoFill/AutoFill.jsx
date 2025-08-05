@@ -1,8 +1,8 @@
 import cls from "./styles.module.scss";
 import { Box } from "@mui/material";
 import HFSelect from "@/components/FormElements/HFSelect";
-import { FieldCheckbox } from "../FieldCheckbox";
 import { useAutoFillProps } from "./useAutoFillProps";
+import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
 
 export const AutoFill = ({
   control,

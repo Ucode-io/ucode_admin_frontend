@@ -1,11 +1,8 @@
 import cls from "./styles.module.scss";
 import HFTextField from "@/components/FormElements/HFTextField";
 import { fieldTypeIcons } from "@/utils/constants/icons";
-import { CloseButton } from "../CloseButton";
-import { FieldMenuItem } from "../FieldMenuItem";
 import { MultiLangField } from "../MultiLangField";
 import { Box, Button } from "@mui/material";
-import { FieldCheckbox } from "../FieldCheckbox";
 import { useFieldParamsProps } from "./useFieldParamsProps";
 import FieldTreeView from "../../FieldTreeView";
 import { TreeView } from "@mui/x-tree-view";
@@ -18,6 +15,9 @@ import { FieldChip } from "../FieldChip";
 import { StatusFieldSettings } from "../StatusFieldSettings";
 import { useState } from "react";
 import { Container, Draggable } from "react-smooth-dnd";
+import { ParamsHeader } from "../../../components/ParamsHeader";
+import { FieldMenuItem } from "../../../components/FieldMenuItem";
+import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
 
 export const FieldParams = ({
   tableName = "",
@@ -75,12 +75,7 @@ export const FieldParams = ({
 
   return (
     <Box>
-      <Box className={cls.header}>
-        <p className={cls.title}>
-          {formType === "CREATE" ? "Create field" : "Edit fields"}
-        </p>
-        <CloseButton onClick={onClose} />
-      </Box>
+      <ParamsHeader onClose={onClose} formType={formType} />
       <Box className={cls.body}>
         <Box display="flex" flexDirection="column" rowGap="8px">
           <Box display="flex" columnGap="6px" paddingX="8px">

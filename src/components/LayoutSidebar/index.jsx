@@ -406,6 +406,23 @@ const LayoutSidebar = ({
     setIsOpenInviteModal(false);
   };
 
+  useEffect(() => {
+    const persistedAuth = localStorage.getItem("persist:auth");
+
+    if (persistedAuth) {
+      try {
+        const tables = JSON.parse(persistedAuth);
+        const objectId = JSON.parse(tables?.tables)?.[0]?.object_id;
+
+        if (objectId) {
+          localStorage.setItem("object_id", objectId);
+        }
+      } catch (error) {
+        console.error("Failed to parse localStorage:", error);
+      }
+    }
+  }, []);
+
   return (
     <>
       <Flex

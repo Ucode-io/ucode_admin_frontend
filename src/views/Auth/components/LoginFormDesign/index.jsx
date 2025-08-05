@@ -369,9 +369,8 @@ const LoginFormDesign = ({
   };
 
   const setCompanyId = () => {
-    if (computedCompanies?.length) {
-      setValue("company_id", computedCompanies?.[0]?.value);
-    }
+    setValue("company_id", computedCompanies?.[0]?.value);
+    setValue("project_id", computedProjects?.[0]?.value);
   };
 
   useEffect(() => {

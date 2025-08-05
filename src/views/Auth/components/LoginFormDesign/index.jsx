@@ -215,6 +215,7 @@ const LoginFormDesign = ({
     companyService
       .getCompanyList(data)
       .then((res) => {
+        console.log("resssssssssss", res);
         if (res?.companies) {
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});
@@ -346,7 +347,9 @@ const LoginFormDesign = ({
       ) {
         onSubmitDialog(getFormValue);
       } else {
-        handleClickOpen();
+        if (connections?.length > 1) {
+          handleClickOpen();
+        }
       }
     }
   };
@@ -423,6 +426,11 @@ const LoginFormDesign = ({
     }
   };
 
+  const setCompanyId = () => {
+    setValue("company_id", computedCompanies?.[0]?.value);
+    setValue("project_id", computedProjects?.[0]?.value);
+  };
+
   useEffect(() => {
     if (computedConnections?.length > 0) {
       computedConnections.forEach((connection, index) => {
@@ -466,7 +474,11 @@ const LoginFormDesign = ({
       computedClientTypes?.length > 1;
 
     if (shouldOpen) {
-      handleClickOpen();
+      if (computedEnvironments?.length > 1) {
+        handleClickOpen();
+      } else {
+        setCompanyId();
+      }
     }
   }, [
     computedCompanies,

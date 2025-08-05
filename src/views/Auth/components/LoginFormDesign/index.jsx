@@ -44,6 +44,7 @@ const LoginFormDesign = ({
 
   const handleClickOpen = () => {
     setOpen(true);
+    setLoading(false);
   };
 
   const handleClose = () => {
@@ -149,6 +150,7 @@ const LoginFormDesign = ({
   };
 
   const onSubmit = (values) => {
+    setLoading(true);
     if (selectedTabIndex === 0) {
       getCompany(values);
     }
@@ -184,11 +186,11 @@ const LoginFormDesign = ({
       [values?.type]: values?.recipient || undefined,
       ...values,
     };
-    setLoading(true);
+
     companyService
       .getCompanyList(data)
       .then((res) => {
-        console.log("resssssssssss", res);
+        setLoading(false);
         if (res?.companies) {
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});
@@ -383,6 +385,8 @@ const LoginFormDesign = ({
             `tables[${index}].table_slug`,
             connection?.options?.[0]?.[connection?.view_slug]
           );
+        } else {
+          handleClickOpen();
         }
       });
     }

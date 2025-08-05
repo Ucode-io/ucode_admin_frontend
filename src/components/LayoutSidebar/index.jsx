@@ -1053,6 +1053,7 @@ const Header = ({
   profileSettingLan,
   handleOpenProfileModal,
 }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -1092,6 +1093,7 @@ const Header = ({
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
         store.dispatch(authActions.setTokens(res));
+        navigate("/");
         window.location.reload();
       })
       .catch((err) => {

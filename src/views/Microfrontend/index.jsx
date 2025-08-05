@@ -8,15 +8,13 @@ const Microfrontend = () => {
   const {microfrontendId} = useParams();
   const test = useParams();
 
-  console.log("testtttttt", test);
-
   const {data, isLoading} = useQuery(
     ["GET_MICROFRONTEND_BY_ID", microfrontendId],
     () => {
       return microfrontendService.getById(microfrontendId);
     }
   );
-  console.log("datadata", data);
+
   const link = data?.url
     ? `https://${data?.url}/assets/remoteEntry.js`
     : undefined;

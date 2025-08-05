@@ -332,12 +332,14 @@ function InviteModal({
 
                     <TabPanel pt={"2px"}></TabPanel>
 
-                    <TypesComponent
-                      tabIndex={tabIndex}
-                      guid={guid}
-                      form={mainForm}
-                      client_type_id={mainForm?.watch()?.client_type_id}
-                    />
+                    <Box mt={"10px"}>
+                      <TypesComponent
+                        tabIndex={tabIndex}
+                        guid={guid}
+                        form={mainForm}
+                        client_type_id={mainForm?.watch()?.client_type_id}
+                      />
+                    </Box>
                   </TabPanels>
                 </Tabs>
               </>

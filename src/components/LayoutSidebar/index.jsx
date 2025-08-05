@@ -22,6 +22,13 @@ import {
   Button,
   ChakraBaseProvider,
   Flex,
+  Input,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -36,7 +43,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {Dialog, Modal} from "@mui/material";
+import {Dialog, Modal, TextField} from "@mui/material";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
@@ -60,7 +67,7 @@ import connectionServiceV2 from "../../services/auth/connectionService";
 import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
 import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import {
+import projectService, {
   useProjectGetByIdQuery,
   useProjectListQuery,
 } from "../../services/projectService";
@@ -78,6 +85,7 @@ import DocsChatwootModal from "./DocsChatwootModal";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
+import AddIcon from "@mui/icons-material/Add";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -749,7 +757,7 @@ const LayoutSidebar = ({
           )}
         </Box>
 
-        {userRoleName !== DEFAULT_ADMIN && (
+        {userRoleName === DEFAULT_ADMIN && (
           <Flex
             display={sidebarIsOpen ? "flex" : "block"}
             mt="auto"
@@ -1045,6 +1053,7 @@ const Header = ({
   profileSettingLan,
   handleOpenProfileModal,
 }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -1084,6 +1093,7 @@ const Header = ({
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
         store.dispatch(authActions.setTokens(res));
+        navigate("/");
         window.location.reload();
       })
       .catch((err) => {
@@ -1542,6 +1552,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 };
 
 const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const [text, setText] = useState("");
+  const [companyId, setCompanyId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const userId = useSelector((state) => state.auth?.userId);
   const authStore = store.getState().auth;
   const companiesQuery = useCompanyListQuery({
@@ -1549,6 +1564,23 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
     queryParams: {enabled: Boolean(userId)},
   });
   const companies = companiesQuery.data?.companies ?? [];
+
+  const createCompany = () => {
+    setLoading(true);
+    projectService
+      .create({
+        company_id: companyId,
+        title: text,
+      })
+      .then((res) => {
+        setLoading(false);
+        queryClient.refetchQueries("COMPANY");
+        onClose();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <Box p={8} borderBottom={"1px solid #eee"}>
@@ -1564,23 +1596,45 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{bg: "#EAECF0"}}>
-              <Flex
-                w={20}
-                h={20}
-                alignItems="center"
-                justifyContent="center"
-                borderRadius={4}
-                bg="#15B79E"
-                fontSize={18}
-                fontWeight={500}
-                color="#fff">
-                {company?.name?.[0]?.toUpperCase()}
+              _hover={{
+                bg: "#EAECF0",
+                ".addIcon": {
+                  display: "block",
+                },
+              }}>
+              <Flex w={"100%"} justifyContent={"space-between"}>
+                <Flex alignItems={"center"} gap={"10px"}>
+                  <Flex
+                    w={20}
+                    h={20}
+                    alignItems="center"
+                    justifyContent="center"
+                    borderRadius={4}
+                    bg="#15B79E"
+                    fontSize={18}
+                    fontWeight={500}
+                    color="#fff">
+                    {company?.name?.[0]?.toUpperCase()}
+                  </Flex>
+                  <Box fontSize={12} fontWeight={500} color="#101828">
+                    {company?.name}
+                  </Box>
+                </Flex>
+                <Flex gap={"6px"}>
+                  <Box
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpen();
+                      setCompanyId(company?.id);
+                    }}
+                    display={"none"}
+                    className="addIcon"
+                    h={"19px"}>
+                    <AddIcon style={{color: "#4f5a6c"}} />
+                  </Box>
+                  <AccordionIcon ml="auto" fontSize="20px" />
+                </Flex>
               </Flex>
-              <Box fontSize={12} fontWeight={500} color="#101828">
-                {company?.name}
-              </Box>
-              <AccordionIcon ml="auto" fontSize="20px" />
             </AccordionButton>
             <Projects
               company={company}
@@ -1590,6 +1644,59 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
           </AccordionItem>
         ))}
       </Accordion>
+
+      <Dialog open={isOpen} onClose={onClose}>
+        <Box w={"400px"} h={"150px"} p={"15px 15px"}>
+          <Box fontWeight={"500"} fontSize={"16px"}>
+            Project Name
+          </Box>
+          <Box w={"100%"}>
+            <Input
+              placeholder="Title"
+              type="text"
+              w={"100%"}
+              h={"38px"}
+              border={"1px solid #787774"}
+              borderRadius={"6px"}
+              padding="0px 10px"
+              mt={"15px"}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </Box>
+          <Box w={"100%"} textAlign={"right"}>
+            <Button
+              onClick={() => {
+                createCompany();
+              }}
+              isLoading={loading}
+              bg="#0361cc"
+              w={"100px"}
+              h={"35px"}
+              color={"#fff"}
+              fontSize={"14px"}
+              margin="8px 0 0 0"
+              borderRadius={"6px"}>
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
+      {/* 
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody></ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant="ghost">Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal> */}
     </Box>
   );
 };

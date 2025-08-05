@@ -1,9 +1,9 @@
 import { Box, Popover } from "@mui/material"
 import { FieldParams } from "../FieldParams";
 import { useFieldPopoverProps } from "./useFieldPopoverProps";
-import { AdvancedSettings } from "../AdvancedSettings";
+import { AdvancedSettings } from "../../../components/AdvancedSettings";
 
-export const FieldPopover = ({ 
+export const FieldPopover = ({
   open,
   anchorEl,
   onClose = () => {},
@@ -16,9 +16,7 @@ export const FieldPopover = ({
   formType,
   field,
   selectedField,
-  popoverProps= {},
 }) => {
-
   const {
     SETTING_TYPES,
     selectedSettings,
@@ -47,30 +45,35 @@ export const FieldPopover = ({
     field,
   });
 
-  return <Popover
-    open={open}
-    onClose={onClose}
-    anchorEl={anchorEl}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "left",
-    }}
-    transformOrigin={{
-      vertical: "top",
-      horizontal: "left",
-    }}
-    PaperProps={{
-      style: {
-        overflowY: "visible",
-        overflowX: "visible",
-      },
-    }}
-    {...popoverProps}
-  >
-    <Box padding="12px 8px" minWidth="292px" maxHeight="500px" overflow="auto">
-      {
-        selectedSettings 
-          ? <AdvancedSettings
+  return (
+    <Popover
+      open={open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{
+        vertical: formType === "CREATE" ? "top" : "bottom",
+        horizontal: formType === "CREATE" ? "right" : "left",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      PaperProps={{
+        style: {
+          overflowY: "visible",
+          overflowX: "visible",
+        },
+      }}
+    >
+      <Box position="relative">
+        <Box
+          padding="12px 8px"
+          minWidth="292px"
+          maxHeight="500px"
+          overflow="auto"
+        >
+          {selectedSettings ? (
+            <AdvancedSettings
               title={selectedSettings}
               onClose={() => {
                 onClose();
@@ -80,7 +83,8 @@ export const FieldPopover = ({
             >
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
-          : <FieldParams
+          ) : (
+            <FieldParams
               onClose={onClose}
               control={control}
               languages={languages}
@@ -100,7 +104,9 @@ export const FieldPopover = ({
               selectedAutofillFieldSlug={selectedField?.slug}
               tableSlug={slug}
             />
-      }
-    </Box>
-  </Popover>
+          )}
+        </Box>
+      </Box>
+    </Popover>
+  );
 };

@@ -14,6 +14,12 @@ import { useQuery, useQueryClient } from "react-query";
 import constructorTableService from "@/services/constructorTableService";
 import { useFieldUpdateMutation } from "@/services/constructorFieldService";
 import { useViewContext } from "@/providers/ViewProvider";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { AutoFill } from "../AutoFill";
+import { AutoFilter } from "../AutoFilter";
+import { FieldHide } from "../FieldHide";
+import { Field } from "../Field";
+import { FormulaField } from "../FormulaField";
 
 export const useFieldPopoverProps = ({
   mainForm,
@@ -28,14 +34,14 @@ export const useFieldPopoverProps = ({
   field,
   setFolder = () => {},
 }) => {
-
   const SETTING_TYPES = {
     VALIDATION: "Validation",
     AUTO_FILL: "Autofill",
     AUTO_FILTER: "Auto Filter",
     FIELD_HIDE: "Field Hide",
+    FIELD: "Field",
     TYPE: "Type",
-  }
+  };
 
   const { id, appId, tableSlug: tableSlugParams } = useParams();
 
@@ -50,6 +56,36 @@ export const useFieldPopoverProps = ({
 
   const { i18n } = useTranslation();
 
+  const defaultOptions = {
+    todo: {
+      options: [
+        {
+          label: "In process",
+          color: "#EAECF0",
+          colorName: "Gray",
+        },
+      ],
+    },
+    progress: {
+      options: [
+        {
+          label: "Ready for test",
+          color: "#FFD6AE",
+          colorName: "Orange",
+        },
+      ],
+    },
+    complete: {
+      options: [
+        {
+          label: "Done",
+          color: "#AAF0C4",
+          colorName: "Green",
+        },
+      ],
+    },
+  };
+
   const languages = useSelector((state) => state.languages.list);
   const { handleSubmit, control, reset, watch, setValue, register } = useForm();
 
@@ -58,7 +94,9 @@ export const useFieldPopoverProps = ({
     name: "label",
   });
 
-  const activeType = newFieldTypes?.find(item => item?.value === watch("type"))
+  const activeType = newFieldTypes?.find(
+    (item) => item?.value === watch("type")
+  );
 
   const [selectedSettings, setSelectedSettings] = useState("");
 
@@ -173,45 +211,95 @@ export const useFieldPopoverProps = ({
     };
     if (formType === "CREATE") createField(data);
     else updateField(data);
-  }
+  };
 
   const handleSelectSetting = (type) => {
-    setSelectedSettings(type)
+    setSelectedSettings(type);
   };
 
   const getSelectedSettings = (type) => {
-    switch(type) {
+    switch (type) {
       case SETTING_TYPES.TYPE:
-        return <FieldTypeList onSelect={() => handleSelectSetting("")} activeType={activeType} setValue={setValue} />
+        return (
+          <FieldTypeList
+            onSelect={() => handleSelectSetting("")}
+            activeType={activeType}
+            setValue={setValue}
+          />
+        );
       case SETTING_TYPES.AUTO_FILL:
-        return <></>
+        return (
+          <AutoFill
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            control={control}
+            mainForm={mainForm}
+          />
+        );
       case SETTING_TYPES.AUTO_FILTER:
-        return <></>
+        return (
+          <AutoFilter
+            register={register}
+            watch={watch}
+            setValue={setValue}
+            control={control}
+            mainForm={mainForm}
+          />
+        );
       case SETTING_TYPES.VALIDATION:
-        return <Validation
-          control={control}
-          watch={watch}
-          tableLan={tableLan}
-          register={register}
-          setValue={setValue}
-        />
+        return (
+          <Validation
+            control={control}
+            watch={watch}
+            tableLan={tableLan}
+            register={register}
+            setValue={setValue}
+          />
+        );
       case SETTING_TYPES.FIELD_HIDE:
-        return <></>
+        return <FieldHide control={control} />;
+      case SETTING_TYPES.FIELD:
+        if (
+          activeType?.value === FIELD_TYPES.FORMULA ||
+          activeType?.value === FIELD_TYPES.FORMULA_FRONTEND
+        ) {
+          return (
+            <FormulaField
+              control={control}
+              mainForm={mainForm}
+              fieldType={activeType?.value}
+              menuItem={menuItem}
+              tableSlug={tableSlug}
+              setValue={setValue}
+              watch={watch}
+            />
+          );
+        } else {
+          return <Field control={control} />;
+        }
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   useEffect(() => {
     const values = {
-      attributes: {},
+      attributes: {
+        label: "",
+        label_en: "",
+        label_ru: "",
+        label_uz: "",
+        math: { label: "plus", value: "+" },
+        ...defaultOptions,
+      },
       default: "",
       index: "string",
       label: "",
       required: false,
       slug: "",
       table_id: tableSlug,
-      type: "",
+      type: FIELD_TYPES.SINGLE_LINE,
       relation_field: selectedAutofillFieldSlug,
     };
     if (formType !== "CREATE") {
@@ -240,5 +328,5 @@ export const useFieldPopoverProps = ({
     getSelectedSettings,
     tableLan,
     onSubmit,
-  }
-}
+  };
+};

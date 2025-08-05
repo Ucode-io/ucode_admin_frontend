@@ -1,6 +1,6 @@
 // import { Delete, Edit } from "@mui/icons-material"
 import {Add} from "@mui/icons-material";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useLocation, useParams } from "react-router-dom";
 import { CTableCell, CTableRow } from "../../../../../components/CTable";
@@ -13,7 +13,7 @@ import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
 import { generateLangaugeText } from "../../../../../utils/generateLanguageText";
 import { FieldPopover } from "./components/FieldPopover/FieldPopover.jsx";
-import { Drawer } from "@mui/material";
+import { Box, Drawer } from "@mui/material";
 
 const Fields = ({ mainForm, getRelationFields, tableLan }) => {
   const { tableSlug } = useParams();
@@ -25,6 +25,8 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
   const [formType, setFormType] = useState("CREATE");
 
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const createAnchorEl = useRef(null);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -94,6 +96,7 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
   };
 
   const openAddForm = () => {
+    setAnchorEl(createAnchorEl.current);
     setFormType("CREATE");
   };
 
@@ -142,69 +145,69 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
   };
 
   return (
-    <TableCard>
-      <DataTable
-        data={fields}
-        removableHeight={false}
-        columns={columns}
-        checkPermission={false}
-        disablePagination
-        dataLength={1}
-        setSelectedField={setSelectedField}
-        tableSlug={"app"}
-        onDeleteClick={deleteField}
-        onEditClick={openEditForm}
-        // isDisabledEdit={isDisabledEdit}
-        additionalRow={
-          <CTableRow>
-            <CTableCell colSpan={columns.length + 1}>
-              <div className={styles.createButton} onClick={openAddForm}>
-                <Add color="primary" />
-                <p>
-                  {generateLangaugeText(tableLan, i18n?.language, "Add") ||
-                    "Add"}
-                </p>
-              </div>
-            </CTableCell>
-          </CTableRow>
-        }
-      />
-
-      <FieldPopover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        formType={drawerState}
-        getRelationFields={getRelationFields}
-        mainForm={mainForm}
-        tableLan={tableLan}
-        onSubmit={(index, field) => updateField(field, index)}
-        slug={tableSlug}
-        field={drawerState}
-        selectedField={selectedField}
-        // menuItem={menuItem}
-      />
-
-      {/* <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
-        <FieldSettings
-          tableLan={tableLan}
-          closeSettingsBlock={() => setDrawerState(null)}
-          onSubmit={(index, field) => updateField(field, index)}
-          field={drawerState}
-          formType={drawerState}
-          mainForm={mainForm}
-          height={`calc(100vh - 48px)`}
-          getRelationFields={getRelationFields}
-          selectedField={selectedField}
-          slug={tableSlug}
+    <Box ref={createAnchorEl}>
+      <TableCard>
+        <DataTable
+          data={fields}
+          removableHeight={false}
+          columns={columns}
+          checkPermission={false}
+          disablePagination
+          dataLength={1}
+          setSelectedField={setSelectedField}
+          tableSlug={"app"}
+          onDeleteClick={deleteField}
+          onEditClick={openEditForm}
+          isDisabledEdit={isDisabledEdit}
+          additionalRow={
+            <CTableRow>
+              <CTableCell colSpan={columns.length + 1}>
+                <div className={styles.createButton} onClick={openAddForm}>
+                  <Add color="primary" />
+                  <p>
+                    {generateLangaugeText(tableLan, i18n?.language, "Add") ||
+                      "Add"}
+                  </p>
+                </div>
+              </CTableCell>
+            </CTableRow>
+          }
         />
-      </Drawer> */}
-    </TableCard>
+        <FieldPopover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          formType={formType}
+          getRelationFields={getRelationFields}
+          mainForm={mainForm}
+          tableLan={tableLan}
+          onSubmit={(index, field) => updateField(field, index)}
+          slug={tableSlug}
+          field={drawerState}
+          selectedField={selectedField}
+          // menuItem={menuItem}
+        />
+        {/* <Drawer
+          open={drawerState}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal"
+        >
+          <FieldSettings
+            tableLan={tableLan}
+            closeSettingsBlock={() => setDrawerState(null)}
+            onSubmit={(index, field) => updateField(field, index)}
+            field={drawerState}
+            formType={drawerState}
+            mainForm={mainForm}
+            height={`calc(100vh - 48px)`}
+            getRelationFields={getRelationFields}
+            selectedField={selectedField}
+            slug={tableSlug}
+          />
+        </Drawer> */}
+      </TableCard>
+    </Box>
   );
 };
 

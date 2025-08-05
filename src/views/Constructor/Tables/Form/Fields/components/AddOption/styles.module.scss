@@ -1,0 +1,22 @@
+.label {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  color: #8F8E8B;
+}
+
+.addOptionBtn {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background-color: #F5F5F5;
+  }
+}

@@ -2,7 +2,7 @@ import { CloseButton } from '../CloseButton'
 import cls from './styles.module.scss'
 import { Box } from "@mui/material"
 
-export const AdvancedSettings = ({title, onClose, onBackClick = () => {}, children }) => {
+export const AdvancedSettings = ({ title, onClose, onBackClick = () => {}, children }) => {
   return <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" paddingBottom="8px">
       <Box display="flex" alignItems="center" columnGap="4px">

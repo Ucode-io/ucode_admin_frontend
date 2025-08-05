@@ -1,0 +1,26 @@
+
+.chip {
+  height: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 18px;
+  padding-right: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  border-radius: 16px;
+  border: 1px solid #EAECF0;
+  background-color: #F9FAFB;
+
+  span {
+    width: 6px;
+    height: 6px;    
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+  }
+}

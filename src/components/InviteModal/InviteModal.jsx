@@ -49,6 +49,7 @@ function InviteModal({
   users = [],
   selectedClientType,
 }) {
+  const project_id = useSelector((state) => state.company.projectId);
   const finalRef = useRef(null);
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);

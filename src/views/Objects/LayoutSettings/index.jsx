@@ -28,7 +28,7 @@ function LayoutSettings() {
   const selectedRow = state;
   const tableSlug = state?.tableSlug || tableSlugParams;
   const [loader, setLoader] = useState(false);
-  console.log("tableSlugtableSlug", tableSlug);
+
   const {
     data: {layout} = {
       layout: [],
@@ -221,7 +221,11 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
             justifyContent={"space-between"}>
             <Button
               onClick={() => {
-                navigate(-1);
+                navigate(-1, {
+                  state: {
+                    refresh: true,
+                  },
+                });
                 onCloseDialog();
               }}
               fontSize={14}

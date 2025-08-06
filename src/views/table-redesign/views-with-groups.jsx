@@ -632,7 +632,13 @@ export const NewUiViewsWithGroups = ({
     window.addEventListener("resize", updateVisibleViews);
     return () => window.removeEventListener("resize", updateVisibleViews);
   }, [views]);
-  console.log("tableSlugtableSlug", tableSlug);
+
+  // useEffect(() => {
+  //   if (location?.state?.refresh) {
+  //     updateQueryWithoutRerender("p", null);
+  //   }
+  // }, []);
+
   return (
     <ViewProvider state={{view, fieldsMap}}>
       <ChakraProvider theme={chakraUITheme}>
@@ -941,16 +947,17 @@ export const NewUiViewsWithGroups = ({
               />
             )}
 
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="view_create"> */}
-            <Button
-              leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
-              variant="ghost"
-              colorScheme="gray"
-              color="#475467"
-              onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
-              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
-            </Button>
-            {/* </PermissionWrapperV2> */}
+            <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
+              <Button
+                leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+                variant="ghost"
+                colorScheme="gray"
+                color="#475467"
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                {generateLangaugeText(tableLan, i18n?.language, "View") ||
+                  "View"}
+              </Button>
+            </PermissionWrapperV2>
 
             {view?.type === "FINANCE CALENDAR" && (
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />

@@ -704,14 +704,15 @@ export const NewUiViewsWithGroups = ({
                         height: "18px",
                       }}>
                       <Box
-                        onClick={() =>
+                        onClick={() => {
                           navigate(`/${menuId}/customize/${tableInfo?.id}`, {
                             state: {
                               ...data,
                               tableSlug: tableSlug ?? view?.table_slug,
                             },
-                          })
-                        }
+                          });
+                          dispatch(detailDrawerActions.closeDrawer());
+                        }}
                         sx={{
                           cursor: "pointer",
                           alignItems: "center",

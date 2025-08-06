@@ -1,10 +1,9 @@
 import {Box, Button, Input} from "@chakra-ui/react";
-import {Dialog, Modal} from "@mui/material";
+import {Dialog} from "@mui/material";
 import React, {useState} from "react";
 import companyService from "../../services/companyService";
 import {useQueryClient} from "react-query";
 import AddIcon from "@mui/icons-material/Add";
-import companyAuthService from "../../services/auth/companyAuth";
 
 function AddOrganization() {
   const [loading, setLoading] = useState(false);
@@ -17,14 +16,14 @@ function AddOrganization() {
 
   const createCompany = () => {
     setLoading(true);
-    companyAuthService
+    companyService
       .create({
         name: text,
       })
       .then(() => {
         setLoading(false);
         queryClient.refetchQueries("COMPANY");
-        onClose();
+        handleClose();
       })
       .finally(() => {
         setLoading(false);

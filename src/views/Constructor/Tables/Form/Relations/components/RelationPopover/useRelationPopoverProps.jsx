@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react";
 import { Additional } from "../Additional";
 import { AutoFilter } from "../../../components/AutoFilter/AutoFilter";
 import { useForm } from "react-hook-form";
@@ -7,14 +7,18 @@ import { useParams } from "react-router-dom";
 import { useRelationGetByIdQuery } from "@/services/relationService";
 import constructorRelationService from "@/services/constructorRelationService";
 
-export const useRelationPopoverProps = ({ relation, formType, getRelationFields, closeSettingsBlock }) => {
-
+export const useRelationPopoverProps = ({
+  relation,
+  formType,
+  getRelationFields,
+  closeSettingsBlock,
+}) => {
   const { view } = useViewContext();
   const { tableSlug: tableSlugParam } = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
 
-  const [formLoader, setFormLoader] = useState(false)
-  const [loader, setLoader] = useState(false)
+  const [formLoader, setFormLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   const { handleSubmit, control, reset, watch, setValue, register } = useForm({
     defaultValues: {
@@ -32,7 +36,7 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
   const SETTING_TYPES = {
     ADDITIONAL: "Additional",
     AUTO_FILTER: "Auto Filter",
-  }
+  };
 
   const [selectedSettings, setSelectedSettings] = useState(null);
 
@@ -57,7 +61,6 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
     closeSettingsBlock(null);
     setLoader(false);
   };
-
 
   const submitHandler = (values) => {
     const data = {
@@ -95,8 +98,8 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
           updateRelations();
         })
         .finally(() => {
-          setFormLoader(false)
-          reset({})
+          setFormLoader(false);
+          reset({});
         });
     } else {
       constructorRelationService
@@ -105,8 +108,8 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
           updateRelations();
         })
         .finally(() => {
-          setFormLoader(false)
-          reset({})
+          setFormLoader(false);
+          reset({});
         });
     }
   };
@@ -114,12 +117,14 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
   const getSelectedSettings = (type) => {
     switch (type) {
       case SETTING_TYPES.ADDITIONAL:
-        return <Additional
-          control={control}
-          watch={watch}
-          register={register}
-          setValue={setValue}
-        />;
+        return (
+          <Additional
+            control={control}
+            watch={watch}
+            register={register}
+            setValue={setValue}
+          />
+        );
       case SETTING_TYPES.AUTO_FILTER:
         return <AutoFilter control={control} watch={watch} />;
       default:
@@ -152,6 +157,12 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
     },
   });
 
+  useEffect(() => {
+    if (formType === "CREATE") {
+      reset({});
+    }
+  }, [formType]);
+
   return {
     selectedSettings,
     handleSelectSetting,
@@ -164,5 +175,5 @@ export const useRelationPopoverProps = ({ relation, formType, getRelationFields,
     setValue,
     register,
     submitHandler,
-  }
-}
+  };
+};

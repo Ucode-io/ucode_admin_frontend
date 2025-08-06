@@ -1066,7 +1066,7 @@ const Header = ({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [env, setEnv] = useState("");
 
-  const {control, watch, setValue} = useForm();
+  const {control, watch, setValue, getValues} = useForm();
 
   const handleClose = () => {
     onClose();
@@ -1081,12 +1081,13 @@ const Header = ({
   };
 
   const onSelectEnvironment = (environment = {}) => {
-    console.log("environmentenvironment", environment);
+    const tablesArr = getValues();
     const params = {
       refresh_token: auth?.refreshToken,
       env_id: environment.id,
       project_id: environment.project_id,
       for_env: true,
+      ...tablesArr,
     };
 
     dispatch(companyActions.setEnvironmentItem(environment));
@@ -1122,11 +1123,24 @@ const Header = ({
         {"Environment-id": env?.id}
       )
       .then((res) => {
-        setConnections(res?.data?.response);
-        if (res?.data?.response?.length > 1) {
-          handleDialogOpen();
-        } else {
+        const connections = res?.data?.response;
+        setConnections(connections);
+        if (!connections?.length) {
           onSelectEnvironment(env);
+        }
+        if (connections?.length > 1) {
+          handleDialogOpen();
+        } else if (connections?.length === 1) {
+          const connection = connections[0];
+          const options = connection?.options || [];
+
+          if (options.length === 1) {
+            const guid = options[0]?.guid;
+            setValue(`tables.${0}.object_id`, guid);
+            setValue(`tables.${0}.table_slug`, connection?.table_slug);
+          } else {
+            handleDialogOpen();
+          }
         }
       });
   };

@@ -24,9 +24,10 @@ function DynamicConnections({
   useEffect(() => {
     if (computedConnections?.length === 1) {
       setValue(`tables.${index}.object_id`, computedConnections[0]?.value);
+      setValue(`tables.${index}.table_slug`, connection?.table_slug);
       onSelectEnvironment(env);
     }
-  }, [computedConnections]);
+  }, [computedConnections, connection]);
 
   return (
     <div className={classes.formRow}>
@@ -40,7 +41,7 @@ function DynamicConnections({
         placeholder={connection?.view_slug}
         required
         onChange={(e, val) => {
-          console.log("e", e);
+          setValue(`tables.${index}.table_slug`, connection?.table_slug);
         }}
       />
 

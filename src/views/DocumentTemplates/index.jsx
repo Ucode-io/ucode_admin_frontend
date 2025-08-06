@@ -18,6 +18,8 @@ import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoade
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useViewContext } from "../../providers/ViewProvider";
+import id from "date-fns/locale/id/index";
 
 const breadCrumbItems = [
   { label: "ЭДО", link: "" },
@@ -29,11 +31,15 @@ const DocumentTemplates = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { tableSlug, appId } = useParams();
-  const [step, setStep] = useState("TEMPLATES");
-  // const [selectedTemplateId, setSelectedTemplateId] = useState(null);
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
+
+  const { tableSlug: tableSlugFromParams, appId, menuId } = useParams();
+
+  const tableSlug = tableSlugFromParams || searchParams.get("tableSlug");
+
+  const [step, setStep] = useState("TEMPLATES");
+  // const [selectedTemplateId, setSelectedTemplateId] = useState(null)
 
   const [pdfIsLoading, setPDFIsLoading] = useState(false);
 
@@ -149,11 +155,10 @@ const DocumentTemplates = () => {
           <h3 className={styles.title}>
             <IconButton
               onClick={() => {
-                console.log("ggg =>", selectedTemplateId)
-                if (selectedTemplateId) setSelectedTemplateId('');
+                if (selectedTemplateId) setSelectedTemplateId("");
                 else
                   navigate(
-                    `/main/${appId}/object/${tableSlug}?menuId=${searchParams.get("menuId")}`
+                    `/main/${appId || menuId}/object/${tableSlug}?menuId=${menuId}`
                   );
               }}
               className={styles.backButton}
@@ -162,7 +167,6 @@ const DocumentTemplates = () => {
             </IconButton>
             {selectedTemplateId ? selectedTemplate?.title : "Выберите шаблон"}
           </h3>
-
           {selectedTemplate && (
             <div className={styles.buttons}>
               <Button
@@ -171,7 +175,7 @@ const DocumentTemplates = () => {
                 className={styles.secondaryButton}
                 onClick={() => {
                   navigate(
-                    `${pathname}/${selectedTemplateId}?id=${searchParams.get("id")}&menuId=${searchParams.get("menuId")}`
+                    `${pathname}/${selectedTemplateId}?id=${searchParams.get("id")}&menuId=${menuId}`
                   );
                 }}
               >
@@ -201,7 +205,9 @@ const DocumentTemplates = () => {
               variant="outlined"
               className={styles.addTemplateButton}
               onClick={() => {
-                navigate(`${pathname}/create?menuId=${searchParams.get('menuId')}&templateId=${searchParams.get('templateId')}&id=${searchParams.get('id')}`);
+                navigate(
+                  `${pathname}/create?menuId=${searchParams.get("menuId")}&templateId=${searchParams.get("templateId")}&id=${searchParams.get("id")}`
+                );
               }}
             >
               Создать шаблон
@@ -231,7 +237,9 @@ const DocumentTemplates = () => {
                       variant="outlined"
                       className={styles.addTemplateButton}
                       onClick={() => {
-                        navigate(`${pathname}/create?menuId=${searchParams.get('menuId')}&templateId=${searchParams.get('templateId')}&id=${searchParams.get('id')}`);
+                        navigate(
+                          `${pathname}/create?menuId=${searchParams.get("menuId")}&templateId=${searchParams.get("templateId")}&id=${searchParams.get("id")}`
+                        );
                       }}
                     >
                       Создать шаблон
@@ -244,6 +252,7 @@ const DocumentTemplates = () => {
                 <ObjectForm
                   form={form}
                   onBackButtonClick={() => setSelectedTemplateId("")}
+                  tableSlug={tableSlug}
                 />
               </div>
             )}

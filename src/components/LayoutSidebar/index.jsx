@@ -86,6 +86,7 @@ import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import AddIcon from "@mui/icons-material/Add";
+import AddOrganization from "./AddOrganization";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -1682,6 +1683,7 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
           </Box>
         </Box>
       </Dialog>
+      <AddOrganization />
     </Box>
   );
 };
@@ -1725,8 +1727,6 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
               }}
               columnGap={8}
               p={5}
-              // justifyContent="space-between"
-              // alignItems="center"
               cursor="pointer"
               borderRadius={6}
               background={"none"}

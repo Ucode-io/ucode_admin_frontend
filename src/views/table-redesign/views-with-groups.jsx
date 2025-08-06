@@ -174,7 +174,7 @@ export const NewUiViewsWithGroups = ({
 
   const tableSlug = relationView
     ? view?.relation_table_slug
-    : (tableSlugFromProps ?? view?.table_slug);
+    : tableSlugFromProps || view?.table_slug;
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();
   const menuId = menuid ?? searchParams.get("menuId");
@@ -632,7 +632,7 @@ export const NewUiViewsWithGroups = ({
     window.addEventListener("resize", updateVisibleViews);
     return () => window.removeEventListener("resize", updateVisibleViews);
   }, [views]);
-
+  console.log("tableSlugtableSlug", tableSlug);
   return (
     <ViewProvider state={{view, fieldsMap}}>
       <ChakraProvider theme={chakraUITheme}>
@@ -708,7 +708,7 @@ export const NewUiViewsWithGroups = ({
                           navigate(`/${menuId}/customize/${tableInfo?.id}`, {
                             state: {
                               ...data,
-                              tableSlug,
+                              tableSlug: tableSlug ?? view?.table_slug,
                             },
                           })
                         }

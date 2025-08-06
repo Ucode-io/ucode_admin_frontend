@@ -43,7 +43,7 @@ const Dropdown = ({
         >
           {content
             ? content
-            : options.map((option) => (
+            : options?.map((option) => (
                 <div
                   className={clsx(cls.option, {
                     [cls.selected]: option.value === selectedValue,

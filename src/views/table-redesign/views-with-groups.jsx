@@ -633,11 +633,7 @@ export const NewUiViewsWithGroups = ({
     return () => window.removeEventListener("resize", updateVisibleViews);
   }, [views]);
 
-  // useEffect(() => {
-  //   if (location?.state?.refresh) {
-  //     updateQueryWithoutRerender("p", null);
-  //   }
-  // }, []);
+  //
 
   return (
     <ViewProvider state={{view, fieldsMap}}>

@@ -1124,6 +1124,7 @@ export const NewUiViewsWithGroups = ({
                       dispatch(
                         detailDrawerActions.setDrawerTabIndex(views?.length)
                       );
+                      navigate(`/main/${appId}/object/${tableSlug}/templates`);
                     }}
                     searchText={searchText}
                     computedVisibleFields={computedVisibleFields}

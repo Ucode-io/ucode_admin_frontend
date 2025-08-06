@@ -1144,6 +1144,8 @@ export const FormatOptionType = (item) => {
       return fileFieldFormats;
     case "VIDEO":
       return fileFieldFormats;
+    case "MULTI_IMAGE":
+      return fileFieldFormats;
     case "SINGLE_LINE":
       return textFieldFormats;
     case "INCREMENT":

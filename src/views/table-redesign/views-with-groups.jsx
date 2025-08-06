@@ -6,7 +6,6 @@ import {quickFiltersActions} from "@/store/filter/quick_filter";
 import {mainActions} from "@/store/main/main.slice";
 import {viewsActions} from "@/store/views/view.slice";
 import chakraUITheme from "@/theme/chakraUITheme";
-import {computedViewTypes} from "@/utils/constants/viewTypes";
 import {
   getSearchText,
   openDB,
@@ -100,9 +99,6 @@ import {
 } from "./components/ViewOptionElement";
 import {FilterButton} from "./FilterButton";
 import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
-import {ViewCreate} from "../Objects/components/ViewCreate";
-import FRow from "../../components/FormElements/FRow";
-import HFSelect from "../../components/FormElements/HFSelect";
 import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
@@ -110,11 +106,10 @@ import DrawerTableView from "./drawer-table-view";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
-// import DrawerFormDetailPage from "../Objects/DrawerDetailPage/DrawerFormDetailPage";
 import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import {ViewProvider} from "../../providers/ViewProvider";
-import ViewTypeListNew from "../Objects/components/ViewTypeList/ViewTypeListNew";
 import {ViewCreatePopup} from "../Objects/components/ViewCreatePopup";
+import MoreViewsComponent from "./MoreViewsComponent";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -176,7 +171,7 @@ export const NewUiViewsWithGroups = ({
     tableSlug: tableSlugFromProps,
     appId,
   } = useParams();
-  // const tableSlug = tableSlugFromProps || view?.table_slug;
+
   const tableSlug = relationView
     ? view?.relation_table_slug
     : (tableSlugFromProps ?? view?.table_slug);
@@ -190,7 +185,6 @@ export const NewUiViewsWithGroups = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [searchText, setSearchText] = useState("");
   const {i18n} = useTranslation();
@@ -209,6 +203,11 @@ export const NewUiViewsWithGroups = ({
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const groupTable = view?.attributes?.group_by_columns;
+  const viewsRef = useRef();
+  const [visibleViews, setVisibleViews] = useState([]);
+  const [overflowedViews, setOverflowedViews] = useState([]);
+  const query = new URLSearchParams(window.location.search);
+  const viewId = query.get("v");
 
   const projectId = useSelector((state) => state.auth.projectId);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
@@ -616,6 +615,24 @@ export const NewUiViewsWithGroups = ({
     tableRelations,
   });
 
+  useEffect(() => {
+    const updateVisibleViews = () => {
+      const container = viewsRef.current;
+      if (!container) return;
+
+      const containerWidth = container.offsetWidth;
+      const viewButtonWidth = 100;
+      const maxVisible = Math.floor(containerWidth / viewButtonWidth);
+
+      setVisibleViews(views.slice(0, maxVisible));
+      setOverflowedViews(views.slice(maxVisible));
+    };
+
+    updateVisibleViews();
+    window.addEventListener("resize", updateVisibleViews);
+    return () => window.removeEventListener("resize", updateVisibleViews);
+  }, [views]);
+
   return (
     <ViewProvider state={{view, fieldsMap}}>
       <ChakraProvider theme={chakraUITheme}>
@@ -875,6 +892,7 @@ export const NewUiViewsWithGroups = ({
             borderBottom="1px solid #EAECF0"
             columnGap="5px">
             <Flex
+              ref={viewsRef}
               w={"70%"}
               sx={{
                 scrollbarWidth: "none",
@@ -883,7 +901,7 @@ export const NewUiViewsWithGroups = ({
                 },
               }}
               overflow={"scroll"}>
-              {(views ?? []).map((view, index) => (
+              {(visibleViews ?? []).map((view, index) => (
                 <Button
                   minW={"80px"}
                   key={view.id}
@@ -893,7 +911,7 @@ export const NewUiViewsWithGroups = ({
                   leftIcon={
                     <SVG
                       src={`/img/${viewIcons[view.type]}`}
-                      color={selectedTabIndex === index ? "#175CD3" : "#475467"}
+                      color={viewId === view?.id ? "#175CD3" : "#475467"}
                       width={18}
                       height={18}
                     />
@@ -901,11 +919,9 @@ export const NewUiViewsWithGroups = ({
                   fontSize={13}
                   h={"30px"}
                   fontWeight={500}
-                  color={selectedTabIndex === index ? "#175CD3" : "#475467"}
-                  bg={selectedTabIndex === index ? "#D1E9FF" : "#fff"}
-                  _hover={
-                    selectedTabIndex === index ? {bg: "#D1E9FF"} : undefined
-                  }
+                  color={viewId === view?.id ? "#175CD3" : "#475467"}
+                  bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
+                  _hover={viewId === view?.id ? {bg: "#D1E9FF"} : undefined}
                   onClick={() => handleViewClick(view, index)}>
                   {view?.is_relation_view
                     ? view?.table_label || view.type
@@ -916,17 +932,24 @@ export const NewUiViewsWithGroups = ({
               ))}
             </Flex>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-              <Button
-                leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
-                variant="ghost"
-                colorScheme="gray"
-                color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
-                {generateLangaugeText(tableLan, i18n?.language, "View") ||
-                  "View"}
-              </Button>
-            </PermissionWrapperV2>
+            {overflowedViews?.length > 0 && (
+              <MoreViewsComponent
+                views={overflowedViews}
+                selectedTabIndex={selectedTabIndex}
+                handleViewClick={handleViewClick}
+              />
+            )}
+
+            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="view_create"> */}
+            <Button
+              leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+              variant="ghost"
+              colorScheme="gray"
+              color="#475467"
+              onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
+            </Button>
+            {/* </PermissionWrapperV2> */}
 
             {view?.type === "FINANCE CALENDAR" && (
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
@@ -946,76 +969,6 @@ export const NewUiViewsWithGroups = ({
               viewAnchorEl={viewAnchorEl}
               views={views}
             />
-
-            {/* <MuiPopover
-              open={Boolean(viewAnchorEl)}
-              anchorEl={viewAnchorEl}
-              anchorPosition={{ top: 200, left: 600 }}
-              onClose={() => {
-                handleClosePop();
-              }}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              PaperProps={{
-                sx: {
-                  overflow: "visible !important",
-                },
-              }}
-            >
-              <ViewCreate
-                views={views}
-                computedViewTypes={computedViewTypes}
-                handleClose={handleClose}
-                setSelectedView={setSelectedView}
-                handleSelectViewType={handleSelectViewType}
-                refetchViews={refetchViews}
-                loading={loading}
-              />
-            </MuiPopover>
-            <MuiPopover
-              id={"view-settings"}
-              open={
-                !!selectedViewAnchor &&
-                (viewsWithSettings.includes(selectedViewTab) ||
-                  Boolean(relationView))
-              }
-              anchorEl={selectedViewAnchor}
-              onClose={closeViewSettings}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              anchorPosition={{ top: 200, left: 600 }}
-            >
-              <Box
-                sx={{
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  width: "250px",
-                  border: "1px solid #D0D5DD",
-                  padding: "10px",
-                }}
-              >
-                {getViewSettings(selectedViewTab)}
-                <Box marginTop={"10px"}>
-                  <Button
-                    w="100%"
-                    h="32px"
-                    borderRadius="8px"
-                    color="#fff"
-                    bg="#175CD3"
-                    type="button"
-                    // disabled={loading}
-                    onClick={() => createView()}
-                  >
-                    Save
-                  </Button>
-                </Box>
-              </Box>
-            </MuiPopover> */}
 
             <Popover placement="bottom-end">
               <InputGroup ml="auto" w="320px">

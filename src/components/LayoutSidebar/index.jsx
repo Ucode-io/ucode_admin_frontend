@@ -1101,6 +1101,7 @@ const Header = ({
   };
 
   const onSelectEnvironment = (environment = {}) => {
+    console.log("environmentenvironment", environment);
     const params = {
       refresh_token: auth?.refreshToken,
       env_id: environment.id,
@@ -1713,32 +1714,37 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
           </Box>
         </Box>
       </Dialog>
-      {/* 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody></ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal> */}
     </Box>
   );
 };
 
 const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
+  const [projectID, setProjectID] = useState("");
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
     queryParams: {enabled: Boolean(company?.id)},
   });
   const projects = projectsQuery.data?.projects ?? [];
+
+  const environmentsQuery = useEnvironmentListQuery({
+    params: {project_id: projectID},
+    queryParams: {enabled: Boolean(projectID)},
+  });
+
+  const environments = environmentsQuery?.data?.environments;
+
+  useEffect(() => {
+    const computedEnv = environments?.find(
+      (item) => item?.name === "Production"
+    );
+    if (Boolean(computedEnv?.project_id)) {
+      onSelectEnvironment(computedEnv);
+      setEnvirId(computedEnv);
+    } else {
+      onSelectEnvironment(environments?.[0]);
+      setEnvirId(environments?.[0]);
+    }
+  }, [projectID, environments?.length]);
 
   return (
     <AccordionPanel pl="12px" mt="4px">
@@ -1746,10 +1752,13 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
         {projects.map((project) => (
           <AccordionItem key={project.project_id}>
             <AccordionButton
+              onClick={() => {
+                setProjectID(project?.project_id);
+              }}
               columnGap={8}
               p={5}
-              justifyContent="space-between"
-              alignItems="center"
+              // justifyContent="space-between"
+              // alignItems="center"
               cursor="pointer"
               borderRadius={6}
               background={"none"}
@@ -1770,14 +1779,14 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
               <Box fontSize={12} fontWeight={500} color="#101828">
                 {project.title}
               </Box>
-              <AccordionIcon ml="auto" fontSize="20px" />
+              {/* <AccordionIcon ml="auto" fontSize="20px" /> */}
             </AccordionButton>
 
-            <Environments
+            {/* <Environments
               project={project}
               setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
-            />
+            /> */}
           </AccordionItem>
         ))}
       </Accordion>
@@ -1785,60 +1794,60 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
   );
 };
 
-const Environments = ({project, onSelectEnvironment, setEnvirId}) => {
-  const environmentsQuery = useEnvironmentListQuery({
-    params: {project_id: project?.project_id},
-    queryParams: {enabled: Boolean(project?.project_id)},
-  });
-  const environments = environmentsQuery.data?.environments ?? [];
+// const Environments = ({project, onSelectEnvironment, setEnvirId}) => {
+//   const environmentsQuery = useEnvironmentListQuery({
+//     params: {project_id: project?.project_id},
+//     queryParams: {enabled: Boolean(project?.project_id)},
+//   });
+//   const environments = environmentsQuery.data?.environments ?? [];
 
-  return (
-    <AccordionPanel pl="12px" mt="4px">
-      <Box>
-        {environments.map((environment) => (
-          <Flex
-            key={environment.id}
-            p={5}
-            justifyContent="space-between"
-            alignItems="center"
-            cursor="pointer"
-            borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            onClick={() => {
-              onSelectEnvironment(environment);
-              setEnvirId(environment);
-            }}>
-            <Flex columnGap={8} alignItems="center">
-              <Flex
-                w={20}
-                h={20}
-                alignItems="center"
-                justifyContent="center"
-                borderRadius={4}
-                bg="#15B79E"
-                fontSize={18}
-                fontWeight={500}
-                color="#fff">
-                {environment.name?.[0]?.toUpperCase()}
-              </Flex>
-              <Box mr={36}>
-                <Box fontSize={12} fontWeight={500} color="#101828">
-                  {environment.name}
-                </Box>
-              </Box>
-            </Flex>
-            <KeyboardArrowDownIcon
-              style={{
-                alignSelf: "center",
-                transform: "rotate(-90deg)",
-                fontSize: 20,
-              }}
-            />
-          </Flex>
-        ))}
-      </Box>
-    </AccordionPanel>
-  );
-};
+//   return (
+//     <AccordionPanel pl="12px" mt="4px">
+//       <Box>
+//         {environments.map((environment) => (
+//           <Flex
+//             key={environment.id}
+//             p={5}
+//             justifyContent="space-between"
+//             alignItems="center"
+//             cursor="pointer"
+//             borderRadius={6}
+//             _hover={{bg: "#EAECF0"}}
+//             onClick={() => {
+//               onSelectEnvironment(environment);
+//               setEnvirId(environment);
+//             }}>
+//             <Flex columnGap={8} alignItems="center">
+//               <Flex
+//                 w={20}
+//                 h={20}
+//                 alignItems="center"
+//                 justifyContent="center"
+//                 borderRadius={4}
+//                 bg="#15B79E"
+//                 fontSize={18}
+//                 fontWeight={500}
+//                 color="#fff">
+//                 {environment.name?.[0]?.toUpperCase()}
+//               </Flex>
+//               <Box mr={36}>
+//                 <Box fontSize={12} fontWeight={500} color="#101828">
+//                   {environment.name}
+//                 </Box>
+//               </Box>
+//             </Flex>
+//             <KeyboardArrowDownIcon
+//               style={{
+//                 alignSelf: "center",
+//                 transform: "rotate(-90deg)",
+//                 fontSize: 20,
+//               }}
+//             />
+//           </Flex>
+//         ))}
+//       </Box>
+//     </AccordionPanel>
+//   );
+// };
 
 export default LayoutSidebar;

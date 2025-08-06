@@ -79,6 +79,7 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
       state.isAuth = true;
     },
     setPermission(state, {payload}) {
+      console.log("payload", payload);
       state.permissions =
         payload?.permissions?.reduce((acc, curr) => {
           acc[curr.table_slug] = {

@@ -21,6 +21,20 @@ import authService from "../../../../services/auth/authService";
 import companyService from "../../../../services/companyService";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import connectionServiceV2 from "../../../../services/auth/connectionService";
+import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
+import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
+import {auth} from "./firebase";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import RecoverPassword from "../RecoverPassword";
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
+//   authDomain: "ucode-c166d.firebaseapp.com",
+//   projectId: "ucode-c166d",
+//   storageBucket: "ucode-c166d.firebasestorage.app",
+//   messagingSenderId: "195504606938",
+//   appId: "1:195504606938:web:1f01f882f66e1b52339fe3",
+// };
 
 const LoginFormDesign = ({
   index,
@@ -44,6 +58,7 @@ const LoginFormDesign = ({
 
   const handleClickOpen = () => {
     setOpen(true);
+    setLoading(false);
   };
 
   const handleClose = () => {
@@ -149,6 +164,7 @@ const LoginFormDesign = ({
   };
 
   const onSubmit = (values) => {
+    setLoading(true);
     if (selectedTabIndex === 0) {
       getCompany(values);
     }
@@ -184,10 +200,11 @@ const LoginFormDesign = ({
       [values?.type]: values?.recipient || undefined,
       ...values,
     };
-    setLoading(true);
+
     companyService
       .getCompanyList(data)
       .then((res) => {
+        setLoading(false);
         if (res?.companies) {
           setIsUserId(res?.user_id ?? "");
           setCompanies(res?.companies ?? {});
@@ -382,6 +399,8 @@ const LoginFormDesign = ({
             `tables[${index}].table_slug`,
             connection?.options?.[0]?.[connection?.view_slug]
           );
+        } else {
+          handleClickOpen();
         }
       });
     }

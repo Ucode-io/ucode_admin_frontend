@@ -107,7 +107,7 @@ export const Filter = ({
 
     case "DATE":
       return (
-        <DateFilter
+        <YDateFilter
           field={field}
           placeholder={field?.label}
           value={filters[name]}

@@ -904,9 +904,8 @@ const FieldButton = ({
           setFieldOptionAnchor(e.currentTarget);
           setTarget(e.currentTarget);
           setFieldData(null);
-        }}
-      >
-        <AddRoundedIcon style={{ marginTop: "3px" }} />
+        }}>
+        <AddRoundedIcon style={{marginTop: "3px"}} />
       </Box>
       <FieldOptionModal
         tableLan={tableLan}

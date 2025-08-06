@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState} from "react";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import DynamicFields from "../DynamicFields";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
@@ -16,12 +16,11 @@ function LoginCompaniesList({
   companies,
   selectedCollection,
   setSelectedCollection,
-  loading = false,
   handleSubmit = () => {},
   setValue = () => {},
 }) {
   const {t} = useTranslation();
-
+  const [loading, setLoading] = useState(false);
   return (
     <>
       <div className={classes.dialogContainer}>
@@ -108,7 +107,10 @@ function LoginCompaniesList({
         <div className={classes.footerContent}>
           <PrimaryButton
             className={classes.primaryButton}
-            onClick={handleSubmit}
+            onClick={() => {
+              handleSubmit();
+              setLoading(true);
+            }}
             loader={loading}>
             {t("enter")}
           </PrimaryButton>

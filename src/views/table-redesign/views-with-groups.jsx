@@ -1775,7 +1775,7 @@ const FiltersList = ({
     if (filtersRef.current) {
       localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
     }
-  }, []);
+  }, [computedFields]);
 
   if (!filtersOpen) {
     return;

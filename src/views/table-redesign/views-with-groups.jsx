@@ -174,7 +174,7 @@ export const NewUiViewsWithGroups = ({
 
   const tableSlug = relationView
     ? view?.relation_table_slug
-    : (tableSlugFromProps ?? view?.table_slug);
+    : tableSlugFromProps || view?.table_slug;
   const new_router = Boolean(localStorage.getItem("new_router") === "true");
   const [searchParams] = useSearchParams();
   const menuId = menuid ?? searchParams.get("menuId");
@@ -633,6 +633,8 @@ export const NewUiViewsWithGroups = ({
     return () => window.removeEventListener("resize", updateVisibleViews);
   }, [views]);
 
+  //
+
   return (
     <ViewProvider state={{view, fieldsMap}}>
       <ChakraProvider theme={chakraUITheme}>
@@ -704,14 +706,15 @@ export const NewUiViewsWithGroups = ({
                         height: "18px",
                       }}>
                       <Box
-                        onClick={() =>
+                        onClick={() => {
                           navigate(`/${menuId}/customize/${tableInfo?.id}`, {
                             state: {
                               ...data,
-                              tableSlug,
+                              tableSlug: tableSlug ?? view?.table_slug,
                             },
-                          })
-                        }
+                          });
+                          dispatch(detailDrawerActions.closeDrawer());
+                        }}
                         sx={{
                           cursor: "pointer",
                           alignItems: "center",
@@ -940,16 +943,17 @@ export const NewUiViewsWithGroups = ({
               />
             )}
 
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="view_create"> */}
-            <Button
-              leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
-              variant="ghost"
-              colorScheme="gray"
-              color="#475467"
-              onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
-              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
-            </Button>
-            {/* </PermissionWrapperV2> */}
+            <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
+              <Button
+                leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+                variant="ghost"
+                colorScheme="gray"
+                color="#475467"
+                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                {generateLangaugeText(tableLan, i18n?.language, "View") ||
+                  "View"}
+              </Button>
+            </PermissionWrapperV2>
 
             {view?.type === "FINANCE CALENDAR" && (
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />

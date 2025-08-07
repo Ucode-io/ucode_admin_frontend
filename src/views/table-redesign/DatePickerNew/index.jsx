@@ -56,11 +56,9 @@ function HFDatePickerNew({
           }}>
           <span>
             {isValidDate(value) ? (
-              `${format(new Date(value), "dd.MM.yyyy")}`
+              `${format(new Date(value), "dd.MM.yyyy HH:mm:ss")}`
             ) : (
-              <span style={{color: "#909EAB"}}>
-                {"DD.MM.YYYY - DD.MM.YYYY"}
-              </span>
+              <span style={{color: "#909EAB"}}>{"DD.MM.YYYY HH:mm:ss"}</span>
             )}
           </span>
 
@@ -91,7 +89,7 @@ function HFDatePickerNew({
           }}>
           <Box
             sx={{
-              width: "205px",
+              width: "210px",
               height: "250px",
               border: "1px solid #eee",
               borderRadius: "8px",
@@ -109,38 +107,40 @@ function HFDatePickerNew({
                   name={name}
                   field={field}
                   placeholder={field?.label}
-                  //   value={value}
                   updateObject={updateObject}
                   withTime={true}
                 />
               </TabPanel>
-              {/* <TabPanel sx={{height: "100px", width: "100%"}}>
+              <TabPanel sx={{height: "100px", width: "100%"}}>
                 <HFMonthPicker
+                  control={control}
+                  name={name}
                   field={field}
                   placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
+                  updateObject={updateObject}
                   withTime={true}
                 />
               </TabPanel>
               <TabPanel sx={{height: "100px", width: "100%"}}>
                 <HFQuarterPicker
+                  control={control}
+                  name={name}
                   field={field}
                   placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
+                  updateObject={updateObject}
                   withTime={true}
                 />
               </TabPanel>
               <TabPanel sx={{height: "100px", width: "100%"}}>
                 <HFYearPicker
+                  control={control}
+                  name={name}
                   field={field}
                   placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
+                  updateObject={updateObject}
                   withTime={true}
                 />
-              </TabPanel> */}
+              </TabPanel>
             </Tabs>
           </Box>
         </Popover>

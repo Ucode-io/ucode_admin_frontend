@@ -27,7 +27,6 @@ export const HFDayPicker = ({
             valueFormat="DD.MM.YYYY"
             rightSection={<img src="/table-icons/date.svg" alt="" />}
             onChange={(value) => {
-              console.log("valueeeee", value);
               onChange(value);
               updateObject();
             }}

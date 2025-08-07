@@ -1,0 +1,76 @@
+import {DatePicker, DatePickerInput} from "@mantine/dates";
+import {isValid} from "date-fns";
+import {Controller} from "react-hook-form";
+
+export const HFDayPicker = ({
+  control,
+  name,
+  defaultValue = "",
+  required,
+  updateObject = () => {},
+  disabled,
+}) => {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      disabled={disabled}
+      rules={{
+        required: required ? "This field is required" : false,
+      }}
+      defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
+      render={({field: {onChange, value}}) => {
+        return (
+          <DatePicker
+            id="dateField"
+            value={getValue(value)}
+            valueFormat="DD.MM.YYYY"
+            rightSection={<img src="/table-icons/date.svg" alt="" />}
+            onChange={(value) => {
+              console.log("valueeeee", value);
+              onChange(value);
+              updateObject();
+            }}
+            styles={{input: {background: "inherit", border: "none"}}}
+            highlightToday
+            disabled={disabled}
+          />
+        );
+      }}
+    />
+  );
+};
+
+const getValue = (value) => {
+  if (!value || value === "CURRENT_TIMESTAMP") return null;
+  if (value instanceof Date && isValid(value)) return value;
+  try {
+    if (typeof value === "string") {
+      if (value.toLowerCase().includes("now")) return new Date();
+      if (value.includes("Z")) {
+        const parsedISO = new Date(value);
+        if (isValid(parsedISO)) {
+          return parsedISO;
+        }
+      } else {
+        const parsedISO = new Date(value);
+        return parsedISO;
+      }
+
+      const formats = [
+        "yyyy-MM-dd HH:mm",
+        "dd.MM.yyyy HH:mm",
+        "yyyy-MM-dd'T'HH:mm:ssX",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+      ];
+
+      for (const fmt of formats) {
+        const parsedDate = parse(value, fmt, new Date());
+        if (isValid(parsedDate)) return parsedDate;
+      }
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+};

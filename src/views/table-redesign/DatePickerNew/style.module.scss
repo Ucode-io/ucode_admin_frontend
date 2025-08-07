@@ -1,0 +1,15 @@
+.tabs {
+  .tablist {
+    border-bottom: 1px solid #fff;
+    display: flex;
+    // background-color: #eee;
+    padding: 0 10px 5px;
+
+    .tab {
+      padding: 5px;
+      font-size: 12px;
+      list-style: none;
+      cursor: pointer;
+    }
+  }
+}

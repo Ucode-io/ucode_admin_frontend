@@ -1,15 +1,30 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {Box, Popover} from "@mui/material";
+import {format} from "date-fns";
 import React, {useState} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import CloseIcon from "@mui/icons-material/Close";
+import {HFDayPicker} from "./HFDayPicker";
+import HFMonthPicker from "./HFMonthPicker";
+import HFQuarterPicker from "./HFQuarterPicker";
+import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
-import YDatePicker from "./YDatePicker";
-import YMonthPicker from "./YMonthPicker";
-import YYearPicker from "./YYearPicker";
-import {format} from "date-fns";
-import YQuarterPicker from "./YQuarterPicker";
+import {Controller, useWatch} from "react-hook-form";
 
-function YDateFilter({field, value, onChange = () => {}, name}) {
+function HFDatePickerNew({
+  isFormEdit,
+  isBlackBg,
+  control,
+  name,
+  field,
+  showCopyBtn,
+  disabled = false,
+  required = false,
+  placeholder = "",
+  defaultValue = "",
+  isNewTableView = false,
+  isTransparent = false,
+  updateObject = () => {},
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -20,6 +35,11 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
     const d = new Date(date);
     return d instanceof Date && !isNaN(d);
   };
+  const value = useWatch({
+    control,
+    name: name,
+  });
+
   return (
     <>
       <Box>
@@ -29,15 +49,14 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            border: "1px solid #eee",
             padding: "2px 8px",
-            borderRadius: "12px",
             cursor: "pointer",
             fontSize: "12px",
+            height: "32px",
           }}>
           <span>
-            {isValidDate(value?.$gte) && isValidDate(value?.$lt) ? (
-              `${format(new Date(value?.$gte), "dd.MM.yyyy")} - ${format(new Date(value?.$lt), "dd.MM.yyyy")}`
+            {isValidDate(value) ? (
+              `${format(new Date(value), "dd.MM.yyyy")}`
             ) : (
               <span style={{color: "#909EAB"}}>
                 {"DD.MM.YYYY - DD.MM.YYYY"}
@@ -85,7 +104,18 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                 <Tab className={styles.tab}>Yearly</Tab>
               </TabList>
               <TabPanel sx={{height: "200px", width: "100%"}}>
-                <YDatePicker
+                <HFDayPicker
+                  control={control}
+                  name={name}
+                  field={field}
+                  placeholder={field?.label}
+                  //   value={value}
+                  updateObject={updateObject}
+                  withTime={true}
+                />
+              </TabPanel>
+              {/* <TabPanel sx={{height: "100px", width: "100%"}}>
+                <HFMonthPicker
                   field={field}
                   placeholder={field?.label}
                   value={value}
@@ -94,7 +124,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                 />
               </TabPanel>
               <TabPanel sx={{height: "100px", width: "100%"}}>
-                <YMonthPicker
+                <HFQuarterPicker
                   field={field}
                   placeholder={field?.label}
                   value={value}
@@ -103,23 +133,14 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                 />
               </TabPanel>
               <TabPanel sx={{height: "100px", width: "100%"}}>
-                <YQuarterPicker
+                <HFYearPicker
                   field={field}
                   placeholder={field?.label}
                   value={value}
                   onChange={(val) => onChange(val, name)}
                   withTime={true}
                 />
-              </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
-                <YYearPicker
-                  field={field}
-                  placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
-                  withTime={true}
-                />
-              </TabPanel>
+              </TabPanel> */}
             </Tabs>
           </Box>
         </Popover>
@@ -128,4 +149,4 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
   );
 }
 
-export default YDateFilter;
+export default HFDatePickerNew;

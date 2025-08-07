@@ -63,9 +63,9 @@ function HFDatePickerNew({
             }}>
             <span>
               {isValidDate(value) ? (
-                `${format(new Date(value), "dd.MM.yyyy HH:mm")}`
+                `${withTime ? format(new Date(value), "dd.MM.yyyy HH:mm") : format(new Date(value), "dd.MM.yyyy")}`
               ) : (
-                <span style={{color: "#909EAB"}}>{"DD.MM.YYYY HH:mm"}</span>
+                <span style={{color: "#909EAB"}}>{""}</span>
               )}
             </span>
 
@@ -92,6 +92,9 @@ function HFDatePickerNew({
               <Lock />
             </Box>
           )}
+          <Box>
+            <img src="/table-icons/date-time.svg" alt="" />
+          </Box>
         </Box>
 
         <Popover

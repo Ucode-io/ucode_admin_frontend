@@ -489,7 +489,7 @@ const LoginForm = ({
           <PasswordInput
             placeholder="Enter new password"
             size="lg"
-            {...mainForm.register("new_password", {required: true})}
+            {...mainForm.register("password", {required: true})}
             isInvalid={errors?.password}
           />
         </Box>

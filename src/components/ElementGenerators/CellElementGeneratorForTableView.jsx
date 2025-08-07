@@ -37,6 +37,7 @@ import NewCHFFormulaField from "../FormElements/NewCHFormulaField";
 import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
+import HFDatePickerNew from "../../views/table-redesign/DatePickerNew";
 
 const parser = new Parser();
 
@@ -55,12 +56,13 @@ const CellElementGeneratorForTableView = ({
   isTableView = false,
   setFormValue = () => {},
   updateObject = () => {},
-  newUi,
+  newUi = false,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const {i18n} = useTranslation();
+
   let relationTableSlug = "";
 
   if (field?.id.includes("#")) {
@@ -422,7 +424,25 @@ const CellElementGeneratorForTableView = ({
       );
 
     case "DATE":
-      return (
+      return newUi ? (
+        <HFDatePickerNew
+          field={field}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          updateObject={updateObject}
+          isNewTableView={true}
+          width={"100%"}
+          mask={"99.99.9999"}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
+          isTransparent={true}
+        />
+      ) : (
         <HFDatePicker
           control={control}
           name={computedSlug}
@@ -442,7 +462,24 @@ const CellElementGeneratorForTableView = ({
       );
 
     case "DATE_TIME":
-      return (
+      return newUi ? (
+        <HFDatePickerNew
+          dateTime={true}
+          field={field}
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          showCopyBtn={false}
+          control={control}
+          name={computedSlug}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          isTransparent={true}
+        />
+      ) : (
         <HFDateTimePicker
           disabled={isDisabled}
           isFormEdit
@@ -460,7 +497,25 @@ const CellElementGeneratorForTableView = ({
       );
 
     case "DATE_TIME_WITHOUT_TIME_ZONE":
-      return (
+      return newUi ? (
+        <HFDatePickerNew
+          dateTime={true}
+          timezone={true}
+          field={field}
+          disabled={isDisabled}
+          isFormEdit
+          updateObject={updateObject}
+          isNewTableView={true}
+          isBlackBg={isBlackBg}
+          showCopyBtn={false}
+          control={control}
+          name={computedSlug}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          isTransparent={true}
+        />
+      ) : (
         <HFDateDatePickerWithoutTimeZoneTable
           control={control}
           name={computedSlug}

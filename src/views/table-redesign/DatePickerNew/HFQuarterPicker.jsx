@@ -13,6 +13,7 @@ const HFQuarterPicker = ({
   name,
   defaultValue = "",
   withTime = false,
+  required = false,
 }) => {
   const quarterRefs = useRef({});
   const {i18n} = useTranslation();

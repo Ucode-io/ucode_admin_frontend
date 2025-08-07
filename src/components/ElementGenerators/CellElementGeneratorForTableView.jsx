@@ -464,6 +464,7 @@ const CellElementGeneratorForTableView = ({
     case "DATE_TIME":
       return newUi ? (
         <HFDatePickerNew
+          withTime={true}
           dateTime={true}
           field={field}
           disabled={isDisabled}
@@ -499,6 +500,7 @@ const CellElementGeneratorForTableView = ({
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return newUi ? (
         <HFDatePickerNew
+          withTime={true}
           dateTime={true}
           timezone={true}
           field={field}

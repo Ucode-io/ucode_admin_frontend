@@ -80,11 +80,11 @@ const CustomPermissionModal = ({
     //   name: "Fix column",
     //   controlName: "fix_column",
     // },
-    {
-      guid: "12",
-      name: "columns",
-      controlName: "columns",
-    },
+    // {
+    //   guid: "12",
+    //   name: "columns",
+    //   controlName: "columns",
+    // },
     // {
     //   guid: "13",
     //   name: "Group",
@@ -124,6 +124,7 @@ const CustomPermissionModal = ({
       excel_menu: val ? "Yes" : "No",
       tab_group: val ? "Yes" : "No",
       search_button: val ? "Yes" : "No",
+      add_field: val ? "Yes" : "No",
     };
     setValue(basePath, computedValue);
   };
@@ -132,14 +133,12 @@ const CustomPermissionModal = ({
     (value) => value === "Yes"
   );
 
-  console.log(watch(basePath));
-
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Tableview permissions</Typography>
+            <Typography variant="h4">Table view permissions</Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}

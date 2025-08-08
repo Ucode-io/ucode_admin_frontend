@@ -5,7 +5,8 @@ import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
 import TableOrderingButton from "@/components/TableOrderingButton";
-import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
+import YDateFilter from "./YDateFilter";
 
 const FilterGenerator = ({
   field,
@@ -28,7 +29,7 @@ const FilterGenerator = ({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{display: "flex", alignItems: "center"}}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
     </div>
   );
@@ -47,7 +48,7 @@ export const Filter = ({
 
   const computedOptions = useMemo(() => {
     if (field.type === FIELD_TYPES.STATUS) {
-      const { todo, complete, progress } = field.attributes;
+      const {todo, complete, progress} = field.attributes;
       const options = [
         ...todo?.options,
         ...complete?.options,
@@ -106,7 +107,7 @@ export const Filter = ({
 
     case "DATE":
       return (
-        <DateFilter
+        <YDateFilter
           field={field}
           placeholder={field?.label}
           value={filters[name]}
@@ -117,12 +118,12 @@ export const Filter = ({
     case "DATE_TIME":
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return (
-        <DateFilter
+        <YDateFilter
           field={field}
           placeholder={field?.label}
           value={filters[name]}
+          name={name}
           onChange={(val) => onChange(val, name)}
-          withTime={true}
         />
       );
 

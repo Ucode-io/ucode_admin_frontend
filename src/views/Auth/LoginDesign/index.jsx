@@ -11,12 +11,17 @@ const LoginDesign = () => {
   return (
     <>
       <div
-        className={clsx(styles.outletWrapper, styles.outlet, {
-          [styles.outletSecond]: formType === "OTP" || formType === "EMAIL_OTP",
-          [styles.outletPhone]: formType === "phone" || formType === "email",
-          [styles.outletForgot]: formType === "FORGOT_PASSWORD",
-        })}
-      >
+        className={
+          formType === "OTP" || formType === "EMAIL_OTP"
+            ? styles.outletSecond
+            : formType === "phone" || formType === "email"
+              ? styles.outletPhone
+              : formType === "FORGOT_PASSWORD"
+                ? styles.outletForgot
+                : formType === "FIREBASEOTP"
+                  ? styles.outletFirebase
+                  : styles.outlet
+        }>
         <div className={styles.page}>
           <LoginFormDesign
             setFormType={setFormType}

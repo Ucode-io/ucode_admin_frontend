@@ -6,8 +6,8 @@ import {useLocation} from "react-router-dom";
 import LaunchIcon from "@mui/icons-material/Launch";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {InputAdornment, TextField} from "@mui/material";
-import { Box } from "@chakra-ui/react";
-import { Lock } from "@mui/icons-material";
+import {Box} from "@chakra-ui/react";
+import {Lock} from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -28,7 +28,7 @@ const HFLinkField = ({
   name = "",
   rules = {},
   inputHeight,
-  placeholder,
+  placeholder = "",
   endAdornment,
   setFormValue,
   exist = false,
@@ -72,7 +72,7 @@ const HFLinkField = ({
           required: required ? "This is required field" : false,
           ...rules,
         }}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return (
             <TextField
               size="small"
@@ -112,7 +112,7 @@ const HFLinkField = ({
                 readOnly: disabled,
                 inputProps: {
                   tabIndex,
-                  style: { height: inputHeight, color: "blue" },
+                  style: {height: inputHeight, color: "blue"},
                 },
                 classes: {
                   input: isBlackBg ? classes.input : "",
@@ -139,9 +139,8 @@ const HFLinkField = ({
                         disabled={Boolean(!value)}
                         className={styles.linkBtn}
                         onClick={() => navigateToNewPage(value)}
-                        sx={{ cursor: "pointer" }}
-                      >
-                        <LaunchIcon style={{ fontSize: "20px" }} />
+                        sx={{cursor: "pointer"}}>
+                        <LaunchIcon style={{fontSize: "20px"}} />
                       </button>
                     ) : (
                       ""
@@ -171,9 +170,8 @@ const HFLinkField = ({
               right: 0,
               top: "50%",
               transform: "translateY(-50%)",
-            }}
-          >
-            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+            }}>
+            <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
           </Box>
         )}
       </Box>

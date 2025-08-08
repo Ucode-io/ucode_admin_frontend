@@ -69,6 +69,7 @@ function DrawerFieldGenerator({
   drawerDetail,
   isDisabled,
   activeLang = "",
+  inviteModal = false,
   setFormValue = () => {},
   updateObject = () => {},
   errors,
@@ -99,6 +100,14 @@ function DrawerFieldGenerator({
 
     return field?.slug;
   }, [field?.slug, activeLang, field]);
+
+  const placeholderField = useMemo(() => {
+    if (inviteModal) {
+      return field?.label ?? field?.attributes?.label;
+    } else {
+      return field?.placeholder ?? field?.attributes?.placeholder ?? "Empty";
+    }
+  }, [field, inviteModal]);
 
   // const defaultValue = useMemo(() => {
   //   if (
@@ -141,6 +150,7 @@ function DrawerFieldGenerator({
             </>
           }>
           <RelationField
+            placeholder={placeholderField}
             updateObject={updateObject}
             disabled={isDisabled}
             isRequired={isRequired}
@@ -158,7 +168,7 @@ function DrawerFieldGenerator({
       return (
         <MultiLineInput
           isDisabled={isDisabled}
-          placeholder={"Empty"}
+          placeholder={placeholderField}
           control={control}
           name={computedSlug}
           field={field}
@@ -169,6 +179,7 @@ function DrawerFieldGenerator({
     case "DATE":
       return (
         <HFDatePickerField
+          placeholder={placeholderField}
           updateObject={updateObject}
           disabled={isDisabled}
           field={field}
@@ -182,6 +193,7 @@ function DrawerFieldGenerator({
     case "DATE_TIME":
       return (
         <HFDateTimePickerField
+          placeholder={placeholderField}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -193,6 +205,7 @@ function DrawerFieldGenerator({
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return (
         <HFDateDatePickerWithoutTimeZoneTableField
+          placeholder={placeholderField}
           disabled={isDisabled}
           field={field}
           control={control}
@@ -204,6 +217,7 @@ function DrawerFieldGenerator({
     case "TIME":
       return (
         <HFTimePickerField
+          placeholder={placeholderField}
           disabled={isDisabled}
           control={control}
           name={computedSlug}
@@ -216,6 +230,7 @@ function DrawerFieldGenerator({
     case "PASSWORD":
       return (
         <InputField
+          placeholder={placeholderField}
           disabled={isDisabled}
           type="password"
           control={control}
@@ -263,6 +278,7 @@ function DrawerFieldGenerator({
     case "STATUS":
       return (
         <HFStatusField
+          placeholder={placeholderField}
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
@@ -279,7 +295,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
-          placeholder={"Empty"}
+          placeholder={placeholderField}
           updateObject={updateObject}
         />
       );
@@ -330,7 +346,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
-          placeholder={"Empty"}
+          placeholder={placeholderField}
           isNewTableView={true}
           updateObject={updateObject}
         />
@@ -344,7 +360,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
-          placeholder="Empty"
+          placeholder={placeholderField}
           updateObject={updateObject}
         />
       );
@@ -370,7 +386,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           field={field}
-          placeholder="Empty"
+          placeholder={placeholderField}
           isNewTableView={true}
           updateObject={updateObject}
         />
@@ -378,6 +394,7 @@ function DrawerFieldGenerator({
     case "POLYGON":
       return (
         <PolygonFieldTable
+          placeholder={placeholderField}
           disabled={isDisabled}
           drawerDetail={drawerDetail}
           control={control}
@@ -417,6 +434,7 @@ function DrawerFieldGenerator({
     case "FORMULA_FRONTEND":
       return (
         <FormulaField
+          placeholder={placeholderField}
           disabled={isDisabled}
           control={control}
           name={computedSlug}
@@ -429,6 +447,7 @@ function DrawerFieldGenerator({
     case "INTERNATION_PHONE":
       return (
         <HFInternationalPhone
+          placeholder={placeholderField}
           disabled={isDisabled}
           control={control}
           name={computedSlug}
@@ -439,6 +458,7 @@ function DrawerFieldGenerator({
     case FIELD_TYPES.SINGLE_LINE:
       return (
         <InputField
+          placeholder={placeholderField}
           watch={watch}
           disabled={isDisabled}
           control={control}
@@ -454,6 +474,7 @@ function DrawerFieldGenerator({
     default:
       return (
         <InputField
+          placeholder={placeholderField}
           watch={watch}
           disabled={isDisabled}
           control={control}
@@ -477,6 +498,7 @@ const InputField = ({
   functions,
   field,
   isTextarea,
+  placeholder = "Empty",
   updateObject = () => {},
 }) => {
   const textareaRef = useRef(null);
@@ -531,7 +553,7 @@ const InputField = ({
                       onChange(e.target.value);
                       inputChangeHandler();
                     }}
-                    placeholder="Empty"
+                    placeholder={placeholder}
                     className={cls.singleLine}
                   />
                 ) : (
@@ -544,9 +566,11 @@ const InputField = ({
                       inputChangeHandler();
                     }}
                     placeholder={
-                      field?.type === "INCREMENT_ID" ? "Increment ID" : "Empty"
+                      field?.type === "INCREMENT_ID"
+                        ? "Increment ID"
+                        : placeholder
                     }
-                    height="30px"
+                    height="38px"
                     fontSize="13px"
                     px={"9.6px"}
                     width="100%"
@@ -685,6 +709,7 @@ const FormulaField = ({
   disabled,
   defaultValue,
   field,
+  placeholder = "",
   updateObject = () => {},
   ...props
 }) => {
@@ -735,7 +760,7 @@ const FormulaField = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <TextField
           className="formulaField"
-          placeholder="Empty"
+          placeholder={placeholder}
           size="small"
           value={
             formulaIsVisible
@@ -796,81 +821,6 @@ const FormulaField = ({
           {...props}
         />
       )}></Controller>
-  );
-};
-
-const JSONField = ({
-  control,
-  name,
-  field,
-  disabled = false,
-  placeholder = "",
-}) => {
-  const value = useWatch({
-    control,
-    name,
-  });
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-
-  return (
-    <div>
-      <Box position="relative">
-        <TextField
-          className="formulaField"
-          placeholder="Empty"
-          size="small"
-          value={value}
-          disabled={disabled}
-          onClick={handleClick}
-        />
-        {disabled && (
-          <Box
-            sx={{
-              width: "2.5rem",
-              height: "2.5rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "absolute",
-              right: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}>
-            <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
-          </Box>
-        )}
-      </Box>
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}>
-        <HFCodeField
-          control={control}
-          field={field}
-          name={name}
-          isDisabled={disabled}
-        />
-      </Popover>
-    </div>
   );
 };
 

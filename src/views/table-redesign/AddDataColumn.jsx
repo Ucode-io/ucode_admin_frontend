@@ -138,7 +138,8 @@ const AddDataColumn = React.memo(
             backgroundColor: "#F6F6F6",
             zIndex: "2",
             textAlign: "center",
-          }}>
+          }}
+        >
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column, index) => (
@@ -174,7 +175,8 @@ const AddDataColumn = React.memo(
                   ? "1"
                   : "0"
               }`,
-            }}>
+            }}
+          >
             <NewTableDataForm
               tableSlug={tableSlug}
               fields={columns}
@@ -193,7 +195,7 @@ const AddDataColumn = React.memo(
               isTableView={isTableView}
             />
 
-            {(column.attributes?.disabled ||
+            {/* {(column.attributes?.disabled ||
               !column.attributes?.field_permission?.edit_permission) && (
               <div
                 style={{
@@ -208,7 +210,7 @@ const AddDataColumn = React.memo(
                 }}>
                 <img src="/table-icons/lock.svg" alt="lock" />
               </div>
-            )}
+            )} */}
           </CTableCell>
         ))}
         <CTableCell
@@ -225,7 +227,8 @@ const AddDataColumn = React.memo(
             right: "0",
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
-          }}></CTableCell>
+          }}
+        ></CTableCell>
       </CTableRow>
     );
   }

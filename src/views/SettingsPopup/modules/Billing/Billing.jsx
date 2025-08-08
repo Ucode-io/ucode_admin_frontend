@@ -40,7 +40,8 @@ export const Billing = () => {
                 height: "100%",
                 boxShadow: "none",
                 border: "1px solid rgba(55, 53, 47, 0.06)",
-              }}>
+              }}
+            >
               <CardContent
                 sx={{
                   height: "100%",
@@ -48,8 +49,9 @@ export const Billing = () => {
                   alignItems: "center",
                   padding: "16px",
                   paddingBottom: "16px !important",
-                }}>
-                <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   {/* <AccountBalance color="primary" fontSize="large" /> */}
                   <img
                     src="img/bank.svg"
@@ -78,7 +80,8 @@ export const Billing = () => {
                 height: "100%",
                 boxShadow: "none",
                 border: "1px solid rgba(55, 53, 47, 0.06)",
-              }}>
+              }}
+            >
               <CardContent
                 sx={{
                   height: "100%",
@@ -86,8 +89,9 @@ export const Billing = () => {
                   alignItems: "center",
                   padding: "16px",
                   paddingBottom: "16px !important",
-                }}>
-                <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   {/* <Typography
                     sx={{
                       fontSize: "16px",
@@ -105,14 +109,15 @@ export const Billing = () => {
                   <Box>
                     <Typography variant="h6">Tariff</Typography>
                     <Typography
-                      sx={{cursor: "pointer"}}
+                      sx={{ cursor: "pointer" }}
                       onClick={() => {
                         dispatch(settingsModalActions.setTab("fares"));
                       }}
                       variant="h6"
-                      color="success.main">
+                      color="success.main"
+                    >
                       {data?.name}
-                      <Typography variant="subtitle1" sx={{color: "#000"}}>
+                      <Typography variant="subtitle1" sx={{ color: "#000" }}>
                         {numberWithSpaces(data?.price * 12927.17)}
                         {data?.currency?.toUpperCase()}
                       </Typography>
@@ -129,7 +134,8 @@ export const Billing = () => {
                 height: "100%",
                 boxShadow: "none",
                 border: "1px solid rgba(55, 53, 47, 0.06)",
-              }}>
+              }}
+            >
               <CardContent
                 sx={{
                   height: "100%",
@@ -137,8 +143,9 @@ export const Billing = () => {
                   alignItems: "center",
                   padding: "16px",
                   paddingBottom: "16px !important",
-                }}>
-                <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   {/* <HourglassBottom color="warning" fontSize="large" /> */}
                   <img
                     src="img/time.svg"
@@ -164,7 +171,8 @@ export const Billing = () => {
           onClose={handCloseBalance}
           open={addBalance}
           aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-slide-description">
+          aria-describedby="alert-dialog-slide-description"
+        >
           <TopUpBalance
             handleSubmit={handleSubmit}
             onSubmit={onSubmit}

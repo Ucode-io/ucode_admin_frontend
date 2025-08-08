@@ -90,8 +90,9 @@ const CellElementGeneratorForTableView = ({
   }, [field, i18n?.language]);
 
   const isDisabled =
-    field.attributes?.disabled ||
-    !field.attributes?.field_permission?.edit_permission;
+    (field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission) &&
+    !isNewRow;
 
   const defaultValue = useMemo(() => {
     const defaultValue =
@@ -154,6 +155,7 @@ const CellElementGeneratorForTableView = ({
           name={computedSlug}
           fullWidth
           field={field}
+          inputHeight={20}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}

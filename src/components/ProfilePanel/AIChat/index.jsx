@@ -1,5 +1,5 @@
-import {Box, Menu, Typography} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
+import { Box, IconButton, Menu, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import sendToGptService from "../../../services/sendToGptService";
 import GptChat from "./GptChat";
 import UserChat from "./UserChat";
@@ -10,6 +10,9 @@ import { ProjectType } from "./components/ProjectType";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useMcpCellMutation } from "@/services/mcp/mcp.service";
 import { ProjectManagement } from "./components/ProjectManagement";
+import { ArrowBack } from "@mui/icons-material";
+import { Tables } from "./components/Tables";
+import { ENTITY_TYPES } from "./constants";
 
 const EntityCard = ({ onClick, icon, heading, description, bgcolor }) => {
   return (
@@ -46,28 +49,21 @@ export const AIMenu = ({
   handleClose,
   handleKeyDown,
   handleSendClick,
-  showInput,
-  setShowInput,
   handleSuccess = () => {},
   handleError = () => {},
   onExited = () => {},
   appendMessage = () => {},
   handleChangeEntityType = () => {},
   selectedEntityType,
-  ENTITY_TYPES,
   setMessages = () => {},
+  control,
+  errors,
+  handleSubmit,
+  reset,
+  watch,
+  setValue,
 }) => {
   const [disabled, setDisabled] = useState(false);
-  const [shoFields, setShowFields] = useState(false);
-
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-  } = useForm();
 
   const { fields } = useFieldArray({
     control,
@@ -76,11 +72,6 @@ export const AIMenu = ({
       required: true,
     },
   });
-
-  const handleSelectProjectType = () => {
-    setDisabled(true);
-    setShowFields(true);
-  };
 
   const cellMcpMutation = useMcpCellMutation({
     onSuccess: (data) => {
@@ -98,6 +89,7 @@ export const AIMenu = ({
     const requestData = {
       ...data,
       management_system,
+      method: "project",
     };
 
     setMessages((prevMessages) => [
@@ -130,7 +122,6 @@ export const AIMenu = ({
       open={open}
       onClose={() => {
         handleClose();
-        setShowFields(false);
         setDisabled(false);
         reset();
       }}
@@ -156,7 +147,7 @@ export const AIMenu = ({
       <Box
         sx={{
           height: "600px",
-          width: "400px",
+          width: "460px",
           display: "flex",
           flexDirection: "column",
           borderRadius: "10px",
@@ -172,10 +163,28 @@ export const AIMenu = ({
             color: "#000",
             padding: "10px",
             borderBottom: "1px solid #ccc",
+            position: "relative",
           }}
         >
-          <Typography sx={{ marginLeft: "10px" }} variant="h4">
-            Chat
+          {selectedEntityType && (
+            <IconButton
+              color="#475467"
+              onClick={onExited}
+              sx={{ position: "absolute", left: "10px" }}
+            >
+              <ArrowBack htmlColor="#475467" />
+            </IconButton>
+          )}
+          <Typography
+            sx={{
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+            fontSize="16px"
+            lineHeight={1.5}
+            fontWeight={600}
+          >
+            Create with AI
           </Typography>
         </Box>
         <Box
@@ -187,24 +196,34 @@ export const AIMenu = ({
           }}
         >
           {selectedEntityType === ENTITY_TYPES.TEMPLATES && (
-            <ProjectType
-              control={control}
-              disabled={disabled}
-              errors={errors}
-              handleSelectProjectType={handleSelectProjectType}
-              setValue={setValue}
-              watch={watch}
-            />
+            <>
+              <ProjectType
+                control={control}
+                disabled={disabled}
+                errors={errors}
+                setValue={setValue}
+              />
+              {watch("project_type") && (
+                <ProjectManagement
+                  fields={fields}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  setMessages={setMessages}
+                  watch={watch}
+                  control={control}
+                />
+              )}
+            </>
           )}
-          {shoFields && selectedEntityType === ENTITY_TYPES.TEMPLATES && (
-            <ProjectManagement
-              fields={fields}
-              handleSubmit={handleSubmit}
-              onSubmit={onSubmit}
-              setMessages={setMessages}
-              watch={watch}
-              control={control}
-            />
+          {selectedEntityType === ENTITY_TYPES.TABLES && (
+            <>
+              <Tables
+                control={control}
+                disabled={disabled}
+                setChatInputValue={setInputValue}
+                errors={errors}
+              />
+            </>
           )}
           {messages.length > 0 || selectedEntityType ? (
             messages.map((msg, index) =>
@@ -221,7 +240,7 @@ export const AIMenu = ({
                 height: "100%",
                 display: "flex",
                 // alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start",
                 flexDirection: "column",
                 gap: "10px",
                 fontSize: "16px",
@@ -335,7 +354,7 @@ export const AIMenu = ({
             display: "flex",
             alignItems: "center",
             padding: "10px",
-            borderTop: "1px solid #ccc",
+            // borderTop: "1px solid #ccc",
             backgroundColor: "#fff",
           }}
         >
@@ -347,6 +366,8 @@ export const AIMenu = ({
             handleSendClick={handleSendClick}
             inputValue={inputValue}
             handleKeyDown={handleKeyDown}
+            selectedEntityType={selectedEntityType}
+            selectedTable={watch("table")}
           />
           {/* )} */}
           {/* {selectedEntityType === ENTITY_TYPES.TEMPLATES && (
@@ -366,11 +387,6 @@ export const AIMenu = ({
 };
 
 export const useAIChat = () => {
-  const ENTITY_TYPES = {
-    TEMPLATES: "TEMPLATES",
-    MODELS: "MODELS",
-    FUNCTIONS: "FUNCTIONS",
-  };
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [messages, setMessages] = useState([]);
@@ -381,27 +397,17 @@ export const useAIChat = () => {
 
   const [selectedEntityType, setSelectedEntityType] = useState(null);
 
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+  } = useForm();
+
   const handleChangeEntityType = (type) => {
     setSelectedEntityType(type);
-    // setMessages([
-    //   {
-    //     text: "",
-    //     sender: "chat",
-    //     content: (
-    //       <Box>
-    //         <p className={cls.title}>Choose the type of project</p>
-    //         <ProjectTypeSelect
-    //           appendMessage={appendMessage}
-    //           handleChangeEntityType={handleChangeEntityType}
-    //           handleClose={handleClose}
-    //           handleError={handleError}
-    //           handleSuccess={handleSuccess}
-    //           setMessages={setMessages}
-    //         />
-    //       </Box>
-    //     ),
-    //   },
-    // ]);
   };
 
   const handleClick = (event) => {
@@ -434,7 +440,17 @@ export const useAIChat = () => {
     setInputValue("");
     setLoader(false);
     setSelectedEntityType(null);
+    reset();
   };
+
+  const cellMcpMutation = useMcpCellMutation({
+    onSuccess: (data) => {
+      handleSuccess(data);
+    },
+    onError: (error) => {
+      handleError(error?.data?.message || error?.data);
+    },
+  });
 
   const handleSendClick = () => {
     setLoader(true);
@@ -444,22 +460,30 @@ export const useAIChat = () => {
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: userMessage, sender: "user" },
-        { type: "loader", sender: "chat" },
+        { type: "loader", sender: "chat", isProjectType: true },
       ]);
       setInputValue("");
-      sendToGptService
-        .sendText({ promt: userMessage })
-        .then((res) => {
-          updateChatMessage(res);
-          setInputValue("");
-        })
-        .catch((err) => {
-          setMessages((prevMessages) => [
-            ...prevMessages.slice(0, -1),
-            { errorText: err?.data?.data, sender: "chat" },
-          ]);
-          setLoader(false);
-        });
+      if (selectedEntityType === ENTITY_TYPES.TABLES) {
+        const requestData = {
+          prompt: userMessage,
+          method: "table",
+        };
+        cellMcpMutation.mutate(requestData);
+      } else {
+        sendToGptService
+          .sendText({ promt: userMessage })
+          .then((res) => {
+            updateChatMessage(res);
+            setInputValue("");
+          })
+          .catch((err) => {
+            setMessages((prevMessages) => [
+              ...prevMessages.slice(0, -1),
+              { errorText: err?.data?.data, sender: "chat" },
+            ]);
+            setLoader(false);
+          });
+      }
     }
   };
 
@@ -538,8 +562,12 @@ export const useAIChat = () => {
     appendMessage,
     selectedEntityType,
     handleChangeEntityType,
-    ENTITY_TYPES,
     setMessages,
+    control,
+    errors,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
   };
 };
-

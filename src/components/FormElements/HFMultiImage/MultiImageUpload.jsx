@@ -126,7 +126,8 @@ function MultiImageUpload({
                 gap: "10px",
                 padding: drawerDetail ? "0 9.6px" : "0",
                 cursor: disabled ? "not-allowed" : "pointer",
-              }}>
+              }}
+            >
               {value?.map((img, index) => (
                 <>
                   <Box
@@ -138,7 +139,8 @@ function MultiImageUpload({
                       overflow: "hidden",
                       padding: "0 0 0 0",
                     }}
-                    title={parseImgPhoto(img)}>
+                    title={parseImgPhoto(img)}
+                  >
                     <img
                       style={{
                         width: "100%",
@@ -165,9 +167,10 @@ function MultiImageUpload({
                 justifyContent: "center",
                 position: "relative",
                 cursor: disabled ? "not-allowed" : "pointer",
-              }}>
+              }}
+            >
               <img
-                style={{width: "100%", height: "100%", border: "none"}}
+                style={{ width: "100%", height: "100%", border: "none" }}
                 src={value?.[0]}
                 type="text"
               />
@@ -190,7 +193,8 @@ function MultiImageUpload({
                   justifyContent: "center",
                   fontSize: "16px",
                   color: "#fff",
-                }}>
+                }}
+              >
                 {value?.length > 1 ? `${value?.length}+` : value?.length}
               </Box>
             </Box>
@@ -211,7 +215,8 @@ function MultiImageUpload({
                 cursor: disabled ? "not-allowed" : "pointer",
                 justifyContent: "flex-start",
                 alignItems: "center",
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -221,11 +226,12 @@ function MultiImageUpload({
                   fontSize: "10px",
                   gap: "5px",
                   padding: "0 8px",
-                }}>
+                }}
+              >
                 <img
                   src="/img/newUpload.svg"
                   alt="Upload"
-                  style={{width: 22, height: 22}}
+                  style={{ width: 22, height: 22 }}
                 />
               </Box>
             </Box>
@@ -245,7 +251,8 @@ function MultiImageUpload({
                 flexDirection: "column",
                 justifyContent: "center",
                 cursor: disabled ? "not-allowed" : "pointer",
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -254,8 +261,9 @@ function MultiImageUpload({
                   color: "#777",
                   fontSize: "10px",
                   gap: "5px",
-                }}>
-                <AddIcon style={{width: "24px", height: "24px"}} />
+                }}
+              >
+                <AddIcon style={{ width: "24px", height: "24px" }} />
 
                 <span>{t("add_photo")}</span>
               </Box>
@@ -277,9 +285,10 @@ function MultiImageUpload({
               top: "0",
               zIndex: "999",
               background: "white",
-            }}>
+            }}
+          >
             <Button onClick={handleClose}>
-              <CloseIcon style={{width: "24", height: "24px"}} />
+              <CloseIcon style={{ width: "24", height: "24px" }} />
             </Button>
           </Box>
 
@@ -292,7 +301,8 @@ function MultiImageUpload({
                   onClick={(e) => {
                     e.stopPropagation();
                     handleFullScreen(item);
-                  }}>
+                  }}
+                >
                   <img src={item} alt="photo" />
 
                   <button
@@ -301,11 +311,12 @@ function MultiImageUpload({
                       e.stopPropagation();
                       removeImage(item);
                     }}
-                    className={styles.clearBtn}>
-                    <DeleteIcon style={{color: "red"}} />
+                    className={styles.clearBtn}
+                  >
+                    <DeleteIcon style={{ color: "red" }} />
                   </button>
                   <Button className={styles.fullBtn} onClick={handleClose}>
-                    <FullscreenIcon style={{width: "35px", height: "35px"}} />
+                    <FullscreenIcon style={{ width: "35px", height: "35px" }} />
                   </Button>
                 </div>
               ))}
@@ -326,20 +337,21 @@ function MultiImageUpload({
               onClick={(e) => {
                 e.stopPropagation();
                 inputRef.current.click();
-              }}>
+              }}
+            >
               <input
                 type="file"
                 style={{
                   display: "none",
                 }}
-                accept=".jpg, .jpeg, .png, .gif"
+                accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras, .svg"
                 className="hidden"
                 ref={inputRef}
                 tabIndex={tabIndex}
                 autoFocus={tabIndex === 1}
                 onChange={inputChangeHandler}
               />
-              <UploadIcon style={{width: "32px", height: "32px"}} />
+              <UploadIcon style={{ width: "32px", height: "32px" }} />
             </Box>
           </div>
 
@@ -355,14 +367,16 @@ function MultiImageUpload({
               zIndex: "999",
               background: "white",
               width: "100%",
-            }}>
+            }}
+          >
             <Box></Box>
             <Button
               variant="contained"
               onClick={() => {
                 isTableView && updateObject();
                 handleClose();
-              }}>
+              }}
+            >
               {t("save_btn")}
             </Button>
           </Box>

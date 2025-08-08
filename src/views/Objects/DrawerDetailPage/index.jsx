@@ -67,7 +67,7 @@ function DrawerDetailPage({
 
   const [drawerWidth, setDrawerWidth] = useState(() => {
     const savedWidth = localStorage.getItem("drawerWidth");
-    return savedWidth ? parseInt(savedWidth, 10) : 650;
+    return savedWidth ? parseInt(savedWidth, 10) : 1050;
   });
 
   const rootForm = useForm({

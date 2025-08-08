@@ -5,12 +5,12 @@ import {useLocation, useParams, useSearchParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {TabPanel, Tabs} from "react-tabs";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
-import { NewUiViewsWithGroups } from "../../views/table-redesign/views-with-groups";
+import {NewUiViewsWithGroups} from "../../views/table-redesign/views-with-groups";
 import menuService from "../../services/menuService";
-import { listToMap, listToMapWithoutRel } from "../../utils/listToMap";
-import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
+import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
 import constructorViewService from "../../services/constructorViewService";
-import { store } from "../../store";
+import {store} from "../../store";
 
 function DrawerObjectsPage({
   projectInfo,
@@ -94,7 +94,7 @@ function DrawerObjectsPage({
       },
     }
   );
-  console.log("selectedViewwww======> DrawerObjectPage", selectedView);
+
   const {
     data: {
       fieldsMap,

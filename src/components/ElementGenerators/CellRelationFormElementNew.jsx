@@ -56,6 +56,7 @@ const CellRelationFormElementNew = ({
   isTableView = false,
   row,
   newUi,
+  objectIdFromJWT,
 }) => {
   const classes = useStyles();
 
@@ -128,6 +129,7 @@ const CellRelationFormElementNew = ({
               relationfields={relationfields}
               data={data}
               newUi={newUi}
+              objectIdFromJWT={objectIdFromJWT}
             />
           );
         }}
@@ -153,6 +155,7 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
   row,
   newUi,
+  objectIdFromJWT,
 }) => {
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
@@ -180,7 +183,11 @@ const AutoCompleteElement = ({
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
+      background: isBlackBg
+        ? "#2A2D34"
+        : disabled
+          ? "rgb(248, 248, 248)"
+          : "transparent",
       color: isBlackBg ? "#fff" : "",
       width: "100%",
       display: "flex",
@@ -300,6 +307,13 @@ const AutoCompleteElement = ({
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
+
+    if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
+      return uniqueObjects?.filter((item) => {
+        return item?.guid === objectIdFromJWT;
+      });
+    }
+
     return uniqueObjects ?? [];
   }, [allOptions]);
 

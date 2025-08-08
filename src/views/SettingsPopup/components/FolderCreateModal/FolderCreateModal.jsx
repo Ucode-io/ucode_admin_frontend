@@ -1,12 +1,15 @@
 import {Card, Modal, Typography} from "@mui/material";
-import { useQuery, useQueryClient } from "react-query";
-import { store } from "../../../../store";
-import { useForm } from "react-hook-form";
-import { useClientTypeCreateMutation, useClientTypeUpdateMutation } from "../../../../services/clientTypeService";
-import { useTablesListQuery } from "../../../../services/tableService";
+import {useQuery, useQueryClient} from "react-query";
+import {store} from "../../../../store";
+import {useForm} from "react-hook-form";
+import {
+  useClientTypeCreateMutation,
+  useClientTypeUpdateMutation,
+} from "../../../../services/clientTypeService";
+import {useTablesListQuery} from "../../../../services/tableService";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
-import { useMemo } from "react";
-import { Clear } from "@mui/icons-material";
+import {useMemo} from "react";
+import {Clear} from "@mui/icons-material";
 import FRow from "../../../../components/FormElements/FRow";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
@@ -14,13 +17,24 @@ import HFAutocomplete from "../../../../components/FormElements/HFAutocomplete";
 import HFNumberField from "../../../../components/FormElements/HFNumberField";
 import CreateButton from "../../../../components/Buttons/CreateButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
+import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
+import {useFieldsListQuery} from "../../../../services/constructorFieldService";
+
+const noPermittedFields = [
+  "guid",
+  "folder_id",
+  "client_type_id",
+  "role_id",
+  " user_id_auth",
+];
 
 export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
   const company = store.getState().company;
   const queryClient = useQueryClient();
   const createType = modalType === "CREATE";
+  const projectId = store.getState().company.projectId;
 
-  const {control, handleSubmit, setValue} = useForm({
+  const {control, handleSubmit, setValue, watch} = useForm({
     defaultValues: {
       project_id: company.projectId,
       id: clientType.id,
@@ -30,6 +44,7 @@ export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
       self_recover: clientType.self_recover ?? false,
       self_register: clientType.self_register ?? false,
       table_slug: clientType.table_slug ?? "",
+      columns: clientType?.columns ?? [],
     },
   });
 
@@ -75,6 +90,19 @@ export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
     }
   );
 
+  const {data: fieldsData} = useFieldsListQuery(
+    {
+      queryParams: {
+        enabled: Boolean(watch("table_slug")),
+      },
+      params: {
+        table_slug: watch("table_slug"),
+        "project-id": projectId,
+      },
+    },
+    watch("table_slug")
+  );
+
   const onSubmit = (values) => {
     const data = {
       ...values,
@@ -95,6 +123,15 @@ export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
       label: item.label,
     }));
   }, [projectTables]);
+
+  const computedFieldsListOptions = useMemo(() => {
+    return fieldsData?.fields
+      ?.filter((el) => !noPermittedFields?.includes(el?.slug))
+      ?.map((field) => ({
+        label: field?.label || field?.view_fields?.[0]?.label,
+        value: field?.id,
+      }));
+  }, [fieldsData]);
 
   return (
     <div>
@@ -144,7 +181,7 @@ export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
               control={control}
               name="self_register"
             />
-            <FRow label="Table" required>
+            <FRow label="Table">
               <HFAutocomplete
                 name="table_slug"
                 control={control}
@@ -163,6 +200,17 @@ export const FolderCreateModal = ({closeModal, clientType = {}, modalType}) => {
                 options={tableOptions}
               />
             </FRow>
+
+            {Boolean(clientType?.table_slug) && (
+              <FRow label="Fields">
+                <HFMultipleSelect
+                  name="columns"
+                  control={control}
+                  options={computedFieldsListOptions}
+                  placeholder="Fields List"
+                />
+              </FRow>
+            )}
             <div className="btns-row">
               {createType ? (
                 <CreateButton

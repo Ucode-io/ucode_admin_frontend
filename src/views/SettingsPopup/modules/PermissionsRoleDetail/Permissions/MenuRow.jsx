@@ -1,15 +1,21 @@
-import {useState} from "react";
+import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
 import { useMemo } from "react";
 import { CTableCell, CTableHeadRow } from "../../../../../components/CTable";
-import { Box, Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useMenuPermissionGetByIdQuery } from "../../../../../services/rolePermissionService";
 import { store } from "../../../../../store";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.scss";
 import clsx from "clsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import IconGeneratorIconjs from "../../../../../components/IconPicker/IconGeneratorIconjs";
+import IconGenerator from "../../../../../components/IconPicker/IconGenerator";
+import menuSettingsService from "../../../../../services/menuSettingsService";
+import { useQuery } from "react-query";
+import { menuAccordionActions } from "../../../../../store/menus/menus.slice";
+import { useMenuListQuery } from "../../../../../services/menuService";
 
 const MenuCheckbox = ({ label, onChange, checked }) => {
   return (
@@ -43,8 +49,12 @@ const MenuRow = ({
   childIndex = null,
   watch,
   name = `menus.${appIndex}.children`,
+  icon,
 }) => {
+  const dispatch = useDispatch();
+
   const roleId = useSelector((state) => state.settingsModal.roleId);
+  const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
 
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
   const [parentId, setParentId] = useState("");
@@ -53,35 +63,68 @@ const MenuRow = ({
   const { i18n } = useTranslation();
   const [innerName, setInnerName] = useState(null);
 
-  const { data: permissionData, isLoading: permissionGetByIdLoading } =
-    useMenuPermissionGetByIdQuery({
-      projectId: projectId,
-      roleId: roleId,
-      parentId: parentId,
-      queryParams: {
-        enabled: !!parentId,
-        onSuccess: (res) => {
-          // const obj = {};
+  function computeMenuChilds(id, children = []) {
+    const updated = { ...menuChilds };
+    updated[id] = { children };
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  }
 
-          // res?.menus?.forEach((item) => {
-          //   obj[item?.id] = item.permission;
-          // });
-
-          // setCheckBoxValues((prev) => ({ ...prev, ...obj }));
-
-          setData(res?.menus);
-          if (!parentId) {
-            setValue(`menus`, res?.menus);
+  const { isLoading: permissionGetByIdLoading } = useMenuListQuery({
+    params: {
+      parent_id: parentId,
+    },
+    queryParams: {
+      enabled: !!parentId,
+      onSuccess: (res) => {
+        setData(
+          res.menus?.map((item) => ({
+            ...item,
+            permission: item?.data?.permission,
+          }))
+        );
+        if (!parentId) {
+          setValue(`menus`, res?.menus);
+        } else {
+          if (innerName) {
+            setValue(innerName, res?.menus);
           } else {
-            if (innerName) {
-              setValue(innerName, res?.menus);
-            } else {
-              setValue(name, res?.menus);
-            }
+            setValue(name, res?.menus);
           }
-        },
+        }
       },
-    });
+    },
+  });
+
+  // const { data: permissionData, isLoading: permissionGetByIdLoading } =
+  //   useMenuPermissionGetByIdQuery({
+  //     projectId: projectId,
+  //     roleId: roleId,
+  //     parentId: parentId,
+  //     queryParams: {
+  //       enabled: !!parentId,
+  //       onSuccess: (res) => {
+  //         console.log({ res }, "OLD");
+  //         // const obj = {};
+
+  //         // res?.menus?.forEach((item) => {
+  //         //   obj[item?.id] = item.permission;
+  //         // });
+
+  //         // setCheckBoxValues((prev) => ({ ...prev, ...obj }));
+
+  //         setData(res?.menus);
+  //         if (!parentId) {
+  //           setValue(`menus`, res?.menus);
+  //         } else {
+  //           if (innerName) {
+  //             setValue(innerName, res?.menus);
+  //           } else {
+  //             setValue(name, res?.menus);
+  //           }
+  //         }
+  //       },
+  //     },
+  //   });
 
   const renderMenuRows = (items) => {
     return items?.map((item, index) => {
@@ -97,6 +140,7 @@ const MenuRow = ({
           changedData={changedData}
           setValue={setValue}
           watch={watch}
+          icon={item?.icon}
           name={
             item.type === "FOLDER"
               ? level === 1
@@ -158,6 +202,15 @@ const MenuRow = ({
     }
   };
 
+  function isValidUrl(str) {
+    try {
+      const url = new URL(str);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) {
+      return false;
+    }
+  }
+
   return (
     <>
       {app?.type === "FOLDER" ? (
@@ -175,6 +228,7 @@ const MenuRow = ({
                 setInnerName(`${name}.${clickedChildFolderIndex}.children`);
               }
             }}
+            className={styles.tableHeadCell}
           >
             <Box
               sx={{
@@ -185,24 +239,57 @@ const MenuRow = ({
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                paddingLeft: `${level > 1 ? level * 7 : 0}px`,
               }}
             >
-              {app?.attributes?.[`label_${i18n?.language}`] ??
-                app?.attributes?.[`title_${i18n?.language}`] ??
-                app.label}
+              <span>
+                {icon?.includes(":") ? (
+                  <IconGeneratorIconjs
+                    icon={
+                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                    }
+                    size={16}
+                    style={{
+                      color: "#475467",
+                    }}
+                  />
+                ) : isValidUrl(icon) ? (
+                  <img width={"24px"} height={"24px"} src={icon} />
+                ) : (
+                  <IconGenerator
+                    icon={
+                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                    }
+                    size={16}
+                    style={{
+                      color: "#475467",
+                    }}
+                  />
+                )}
+              </span>
+              <span style={{ marginLeft: "10px" }}>
+                {app?.attributes?.[`label_${i18n?.language}`] ??
+                  app?.attributes?.[`title_${i18n?.language}`] ??
+                  app.label}
+              </span>
               <Button
                 variant="text"
                 style={{
                   padding: "0",
                   justifyContent: "flex-end",
+                  marginLeft: "auto",
                 }}
                 disabled
               >
-                <ArrowForwardIosIcon
-                  style={{
-                    transform: `rotate(${tableBlockIsOpen ? 90 : -90}deg)`,
-                  }}
-                />
+                {permissionGetByIdLoading ? (
+                  <CircularProgress color="inherit" size="20px" />
+                ) : (
+                  <ArrowForwardIosIcon
+                    style={{
+                      transform: `rotate(${tableBlockIsOpen ? 90 : -90}deg)`,
+                    }}
+                  />
+                )}
               </Button>
             </Box>
           </CTableCell>
@@ -273,14 +360,40 @@ const MenuRow = ({
                 lineHeight: "20px",
                 color: "#475467",
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
-                paddingLeft: `${level * 7}px`,
+                paddingLeft: `${level > 1 ? level * 7 : 0}px`,
               }}
             >
-              {app?.attributes?.[`label_${i18n?.language}`] ??
-                app?.attributes?.[`title_${i18n?.language}`] ??
-                app.label}
+              <span>
+                {icon?.includes(":") ? (
+                  <IconGeneratorIconjs
+                    icon={
+                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                    }
+                    size={16}
+                    style={{
+                      color: "#475467",
+                    }}
+                  />
+                ) : isValidUrl(icon) ? (
+                  <img width={"24px"} height={"24px"} src={icon} />
+                ) : (
+                  <IconGenerator
+                    icon={
+                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                    }
+                    size={16}
+                    style={{
+                      color: "#475467",
+                    }}
+                  />
+                )}
+              </span>
+              <span style={{ marginLeft: "10px" }}>
+                {app?.attributes?.[`label_${i18n?.language}`] ??
+                  app?.attributes?.[`title_${i18n?.language}`] ??
+                  app.label}
+              </span>
             </Box>
           </CTableCell>
           <CTableCell className={clsx(styles.tbBadgeCell, styles.tbCell)}>

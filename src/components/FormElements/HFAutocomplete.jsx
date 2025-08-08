@@ -48,7 +48,7 @@ const HFAutocomplete = ({
         fieldState: {error},
       }) => {
         return (
-          <FormControl style={{ width }}>
+          <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
             <CAutoCompleteSelect
               value={value}

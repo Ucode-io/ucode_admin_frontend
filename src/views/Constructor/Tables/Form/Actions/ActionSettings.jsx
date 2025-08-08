@@ -90,6 +90,10 @@ const ActionSettings = ({
     }
   );
 
+  const computedFunction = useMemo(() => {
+    return functions?.find((item) => item?.value === watch("event_path"));
+  }, [functions, watch("event_path")]);
+
   const {data: microfrontend} = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
@@ -149,7 +153,7 @@ const ActionSettings = ({
     if (formType === "CREATE") return;
     reset(action);
   }, [action, formType, reset]);
-  // console.log('functionTypefunctionType', functionType);
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -190,11 +194,11 @@ const ActionSettings = ({
                 options={functionsOptions}
                 disabled={false}
                 required
-                groupBy={(option) => option?.type}
+                // groupBy={(option) => option?.type}
                 customChange={(value) => setFunctionType(value?.functionType)}
               />
             </FRow>
-            {functionType === "WORKFLOW" && (
+            {computedFunction?.functionType === "WORKFLOW" && (
               <FRow label="Path" required>
                 <HFTextField
                   required={true}

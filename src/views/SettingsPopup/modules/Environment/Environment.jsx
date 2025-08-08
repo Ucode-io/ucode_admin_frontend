@@ -1,7 +1,4 @@
-import { Box } from "@mui/material";
-import { ContentTitle } from "../../components/ContentTitle";
-import { useEnvironmentProps } from "./useEnvironmentProps";
-import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import {Box, Switch} from "@mui/material";
 import {
   CTable,
   CTableBody,
@@ -9,13 +6,19 @@ import {
   CTableHead,
   CTableRow,
 } from "../../../../components/CTable";
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-// import { Delete } from "@mui/icons-material";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {ContentTitle} from "../../components/ContentTitle";
+import {useEnvironmentProps} from "./useEnvironmentProps";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import TableRowButton from "../../../../components/TableRowButton";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import authService from "../../../../services/auth/authService";
+import {store} from "../../../../store";
+import {authActions} from "../../../../store/auth/auth.slice";
+import {companyActions} from "../../../../store/company/company.slice";
+import {Button} from "../../components/Button";
 import cls from "./styles.module.scss";
-import { Button } from "../../components/Button";
+import SyncIcon from "@mui/icons-material/Sync";
 
 export const Environment = () => {
   const {
@@ -27,6 +30,34 @@ export const Environment = () => {
     deleteEnvironment,
     navigateToCreateForm,
   } = useEnvironmentProps();
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+  const envId = useSelector((state) => state?.company?.environmentId);
+
+  const onSelectEnvironment = (environment = {}) => {
+    const params = {
+      refresh_token: auth?.refreshToken,
+      env_id: environment.id,
+      project_id: environment.project_id,
+      for_env: true,
+    };
+
+    dispatch(companyActions.setEnvironmentItem(environment));
+    dispatch(companyActions.setEnvironmentId(environment.id));
+    authService
+      .updateToken({...params, env_id: environment.id}, {...params})
+      .then((res) => {
+        dispatch(companyActions.setProjectId(environment.project_id));
+        store.dispatch(authActions.setTokens(res));
+        navigate("/");
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <Box>
@@ -60,13 +91,13 @@ export const Environment = () => {
         <CTableBody
           loader={environmentLoading}
           columnsCount={4}
-          dataLength={environments?.environments?.length}
-        >
+          dataLength={environments?.environments?.length}>
           {environments?.environments?.map((element, index) => (
             <CTableRow
               key={element.id}
-              onClick={() => navigateToEditForm(element.id)}
-            >
+              onClick={() => {
+                navigateToEditForm(element.id);
+              }}>
               <CTableCell className={cls.tBodyCell}>{index + 1}</CTableCell>
               <CTableCell className={cls.tBodyCell}>
                 <div
@@ -74,8 +105,7 @@ export const Environment = () => {
                     display: "flex",
                     alignItems: "center",
                     columnGap: "8px",
-                  }}
-                >
+                  }}>
                   <span
                     style={{
                       background: element.display_color,
@@ -83,22 +113,45 @@ export const Environment = () => {
                       height: "10px",
                       display: "block",
                       borderRadius: "50%",
-                    }}
-                  ></span>
+                    }}></span>
                   {element?.name}
                 </div>
               </CTableCell>
               <CTableCell className={cls.tBodyCell}>
                 {element?.description}
               </CTableCell>
-              <CTableCell className={cls.tBodyCell}>
+              <CTableCell
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                style={{
+                  display: "flex",
+                  gap: "5px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                className={cls.tBodyCell}>
+                {element?.id !== envId && (
+                  <button
+                    className={cls.btnSync}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (e.target.checked) {
+                        onSelectEnvironment(element);
+                      }
+                    }}>
+                    <span>
+                      <SyncIcon color="inherit" />
+                    </span>
+                  </button>
+                )}
+
                 <button
                   className={cls.btn}
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteEnvironment(element.id);
-                  }}
-                >
+                  }}>
                   <span>
                     <DeleteOutlinedIcon color="inherit" />
                   </span>

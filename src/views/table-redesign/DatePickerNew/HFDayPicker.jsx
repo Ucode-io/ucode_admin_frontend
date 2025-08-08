@@ -1,8 +1,10 @@
-import {DatePicker, DatePickerInput} from "@mantine/dates";
-import {isValid} from "date-fns";
+import {DatePicker, TimeInput} from "@mantine/dates";
 import {Controller} from "react-hook-form";
+import {useState} from "react";
+import {isValid, setHours, setMinutes} from "date-fns";
 
 export const HFDayPicker = ({
+  withTime = false,
   control,
   name,
   defaultValue = "",
@@ -20,26 +22,65 @@ export const HFDayPicker = ({
       }}
       defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
       render={({field: {onChange, value}}) => {
+        const initialDate = getValue(value) || new Date();
+        const [date, setDate] = useState(initialDate);
+        const [time, setTime] = useState(
+          `${pad(date.getHours())}:${pad(date.getMinutes())}`
+        );
+
+        const handleDateChange = (newDate) => {
+          if (!newDate) return;
+          const [hours, minutes] = time.split(":").map(Number);
+          const fullDate = setMinutes(setHours(newDate, hours), minutes);
+          setDate(newDate);
+          onChange(fullDate);
+          updateObject();
+        };
+
+        const handleTimeChange = (val) => {
+          setTime(val);
+          const [hours, minutes] = val.split(":").map(Number);
+          const fullDate = setMinutes(setHours(date, hours), minutes);
+          onChange(fullDate);
+          updateObject();
+        };
+
         return (
-          <DatePicker
-            id="dateField"
-            value={getValue(value)}
-            valueFormat="DD.MM.YYYY"
-            rightSection={<img src="/table-icons/date.svg" alt="" />}
-            onChange={(value) => {
-              console.log("valueeeee", value);
-              onChange(value);
-              updateObject();
-            }}
-            styles={{input: {background: "inherit", border: "none"}}}
-            highlightToday
-            disabled={disabled}
-          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              padding: "5px",
+            }}>
+            <DatePicker
+              type="default"
+              value={date}
+              onChange={handleDateChange}
+              valueFormat="DD.MM.YYYY"
+              styles={{calendarHeaderControl: {fontSize: 14}}}
+              disabled={disabled}
+              highlightToday
+            />
+            {withTime && (
+              <TimeInput
+                value={time}
+                onChange={(event) =>
+                  handleTimeChange(event.currentTarget.value)
+                }
+                disabled={disabled}
+                format="24"
+                clearable={false}
+              />
+            )}
+          </div>
         );
       }}
     />
   );
 };
+
+const pad = (n) => n.toString().padStart(2, "0");
 
 const getValue = (value) => {
   if (!value || value === "CURRENT_TIMESTAMP") return null;
@@ -47,27 +88,8 @@ const getValue = (value) => {
   try {
     if (typeof value === "string") {
       if (value.toLowerCase().includes("now")) return new Date();
-      if (value.includes("Z")) {
-        const parsedISO = new Date(value);
-        if (isValid(parsedISO)) {
-          return parsedISO;
-        }
-      } else {
-        const parsedISO = new Date(value);
-        return parsedISO;
-      }
-
-      const formats = [
-        "yyyy-MM-dd HH:mm",
-        "dd.MM.yyyy HH:mm",
-        "yyyy-MM-dd'T'HH:mm:ssX",
-        "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-      ];
-
-      for (const fmt of formats) {
-        const parsedDate = parse(value, fmt, new Date());
-        if (isValid(parsedDate)) return parsedDate;
-      }
+      const parsed = new Date(value);
+      if (isValid(parsed)) return parsed;
     }
     return null;
   } catch (e) {

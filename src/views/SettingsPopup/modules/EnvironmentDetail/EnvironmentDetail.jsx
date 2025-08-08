@@ -1,15 +1,14 @@
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import FRow from "../../../../components/FormElements/FRow";
 import HFTextField from "../../../../components/FormElements/HFTextField";
-import { generateLangaugeText } from "../../../../utils/generateLanguageText";
-import { ContentTitle } from "../../components/ContentTitle";
-import { useEnvironmentDetailProps } from "./useEnvironmentDetailProps";
+import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {ContentTitle} from "../../components/ContentTitle";
+import {useEnvironmentDetailProps} from "./useEnvironmentDetailProps";
 import NewColorInput from "../../../../components/FormElements/HFNewColorPicker";
-import { SaveCancelBtns } from "../../components/SaveCancelBtns";
+import {SaveCancelBtns} from "../../components/SaveCancelBtns";
 import cls from "./styles.module.scss";
 
 export const EnvironmentDetail = () => {
-
   const {
     lang,
     i18n,
@@ -28,8 +27,7 @@ export const EnvironmentDetail = () => {
           envId
             ? mainForm.watch("name")
             : generateLangaugeText(lang, i18n?.language, "Create new")
-        }
-      >
+        }>
         {generateLangaugeText(lang, i18n?.language, "Environments") ||
           "Environments"}
       </ContentTitle>
@@ -37,15 +35,13 @@ export const EnvironmentDetail = () => {
       <Box>
         <form
           onSubmit={mainForm.handleSubmit(onSubmit)}
-          style={{ overflow: "auto" }}
-        >
+          style={{overflow: "auto"}}>
           {/* <ContentTitle>{generateLangaugeText(lang, i18n?.language, "Details") || "Details"}</ContentTitle> */}
           <Box maxWidth={500}>
             <FRow
               label={"Названия"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <HFTextField
                 disabledHelperText
                 name="name"
@@ -57,8 +53,7 @@ export const EnvironmentDetail = () => {
             <FRow
               label={"Цвет"}
               componentClassName="flex gap-2 align-center"
-              required
-            >
+              required>
               <Box className={cls.colorpicker}>
                 <NewColorInput
                   control={mainForm.control}

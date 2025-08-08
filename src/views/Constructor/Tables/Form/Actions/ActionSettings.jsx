@@ -1,9 +1,9 @@
 import {Close} from "@mui/icons-material";
 import {Box, IconButton} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete";
@@ -17,31 +17,31 @@ import styles from "./style.module.scss";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import TableActions from "./TableActions";
 import requestV2 from "../../../../../utils/requestV2";
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import useDebounce from "../../../../../hooks/useDebounce";
-import { useMicrofrontendListQuery } from "../../../../../services/microfrontendService";
+import {useMicrofrontendListQuery} from "../../../../../services/microfrontendService";
 
 const actionTypeList = [
-  { label: "HTTP", value: "HTTP" },
-  { label: "after", value: "after" },
-  { label: "before", value: "before" },
+  {label: "HTTP", value: "HTTP"},
+  {label: "after", value: "after"},
+  {label: "before", value: "before"},
 ];
 const methodList = [
-  { label: "GETLIST", value: "GETLIST" },
-  { label: "UPDATE", value: "UPDATE" },
-  { label: "CREATE", value: "CREATE" },
-  { label: "DELETE", value: "DELETE" },
-  { label: "MULTIPLE_UPDATE", value: "MULTIPLE_UPDATE" },
-  { label: "APPEND_MANY2MANY", value: "APPEND_MANY2MANY" },
-  { label: "DELETE_MANY2MANY", value: "DELETE_MANY2MANY" },
+  {label: "GETLIST", value: "GETLIST"},
+  {label: "UPDATE", value: "UPDATE"},
+  {label: "CREATE", value: "CREATE"},
+  {label: "DELETE", value: "DELETE"},
+  {label: "MULTIPLE_UPDATE", value: "MULTIPLE_UPDATE"},
+  {label: "APPEND_MANY2MANY", value: "APPEND_MANY2MANY"},
+  {label: "DELETE_MANY2MANY", value: "DELETE_MANY2MANY"},
 ];
 
 const typeList = [
-  { label: "TABLE", value: "TABLE" },
-  { label: "OBJECTID", value: "OBJECTID" },
-  { label: "HARDCODE", value: "HARDCODE" },
+  {label: "TABLE", value: "TABLE"},
+  {label: "OBJECTID", value: "OBJECTID"},
+  {label: "HARDCODE", value: "HARDCODE"},
 ];
 
 const ActionSettings = ({
@@ -52,12 +52,13 @@ const ActionSettings = ({
   formType,
   height,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const languages = useSelector((state) => state.languages.list);
   const [loader, setLoader] = useState(false);
   const [debounceValue, setDebouncedValue] = useState("");
+  const [functionType, setFunctionType] = useState("");
 
-  const { handleSubmit, control, reset, watch, setValue } = useForm({
+  const {handleSubmit, control, reset, watch, setValue} = useForm({
     defaultValues: {
       table_slug: tableSlug,
     },
@@ -65,7 +66,7 @@ const ActionSettings = ({
 
   const action_type = watch("action_type");
 
-  const { data: functions = [] } = useQuery(
+  const {data: functions = []} = useQuery(
     ["GET_FUNCTIONS_LIST", debounceValue],
     () => {
       return constructorFunctionService.getListV2({
@@ -82,19 +83,25 @@ const ActionSettings = ({
           value: el["id"],
           label: el["name"],
           type: "Functions",
+          functionType: el?.type,
         }));
         // return listToOptions(res.functions, "name", "id");
       },
     }
   );
 
-  const { data: microfrontend } = useMicrofrontendListQuery();
+  const computedFunction = useMemo(() => {
+    return functions?.find((item) => item?.value === watch("event_path"));
+  }, [functions, watch("event_path")]);
+
+  const {data: microfrontend} = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
     return microfrontend?.functions?.map((item, index) => ({
       label: item.name,
       value: item.id,
       type: "Micro frontend",
+      functionType: item?.type,
     }));
   }, [microfrontend]);
 
@@ -126,7 +133,7 @@ const ActionSettings = ({
       })
       .catch(() => setLoader(false));
   };
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const submitHandler = (values) => {
     const computedValues = {
       ...values,
@@ -157,19 +164,17 @@ const ActionSettings = ({
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{ height }}>
+      <div className={styles.settingsBlockBody} style={{height}}>
         <form
           onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
+          className={styles.fieldSettingsForm}>
           <div className="p-2">
             <FRow label="Icon" required>
               <HFIconPicker control={control} required name="icon" />
             </FRow>
             <FRow label="Label" required>
               <Box
-                style={{ display: "flex", flexDirection: "column", gap: "6px" }}
-              >
+                style={{display: "flex", flexDirection: "column", gap: "6px"}}>
                 {languages?.map((lang) => (
                   <HFTextField
                     name={`attributes.label_${lang?.slug}`}
@@ -189,18 +194,22 @@ const ActionSettings = ({
                 options={functionsOptions}
                 disabled={false}
                 required
-                groupBy={(option) => option?.type}
+                // groupBy={(option) => option?.type}
+                customChange={(value) => setFunctionType(value?.functionType)}
               />
             </FRow>
-            <FRow label="Redirect url">
-              <HFTextField
-                name="url"
-                control={control}
-                placeholder="Redirect url"
-                options={functions}
-                fullWidth
-              />
-            </FRow>
+            {computedFunction?.functionType === "WORKFLOW" && (
+              <FRow label="Path" required>
+                <HFTextField
+                  required={true}
+                  name="path"
+                  control={control}
+                  placeholder="Path"
+                  options={functions}
+                  fullWidth
+                />
+              </FRow>
+            )}
             <FRow label="Action type">
               <HFSelect
                 name="action_type"
@@ -246,10 +255,9 @@ const ActionSettings = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{ width: "100%" }}
+              style={{width: "100%"}}
               onClick={handleSubmit(submitHandler)}
-              loader={loader}
-            >
+              loader={loader}>
               Save
             </PrimaryButton>
           </div>

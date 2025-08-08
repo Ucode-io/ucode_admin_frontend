@@ -72,6 +72,7 @@ const RelationField = ({
             isMulti={isMulti}
             required={required}
             activeLang={activeLang}
+            updateObject={updateObject}
           />
         )}
       />
@@ -361,17 +362,19 @@ const AutoCompleteElement = ({
       const val = value;
 
       setValue(isMulti ? val?.map((el) => el.guid) : (val?.guid ?? null));
+      updateObject();
       setLocalValue(isMulti ? val : val?.guid ? [val] : null);
       if (!field?.attributes?.autofill) return;
 
       field.attributes.autofill.forEach(({field_from, field_to}) => {
         setFormValue(field_to, get(val, field_from));
+        updateObject();
       });
       setPage(1);
     }
   };
 
-  const inputUpdateObject = useDebounce(() => updateObject(), 500);
+  // const inputUpdateObject = useDebounce(() => updateObject(), 500);
 
   const setClientTypeValue = () => {
     const value = options?.find((item) => item?.guid === clientTypeID);
@@ -459,6 +462,7 @@ const AutoCompleteElement = ({
       computedValueMulti?.length > localValue?.length
     ) {
       setLocalValue(computedValueMulti);
+      updateObject();
     }
   }, [computedValueMulti]);
 

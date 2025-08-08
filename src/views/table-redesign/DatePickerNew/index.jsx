@@ -8,15 +8,14 @@ import HFMonthPicker from "./HFMonthPicker";
 import HFQuarterPicker from "./HFQuarterPicker";
 import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
-import {Controller, useWatch} from "react-hook-form";
+import {useWatch} from "react-hook-form";
+import {Lock} from "@mui/icons-material";
 
 function HFDatePickerNew({
-  isFormEdit,
-  isBlackBg,
+  withTime = false,
   control,
   name,
   field,
-  showCopyBtn,
   disabled = false,
   required = false,
   placeholder = "",
@@ -44,41 +43,58 @@ function HFDatePickerNew({
     <>
       <Box>
         <Box
-          onClick={handleClick}
+          onClick={(e) => {
+            !disabled && handleClick(e);
+          }}
           sx={{
             display: "flex",
             alignItems: "center",
+            justifyContent: "space-between",
             gap: "8px",
             padding: "2px 8px",
             cursor: "pointer",
             fontSize: "12px",
             height: "32px",
           }}>
-          <span>
-            {isValidDate(value) ? (
-              `${format(new Date(value), "dd.MM.yyyy")}`
-            ) : (
-              <span style={{color: "#909EAB"}}>
-                {"DD.MM.YYYY - DD.MM.YYYY"}
-              </span>
-            )}
-          </span>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}>
+            <span>
+              {isValidDate(value) ? (
+                `${withTime ? format(new Date(value), "dd.MM.yyyy HH:mm") : format(new Date(value), "dd.MM.yyyy")}`
+              ) : (
+                <span style={{color: "#909EAB"}}>{""}</span>
+              )}
+            </span>
 
-          {Boolean(value?.$gte && value?.$lt) && (
-            <Box
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange(undefined);
-              }}
-              sx={{
-                height: "18px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <CloseIcon style={{height: "16px", width: "16px"}} />
+            {/* {Boolean(value) && (
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange(undefined);
+                }}
+                sx={{
+                  height: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginLeft: "10px",
+                }}>
+                <CloseIcon style={{height: "16px", width: "16px"}} />
+              </Box>
+            )} */}
+          </Box>
+
+          {Boolean(disabled) && (
+            <Box sx={{marginRight: "20px"}}>
+              <Lock />
             </Box>
           )}
+          <Box>
+            <img src="/table-icons/date-time.svg" alt="" />
+          </Box>
         </Box>
 
         <Popover
@@ -91,8 +107,8 @@ function HFDatePickerNew({
           }}>
           <Box
             sx={{
-              width: "205px",
-              height: "250px",
+              minWidth: "210px",
+              minHeight: "250px",
               border: "1px solid #eee",
               borderRadius: "8px",
             }}>
@@ -109,38 +125,37 @@ function HFDatePickerNew({
                   name={name}
                   field={field}
                   placeholder={field?.label}
-                  //   value={value}
                   updateObject={updateObject}
-                  withTime={true}
+                  withTime={withTime}
                 />
               </TabPanel>
-              {/* <TabPanel sx={{height: "100px", width: "100%"}}>
+              <TabPanel sx={{height: "100px", width: "100%"}}>
                 <HFMonthPicker
+                  control={control}
+                  name={name}
                   field={field}
                   placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
-                  withTime={true}
+                  updateObject={updateObject}
                 />
               </TabPanel>
               <TabPanel sx={{height: "100px", width: "100%"}}>
                 <HFQuarterPicker
+                  control={control}
+                  name={name}
                   field={field}
                   placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
-                  withTime={true}
+                  updateObject={updateObject}
                 />
               </TabPanel>
               <TabPanel sx={{height: "100px", width: "100%"}}>
                 <HFYearPicker
+                  control={control}
+                  name={name}
                   field={field}
                   placeholder={field?.label}
-                  value={value}
-                  onChange={(val) => onChange(val, name)}
-                  withTime={true}
+                  updateObject={updateObject}
                 />
-              </TabPanel> */}
+              </TabPanel>
             </Tabs>
           </Box>
         </Popover>

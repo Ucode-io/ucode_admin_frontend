@@ -40,6 +40,7 @@ import {useFieldsListQuery} from "../../services/constructorFieldService";
 import userService from "../../services/userService";
 import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import styles from "./style.module.scss";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 function InviteModal({
   isOpen,
@@ -59,7 +60,14 @@ function InviteModal({
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [allowPassword, setAllowPassword] = useState("noShow");
-  const clientTypeId = users?.find((el) => el?.id === guid)?.client_type_id;
+  const clientTypeID = users?.find((el) => el?.id === guid)?.client_type_id;
+  const clientTypeId =
+    clientTypeID ??
+    mainForm.getValues()?.client_type_id?.guid ??
+    selectedClientType?.client_type_id;
+
+  const roleId =
+    mainForm.getValues()?.role_id?.guid ?? selectedClientType?.guid;
 
   const handleClose = () => {
     onClose();
@@ -139,7 +147,7 @@ function InviteModal({
     notifyButton();
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${selectedClientType?.guid}&client_type_id=${selectedClientType?.client_type_id}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}`
       );
     } catch (err) {
       console.error("Failed to copy!", err);
@@ -196,7 +204,7 @@ function InviteModal({
 
             <ModalBody padding={"0 15px"}>
               <>
-                {tabIndex === 3 &&
+                {/* {tabIndex === 3 &&
                   mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
                     <Button
                       onClick={copyToClipboard}
@@ -213,7 +221,7 @@ function InviteModal({
                       />
                       Invite Link
                     </Button>
-                  )}
+                  )} */}
                 <Tabs
                   isLazy={false}
                   index={tabIndex}
@@ -331,7 +339,22 @@ function InviteModal({
                       />
                     </TabPanel>
 
-                    <TabPanel pt={"2px"}></TabPanel>
+                    <TabPanel p={"0"}>
+                      <Flex gap={"5px"} alignItems={"center"}>
+                        <Input
+                          disabled
+                          value={`${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}`}
+                          mt={"12px"}
+                          h={"38px"}
+                        />
+                        <Button
+                          onClick={copyToClipboard}
+                          mt={"12px"}
+                          h={"38px"}>
+                          <ContentCopyIcon />
+                        </Button>
+                      </Flex>
+                    </TabPanel>
 
                     <Box mt={"10px"}>
                       <TypesComponent

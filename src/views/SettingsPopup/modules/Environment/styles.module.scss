@@ -21,11 +21,38 @@
   color: #475467;
   background-color: transparent;
   cursor: pointer;
-  transition: color 0.3s ease, border-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease;
 
   &:hover {
     color: rgb(235, 87, 87);
     border-color: rgb(235, 87, 87);
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.btnSync {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid rgba(145, 158, 171, 0.32);
+  border-radius: 6px;
+  color: #475467;
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease;
+
+  &:hover {
+    color: #2383e2;
+    border-color: #2383e2;
   }
 
   span {

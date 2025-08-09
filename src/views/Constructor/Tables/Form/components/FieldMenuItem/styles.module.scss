@@ -6,12 +6,12 @@
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(243, 243, 243, 0.5);
+    background-color: #F2F4F7;
   }
 }
 
 .item.active {
-  background-color: rgba(243, 243, 243, 0.5);
+  background-color: #F2F4F7;
 }
 
 .value {

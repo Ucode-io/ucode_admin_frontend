@@ -10,6 +10,7 @@ import HFTextField from "@/components/FormElements/HFTextField";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { math } from "@/utils/constants/fieldTypes";
 import { getColumnIconPath } from "../../../../../../table-redesign/icons";
+import { SearchInput } from "../../../components/SearchInput";
 
 export const FormulaField = ({
   control,
@@ -253,17 +254,8 @@ export const FormulaField = ({
               "Fields list"}
             :
           </h2> */}
-          <Box className={cls.fieldSearchContainer}>
-            <input
-              className={cls.fieldSearch}
-              type="text"
-              value={search}
-              onChange={handleSearch}
-              placeholder="Search field"
-            />
-            <span>
-              <SearchIcon htmlColor="#6E8BB7" />
-            </span>
+          <Box marginBottom="8px" marginTop="12px">
+            <SearchInput onChange={handleSearch} />
           </Box>
           <Box display="flex" gap="8px" flexWrap="wrap">
             {fieldsList.map((field) => (

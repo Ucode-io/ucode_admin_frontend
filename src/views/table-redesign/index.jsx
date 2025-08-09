@@ -972,6 +972,7 @@ const Th = ({
   const permissions = useSelector(
     (state) => state.permissions?.permissions?.[tableSlug]
   );
+  console.log({ permissions, tableSlug });
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

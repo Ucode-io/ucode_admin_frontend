@@ -1,6 +1,10 @@
 .field {
   height: 32px;
   border-left: none;
+
+  & > div {
+    padding-left: 6px;
+  }
 }
 
 .langButton {

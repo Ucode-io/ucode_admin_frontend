@@ -35,7 +35,7 @@ export const MultiLangField = ({
   const [fieldName, setFieldName] = useState(name);
   const [fieldPlaceholder, setFieldPlaceholder] = useState(placeholder);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  // const open = Boolean(anchorEl);
 
   const watch = useWatch({
     control,
@@ -47,12 +47,24 @@ export const MultiLangField = ({
   );
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    // setAnchorEl(event.currentTarget);
+    if (
+      languages?.length - 1 >
+      languages.findIndex((lang) => lang.slug === selectedLanguage)
+    ) {
+      setSelectedLanguage(
+        languages[
+          languages.findIndex((lang) => lang.slug === selectedLanguage) + 1
+        ]?.slug
+      );
+    } else {
+      setSelectedLanguage(languages[0]?.slug);
+    }
   };
-  const handleClose = (language) => {
-    setSelectedLanguage(language);
-    setAnchorEl(null);
-  };
+  // const handleClose = (language) => {
+  //   setSelectedLanguage(language);
+  //   setAnchorEl(null);
+  // };
 
   useEffect(() => {
     setFieldName(`${name}_${selectedLanguage}`);
@@ -68,6 +80,12 @@ export const MultiLangField = ({
   return (
     <>
       <HFTextField
+        className={cls.field}
+        inputStyles={{
+          padding: "6px 14px",
+          fontSize: "12px",
+          lineHeight: "18px",
+        }}
         key={fieldName}
         control={control}
         name={fieldName}
@@ -81,24 +99,26 @@ export const MultiLangField = ({
             <button className={cls.langButton} onClick={handleClick}>
               <span className={cls.langButtonInner}>
                 <span>{selectedLanguage}</span>
-                <svg
-                  width="10"
-                  height="6"
-                  viewBox="0 0 10 6"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M1 1L5 5L9 1"
-                    stroke="#D0D5DD"
-                    stroke-width="1.3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                {languages?.length > 1 && (
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1 1L5 5L9 1"
+                      stroke="#D0D5DD"
+                      stroke-width="1.3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                )}
               </span>
             </button>
-            <Menu
+            {/* <Menu
               id="basic-menu"
               anchorEl={anchorEl}
               open={open}
@@ -122,7 +142,7 @@ export const MultiLangField = ({
                   {language?.title}
                 </MenuItem>
               ))}
-            </Menu>
+            </Menu> */}
           </Box>
         }
       />

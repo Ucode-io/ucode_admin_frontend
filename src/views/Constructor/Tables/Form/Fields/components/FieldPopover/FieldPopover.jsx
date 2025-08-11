@@ -16,6 +16,7 @@ export const FieldPopover = ({
   formType,
   field,
   selectedField,
+  submitCallback = () => {},
 }) => {
   const {
     SETTING_TYPES,
@@ -43,6 +44,7 @@ export const FieldPopover = ({
     formType,
     selectedAutofillFieldSlug: selectedField?.slug,
     field,
+    submitCallback,
   });
 
   return (
@@ -66,12 +68,7 @@ export const FieldPopover = ({
       }}
     >
       <Box position="relative">
-        <Box
-          padding="12px 8px"
-          minWidth="292px"
-          maxHeight="500px"
-          overflow="auto"
-        >
+        <Box padding="12px 8px" minWidth="292px" maxHeight="500px">
           {selectedSettings ? (
             <AdvancedSettings
               title={selectedSettings}

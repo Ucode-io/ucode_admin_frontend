@@ -41,7 +41,7 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("Choose backet");
 
-  const [isCreateOptionOpen, setIsCreateOptionOpen] = useState(false);
+  const [isCreateOptionOpen, setIsCreateOptionOpen] = useState(true);
   const [isTodoOptionOpen, setIsTodoOptionOpen] = useState(false);
   const [isProgressOptionOpen, setIsProgressOptionOpen] = useState(false);
   const [isCompleteOptionOpen, setIsCompleteOptionOpen] = useState(false);

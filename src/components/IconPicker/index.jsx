@@ -134,7 +134,6 @@ const IconPicker = ({
           </TabList>
           {iconCategories?.map((itemTab, index) => {
             const isFirst = index === 0;
-
             return (
               <TabPanel key={itemTab?.value || index}>
                 {isFirst ? (

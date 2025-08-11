@@ -1,6 +1,6 @@
 import cls from './styles.module.scss'
 import { useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, Portal } from "@mui/material";
 
 export const FieldMenuItem = ({
   title,
@@ -10,6 +10,7 @@ export const FieldMenuItem = ({
   id,
   isOpen,
   isDraggable,
+  containerRef,
   setActiveId = () => {},
   onClick = () => {},
 }) => {
@@ -58,7 +59,11 @@ export const FieldMenuItem = ({
           </span>
         </Box>
       </Box>
-      {content && isOpen && <Box className={cls.content}>{content}</Box>}
+      {content && isOpen && (
+        <Portal container={() => containerRef.current}>
+          <Box className={cls.content}>{content}</Box>
+        </Portal>
+      )}
     </Box>
   );
 };

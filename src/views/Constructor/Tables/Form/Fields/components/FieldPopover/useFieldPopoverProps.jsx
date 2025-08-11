@@ -33,6 +33,7 @@ export const useFieldPopoverProps = ({
   selectedAutofillFieldSlug,
   field,
   setFolder = () => {},
+  submitCallback = () => {},
 }) => {
   const SETTING_TYPES = {
     VALIDATION: "Validation",
@@ -211,6 +212,7 @@ export const useFieldPopoverProps = ({
     };
     if (formType === "CREATE") createField(data);
     else updateField(data);
+    submitCallback();
   };
 
   const handleSelectSetting = (type) => {

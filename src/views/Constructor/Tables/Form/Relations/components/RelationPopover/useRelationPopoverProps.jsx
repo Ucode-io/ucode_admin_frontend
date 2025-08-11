@@ -12,6 +12,7 @@ export const useRelationPopoverProps = ({
   formType,
   getRelationFields,
   closeSettingsBlock,
+  submitCallback,
 }) => {
   const { view } = useViewContext();
   const { tableSlug: tableSlugParam } = useParams();
@@ -112,6 +113,7 @@ export const useRelationPopoverProps = ({
           reset({});
         });
     }
+    submitCallback();
   };
 
   const getSelectedSettings = (type) => {

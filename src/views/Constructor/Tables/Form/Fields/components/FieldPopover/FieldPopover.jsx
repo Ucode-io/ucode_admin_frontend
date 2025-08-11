@@ -16,6 +16,7 @@ export const FieldPopover = ({
   formType,
   field,
   selectedField,
+  submitCallback = () => {},
 }) => {
   const {
     SETTING_TYPES,
@@ -43,6 +44,7 @@ export const FieldPopover = ({
     formType,
     selectedAutofillFieldSlug: selectedField?.slug,
     field,
+    submitCallback,
   });
 
   return (

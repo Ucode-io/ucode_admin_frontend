@@ -181,7 +181,7 @@ const Fields = ({ mainForm, getRelationFields, tableLan }) => {
           getRelationFields={getRelationFields}
           mainForm={mainForm}
           tableLan={tableLan}
-          onSubmit={(index, field) => updateField(field, index)}
+          // onSubmit={(index, field) => updateField(field, index)}
           slug={tableSlug}
           field={drawerState}
           selectedField={selectedField}

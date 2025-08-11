@@ -36,7 +36,7 @@ const HFTextField = ({
   endAdornment,
   field,
   inputHeight,
-  watch,
+  watch = () => {},
   disabled_text = "This field is disabled for this role!",
   setFormValue = () => {},
   customOnChange = () => {},
@@ -44,6 +44,7 @@ const HFTextField = ({
   newUi,
   className,
   inputStyles = {},
+  startAdornment = <></>,
   ...props
 }) => {
   const location = useLocation();
@@ -98,6 +99,7 @@ const HFTextField = ({
             autoFocus={tabIndex === 1}
             InputProps={{
               readOnly: disabled,
+              startAdornment,
               inputProps: {
                 tabIndex,
                 style: { height: inputHeight, ...inputStyles },

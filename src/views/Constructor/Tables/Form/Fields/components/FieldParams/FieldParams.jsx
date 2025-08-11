@@ -13,7 +13,7 @@ import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
 import { AddOption } from "../AddOption";
 import { FieldChip } from "../FieldChip";
 import { StatusFieldSettings } from "../StatusFieldSettings";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Container, Draggable } from "react-smooth-dnd";
 import { ParamsHeader } from "../../../components/ParamsHeader";
 import { FieldMenuItem } from "../../../components/FieldMenuItem";
@@ -72,15 +72,42 @@ export const FieldParams = ({
   } = useFieldParamsProps({ watch, setValue, control });
 
   const [activeId, setActiveId] = useState(null);
+  const containerRef = useRef(null);
 
   return (
-    <Box>
+    <Box ref={containerRef}>
       <ParamsHeader onClose={onClose} formType={formType} />
       <Box className={cls.body}>
         <Box display="flex" flexDirection="column" rowGap="6px">
           <Box display="flex" flexDirection="column" rowGap="8px">
+            <Box>
+              <FieldMenuItem
+                title="Type"
+                icon={
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.33325 9.66687L7.7614 12.8809C7.84886 12.9247 7.89259 12.9465 7.93845 12.9551C7.97908 12.9628 8.02076 12.9628 8.06139 12.9551C8.10725 12.9465 8.15098 12.9247 8.23843 12.8809L14.6666 9.66687M1.33325 6.33354L7.7614 3.11946C7.84886 3.07574 7.89259 3.05387 7.93845 3.04527C7.97908 3.03765 8.02076 3.03765 8.06139 3.04527C8.10725 3.05387 8.15098 3.07574 8.23843 3.11946L14.6666 6.33354L8.23843 9.54762C8.15098 9.59134 8.10725 9.61321 8.06139 9.62181C8.02076 9.62943 7.97908 9.62943 7.93845 9.62181C7.89259 9.61321 7.84886 9.59134 7.7614 9.54762L1.33325 6.33354Z"
+                      stroke="#101828"
+                      stroke-width="1.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                }
+                value={
+                  activeType?.[`label_${i18n.language}`] || activeType?.label
+                }
+                onClick={() => handleSelectSetting(SETTING_TYPES.TYPE)}
+              />
+            </Box>
             <Box display="flex" columnGap="6px" paddingX="8px">
-              <Box className={cls.iconBox}>{fieldTypeIcons[watch("type")]}</Box>
+              {/* <Box className={cls.iconBox}>{fieldTypeIcons[watch("type")]}</Box> */}
               <MultiLangField
                 control={control}
                 name="attributes.label"
@@ -89,6 +116,7 @@ export const FieldParams = ({
                 defaultValue={tableName}
                 languages={languages}
                 id={"field_label"}
+                watch={watch}
                 required
               />
             </Box>
@@ -195,32 +223,6 @@ export const FieldParams = ({
             </Box>
           )}
           <Box>
-            <Box>
-              <FieldMenuItem
-                title="Type"
-                icon={
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1.33325 9.66687L7.7614 12.8809C7.84886 12.9247 7.89259 12.9465 7.93845 12.9551C7.97908 12.9628 8.02076 12.9628 8.06139 12.9551C8.10725 12.9465 8.15098 12.9247 8.23843 12.8809L14.6666 9.66687M1.33325 6.33354L7.7614 3.11946C7.84886 3.07574 7.89259 3.05387 7.93845 3.04527C7.97908 3.03765 8.02076 3.03765 8.06139 3.04527C8.10725 3.05387 8.15098 3.07574 8.23843 3.11946L14.6666 6.33354L8.23843 9.54762C8.15098 9.59134 8.10725 9.61321 8.06139 9.62181C8.02076 9.62943 7.97908 9.62943 7.93845 9.62181C7.89259 9.61321 7.84886 9.59134 7.7614 9.54762L1.33325 6.33354Z"
-                      stroke="#101828"
-                      stroke-width="1.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                }
-                value={
-                  activeType?.[`label_${i18n.language}`] || activeType?.label
-                }
-                onClick={() => handleSelectSetting(SETTING_TYPES.TYPE)}
-              />
-            </Box>
             {activeType?.value === FIELD_TYPES.MULTISELECT && (
               <Box>
                 <AddOption onClick={() => toggleCreateOptionField()} />
@@ -234,6 +236,7 @@ export const FieldParams = ({
                   {multiSelectFields?.map((item, index) => (
                     <Draggable key={item?.key}>
                       <FieldMenuItem
+                        containerRef={containerRef}
                         icon={
                           <DragIndicatorIcon
                             htmlColor="#101828"
@@ -245,8 +248,8 @@ export const FieldParams = ({
                         }
                         isDraggable={true}
                         key={item?.key}
-                        id={index}
-                        isOpen={activeId === index}
+                        id={item?.key}
+                        isOpen={activeId === item?.key}
                         setActiveId={setActiveId}
                         title={
                           hasColor ? (
@@ -330,6 +333,7 @@ export const FieldParams = ({
                       {todoFields?.map((item, index) => (
                         <Draggable key={item?.key}>
                           <FieldMenuItem
+                            containerRef={containerRef}
                             icon={
                               <DragIndicatorIcon
                                 htmlColor="#101828"
@@ -410,6 +414,7 @@ export const FieldParams = ({
                       {progressFields?.map((item, index) => (
                         <Draggable key={item?.key}>
                           <FieldMenuItem
+                            containerRef={containerRef}
                             icon={
                               <DragIndicatorIcon
                                 htmlColor="#101828"
@@ -490,6 +495,7 @@ export const FieldParams = ({
                       {completeFields?.map((item, index) => (
                         <Draggable key={item?.key}>
                           <FieldMenuItem
+                            containerRef={containerRef}
                             icon={
                               <DragIndicatorIcon
                                 htmlColor="#101828"

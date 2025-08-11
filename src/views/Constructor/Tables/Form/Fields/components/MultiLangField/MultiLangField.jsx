@@ -4,6 +4,7 @@ import {Badge, Box, Button, Menu, MenuItem} from "@mui/material";
 import React, {useEffect, useMemo, useState} from "react";
 import HFTextField from "../../../../../../../components/FormElements/HFTextField";
 import { useWatch } from "react-hook-form";
+import { fieldTypeIcons } from "@/utils/constants/icons";
 
 export const MultiLangField = ({
   control,
@@ -27,6 +28,7 @@ export const MultiLangField = ({
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   id,
+  watch = () => {},
   ...props
 }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(
@@ -37,13 +39,13 @@ export const MultiLangField = ({
   const [anchorEl, setAnchorEl] = React.useState(null);
   // const open = Boolean(anchorEl);
 
-  const watch = useWatch({
+  const formWatch = useWatch({
     control,
   });
 
   const defaultValue = useMemo(
-    () => watch[fieldName] ?? "",
-    [watch, fieldName]
+    () => formWatch[fieldName] ?? "",
+    [formWatch, fieldName]
   );
 
   const handleClick = (event) => {
@@ -82,7 +84,7 @@ export const MultiLangField = ({
       <HFTextField
         className={cls.field}
         inputStyles={{
-          padding: "6px 14px",
+          padding: "6px 14px 6px 6px",
           fontSize: "12px",
           lineHeight: "18px",
         }}
@@ -94,28 +96,38 @@ export const MultiLangField = ({
         defaultValue={defaultValue}
         id={id}
         required={required}
+        startAdornment={
+          <Box className={cls.iconBox}>{fieldTypeIcons[watch("type")]}</Box>
+        }
         endAdornment={
           <Box paddingLeft="8px" marginY="5px" borderLeft="1px solid #EAECF0">
             <button className={cls.langButton} onClick={handleClick}>
               <span className={cls.langButtonInner}>
-                <span>{selectedLanguage}</span>
                 {languages?.length > 1 && (
                   <svg
-                    width="10"
-                    height="6"
-                    viewBox="0 0 10 6"
-                    fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="transparent"
+                    viewBox="0 0 20 20"
                   >
-                    <path
-                      d="M1 1L5 5L9 1"
-                      stroke="#D0D5DD"
-                      stroke-width="1.3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
+                    <g clip-path="url(#a)">
+                      <path
+                        stroke="#8F8E8B"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M10 1.667A12.75 12.75 0 0 1 13.334 10 12.75 12.75 0 0 1 10 18.334m0-16.667A12.75 12.75 0 0 0 6.667 10 12.75 12.75 0 0 0 10 18.334m0-16.667a8.333 8.333 0 0 0 0 16.667m0-16.667a8.333 8.333 0 1 1 0 16.667M2.084 7.5h15.833m-15.833 5h15.833"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="a">
+                        <path fill="#fff" d="M0 0h20v20H0z" />
+                      </clipPath>
+                    </defs>
                   </svg>
                 )}
+                <span>{selectedLanguage}</span>
               </span>
             </button>
             {/* <Menu
@@ -184,4 +196,4 @@ export const MultiLangField = ({
       </Menu> */}
     </>
   );
-}
+};

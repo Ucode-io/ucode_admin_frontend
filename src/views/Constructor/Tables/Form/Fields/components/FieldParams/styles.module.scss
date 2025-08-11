@@ -29,7 +29,8 @@
   padding: 6px;
   
   &:focus {
-    outline: 1px solid #2970FF;
+    outline: none;
+    border: 1px solid #2970FF;
   }
 }
 

@@ -62,6 +62,11 @@ export const resourceTypes = [
     value: 12,
     icon: SiPostgresql,
   },
+  {
+    label: "Transcode",
+    value: 13,
+    icon: SiPostgresql,
+  },
 ];
 export const resources = [
   {
@@ -191,7 +196,7 @@ export const groupedResources = [
     items: [
       {
         label: "Transcoder",
-        value: 11,
+        value: 13,
         icon: "transcode",
       },
     ],

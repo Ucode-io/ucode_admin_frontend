@@ -25,6 +25,9 @@ import {
 import {Text} from "@chakra-ui/react";
 import {Tag} from "antd";
 import resourceService from "../../../../services/resourceService";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import {resourceTypes} from "../../../../utils/resourceConstants";
+import {useWatch} from "react-hook-form";
 
 function TransCoder({
   control,
@@ -51,6 +54,11 @@ function TransCoder({
     });
   };
 
+  const resurceType = useWatch({
+    control,
+    name: "resource_type",
+  });
+  console.log("resurceTyperesurceType", resurceType);
   useEffect(() => {
     getTransCode();
   }, []);
@@ -92,6 +100,23 @@ function TransCoder({
                   inputProps={{
                     placeholder: "Resource name",
                   }}
+                />
+              </Box>
+
+              <Box sx={{width: "48%"}}>
+                <FieldLabel
+                  children={
+                    generateLangaugeText(settingLan, i18n?.language, "Type") ||
+                    "Type"
+                  }
+                />
+                <HFSelect
+                  options={resourceTypes}
+                  control={control}
+                  required
+                  name="resource_type"
+                  resurceType={resurceType}
+                  disabled={isEditPage}
                 />
               </Box>
             </Box>
@@ -274,7 +299,7 @@ function TransCoder({
             }}
             margin={"5px"}>
             <Pagination
-              count={Math.ceil(pipelines.length / rowsPerPage)}
+              count={Math.ceil(pipelines?.length / rowsPerPage)}
               page={page}
               onChange={(event, value) => {
                 getTransCode();

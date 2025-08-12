@@ -16,6 +16,7 @@ import SmtpResource from "./ResourceContents/SmtpResource";
 import SupersetContent from "./ResourceContents/SupersetContent";
 import GitLabContent from "./ResourceContents/GitlabContent";
 import GithubContent from "./ResourceContents/GithubContent";
+import SmsContent from "./ResourceContents/SmsContent";
 
 const Form = ({
   control,

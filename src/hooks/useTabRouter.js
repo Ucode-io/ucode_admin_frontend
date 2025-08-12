@@ -1,6 +1,6 @@
 import {useAliveController} from "react-activation";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {tabRouterActions} from "../store/tabRouter/tabRouter.slice";
 import {generateGUID, generateID} from "../utils/generateID";
 
@@ -21,6 +21,10 @@ export default function useTabRouter() {
   ) => {
     const isNewRouter = localStorage.getItem("new_router") === "true"
 
+    if(type === "CREATE" && isNewRouter) {
+      navigate(`/${menuId}/detail/create?menuId=${menuId}&itemId=${itemId}`, {state: {...state, table_slug: tableSlug}});
+      return
+    }
 
     if (type === "CREATE") {
       const id = generateID();

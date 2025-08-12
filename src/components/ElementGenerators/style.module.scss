@@ -504,3 +504,47 @@
     left: calc(100% + 10px);
   }
 }
+
+.launchIcon {
+  display: none;
+}
+
+.select {
+  
+  &:hover {
+    .launchIcon, .closeIcon {
+      display: flex;
+    }
+  }
+}
+
+.selectIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.noOptionText {
+  // padding: 6px;
+  display: flex;
+  justify-content: center;
+  color: #175CD3;
+  font-size: 14px;
+  font-weight: 500;
+  user-select: none;
+  cursor: pointer;
+}
+
+.closeIcon {
+  width: 20px;
+  height: 20px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}

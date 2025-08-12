@@ -26,6 +26,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
 import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
 import { groupFieldActions } from "../../store/groupField/groupField.slice";
+import { Close } from "@mui/icons-material";
+import clsx from "clsx";
+import { CustomSingleValue } from "./components/CustomSingleValue";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -181,7 +184,7 @@ const AutoCompleteElement = ({
   );
 
   const customStyles = {
-    control: (provided, state) => ({
+    control: (provided) => ({
       ...provided,
       background: isBlackBg
         ? "#2A2D34"
@@ -192,29 +195,61 @@ const AutoCompleteElement = ({
       width: "100%",
       display: "flex",
       alignItems: "center",
+      boxShadow: "none",
       border: "0px solid #fff",
       outline: "none",
       minHeight: newUi ? "25px" : undefined,
       height: newUi ? "25px" : undefined,
     }),
-    input: (provided) => ({
-      ...provided,
-      width: "100%",
-      border: "none",
-    }),
+    input: (provided, state) => {
+      return {
+        ...provided,
+        // position: "absolute",
+        // left: "0",
+        // height: "100%",
+        width: "100%",
+        border: "none",
+        // backgroundColor: "rgba(242, 241, 238, 0.6)",
+      };
+    },
     placeholder: (provided) => ({
       ...provided,
       display: "flex",
     }),
     option: (provided, state) => ({
       ...provided,
-      background: state.isSelected ? "#007AFF" : provided.background,
-      color: state.isSelected ? "#fff" : provided.color,
+      background: "#fff",
+      color: provided.color === "hsl(0, 0%, 100%)" ? "#222" : provided.color,
       cursor: "pointer",
+      height: "28px",
+      fontSize: "12px",
+      lineHeigh: "20px",
+      fontWeight: "400",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "0",
+      paddingLeft: "8px",
+      paddingRight: "8px",
+      borderRadius: "6px",
+      "&:hover": {
+        backgroundColor: "rgba(242, 241, 238, 0.6)",
+      },
     }),
     menu: (provided) => ({
       ...provided,
+      width: "calc(100% + 10px)",
+      left: "-5px",
+      top: "-3px",
       zIndex: 9999,
+      borderRadius: "6px",
+      borderTopRightRadius: "0px",
+      borderTopLeftRadius: "0px",
+      // boxShadow: "rgba(55, 53, 47, 0.16) 0px -1px inset",
+      padding: "4px",
+      height: "auto",
+      boxShadow:
+        "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
     }),
     menuPortal: (base) => ({
       ...base,
@@ -393,71 +428,116 @@ const AutoCompleteElement = ({
 
   const dispatch = useDispatch();
 
-  const CustomSingleValue = (props) => (
-    <components.SingleValue {...props}>
-      <div
-        className="select_icon"
-        style={{ display: "flex", alignItems: "center" }}
-        onClick={() => {
-          refetch();
-        }}
-      >
-        {props?.data?.[`name_${i18n?.language}`] ||
-          props?.data?.name ||
-          props.children}
-        {!disabled && (
-          <Box
-            sx={{ position: "relative", zIndex: 99999 }}
-            onMouseDown={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (isNewRouter) {
-                const { data } = props;
-                dispatch(detailDrawerActions.openDrawer());
-                dispatch(groupFieldActions.clearViewsPath());
-                dispatch(groupFieldActions.clearViews());
-                dispatch(
-                  groupFieldActions.addView({
-                    id: data?.table_id,
-                    detailId: data?.guid,
-                    is_relation_view: true,
-                    table_slug: data?.table_slug,
-                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
-                    relation_table_slug: data?.table_slug,
-                  })
-                );
-                dispatch(
-                  groupFieldActions.addViewPath({
-                    id: data?.table_id,
-                    detailId: data?.guid,
-                    is_relation_view: true,
-                    table_slug: data?.table_slug,
-                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
-                  })
-                );
-                updateQueryWithoutRerender("p", props?.data?.guid);
-                updateQueryWithoutRerender("field_slug", field?.table_slug);
-              } else {
-                navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
-              }
-            }}
-          >
-            <LaunchIcon
-              style={{
-                fontSize: "18px",
-                marginLeft: "5px",
-                fontWeight: "700",
-                cursor: "pointer",
-              }}
-            />
-          </Box>
-        )}
-      </div>
-    </components.SingleValue>
-  );
+  // const CustomSingleValue = (props) => (
+  //   <components.SingleValue className={styles.singleValue} {...props}>
+  //     <div
+  //       className={clsx("select_icon")}
+  //       style={{ display: "flex", alignItems: "center" }}
+  //       onClick={() => {
+  //         refetch();
+  //       }}
+  //     >
+  //       <div className={styles.selectValue}>
+  //         {props?.data?.[`name_${i18n?.language}`] ||
+  //           props?.data?.name ||
+  //           props.children}
+  //         {!disabled && (
+  //           <Box
+  //             sx={{
+  //               width: "20px",
+  //               height: "20px",
+  //               display: "flex",
+  //               flexDirection: "column",
+  //               alignItems: "center",
+  //               justifyContent: "center",
+  //               position: "relative",
+  //               zIndex: 99999,
+  //               borderRadius: "4px",
+  //               marginLeft: "5px",
+
+  //               "&:hover": {
+  //                 backgroundColor: "rgba(55, 53, 47, 0.06)",
+  //               },
+  //             }}
+  //             onMouseDown={(e) => {
+  //               e.stopPropagation();
+  //               e.preventDefault();
+  //             }}
+  //             onClick={(e) => {
+  //               e.stopPropagation();
+  //               if (isNewRouter) {
+  //                 const { data } = props;
+  //                 dispatch(detailDrawerActions.openDrawer());
+  //                 dispatch(groupFieldActions.clearViewsPath());
+  //                 dispatch(groupFieldActions.clearViews());
+  //                 dispatch(
+  //                   groupFieldActions.addView({
+  //                     id: data?.table_id,
+  //                     detailId: data?.guid,
+  //                     is_relation_view: true,
+  //                     table_slug: data?.table_slug,
+  //                     label:
+  //                       field?.attributes?.[`label_${i18n?.language}`] || "",
+  //                     relation_table_slug: data?.table_slug,
+  //                   })
+  //                 );
+  //                 dispatch(
+  //                   groupFieldActions.addViewPath({
+  //                     id: data?.table_id,
+  //                     detailId: data?.guid,
+  //                     is_relation_view: true,
+  //                     table_slug: data?.table_slug,
+  //                     label:
+  //                       field?.attributes?.[`label_${i18n?.language}`] || "",
+  //                   })
+  //                 );
+  //                 updateQueryWithoutRerender("p", props?.data?.guid);
+  //                 updateQueryWithoutRerender("field_slug", field?.table_slug);
+  //               } else {
+  //                 navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+  //               }
+  //             }}
+  //           >
+  //             <LaunchIcon
+  //               htmlColor="rgba(50, 48, 44, 0.5)"
+  //               className={styles.launchIcon}
+  //               style={{
+  //                 fontSize: "14px",
+  //                 fontWeight: "700",
+  //                 cursor: "pointer",
+  //               }}
+  //             />
+  //           </Box>
+  //         )}
+  //         <span
+  //           className={styles.closeIcon}
+  //           onClick={(e) => {
+  //             e.stopPropagation();
+  //             props?.clearValue();
+  //           }}
+  //         >
+  //           {/* <Close fontSize="8px" htmlColor="rgba(50, 48, 44, 0.5)" /> */}
+  //           <svg
+  //             aria-hidden="true"
+  //             role="graphics-symbol"
+  //             viewBox="0 0 8 8"
+  //             class="closeThick"
+  //             style={{
+  //               width: "8px",
+  //               height: "8px",
+  //               display: "block",
+  //               fill: "rgba(50, 48, 44, 0.5)",
+  //               flexShrink: 0,
+  //               opacity: "0.5",
+  //             }}
+  //           >
+  //             <polygon points="8 1.01818182 6.98181818 0 4 2.98181818 1.01818182 0 0 1.01818182 2.98181818 4 0 6.98181818 1.01818182 8 4 5.01818182 6.98181818 8 8 6.98181818 5.01818182 4"></polygon>
+  //           </svg>
+  //         </span>
+  //       </div>
+  //     </div>
+  //   </components.SingleValue>
+  // );
 
   const autofilterDisable = useMemo(() => {
     if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
@@ -496,7 +576,9 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{ p: 1 }}>Create new object</Typography>
+            <p className={styles.noOptionText}>
+              Select an option or create one
+            </p>
           </Popover>
         </span>
       )}
@@ -510,6 +592,7 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        className={styles.select}
         id="relation-lookup"
         inputValue={inputValue}
         onInputChange={(newInputValue, { action }) => {
@@ -548,8 +631,20 @@ const AutoCompleteElement = ({
           //     )
           //   );
           // },
-          SingleValue: CustomSingleValue,
+          SingleValue: (props) => (
+            <CustomSingleValue
+              tableSlug={tableSlug}
+              disabled={disabled}
+              field={field}
+              isNewRouter={isNewRouter}
+              localValue={localValue}
+              menuId={menuId}
+              refetch={refetch}
+              {...props}
+            />
+          ),
           DropdownIndicator: null,
+          ClearIndicator: null,
         }}
         onChange={(newValue, { action }) => {
           changeHandler(newValue);
@@ -557,9 +652,9 @@ const AutoCompleteElement = ({
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+            className={styles.noOptionText}
           >
-            Create new
+            + Create one
           </span>
         )}
         menuShouldScrollIntoView

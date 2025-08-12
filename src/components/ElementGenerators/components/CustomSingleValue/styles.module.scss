@@ -1,0 +1,24 @@
+.selectValue {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 24px;
+}
+
+.closeIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 99999;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}

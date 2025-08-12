@@ -159,7 +159,7 @@ const AutoCompleteElement = ({
         );
       } else {
         return localOptions?.find((item) => {
-          item?.value === value;
+          return item?.value === value;
         });
       }
     else return [localOptions?.find((option) => option.value === value[0])];

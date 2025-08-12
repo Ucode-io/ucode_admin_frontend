@@ -21,6 +21,7 @@ import fileService from "../../services/fileService";
 import "./style.scss";
 import useDownloader from "../../hooks/useDownloader";
 import {Download} from "@mui/icons-material";
+import VideoPlayer from "./hf-videoplayer";
 
 const style = {
   position: "absolute",
@@ -297,12 +298,21 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               flexDirection: "column",
             }}
             aria-describedby={id}>
-            <video
-              onClick={(e) => e.stopPropagation()}
-              controls
-              className="uploadedImage"
-              style={{transform: `scale(${imgScale})`}}
-              src={value}></video>
+            {value?.includes("m3u8") ? (
+              <VideoPlayer
+                videoRef={videoRef}
+                controls
+                style={{transform: `scale(${imgScale})`}}
+                src={value}
+              />
+            ) : (
+              <video
+                onClick={(e) => e.stopPropagation()}
+                controls
+                className="uploadedImage"
+                style={{transform: `scale(${imgScale})`}}
+                src={value}></video>
+            )}
             <Typography
               sx={{
                 fontSize: "10px",

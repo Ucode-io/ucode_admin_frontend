@@ -16,6 +16,10 @@ import request from "../../utils/request";
 import CascadingElement from "./CascadingElement";
 import styles from "./style.module.scss";
 import { pageToOffset } from "../../utils/pageToOffset";
+import Select from "react-select";
+import { CustomSingleValue } from "./components/CustomSingleValue";
+import { CustomMultiValue } from "./components/CustomMultiValue";
+import { components } from "react-select";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -25,6 +29,43 @@ const useStyles = makeStyles((theme) => ({
     heigth: "40px",
   },
 }));
+
+const CustomMultiValueRemove = (props) => {
+  console.log({ props });
+  return (
+    <components.MultiValueRemove {...props}>
+      <span
+        // className={styles.closeIcon}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+        {...props.innerProps}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log(e);
+        }}
+      >
+        <svg
+          aria-hidden="true"
+          role="graphics-symbol"
+          viewBox="0 0 8 8"
+          class="closeThick"
+          style={{
+            width: "8px",
+            height: "8px",
+            display: "block",
+            fill: "rgba(50, 48, 44, 0.5)",
+            flexShrink: 0,
+            opacity: "0.5",
+          }}
+        >
+          <polygon points="8 1.01818182 6.98181818 0 4 2.98181818 1.01818182 0 0 1.01818182 2.98181818 4 0 6.98181818 1.01818182 8 4 5.01818182 6.98181818 8 8 6.98181818 5.01818182 4"></polygon>
+        </svg>
+      </span>
+    </components.MultiValueRemove>
+  );
+};
 
 const CellManyToManyRelationElement = ({
   relOptions,
@@ -126,6 +167,7 @@ const AutoCompleteElement = ({
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
   const { state } = useLocation();
+  const isNewRouter = localStorage.getItem("new_router") === "true";
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option, i18n.language);
@@ -377,8 +419,180 @@ const AutoCompleteElement = ({
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   };
 
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      background: isBlackBg
+        ? "#2A2D34"
+        : disabled
+          ? "rgb(248, 248, 248)"
+          : "transparent",
+      color: isBlackBg ? "#fff" : "",
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      boxShadow: "none",
+      border: "0px solid #fff",
+      outline: "none",
+      minHeight: newUi ? "25px" : undefined,
+      height: newUi ? "25px" : undefined,
+    }),
+    // input: (provided, state) => {
+    //   return {
+    //     ...provided,
+    //     // position: "absolute",
+    //     // left: "0",
+    //     // height: "100%",
+    //     width: "100%",
+    //     border: "none",
+    //     // backgroundColor: "rgba(242, 241, 238, 0.6)",
+    //   };
+    // },
+    placeholder: (provided) => ({
+      ...provided,
+      display: "flex",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      background: "#fff",
+      color: provided.color === "hsl(0, 0%, 100%)" ? "#222" : provided.color,
+      cursor: "pointer",
+      height: "28px",
+      fontSize: "12px",
+      lineHeigh: "20px",
+      fontWeight: "400",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "0",
+      paddingLeft: "8px",
+      paddingRight: "8px",
+      borderRadius: "6px",
+      "&:hover": {
+        backgroundColor: "rgba(242, 241, 238, 0.6)",
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      width: "calc(100% + 10px)",
+      left: "-5px",
+      top: "-3px",
+      zIndex: 9999,
+      borderRadius: "6px",
+      borderTopRightRadius: "0px",
+      borderTopLeftRadius: "0px",
+      // boxShadow: "rgba(55, 53, 47, 0.16) 0px -1px inset",
+      padding: "4px",
+      height: "auto",
+      boxShadow:
+        "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+    clearIndicator: (provided) => ({
+      ...provided,
+      cursor: "pointer",
+      marginRight: "20px",
+      padding: "0",
+    }),
+  };
+
+  const [inputValue, setInputValue] = useState("");
+
   return (
     <div className={styles.autocompleteWrapper}>
+      {/* <Select
+        className={styles.select}
+        id="relation-lookup"
+        inputValue={inputValue}
+        onInputChange={(newInputValue, { action }) => {
+          if (action !== "reset") {
+            setInputValue(newInputValue);
+            inputChangeHandler(newInputValue);
+          }
+        }}
+        isDisabled={disabled}
+        onMenuScrollToBottom={loadMoreItems}
+        options={allOptions ?? []}
+        value={computedValue}
+        menuPortalTarget={document.body}
+        // onMenuOpen={(e) => {
+        //   refetch();
+        // }}
+        components={{
+          // ClearIndicator: (props) => {
+          //   console.log({ props });
+          //   return (
+          //     ((Array.isArray(localValue) && localValue?.length) ||
+          //       Boolean(localValue)) && (
+          //       <div
+          //         style={{
+          //           marginRight: "20px",
+          //           cursor: "pointer",
+          //         }}
+          //         onClick={(e) => {
+          //           e.stopPropagation();
+          //           setLocalValue([]);
+          //         }}
+          //       >
+          //         <ClearIcon />
+          //       </div>
+          //     )
+          //   );
+          // },
+          SingleValue: (props) => (
+            <CustomSingleValue
+              tableSlug={tableSlug}
+              disabled={disabled}
+              field={field}
+              isNewRouter={isNewRouter}
+              localValue={computedValue}
+              menuId={menuId}
+              refetch={() => {}}
+              {...props}
+            />
+          ),
+          MultiValue: (props) => (
+            <CustomMultiValue
+              tableSlug={tableSlug}
+              disabled={disabled}
+              field={field}
+              isNewRouter={isNewRouter}
+              localValue={computedValue}
+              menuId={menuId}
+              refetch={() => {}}
+              {...props}
+            />
+          ),
+          DropdownIndicator: null,
+          ClearIndicator: null,
+          MultiValueRemove: (props) => <CustomMultiValueRemove {...props} />,
+        }}
+        onChange={(newValue, { action }) => {
+          changeHandler(newValue);
+        }}
+        noOptionsMessage={() => (
+          <span
+            onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
+            className={styles.noOptionText}
+          >
+            + Create one
+          </span>
+        )}
+        menuShouldScrollIntoView
+        styles={customStyles}
+        getOptionLabel={(option) =>
+          getRelationFieldTabsLabel(field, option, i18n.language)
+        }
+        getOptionValue={(option) => option.value}
+        isOptionSelected={(option, value) =>
+          value.some((val) => val.guid === value)
+        }
+        blurInputOnSelect
+        isMulti
+      /> */}
       <Autocomplete
         disabled={disabled}
         options={allOptions ?? []}

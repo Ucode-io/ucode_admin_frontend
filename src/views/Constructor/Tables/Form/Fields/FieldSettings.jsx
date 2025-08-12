@@ -324,7 +324,7 @@ const FieldSettings = ({
 
   const checkResource = () => {
     const params = {
-      type: "TRANSCODE",
+      type: "TRANSCODER",
     };
     resourceService.getListV2(params).then((res) => {
       if (res.resources?.length > 0) {

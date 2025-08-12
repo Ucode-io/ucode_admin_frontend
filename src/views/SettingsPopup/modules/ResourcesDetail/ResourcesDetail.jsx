@@ -507,7 +507,7 @@ export const ResourcesDetail = ({
     setResourceVal(null);
     queryClient.refetchQueries(["RESOURCESV2"]);
   }
-  console.log("resource_typeresource_type", resource_type);
+
   return (
     <Box className="scrollbarNone" sx={{height: "670px", overflow: "hidden"}}>
       <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>

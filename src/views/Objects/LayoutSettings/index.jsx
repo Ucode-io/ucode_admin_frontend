@@ -85,14 +85,18 @@ function LayoutSettings() {
       .update(currentUpdatedLayout, tableSlug)
       .then(() => {
         dispatch(showAlert("Layout successfully updated!", "success"));
-        navigate(-1);
+        if (state?.backLink) {
+          navigate(state?.backLink);
+        } else {
+          navigate(-1);
+        }
       })
       .finally(() => setLoader(false));
   };
 
   return (
     <Box bg={"#F8F8F7"}>
-      <Header loader={loader} applyAllChanges={applyAllChanges} />
+      <Header loader={loader} applyAllChanges={applyAllChanges} state={state} />
 
       <Flex pl={24}>
         <Box
@@ -130,7 +134,7 @@ function LayoutSettings() {
   );
 }
 
-const Header = ({loader = false, applyAllChanges = () => {}}) => {
+const Header = ({ loader = false, applyAllChanges = () => {}, state = {} }) => {
   const navigate = useNavigate();
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -149,16 +153,19 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
         px={6}
         py={3}
         borderRadius={6}
-        cursor={"pointer"}>
+        cursor={"pointer"}
+      >
         <Flex gap={6} alignItems={"center"}>
-          <TuneIcon style={{color: "#54524D", height: "18px", width: "18px"}} />
+          <TuneIcon
+            style={{ color: "#54524D", height: "18px", width: "18px" }}
+          />
           <Text fontSize={14}>Page settings</Text>
         </Flex>
       </Button>
 
       <Box>
         <Flex justifyContent={"center"} gap={6} alignItems={"center"}>
-          <TextSnippetIcon style={{color: "#787774"}} />
+          <TextSnippetIcon style={{ color: "#787774" }} />
           <Text fontSize={16}>Ucode</Text>
         </Flex>
         <Button
@@ -170,7 +177,8 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
           px={6}
           py={3}
           borderRadius={6}
-          cursor={"pointer"}>
+          cursor={"pointer"}
+        >
           <Text fontSize={12} color={"#787774"}>
             Preview: (Layout) Input fields need to be disabled{" "}
           </Text>
@@ -185,7 +193,8 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
           border={"none"}
           h={32}
           p={"0 12px 0 10px"}
-          fontSize={14}>
+          fontSize={14}
+        >
           <Flex mr={6}>
             <ClearIcon />
           </Flex>
@@ -201,9 +210,10 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
           px={"8px"}
           color={"#fff"}
           cursor={"pointer"}
-          fontSize={14}>
+          fontSize={14}
+        >
           <Flex mr={6}>
-            <DoneIcon style={{width: "14px", height: "14px"}} />
+            <DoneIcon style={{ width: "14px", height: "14px" }} />
           </Flex>
           Apply to all changes
         </Button>
@@ -218,21 +228,20 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
             mt={20}
             w={"100%"}
             flexDirection={"column"}
-            justifyContent={"space-between"}>
+            justifyContent={"space-between"}
+          >
             <Button
               onClick={() => {
-                navigate(-1, {
-                  state: {
-                    refresh: true,
-                  },
-                });
+                if (state?.backLink) navigate(state?.backLink);
+                else navigate(-1);
                 onCloseDialog();
               }}
               fontSize={14}
               borderRadius={6}
               color={"#fff"}
               h={32}
-              bg={"#EB5756"}>
+              bg={"#EB5756"}
+            >
               Discard
             </Button>
             <Button
@@ -241,7 +250,8 @@ const Header = ({loader = false, applyAllChanges = () => {}}) => {
               mt={8}
               fontSize={14}
               border="1px solid rgba(55, 53, 47, 0.16)"
-              h={32}>
+              h={32}
+            >
               Cancel
             </Button>
           </Flex>

@@ -23,12 +23,13 @@ const HeadingOptions = ({
   updateObject = () => {},
   updateLayout = () => {},
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [anchorEl, setAnchorEl] = useState(null);
   const query = new URLSearchParams(window.location.search);
   const itemId = query.get("p");
 
   const removeLangFromSlug = (slug) => {
+    if (typeof slug !== "string") return false;
     var lastIndex = slug?.lastIndexOf("_");
     if (lastIndex !== -1) {
       var result = slug?.substring(0, lastIndex);
@@ -130,13 +131,15 @@ const HeadingOptions = ({
           justifyContent: "space-between",
           paddingLeft: "3px",
           gap: "10px",
-        }}>
+        }}
+      >
         <Flex
           onClick={(e) => !selectedFieldSlug && handleClick(e)}
           // onClick={(e) => handleClick(e)}
           width={"100%"}
           flexDirection={"column"}
-          justifyContent={"flex-start"}>
+          justifyContent={"flex-start"}
+        >
           <AutoResizeTextarea
             updateObject={updateObject}
             control={control}
@@ -149,15 +152,16 @@ const HeadingOptions = ({
           />
         </Flex>
 
-        <Box sx={{display: "flex", gap: "10px"}}>
+        <Box sx={{ display: "flex", gap: "10px" }}>
           {!selectedFieldSlug && (
-            <Box sx={{cursor: "pointer"}}>
+            <Box sx={{ cursor: "pointer" }}>
               <Flex
                 p={"5px"}
                 borderRadius={6}
                 onClick={handleClick}
                 gap={2}
-                alignItems={"center"}>
+                alignItems={"center"}
+              >
                 <Text>
                   {
                     fieldsList?.find(
@@ -181,8 +185,9 @@ const HeadingOptions = ({
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={() => handleClose(null)}>
-        <Box sx={{width: "180px", padding: "4px 0"}}>
+        onClose={() => handleClose(null)}
+      >
+        <Box sx={{ width: "180px", padding: "4px 0" }}>
           {fieldsList?.map((option) => (
             <MenuItem
               style={{
@@ -195,13 +200,15 @@ const HeadingOptions = ({
                 height: "32px",
               }}
               key={option.label}
-              onClick={() => handleClose(option)}>
+              onClick={() => handleClose(option)}
+            >
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: "5px",
-                }}>
+                }}
+              >
                 {option.label}
               </Box>
 
@@ -227,7 +234,7 @@ const AutoResizeTextarea = ({
   ...props
 }) => {
   const textareaRef = useRef(null);
-  const name = selectedFieldSlug;
+  const name = typeof selectedFieldSlug === "string" ? selectedFieldSlug : "";
 
   const headingValue = name ? watch(name) : "";
 
@@ -245,12 +252,12 @@ const AutoResizeTextarea = ({
 
   const inputChangeHandler = useDebounce(() => updateObject(), 500);
 
-  return (
+  return name ? (
     <Controller
       control={control}
       name={name ?? ""}
       defaultValue={fieldValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <textarea
             ref={textareaRef}
@@ -280,6 +287,8 @@ const AutoResizeTextarea = ({
         );
       }}
     />
+  ) : (
+    <></>
   );
 };
 

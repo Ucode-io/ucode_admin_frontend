@@ -12,15 +12,33 @@ export const CustomMultiValue = ({
   field,
   localValue,
   menuId,
+  changeHandler,
+  computedValue,
   ...props
 }) => {
-
   const { menuIsOpen } = props.selectProps;
 
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
 
-  return <components.MultiValue className={cls.multiValue} {...props}>
-
-  </components.MultiValue>
-}
+  return (
+    <components.MultiValue
+      className={cls.multiValue}
+      {...props}
+      removeProps={{
+        onClick: (e) => {
+          e.preventDefault();
+          changeHandler(
+            computedValue?.filter((el) => el.guid !== props.data.guid)
+          );
+        },
+        onMouseDown: (e) => {
+          e.preventDefault();
+        },
+        onMouseUp: (e) => {
+          e.preventDefault();
+        },
+      }}
+    ></components.MultiValue>
+  );
+};

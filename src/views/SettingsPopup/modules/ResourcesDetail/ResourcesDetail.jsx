@@ -672,7 +672,7 @@ export const ResourcesDetail = ({
                   isEditPage={isEditPage}
                   watch={watch}
                 />
-              ) : Number(resourceType) === 11 ? (
+              ) : Number(resourceType) === 13 ? (
                 <TransCoder
                   settingLan={settingLan}
                   control={control}

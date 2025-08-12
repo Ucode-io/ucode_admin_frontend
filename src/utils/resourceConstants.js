@@ -192,7 +192,7 @@ export const groupedResources = [
       {
         label: "Transcoder",
         value: 11,
-        icon: "superset",
+        icon: "transcode",
       },
     ],
   },

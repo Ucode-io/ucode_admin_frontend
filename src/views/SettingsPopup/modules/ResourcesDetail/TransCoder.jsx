@@ -26,60 +26,6 @@ import {Text} from "@chakra-ui/react";
 import {Tag} from "antd";
 import resourceService from "../../../../services/resourceService";
 
-const mockData = [
-  {
-    id: "15ce7bb2-0c3c-4c74-b6fd-2f62db771c4a",
-    project_id: "f3752975-d396-4baa-a4fc-54c8cd5bd959",
-    stage: "upload",
-    stage_status: "success",
-    input_url:
-      "https://cdn-api.ucode.run/ucode/cdbc20f8-3daf-412c-8e4e-2a4452bd999d_hey.mp4",
-    output_key: "a19b5742-b26c-4c2e-b460-e625e2d346c3",
-    output_path: "movies",
-    size_kb: 4755.658,
-    max_resolution: "1080p",
-    video_duration: 20,
-    preparation_duration_seconds: 0.125,
-    webhook_retry_count: 7,
-    created_at: "Mon, 11 Aug 2025 03:19:53 +0000",
-    updated_at: "Mon, 11 Aug 2025 03:22:53 +0000",
-  },
-  {
-    id: "8f209ed8-1362-4014-acb5-39ac11adeaeb",
-    project_id: "f3752975-d396-4baa-a4fc-54c8cd5bd959",
-    stage: "upload",
-    stage_status: "success",
-    input_url:
-      "https://cdn-api.ucode.run/ucode/cdbc20f8-3daf-412c-8e4e-2a4452bd999d_hey.mp4",
-    output_key: "02ccafa1-f64e-4701-ab1e-a2744062e7f5",
-    output_path: "movies",
-    size_kb: 4755.658,
-    max_resolution: "1080p",
-    video_duration: 20,
-    preparation_duration_seconds: 0.14,
-    webhook_retry_count: 11,
-    created_at: "Sat, 09 Aug 2025 12:30:24 +0000",
-    updated_at: "Sat, 09 Aug 2025 12:39:41 +0000",
-  },
-  {
-    id: "e678b359-ee53-4ce6-95e5-27634c802d9f",
-    project_id: "f3752975-d396-4baa-a4fc-54c8cd5bd959",
-    stage: "upload",
-    stage_status: "success",
-    input_url:
-      "https://cdn-api.ucode.run/ucode/cdbc20f8-3daf-412c-8e4e-2a4452bd999d_hey.mp4",
-    output_key: "a6dfe2c5-ecd6-4019-b6a8-cfe932c1473f",
-    output_path: "movies",
-    size_kb: 4755.658,
-    max_resolution: "1080p",
-    video_duration: 20,
-    preparation_duration_seconds: 0.153,
-    webhook_retry_count: 11,
-    created_at: "Sat, 09 Aug 2025 12:24:41 +0000",
-    updated_at: "Sat, 09 Aug 2025 12:29:35 +0000",
-  },
-];
-
 function TransCoder({
   control,
   setSelectedEnvironment,
@@ -328,7 +274,7 @@ function TransCoder({
             }}
             margin={"5px"}>
             <Pagination
-              count={Math.ceil(mockData.length / rowsPerPage)}
+              count={Math.ceil(pipelines.length / rowsPerPage)}
               page={page}
               onChange={(event, value) => {
                 getTransCode();

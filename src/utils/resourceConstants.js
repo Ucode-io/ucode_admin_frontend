@@ -186,6 +186,16 @@ export const groupedResources = [
       },
     ],
   },
+  {
+    head: "Transcoder",
+    items: [
+      {
+        label: "Transcoder",
+        value: 11,
+        icon: "superset",
+      },
+    ],
+  },
 ];
 
 export const getResourceTypeByID = (type) => {

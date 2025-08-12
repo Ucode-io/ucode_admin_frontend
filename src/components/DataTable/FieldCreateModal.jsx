@@ -1446,22 +1446,25 @@ export default function FieldCreateModal({
         selectedField={drawerState}
         // menuItem={menuItem}
       />
-      <RelationPopover
-        anchorEl={relationFieldAnchorEl}
-        onClose={relationFieldHandleClose}
-        tableLan={tableLan}
-        relation={drawerState}
-        closeSettingsBlock={() => closeAllDrawer()}
-        getRelationFields={getRelationFields}
-        formType={drawerState}
-        open={Boolean(relationFieldAnchorEl)}
-        submitCallback={() => {
-          setTimeout(() => {
-            queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-            queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
-          }, 200);
-        }}
-      />
+      {fieldData.type === FIELD_TYPES.LOOKUP ||
+      fieldData.type === FIELD_TYPES.LOOKUPS ? (
+        <RelationPopover
+          anchorEl={relationFieldAnchorEl}
+          onClose={relationFieldHandleClose}
+          tableLan={tableLan}
+          relation={drawerState}
+          closeSettingsBlock={() => closeAllDrawer()}
+          getRelationFields={getRelationFields}
+          formType={drawerState}
+          open={Boolean(relationFieldAnchorEl)}
+          submitCallback={() => {
+            setTimeout(() => {
+              queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+              queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+            }, 200);
+          }}
+        />
+      ) : null}
     </>
   );
 }

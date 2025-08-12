@@ -231,9 +231,12 @@ const ResourceButton = ({
 };
 
 const getElementIcon = (element) => {
+  console.log("elementelementelement", element);
   switch (element) {
     case "mongodb":
       return <img src="/img/mongodb.svg" alt="" />;
+    case "transcode":
+      return <img src="/img/transcode.svg" alt="" />;
     case "postgres":
       return <img src="/img/postgres.svg" alt="" />;
     case "restapi":

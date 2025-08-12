@@ -52,7 +52,7 @@ export const getSearchText = (db, table_slug) => {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(["searchTexts"], "readonly");
     const store = transaction.objectStore("searchTexts");
-    const request = store.get(table_slug);
+    const request = store.get(table_slug || "");
 
     request.onsuccess = (event) => resolve(event.target.result);
     request.onerror = (event) => reject(event);

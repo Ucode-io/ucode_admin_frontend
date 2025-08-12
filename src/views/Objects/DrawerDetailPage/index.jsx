@@ -378,7 +378,8 @@ function DrawerDetailPage({
           transition: "width 0.1s ease",
           overflow: "hidden",
           background: "#fff",
-        }}>
+        }}
+      >
         <Box zIndex={9}>
           <DrawerObjectsPage
             open={open}

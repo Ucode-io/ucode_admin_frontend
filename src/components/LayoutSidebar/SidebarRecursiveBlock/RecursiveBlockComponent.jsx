@@ -205,11 +205,15 @@ const RecursiveBlock = ({
 
   return (
     <Draggable key={index}>
-      <Box sx={{padding: `0 0 0 ${level * 10}px`}} style={{marginBottom: 5}}>
+      <Box
+        sx={{ padding: `0 0 0 ${level * 10}px` }}
+        style={{ marginBottom: 5 }}
+      >
         <div
           className="parent-block column-drag-handle"
           key={element.id}
-          style={{marginBottom: 5}}>
+          style={{ marginBottom: 5 }}
+        >
           {permission && (
             <Button
               id="more-button"
@@ -228,7 +232,8 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 customFunc(e);
                 clickHandler(e);
-              }}>
+              }}
+            >
               <div className="label">
                 {element?.type === "USER" && (
                   <PersonIcon
@@ -243,7 +248,7 @@ const RecursiveBlock = ({
                 {element?.type === "FOLDER" && (
                   <Box>
                     <div className="childMenuFolderArrow">
-                      {MenuFolderArrows({element, childBlockVisible})}
+                      {MenuFolderArrows({ element, childBlockVisible })}
                     </div>
 
                     <div className="childMenuIcon">
@@ -295,14 +300,16 @@ const RecursiveBlock = ({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                          }}>
+                          }}
+                        >
                           <Box
                             sx={{
                               width: "5px",
                               height: "5px",
                               background: "#787774",
                               borderRadius: "50%",
-                            }}></Box>
+                            }}
+                          ></Box>
                         </Box>
                       )}
                     </div>
@@ -316,7 +323,8 @@ const RecursiveBlock = ({
                     style={{
                       marginRight: "4px",
                     }}
-                    className="childMenuIcon">
+                    className="childMenuIcon"
+                  >
                     {
                       isValidUrl(element?.icon) ? (
                         <img
@@ -365,14 +373,16 @@ const RecursiveBlock = ({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                    }}>
+                    }}
+                  >
                     <Box
                       sx={{
                         width: "5px",
                         height: "5px",
                         background: "#787774",
                         borderRadius: "50%",
-                      }}></Box>
+                      }}
+                    ></Box>
                   </Box>
                 ) : (
                   ""
@@ -382,7 +392,8 @@ const RecursiveBlock = ({
                   title={
                     Boolean(level > 2 && getMenuLabel(element)?.length > 14) &&
                     getMenuLabel(element)
-                  }>
+                  }
+                >
                   <Box
                     sx={{
                       display: "flex",
@@ -391,7 +402,8 @@ const RecursiveBlock = ({
                       width: "100%",
                       position: "relative",
                       color: "#465766",
-                    }}>
+                    }}
+                  >
                     <Box>
                       <p>
                         {level > 2
@@ -411,7 +423,8 @@ const RecursiveBlock = ({
                           // backgroundColor: "#EAECF0",
                           padding: "2px 4px",
                           borderRadius: 4,
-                        }}>
+                        }}
+                      >
                         {(element?.data?.permission?.delete ||
                           element?.data?.permission?.update ||
                           element?.data?.permission?.write) && (

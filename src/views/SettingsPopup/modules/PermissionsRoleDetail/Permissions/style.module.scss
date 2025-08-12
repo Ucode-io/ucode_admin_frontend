@@ -230,3 +230,13 @@
   font-weight: 500;
   line-height: 18px;
 }
+
+
+.tableHeadCell {
+  width: 353px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(234, 236, 240);
+  }
+}

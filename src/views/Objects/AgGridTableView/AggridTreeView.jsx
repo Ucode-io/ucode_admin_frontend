@@ -498,6 +498,7 @@ function AggridTreeView(props) {
   }
 
   function removeRow(params, guid) {
+    console.log({ params, guid });
     const node = params.node;
     if (!node || !node.data) return;
 

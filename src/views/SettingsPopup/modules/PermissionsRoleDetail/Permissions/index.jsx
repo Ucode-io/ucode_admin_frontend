@@ -339,6 +339,15 @@ const Permissions = ({
                                 },
                               }))
                             );
+                            setChangedData(
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  read: e.target.checked,
+                                },
+                              }))
+                            );
                           }}
                         />
                       </CTableCell>
@@ -348,6 +357,15 @@ const Permissions = ({
                           onChange={(e) => {
                             setValue(
                               "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  write: e.target.checked,
+                                },
+                              }))
+                            );
+                            setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
                                 permission: {
@@ -373,6 +391,15 @@ const Permissions = ({
                                 },
                               }))
                             );
+                            setChangedData(
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  update: e.target.checked,
+                                },
+                              }))
+                            );
                           }}
                         />
                       </CTableCell>
@@ -390,6 +417,15 @@ const Permissions = ({
                                 },
                               }))
                             );
+                            setChangedData(
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  delete: e.target.checked,
+                                },
+                              }))
+                            );
                           }}
                         />
                       </CTableCell>
@@ -399,6 +435,15 @@ const Permissions = ({
                           onChange={(e) => {
                             setValue(
                               "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  menu_settings: e.target.checked,
+                                },
+                              }))
+                            );
+                            setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
                                 permission: {

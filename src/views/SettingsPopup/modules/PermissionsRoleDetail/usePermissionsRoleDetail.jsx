@@ -70,7 +70,7 @@ export const usePermissionsRoleDetail = () => {
     menuSettingsService
       .getList({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
-        "role-id": activeRoleId,
+        role_id: activeRoleId,
       })
       .then((res) => {
         setMenuList({

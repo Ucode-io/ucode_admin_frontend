@@ -9,7 +9,7 @@ import OverallCategoryIcons from "./OverallCategoryIcons";
 import styles from "./style.module.scss";
 import {useSelector} from "react-redux";
 
-const defaultOverallTab = {label: "Overall", category: "", value: "overall"};
+const defaultOverallTab = {label: "All", category: "", value: "overall"};
 
 const IconPicker = ({
   value = "",

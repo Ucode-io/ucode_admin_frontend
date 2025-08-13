@@ -64,6 +64,7 @@ const RecursiveBlock = ({
   const [searchParams] = useSearchParams();
   const newRouter = localStorage.getItem("new_router");
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
+
   const activeRequest =
     element?.type === "FOLDER" || element?.type === "WIKI_FOLDER";
   const defaultLanguage = i18n?.language;

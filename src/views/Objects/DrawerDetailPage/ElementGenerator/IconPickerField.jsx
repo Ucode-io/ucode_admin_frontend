@@ -9,7 +9,7 @@ import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import OverallCategoryIcons from "../../../../components/IconPicker/OverallCategoryIcons";
 import CategoryContent from "../../../../components/IconPicker/CategoryContent";
 
-const defaultOverallTab = {label: "Overall", category: "", value: "overall"};
+const defaultOverallTab = {label: "All", category: "", value: "overall"};
 
 const IconPicker = ({
   value = "",

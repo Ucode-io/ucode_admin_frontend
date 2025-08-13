@@ -6,6 +6,10 @@ import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
+import { Box } from "@mui/material";
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
+import ClearIcon from "@mui/icons-material/Clear";
+import useDebounce from "../../hooks/useDebounce";
 
 const AddDataColumn = React.memo(
   ({
@@ -31,7 +35,7 @@ const AddDataColumn = React.memo(
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
-    const {id} = useParams();
+    const { id } = useParams();
     const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
     const computedTableSlug = isRelationTable ? relatedTableSlug : tableSlug;
@@ -40,7 +44,7 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      formState: {errors},
+      formState: { errors },
     } = useForm({});
     const onSubmit = (values) => {
       const data = {
@@ -70,28 +74,52 @@ const AddDataColumn = React.memo(
         .finally(() => {});
     };
 
+    const handleKeyDown = useDebounce((event) => {
+      const activeEl = document.activeElement;
+
+      const isTextInput =
+        activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
+      const isContentEditable = activeEl?.isContentEditable;
+
+      const isInMantineDateField = activeEl?.closest(
+        ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root"
+      );
+
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey &&
+        (isTextInput || isContentEditable) &&
+        !isInMantineDateField &&
+        !isLoading
+      ) {
+        event.preventDefault();
+        handleSubmit(onSubmit)();
+      }
+    }, 500);
+
     useEffect(() => {
-      const handleKeyDown = (event) => {
-        const activeEl = document.activeElement;
+      // const handleKeyDown = (event) => {
+      //   const activeEl = document.activeElement;
 
-        const isTextInput =
-          activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
-        const isContentEditable = activeEl?.isContentEditable;
+      //   const isTextInput =
+      //     activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
+      //   const isContentEditable = activeEl?.isContentEditable;
 
-        const isInMantineDateField = activeEl?.closest(
-          ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root"
-        );
+      //   const isInMantineDateField = activeEl?.closest(
+      //     ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root"
+      //   );
 
-        if (
-          event.key === "Enter" &&
-          !event.shiftKey &&
-          (isTextInput || isContentEditable) &&
-          !isInMantineDateField
-        ) {
-          event.preventDefault();
-          handleSubmit(onSubmit)();
-        }
-      };
+      //   if (
+      //     event.key === "Enter" &&
+      //     !event.shiftKey &&
+      //     (isTextInput || isContentEditable) &&
+      //     !isInMantineDateField &&
+      //     !isLoading
+      //   ) {
+      //     event.preventDefault();
+      //     handleSubmit(onSubmit)();
+      //   }
+      // };
 
       window.addEventListener("keydown", handleKeyDown);
       return () => {
@@ -228,7 +256,24 @@ const AddDataColumn = React.memo(
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
           }}
-        ></CTableCell>
+        >
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <RectangleIconButton
+              id="cancel-row"
+              color="error"
+              style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
+              // onClick={() => colDef.removeRow(props, data?.guid)}
+              onClick={() => {
+                setAddNewRow(false);
+                // props?.api?.applyTransaction({
+                //   remove: [data],
+                // });
+              }}
+            >
+              <ClearIcon color="error" />
+            </RectangleIconButton>
+          </Box>
+        </CTableCell>
       </CTableRow>
     );
   }

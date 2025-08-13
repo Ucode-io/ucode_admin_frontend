@@ -125,7 +125,7 @@ const NewRouter = () => {
         : companyDefaultLink
     )
       ? result
-      : null;
+      : `/`;
   }, [
     location.pathname,
     applications,
@@ -153,7 +153,7 @@ const NewRouter = () => {
       return (
         // <Suspense fallback={<p> Loading...</p>}>
         <Routes>
-          <Route index element={<Navigate to={redirectLink || "/login"} />} />
+          <Route index element={<Navigate to={redirectLink} />} />
           <Route path="/">
             <Route index element={<Navigate to="/login " />} />
             <Route
@@ -438,9 +438,7 @@ const NewRouter = () => {
               </KeepAliveWrapper>
             }
           />
-          {redirectLink && (
-            <Route path="*" element={<Navigate to={redirectLink} />} />
-          )}
+          <Route path="*" element={<Navigate to={redirectLink} />} />
         </Route>
 
         <Route path="settings">
@@ -626,9 +624,7 @@ const NewRouter = () => {
         </Route>
       </Route>
 
-      {redirectLink && (
-        <Route path="*" element={<Navigate to={redirectLink} />} />
-      )}
+      <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />
       <Route path="reloadRelations" element={<ReloadRelations />} />
     </Routes>

@@ -174,12 +174,10 @@ function AgGridTableView(props) {
     return getObject?.pageLimit ?? limit;
   }, [paginationInfo, tableSlug]);
 
-  console.log("paginiationpaginiation", paginiation, tableSlug);
-
   const limitPage = useMemo(() => pageToOffset(offset, limit), [limit, offset]);
-  const {data: tabs} = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
-  const {isLoading, refetch} = useQuery(
+  const { isLoading, refetch } = useQuery(
     [
       "GET_OBJECTS_LIST_DATA",
       {
@@ -223,14 +221,15 @@ function AgGridTableView(props) {
   );
 
   const {
-    data: {fields} = {
+    data: { fields } = {
       pageCount: 1,
       fiedlsarray: [],
       custom_events: [],
     },
   } = useQuery({
     queryKey: ["GET_TABLE_INFO", tableSlug],
-    queryFn: () => constructorTableService.getTableInfo(tableSlug, {data: {}}),
+    queryFn: () =>
+      constructorTableService.getTableInfo(tableSlug, { data: {} }),
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
@@ -270,7 +269,7 @@ function AgGridTableView(props) {
   }, [fields]);
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -455,7 +454,7 @@ function AgGridTableView(props) {
   }
 
   function appendNewRow() {
-    const newRow = {new_field: true, guid: generateGUID()};
+    const newRow = { new_field: true, guid: generateGUID() };
     gridApi.current.api.applyTransaction({
       add: [newRow],
       addIndex: 0,
@@ -477,7 +476,7 @@ function AgGridTableView(props) {
   }
 
   const updateView = (pinnedField, updatedColumns = []) => {
-    pinFieldsRef.current = {...pinFieldsRef.current, ...pinnedField};
+    pinFieldsRef.current = { ...pinFieldsRef.current, ...pinnedField };
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -492,7 +491,7 @@ function AgGridTableView(props) {
 
   const updateObject = (data) => {
     if (!data?.new_field) {
-      constructorObjectService.update(tableSlug, {data: {...data}});
+      constructorObjectService.update(tableSlug, { data: { ...data } });
     }
   };
 
@@ -511,10 +510,10 @@ function AgGridTableView(props) {
   }
 
   const onColumnPinned = (event) => {
-    const {column, pinned} = event;
+    const { column, pinned } = event;
     const fieldId = column?.colDef?.columnID;
     updateView({
-      [fieldId]: {pinned},
+      [fieldId]: { pinned },
     });
   };
 
@@ -599,7 +598,7 @@ function AgGridTableView(props) {
     projectInfo,
     isWarningActive,
   ]);
-  console.log("rowDatarowData", rowData);
+
   return (
     <Box
       className={style.gridWrapper}

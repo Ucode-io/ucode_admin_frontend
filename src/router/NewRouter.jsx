@@ -125,7 +125,7 @@ const NewRouter = () => {
         : companyDefaultLink
     )
       ? result
-      : `/`;
+      : null;
   }, [
     location.pathname,
     applications,
@@ -139,7 +139,7 @@ const NewRouter = () => {
       ? "fbs-integrations.mybazar.uz"
       : window.location.hostname;
 
-  const {data, isLoading} = useLoginMicrofrontendQuery({
+  const { data, isLoading } = useLoginMicrofrontendQuery({
     params: {
       subdomain,
       enabled: Boolean(!isAuth),
@@ -153,7 +153,7 @@ const NewRouter = () => {
       return (
         // <Suspense fallback={<p> Loading...</p>}>
         <Routes>
-          <Route index element={<Navigate to={redirectLink} />} />
+          <Route index element={<Navigate to={redirectLink || "/login"} />} />
           <Route path="/">
             <Route index element={<Navigate to="/login " />} />
             <Route
@@ -191,7 +191,8 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+      >
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="/">
@@ -437,8 +438,9 @@ const NewRouter = () => {
               </KeepAliveWrapper>
             }
           />
-
-          <Route path="*" element={<Navigate to={redirectLink} />} />
+          {redirectLink && (
+            <Route path="*" element={<Navigate to={redirectLink} />} />
+          )}
         </Route>
 
         <Route path="settings">
@@ -624,7 +626,9 @@ const NewRouter = () => {
         </Route>
       </Route>
 
-      <Route path="*" element={<Navigate to={redirectLink} />} />
+      {redirectLink && (
+        <Route path="*" element={<Navigate to={redirectLink} />} />
+      )}
       <Route path="reload" element={<ReloadPage />} />
       <Route path="reloadRelations" element={<ReloadRelations />} />
     </Routes>

@@ -944,26 +944,26 @@ const LayoutSidebar = ({
   );
 };
 
-const Chatwoot = forwardRef(({open, ...props}, ref) => {
-  const {originalButtonFunction} = useChatwoot();
+// const Chatwoot = forwardRef(({open, ...props}, ref) => {
+//   const {originalButtonFunction} = useChatwoot();
 
-  return (
-    <Flex
-      ref={ref}
-      w={open ? "100%" : 36}
-      h={36}
-      alignItems="center"
-      justifyContent="center"
-      borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
-      cursor="pointer"
-      mb={open ? 0 : 4}
-      {...props}
-      onClick={originalButtonFunction}>
-      <img src="/img/message-text-square.svg" alt="chat" />
-    </Flex>
-  );
-});
+//   return (
+//     <Flex
+//       ref={ref}
+//       w={open ? "100%" : 36}
+//       h={36}
+//       alignItems="center"
+//       justifyContent="center"
+//       borderRadius={6}
+//       _hover={{bg: "#EAECF0"}}
+//       cursor="pointer"
+//       mb={open ? 0 : 4}
+//       {...props}
+//       onClick={originalButtonFunction}>
+//       <img src="/img/message-text-square.svg" alt="chat" />
+//     </Flex>
+//   );
+// });
 
 const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
   const {

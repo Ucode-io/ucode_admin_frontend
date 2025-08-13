@@ -340,17 +340,36 @@ function InviteModal({
                     </TabPanel>
 
                     <TabPanel p={"0"}>
-                      <Flex gap={"5px"} alignItems={"center"}>
+                      <Flex gap="5px" alignItems="center" position="relative">
                         <Input
-                          disabled
+                          w="500px"
+                          isDisabled
                           value={`${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}`}
-                          mt={"12px"}
-                          h={"38px"}
+                          mt="12px"
+                          h="38px"
+                          pr="50px"
+                          border="1px solid #e2e8f0"
+                          pointerEvents="none"
+                          sx={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            textAlign: "left",
+                          }}
+                          _disabled={{
+                            borderColor: "#e2e8f0",
+                            borderWidth: "1px",
+                            boxShadow: "none",
+                            color: "gray.600",
+                          }}
                         />
+
                         <Button
+                          position="absolute"
+                          right="0"
                           onClick={copyToClipboard}
-                          mt={"12px"}
-                          h={"38px"}>
+                          mt="12px"
+                          h="38px">
                           <ContentCopyIcon />
                         </Button>
                       </Flex>

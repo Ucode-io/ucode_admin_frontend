@@ -1,4 +1,3 @@
-
 import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
 import requestV2 from "../utils/requestV2";
@@ -49,6 +48,7 @@ const resourceService = {
   resourceCreate: (data) => requestV2.post(`company/project/resource`, data),
   metabaseResource: (data) => request.post(`metabase/dashboard`, data),
   metabaseGetUrl: (data) => request.post(`metabase/public-url`, data),
+  getTranscode: (params) => request.get("transcoder/pipeline", {params}),
 };
 
 export const useResourceListQuery = ({params = {}, queryParams} = {}) => {

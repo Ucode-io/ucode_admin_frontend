@@ -1,18 +1,15 @@
-import {
-  CircularProgress,
-  IconButton,
-  Menu,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import {memo, useId, useRef, useState} from "react";
-import useDebouncedWatch from "../../hooks/useDebouncedWatch";
-import {iconsList} from "../../utils/constants/iconsList";
-import IconGenerator from "./IconGenerator";
-import styles from "./style.module.scss";
 import {Lock} from "@mui/icons-material";
-import axios from "axios";
+import {CircularProgress, IconButton, Menu, Tooltip} from "@mui/material";
+import {memo, useId, useRef, useState} from "react";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import CategoryContent from "./CategoryContent";
+import IconGenerator from "./IconGenerator";
 import IconGeneratorIconjs from "./IconGeneratorIconjs";
+import OverallCategoryIcons from "./OverallCategoryIcons";
+import styles from "./style.module.scss";
+import {useSelector} from "react-redux";
+
+const defaultOverallTab = {label: "Overall", category: "", value: "overall"};
 
 const IconPicker = ({
   value = "",
@@ -28,53 +25,25 @@ const IconPicker = ({
 }) => {
   const buttonRef = useRef();
   const id = useId();
-  const [debouncedValue, setDebouncedValue] = useState("");
+  const [selectedTab, setSelectedTab] = useState();
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
-  const [computedIconsList, setComputedIconsList] = useState(
-    iconsList.slice(0, 40)
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+  const iconCategoriesFromRedux = useSelector((state) =>
+    state?.iconCategories?.iconCategories?.map((item, index) => ({
+      label: item?.split("#")?.[1],
+      category: item?.split("#")?.[0],
+      value: index + 1,
+    }))
   );
+
+  const iconCategories = [
+    defaultOverallTab,
+    ...(iconCategoriesFromRedux || []),
+  ];
 
   const handleClose = () => setDropdownIsOpen(false);
-
   const handleOpen = () => setDropdownIsOpen(true);
-
-  useDebouncedWatch(
-    () => {
-      const filteredList = iconsList.filter((icon) =>
-        icon.includes(searchText)
-      );
-
-      setComputedIconsList(filteredList.slice(0, 40));
-    },
-    [searchText],
-    300
-  );
-
-  useDebouncedWatch(
-    () => {
-      if (!searchText) return;
-
-      axios
-        .get(`https://api.iconify.design/search?query=${searchText}`)
-        .then((res) => {
-          const apiIcons = res?.data?.icons || [];
-
-          const localIcons = iconsList.filter((icon) =>
-            icon.includes(searchText)
-          );
-
-          const merged = [...new Set([...localIcons, ...apiIcons])];
-
-          setComputedIconsList(merged.slice(0, 40));
-        })
-        .catch((err) => {
-          console.error("Failed to fetch icons", err);
-        });
-    },
-    [searchText],
-    500
-  );
 
   if (loading)
     return (
@@ -112,35 +81,42 @@ const IconPicker = ({
         open={dropdownIsOpen}
         anchorOrigin={{horizontal: "left", vertical: "bottom"}}
         classes={{paper: styles.menuPaper, list: styles.menuList}}>
-        <TextField
-          size="small"
-          fullWidth
-          value={searchText}
-          autoFocus={tabIndex === 1}
-          inputProps={{tabIndex}}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-          sx={{marginTop: "10px"}}
-        />
-
-        <div className={styles.iconsBlock}>
-          {computedIconsList.map((icon) => (
-            <div
-              key={icon}
-              className={styles.popupIconWrapper}
-              onClick={() => {
-                onChange(icon);
-                handleClose();
-              }}>
-              {icon.includes(":") ? (
-                <IconGeneratorIconjs icon={icon} />
-              ) : (
-                <IconGenerator icon={icon} />
-              )}
-            </div>
-          ))}
-        </div>
+        <Tabs onSelect={(e) => setSelectedTabIndex(e)} className={styles.tabs}>
+          <TabList className={styles.tabList}>
+            {iconCategories?.map((tab, index) => (
+              <Tab
+                onClick={() => setSelectedTab(tab)}
+                key={index}
+                selectedClassName={styles.active}
+                className={styles.tab}>
+                {tab?.label}
+              </Tab>
+            ))}
+          </TabList>
+          {iconCategories?.map((itemTab, index) => {
+            const isFirst = index === 0;
+            return (
+              <TabPanel key={itemTab?.value || index}>
+                {isFirst ? (
+                  <OverallCategoryIcons
+                    tabIndex={index}
+                    handleClose={handleClose}
+                    onChange={onChange}
+                    selectedTabIndex={selectedTabIndex}
+                  />
+                ) : (
+                  <CategoryContent
+                    tabIndex={index}
+                    selectedTab={selectedTab}
+                    handleClose={handleClose}
+                    onChange={onChange}
+                    selectedTabIndex={selectedTabIndex}
+                  />
+                )}
+              </TabPanel>
+            );
+          })}
+        </Tabs>
       </Menu>
     </div>
   );

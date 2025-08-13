@@ -15,8 +15,10 @@ import {differenceInCalendarDays, parseISO} from "date-fns";
 import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
 import {ToastContainer} from "react-toastify";
+import {iconCategoryActions} from "../../store/IconCategory/iconCategory.slice";
 
 const MainLayout = ({setFavicon, favicon}) => {
+  const dispatch = useDispatch();
   const {appId} = useParams();
   const projectId = store.getState().company.projectId;
 
@@ -27,6 +29,8 @@ const MainLayout = ({setFavicon, favicon}) => {
     projectId,
     queryParams: {
       onSuccess: (data) => {
+        dispatch(iconCategoryActions.setCategories(data?.icon_categories));
+        console.log("projectInfoprojectInfo", projectInfo);
         localStorage.setItem("project_status", data?.status);
         window.dispatchEvent(new Event("storageUpdate"));
       },

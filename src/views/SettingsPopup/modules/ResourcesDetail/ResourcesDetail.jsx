@@ -43,6 +43,7 @@ import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
 import {SMSType} from "./SMSType";
 import PostgresCreate from "./PostgresCreate";
 import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
+import TransCoder from "./TransCoder";
 
 export const ResourcesDetail = ({
   setOpenResource = () => {},
@@ -592,25 +593,26 @@ export const ResourcesDetail = ({
                     </Button>
                   )}
 
-                  {isEditPage && variables?.type !== "REST" && (
-                    <Button
-                      sx={{
-                        color: "#fff",
-                        background: "#38A169",
-                        marginRight: "10px",
-                      }}
-                      hidden={!isEditPage}
-                      color={"success"}
-                      variant="contained"
-                      onClick={() => reconnectResource({id: resourceId})}
-                      isLoading={reconnectLoading}>
-                      {generateLangaugeText(
-                        settingLan,
-                        i18n?.language,
-                        "Reconnect"
-                      ) || "Reconnect"}
-                    </Button>
-                  )}
+                  {(isEditPage && variables?.type !== "REST") ||
+                    (resource_type !== 13 && (
+                      <Button
+                        sx={{
+                          color: "#fff",
+                          background: "#38A169",
+                          marginRight: "10px",
+                        }}
+                        hidden={!isEditPage}
+                        color={"success"}
+                        variant="contained"
+                        onClick={() => reconnectResource({id: resourceId})}
+                        isLoading={reconnectLoading}>
+                        {generateLangaugeText(
+                          settingLan,
+                          i18n?.language,
+                          "Reconnect"
+                        ) || "Reconnect"}
+                      </Button>
+                    ))}
                 </Box>
               </Box>
             </ContentTitle>
@@ -661,6 +663,17 @@ export const ResourcesDetail = ({
                 />
               ) : Number(resourceType) === 3 ? (
                 <PostgresCreate
+                  settingLan={settingLan}
+                  control={control}
+                  selectedEnvironment={selectedEnvironment}
+                  btnLoading={configureLoading || updateLoading}
+                  setSelectedEnvironment={setSelectedEnvironment}
+                  projectEnvironments={projectEnvironments}
+                  isEditPage={isEditPage}
+                  watch={watch}
+                />
+              ) : Number(resourceType) === 13 ? (
+                <TransCoder
                   settingLan={settingLan}
                   control={control}
                   selectedEnvironment={selectedEnvironment}

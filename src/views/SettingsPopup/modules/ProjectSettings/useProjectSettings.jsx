@@ -13,6 +13,7 @@ import {
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import {useGetLang} from "../../../../hooks/useGetLang";
 import {useSettingsPopupContext} from "../../providers";
+import {iconCategoryActions} from "../../../../store/IconCategory/iconCategory.slice";
 
 export const useProjectSettings = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export const useProjectSettings = () => {
 
   const {handleClose} = useSettingsPopupContext();
 
-  const { isLoading } = useProjectGetByIdQuery({
+  const {isLoading} = useProjectGetByIdQuery({
     projectId: company.projectId,
     queryParams: {
       onSuccess: (res) => {
@@ -103,6 +104,7 @@ export const useProjectSettings = () => {
   const {mutate: updateProject, isLoading: btnLoading} =
     useProjectUpdateMutation({
       onSuccess: (data) => {
+        dispatch(iconCategoryActions.setCategories(data?.icon_categories));
         newRouterHandler(data);
         dispatch(showAlert("Successfully updated", "success"));
         queryClient.invalidateQueries(["PROJECTS"]);

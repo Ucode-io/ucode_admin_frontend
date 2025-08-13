@@ -10,7 +10,8 @@ import {Box, Checkbox, FormControlLabel, FormGroup, Grid} from "@mui/material";
 import {ContentTitle} from "../../components/ContentTitle";
 import {Field} from "../../components/Field";
 import {Flex} from "@chakra-ui/react";
-import {E} from "@formulajs/formulajs";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 export const ProjectSettings = () => {
   const {
@@ -28,6 +29,29 @@ export const ProjectSettings = () => {
     btnLoading,
     setValue,
   } = useProjectSettings();
+
+  const [categoryList, setCategoryList] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const {data} = await axios.get(
+          "https://api.iconify.design/collections"
+        );
+
+        const categories = Object.entries(data || {}).map(([key, value]) => ({
+          label: value?.name || "Unknown",
+          value: `${key}#${value?.name || "Unknown"}`,
+        }));
+
+        setCategoryList(categories);
+      } catch (error) {
+        console.error("Error fetching icon categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
@@ -68,7 +92,7 @@ export const ProjectSettings = () => {
               />
             </FRow>
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <FRow
               label={
                 generateLangaugeText(lang, i18n?.language, "Currency") ||
@@ -84,7 +108,7 @@ export const ProjectSettings = () => {
                 fullWidth
               />
             </FRow>
-          </Grid>
+          </Grid> */}
           <Grid item xs={6}>
             <FRow
               label={
@@ -97,6 +121,23 @@ export const ProjectSettings = () => {
                 disabledHelperText
                 options={timezoneOptions}
                 name="timezone"
+                control={control}
+                fullWidth
+              />
+            </FRow>
+          </Grid>
+
+          <Grid item xs={6}>
+            <FRow
+              label={
+                generateLangaugeText(lang, i18n?.language, "Icon Categories") ||
+                "Icon Categories"
+              }
+              componentClassName="flex gap-2 align-center">
+              <HFMultipleSelect
+                disabledHelperText
+                options={categoryList}
+                name="icon_categories"
                 control={control}
                 fullWidth
               />

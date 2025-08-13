@@ -7,61 +7,9 @@ import IconGenerator from "./IconGenerator";
 import IconGeneratorIconjs from "./IconGeneratorIconjs";
 import OverallCategoryIcons from "./OverallCategoryIcons";
 import styles from "./style.module.scss";
+import {useSelector} from "react-redux";
 
-const iconCategories = [
-  {label: "Overall", value: 1, category: ""},
-  {
-    label: "Google material icons",
-    category: "ic",
-    value: 2,
-  },
-  {
-    label: "Solar",
-    value: 3,
-    category: "solar",
-  },
-  {
-    label: "Remix",
-    value: 4,
-    category: "ri",
-  },
-
-  {
-    label: "Carbon",
-    value: 5,
-    category: "carbon",
-  },
-  {
-    label: "Fluent ui system ",
-    value: 6,
-    category: "fluent",
-  },
-  {
-    label: "Material icon theme",
-    value: 7,
-    category: "material-icon-theme",
-  },
-  {
-    label: "Openmoji",
-    value: 8,
-    category: "openmoji",
-  },
-  {
-    label: "Flag icons",
-    value: 9,
-    category: "flag",
-  },
-  {
-    label: "Twitter emoji",
-    value: 10,
-    category: "twemoji",
-  },
-  {
-    label: "SVG logos",
-    value: 11,
-    category: "logos",
-  },
-];
+const defaultOverallTab = {label: "Overall", category: "", value: "overall"};
 
 const IconPicker = ({
   value = "",
@@ -80,6 +28,19 @@ const IconPicker = ({
   const [selectedTab, setSelectedTab] = useState();
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+  const iconCategoriesFromRedux = useSelector((state) =>
+    state?.iconCategories?.iconCategories?.map((item, index) => ({
+      label: item?.split("#")?.[1],
+      category: item?.split("#")?.[0],
+      value: index + 1,
+    }))
+  );
+
+  const iconCategories = [
+    defaultOverallTab,
+    ...(iconCategoriesFromRedux || []),
+  ];
 
   const handleClose = () => setDropdownIsOpen(false);
   const handleOpen = () => setDropdownIsOpen(true);

@@ -25,8 +25,9 @@ import {permissionsReducer} from "./permissions/permissions.slice";
 import {menuAccordionReducer} from "./menus/menus.slice";
 import {groupFieldReducer} from "./groupField/groupField.slice";
 import {detailDrawerReducer} from "./detailDrawer/detailDrawer.slice";
-import { tableReducer } from "./table/table.slice";
-import { settingsModalReducer } from "./settingsModal/settingsModal.slice";
+import {tableReducer} from "./table/table.slice";
+import {settingsModalReducer} from "./settingsModal/settingsModal.slice";
+import {iconCategoryReducer} from "./IconCategory/iconCategory.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -132,8 +133,8 @@ const settingsModal = {
   storage: sessionStorage,
 };
 
-const groupFieldPersistConfig = {
-  key: "view",
+const iconCategoriesPersistConfig = {
+  key: "iconCategories",
   storage,
 };
 
@@ -164,7 +165,10 @@ const rootReducer = combineReducers({
     tableColumnReducer
   ),
   filter: persistReducer(filtersPersistConfig, filterReducer),
-  // filter: filterReducer,
+  iconCategories: persistReducer(
+    iconCategoriesPersistConfig,
+    iconCategoryReducer
+  ),
   tableSize: persistReducer(tableSizePersistConfig, tableSizeReducer),
   tabRouter: persistReducer(tabRouterPersistConfig, tabRouterReducer),
   relationTab: persistReducer(relationTab, relationTabReducer),

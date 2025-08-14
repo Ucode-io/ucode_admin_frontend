@@ -44,6 +44,7 @@ import {addDays, endOfMonth, startOfMonth} from "date-fns";
 import React, {
   Suspense,
   lazy,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -453,32 +454,34 @@ export const NewUiViewsWithGroups = ({
     }
   };
 
-  const handleViewClick = (view, index) => {
+  const handleViewClick = (view) => {
+    const idx = views?.findIndex((v) => v.id === view.id);
+    setSelectedTabIndex(idx);
     viewHandler(view);
     setSelectedView(view);
-    dispatch(viewsActions.setSelectedView({view, index}));
+    dispatch(viewsActions.setSelectedView({view, idx}));
 
     const isSection = view?.type === "SECTION";
     if (!new_router) {
-      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: index}));
-      setSelectedTabIndex(index);
+      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: idx}));
+      setSelectedTabIndex(idx);
     } else {
       if (isSection) {
-        dispatch(detailDrawerActions.setDrawerTabIndex(index));
+        dispatch(detailDrawerActions.setDrawerTabIndex(idx));
         dispatch(groupFieldActions.trimViewsDataUntil(view));
         dispatch(groupFieldActions.trimViewsUntil(view));
         return;
       }
 
       if (relationView && !isSection) {
-        dispatch(detailDrawerActions.setDrawerTabIndex(index));
+        dispatch(detailDrawerActions.setDrawerTabIndex(idx));
         dispatch(
           groupFieldActions.addViewPath({
             ...view,
           })
         );
       } else {
-        dispatch(detailDrawerActions.setMainTabIndex(index));
+        dispatch(detailDrawerActions.setMainTabIndex(idx));
       }
     }
   };
@@ -615,25 +618,110 @@ export const NewUiViewsWithGroups = ({
     tableRelations,
   });
 
+  // useEffect(() => {
+  //   if (!views || views.length === 0) return;
+
+  //   const updateVisibleViews = () => {
+  //     const container = viewsRef.current;
+  //     if (!container) return;
+
+  //     const containerWidth = container.offsetWidth;
+  //     const viewButtonWidth = 90;
+  //     const maxVisible = Math.max(
+  //       1,
+  //       Math.floor(containerWidth / viewButtonWidth)
+  //     );
+
+  //     let visible = views.slice(0, maxVisible);
+  //     let overflowed = views.slice(maxVisible);
+
+  //     if (overflowed.length > 0) {
+  //       const chosenView = views.find((v) => v.id === viewId);
+  //       if (chosenView) {
+  //         const isInVisible = visible.some((v) => v.id === viewId);
+
+  //         if (!isInVisible) {
+  //           if (visible.length >= maxVisible) {
+  //             const removed = visible.pop();
+  //             overflowed = [removed, ...overflowed];
+  //           }
+  //           visible.push(chosenView);
+  //           overflowed = overflowed.filter((v) => v.id !== viewId);
+  //         } else {
+  //           visible = visible.filter((v) => v.id !== viewId);
+  //           visible.push(chosenView);
+  //         }
+  //       }
+  //     }
+
+  //     setVisibleViews(visible);
+  //     setOverflowedViews(overflowed);
+  //   };
+
+  //   updateVisibleViews();
+  //   window.addEventListener("resize", updateVisibleViews);
+  //   return () => window.removeEventListener("resize", updateVisibleViews);
+  // }, [viewId]);
+
+  const updateVisibleViews = useCallback(() => {
+    if (!views || views.length === 0) return;
+
+    const container = viewsRef.current;
+    if (!container) return;
+
+    const containerWidth = container.offsetWidth;
+    const viewButtonWidth = 90;
+    const maxVisible = Math.max(
+      1,
+      Math.floor(containerWidth / viewButtonWidth)
+    );
+
+    let visible = views.slice(0, maxVisible);
+    let overflowed = views.slice(maxVisible);
+
+    if (overflowed.length > 0) {
+      const chosenView = views.find((v) => v.id === viewId);
+      if (chosenView) {
+        const isInVisible = visible.some((v) => v.id === viewId);
+
+        if (!isInVisible) {
+          if (visible.length >= maxVisible) {
+            const removed = visible.pop();
+            overflowed = [removed, ...overflowed];
+          }
+          visible.push(chosenView);
+          overflowed = overflowed.filter((v) => v.id !== viewId);
+        } else {
+          visible = visible.filter((v) => v.id !== viewId);
+          visible.push(chosenView);
+        }
+      }
+    }
+
+    setVisibleViews(visible);
+    setOverflowedViews(overflowed);
+  }, [views, viewId]);
+
   useEffect(() => {
-    const updateVisibleViews = () => {
-      const container = viewsRef.current;
-      if (!container) return;
+    updateVisibleViews();
+  }, [updateVisibleViews]);
 
-      const containerWidth = container.offsetWidth;
-      const viewButtonWidth = 100;
-      const maxVisible = Math.floor(containerWidth / viewButtonWidth);
+  useEffect(() => {
+    let resizeTimeout;
 
-      setVisibleViews(views.slice(0, maxVisible));
-      setOverflowedViews(views.slice(maxVisible));
+    const handleResizeEnd = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        updateVisibleViews();
+      }, 200); // Debounce resize end
     };
 
-    updateVisibleViews();
-    window.addEventListener("resize", updateVisibleViews);
-    return () => window.removeEventListener("resize", updateVisibleViews);
-  }, [views]);
-
-  //
+    window.addEventListener("resize", handleResizeEnd);
+    return () => {
+      clearTimeout(resizeTimeout);
+      window.removeEventListener("resize", handleResizeEnd);
+    };
+  }, [updateVisibleViews]);
 
   return (
     <ViewProvider state={{view, fieldsMap}}>
@@ -906,6 +994,7 @@ export const NewUiViewsWithGroups = ({
               overflow={"scroll"}>
               {(visibleViews ?? []).map((view, index) => (
                 <Button
+                  p={"0 6px"}
                   minW={"80px"}
                   key={view.id}
                   variant="ghost"
@@ -925,35 +1014,45 @@ export const NewUiViewsWithGroups = ({
                   color={viewId === view?.id ? "#175CD3" : "#475467"}
                   bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
                   _hover={viewId === view?.id ? {bg: "#D1E9FF"} : undefined}
-                  onClick={() => handleViewClick(view, index)}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (overflowedViews?.length > 0) {
+                      if (index !== visibleViews?.length - 1)
+                        handleViewClick(view, index);
+                    } else handleViewClick(view, index);
+                  }}>
                   {view?.is_relation_view
                     ? view?.table_label || view.type
                     : view?.attributes?.[`name_${i18n?.language}`] ||
                       view?.name ||
                       view.type}
+
+                  {overflowedViews?.length > 0 &&
+                    index === visibleViews?.length - 1 && (
+                      <MoreViewsComponent
+                        views={overflowedViews}
+                        selectedTabIndex={selectedTabIndex}
+                        setViewAnchorEl={setViewAnchorEl}
+                        handleViewClick={handleViewClick}
+                      />
+                    )}
                 </Button>
               ))}
             </Flex>
 
-            {overflowedViews?.length > 0 && (
-              <MoreViewsComponent
-                views={overflowedViews}
-                selectedTabIndex={selectedTabIndex}
-                handleViewClick={handleViewClick}
-              />
+            {!overflowedViews?.length > 0 && (
+              <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
+                <Button
+                  leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
+                  variant="ghost"
+                  colorScheme="gray"
+                  color="#475467"
+                  onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                  {generateLangaugeText(tableLan, i18n?.language, "View") ||
+                    "View"}
+                </Button>
+              </PermissionWrapperV2>
             )}
-
-            <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
-              <Button
-                leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
-                variant="ghost"
-                colorScheme="gray"
-                color="#475467"
-                onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
-                {generateLangaugeText(tableLan, i18n?.language, "View") ||
-                  "View"}
-              </Button>
-            </PermissionWrapperV2>
 
             {view?.type === "FINANCE CALENDAR" && (
               <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
@@ -1845,15 +1944,6 @@ const FiltersSwitch = ({
           )) ?? []
     );
   }, [view, search]);
-
-  // const renderColumns = [
-  //   ...checkedColumns.map((c) => ({ ...c, checked: true })),
-  //   ...unCheckedColumns.map((c) => ({ ...c, checked: false })),
-  // ].filter((column) =>
-  //   search === ""
-  //     ? true
-  //     : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
-  // );
 
   const mutation = useMutation({
     mutationFn: async (data) => {

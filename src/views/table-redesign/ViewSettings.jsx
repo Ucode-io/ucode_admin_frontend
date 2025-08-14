@@ -1,33 +1,31 @@
+import {ChevronRightIcon} from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   Flex,
   Image,
   Modal,
   ModalContent,
   ModalOverlay,
-  useDisclosure,
 } from "@chakra-ui/react";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {ChevronRightIcon} from "@chakra-ui/icons";
-import {useParams} from "react-router-dom";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 import ViewSettings from "../Objects/components/ViewSettings";
 
 function ViewSettingsModal({
   selectedView,
-  tableLan,
-  isChanged,
-  selectedTabIndex,
+  tableLan = {},
+  isChanged = false,
+  viewSetting = false,
+  selectedTabIndex = 0,
   refetchViews = () => {},
   setIsChanged = () => {},
 }) {
-  const {tableSlug, appId} = useParams();
   const {i18n} = useTranslation();
-
   const [typeNewView, setTypeNewView] = useState(null);
-
   const [isOpen, setIsOpen] = useState(false);
   const onOpen = () => {
     setIsChanged(false);
@@ -42,19 +40,37 @@ function ViewSettingsModal({
   return (
     <>
       <Flex
-        p="8px"
         h="32px"
         columnGap="8px"
         alignItems="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        // _hover={{bg: "#EAECF0"}}
         cursor="pointer"
         onClick={onOpen}>
-        <Image src="/img/file-download.svg" alt="Docs" />
-        <ViewOptionTitle>
-          {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
-        </ViewOptionTitle>
-        <ChevronRightIcon ml="auto" fontSize={22} />
+        {viewSetting ? (
+          <>
+            <Button
+              width={"18px"}
+              p={"0 0"}
+              color={"#000"}
+              bg={"none"}
+              h={"24px"}
+              _hover={{
+                bg: "#edf2f6",
+              }}>
+              <MoreHorizIcon />
+            </Button>
+          </>
+        ) : (
+          <>
+            {" "}
+            <Image src="/img/file-download.svg" alt="Docs" />
+            <ViewOptionTitle>
+              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
+            </ViewOptionTitle>
+            <ChevronRightIcon ml="auto" fontSize={22} />
+          </>
+        )}
       </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>

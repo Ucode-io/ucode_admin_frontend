@@ -21,7 +21,8 @@ const ViewSettings = ({
   setSelectedView = () => {},
   selectedView,
 }) => {
-  const {tableSlug, appId} = useParams();
+  const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
+  const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
   const closeForm = () => setSelectedView(null);
 
   const {
@@ -37,7 +38,12 @@ const ViewSettings = ({
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
-        data: {limit: 10, offset: 0, with_relations: true, app_id: appId},
+        data: {
+          limit: 10,
+          offset: 0,
+          with_relations: true,
+          app_id: appId ?? menuId,
+        },
       });
     },
     {

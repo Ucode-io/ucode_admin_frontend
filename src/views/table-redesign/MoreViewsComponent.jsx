@@ -1,12 +1,10 @@
 import {Box, Button, Flex, Input} from "@chakra-ui/react";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import {Menu} from "@mui/material";
-import React, {useState} from "react";
+import React, {useState, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {default as SVG} from "react-inlinesvg";
 import AddIcon from "@mui/icons-material/Add";
+import ViewSettingsModal from "./ViewSettings";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -20,37 +18,45 @@ const viewIcons = {
 };
 
 function MoreViewsComponent({
+  anchorEl = null,
+  open = false,
   views = [],
-  setViewAnchorEl = () => {},
+  tableLan = {},
+  selectedView = {},
+  selectedTabIndex = 0,
+  refetchViews = () => {},
+  handleClose = () => {},
   handleViewClick = () => {},
   setSelectedView = () => {},
+  setViewAnchorEl = () => {},
 }) {
   const {i18n} = useTranslation();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [searchText, setSearchText] = useState("");
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v");
-
-  const handleClick = (e) => {
-    e.stopPropagation();
-    setAnchorEl(e.currentTarget);
-  };
-  const handleClose = () => setAnchorEl(null);
 
   const handleMenuSelect = (view) => {
     setSelectedView(view);
     handleViewClick(view);
     handleClose();
   };
+
+  const filteredViews = useMemo(() => {
+    const lowerSearch = searchText.toLowerCase();
+    return views.filter((view) => {
+      const name = view?.is_relation_view
+        ? view?.table_label || view.type
+        : view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.name ||
+          view.type;
+
+      return name?.toLowerCase().includes(lowerSearch);
+    });
+  }, [views, searchText, i18n?.language]);
+
   return (
     <>
       <Box sx={{width: "20px"}}>
-        <Box
-          onClick={handleClick}
-          sx={{height: "19px", cursor: "pointer", marginRight: "15px"}}>
-          <KeyboardArrowDownIcon />
-        </Box>
-
         <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
           <Box
             sx={{
@@ -63,93 +69,98 @@ function MoreViewsComponent({
               padding: "5px",
             }}>
             <Input
+              h={"30px"}
               placeholder="Search"
+              value={searchText}
               onChange={(e) => {
+                setSearchText(e.target.value);
                 e.stopPropagation();
               }}
+              onKeyDown={(e) => e.stopPropagation()}
             />
 
             <Box
               sx={{
                 width: "100%",
-                padding: "5px",
+                padding: "0px",
                 borderBottom: "1px solid #eee",
+                maxHeight: "300px",
+                overflowY: "auto",
               }}>
-              {views?.map((view, index) => (
-                <Flex
-                  w={"100%"}
-                  alignItems={"center"}
-                  borderRadius={"6px"}
-                  _hover={{
-                    background: "#edf2f6",
-                  }}>
-                  <Button
-                    w={"20px"}
-                    p={"0"}
-                    bg={"none"}
-                    h={"24px"}
-                    _hover={{
-                      bg: "none",
-                    }}
-                    color={viewId === view?.id ? "#175CD3" : "#475467"}>
-                    <DragIndicatorIcon />
-                  </Button>
-                  <Button
-                    w={"100%"}
+              {filteredViews.length > 0 ? (
+                filteredViews.map((view, index) => (
+                  <Flex
+                    m={"5px 0"}
                     key={view.id}
-                    variant="ghost"
-                    colorScheme="gray"
-                    padding={"0"}
-                    leftIcon={
-                      <SVG
-                        src={`/img/${viewIcons[view.type]}`}
-                        color={viewId === view?.id ? "#175CD3" : "#475467"}
-                        width={18}
-                        height={18}
-                      />
-                    }
-                    display={"flex"}
+                    p={"0 4px"}
+                    w={"100%"}
+                    h={"26px"}
                     alignItems={"center"}
-                    justifyContent={"flex-start"}
-                    fontSize={13}
-                    h={"30px"}
+                    borderRadius={"6px"}
                     _hover={{
-                      bg: "none",
-                    }}
-                    fontWeight={500}
-                    color={viewId === view?.id ? "#175CD3" : "#475467"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleViewClick(view, index);
-                      handleMenuSelect(view);
+                      background: "#edf2f6",
                     }}>
-                    {view?.is_relation_view
-                      ? view?.table_label || view.type
-                      : view?.attributes?.[`name_${i18n?.language}`] ||
-                        view?.name ||
-                        view.type}
-                  </Button>
-                  <Button
-                    color={"#000"}
-                    bg={"none"}
-                    h={"24px"}
-                    _hover={{
-                      background: "none",
-                    }}>
-                    <MoreHorizIcon />
-                  </Button>
-                </Flex>
-              ))}
+                    <Button
+                      w={"100%"}
+                      variant="ghost"
+                      colorScheme="gray"
+                      padding={"0"}
+                      leftIcon={
+                        <SVG
+                          src={`/img/${viewIcons[view.type]}`}
+                          color={viewId === view?.id ? "#175CD3" : "#475467"}
+                          width={18}
+                          height={18}
+                        />
+                      }
+                      display={"flex"}
+                      alignItems={"center"}
+                      justifyContent={"flex-start"}
+                      fontSize={12}
+                      h={"30px"}
+                      _hover={{
+                        bg: "none",
+                      }}
+                      fontWeight={500}
+                      color={viewId === view?.id ? "#175CD3" : "#475467"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewClick(view, index);
+                        handleMenuSelect(view);
+                      }}>
+                      {view?.is_relation_view
+                        ? view?.table_label || view.type
+                        : view?.attributes?.[`name_${i18n?.language}`] ||
+                          view?.name ||
+                          view.type}
+                    </Button>
+
+                    <ViewSettingsModal
+                      viewSetting={true}
+                      refetchViews={refetchViews}
+                      selectedTabIndex={selectedTabIndex}
+                      tableLan={tableLan}
+                      selectedView={selectedView}
+                    />
+                  </Flex>
+                ))
+              ) : (
+                <Box fontSize="14px" color="gray" p="10px">
+                  No results found
+                </Box>
+              )}
             </Box>
 
             <Button
               onClick={(e) => {
                 setViewAnchorEl(e.currentTarget);
               }}
+              p={"0"}
+              h={"26px"}
               mt={"5px"}
               bg={"none"}
               justifyContent={"flex-start"}
-              gap={"5px"}
+              gap={"2px"}
               _hover={{
                 bg: "#eee",
               }}

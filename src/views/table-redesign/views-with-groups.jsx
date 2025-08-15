@@ -187,7 +187,7 @@ export const NewUiViewsWithGroups = ({
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
   const query = new URLSearchParams(window.location.search);
-  const viewId = query.get("v");
+  const viewId = selectedView ? query.get("v") : selectedView?.id;
 
   const projectId = useSelector((state) => state.auth.projectId);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
@@ -198,7 +198,7 @@ export const NewUiViewsWithGroups = ({
       calendar_to_slug: "",
     },
   });
-
+  console.log("selectedViewselectedView", selectedView, viewId);
   const handleAddDate = (item) => {
     const startDate = new Date(centerDate).toISOString();
     const endDate = addDays(new Date(centerDate), 5).toISOString();
@@ -952,11 +952,7 @@ export const NewUiViewsWithGroups = ({
                   leftIcon={
                     <SVG
                       src={`/img/${viewIcons[view.type]}`}
-                      color={
-                        (viewId ?? selectedView?.id === view?.id)
-                          ? "#175CD3"
-                          : "#475467"
-                      }
+                      color={viewId === view?.id ? "#175CD3" : "#475467"}
                       width={18}
                       height={18}
                     />
@@ -964,21 +960,9 @@ export const NewUiViewsWithGroups = ({
                   fontSize={13}
                   h={"30px"}
                   fontWeight={500}
-                  color={
-                    (viewId ?? selectedView?.id === view?.id)
-                      ? "#175CD3"
-                      : "#475467"
-                  }
-                  bg={
-                    (viewId ?? selectedView?.id === view?.id)
-                      ? "#D1E9FF"
-                      : "#fff"
-                  }
-                  _hover={
-                    (viewId ?? selectedView?.id === view?.id)
-                      ? {bg: "#D1E9FF"}
-                      : undefined
-                  }
+                  color={viewId === view?.id ? "#175CD3" : "#475467"}
+                  bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
+                  _hover={viewId === view?.id ? {bg: "#D1E9FF"} : undefined}
                   onClick={(e) => {
                     console.log("CLICKED");
                     e.stopPropagation();

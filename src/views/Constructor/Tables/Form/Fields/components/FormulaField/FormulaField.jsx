@@ -11,6 +11,7 @@ import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { math } from "@/utils/constants/fieldTypes";
 import { getColumnIconPath } from "../../../../../../table-redesign/icons";
 import { SearchInput } from "../../../components/SearchInput";
+import { FormulaEditor } from "../FormulaEditor";
 
 export const FormulaField = ({
   control,
@@ -35,18 +36,18 @@ export const FormulaField = ({
     tableLan,
     mathType,
     handleSearch,
-    search,
-    code,
-    handleChange,
-    showSuggestions,
-    filteredSuggestions,
-    handleSuggestionClick,
-    textareaRef,
-    mirrorRef,
+    // search,
+    // code,
+    // handleChange,
+    // showSuggestions,
+    // filteredSuggestions,
+    // handleSuggestionClick,
+    // textareaRef,
+    // mirrorRef,
   } = useFormulaFieldProps({ control, mainForm, menuItem, tableSlug, watch });
 
   return (
-    <Box maxWidth="292px">
+    <Box maxWidth="740px" width="100%">
       {fieldType === FIELD_TYPES.FORMULA ? (
         <Box display="flex" flexDirection="column" rowGap="8px">
           <DropdownSelect
@@ -96,7 +97,7 @@ export const FormulaField = ({
         </Box>
       ) : (
         <Box>
-          <Box className={cls.formula}>
+          {/* <Box className={cls.formula}>
             <DropdownSelect
               className={cls.input}
               disabledHelperText
@@ -147,40 +148,10 @@ export const FormulaField = ({
                 ) || "Select variable"
               }
             />
-            {/* <Menu
-              open={openMath}
-              onClose={handleCloseMath}
-              anchorEl={mathEl}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <Box className={cls.mathList}>
-                {math.map((item) => {
-                  return (
-                    <span
-                      id={`math_${item?.label}`}
-                      // className={cls[`math_${item?.label}`]}
-                      onClick={() => {
-                        setValue("attributes.math", item);
-                        setMathEl(null);
-                      }}
-                    >
-                      <span>{item?.value}</span>
-                    </span>
-                  );
-                })}
-              </Box>
-            </Menu> */}
-          </Box>
+          </Box> */}
           <Box className={cls.suggestionsContainer}>
             <div
-              ref={mirrorRef}
+              // ref={mirrorRef}
               style={{
                 visibility: "hidden",
                 position: "absolute",
@@ -188,8 +159,9 @@ export const FormulaField = ({
                 pointerEvents: "none",
               }}
             />
+            <FormulaEditor />
 
-            <textarea
+            {/* <textarea
               className={cls.textArea}
               ref={textareaRef}
               disabledHelperText
@@ -231,7 +203,7 @@ export const FormulaField = ({
                   </li>
                 ))}
               </ul>
-            )}
+            )} */}
             {/* <HFTextArea
               className={cls.input}
               disabledHelperText
@@ -254,7 +226,7 @@ export const FormulaField = ({
               "Fields list"}
             :
           </h2> */}
-          <Box marginBottom="8px" marginTop="12px">
+          {/* <Box marginBottom="8px" marginTop="12px">
             <SearchInput onChange={handleSearch} />
           </Box>
           <Box display="flex" gap="8px" flexWrap="wrap">
@@ -264,7 +236,7 @@ export const FormulaField = ({
                 key={field.slug}
                 onClick={() => {
                   const newValue = watch("attributes.formula") + field.slug;
-                  handleChange({ target: { value: newValue } });
+                  // handleChange({ target: { value: newValue } });
                   setValue(newValue);
                 }}
               >
@@ -277,7 +249,7 @@ export const FormulaField = ({
                 <span>{field.label}</span>
               </Box>
             ))}
-          </Box>
+          </Box> */}
           {/* {fieldsList.map((field) => (
           <div>
             {field.label} - <strong>{field.slug}</strong>{" "}

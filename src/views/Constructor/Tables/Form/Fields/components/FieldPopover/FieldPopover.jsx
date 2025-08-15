@@ -54,11 +54,12 @@ export const FieldPopover = ({
       onClose={onClose}
       anchorOrigin={{
         vertical: formType === "CREATE" ? "top" : "bottom",
-        horizontal: formType === "CREATE" ? "right" : "left",
+        // horizontal: formType === "CREATE" ? "right" : "left",
+        horizontal: "right",
       }}
       transformOrigin={{
         vertical: "top",
-        horizontal: "right",
+        horizontal: "left",
       }}
       PaperProps={{
         style: {

@@ -33,9 +33,7 @@ export const AdvancedSettings = ({ title, onClose, onBackClick = () => {}, child
         </Box>
         <CloseButton onClick={onClose} />
       </Box>
-      <Box overflow="auto" maxHeight="376px">
-        {children}
-      </Box>
+      <Box maxHeight="376px">{children}</Box>
     </Box>
   );
 }

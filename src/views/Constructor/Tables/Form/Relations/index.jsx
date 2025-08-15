@@ -14,6 +14,7 @@ import TableRowButton from "../../../../../components/TableRowButton";
 import {RelationPopover} from "./components/RelationPopover";
 
 const Relations = ({mainForm, getRelationFields, tableLan}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);

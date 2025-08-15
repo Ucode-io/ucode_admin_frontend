@@ -50,6 +50,8 @@ const MenuRow = ({
   watch,
   name = `menus.${appIndex}.children`,
   icon,
+  getValues,
+  activeRoleId,
 }) => {
   const dispatch = useDispatch();
 
@@ -72,6 +74,7 @@ const MenuRow = ({
   const { isLoading: permissionGetByIdLoading } = useMenuListQuery({
     params: {
       parent_id: parentId,
+      role_id: activeRoleId,
     },
     queryParams: {
       enabled: !!parentId,
@@ -141,6 +144,8 @@ const MenuRow = ({
           setValue={setValue}
           watch={watch}
           icon={item?.icon}
+          getValues={getValues}
+          activeRoleId={activeRoleId}
           name={
             item.type === "FOLDER"
               ? level === 1
@@ -161,6 +166,13 @@ const MenuRow = ({
         if (app?.id === item?.id) {
           return {
             ...item,
+            data: {
+              ...item.data,
+              permission: {
+                ...item.data.permission,
+                [type]: checked,
+              },
+            },
             permission: {
               ...item.permission,
               [type]: checked,
@@ -176,6 +188,13 @@ const MenuRow = ({
         ...changedData,
         {
           ...app,
+          data: {
+            ...app.data,
+            permission: {
+              ...app.permission,
+              [type]: checked,
+            },
+          },
           permission: {
             ...app.permission,
             [type]: checked,
@@ -193,12 +212,13 @@ const MenuRow = ({
       //   e
       // );
       if (level > 1 && isFolder) {
-        setValue(`${name}.${childIndex}.permission.${type}`, e);
+        console.log(`${name}.${childIndex}.data.permission.${type}`, e);
+        setValue(`${name}.${childIndex}.data.permission.${type}`, e);
       } else {
-        setValue(`${name}.permission.${type}`, e);
+        setValue(`${name}.data.permission.${type}`, e);
       }
     } else {
-      setValue(`menus.${appIndex}.permission.${type}`, e);
+      setValue(`menus.${appIndex}.data.permission.${type}`, e);
     }
   };
 
@@ -300,7 +320,7 @@ const MenuRow = ({
                 handleChange(e.target.checked, "read", true);
               }}
               checked={watch(
-                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.permission.read`
+                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.data.permission.read`
               )}
               label="Read"
             />
@@ -311,7 +331,7 @@ const MenuRow = ({
                 handleChange(e.target.checked, "write", true);
               }}
               checked={watch(
-                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.permission.write`
+                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.data.permission.write`
               )}
               label="Write"
             />
@@ -322,7 +342,7 @@ const MenuRow = ({
                 handleChange(e.target.checked, "update", true);
               }}
               checked={watch(
-                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.permission.update`
+                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.data.permission.update`
               )}
               label="Update"
             />
@@ -333,7 +353,7 @@ const MenuRow = ({
                 handleChange(e.target.checked, "delete", true);
               }}
               checked={watch(
-                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.permission.delete`
+                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.data.permission.delete`
               )}
               label="Delete"
             />
@@ -344,7 +364,7 @@ const MenuRow = ({
                 handleChange(e.target.checked, "menu_settings", true);
               }}
               checked={watch(
-                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.permission.menu_settings`
+                `${level > 1 ? `${name}.${childIndex}` : `menus.${appIndex}`}.data.permission.menu_settings`
               )}
               label="Settings"
             />
@@ -403,8 +423,8 @@ const MenuRow = ({
               }}
               checked={
                 level > 1
-                  ? watch(`${name}.permission.read`)
-                  : watch(`menus.${appIndex}.permission.read`)
+                  ? watch(`${name}.data.permission.read`)
+                  : watch(`menus.${appIndex}.data.permission.read`)
                 // childIndex !== null
                 //   ? watch(
                 //       `menus.${appIndex}.children.${childIndex}.permission.read`
@@ -421,8 +441,8 @@ const MenuRow = ({
               }}
               checked={
                 level > 1
-                  ? watch(`${name}.permission.write`)
-                  : watch(`menus.${appIndex}.permission.write`)
+                  ? watch(`${name}.data.permission.write`)
+                  : watch(`menus.${appIndex}.data.permission.write`)
                 // childIndex !== null
                 //   ? watch(
                 //       `menus.${appIndex}.children.${childIndex}.permission.write`
@@ -439,8 +459,8 @@ const MenuRow = ({
               }}
               checked={
                 level > 1
-                  ? watch(`${name}.permission.update`)
-                  : watch(`menus.${appIndex}.permission.update`)
+                  ? watch(`${name}.data.permission.update`)
+                  : watch(`menus.${appIndex}.data.permission.update`)
                 // childIndex !== null
                 //   ? watch(
                 //       `menus.${appIndex}.children.${childIndex}.permission.update`
@@ -457,8 +477,8 @@ const MenuRow = ({
               }}
               checked={
                 level > 1
-                  ? watch(`${name}.permission.delete`)
-                  : watch(`menus.${appIndex}.permission.delete`)
+                  ? watch(`${name}.data.permission.delete`)
+                  : watch(`menus.${appIndex}.data.permission.delete`)
                 // childIndex !== null
                 //   ? watch(
                 //       `menus.${appIndex}.children.${childIndex}.permission.delete`
@@ -475,8 +495,8 @@ const MenuRow = ({
               }}
               checked={
                 level > 1
-                  ? watch(`${name}.permission.menu_settings`)
-                  : watch(`menus.${appIndex}.permission.menu_settings`)
+                  ? watch(`${name}.data.permission.menu_settings`)
+                  : watch(`menus.${appIndex}.data.permission.menu_settings`)
                 // childIndex !== null
                 //   ? watch(
                 //       `menus.${appIndex}.children.${childIndex}.permission.menu_settings`
@@ -488,7 +508,6 @@ const MenuRow = ({
           </CTableCell>
         </CTableHeadRow>
       )}
-
       {tableBlockIsOpen && renderMenuRows(data)}
     </>
   );

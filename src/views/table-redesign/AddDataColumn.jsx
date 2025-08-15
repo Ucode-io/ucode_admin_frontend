@@ -6,7 +6,7 @@ import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import { Box } from "@mui/material";
+import {Box, Button} from "@mui/material";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import useDebounce from "../../hooks/useDebounce";
@@ -35,7 +35,7 @@ const AddDataColumn = React.memo(
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
-    const { id } = useParams();
+    const {id} = useParams();
     const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
     const computedTableSlug = isRelationTable ? relatedTableSlug : tableSlug;
@@ -44,7 +44,7 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      formState: { errors },
+      formState: {errors},
     } = useForm({});
     const onSubmit = (values) => {
       const data = {
@@ -166,8 +166,7 @@ const AddDataColumn = React.memo(
             backgroundColor: "#F6F6F6",
             zIndex: "2",
             textAlign: "center",
-          }}
-        >
+          }}>
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column, index) => (
@@ -203,8 +202,7 @@ const AddDataColumn = React.memo(
                   ? "1"
                   : "0"
               }`,
-            }}
-          >
+            }}>
             <NewTableDataForm
               tableSlug={tableSlug}
               fields={columns}
@@ -255,23 +253,37 @@ const AddDataColumn = React.memo(
             right: "0",
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
-          }}
-        >
+          }}>
           <Box display="flex" alignItems="center" justifyContent="center">
-            <RectangleIconButton
-              id="cancel-row"
+            <Button
+              sx={{
+                minWidth: "32px",
+                maxWidth: "32px",
+                height: "24px",
+                padding: "0",
+                borderColor: "#E5E9EB",
+              }}
+              variant="outlined"
               color="error"
-              style={{ minHeight: 25, minWidth: 25, height: 25, width: 25 }}
-              // onClick={() => colDef.removeRow(props, data?.guid)}
               onClick={() => {
                 setAddNewRow(false);
+              }}>
+              <ClearIcon color="error" />
+            </Button>
+            {/* <RectangleIconButton
+              id="cancel-row"
+              color="error"
+              style={{minHeight: 25, minWidth: 25, height: 25, width: 25}}
+              // onClick={() => colDef.removeRow(props, data?.guid)}
+              onClick={(e) => {
+                // e.stopPropogation();
+                // setAddNewRow(false);
                 // props?.api?.applyTransaction({
                 //   remove: [data],
                 // });
-              }}
-            >
+              }}>
               <ClearIcon color="error" />
-            </RectangleIconButton>
+            </RectangleIconButton> */}
           </Box>
         </CTableCell>
       </CTableRow>

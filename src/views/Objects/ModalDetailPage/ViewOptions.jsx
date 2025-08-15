@@ -45,6 +45,7 @@ import useDebounce from "../../../hooks/useDebounce";
 import constructorTableService from "../../../services/constructorTableService";
 import {listToMap} from "../../../utils/listToMap";
 import listToOptions from "../../../utils/listToOptions";
+import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",

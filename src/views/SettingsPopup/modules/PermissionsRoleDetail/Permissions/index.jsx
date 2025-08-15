@@ -28,10 +28,12 @@ const Permissions = ({
   setValue,
   watch,
   activeTab,
+  getValues,
+  activeRoleId,
 }) => {
   const [modalData, setModalData] = useState(null);
   const [permissionLan, setPermissionLan] = useState(null);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const closeModal = () => {
     setModalData(null);
@@ -469,6 +471,8 @@ const Permissions = ({
                         setChangedData={setChangedData}
                         setValue={setValue}
                         watch={watch}
+                        getValues={getValues}
+                        activeRoleId={activeRoleId}
                         icon={
                           app?.icon ||
                           app?.data?.microfrontend?.icon ||

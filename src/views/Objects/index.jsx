@@ -15,10 +15,8 @@ import {useMenuGetByIdQuery} from "../../services/menuService";
 import {store} from "../../store";
 import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import CalendarHourView from "./CalendarHourView";
-import DocView from "./DocView";
 import GanttView from "./GanttView";
 import ViewsWithGroups from "./ViewsWithGroups";
-
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
 import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
 import {Box, Popover, Skeleton} from "@mui/material";
@@ -32,12 +30,10 @@ import {viewsActions} from "../../store/views/view.slice";
 const ObjectsPage = () => {
   const {tableSlug} = useParams();
   const {state} = useLocation();
-  const {appId} = useParams();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
-  const menuId = searchParams.get("menuId");
 
   const {i18n, t} = useTranslation();
   const viewSelectedIndex = useSelector(
@@ -49,18 +45,8 @@ const ObjectsPage = () => {
     viewSelectedIndex?.tabIndex || 1
   );
   const [menuItem, setMenuItem] = useState(null);
-  const roleId = useSelector((state) => state.auth?.roleInfo?.id);
-  const projectId = store.getState().company.projectId;
-  const auth = useSelector((state) => state.auth);
-  const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
+  const [selectedView, setSelectedView] = useState(null);
   const {views: viewsFromStore} = useSelector((state) => state.views);
-
-  const parts = auth?.clientType?.default_page
-    ? auth?.clientType?.default_page?.split("/")
-    : companyDefaultLink.split("/");
-
-  const resultDefaultLink =
-    parts?.length && `/${parts[3]}/${parts[4]}/${parts[5]}/${parts[6]}`;
 
   const [isViewCreateModalOpen, setIsViewCreateModalOpen] = useState(false);
   const addViewRef = useRef(null);
@@ -130,6 +116,7 @@ const ObjectsPage = () => {
         };
       },
       onSuccess: ({views}) => {
+        setSelectedView(views?.[0]);
         dispatch(viewsActions.setViews(views));
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
@@ -144,7 +131,6 @@ const ObjectsPage = () => {
 
   useEffect(() => {
     return () => {
-      console.log("unmount");
       dispatch(viewsActions.clearViews());
     };
   }, []);
@@ -212,6 +198,7 @@ const ObjectsPage = () => {
         menuItem={menuItem}
         refetchViews={refetch}
         setOpen={setOpen}
+        selectedView={selectedView}
         open={open}
         {...defaultProps}
         {...props}
@@ -222,7 +209,6 @@ const ObjectsPage = () => {
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
   const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
-  console.log(selectedTabIndex);
 
   return (
     <>
@@ -235,14 +221,6 @@ const ObjectsPage = () => {
               </TabPanel>
             );
           })}
-          {/* <TabPanel>
-            <DocView
-              views={views}
-              fieldsMap={fieldsMap}
-              selectedTabIndex={selectedTabIndex}
-              setSelectedTabIndex={setSelectedTabIndex}
-            />
-          </TabPanel> */}
         </div>
       </Tabs>
 
@@ -267,15 +245,6 @@ const ObjectsPage = () => {
                   onClick={handleAddViewClick}>
                   {t("add")}
                 </Button>
-                {/* <div
-                // className={style.element}
-                variant="contained"
-                onClick={handleAddViewClick}
-                ref={addViewRef}
-              >
-                <AddIcon style={{ color: "#000" }} />
-                <strong style={{ color: "#000" }}>{t("add")}</strong>
-              </div> */}
               </PermissionWrapperV2>
             </Box>
             <Box
@@ -292,14 +261,6 @@ const ObjectsPage = () => {
               </Text>
             </Box>
           </Box>
-          // <FiltersBlock>
-          //   <ViewTabSelector
-          //     selectedTabIndex={selectedTabIndex}
-          //     setSelectedTabIndex={setSelectedTabIndex}
-          //     views={views}
-          //     menuItem={menuItem}
-          //   />
-          // </FiltersBlock>
         )}
       </ChakraProvider>
       <Popover

@@ -69,7 +69,7 @@ const TableRow = ({
         <>
           <CTableRow
             key={key}
-            style={{...style, height: "28px"}}
+            style={{...style, height: "32px"}}
             className="new-ui"
             ref={parentRef}>
             <CTableCell
@@ -81,7 +81,7 @@ const TableRow = ({
                 left: "0",
                 backgroundColor: "#F6F6F6",
                 zIndex: "1",
-                height: "22px",
+                height: "20px",
               }}>
               <div
                 style={{
@@ -269,9 +269,6 @@ const TableRow = ({
                       projectId={projectId}
                     />
                   ))}
-                {/*<PermissionWrapperV2 tableSlug={tableSlug} type={"pdf_action"}>*/}
-                {/*  <GeneratePdfFromTable view={view} row={row}/>*/}
-                {/*</PermissionWrapperV2>*/}
               </div>
             </td>
           </CTableRow>
@@ -387,7 +384,7 @@ const TableRow = ({
           )}
           <td
             style={{
-              height: "30px",
+              height: "34px",
               minWidth: "85px",
               color: "#262626",
               fontSize: "13px",

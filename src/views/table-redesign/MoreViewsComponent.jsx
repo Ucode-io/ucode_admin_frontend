@@ -61,7 +61,7 @@ function MoreViewsComponent({
           <Box
             sx={{
               borderRadius: "8px",
-              width: "300px",
+              width: "250px",
               border: "1px solid #eee",
               display: "flex",
               alignItems: "flex-start",

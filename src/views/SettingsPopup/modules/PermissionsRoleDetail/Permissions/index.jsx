@@ -335,6 +335,13 @@ const Permissions = ({
                               "menus",
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    read: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   read: e.target.checked,
@@ -344,6 +351,13 @@ const Permissions = ({
                             setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    read: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   read: e.target.checked,
@@ -361,6 +375,13 @@ const Permissions = ({
                               "menus",
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    write: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   write: e.target.checked,
@@ -370,6 +391,13 @@ const Permissions = ({
                             setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    write: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   write: e.target.checked,
@@ -387,6 +415,13 @@ const Permissions = ({
                               "menus",
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    update: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   update: e.target.checked,
@@ -396,6 +431,13 @@ const Permissions = ({
                             setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    update: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   update: e.target.checked,
@@ -413,6 +455,13 @@ const Permissions = ({
                               "menus",
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    delete: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   delete: e.target.checked,
@@ -422,6 +471,13 @@ const Permissions = ({
                             setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    delete: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   delete: e.target.checked,
@@ -439,6 +495,13 @@ const Permissions = ({
                               "menus",
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    menu_settings: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   menu_settings: e.target.checked,
@@ -448,6 +511,13 @@ const Permissions = ({
                             setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
+                                data: {
+                                  ...item.data,
+                                  permission: {
+                                    ...item.data.permission,
+                                    menu_settings: e.target.checked,
+                                  },
+                                },
                                 permission: {
                                   ...item.permission,
                                   menu_settings: e.target.checked,

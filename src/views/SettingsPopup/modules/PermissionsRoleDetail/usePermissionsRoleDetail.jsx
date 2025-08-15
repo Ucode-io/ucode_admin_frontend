@@ -20,7 +20,8 @@ import { settingsModalActions } from "../../../../store/settingsModal/settingsMo
 import menuSettingsService from "../../../../services/menuSettingsService";
 
 export const usePermissionsRoleDetail = () => {
-  const { control, reset, watch, setValue, handleSubmit } = useForm();
+  const { control, reset, watch, setValue, handleSubmit, getValues } =
+    useForm();
   const projectId = store.getState().company.projectId;
 
   const [changedData, setChangedData] = useState([]);
@@ -229,5 +230,7 @@ export const usePermissionsRoleDetail = () => {
     handleOpenCategory,
     handleCloseCategory,
     categories,
+    getValues,
+    activeRoleId,
   };
 };

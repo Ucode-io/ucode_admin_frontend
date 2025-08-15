@@ -24,7 +24,7 @@ import connectionServiceV2 from "../../../../services/auth/connectionService";
 import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
 import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
 import {auth} from "./firebase";
-import { showAlert } from "../../../../store/alert/alert.thunk";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 import RecoverPassword from "../RecoverPassword";
 
 // const firebaseConfig = {
@@ -441,10 +441,7 @@ const LoginFormDesign = ({
         if (connection?.options?.length === 1) {
           setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
           setSelectedCollection(connection.options[0]?.value);
-          setValue(
-            `tables[${index}].table_slug`,
-            connection?.options?.[0]?.[connection?.view_slug]
-          );
+          setValue(`tables[${index}].table_slug`, connection?.table_slug);
         } else {
           handleClickOpen();
         }

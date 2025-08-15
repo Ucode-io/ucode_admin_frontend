@@ -12,8 +12,14 @@ import { listToMap } from "../../../../utils/listToMap";
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const ObjectForm = ({ onBackButtonClick, form }) => {
-  const { tableSlug } = useParams();
+const ObjectForm = ({
+  onBackButtonClick,
+  form,
+  tableSlug: tableSlugFromProps,
+}) => {
+  const { tableSlug: tableSlugParam, menuId: menuIdParam } = useParams();
+
+  const tableSlug = tableSlugParam || tableSlugFromProps;
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
@@ -24,7 +30,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
   const { i18n } = useTranslation();
   const [data, setData] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
+  const menuId = searchParams.get("menuId") || menuIdParam;
 
   const id = searchParams.get("id");
 
@@ -41,7 +47,7 @@ const ObjectForm = ({ onBackButtonClick, form }) => {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
     });
-    
+
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {

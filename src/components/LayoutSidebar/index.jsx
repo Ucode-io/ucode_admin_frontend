@@ -87,6 +87,8 @@ import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import AddIcon from "@mui/icons-material/Add";
 import AddOrganization from "./AddOrganization";
+import { permissionsActions } from "../../store/permissions/permissions.slice";
+import { isJSONParsable } from "../../utils/isJsonValid";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -421,10 +423,11 @@ const LayoutSidebar = ({
     if (persistedAuth) {
       try {
         const tables = JSON.parse(persistedAuth);
-        const objectId = JSON.parse(tables?.tables)?.[0]?.object_id;
-
-        if (objectId) {
-          localStorage.setItem("object_id", objectId);
+        if (isJSONParsable(tables?.tables)) {
+          const objectId = JSON.parse(tables?.tables)?.[0]?.object_id;
+          if (objectId) {
+            localStorage.setItem("object_id", objectId);
+          }
         }
       } catch (error) {
         console.error("Failed to parse localStorage:", error);
@@ -1095,6 +1098,7 @@ const Header = ({
       .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
+        dispatch(permissionsActions.setPermissions(res?.permissions));
         store.dispatch(authActions.setTokens(res));
         navigate("/");
         window.location.reload();

@@ -17,6 +17,7 @@ import { useQuery } from "react-query";
 import roleServiceV2 from "@/services/roleServiceV2";
 import cls from "./styles.module.scss";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
+import menuSettingsService from "../../../../services/menuSettingsService";
 
 export const usePermissionsRoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit } = useForm();
@@ -57,6 +58,41 @@ export const usePermissionsRoleDetail = () => {
   const onBackClick = () => {
     dispatch(settingsModalActions.resetParams());
   };
+
+  const [menuList, setMenuList] = useState({
+    menus: [],
+  });
+  const [isMenuListLoading, setIsMenuListLoading] = useState([]);
+
+  const getMenuList = () => {
+    setIsMenuListLoading(true);
+
+    menuSettingsService
+      .getList({
+        parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+        role_id: activeRoleId,
+      })
+      .then((res) => {
+        setMenuList({
+          menus: res?.menus?.map((item) => ({
+            ...item,
+            permission: item?.data?.permission,
+          })),
+        });
+        setIsMenuListLoading(false);
+      })
+      .catch((error) => {
+        setIsMenuListLoading(false);
+        console.log("error", error);
+      })
+      .finally(() => {
+        setIsMenuListLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getMenuList();
+  }, [activeRoleId]);
 
   const { data: rolePermissionData, isLoading: rolePermissionGetByIdLoading } =
     useRolePermissionGetByIdQuery({
@@ -143,10 +179,10 @@ export const usePermissionsRoleDetail = () => {
   };
 
   useEffect(() => {
-    if (rolePermissionData || permissionData) {
-      reset({ ...permissionData, ...rolePermissionData });
+    if (rolePermissionData || menuList) {
+      reset({ ...menuList, ...rolePermissionData });
     }
-  }, [permissionData, rolePermissionData]);
+  }, [menuList, rolePermissionData, activeClientType]);
 
   const categories = {
     table: "Table",

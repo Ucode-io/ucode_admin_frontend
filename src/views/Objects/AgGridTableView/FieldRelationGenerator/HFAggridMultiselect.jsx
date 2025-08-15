@@ -73,7 +73,6 @@ const HFAggridMultiselect = React.memo((props) => {
   const onNavigateToDetail = () => {
     colDef?.onRowClick?.(data);
   };
-  console.log("fieldddddd", computedValue, field);
 
   return (
     <Box

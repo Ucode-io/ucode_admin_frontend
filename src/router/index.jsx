@@ -3,7 +3,7 @@ import NewRouter from "./NewRouter";
 import OldRouter from "./OldRouter";
 
 function Router() {
-  const [routerSwitch, setRouterSwitch] = useState(false);
+  const [routerSwitch, setRouterSwitch] = useState(null);
 
   useEffect(() => {
     const checkRouter = () => {
@@ -17,6 +17,10 @@ function Router() {
 
     return () => window.removeEventListener("storageUpdate", checkRouter);
   }, []);
+
+  if (routerSwitch === null) {
+    return <>Loading...</>;
+  }
 
   return <>{!!routerSwitch ? <NewRouter /> : <OldRouter />}</>;
 }

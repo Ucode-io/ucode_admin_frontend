@@ -28,6 +28,7 @@ export const FIELD_TYPES = {
   TEXT: "TEXT",
   INCREMENT_ID: "INCREMENT_ID",
   DATE_TIME_WITHOUT_TIME_ZONE: "DATE_TIME_WITHOUT_TIME_ZONE",
+  VIDEO: "VIDEO",
 };
 
 export const fieldTypes = [
@@ -1143,6 +1144,8 @@ export const FormatOptionType = (item) => {
     case "PHOTO":
       return fileFieldFormats;
     case "VIDEO":
+      return fileFieldFormats;
+    case "MULTI_IMAGE":
       return fileFieldFormats;
     case "SINGLE_LINE":
       return textFieldFormats;

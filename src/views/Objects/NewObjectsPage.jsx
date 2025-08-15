@@ -133,7 +133,7 @@ const NewObjectsPage = () => {
       },
     }
   );
-  console.log("selectedViewselectedView", selectedView);
+
   useEffect(() => {
     if (pathname.includes("/login")) {
       navigate("/", {replace: false});

@@ -130,16 +130,18 @@ const ImageUpload = ({
   return (
     <div
       className={`Gallery ${className}`}
-      style={{cursor: disabled ? "not-allowed" : "pointer"}}>
+      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    >
       {value && (
         <>
           <div
-            style={{padding: drawerDetail ? "0 10px" : 0}}
+            style={{ padding: drawerDetail ? "0 10px" : 0 }}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}
             // onClick={handleClick}>
-            onClick={() => handleOpenImg()}>
+            onClick={() => handleOpenImg()}
+          >
             <div className="img">
               <img
                 src={value}
@@ -156,7 +158,8 @@ const ImageUpload = ({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}>
+              }}
+            >
               {value.split("#")[0].split("_")[1] ?? ""}
             </Typography>
           </div>
@@ -169,7 +172,8 @@ const ImageUpload = ({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -177,7 +181,8 @@ const ImageUpload = ({
                 gap: "10px",
                 padding: "10px",
                 backgroundColor: "#212B36",
-              }}>
+              }}
+            >
               <Button
                 sx={{
                   display: "flex",
@@ -186,7 +191,8 @@ const ImageUpload = ({
                   justifyContent: "flex-start",
                   color: "#fff",
                 }}
-                onClick={() => handleOpenImg()}>
+                onClick={() => handleOpenImg()}
+              >
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
@@ -199,8 +205,9 @@ const ImageUpload = ({
                   justifyContent: "flex-start",
                   color: "#fff",
                 }}
-                onClick={closeButtonHandler}>
-                <DeleteIcon style={{width: "17px", height: "17px"}} />
+                onClick={closeButtonHandler}
+              >
+                <DeleteIcon style={{ width: "17px", height: "17px" }} />
                 Remove Image
               </Button>
 
@@ -216,7 +223,8 @@ const ImageUpload = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}>
+                }}
+              >
                 <ChangeCircleIcon />
                 Change Image
               </Button>
@@ -252,7 +260,8 @@ const ImageUpload = ({
                   outline: "none",
                   boxShadow: "none",
                 },
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   border: "0px solid #fff",
@@ -262,11 +271,12 @@ const ImageUpload = ({
                   justifyContent: "center",
                   flexDirection: "column",
                 }}
-                aria-describedby={id}>
+                aria-describedby={id}
+              >
                 <img
                   onClick={(e) => e.stopPropagation()}
                   src={value}
-                  style={{transform: `scale(${imgScale})`}}
+                  style={{ transform: `scale(${imgScale})` }}
                   className="uploadedImage"
                   alt=""
                 />
@@ -274,7 +284,8 @@ const ImageUpload = ({
                   sx={{
                     fontSize: "10px",
                     color: "#747474",
-                  }}>
+                  }}
+                >
                   {value?.split?.("_")?.[1] ?? ""}
                 </Typography>
               </Box>
@@ -285,8 +296,9 @@ const ImageUpload = ({
                   right: "-300px",
                   top: "-50px",
                   color: "white",
-                }}>
-                <ClearIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ClearIcon style={{ width: "30px", height: "30px" }} />
               </Button>
 
               <Button
@@ -299,8 +311,9 @@ const ImageUpload = ({
                   right: "-10px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
-                <ZoomInIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ZoomInIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={(e) => {
@@ -312,8 +325,9 @@ const ImageUpload = ({
                   right: "-70px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
-                <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ZoomOutIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={(e) => {
@@ -325,9 +339,10 @@ const ImageUpload = ({
                   right: "-130px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
+                }}
+              >
                 <Rotate90DegreesCcwIcon
-                  style={{width: "30px", height: "30px"}}
+                  style={{ width: "30px", height: "30px" }}
                 />
               </Button>
 
@@ -341,8 +356,9 @@ const ImageUpload = ({
                   right: "-200px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
-                <DownloadIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <DownloadIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={(e) => {
@@ -354,10 +370,11 @@ const ImageUpload = ({
                   right: "-300px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
+                }}
+              >
                 <MoreHorizIcon
                   htmlColor="#fff"
-                  style={{width: "30px", height: "30px"}}
+                  style={{ width: "30px", height: "30px" }}
                 />
               </Button>
             </Box>
@@ -378,7 +395,8 @@ const ImageUpload = ({
               minWidth: 40,
               width: 40,
               height: 27,
-            }}>
+            }}
+          >
             <input
               id="img_upload"
               type="file"
@@ -388,12 +406,12 @@ const ImageUpload = ({
               autoFocus={tabIndex === 1}
               onChange={inputChangeHandler}
               disabled={disabled}
-              accept=".jpg, .jpeg, .png, .gif"
+              accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras, .svg"
             />
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{width: 22, height: 22}}
+              style={{ width: 22, height: 22 }}
             />
           </Button>
         )}

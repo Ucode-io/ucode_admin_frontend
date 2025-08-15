@@ -24,6 +24,8 @@ import connectionServiceV2 from "../../../../services/auth/connectionService";
 import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
 import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
 import {auth} from "./firebase";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import RecoverPassword from "../RecoverPassword";
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",

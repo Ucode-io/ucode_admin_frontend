@@ -93,7 +93,7 @@ const Permissions = ({
   return (
     <>
       <div>
-        <Card style={{boxShadow: "none", paddingTop: "3px"}}>
+        <Card style={{ boxShadow: "none", paddingTop: "3px" }}>
           {/* <TabList>
             <Tab>
               {generateLangaugeText(permissionLan, i18n?.language, "Table") ||
@@ -119,20 +119,23 @@ const Permissions = ({
                 borderRadius="md"
                 disablePagination
                 type={"withoutPadding"}
-                bodyClassname={styles.body}>
+                bodyClassname={styles.body}
+              >
                 <CTable removableHeight={284} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
                       <CTableCell
                         rowSpan={2}
                         w={200}
-                        className={styles.sticky_header}>
+                        className={styles.sticky_header}
+                      >
                         <Box
                           minWidth="198px"
                           color="#475467"
                           fontSize="12px"
                           fontWeight={500}
-                          lineHeight="18px">
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
@@ -146,7 +149,8 @@ const Permissions = ({
                           alignItems={"center"}
                           justifyContent="center"
                           columnGap={"4px"}
-                          className={styles.headCellBox}>
+                          className={styles.headCellBox}
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
@@ -160,7 +164,7 @@ const Permissions = ({
                             {item.title}{" "}
                             <GoInfo
                               size={18}
-                              style={{cursor: "pointer"}}
+                              style={{ cursor: "pointer" }}
                               onClick={() =>
                                 item?.content && setModalData(item)
                               }
@@ -260,7 +264,8 @@ const Permissions = ({
                   <CTableBody
                     //   loader={isLoading}
                     columnsCount={8}
-                    dataLength={tables?.tables?.length}>
+                    dataLength={tables?.tables?.length}
+                  >
                     {tables?.tables?.map((table, tableIndex) => (
                       <TableRow
                         key={table.id}
@@ -283,7 +288,8 @@ const Permissions = ({
                 withBorder
                 disablePagination
                 borderRadius="md"
-                type={"withoutPadding"}>
+                type={"withoutPadding"}
+              >
                 <CTable removableHeight={false} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
@@ -293,7 +299,8 @@ const Permissions = ({
                           color="#475467"
                           fontSize="12px"
                           fontWeight={500}
-                          lineHeight="18px">
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
@@ -303,11 +310,12 @@ const Permissions = ({
                       </CTableCell>
                       <CTableCell colSpan={5} tex>
                         <Box
-                          sx={{justifyContent: "center", display: "flex"}}
+                          sx={{ justifyContent: "center", display: "flex" }}
                           color="#475467"
                           fontSize="12px"
                           fontWeight={500}
-                          lineHeight="18px">
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
@@ -323,6 +331,15 @@ const Permissions = ({
                           onChange={(e) => {
                             setValue(
                               "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  read: e.target.checked,
+                                },
+                              }))
+                            );
+                            setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
                                 permission: {
@@ -348,6 +365,15 @@ const Permissions = ({
                                 },
                               }))
                             );
+                            setChangedData(
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  write: e.target.checked,
+                                },
+                              }))
+                            );
                           }}
                         />
                       </CTableCell>
@@ -357,6 +383,15 @@ const Permissions = ({
                           onChange={(e) => {
                             setValue(
                               "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  update: e.target.checked,
+                                },
+                              }))
+                            );
+                            setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
                                 permission: {
@@ -382,6 +417,15 @@ const Permissions = ({
                                 },
                               }))
                             );
+                            setChangedData(
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  delete: e.target.checked,
+                                },
+                              }))
+                            );
                           }}
                         />
                       </CTableCell>
@@ -391,6 +435,15 @@ const Permissions = ({
                           onChange={(e) => {
                             setValue(
                               "menus",
+                              allMenu?.map((item) => ({
+                                ...item,
+                                permission: {
+                                  ...item.permission,
+                                  menu_settings: e.target.checked,
+                                },
+                              }))
+                            );
+                            setChangedData(
                               allMenu?.map((item) => ({
                                 ...item,
                                 permission: {
@@ -416,6 +469,11 @@ const Permissions = ({
                         setChangedData={setChangedData}
                         setValue={setValue}
                         watch={watch}
+                        icon={
+                          app?.icon ||
+                          app?.data?.microfrontend?.icon ||
+                          app?.data?.webpage?.icon
+                        }
                       />
                     ))}
                   </CTableBody>
@@ -429,7 +487,8 @@ const Permissions = ({
                 withBorder
                 borderRadius="md"
                 type={"withoutPadding"}
-                disablePagination>
+                disablePagination
+              >
                 <CTable removableHeight={false} disablePagination>
                   <CTableHead>
                     <CTableHeadRow>
@@ -438,7 +497,8 @@ const Permissions = ({
                           color="#475467"
                           fontSize="12px"
                           fontWeight={500}
-                          lineHeight="18px">
+                          lineHeight="18px"
+                        >
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,

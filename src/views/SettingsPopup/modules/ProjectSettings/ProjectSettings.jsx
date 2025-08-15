@@ -12,6 +12,7 @@ import {Field} from "../../components/Field";
 import {Flex} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import Language from "./Language";
 
 export const ProjectSettings = () => {
   const {
@@ -55,10 +56,17 @@ export const ProjectSettings = () => {
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
-      <ContentTitle subtitle={watch("title")}>
-        {generateLangaugeText(lang, i18n?.language, "Project Settings") ||
-          "Project settings"}
-      </ContentTitle>
+      <Flex
+        h={"52px"}
+        mb={"20px"}
+        borderBottom={"1px solid #eee"}
+        justifyContent={"space-between"}>
+        <ContentTitle style={{borderBottom: "none"}} subtitle={watch("title")}>
+          {generateLangaugeText(lang, i18n?.language, "Project Settings") ||
+            "Project settings"}
+        </ContentTitle>
+        <Language languageOptions={languageOptions} />
+      </Flex>
       <Flex alignItems="flex-end" mb="48px">
         <HFAvatarUpload
           size="xs"

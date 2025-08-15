@@ -12,14 +12,11 @@ import {
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
 import {queryGenerator} from "@/utils/queryGenerator";
-import ViewTypeList from "@/views/Objects/components/ViewTypeList";
+import AgGridTableView from "@/views/Objects/AgGridTableView";
+import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import style from "@/views/Objects/style.module.scss";
 import {getColumnIcon} from "@/views/table-redesign/icons";
-import {
-  ArrowBackIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
+import {ArrowBackIcon, ChevronRightIcon} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -34,12 +31,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Spinner,
   Switch,
 } from "@chakra-ui/react";
-import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {Backdrop, CircularProgress, Popover as MuiPopover} from "@mui/material";
+import {Backdrop, CircularProgress} from "@mui/material";
 import {addDays, endOfMonth, startOfMonth} from "date-fns";
 import React, {
   Suspense,
@@ -69,50 +65,31 @@ import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useGetLang} from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
+import {ViewProvider} from "../../providers/ViewProvider";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorRelationService from "../../services/constructorRelationService";
-import constructorTableService, {
-  useTableByIdQuery,
-} from "../../services/constructorTableService";
+import {useTableByIdQuery} from "../../services/constructorTableService";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
 import {generateGUID} from "../../utils/generateID";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {listToMap} from "../../utils/listToMap";
-import listToOptions from "../../utils/listToOptions";
 import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
-import {Filter} from "./FilterGenerator";
-import {LayoutPopup} from "./LayoutPopup";
-import {ScreenOptions} from "./ScreenOptions";
-import ViewSettingsModal from "./ViewSettings";
-import {CalendarSettings} from "./components/CalendarSettings";
-import {SubGroup} from "./components/SubGroup";
-import {TimelineSettings} from "./components/TimelineSettings";
-import {
-  ColumnsVisibility,
-  DeleteViewButton,
-  ExcelExportButton,
-  ExcelImportButton,
-  FixColumns,
-  Group,
-  TabGroup,
-} from "./components/ViewOptionElement";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {FilterButton} from "./FilterButton";
-import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
-import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
-import TableView from "./table-view";
-import TableViewOld from "./table-view-old";
-import DrawerTableView from "./drawer-table-view";
-import AgGridTableView from "@/views/Objects/AgGridTableView";
-import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
 import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
-import {ViewProvider} from "../../providers/ViewProvider";
-import {ViewCreatePopup} from "../Objects/components/ViewCreatePopup";
-import MoreViewsComponent from "./MoreViewsComponent";
 import ViewOptions from "../Objects/ModalDetailPage/ViewOptions";
+import {ViewCreatePopup} from "../Objects/components/ViewCreatePopup";
+import {FilterButton} from "./FilterButton";
+import {Filter} from "./FilterGenerator";
+import {LayoutPopup} from "./LayoutPopup";
+import MoreViewsComponent from "./MoreViewsComponent";
+import {ScreenOptions} from "./ScreenOptions";
+import DrawerTableView from "./drawer-table-view";
+import TableView from "./table-view";
+import TableViewOld from "./table-view-old";
+import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -1002,14 +979,17 @@ export const NewUiViewsWithGroups = ({
                       view?.name ||
                       view.type}
 
-                  <Box
-                    onClick={handleClick}
-                    sx={{
-                      height: "19px",
-                      cursor: "pointer",
-                    }}>
-                    <KeyboardArrowDownIcon />
-                  </Box>
+                  {overflowedViews?.length > 0 &&
+                    index === visibleViews?.length - 1 && (
+                      <Box
+                        onClick={handleClick}
+                        sx={{
+                          height: "19px",
+                          cursor: "pointer",
+                        }}>
+                        <KeyboardArrowDownIcon />
+                      </Box>
+                    )}
                 </Button>
               ))}
               {overflowedViews?.length > 0 && (
@@ -1182,11 +1162,12 @@ export const NewUiViewsWithGroups = ({
 
             {view?.type !== "SECTION" && (
               <>
-                {" "}
                 <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                   <Button
+                    minW={"auto"}
+                    width={"auto"}
                     h={"30px"}
-                    rightIcon={<ChevronDownIcon fontSize={18} />}
+                    px={4}
                     onClick={() => navigateCreatePage()}>
                     {generateLangaugeText(
                       tableLan,

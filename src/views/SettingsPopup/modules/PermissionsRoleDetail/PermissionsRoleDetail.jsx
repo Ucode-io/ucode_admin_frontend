@@ -73,18 +73,32 @@ export const PermissionsRoleDetail = () => {
             alignItems: "center",
             width: "100%",
           }}>
-          <Box sx={{display: "flex", alignItems: "center", gap: "5px"}}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              border: "1px solid #eee",
+              borderRadius: "8px",
+              padding: "0 4px",
+              bgcolor: "#f9fafb",
+            }}>
             <Box
               display={"flex"}
               alignItems={"center"}
               columnGap={"8px"}
-              border={"1px solid #eee"}
-              padding={"5px"}
+              padding={"3px"}
               borderRadius={"6px"}
-              sx={{cursor: "pointer"}}
+              bgcolor={selectedIndex === 0 ? "#fff" : ""}
+              sx={{
+                cursor: "pointer",
+              }}
               onClick={() => setSelectedIndex(0)}>
               <span className={cls.clientType}>{activeClientType?.name}</span>
-              <button className={cls.iconBtn} onClick={handleOpenUpdateModal}>
+              <button
+                style={{display: selectedIndex === 0 ? "block" : "none"}}
+                className={cls.iconBtn}
+                onClick={handleOpenUpdateModal}>
                 <span>
                   <EditIcon />
                 </span>
@@ -94,10 +108,10 @@ export const PermissionsRoleDetail = () => {
               display={"flex"}
               alignItems={"center"}
               columnGap={"8px"}
-              border={"1px solid #eee"}
               padding={"5px"}
               borderRadius={"6px"}
-              fontSize={"14px"}
+              fontSize={"12px"}
+              bgcolor={selectedIndex === 1 ? "#fff" : ""}
               sx={{cursor: "pointer"}}
               onClick={() => setSelectedIndex(1)}>
               <button className={cls.clientTypeConnect}>{"Connections"}</button>

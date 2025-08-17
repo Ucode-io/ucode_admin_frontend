@@ -14,7 +14,7 @@ import ConnectionCreateModal from "../../../Matrix/ConnectionCreateModal";
 const templateColumns =
   "minmax(72px, 32px) minmax(240px, 1fr) minmax(240px, 1fr) minmax(240px, 1fr) minmax(62px, 1fr)";
 
-function ConnectionsModal({activeClientType, connections}) {
+function ConnectionsModal({connections}) {
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
   const [settingLan, setSettingLan] = useState();

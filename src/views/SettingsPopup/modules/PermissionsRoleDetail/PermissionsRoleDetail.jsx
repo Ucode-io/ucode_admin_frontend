@@ -13,6 +13,9 @@ import {GreyLoader} from "@/components/Loaders/GreyLoader";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {useState} from "react";
 import ConnectionsModal from "./ConnectionsModal";
+import {useQuery} from "react-query";
+import connectionServiceV2 from "../../../../services/auth/connectionService";
+import {useSelector} from "react-redux";
 
 export const PermissionsRoleDetail = () => {
   const {
@@ -43,7 +46,22 @@ export const PermissionsRoleDetail = () => {
     handleCloseCategory,
     categories,
   } = usePermissionsRoleDetail();
+  const auth = useSelector((state) => state.auth);
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const {data: connections, isLoading} = useQuery(
+    ["GET_CONNECTION_LIST", activeClientType?.id],
+    () => {
+      return connectionServiceV2.getList(
+        {client_type_id: activeClientType?.id},
+        {"Environment-id": auth.environmentId}
+      );
+    },
+    {
+      cacheTime: 10,
+      enabled: !!activeClientType?.id,
+    }
+  );
 
   return (
     <Box flex={1}>
@@ -227,7 +245,10 @@ export const PermissionsRoleDetail = () => {
           )}
         </Box>
       ) : (
-        <ConnectionsModal />
+        <ConnectionsModal
+          connections={connections}
+          activeClientType={activeClientType}
+        />
       )}
     </Box>
   );

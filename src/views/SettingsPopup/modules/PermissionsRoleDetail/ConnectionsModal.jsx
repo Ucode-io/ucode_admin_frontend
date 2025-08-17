@@ -1,54 +1,25 @@
-import {Delete} from "@mui/icons-material";
+import {Box, Button, Flex, Grid, GridItem, Image} from "@chakra-ui/react";
+import AddIcon from "@mui/icons-material/Add";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {useQueryClient} from "react-query";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../../components/CTable";
-import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import TableCard from "../../../../components/TableCard";
-import TableRowButton from "../../../../components/TableRowButton";
-import connectionServiceV2, {
-  useConnectionDeleteMutation,
-} from "../../../../services/auth/connectionService";
+import {useConnectionDeleteMutation} from "../../../../services/auth/connectionService";
 import {store} from "../../../../store";
+import {showAlert} from "../../../../store/alert/alert.thunk";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {getAllFromDB} from "../../../../utils/languageDB";
-import ConnectionCreateModal from "../../../Permissions/Connections/ConnectionFormPage";
-import {Box, Grid, Th} from "@chakra-ui/react";
+import ConnectionCreateModal from "../../../Matrix/ConnectionCreateModal";
 
 const templateColumns =
-  "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
+  "minmax(72px, 32px) minmax(240px, 1fr) minmax(240px, 1fr) minmax(240px, 1fr) minmax(62px, 1fr)";
 
-function ConnectionsModal() {
-  const {clientId} = useParams();
+function ConnectionsModal({activeClientType, connections}) {
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
+  const [settingLan, setSettingLan] = useState();
   const [connectionId, setConnectionId] = useState();
   const {i18n} = useTranslation();
-  const [settingLan, setSettingLan] = useState();
-  const auth = useSelector((state) => state.auth);
-
-  const {data: connections, isLoading} = useQuery(
-    ["GET_CONNECTION_LIST", clientId],
-    () => {
-      return connectionServiceV2.getList(
-        {client_type_id: clientId},
-        {"Environment-id": auth.environmentId}
-      );
-    },
-    {
-      cacheTime: 10,
-      enabled: !!clientId,
-    }
-  );
 
   const {mutateAsync: deleteRole, isLoading: createLoading} =
     useConnectionDeleteMutation({
@@ -84,128 +55,132 @@ function ConnectionsModal() {
   }, []);
 
   return (
-    // <div style={{height: "calc(100vh - 100px)", padding: 0}}>
-    //   <TableCard cardStyles={{height: "calc(100vh - 200px)"}}>
-    //     <CTable disablePagination removableHeight={false}>
-    //       <CTableHead>
-    //         <CTableCell width={10}>№</CTableCell>
-    //         <CTableCell>
-    //           {generateLangaugeText(settingLan, i18n?.language, "Name") ||
-    //             "Name"}
-    //         </CTableCell>
-    //         <CTableCell>
-    //           {generateLangaugeText(settingLan, i18n?.language, "Table slug") ||
-    //             "Table slug"}
-    //         </CTableCell>
-    //         <CTableCell>
-    //           {generateLangaugeText(settingLan, i18n?.language, "View slug") ||
-    //             "View slug"}
-    //         </CTableCell>
-    //         {connections?.data?.response.length ? (
-    //           <CTableCell width={60}></CTableCell>
-    //         ) : null}
-    //       </CTableHead>
-    //       <CTableBody
-    //         loader={isLoading}
-    //         columnsCount={5}
-    //         dataLength={connections?.data?.response?.length}>
-    //         {connections?.data?.response?.map((element, index) => (
-    //           <CTableRow
-    //             key={element.guid}
-    //             onClick={() => {
-    //               setModalType("UPDATE");
-    //               setConnectionId(element.guid);
-    //             }}>
-    //             <CTableCell>{index + 1}</CTableCell>
-    //             <CTableCell>{element?.name}</CTableCell>
-    //             <CTableCell>{element?.table_slug}</CTableCell>
-    //             <CTableCell>{element?.view_slug}</CTableCell>
-    //             <CTableCell>
-    //               <RectangleIconButton
-    //                 color="error"
-    //                 onClick={() => {
-    //                   deleteRoleElement(element.guid);
-    //                 }}>
-    //                 <Delete color="error" />
-    //               </RectangleIconButton>
-    //             </CTableCell>
-    //           </CTableRow>
-    //         ))}
-    //         <PermissionWrapperV2 tabelSlug="app" type="write">
-    //           <TableRowButton colSpan={5} onClick={() => setModalType("NEW")} />
-    //         </PermissionWrapperV2>
-    //       </CTableBody>
-    //     </CTable>
-    //   </TableCard>
-
-    //   {modalType && (
-    //     <ConnectionCreateModal
-    //       settingLan={settingLan}
-    //       closeModal={closeModal}
-    //       modalType={modalType}
-    //       connectionId={connectionId}
-    //     />
-    //   )}
-    // </div>
-    <Box borderTop="1px solid #EAECF0" overflowX="auto" flexGrow={1}>
-      <Grid
-        templateColumns={templateColumns}
-        borderBottom="1px solid #EAECF0"
-        borderLeft="1px solid #EAECF0">
-        <Th justifyContent="center">
-          <img src="/img/hash.svg" alt="index" />
-        </Th>
-        <Th type="text">
-          {generateLangaugeText(settingLan, i18n?.language, "Name") || "Name"}
-        </Th>
-        <Th type="text">
-          {generateLangaugeText(settingLan, i18n?.language, "Role") || "Role"}
-        </Th>
-        <Th type="text">
-          {generateLangaugeText(settingLan, i18n?.language, "Login") || "Login"}
-        </Th>
-        <Th type="text">
-          {generateLangaugeText(settingLan, i18n?.language, "Mail") || "Mail"}
-        </Th>
-        <Th type="phone">
-          {generateLangaugeText(settingLan, i18n?.language, "Phone") || "Phone"}
-        </Th>
-        <Th></Th>
-      </Grid>
-
-      {connections?.data?.response?.map((user, index) => (
+    <div>
+      <Flex w={"full"} alignItems={"center"} justifyContent={"flex-end"}>
+        {" "}
+        <Button
+          px={"8px"}
+          h={"32px"}
+          minW={"60px"}
+          bg={"#2383e2"}
+          color={"#fff"}
+          m={"5px"}
+          borderRadius={"8px"}
+          onClick={() => setModalType("NEW")}>
+          <AddIcon /> Add Connection
+        </Button>
+      </Flex>
+      <Box borderTop="1px solid #EAECF0" overflowX="auto" flexGrow={1}>
         <Grid
-          onClick={() => {
-            // onOpen();
-            // setEditUserGuid(user?.id);
-          }}
-          cursor={"pointer"}
-          key={user.id}
           templateColumns={templateColumns}
           borderBottom="1px solid #EAECF0"
-          borderLeft="1px solid #EAECF0">
-          <Td display="flex" justifyContent="center" fontWeight={600}>
-            {index + 1}
-          </Td>
-          <Td>{user?.name}</Td>
-          <Td>'ddsdsa</Td>
-          <Td>{user.login}</Td>
-          <Td>{user?.email}</Td>
-          <Td>{user?.phone}</Td>
-          <Td display="flex" justifyContent="center" columnGap="6px">
-            {/* <IconButton
-            h={"25px"}
-            aria-label="edit"
-            icon={<Image src="/img/edit.svg" alt="edit" />}
-            variant="ghost"
-            colorScheme="gray"
-          /> */}
-            {/* <DeleteButton user={user} /> */}
-          </Td>
+          borderLeft="1px solid #EAECF0"
+          fontWeight="bold">
+          <Th justifyContent="center">
+            <img src="/img/hash.svg" alt="index" />
+          </Th>
+          <Th type="text">
+            {generateLangaugeText(settingLan, i18n?.language, "Name") || "Name"}
+          </Th>
+          <Th type="text">
+            {generateLangaugeText(settingLan, i18n?.language, "Table Slug") ||
+              "Table Slug"}
+          </Th>
+          <Th type="text">
+            {generateLangaugeText(settingLan, i18n?.language, "View Slug") ||
+              "View Slug"}
+          </Th>
+          <Th></Th>
         </Grid>
-      ))}
-    </Box>
+
+        {connections?.data?.response?.map((user, index) => (
+          <Grid
+            key={user.id}
+            templateColumns={templateColumns}
+            borderBottom="1px solid #EAECF0"
+            borderLeft="1px solid #EAECF0"
+            _hover={{bg: "gray.50"}}
+            cursor="pointer"
+            onClick={() => {
+              setModalType("UPDATE");
+              setConnectionId(user.guid);
+            }}>
+            <Td display="flex" justifyContent="center" fontWeight={600}>
+              {index + 1}
+            </Td>
+            <Td>{user.name}</Td>
+            <Td>{user?.table_slug}</Td>
+            <Td>{user.view_slug}</Td>
+
+            <Td display="flex" justifyContent="center" columnGap="6px">
+              <RectangleIconButton
+                style={{height: "24px", border: "none"}}
+                color="error"
+                onClick={() => {
+                  deleteRoleElement(user.guid);
+                }}>
+                <Image src="/img/delete.svg" alt="delete" />
+              </RectangleIconButton>
+            </Td>
+          </Grid>
+        ))}
+        {modalType && (
+          <ConnectionCreateModal
+            settingLan={settingLan}
+            closeModal={closeModal}
+            modalType={modalType}
+            connectionId={connectionId}
+          />
+        )}
+      </Box>
+    </div>
   );
 }
+
+const icons = {
+  text: <img src="/img/text-column.svg" alt="text" />,
+  phone: <img src="/img/phone.svg" alt="text" />,
+};
+
+const Th = ({type, children, ...props}) => {
+  const icon = icons[type];
+
+  return (
+    <GridItem
+      display="flex"
+      alignItems="center"
+      columnGap="8px"
+      h="32px"
+      py="4px"
+      px="8px"
+      bg="#F9FAFB"
+      borderRight="1px solid #EAECF0"
+      color="#475467"
+      fontWeight={500}
+      fontSize={12}
+      {...props}>
+      {Boolean(icon) && icon}
+      {children}
+    </GridItem>
+  );
+};
+
+const Td = ({children, ...props}) => (
+  <GridItem
+    px="8px"
+    py="4px"
+    h="32px"
+    bg="#fff"
+    borderRight="1px solid #EAECF0"
+    color="#475467"
+    fontSize={14}
+    fontWeight={400}
+    whiteSpace="nowrap"
+    overflow="hidden"
+    textOverflow="ellipsis"
+    {...props}>
+    {children}
+  </GridItem>
+);
 
 export default ConnectionsModal;

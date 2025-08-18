@@ -82,10 +82,12 @@ export const PermissionsRoleDetail = () => {
               gap: "5px",
               border: "1px solid #eee",
               borderRadius: "8px",
-              padding: "0 4px",
+              padding: "3px 4px",
               bgcolor: "#f9fafb",
             }}>
             <Box
+              minWidth={"70px"}
+              justifyContent={"center"}
               display={"flex"}
               alignItems={"center"}
               columnGap={"8px"}
@@ -110,7 +112,7 @@ export const PermissionsRoleDetail = () => {
               display={"flex"}
               alignItems={"center"}
               columnGap={"8px"}
-              padding={"5px"}
+              padding={"3px"}
               borderRadius={"6px"}
               fontSize={"12px"}
               bgcolor={selectedIndex === 1 ? "#fff" : ""}

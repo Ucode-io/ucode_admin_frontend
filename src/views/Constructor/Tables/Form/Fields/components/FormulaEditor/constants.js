@@ -1,4 +1,16 @@
-import { Parser } from "hot-formula-parser";
+import { Parser, SUPPORTED_FORMULAS } from "hot-formula-parser";
+
+export const CUSTOM_FUNCTIONS = [
+  "ADD","SUBTRACT","MULTIPLE","MOD","POW","DIVIDE","MIN","MAX","SUM","MEDIAN",
+  "CBRT","EXP","LN","LOG10","LOG2","SIGN","PI","E","MEAN",
+  "TONUMBER","NAME","EMAIL","SUBSTRING","CONTAINS","TEST","MATCH","REPLACE","REPLACEALL",
+  "LOWER","UPPER","TRIM","ABS","ROUND","CEIL","FLOOR","SQRT","REPEAT","CONCAT",
+  "JOIN","SPLIT","IF","FORMAT","IFS","AND","EQUAL","UNEQUAL","LET","LETS","OR",
+  "NOW","TODAY","MINUTE","HOUR","DAY","DATE","WEEK","MONTH","NOT","EMPTY","LENGTH",
+  "DATEADD","DATESUBTRACT","DATEBETWEEN","DATERANGE","DATESTART","DATEEND","TIMESTAMP",
+  "FROMTIMESTAMP","PARSEDATE","FORMATDATE","INCLUDES","AT","FIRST","LAST","SLICE",
+  "SORT","REVERSE","UNIQUE","FILTER","SOME","EVERY","MAP","FLAT","COUNT"
+]
 
 export const FIELD_TYPE_MAP = {
   SINGLE_LINE: "TEXT",
@@ -53,7 +65,14 @@ export const CUSTOM_FUNCTIONS_META = [
   { name: "TONUMBER", snippet: "TONUMBER(text)", hint: "Парсинг числа" },
 ];
 
-export const SIG = {
+const FORMULA_SIG = Object.fromEntries(
+  Object.keys(SUPPORTED_FORMULAS).map(fn => [
+    fn.toUpperCase(),
+    { variadic: true } // базовый вариант: считаем что все поддерживаются
+  ])
+);
+
+const CUSTOM_SIG = {
   IFS: { variadic: true, min: 3 },
   EMPTY: { min: 1, max: 1 },
   LENGTH: { min: 1, max: 1 },
@@ -82,6 +101,12 @@ export const SIG = {
   FINDINDEX: { min: 2, max: 2 },
   FILTER: { min: 2, max: 2 },
   TONUMBER: { min: 1, max: 1 },
+  FLAT: { min: 1, max: 1 }
+}
+
+export const SIG = {
+  ...FORMULA_SIG,
+  ...CUSTOM_SIG
 };
 
 // ------------------------------

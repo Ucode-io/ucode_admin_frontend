@@ -20,6 +20,7 @@ import { AutoFilter } from "../AutoFilter";
 import { FieldHide } from "../FieldHide";
 import { Field } from "../Field";
 import { FormulaField } from "../FormulaField";
+import { Box } from "@mui/material";
 
 export const useFieldPopoverProps = ({
   mainForm,
@@ -210,9 +211,10 @@ export const useFieldPopoverProps = ({
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
-    if (formType === "CREATE") createField(data);
-    else updateField(data);
-    submitCallback();
+    console.log(data);
+    // if (formType === "CREATE") createField(data);
+    // else updateField(data);
+    // submitCallback();
   };
 
   const handleSelectSetting = (type) => {
@@ -223,62 +225,80 @@ export const useFieldPopoverProps = ({
     switch (type) {
       case SETTING_TYPES.TYPE:
         return (
-          <FieldTypeList
-            onSelect={() => handleSelectSetting("")}
-            activeType={activeType}
-            setValue={setValue}
-          />
+          <Box padding="12px 8px">
+            <FieldTypeList
+              onSelect={() => handleSelectSetting("")}
+              activeType={activeType}
+              setValue={setValue}
+            />
+          </Box>
         );
       case SETTING_TYPES.AUTO_FILL:
         return (
-          <AutoFill
-            register={register}
-            watch={watch}
-            setValue={setValue}
-            control={control}
-            mainForm={mainForm}
-          />
+          <Box padding="12px 8px">
+            <AutoFill
+              register={register}
+              watch={watch}
+              setValue={setValue}
+              control={control}
+              mainForm={mainForm}
+            />
+          </Box>
         );
       case SETTING_TYPES.AUTO_FILTER:
         return (
-          <AutoFilter
-            register={register}
-            watch={watch}
-            setValue={setValue}
-            control={control}
-            mainForm={mainForm}
-          />
+          <Box padding="12px 8px">
+            <AutoFilter
+              register={register}
+              watch={watch}
+              setValue={setValue}
+              control={control}
+              mainForm={mainForm}
+            />
+          </Box>
         );
       case SETTING_TYPES.VALIDATION:
         return (
-          <Validation
-            control={control}
-            watch={watch}
-            tableLan={tableLan}
-            register={register}
-            setValue={setValue}
-          />
+          <Box padding="12px 8px">
+            <Validation
+              control={control}
+              watch={watch}
+              tableLan={tableLan}
+              register={register}
+              setValue={setValue}
+            />
+          </Box>
         );
       case SETTING_TYPES.FIELD_HIDE:
-        return <FieldHide control={control} />;
+        return (
+          <Box padding="12px 8px">
+            <FieldHide control={control} />
+          </Box>
+        );
       case SETTING_TYPES.FIELD:
         if (
           activeType?.value === FIELD_TYPES.FORMULA ||
           activeType?.value === FIELD_TYPES.FORMULA_FRONTEND
         ) {
           return (
-            <FormulaField
-              control={control}
-              mainForm={mainForm}
-              fieldType={activeType?.value}
-              menuItem={menuItem}
-              tableSlug={tableSlug}
-              setValue={setValue}
-              watch={watch}
-            />
+            <Box padding="12px 0px">
+              <FormulaField
+                control={control}
+                mainForm={mainForm}
+                fieldType={activeType?.value}
+                menuItem={menuItem}
+                tableSlug={tableSlug}
+                setValue={setValue}
+                watch={watch}
+              />
+            </Box>
           );
         } else {
-          return <Field control={control} />;
+          return (
+            <Box padding="12px 8px">
+              <Field control={control} />
+            </Box>
+          );
         }
       default:
         return null;

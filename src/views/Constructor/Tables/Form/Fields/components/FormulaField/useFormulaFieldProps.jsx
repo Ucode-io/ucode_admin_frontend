@@ -4,6 +4,9 @@ import { useFieldsListQuery } from "@/services/constructorFieldService";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
 import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
+import { SUPPORTED_FORMULAS } from "hot-formula-parser";
+import { getColumnIconPath } from "../../../../../../table-redesign/icons";
+import { getFieldIcon } from "./formulaFieldIcons";
 
 export const useFormulaFieldProps = ({
   mainForm,
@@ -11,15 +14,20 @@ export const useFormulaFieldProps = ({
   tableSlug,
   control,
   watch,
+  setValue = () => {},
 }) => {
   const { i18n } = useTranslation();
   const tableLan = useGetLang("Table");
 
+  const [editorValue, setEditorValue] = useState("");
+  const [editorSearchText, setEditorSearchText] = useState("");
+  const [exampleType, setExampleType] = useState("");
   const [search, setSearch] = useState("");
 
   const [fields, setFields] = useState([]);
 
   const mirrorRef = useRef(null);
+  const editorRef = useRef(null);
   const textareaRef = useRef(null);
 
   const mathType = watch("attributes.math");
@@ -30,13 +38,17 @@ export const useFormulaFieldProps = ({
       ?.filter((item) => item?.type !== FIELD_TYPES.UUID) ?? [];
 
   const fieldsList = useMemo(() => {
-    if (search) {
-      return suggestionsFields.filter((item) =>
-        item.label?.toLowerCase()?.includes(search?.toLowerCase())
-      );
-    }
-    return suggestionsFields;
+    // if (search) {
+    //   return suggestionsFields.filter((item) =>
+    //     item.label?.toLowerCase()?.includes(search?.toLowerCase())
+    //   );
+    // }
+    return suggestionsFields?.filter(
+      (item) => !item?.type?.includes("FRONTEND") && item?.label
+    );
   }, [search]);
+
+  const menuList = getFieldIcon({ fieldsList });
 
   const [code, setCode] = useState(watch("attributes.formula") ?? "");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -58,6 +70,22 @@ export const useFormulaFieldProps = ({
     div.style.letterSpacing = style.letterSpacing;
     div.style.width = el.offsetWidth + "px";
     div.style.zIndex = -1;
+  };
+
+  const onEditorChange = (value) => {
+    setEditorValue(value);
+    setValue("attributes.formula", value);
+  };
+
+  const onItemMouseEnter = (type) => setExampleType(type);
+  const onItemMouseLeave = () => setExampleType(null);
+
+  const handleFilterFields = (value) => {
+    // if (value?.includes(" ")) {
+    //   setEditorSearchText("");
+    // } else {
+    //   setEditorSearchText(value);
+    // }
   };
 
   const handleChange = (e) => {
@@ -164,7 +192,6 @@ export const useFormulaFieldProps = ({
 
   return {
     formulaTypes,
-    fieldsList,
     computedTables,
     fields,
     selectedTableSlug,
@@ -172,17 +199,14 @@ export const useFormulaFieldProps = ({
     addNewSummary,
     deleteSummary,
     type,
+    onEditorChange,
+    editorValue,
+    handleFilterFields,
+    editorRef,
+    menuList,
+    onItemMouseEnter,
+    onItemMouseLeave,
+    exampleType,
     i18n,
-    tableLan,
-    mathType,
-    handleSearch,
-    search,
-    code,
-    handleChange,
-    showSuggestions,
-    filteredSuggestions,
-    handleSuggestionClick,
-    textareaRef,
-    mirrorRef,
   };
 };

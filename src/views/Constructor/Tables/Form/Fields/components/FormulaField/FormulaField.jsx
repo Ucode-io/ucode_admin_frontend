@@ -12,6 +12,8 @@ import { math } from "@/utils/constants/fieldTypes";
 import { getColumnIconPath } from "../../../../../../table-redesign/icons";
 import { SearchInput } from "../../../components/SearchInput";
 import { FormulaEditor } from "../FormulaEditor";
+import { Examples } from "../Examples";
+import { menuIcons } from "./formulaFieldIcons";
 
 export const FormulaField = ({
   control,
@@ -24,7 +26,6 @@ export const FormulaField = ({
 }) => {
   const {
     formulaTypes,
-    fieldsList,
     computedTables,
     fields,
     selectedTableSlug,
@@ -32,22 +33,26 @@ export const FormulaField = ({
     addNewSummary,
     deleteSummary,
     type,
+    onEditorChange,
+    editorValue,
+    handleFilterFields,
+    menuList,
+    editorRef,
+    onItemMouseEnter,
+    onItemMouseLeave,
+    exampleType,
     i18n,
-    tableLan,
-    mathType,
-    handleSearch,
-    // search,
-    // code,
-    // handleChange,
-    // showSuggestions,
-    // filteredSuggestions,
-    // handleSuggestionClick,
-    // textareaRef,
-    // mirrorRef,
-  } = useFormulaFieldProps({ control, mainForm, menuItem, tableSlug, watch });
+  } = useFormulaFieldProps({
+    control,
+    mainForm,
+    menuItem,
+    tableSlug,
+    watch,
+    setValue,
+  });
 
   return (
-    <Box maxWidth="740px" width="100%">
+    <Box width="740px">
       {fieldType === FIELD_TYPES.FORMULA ? (
         <Box display="flex" flexDirection="column" rowGap="8px">
           <DropdownSelect
@@ -159,8 +164,20 @@ export const FormulaField = ({
                 pointerEvents: "none",
               }}
             />
-            <FormulaEditor />
-
+            <Box
+              paddingX="12px"
+              paddingBottom="12px"
+              borderBottom="1px solid rgba(84, 72, 49, 0.15)"
+            >
+              <FormulaEditor
+                onChange={(value) => {
+                  onEditorChange(value);
+                  handleFilterFields(value);
+                }}
+                ref={editorRef}
+                value={editorValue}
+              />
+            </Box>
             {/* <textarea
               className={cls.textArea}
               ref={textareaRef}
@@ -228,33 +245,84 @@ export const FormulaField = ({
           </h2> */}
           {/* <Box marginBottom="8px" marginTop="12px">
             <SearchInput onChange={handleSearch} />
-          </Box>
-          <Box display="flex" gap="8px" flexWrap="wrap">
-            {fieldsList.map((field) => (
-              <Box
-                className={cls.fieldChip}
-                key={field.slug}
-                onClick={() => {
-                  const newValue = watch("attributes.formula") + field.slug;
-                  // handleChange({ target: { value: newValue } });
-                  setValue(newValue);
-                }}
-              >
-                <img
-                  src={getColumnIconPath({ column: field })}
-                  width={"16px"}
-                  height={"16px"}
-                  alt=""
-                />
-                <span>{field.label}</span>
-              </Box>
-            ))}
           </Box> */}
-          {/* {fieldsList.map((field) => (
-          <div>
-            {field.label} - <strong>{field.slug}</strong>{" "}
-          </div>
-        ))} */}
+          <Box display="grid" gridTemplateColumns="230px 1fr" gap="8px">
+            <Box
+              display="flex"
+              flexDirection="column"
+              rowGap="4px"
+              maxHeight="237px"
+              overflow="auto"
+              padding="6px 4px 2px"
+              borderRight="1px solid rgba(84, 72, 49, 0.15)"
+            >
+              {menuList.map((menuItem) => (
+                <Box>
+                  <p className={cls.menuTitle}>{menuItem?.name}</p>
+                  {menuItem?.list?.map((item, index) => (
+                    <Box
+                      className={clsx(cls.fieldChip, {
+                        [cls.active]: item.label === exampleType.label,
+                      })}
+                      key={item.key + index}
+                      onMouseEnter={() => onItemMouseEnter(item)}
+                      // onMouseLeave={() => onItemMouseLeave()}
+                      onClick={() => {
+                        if (menuItem.key === "formula")
+                          onEditorChange(editorValue + item.key + "(");
+                        else {
+                          onEditorChange(editorValue + item.key);
+                        }
+                        editorRef.current?.focus();
+                        // const newValue = watch("attributes.formula") + field.slug;
+                        // handleChange({ target: { value: newValue } });
+                        // setValue(newValue);
+                      }}
+                    >
+                      {typeof item.icon === "string" ? (
+                        <img
+                          src={item.icon}
+                          width={"16px"}
+                          height={"16px"}
+                          alt=""
+                        />
+                      ) : (
+                        <span className={cls.fieldIcon}>{item.icon}</span>
+                      )}
+                      <span className={cls.fieldName}>
+                        {item?.attributes?.[`label_${i18n.language}`] ||
+                          item.label}
+                      </span>
+                    </Box>
+                  ))}
+                </Box>
+              ))}
+
+              {/* {fieldsList.map((field) => (
+                <Box
+                  className={cls.fieldChip}
+                  key={field.slug}
+                  onClick={() => {
+                    onEditorChange(editorValue + field.slug);
+                    // const newValue = watch("attributes.formula") + field.slug;
+                    // handleChange({ target: { value: newValue } });
+                    // setValue(newValue);
+                  }}
+                >
+                  <img
+                    src={getColumnIconPath({ column: field })}
+                    width={"16px"}
+                    height={"16px"}
+                    alt=""
+                  />
+                  <span>{field.label}</span>
+                </Box>
+              ))} */}
+            </Box>
+            <Box maxHeight="237px" overflow="auto">
+              <Examples item={exampleType} />
+            </Box>
+          </Box>
         </Box>
       )}
     </Box>

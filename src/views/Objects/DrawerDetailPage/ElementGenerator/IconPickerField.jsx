@@ -1,81 +1,49 @@
-import {
-  CircularProgress,
-  IconButton,
-  Menu,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import {memo, useId, useMemo, useRef, useState} from "react";
-import styles from "./style.module.scss";
 import {Lock} from "@mui/icons-material";
-import useDebouncedWatch from "../../../../hooks/useDebouncedWatch";
-import {iconsList} from "../../../../utils/constants/iconsList";
-import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import {CircularProgress, IconButton, Menu, Tooltip} from "@mui/material";
+import {memo, useId, useRef, useState} from "react";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import styles from "./style.module.scss";
+import {useSelector} from "react-redux";
 import IconGeneratorIconjs from "../../../../components/IconPicker/IconGeneratorIconjs";
-import axios from "axios";
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import OverallCategoryIcons from "../../../../components/IconPicker/OverallCategoryIcons";
+import CategoryContent from "../../../../components/IconPicker/CategoryContent";
 
-const IconPickerField = ({
+const defaultOverallTab = {label: "All", category: "", value: "overall"};
+
+const IconPicker = ({
   value = "",
   onChange,
   customeClick,
   clickItself,
   tabIndex,
   error,
-  loading = false,
+  loading,
   shape = "circle",
   disabled,
-  drawerDetail = false,
   ...props
 }) => {
   const buttonRef = useRef();
   const id = useId();
-
+  const [selectedTab, setSelectedTab] = useState();
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
-  const [computedIconsList, setComputedIconsList] = useState(
-    iconsList.slice(0, 40)
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+  const iconCategoriesFromRedux = useSelector((state) =>
+    state?.iconCategories?.iconCategories?.map((item, index) => ({
+      label: item?.split("#")?.[1],
+      category: item?.split("#")?.[0],
+      value: index + 1,
+    }))
   );
+
+  const iconCategories = [
+    defaultOverallTab,
+    ...(iconCategoriesFromRedux || []),
+  ];
 
   const handleClose = () => setDropdownIsOpen(false);
-
   const handleOpen = () => setDropdownIsOpen(true);
-
-  useDebouncedWatch(
-    () => {
-      const filteredList = iconsList.filter((icon) =>
-        icon.includes(searchText)
-      );
-
-      setComputedIconsList(filteredList.slice(0, 40));
-    },
-    [searchText],
-    300
-  );
-
-  useDebouncedWatch(
-    () => {
-      if (!searchText) return;
-
-      axios
-        .get(`https://api.iconify.design/search?query=${searchText}`)
-        .then((res) => {
-          const apiIcons = res?.data?.icons || [];
-
-          const localIcons = iconsList.filter((icon) =>
-            icon.includes(searchText)
-          );
-
-          const merged = [...new Set([...localIcons, ...apiIcons])];
-
-          setComputedIconsList(merged.slice(0, 40));
-        })
-        .catch((err) => {
-          console.error("Failed to fetch icons", err);
-        });
-    },
-    [searchText],
-    500
-  );
 
   if (loading)
     return (
@@ -86,13 +54,7 @@ const IconPickerField = ({
 
   return (
     <div
-      style={{
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        padding: drawerDetail ? "0 9.6px" : "0",
-      }}
+      style={{height: "16px"}}
       onClick={(e) => e.stopPropagation()}
       {...props}>
       <div
@@ -103,26 +65,12 @@ const IconPickerField = ({
         onClick={customeClick ? clickItself : !disabled && handleOpen}>
         {disabled ? (
           <Tooltip title="This field is disabled for this role!">
-            <Lock
-              style={{
-                fontSize: "20px",
-                color: "#adb5bd",
-                cursor: "not-allowed",
-              }}
-            />
+            <Lock style={{fontSize: "20px"}} />
           </Tooltip>
         ) : value?.includes(":") ? (
-          <IconGeneratorIconjs
-            style={{width: "15px", height: "15px"}}
-            icon={value}
-            disabled={disabled}
-          />
+          <IconGeneratorIconjs icon={value} disabled={disabled} />
         ) : (
-          <IconGenerator
-            style={{width: "15px", height: "15px"}}
-            icon={value}
-            disabled={disabled}
-          />
+          <IconGenerator icon={value} disabled={disabled} />
         )}
       </div>
 
@@ -133,35 +81,45 @@ const IconPickerField = ({
         open={dropdownIsOpen}
         anchorOrigin={{horizontal: "left", vertical: "bottom"}}
         classes={{paper: styles.menuPaper, list: styles.menuList}}>
-        <TextField
-          size="small"
-          fullWidth
-          value={searchText}
-          autoFocus={tabIndex === 1}
-          inputProps={{tabIndex}}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
-
-        <div className={styles.iconsBlock}>
-          {computedIconsList.map((icon) => (
-            <div
-              key={icon}
-              className={styles.popupIconWrapper}
-              onClick={() => {
-                onChange(icon);
-                handleClose();
-              }}>
-              {icon?.includes(":") ? (
-                <IconGeneratorIconjs icon={icon} />
-              ) : (
-                <IconGenerator icon={icon} />
-              )}
-            </div>
-          ))}
-        </div>
+        <Tabs onSelect={(e) => setSelectedTabIndex(e)} className={styles.tabs}>
+          <TabList className={styles.tabList}>
+            {iconCategories?.map((tab, index) => (
+              <Tab
+                onClick={() => setSelectedTab(tab)}
+                key={index}
+                selectedClassName={styles.active}
+                className={styles.tab}>
+                {tab?.label}
+              </Tab>
+            ))}
+          </TabList>
+          {iconCategories?.map((itemTab, index) => {
+            const isFirst = index === 0;
+            return (
+              <TabPanel key={itemTab?.value || index}>
+                {isFirst ? (
+                  <OverallCategoryIcons
+                    tabIndex={index}
+                    handleClose={handleClose}
+                    onChange={onChange}
+                    selectedTabIndex={selectedTabIndex}
+                  />
+                ) : (
+                  <CategoryContent
+                    tabIndex={index}
+                    selectedTab={selectedTab}
+                    handleClose={handleClose}
+                    onChange={onChange}
+                    selectedTabIndex={selectedTabIndex}
+                  />
+                )}
+              </TabPanel>
+            );
+          })}
+        </Tabs>
       </Menu>
     </div>
   );
 };
 
-export default memo(IconPickerField);
+export default memo(IconPicker);

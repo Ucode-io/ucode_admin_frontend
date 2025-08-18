@@ -122,7 +122,7 @@ const ConnectionPage = ({settingLan}) => {
         </CTable>
       </TableCard>
 
-      {modalType && (
+      {Boolean(modalType) && (
         <ConnectionCreateModal
           settingLan={settingLan}
           closeModal={closeModal}

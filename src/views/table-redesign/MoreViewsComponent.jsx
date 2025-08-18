@@ -1,10 +1,10 @@
-import {Badge, Box, Menu} from "@mui/material";
-import React, {useState} from "react";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import {Button} from "@chakra-ui/react";
-import {default as InlineSVG, default as SVG} from "react-inlinesvg";
+import {Box, Button, Flex, Input} from "@chakra-ui/react";
+import {Menu} from "@mui/material";
+import React, {useState, useMemo} from "react";
 import {useTranslation} from "react-i18next";
-import {useSearchParams} from "react-router-dom";
+import {default as SVG} from "react-inlinesvg";
+import AddIcon from "@mui/icons-material/Add";
+import ViewSettingsModal from "./ViewSettings";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -17,81 +17,161 @@ const viewIcons = {
   SECTION: "layout.svg",
 };
 
-function MoreViewsComponent({views = [], handleViewClick = () => {}}) {
+function MoreViewsComponent({
+  anchorEl = null,
+  open = false,
+  views = [],
+  tableLan = {},
+  selectedView = {},
+  selectedTabIndex = 0,
+  refetchViews = () => {},
+  handleClose = () => {},
+  handleViewClick = () => {},
+  setSelectedView = () => {},
+  setViewAnchorEl = () => {},
+}) {
   const {i18n} = useTranslation();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [searchText, setSearchText] = useState("");
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v");
 
-  const isViewExist = views?.find((item) => item?.id === viewId);
+  const handleMenuSelect = (view) => {
+    setSelectedView(view);
+    handleViewClick(view);
+    handleClose();
+  };
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
-  const handleClose = () => setAnchorEl(null);
+  const filteredViews = useMemo(() => {
+    const lowerSearch = searchText.toLowerCase();
+    return views.filter((view) => {
+      const name = view?.is_relation_view
+        ? view?.table_label || view.type
+        : view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.name ||
+          view.type;
+
+      return name?.toLowerCase().includes(lowerSearch);
+    });
+  }, [views, searchText, i18n?.language]);
 
   return (
     <>
-      <Box>
-        {Boolean(isViewExist?.id) ? (
-          <Badge variant="dot" color="primary">
-            <Box
-              onClick={handleClick}
-              sx={{height: "19px", width: "14px", cursor: "pointer"}}>
-              <MoreVertIcon />
-            </Box>
-          </Badge>
-        ) : (
-          <Box
-            onClick={handleClick}
-            sx={{height: "19px", width: "14px", cursor: "pointer"}}>
-            <MoreVertIcon />
-          </Box>
-        )}
-
+      <Box sx={{width: "20px"}}>
         <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
           <Box
             sx={{
               borderRadius: "8px",
-              minWidth: "100px",
+              width: "250px",
               border: "1px solid #eee",
               display: "flex",
               alignItems: "flex-start",
               flexDirection: "column",
               padding: "5px",
             }}>
-            {views?.map((view, index) => (
-              <Button
-                minW={"100%"}
-                key={view.id}
-                variant="ghost"
-                colorScheme="gray"
-                padding={"0 0 0 6px"}
-                margin={"3px 0"}
-                leftIcon={
-                  <SVG
-                    src={`/img/${viewIcons[view.type]}`}
-                    color={viewId === view?.id ? "#175CD3" : "#475467"}
-                    width={18}
-                    height={18}
-                  />
-                }
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"flex-start"}
-                fontSize={13}
-                h={"30px"}
-                fontWeight={500}
-                color={viewId === view?.id ? "#175CD3" : "#475467"}
-                bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
-                _hover={viewId === view?.id ? {bg: "#D1E9FF"} : undefined}
-                onClick={() => handleViewClick(view, index)}>
-                {view?.is_relation_view
-                  ? view?.table_label || view.type
-                  : view?.attributes?.[`name_${i18n?.language}`] ||
-                    view?.name ||
-                    view.type}
-              </Button>
-            ))}
+            <Input
+              h={"30px"}
+              placeholder="Search"
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+                e.stopPropagation();
+              }}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+
+            <Box
+              sx={{
+                width: "100%",
+                padding: "0px",
+                borderBottom: "1px solid #eee",
+                maxHeight: "300px",
+                overflowY: "auto",
+              }}>
+              {filteredViews.length > 0 ? (
+                filteredViews.map((view, index) => (
+                  <Flex
+                    m={"5px 0"}
+                    key={view.id}
+                    p={"0 4px"}
+                    w={"100%"}
+                    h={"26px"}
+                    alignItems={"center"}
+                    borderRadius={"6px"}
+                    _hover={{
+                      background: "#edf2f6",
+                    }}>
+                    <Button
+                      w={"100%"}
+                      variant="ghost"
+                      colorScheme="gray"
+                      padding={"0"}
+                      leftIcon={
+                        <SVG
+                          src={`/img/${viewIcons[view.type]}`}
+                          color={viewId === view?.id ? "#175CD3" : "#475467"}
+                          width={18}
+                          height={18}
+                        />
+                      }
+                      display={"flex"}
+                      alignItems={"center"}
+                      justifyContent={"flex-start"}
+                      fontSize={12}
+                      h={"30px"}
+                      _hover={{
+                        bg: "none",
+                      }}
+                      fontWeight={500}
+                      color={viewId === view?.id ? "#175CD3" : "#475467"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewClick(view, index);
+                        handleMenuSelect(view);
+                      }}>
+                      {view?.is_relation_view
+                        ? view?.table_label || view.type
+                        : view?.attributes?.[`name_${i18n?.language}`] ||
+                          view?.name ||
+                          view.type}
+                    </Button>
+
+                    <ViewSettingsModal
+                      viewSetting={true}
+                      refetchViews={refetchViews}
+                      selectedTabIndex={selectedTabIndex}
+                      tableLan={tableLan}
+                      selectedView={selectedView}
+                    />
+                  </Flex>
+                ))
+              ) : (
+                <Box fontSize="14px" color="gray" p="10px">
+                  No results found
+                </Box>
+              )}
+            </Box>
+
+            <Button
+              onClick={(e) => {
+                setViewAnchorEl(e.currentTarget);
+              }}
+              p={"0"}
+              h={"26px"}
+              mt={"5px"}
+              bg={"none"}
+              justifyContent={"flex-start"}
+              gap={"2px"}
+              _hover={{
+                bg: "#eee",
+              }}
+              color={"#475467"}
+              w={"100%"}
+              textAlign={"justify"}>
+              <AddIcon style={{width: "20px", height: "20px"}} />
+              <Box fontSize={"14px"} fontWeight={"400"}>
+                New view
+              </Box>
+            </Button>
           </Box>
         </Menu>
       </Box>

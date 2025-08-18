@@ -20,26 +20,26 @@ import {useUsersListQuery} from "@/services/userService";
 import {Select} from "chakra-react-select";
 import {Pagination} from "@mui/material";
 
-import { useUserDeleteMutation } from "@/services/auth/userService";
-import { useRoleListQuery } from "@/services/roleServiceV2";
-import { useTranslation } from "react-i18next";
-import { useClientTypesQuery } from "../../client-types/utils";
-import { CreateDrawer, EditDrawer } from "../../client-types/actions";
-import { generateLangaugeText } from "../../../utils/generateLanguageText";
+import {useUserDeleteMutation} from "@/services/auth/userService";
+import {useRoleListQuery} from "@/services/roleServiceV2";
+import {useTranslation} from "react-i18next";
+import {useClientTypesQuery} from "../../client-types/utils";
+import {CreateDrawer, EditDrawer} from "../../client-types/actions";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
 import styles from "./style.module.scss";
 import useSearchParams from "../../../hooks/useSearchParams";
 import InviteModal from "@/components/InviteModal/InviteModal";
-import { useDispatch } from "react-redux";
-import { settingsModalActions } from "../../../store/settingsModal/settingsModal.slice";
+import {useDispatch} from "react-redux";
+import {settingsModalActions} from "../../../store/settingsModal/settingsModal.slice";
 
 const templateColumns =
   "minmax(72px, 32px) minmax(160px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(76px, 32px)";
 
 const limitOptions = [
-  { value: 10, label: "10 rows" },
-  { value: 20, label: "20 rows" },
-  { value: 30, label: "30 rows" },
-  { value: 40, label: "40 rows" },
+  {value: 10, label: "10 rows"},
+  {value: 20, label: "20 rows"},
+  {value: 30, label: "30 rows"},
+  {value: 40, label: "40 rows"},
 ];
 
 export const UserClientTypes = () => {
@@ -50,8 +50,8 @@ export const UserClientTypes = () => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [userInviteLan, setUserInviteLan] = useState(null);
-  const { i18n } = useTranslation();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {i18n} = useTranslation();
+  const {isOpen, onOpen, onClose} = useDisclosure();
 
   const clientTypesQuery = useClientTypesQuery();
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
@@ -63,7 +63,7 @@ export const UserClientTypes = () => {
       limit,
       offset: (page - 1) * limit,
     },
-    queryParams: { enabled: Boolean(clientTypeId) },
+    queryParams: {enabled: Boolean(clientTypeId)},
   });
   const users = usersListQuery.data?.users ?? [];
   const usersCount = usersListQuery.data?.count;
@@ -102,14 +102,12 @@ export const UserClientTypes = () => {
                 mb={"5px"}
                 border={"1px solid #EAECF0"}
                 overflow="auto"
-                maxWidth="720px"
-              >
+                maxWidth="720px">
                 {clientTypes.map((type, index) => (
                   <Tab
                     className={`${tabIndex === index ? styles.reactTabIteActive : styles.reactTabItem} ${styles.userTab}`}
-                    sx={{ fontSize: "12px" }}
-                    key={type.guid}
-                  >
+                    sx={{fontSize: "12px"}}
+                    key={type.guid}>
                     {type.name}
                   </Tab>
                 ))}
@@ -125,8 +123,7 @@ export const UserClientTypes = () => {
               onClick={() => {
                 onOpen();
                 dispatch(settingsModalActions.setInvite(true));
-              }}
-            >
+              }}>
               {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
                 "Invite"}
             </Button>
@@ -149,8 +146,7 @@ export const UserClientTypes = () => {
           <Grid
             templateColumns={templateColumns}
             borderBottom="1px solid #EAECF0"
-            borderLeft="1px solid #EAECF0"
-          >
+            borderLeft="1px solid #EAECF0">
             <Th justifyContent="center">
               <img src="/img/hash.svg" alt="index" />
             </Th>
@@ -187,8 +183,7 @@ export const UserClientTypes = () => {
               key={user.id}
               templateColumns={templateColumns}
               borderBottom="1px solid #EAECF0"
-              borderLeft="1px solid #EAECF0"
-            >
+              borderLeft="1px solid #EAECF0">
               <Td display="flex" justifyContent="center" fontWeight={600}>
                 {index + 1}
               </Td>
@@ -214,22 +209,20 @@ export const UserClientTypes = () => {
         <Flex
           p="8px 16px 0px"
           borderTop="1px solid #EAECF0"
-          justifyContent="space-between"
-        >
+          justifyContent="space-between">
           <Flex
             columnGap="16px"
             alignItems="center"
             fontSize={14}
             fontWeight={600}
-            color="#344054"
-          >
+            color="#344054">
             {generateLangaugeText(userInviteLan, i18n?.language, "Show") ||
               "Show"}
             <Select
-              value={{ value: limit, label: `${limit} rows` }}
+              value={{value: limit, label: `${limit} rows`}}
               options={limitOptions}
               menuPlacement="top"
-              onChange={({ value }) => onLimitChange(value)}
+              onChange={({value}) => onLimitChange(value)}
             />
             out of {usersCount}
           </Flex>
@@ -240,7 +233,7 @@ export const UserClientTypes = () => {
             count={Math.ceil((usersCount ?? 0) / limit)}
             variant="outlined"
             shape="rounded"
-            style={{ marginLeft: 40 }}
+            style={{marginLeft: 40}}
           />
 
           <div />

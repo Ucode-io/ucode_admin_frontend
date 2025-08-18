@@ -23,14 +23,7 @@ import {
   ChakraBaseProvider,
   Flex,
   Input,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Popover,
-  PopoverBody,
   PopoverContent,
   PopoverTrigger,
   theme,
@@ -38,12 +31,12 @@ import {
   useOutsideClick,
 } from "@chakra-ui/react";
 import {Logout} from "@mui/icons-material";
-import GTranslateIcon from "@mui/icons-material/GTranslate";
+import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {Dialog, Modal, TextField} from "@mui/material";
+import {Dialog, Modal} from "@mui/material";
 import {differenceInCalendarDays, parseISO} from "date-fns";
 import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
@@ -75,20 +68,18 @@ import {store} from "../../store";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
 import {mainActions} from "../../store/main/main.slice";
 import {menuAccordionActions} from "../../store/menus/menus.slice";
+import {permissionsActions} from "../../store/permissions/permissions.slice";
 import {applyDrag} from "../../utils/applyDrag";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {isJSONParsable} from "../../utils/isJsonValid";
 import {getAllFromDB} from "../../utils/languageDB";
 import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
-import {useChatwoot} from "../ProfilePanel/Chatwoot";
+import AddOrganization from "./AddOrganization";
 import AppSidebar from "./AppSidebarComponent";
 import DocsChatwootModal from "./DocsChatwootModal";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
-import AddIcon from "@mui/icons-material/Add";
-import AddOrganization from "./AddOrganization";
-import { permissionsActions } from "../../store/permissions/permissions.slice";
-import { isJSONParsable } from "../../utils/isJsonValid";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -944,26 +935,26 @@ const LayoutSidebar = ({
   );
 };
 
-const Chatwoot = forwardRef(({open, ...props}, ref) => {
-  const {originalButtonFunction} = useChatwoot();
+// const Chatwoot = forwardRef(({open, ...props}, ref) => {
+//   const {originalButtonFunction} = useChatwoot();
 
-  return (
-    <Flex
-      ref={ref}
-      w={open ? "100%" : 36}
-      h={36}
-      alignItems="center"
-      justifyContent="center"
-      borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
-      cursor="pointer"
-      mb={open ? 0 : 4}
-      {...props}
-      onClick={originalButtonFunction}>
-      <img src="/img/message-text-square.svg" alt="chat" />
-    </Flex>
-  );
-});
+//   return (
+//     <Flex
+//       ref={ref}
+//       w={open ? "100%" : 36}
+//       h={36}
+//       alignItems="center"
+//       justifyContent="center"
+//       borderRadius={6}
+//       _hover={{bg: "#EAECF0"}}
+//       cursor="pointer"
+//       mb={open ? 0 : 4}
+//       {...props}
+//       onClick={originalButtonFunction}>
+//       <img src="/img/message-text-square.svg" alt="chat" />
+//     </Flex>
+//   );
+// });
 
 const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
   const {
@@ -1419,7 +1410,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 
   return (
     <Box p={8} ref={popoverRef}>
-      <Popover
+      {/* <Popover
         isOpen={isOpen}
         onClose={onClose}
         placement="right-start"
@@ -1478,7 +1469,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
             </PopoverBody>
           </Box>
         </PopoverContent>
-      </Popover>
+      </Popover> */}
 
       <Box
         sx={{

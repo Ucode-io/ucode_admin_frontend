@@ -29,8 +29,11 @@ import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slic
 import {useParams} from "react-router-dom";
 import useDownloader from "../../../hooks/useDownloader";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { VIEW_TYPES_MAP } from "../../../utils/constants/viewTypes";
-import { viewsActions } from "../../../store/views/view.slice";
+import {VIEW_TYPES_MAP} from "../../../utils/constants/viewTypes";
+import {viewsActions} from "../../../store/views/view.slice";
+
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 export const ColumnsVisibility = ({
   relationView = false,
@@ -43,7 +46,7 @@ export const ColumnsVisibility = ({
   refetchRelationViews = () => {},
 }) => {
   const queryClient = useQueryClient();
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const [search, setSearch] = useState("");
   const allFields = Object.values(fieldsMap);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -57,18 +60,10 @@ export const ColumnsVisibility = ({
         refetchRelationViews();
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else if (!relationView) {
-        dispatch(viewsActions.updateView({ view: data, id: view?.id }));
+        dispatch(viewsActions.updateView({view: data, id: view?.id}));
       } else {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
-
-      // if (relationView && viewsList?.length > 1) {
-      //   return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
-      // } else if (!relationView) {
-      //   return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
-      // } else {
-      //   return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-      // }
     },
     onSuccess: (data) => {
       // refetchViews();
@@ -180,8 +175,7 @@ export const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}
-        >
+          onClick={onBackClick}>
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
@@ -222,8 +216,7 @@ export const ColumnsVisibility = ({
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
-        overflow="auto"
-      >
+        overflow="auto">
         <Container onDrop={onDrop}>
           {renderFields.map((column) => (
             <Draggable key={column.id}>
@@ -234,13 +227,15 @@ export const ColumnsVisibility = ({
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
-                _hover={{ bg: "#EAECF0" }}
+                _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
-                zIndex={999999}
-              >
-                {column?.type && getColumnIcon({ column })}
+                zIndex={999999}>
+                {column?.type && getColumnIcon({column})}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-                <Switch
+                <Box ml="auto">
+                  <VisibilityIcon />
+                </Box>
+                {/* <Switch
                   ml="auto"
                   onChange={(ev) => onChange(column, ev.target.checked)}
                   isChecked={
@@ -253,7 +248,7 @@ export const ColumnsVisibility = ({
                             : column?.id
                         )
                   }
-                />
+                /> */}
               </Flex>
             </Draggable>
           ))}
@@ -699,12 +694,12 @@ export const ExcelImportButton = ({
   tableSlug,
 }) => {
   // const {tableSlug} = useParams();
-  const { download } = useDownloader();
-  const { i18n } = useTranslation();
+  const {download} = useDownloader();
+  const {i18n} = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const { data } = await constructorObjectService.downloadExcel(tableSlug, {
+      const {data} = await constructorObjectService.downloadExcel(tableSlug, {
         data: {
           field_ids: computedVisibleFields,
           language: i18n.language,
@@ -726,10 +721,9 @@ export const ExcelImportButton = ({
       columnGap="8px"
       alignItems="center"
       borderRadius={6}
-      _hover={{ bg: "#EAECF0" }}
+      _hover={{bg: "#EAECF0"}}
       cursor="pointer"
-      onClick={mutation.mutate}
-    >
+      onClick={mutation.mutate}>
       {mutation.isLoading ? (
         <Spinner w="20px" h="20px" />
       ) : (

@@ -187,7 +187,7 @@ export const NewUiViewsWithGroups = ({
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
   const query = new URLSearchParams(window.location.search);
-  const viewId = selectedView ? query.get("v") : selectedView?.id;
+  const viewId = new_router ? query.get("v") : selectedView?.id;
 
   const projectId = useSelector((state) => state.auth.projectId);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
@@ -198,7 +198,7 @@ export const NewUiViewsWithGroups = ({
       calendar_to_slug: "",
     },
   });
-  console.log("selectedViewselectedView", selectedView, viewId);
+
   const handleAddDate = (item) => {
     const startDate = new Date(centerDate).toISOString();
     const endDate = addDays(new Date(centerDate), 5).toISOString();

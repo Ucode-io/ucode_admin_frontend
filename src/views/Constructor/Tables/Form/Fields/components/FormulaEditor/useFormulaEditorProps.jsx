@@ -7,15 +7,17 @@ import {
   SIG,
 } from "./constants";
 import { Parser, SUPPORTED_FORMULAS } from "hot-formula-parser";
+import { useTranslation } from "react-i18next";
 
-export const useFormulaFieldProps = ({ ref: editorRef }) => {
-  // const editorRef = useRef(null);
+export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
   const monacoRef = useRef(null);
   const parserRef = useRef(null);
-
-  // const [value, setValue] = useState("");
+  const badgeDecosRef = useRef([]);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [decorations, setDecorations] = useState([]);
+
+  const { i18n } = useTranslation();
 
   function validateBySignature(code) {
     const markers = [];
@@ -24,7 +26,7 @@ export const useFormulaFieldProps = ({ ref: editorRef }) => {
     while ((m = re.exec(code))) {
       const fn = m[1];
       if (!SIG[fn]) continue;
-      const openIdx = m.index + m[0].length - 1; // позиция '('
+      const openIdx = m.index + m[0].length - 1;
       const args = countArgsInside(code, openIdx);
       if (args === 0) {
         markers.push({
@@ -76,18 +78,6 @@ export const useFormulaFieldProps = ({ ref: editorRef }) => {
     }
   }
 
-  // function evaluate() {
-  //   if (!parserRef.current) return;
-  //   const res = parserRef.current.parse(value);
-  //   if (res.error) {
-  //     setResult(null);
-  //     setError(String(res.error));
-  //   } else {
-  //     setError(null);
-  //     setResult(res.result);
-  //   }
-  // }
-
   const functionSuggestions = useMemo(
     () =>
       CUSTOM_FUNCTIONS_META.map((f) => ({
@@ -99,58 +89,133 @@ export const useFormulaFieldProps = ({ ref: editorRef }) => {
     []
   );
 
+  const fieldSuggestions = useMemo(
+    () =>
+      fields.map((field) => ({
+        label: field.attributes?.[`label_${i18n.language}`] || field.label,
+        kind: 14,
+        insertText: field.slug,
+        detail: field.type,
+      })),
+    [fields]
+  );
+
   const functionsList = useMemo(() => {
     return [...SUPPORTED_FORMULAS, ...CUSTOM_FUNCTIONS].map((f) =>
       f.toUpperCase()
     );
   }, []);
 
+  function decorateFields() {
+    const editor = editorRef.current;
+    const monaco = monacoRef.current || window?.monaco;
+    if (!editor || !monaco) return;
+
+    const model = editor.getModel();
+    if (!model) return;
+
+    const languageId = model.getLanguageId();
+    const lineCount = model.getLineCount();
+    const text = model.getValue();
+
+    const tokenized = monaco.editor.tokenize(text, languageId);
+
+    const decos = [];
+    for (let line = 1; line <= lineCount; line++) {
+      const tokens = tokenized[line - 1] || [];
+      const lineLen = model.getLineLength(line);
+
+      for (let i = 0; i < tokens.length; i++) {
+        const start = (tokens[i].startIndex ?? tokens[i].offset ?? 0) + 1;
+        const end =
+          i + 1 < tokens.length
+            ? (tokens[i + 1].startIndex ?? tokens[i + 1].offset ?? 0) + 1
+            : lineLen + 1;
+
+        const scope = tokens[i].scopes || tokens[i].type || "";
+
+        if (typeof scope === "string" && scope.includes("field")) {
+          decos.push({
+            range: {
+              startLineNumber: line,
+              startColumn: start,
+              endLineNumber: line,
+              endColumn: end,
+            },
+            options: { inlineClassName: "field-badge" },
+          });
+        }
+      }
+    }
+
+    badgeDecosRef.current = editor.deltaDecorations(
+      badgeDecosRef.current,
+      decos
+    );
+  }
+
   let completionProviderRegistered = false;
 
   function handleEditorMount(editor, monaco) {
-    editorRef.current = editor;
     monacoRef.current = monaco;
+    editorRef.current = editor;
 
-    // Регистрируем простой язык и автодополнение
     monaco.languages.register({ id: "formula-lang" });
     monaco.languages.setMonarchTokensProvider("formula-lang", {
       ignoreCase: true,
       tokenizer: {
         root: [
-          [
-            /\b(NOW|TODAY|DATEADD|DATESUBTRACT|DATEBETWEEN|DATERANGE|DATESTART|DATEEND|TIMESTAMP|FROMTIMESTAMP|FORMATDATE|PARSEDATE|IFS|EMPTY|LENGTH|FORMAT|EQUAL|UNEQUAL|LET|LETS|WEEK|AT|FIRST|LAST|SORT|SLICE|REVERSE|FINDINDEX|FILTER|TONUMBER)\b/,
-            "keyword",
-          ],
           [new RegExp(`\\b(${functionsList.join("|")})\\b`), "keyword"],
           [
-            /\b(SINGLE_LINE|MULTI_LINE|EMAIL|INTERNATION_PHONE|LOOKUP|LOOKUPS|TEXT|NUMBER|DATE|TIME|DATE_TIME|DATE_TIME_WITHOUT_TIME_ZONE|CHECKBOX|SWITCH)\b/,
-            "custom-type",
+            new RegExp(
+              `\\b(${fields
+                .map((f) => f.slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+                .join("|")})\\b`
+            ),
+            "field",
           ],
           [/\b(true|false)\b/, "boolean"],
           [/\d+(?:\.\d+)?/, "number"],
-          [/".*?"/, "string"],
+          [/\".*?\"/, "string"],
           [/[,()]/, "delimiter"],
         ],
       },
     });
 
-    completionProviderRegistered =
-      monaco.languages.registerCompletionItemProvider("formula-lang", {
-        provideCompletionItems: () => ({ suggestions: functionSuggestions }),
-      });
+    monaco.editor.defineTheme("badge-theme", {
+      base: "vs",
+      inherit: true,
+      rules: [
+        { token: "keyword", foreground: "#0077aa" },
+        { token: "field", foreground: "ffffff", background: "007acc" },
+      ],
+      colors: {
+        "editor.background": "#f9f8f7",
+        "editor.lineHighlightBackground": "#00000000",
+        "editor.lineHighlightBorder": "#00000000",
+      },
+    });
+
+    monaco.editor.setTheme("badge-theme");
+
+    monaco.languages.registerCompletionItemProvider("formula-lang", {
+      provideCompletionItems: () => ({
+        suggestions: [...functionSuggestions, ...fieldSuggestions],
+      }),
+    });
 
     const model = editor.getModel();
     monaco.editor.setModelLanguage(model, "formula-lang");
 
-    // Первая валидация
-    runValidation(editor.getValue());
-  }
+    // запуск валидации + бейджей при изменении
+    editor.onDidChangeModelContent(() => {
+      runValidation(editor.getValue());
+      decorateFields();
+    });
 
-  const insertText = (text) => {
-    if (!editorRef.current) return;
-    editorRef.current.trigger("keyboard", "type", { text });
-    editorRef.current.focus();
-  };
+    runValidation(editor.getValue());
+    decorateFields();
+  }
 
   monacoRef.current?.editor?.defineTheme("badge-theme", {
     base: "vs",
@@ -159,16 +224,14 @@ export const useFormulaFieldProps = ({ ref: editorRef }) => {
       {
         token: "keyword",
         foreground: "#0077aa",
-        background: "007acc",
         fontStyle: "normal",
       },
       {
-        token: "type",
-        foreground: "#32302c",
-        background: "54483126",
+        token: "field",
+        foreground: "#0077aa",
+        background: "#007acc",
         fontStyle: "normal",
       },
-      { token: "number", foreground: "#990055" },
     ],
     colors: {
       "editor.background": "#f9f8f7",
@@ -187,15 +250,12 @@ export const useFormulaFieldProps = ({ ref: editorRef }) => {
 
   useEffect(() => {
     const parser = new Parser();
-
-    // Алиасы для соответствия заданным примерам
     parser.setFunction("NOW", () => new Date());
     parser.setFunction("TODAY", () => {
       const d = new Date();
       d.setHours(0, 0, 0, 0);
       return d;
     });
-
     installCustomFunctions(parser);
     parserRef.current = parser;
   }, []);

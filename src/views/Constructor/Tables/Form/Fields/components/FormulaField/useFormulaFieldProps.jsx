@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useFieldsListQuery } from "@/services/constructorFieldService";
 import { useGetLang } from "@/hooks/useGetLang";
@@ -81,11 +81,11 @@ export const useFormulaFieldProps = ({
   const onItemMouseLeave = () => setExampleType(null);
 
   const handleFilterFields = (value) => {
-    // if (value?.includes(" ")) {
-    //   setEditorSearchText("");
-    // } else {
-    //   setEditorSearchText(value);
-    // }
+    if (value?.includes(" ")) {
+      setEditorSearchText("");
+    } else {
+      setEditorSearchText(value);
+    }
   };
 
   const handleChange = (e) => {
@@ -190,6 +190,10 @@ export const useFormulaFieldProps = ({
     },
   });
 
+  useEffect(() => {
+    setEditorValue(watch("attributes.formula") ?? "");
+  }, []);
+
   return {
     formulaTypes,
     computedTables,
@@ -208,5 +212,7 @@ export const useFormulaFieldProps = ({
     onItemMouseLeave,
     exampleType,
     i18n,
+    suggestionsFields,
+    editorSearchText,
   };
 };

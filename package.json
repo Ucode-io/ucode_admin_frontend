@@ -125,6 +125,7 @@
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2",
     "material-ui-popup-state": "^2.0.0",
+    "monaco-editor": "^0.52.2",
     "pb-util": "^1.0.3",
     "pdfjs-dist": "^5.3.93",
     "print-js": "^1.6.0",

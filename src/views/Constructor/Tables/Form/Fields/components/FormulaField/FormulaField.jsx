@@ -42,6 +42,8 @@ export const FormulaField = ({
     onItemMouseLeave,
     exampleType,
     i18n,
+    suggestionsFields,
+    editorSearchText,
   } = useFormulaFieldProps({
     control,
     mainForm,
@@ -176,6 +178,7 @@ export const FormulaField = ({
                 }}
                 ref={editorRef}
                 value={editorValue}
+                fields={suggestionsFields}
               />
             </Box>
             {/* <textarea
@@ -251,50 +254,68 @@ export const FormulaField = ({
               display="flex"
               flexDirection="column"
               rowGap="4px"
-              maxHeight="237px"
+              height="237px"
               overflow="auto"
               padding="6px 4px 2px"
               borderRight="1px solid rgba(84, 72, 49, 0.15)"
             >
               {menuList.map((menuItem) => (
                 <Box>
-                  <p className={cls.menuTitle}>{menuItem?.name}</p>
-                  {menuItem?.list?.map((item, index) => (
-                    <Box
-                      className={clsx(cls.fieldChip, {
-                        [cls.active]: item.label === exampleType.label,
-                      })}
-                      key={item.key + index}
-                      onMouseEnter={() => onItemMouseEnter(item)}
-                      // onMouseLeave={() => onItemMouseLeave()}
-                      onClick={() => {
-                        if (menuItem.key === "formula")
-                          onEditorChange(editorValue + item.key + "(");
-                        else {
-                          onEditorChange(editorValue + item.key);
-                        }
-                        editorRef.current?.focus();
-                        // const newValue = watch("attributes.formula") + field.slug;
-                        // handleChange({ target: { value: newValue } });
-                        // setValue(newValue);
-                      }}
-                    >
-                      {typeof item.icon === "string" ? (
-                        <img
-                          src={item.icon}
-                          width={"16px"}
-                          height={"16px"}
-                          alt=""
-                        />
-                      ) : (
-                        <span className={cls.fieldIcon}>{item.icon}</span>
-                      )}
-                      <span className={cls.fieldName}>
-                        {item?.attributes?.[`label_${i18n.language}`] ||
-                          item.label}
-                      </span>
-                    </Box>
-                  ))}
+                  {menuItem?.list?.filter((item) =>
+                    item?.key
+                      ?.toLowerCase()
+                      ?.includes(editorSearchText?.toLowerCase())
+                  )?.length ? (
+                    <p className={cls.menuTitle}>{menuItem?.name}</p>
+                  ) : (
+                    ""
+                  )}
+                  {menuItem?.list
+                    ?.filter((item) =>
+                      item?.key
+                        ?.toLowerCase()
+                        ?.includes(editorSearchText?.toLowerCase())
+                    )
+                    ?.map((item, index) => (
+                      <Box
+                        className={clsx(cls.fieldChip, {
+                          [cls.active]: item.label === exampleType.label,
+                        })}
+                        key={item.key + index}
+                        onMouseEnter={() => onItemMouseEnter(item)}
+                        // onMouseLeave={() => onItemMouseLeave()}
+                        onClick={() => {
+                          let value = editorValue;
+                          if (editorSearchText) {
+                            value = editorValue?.replace(editorSearchText, "");
+                          }
+                          if (menuItem.key === "formula")
+                            onEditorChange(value + item.key + "(");
+                          else {
+                            onEditorChange(value + item.key);
+                          }
+                          editorRef.current?.focus();
+                          // const newValue = watch("attributes.formula") + field.slug;
+                          // handleChange({ target: { value: newValue } });
+                          // setValue(newValue);
+                        }}
+                      >
+                        {typeof item.icon === "string" ? (
+                          <img
+                            src={item.icon}
+                            width={"16px"}
+                            height={"16px"}
+                            alt=""
+                          />
+                        ) : (
+                          <span className={cls.fieldIcon}>{item.icon}</span>
+                        )}
+                        <span className={cls.fieldName}>
+                          {item?.attributes?.[`label_${i18n.language}`] ||
+                            item.label}
+                        </span>
+                      </Box>
+                    ))}
                 </Box>
               ))}
 

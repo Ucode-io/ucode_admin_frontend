@@ -211,10 +211,10 @@ export const useFieldPopoverProps = ({
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
       },
     };
-    console.log(data);
-    // if (formType === "CREATE") createField(data);
-    // else updateField(data);
-    // submitCallback();
+
+    if (formType === "CREATE") createField(data);
+    else updateField(data);
+    submitCallback();
   };
 
   const handleSelectSetting = (type) => {

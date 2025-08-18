@@ -250,9 +250,12 @@ const ViewOptions = ({
     }
   };
 
+  const [closeOnBlur, setCloseOnBlur] = useState(true);
+
   return (
     <Popover
       offset={[-145, 8]}
+      closeOnBlur={closeOnBlur}
       onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
       modifiers={[
         {
@@ -353,7 +356,6 @@ const ViewOptions = ({
               />
             </Box>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
-              {/* {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && ( */}
               <Flex
                 p="8px"
                 h="32px"
@@ -594,6 +596,7 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
+            setCloseOnBlur={setCloseOnBlur}
             relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}

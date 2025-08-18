@@ -31,9 +31,9 @@ import useDownloader from "../../../hooks/useDownloader";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {VIEW_TYPES_MAP} from "../../../utils/constants/viewTypes";
 import {viewsActions} from "../../../store/views/view.slice";
-
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import FieldOptions from "./FieldOptions";
 
 export const ColumnsVisibility = ({
   relationView = false,
@@ -43,6 +43,7 @@ export const ColumnsVisibility = ({
   onBackClick,
   tableLan,
   tableSlug,
+  setCloseOnBlur = () => {},
   refetchRelationViews = () => {},
 }) => {
   const queryClient = useQueryClient();
@@ -91,7 +92,7 @@ export const ColumnsVisibility = ({
     column?.attributes?.[`label_${i18n.language}`] || column?.label;
 
   const allColumns = [...visibleFields, ...invisibleFields];
-  const renderFields = allColumns.filter((column) =>
+  const renderFields = visibleFields?.filter((column) =>
     search === ""
       ? true
       : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
@@ -218,11 +219,14 @@ export const ColumnsVisibility = ({
         maxHeight="300px"
         overflow="auto">
         <Container onDrop={onDrop}>
+          <Box p={"8px 0 8px 6px"} fontWeight="700" color={"#777"}>
+            Shown in Table
+          </Box>
           {renderFields.map((column) => (
             <Draggable key={column.id}>
               <Flex
                 as="label"
-                p="8px"
+                p="6px"
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
@@ -232,28 +236,106 @@ export const ColumnsVisibility = ({
                 zIndex={999999}>
                 {column?.type && getColumnIcon({column})}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-                <Box ml="auto">
-                  <VisibilityIcon />
-                </Box>
-                {/* <Switch
+                <Flex
                   ml="auto"
-                  onChange={(ev) => onChange(column, ev.target.checked)}
-                  isChecked={
-                    view?.type === "TIMELINE"
+                  cursor="pointer"
+                  onClick={() =>
+                    onChange(
+                      column,
+                      !(view?.type === "TIMELINE"
+                        ? view?.attributes?.visible_field?.includes(
+                            column?.slug
+                          )
+                        : view?.columns?.includes(
+                            column?.type === "LOOKUP" ||
+                              column?.type === "LOOKUPS"
+                              ? column?.relation_id
+                              : column?.id
+                          ))
+                    )
+                  }>
+                  {view?.type === "TIMELINE" ? (
+                    view?.attributes?.visible_field?.includes(column?.slug) ? (
+                      <VisibilityIcon />
+                    ) : (
+                      <VisibilityOffIcon style={{color: "#888"}} />
+                    )
+                  ) : view?.columns?.includes(
+                      column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                        ? column?.relation_id
+                        : column?.id
+                    ) ? (
+                    <VisibilityIcon />
+                  ) : (
+                    <VisibilityOffIcon style={{color: "#888"}} />
+                  )}
+                </Flex>
+                <FieldOptions
+                  view={view}
+                  tableSlug={tableSlug}
+                  field={column}
+                  setCloseOnBlur={setCloseOnBlur}
+                />
+              </Flex>
+            </Draggable>
+          ))}
+          <Box p={"8px 0 8px 6px"} fontWeight="700" color={"#777"}>
+            Hidden in Table
+          </Box>
+          {invisibleFields?.map((column) => (
+            <Flex
+              as="label"
+              p="6px"
+              columnGap="8px"
+              alignItems="center"
+              borderRadius={6}
+              bg="#fff"
+              _hover={{bg: "#EAECF0"}}
+              cursor="pointer"
+              zIndex={999999}>
+              {column?.type && getColumnIcon({column})}
+              <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
+              <Flex
+                ml="auto"
+                cursor="pointer"
+                onClick={() =>
+                  onChange(
+                    column,
+                    !(view?.type === "TIMELINE"
                       ? view?.attributes?.visible_field?.includes(column?.slug)
                       : view?.columns?.includes(
                           column?.type === "LOOKUP" ||
                             column?.type === "LOOKUPS"
                             ? column?.relation_id
                             : column?.id
-                        )
-                  }
-                /> */}
+                        ))
+                  )
+                }>
+                {view?.type === "TIMELINE" ? (
+                  view?.attributes?.visible_field?.includes(column?.slug) ? (
+                    <VisibilityIcon />
+                  ) : (
+                    <VisibilityOffIcon style={{color: "#888"}} />
+                  )
+                ) : view?.columns?.includes(
+                    column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                      ? column?.relation_id
+                      : column?.id
+                  ) ? (
+                  <VisibilityIcon />
+                ) : (
+                  <VisibilityOffIcon style={{color: "#888"}} />
+                )}
               </Flex>
-            </Draggable>
+              <FieldOptions
+                view={view}
+                tableSlug={tableSlug}
+                field={column}
+                setCloseOnBlur={setCloseOnBlur}
+              />
+            </Flex>
           ))}
         </Container>
-        {/* )} */}
       </Flex>
     </Box>
   );

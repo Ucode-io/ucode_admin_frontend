@@ -9,7 +9,7 @@ export const AdvancedSettings = ({ title, onClose, onBackClick = () => {}, child
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        paddingBottom="7px"
+        padding="12px 8px"
       >
         <Box display="flex" alignItems="center" columnGap="4px">
           <button className={cls.backBtn} onClick={onBackClick} type="button">
@@ -33,9 +33,7 @@ export const AdvancedSettings = ({ title, onClose, onBackClick = () => {}, child
         </Box>
         <CloseButton onClick={onClose} />
       </Box>
-      <Box overflow="auto" maxHeight="376px">
-        {children}
-      </Box>
+      <Box maxHeight="376px">{children}</Box>
     </Box>
   );
 }

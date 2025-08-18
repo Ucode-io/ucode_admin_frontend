@@ -12,6 +12,7 @@
 
 
 .fieldHeading {
+  margin-top: 12px;
   margin-bottom: 12px;
   color: rgb(115, 114, 110);
   fill: rgba(71, 70, 68, 0.6);
@@ -104,17 +105,38 @@
 }
 
 .fieldChip {
+  padding: 0 8px;
   display: flex;
-  column-gap: 2px;
-  padding: 2px;
-  font-size: 12px;
+  align-items: center;
+  gap: 8px;
+  line-height: 120%;
+  width: 100%;
+  user-select: none;
+  min-height: 28px;
+  font-size: 14px;
+  color: rgb(50, 48, 44);
   cursor: pointer;
-  height: 22px;
-  font-weight: 500;
-  color: #344054;
-  border: 1px solid #EAECF0;
-  background: #F9FAFB;
-  border-radius: 8px;
+
+  transition: background-color 20ms ease-in;
+  width: 100%;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+  
+}
+
+.fieldChip.active {
+  background-color: rgba(55, 53, 47, 0.06);
+}
+
+.fieldName {
+  color: rgb(50, 48, 44);
+}
+
+.fieldIcon {
+  color: rgba(71, 70, 68, 0.6);
 }
 
 .fieldSearchContainer {
@@ -185,4 +207,16 @@
   resize: none;
   font-size: 14px;
   line-height: 20px;
+}
+
+.menuTitle {
+  display: flex;
+  padding-left: 8px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  color: rgb(115, 114, 110);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 120%;
+  user-select: none;
 }

@@ -54,11 +54,12 @@ export const FieldPopover = ({
       onClose={onClose}
       anchorOrigin={{
         vertical: formType === "CREATE" ? "top" : "bottom",
-        horizontal: formType === "CREATE" ? "right" : "left",
+        // horizontal: formType === "CREATE" ? "right" : "left",
+        horizontal: "right",
       }}
       transformOrigin={{
         vertical: "top",
-        horizontal: "right",
+        horizontal: "left",
       }}
       PaperProps={{
         style: {
@@ -68,7 +69,7 @@ export const FieldPopover = ({
       }}
     >
       <Box position="relative">
-        <Box padding="12px 8px" minWidth="292px" maxHeight="500px">
+        <Box minWidth="292px" maxHeight="500px">
           {selectedSettings ? (
             <AdvancedSettings
               title={selectedSettings}
@@ -81,26 +82,28 @@ export const FieldPopover = ({
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (
-            <FieldParams
-              onClose={onClose}
-              control={control}
-              languages={languages}
-              tableName={tableName}
-              setValue={setValue}
-              watch={watch}
-              register={register}
-              SETTING_TYPES={SETTING_TYPES}
-              handleSelectSetting={handleSelectSetting}
-              handleSubmit={handleSubmit}
-              onSubmit={onSubmit}
-              reset={reset}
-              tableLan={tableLan}
-              field={field}
-              formType={formType}
-              menuItem={menuItem}
-              selectedAutofillFieldSlug={selectedField?.slug}
-              tableSlug={slug}
-            />
+            <Box paddingX="8px">
+              <FieldParams
+                onClose={onClose}
+                control={control}
+                languages={languages}
+                tableName={tableName}
+                setValue={setValue}
+                watch={watch}
+                register={register}
+                SETTING_TYPES={SETTING_TYPES}
+                handleSelectSetting={handleSelectSetting}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                reset={reset}
+                tableLan={tableLan}
+                field={field}
+                formType={formType}
+                menuItem={menuItem}
+                selectedAutofillFieldSlug={selectedField?.slug}
+                tableSlug={slug}
+              />
+            </Box>
           )}
         </Box>
       </Box>

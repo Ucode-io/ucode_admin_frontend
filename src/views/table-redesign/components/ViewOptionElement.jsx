@@ -232,7 +232,10 @@ export const ColumnsVisibility = ({
                 zIndex={999999}>
                 {column?.type && getColumnIcon({column})}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-                <Switch
+                <Box ml="auto">
+                  <VisibilityIcon />
+                </Box>
+                {/* <Switch
                   ml="auto"
                   onChange={(ev) => onChange(column, ev.target.checked)}
                   isChecked={
@@ -245,7 +248,7 @@ export const ColumnsVisibility = ({
                             : column?.id
                         )
                   }
-                />
+                /> */}
               </Flex>
             </Draggable>
           ))}

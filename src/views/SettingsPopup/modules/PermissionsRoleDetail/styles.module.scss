@@ -26,7 +26,7 @@
   background-color: transparent;
   color: rgba(102, 112, 133, 1);
   cursor: pointer;
-  
+
   span {
     display: flex;
     align-items: center;
@@ -39,12 +39,11 @@
   column-gap: 8px;
   padding: 2px;
   border-radius: 8px;
-  background-color: #F9FAFB;
+  background-color: #f9fafb;
   overflow: auto;
-  border: 1px solid #EAECF0;
+  border: 1px solid #eaecf0;
   margin-right: 10px;
 }
-
 
 .categoryDropdown {
   position: relative;
@@ -53,14 +52,14 @@
 
 .categoryDropdownBtn {
   padding: 2px 8px;
-  border: 1px solid #B2DDFF;
+  border: 1px solid #b2ddff;
   border-radius: 4px;
-  background-color: #EFF8FF;
+  background-color: #eff8ff;
   font-weight: 500;
   font-size: 12px;
   line-height: 18px;
   text-align: center;
-  color: #175CD3;
+  color: #175cd3;
   cursor: pointer;
 }
 
@@ -78,7 +77,7 @@
   right: 0;
   padding-top: 10px;
   padding-bottom: 10px;
-  border: 1px solid #EAECF0;
+  border: 1px solid #eaecf0;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0px 12px 16px -4px #10182814;
@@ -104,7 +103,7 @@
   cursor: pointer;
 
   &:hover {
-      background-color: #F9FAFB;
+    background-color: #f9fafb;
   }
 }
 
@@ -112,27 +111,27 @@
   width: 20px;
   height: 20px;
   position: relative;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   border-radius: 50%;
 
   span {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: #004EEB;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #004eeb;
   }
 }
 
 .customRadio.active {
-  border-color: #004EEB;
+  border-color: #004eeb;
 
   span {
-      display: block;
+    display: block;
   }
 }
 
@@ -144,20 +143,20 @@
   font-weight: 600;
 
   &.table {
-      background-color: #D3F8DF;
+    background-color: #d3f8df;
   }
   &.menu {
-      background-color: #FEE4E2;
+    background-color: #fee4e2;
   }
   &.permission {
-      background-color: #FEF7C3;
+    background-color: #fef7c3;
   }
 }
 
 .iconBtn {
   width: 22px;
-  height: 22px;
-  border: 1px solid #EAECF0;
+  height: 20px;
+  border: 1px solid #eaecf0;
   border-radius: 4px;
   background-color: #fff;
   cursor: pointer;
@@ -171,7 +170,12 @@
 }
 
 .clientType {
-  font-size: 18px;
+  font-size: 12px;
+  line-height: 24px;
+}
+
+.clientTypeConnect {
+  font-size: 12px;
   line-height: 28px;
 }
 

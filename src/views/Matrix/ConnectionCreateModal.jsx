@@ -1,128 +1,283 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import HFSelect from "../../components/FormElements/HFSelect";
+import {Box, Card, Modal, Typography} from "@mui/material";
+import {useParams} from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {useQueryClient} from "react-query";
+import ClearIcon from "@mui/icons-material/Clear";
+import {useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {store} from "../../store";
+import {
+  useConnectionCreateMutation,
+  useConnectionGetByIdQuery,
+  useConnectionUpdateMutation,
+} from "../../services/auth/connectionService";
+import {useTablesListQuery} from "../../services/constructorTableService";
+import {useFieldsListQuery} from "../../services/constructorFieldService";
+import {useRelationsListQuery} from "../../services/constructorRelationService";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 import HFTextField from "../../components/FormElements/HFTextField";
-import styles from "./styles.module.scss";
-import HFIconPicker from "../../components/FormElements/HFIconPicker";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "70%",
-  bgcolor: "background.paper",
-  border: "2px solid #e8e8e8",
-  borderRadius: "6px",
-  boxShadow: 24,
-  p: 3,
-};
+import FRow from "../../components/FormElements/FRow";
+import HFSelect from "../../components/FormElements/HFSelect";
+import SaveButton from "../../components/Buttons/SaveButton";
+import CreateButton from "../../components/Buttons/CreateButton";
+import {showAlert} from "../../store/alert/alert.thunk";
 
 const ConnectionCreateModal = ({
-  open = false,
-  tables = [],
-  fields = [],
-  connectionForm = {},
-  setOpen = () => {},
-  getFields = () => {},
-  handleSubmit = () => {},
-  isEdit = false,
+  closeModal,
+  modalType,
+  connectionId,
+  settingLan,
 }) => {
-  const handleClose = () => {
-    setOpen(false);
-    connectionForm.reset();
+  const queryClient = useQueryClient();
+  const {clientId} = useParams();
+  const {i18n} = useTranslation();
+  const envId = store.getState().company.environmentId;
+  const projectId = store.getState().company.projectId;
+  const [relations, setRelations] = useState([]);
+
+  const {control, handleSubmit, reset, watch, getValues} = useForm({
+    defaultValues: {
+      name: "",
+      table_slug: "",
+      view_slug: "",
+      client_type_id: clientId,
+      "project-id": projectId,
+      guid: "",
+    },
+  });
+
+  const tableSlug = watch("table_slug");
+  const mainTableSlug = watch("main_table_slug");
+
+  const {isLoading} = useConnectionGetByIdQuery({
+    id: connectionId,
+    queryParams: {
+      enabled: Boolean(modalType === "UPDATE"),
+      onSuccess: (res) => {
+        reset(res.data.response);
+      },
+    },
+  });
+
+  const {mutateAsync: createConnection, isLoading: createLoading} =
+    useConnectionCreateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
+        store.dispatch(showAlert("Успешно", "success"));
+        closeModal();
+      },
+    });
+  const {mutateAsync: updateConnection, isLoading: updateLoading} =
+    useConnectionUpdateMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
+        store.dispatch(showAlert("Успешно", "success"));
+        closeModal();
+      },
+    });
+
+  const onSubmit = (data) => {
+    const relation = relations?.find((i) => i.slug === getValues().table_slug);
+    if (modalType === "NEW") {
+      createConnection({...data, field_slug: relation?.field_slug});
+    } else {
+      updateConnection({...data, guid: connectionId});
+    }
   };
+
+  const {data: projectTables} = useTablesListQuery({
+    params: {
+      envId: envId,
+    },
+    queryParams: {
+      select: (res) => res.tables,
+    },
+  });
+
+  const {data: fieldsData} = useFieldsListQuery(
+    {
+      queryParams: {
+        enabled: Boolean(tableSlug),
+      },
+      params: {
+        table_slug: tableSlug,
+        "project-id": projectId,
+      },
+    },
+    tableSlug
+  );
+
+  const {data: relationsData} = useRelationsListQuery({
+    queryParams: {
+      enabled: Boolean(mainTableSlug),
+    },
+    params: {
+      table_slug: mainTableSlug,
+      relation_slug: mainTableSlug,
+      "project-id": projectId,
+    },
+    tableSlug: mainTableSlug,
+  });
+
+  const computedFilteredRelations = useMemo(() => {
+    if (!relationsData?.relations) return;
+    const array = [];
+    let from = "";
+    relationsData?.relations.forEach((element) => {
+      if (element?.table_from?.slug === mainTableSlug) from = "to";
+      else if (element?.table_to?.slug === mainTableSlug) from = "from";
+      if (element?.[`table_${from}`]) {
+        element[`table_${from}`].field_slug = element?.[`field_${from}`];
+        element[`table_${from}`].type = element?.type;
+        array.push(element[`table_${from}`]);
+      }
+    });
+    setRelations(array ?? []);
+    return array ?? [];
+  }, [relationsData]);
+
+  const computedOptions = useMemo(() => {
+    return projectTables?.map((item) => ({
+      label: item?.label,
+      value: item?.slug,
+    }));
+  }, [projectTables]);
+
+  const computedViewOptions = useMemo(() => {
+    return fieldsData?.fields?.map((item) => ({
+      label: item?.label,
+      value: item?.slug,
+    }));
+  }, [fieldsData]);
+
+  const computedTableSlug = useMemo(() => {
+    if (!computedFilteredRelations) return [];
+    return computedFilteredRelations?.map((item) => ({
+      label: item?.label,
+      value: item?.slug,
+    }));
+  }, [computedFilteredRelations]);
 
   return (
     <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <div className={styles.card_holder}>
-            <div className={styles.card_header}>
-              <div className={styles.card_header_left}>
-                <HFIconPicker
-                  name="icon"
-                  control={connectionForm.control}
-                  shape="rectangle"
-                  onChange={(e) => {
-                    connectionForm.setValue("icon", e);
-                  }}
-                />
-                <HFTextField
-                  label="Name"
-                  name="name"
-                  onChange={(e) => {
-                    connectionForm.setValue("name", e.target.value);
-                  }}
-                  control={connectionForm.control}
-                  fullWidth
-                />
-                <HFSelect
-                  options={tables}
-                  control={connectionForm.control}
-                  onChange={(e) => {
-                    getFields({ table_id: e });
-                    connectionForm.setValue("table_slug", e);
-                  }}
-                  name="table_slug"
-                  required
-                />
-              </div>
-            </div>
-            <div className={styles.card_body}>
-              <div className={styles.card_body_items}>
-                <div>
-                  <HFTextField
-                    name="view_label"
-                    // value={connectionForm.getValues().view_label}
-                    onChange={(e) => {
-                      connectionForm.setValue("view_label", e.target.value);
-                    }}
-                    control={connectionForm.control}
-                    fullWidth
-                  />
-                </div>
-                <div>
-                  <HFSelect
-                    options={fields}
-                    control={connectionForm.control}
-                    name="view_slug"
-                    onChange={(e) => {
-                      connectionForm.setValue("view_slug", e);
-                    }}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={styles.actions}>
-            <button
-              className={styles.cancel_btn}
-              onClick={() => {
-                handleClose();
-                connectionForm.reset();
+      <Modal open className="child-position-center" onClose={closeModal}>
+        <Card className="PlatformModal">
+          <div className="modal-header silver-bottom-border">
+            <Typography variant="h4">
+              {modalType === "NEW"
+                ? generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Create connection"
+                  ) || '"Create connection"'
+                : generateLangaugeText(
+                    settingLan,
+                    i18n?.language,
+                    "Edit connection"
+                  ) || "Edit connection"}
+            </Typography>
+            <ClearIcon
+              color="primary"
+              onClick={closeModal}
+              width="46px"
+              style={{
+                cursor: "pointer",
               }}
-            >
-              Cancel
-            </button>
-            <button
-              className={styles.craete_btn}
-              onClick={() => {
-                handleSubmit();
-                handleClose();
-              }}
-            >
-              {isEdit ? "Update" : "Create"}
-            </button>
+            />
           </div>
-        </Box>
+
+          <form action="" className="form">
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Table slug"
+                ) || "Table slug"
+              }>
+              <HFTextField
+                fullWidth
+                label="Value"
+                control={control}
+                name="name"
+                required
+              />
+            </FRow>
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Main table slug"
+                ) || "Main table slug"
+              }>
+              <HFSelect
+                fullWidth
+                label="Table"
+                control={control}
+                name="main_table_slug"
+                options={computedOptions}
+                required
+              />
+            </FRow>
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Table slug"
+                ) || "Table slug"
+              }>
+              <HFSelect
+                fullWidth
+                label="Table"
+                control={control}
+                name="table_slug"
+                options={computedTableSlug}
+                required
+              />
+            </FRow>
+            <FRow
+              label={
+                generateLangaugeText(
+                  settingLan,
+                  i18n?.language,
+                  "Field slug"
+                ) || "Field slug"
+              }>
+              <HFSelect
+                fullWidth
+                label="Table"
+                control={control}
+                name="view_slug"
+                options={computedViewOptions}
+                required
+              />
+            </FRow>
+
+            <div className="btns-row">
+              {modalType === "NEW" ? (
+                <CreateButton
+                  title={
+                    generateLangaugeText(settingLan, i18n?.language, "Add") ||
+                    "Add"
+                  }
+                  onClick={handleSubmit(onSubmit)}
+                  loading={createLoading || updateLoading}
+                />
+              ) : (
+                <SaveButton
+                  title={
+                    generateLangaugeText(settingLan, i18n?.language, "Save") ||
+                    "Save"
+                  }
+                  onClick={handleSubmit(onSubmit)}
+                  loading={createLoading || updateLoading}
+                />
+              )}
+            </div>
+          </form>
+        </Card>
       </Modal>
     </div>
   );

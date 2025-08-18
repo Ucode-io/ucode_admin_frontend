@@ -86,7 +86,7 @@ export const PermissionsRoleDetail = () => {
               bgcolor: "#f9fafb",
             }}>
             <Box
-              minWidth={"70px"}
+              minWidth={"78px"}
               justifyContent={"center"}
               display={"flex"}
               alignItems={"center"}

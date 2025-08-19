@@ -81,7 +81,11 @@ export const useFormulaFieldProps = ({
   const onItemMouseLeave = () => setExampleType(null);
 
   const handleFilterFields = (value) => {
-    if (value?.includes(" ")) {
+    if (
+      value?.includes(" ") ||
+      value.substring(value.length - 1) === "." ||
+      value.substring(value.length - 1) === ")"
+    ) {
       setEditorSearchText("");
     } else {
       setEditorSearchText(value);
@@ -214,5 +218,6 @@ export const useFormulaFieldProps = ({
     i18n,
     suggestionsFields,
     editorSearchText,
+    setEditorSearchText,
   };
 };

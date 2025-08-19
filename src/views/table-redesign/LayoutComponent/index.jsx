@@ -11,12 +11,13 @@ import {
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
-import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import ViewSettings from "../Objects/components/ViewSettings";
 import {default as InlineSVG, default as SVG} from "react-inlinesvg";
+import ViewSettings from "../../Objects/components/ViewSettings";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import LayoutModal from "./LayoutModal";
 
-function ViewSettingsModal({
+function LayoutComponent({
   selectedView,
   tableLan = {},
   isChanged = false,
@@ -72,7 +73,8 @@ function ViewSettingsModal({
               <SVG src={`/img/file-download.svg`} width={20} height={20} />
             </Flex>
             <ViewOptionTitle>
-              {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
+              {generateLangaugeText(tableLan, i18n?.language, "Layout") ||
+                "Layout"}
             </ViewOptionTitle>
             <ChevronRightIcon ml="auto" fontSize={22} />
           </>
@@ -83,7 +85,7 @@ function ViewSettingsModal({
         <ModalOverlay />
         <ModalContent zIndex={2} minW="602px" w="602px">
           <MaterialUIProvider>
-            <ViewSettings
+            <LayoutModal
               refetchMainView={refetchViews}
               selectedTabIndex={selectedTabIndex}
               closeModal={onClose}
@@ -106,4 +108,4 @@ const ViewOptionTitle = ({children}) => (
   </Box>
 );
 
-export default ViewSettingsModal;
+export default LayoutComponent;

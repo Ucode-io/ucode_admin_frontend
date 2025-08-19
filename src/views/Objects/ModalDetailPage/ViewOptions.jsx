@@ -46,6 +46,7 @@ import constructorTableService from "../../../services/constructorTableService";
 import {listToMap} from "../../../utils/listToMap";
 import listToOptions from "../../../utils/listToOptions";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
+import LayoutComponent from "../../table-redesign/LayoutComponent";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -335,8 +336,8 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
-                    "Layout"}
+                  {generateLangaugeText(tableLan, i18n?.language, "General") ||
+                    "General"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>
@@ -345,6 +346,15 @@ const ViewOptions = ({
                   <ChevronRightIcon fontSize={22} />
                 </Flex>
               </Flex>
+
+              <LayoutComponent
+                refetchViews={refetchViews}
+                selectedTabIndex={selectedTabIndex}
+                tableLan={tableLan}
+                selectedView={view}
+                isChanged={isChanged}
+                setIsChanged={setIsChanged}
+              />
 
               <ViewSettingsModal
                 refetchViews={refetchViews}

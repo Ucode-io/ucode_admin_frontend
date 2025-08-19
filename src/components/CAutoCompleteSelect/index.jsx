@@ -7,6 +7,7 @@ const CAutoCompleteSelect = ({
   value,
   tabIndex,
   disabled,
+  portal = false,
   multiple = false,
   onChange = () => {},
   onFieldChange = () => {},
@@ -19,6 +20,7 @@ const CAutoCompleteSelect = ({
   return (
     <div>
       <Autocomplete
+        disablePortal={true}
         id="table_choose"
         multiple={multiple}
         // disablePortal

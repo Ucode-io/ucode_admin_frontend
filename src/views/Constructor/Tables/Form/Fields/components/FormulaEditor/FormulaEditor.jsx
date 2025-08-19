@@ -11,6 +11,7 @@ export const FormulaEditor = forwardRef(
     const { runValidation, handleEditorMount, error } = useFormulaFieldProps({
       ref,
       fields,
+      value,
     });
 
     return (

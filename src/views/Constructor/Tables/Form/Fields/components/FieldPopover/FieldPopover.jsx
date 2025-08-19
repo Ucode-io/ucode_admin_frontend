@@ -69,7 +69,7 @@ export const FieldPopover = ({
       }}
     >
       <Box position="relative">
-        <Box minWidth="292px" maxHeight="500px">
+        <Box minWidth="292px" maxHeight="500px" overflow="auto">
           {selectedSettings ? (
             <AdvancedSettings
               title={selectedSettings}

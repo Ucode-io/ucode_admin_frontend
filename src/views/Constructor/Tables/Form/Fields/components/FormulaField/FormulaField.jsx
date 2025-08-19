@@ -44,6 +44,7 @@ export const FormulaField = ({
     i18n,
     suggestionsFields,
     editorSearchText,
+    setEditorSearchText,
   } = useFormulaFieldProps({
     control,
     mainForm,
@@ -292,8 +293,9 @@ export const FormulaField = ({
                           if (menuItem.key === "formula")
                             onEditorChange(value + item.key + "(");
                           else {
-                            onEditorChange(value + item.key);
+                            onEditorChange(value + item.key + ".");
                           }
+                          setEditorSearchText("");
                           editorRef.current?.focus();
                           // const newValue = watch("attributes.formula") + field.slug;
                           // handleChange({ target: { value: newValue } });

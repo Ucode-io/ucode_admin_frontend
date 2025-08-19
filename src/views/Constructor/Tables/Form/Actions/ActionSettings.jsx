@@ -88,7 +88,6 @@ const ActionSettings = ({
           type: "Functions",
           functionType: el?.type,
         }));
-        // return listToOptions(res.functions, "name", "id");
       },
     }
   );
@@ -174,9 +173,9 @@ const ActionSettings = ({
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}>
           <div className="p-2">
-            <FRow label="Icon" required>
-              <HFIconPicker control={control} name="icon" />
-            </FRow>
+            {/* <FRow label="Icon" required>
+              <HFIconPicker control={control} disabled={false} name="icon" />
+            </FRow> */}
             <FRow label="Label" required>
               <Box
                 style={{display: "flex", flexDirection: "column", gap: "6px"}}>

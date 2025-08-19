@@ -84,7 +84,6 @@ function TableActions({tableLan, tableSlug = ""}) {
         <Image h={"18px"} src="/img/lighting.svg" alt="settings" />
       </Button>
 
-      {/* Modal for listing actions */}
       <Modal
         trapFocus={false}
         blockScrollOnMount={false}
@@ -163,7 +162,6 @@ function TableActions({tableLan, tableSlug = ""}) {
         </ModalContent>
       </Modal>
 
-      {/* Chakra Drawer for editing/creating actions */}
       <Drawer
         isOpen={!!drawerState}
         placement="right"
@@ -171,9 +169,6 @@ function TableActions({tableLan, tableSlug = ""}) {
         size="md">
         <DrawerOverlay />
         <DrawerContent w="450px" maxW="450px">
-          {/* <DrawerHeader borderBottomWidth="1px">
-            {drawerState === "CREATE" ? "Create Action" : "Edit Action"}
-          </DrawerHeader> */}
           <DrawerBody p={0}>
             <MaterialUIProvider>
               <ActionSettings

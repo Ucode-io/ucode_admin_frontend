@@ -90,6 +90,7 @@ import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
 import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
+import TableActions from "./TableActions";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -813,7 +814,7 @@ export const NewUiViewsWithGroups = ({
                   </>
                 ))}
 
-              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+              {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <Button
                   h="30px"
                   ml="auto"
@@ -830,7 +831,7 @@ export const NewUiViewsWithGroups = ({
                     "Table Settings"
                   ) || "Table Settings"}
                 </Button>
-              </PermissionWrapperV2>
+              </PermissionWrapperV2> */}
             </Flex>
           ) : (
             <Flex
@@ -903,6 +904,9 @@ export const NewUiViewsWithGroups = ({
               </Flex>
 
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <TableActions tableSlug={tableSlug} tableLan={tableLan} />
+              </PermissionWrapperV2>
+              {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <Button
                   h="30px"
                   ml="auto"
@@ -919,7 +923,7 @@ export const NewUiViewsWithGroups = ({
                     "Table Settings"
                   ) || "Table Settings"}
                 </Button>
-              </PermissionWrapperV2>
+              </PermissionWrapperV2> */}
             </Flex>
           )}
 

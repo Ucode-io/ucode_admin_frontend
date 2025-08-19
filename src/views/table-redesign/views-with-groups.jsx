@@ -264,12 +264,12 @@ export const NewUiViewsWithGroups = ({
     mode: "all",
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -279,7 +279,7 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(
+  const { data: tabs } = useQuery(
     queryGenerator(groupField, filters, i18n.language)
   );
 
@@ -386,7 +386,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const {isLoading} = useTableByIdQuery({
+  const { isLoading } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -413,7 +413,7 @@ export const NewUiViewsWithGroups = ({
         dispatch(detailDrawerActions.openDrawer());
         setSelectedRow(null);
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, {id}, menuId);
+        navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
       }
     }
   };
@@ -439,11 +439,11 @@ export const NewUiViewsWithGroups = ({
     setSelectedTabIndex(idx);
     viewHandler(view);
     setSelectedView(view);
-    dispatch(viewsActions.setSelectedView({view, idx}));
+    dispatch(viewsActions.setSelectedView({ view, idx }));
 
     const isSection = view?.type === "SECTION";
     if (!new_router) {
-      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: idx}));
+      dispatch(viewsActions.setViewTab({ tableSlug, tabIndex: idx }));
       setSelectedTabIndex(idx);
     } else {
       if (isSection) {
@@ -499,7 +499,7 @@ export const NewUiViewsWithGroups = ({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -672,17 +672,19 @@ export const NewUiViewsWithGroups = ({
   // useEffect(() => {}, []);
 
   return (
-    <ViewProvider state={{view, fieldsMap}}>
+    <ViewProvider state={{ view, fieldsMap }}>
       <ChakraProvider theme={chakraUITheme}>
         <Flex
           h={modal ? `100vh` : "100vh"}
           overflow={"hidden"}
           flexDirection="column"
-          bg={"white"}>
+          bg={"white"}
+        >
           {updateLoading && (
             <Backdrop
-              sx={{zIndex: (theme) => theme.zIndex.drawer + 999}}
-              open={true}>
+              sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+              open={true}
+            >
               <RingLoaderWithWrapper />
             </Backdrop>
           )}
@@ -694,7 +696,8 @@ export const NewUiViewsWithGroups = ({
               alignItems="center"
               bg="#fff"
               borderBottom="1px solid #EAECF0"
-              columnGap="8px">
+              columnGap="8px"
+            >
               {relationView && (
                 <IconButton
                   aria-label="back"
@@ -740,7 +743,8 @@ export const NewUiViewsWithGroups = ({
                       sx={{
                         marginLeft: "10px",
                         height: "18px",
-                      }}>
+                      }}
+                    >
                       <Box
                         onClick={() => {
                           navigate(`/${menuId}/customize/${tableInfo?.id}`, {
@@ -760,7 +764,8 @@ export const NewUiViewsWithGroups = ({
                           "&:hover": {
                             background: "rgba(55, 53, 47, 0.06)",
                           },
-                        }}>
+                        }}
+                      >
                         <SpaceDashboardIcon />
                       </Box>
                     </Box>
@@ -794,7 +799,8 @@ export const NewUiViewsWithGroups = ({
                       columnGap="8px"
                       onClick={() => {
                         handleBreadCrumb(item, index);
-                      }}>
+                      }}
+                    >
                       <Flex
                         w="16px"
                         h="16px"
@@ -805,7 +811,8 @@ export const NewUiViewsWithGroups = ({
                         fontWeight={500}
                         fontSize={11}
                         justifyContent="center"
-                        alignItems="center">
+                        alignItems="center"
+                      >
                         {item?.label?.[0]}
                       </Flex>
                       {item?.label}
@@ -823,7 +830,8 @@ export const NewUiViewsWithGroups = ({
                   borderColor="#D0D5DD"
                   color="#344054"
                   leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px">
+                  borderRadius="8px"
+                >
                   {generateLangaugeText(
                     tableLan,
                     i18n?.language,
@@ -840,7 +848,8 @@ export const NewUiViewsWithGroups = ({
               alignItems="center"
               bg="#fff"
               borderBottom="1px solid #EAECF0"
-              columnGap="8px">
+              columnGap="8px"
+            >
               {relationView && (
                 <IconButton
                   aria-label="back"
@@ -885,7 +894,8 @@ export const NewUiViewsWithGroups = ({
                 color="#344054"
                 fontWeight={500}
                 alignItems="center"
-                columnGap="8px">
+                columnGap="8px"
+              >
                 <Flex
                   w="16px"
                   h="16px"
@@ -896,7 +906,8 @@ export const NewUiViewsWithGroups = ({
                   fontWeight={500}
                   fontSize={11}
                   justifyContent="center"
-                  alignItems="center">
+                  alignItems="center"
+                >
                   {tableName?.[0]}
                 </Flex>
                 {tableName}
@@ -912,7 +923,8 @@ export const NewUiViewsWithGroups = ({
                   borderColor="#D0D5DD"
                   color="#344054"
                   leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px">
+                  borderRadius="8px"
+                >
                   {generateLangaugeText(
                     tableLan,
                     i18n?.language,
@@ -930,7 +942,8 @@ export const NewUiViewsWithGroups = ({
             alignItems="center"
             bg="#fff"
             borderBottom="1px solid #EAECF0"
-            columnGap="5px">
+            columnGap="5px"
+          >
             <Flex
               ref={viewsRef}
               w={"70%"}
@@ -940,7 +953,8 @@ export const NewUiViewsWithGroups = ({
                   display: "none",
                 },
               }}
-              overflow={"scroll"}>
+              overflow={"scroll"}
+            >
               {(visibleViews ?? []).map((view, index) => (
                 <Button
                   p={"0 6px"}
@@ -962,9 +976,8 @@ export const NewUiViewsWithGroups = ({
                   fontWeight={500}
                   color={viewId === view?.id ? "#175CD3" : "#475467"}
                   bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
-                  _hover={viewId === view?.id ? {bg: "#D1E9FF"} : undefined}
+                  _hover={viewId === view?.id ? { bg: "#D1E9FF" } : undefined}
                   onClick={(e) => {
-                    console.log("CLICKED");
                     e.stopPropagation();
                     if (overflowedViews?.length > 0) {
                       if (index !== visibleViews?.length - 1) {
@@ -973,7 +986,8 @@ export const NewUiViewsWithGroups = ({
                         handleClick(e);
                       }
                     } else handleViewClick(view, index);
-                  }}>
+                  }}
+                >
                   {view?.is_relation_view
                     ? view?.table_label || view.type
                     : view?.attributes?.[`name_${i18n?.language}`] ||
@@ -987,7 +1001,8 @@ export const NewUiViewsWithGroups = ({
                         sx={{
                           height: "19px",
                           cursor: "pointer",
-                        }}>
+                        }}
+                      >
                         <KeyboardArrowDownIcon />
                       </Box>
                     )}
@@ -1015,7 +1030,8 @@ export const NewUiViewsWithGroups = ({
                   variant="ghost"
                   colorScheme="gray"
                   color="#475467"
-                  onClick={(ev) => setViewAnchorEl(ev.currentTarget)}>
+                  onClick={(ev) => setViewAnchorEl(ev.currentTarget)}
+                >
                   {generateLangaugeText(tableLan, i18n?.language, "View") ||
                     "View"}
                 </Button>
@@ -1080,7 +1096,8 @@ export const NewUiViewsWithGroups = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto">
+                overflow="auto"
+              >
                 {columnsForSearch.map((column) => (
                   <Flex
                     key={column.id}
@@ -1089,9 +1106,10 @@ export const NewUiViewsWithGroups = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
-                    cursor="pointer">
-                    {getColumnIcon({column})}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                  >
+                    {getColumnIcon({ column })}
                     <ViewOptionTitle>
                       {column?.attributes?.[`label_${i18n.language}`] ||
                         column?.label}
@@ -1104,7 +1122,7 @@ export const NewUiViewsWithGroups = ({
                           data: {
                             fields: columnsForSearch.map((c) =>
                               c.id === column.id
-                                ? {...c, is_search: e.target.checked}
+                                ? { ...c, is_search: e.target.checked }
                                 : c
                             ),
                           },
@@ -1123,7 +1141,8 @@ export const NewUiViewsWithGroups = ({
                 view={view}
                 visibleColumns={visibleColumns}
                 refetchViews={refetchViews}
-                tableSlug={tableSlug}>
+                tableSlug={tableSlug}
+              >
                 <FilterButton view={view} />
               </FilterPopover>
             )}
@@ -1133,9 +1152,10 @@ export const NewUiViewsWithGroups = ({
                 <PopoverTrigger>
                   <Button
                     variant="text"
-                    _hover={{backgroundColor: "rgba(0, 122, 255, 0.08)"}}
+                    _hover={{ backgroundColor: "rgba(0, 122, 255, 0.08)" }}
                     fontWeight={400}
-                    color={"#888"}>
+                    color={"#888"}
+                  >
                     No date ({noDates.length})
                   </Button>
                 </PopoverTrigger>
@@ -1148,11 +1168,12 @@ export const NewUiViewsWithGroups = ({
                         columnGap="8px"
                         alignItems="center"
                         borderRadius={6}
-                        _hover={{bg: "#EAECF0"}}
+                        _hover={{ bg: "#EAECF0" }}
                         cursor="pointer"
                         key={item?.guid}
                         fontSize={12}
-                        onClick={() => handleAddDate(item)}>
+                        onClick={() => handleAddDate(item)}
+                      >
                         {item?.[view?.attributes?.visible_field?.split("/")[0]]}
                       </Box>
                     ))}
@@ -1169,7 +1190,8 @@ export const NewUiViewsWithGroups = ({
                     width={"auto"}
                     h={"30px"}
                     px={4}
-                    onClick={() => navigateCreatePage()}>
+                    onClick={() => navigateCreatePage()}
+                  >
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
@@ -1234,21 +1256,23 @@ export const NewUiViewsWithGroups = ({
             defaultIndex={0}
             style={{
               height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
-            }}>
+            }}
+          >
             {tabs?.length > 0 &&
               view?.type !== "GRID" &&
               view?.type !== "BOARD" && (
                 <div id="tabsHeight" className={style.tableCardHeader}>
-                  <div style={{display: "flex", alignItems: "center"}}>
-                    <div className="title" style={{marginRight: "20px"}}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div className="title" style={{ marginRight: "20px" }}>
                       <h3>{view.table_label}</h3>
                     </div>
-                    <TabList style={{border: "none"}}>
+                    <TabList style={{ border: "none" }}>
                       {tabs?.map((tab) => (
                         <Tab
                           key={tab.value}
                           selectedClassName={style.activeTab}
-                          className={`${style.disableTab} react-tabs__tab`}>
+                          className={`${style.disableTab} react-tabs__tab`}
+                        >
                           {tab.label}
                         </Tab>
                       ))}
@@ -1268,10 +1292,12 @@ export const NewUiViewsWithGroups = ({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                        }}>
+                        }}
+                      >
                         <CircularProgress />
                       </div>
-                    }>
+                    }
+                  >
                     <DrawerFormDetailPage
                       view={view}
                       modal={modal}
@@ -1366,10 +1392,12 @@ export const NewUiViewsWithGroups = ({
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                            }}>
+                            }}
+                          >
                             <CircularProgress />
                           </div>
-                        }>
+                        }
+                      >
                         <TimeLineView
                           setFormValue={setFormValue}
                           projectInfo={projectInfo}
@@ -1405,10 +1433,12 @@ export const NewUiViewsWithGroups = ({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                        }}>
+                        }}
+                      >
                         <CircularProgress />
                       </div>
-                    }>
+                    }
+                  >
                     <BoardView
                       setSelectedRow={setSelectedRow}
                       selectedRow={selectedRow}
@@ -1442,10 +1472,12 @@ export const NewUiViewsWithGroups = ({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                        }}>
+                        }}
+                      >
                         <CircularProgress />
                       </div>
-                    }>
+                    }
+                  >
                     <CalendarView
                       menuItem={menuItem}
                       selectedTabIndex={selectedTabIndex}

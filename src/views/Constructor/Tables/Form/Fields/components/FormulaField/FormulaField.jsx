@@ -291,7 +291,7 @@ export const FormulaField = ({
                             value = editorValue?.replace(editorSearchText, "");
                           }
                           if (menuItem.key === "formula")
-                            onEditorChange(value + item.key + "(");
+                            onEditorChange(value + item.key + "()");
                           else {
                             onEditorChange(value + item.key + ".");
                           }

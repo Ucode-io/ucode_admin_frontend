@@ -62,6 +62,7 @@ export const LayoutPopup = ({
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     const computedData = {
       ...data,
       id: data?.id,

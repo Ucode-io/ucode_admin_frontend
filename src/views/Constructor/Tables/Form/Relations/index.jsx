@@ -1,22 +1,26 @@
 import {Add} from "@mui/icons-material";
-import {useMemo, useState} from "react";
-import {useFieldArray} from "react-hook-form";
-import {useParams} from "react-router-dom";
-import {CTableCell, CTableRow} from "../../../../../components/CTable";
+import { useMemo, useRef, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { CTableCell, CTableRow } from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import constructorRelationService from "../../../../../services/constructorRelationService";
-import {generateGUID} from "../../../../../utils/generateID";
+import { generateGUID } from "../../../../../utils/generateID";
 import styles from "../Fields/style.module.scss";
-import {Drawer} from "@mui/material";
+import { Box, Drawer } from "@mui/material";
 import RelationSettings from "./RelationSettings";
 import TableRowButton from "../../../../../components/TableRowButton";
+import { RelationPopover } from "./components/RelationPopover";
 
 const Relations = ({mainForm, getRelationFields, tableLan}) => {
 
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
   const { tableSlug } = useParams();
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
@@ -25,7 +29,13 @@ const Relations = ({mainForm, getRelationFields, tableLan}) => {
   });
   const { id } = useParams();
 
-  const openEditForm = (field, index) => {
+  const handleClose = () => {
+    setAnchorEl(null);
+    setDrawerState(null);
+  };
+
+  const openEditForm = (field, index, e) => {
+    setAnchorEl(e.target);
     setDrawerState(field);
   };
   const updateRelations = async () => {
@@ -72,42 +82,62 @@ const Relations = ({mainForm, getRelationFields, tableLan}) => {
     []
   );
 
-  return (
-    <TableCard>
-      <DataTable
-        data={relations}
-        removableHeight={false}
-        tableSlug={"app"}
-        columns={columns}
-        disablePagination
-        loader={loader}
-        onDeleteClick={deleteField}
-        onEditClick={openEditForm}
-        checkPermission={false}
-        dataLength={1}
-        additionalRow={
-          <TableRowButton
-            colSpan={columns.length + 2}
-            onClick={() => setDrawerState("CREATE")}
-          />
-        }
-      />
+  const createAnchorEl = useRef(null);
 
-      <Drawer
-        open={!!drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal">
-        <RelationSettings
+  const openAddForm = () => {
+    setAnchorEl(createAnchorEl.current);
+    setDrawerState("CREATE");
+  };
+
+  return (
+    <Box ref={createAnchorEl}>
+      <TableCard>
+        <DataTable
+          data={relations}
+          removableHeight={false}
+          tableSlug={"app"}
+          columns={columns}
+          disablePagination
+          loader={loader}
+          onDeleteClick={deleteField}
+          onEditClick={openEditForm}
+          checkPermission={false}
+          dataLength={1}
+          additionalRow={
+            <TableRowButton
+              colSpan={columns.length + 2}
+              onClick={openAddForm}
+            />
+          }
+        />
+        <RelationPopover
+          anchorEl={anchorEl}
+          onClose={handleClose}
           tableLan={tableLan}
           relation={drawerState}
-          closeSettingsBlock={() => setDrawerState(null)}
+          closeSettingsBlock={() => handleClose()}
           getRelationFields={getRelationFields}
           formType={drawerState}
-          height={`calc(100vh - 48px)`}
+          open={Boolean(anchorEl)}
         />
-      </Drawer>
-    </TableCard>
+
+        {/* <Drawer
+          open={!!drawerState}
+          anchor="right"
+          onClose={() => setDrawerState(null)}
+          orientation="horizontal"
+        >
+          <RelationSettings
+            tableLan={tableLan}
+            relation={drawerState}
+            closeSettingsBlock={() => setDrawerState(null)}
+            getRelationFields={getRelationFields}
+            formType={drawerState}
+            height={`calc(100vh - 48px)`}
+          />
+        </Drawer> */}
+      </TableCard>
+    </Box>
   );
 };
 

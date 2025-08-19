@@ -1,9 +1,9 @@
 import { Box, Popover } from "@mui/material"
 import { FieldParams } from "../FieldParams";
 import { useFieldPopoverProps } from "./useFieldPopoverProps";
-import { AdvancedSettings } from "../AdvancedSettings";
+import { AdvancedSettings } from "../../../components/AdvancedSettings";
 
-export const FieldPopover = ({ 
+export const FieldPopover = ({
   open,
   anchorEl,
   onClose = () => {},
@@ -16,9 +16,8 @@ export const FieldPopover = ({
   formType,
   field,
   selectedField,
-  popoverProps= {},
+  submitCallback = () => {},
 }) => {
-
   const {
     SETTING_TYPES,
     selectedSettings,
@@ -45,32 +44,34 @@ export const FieldPopover = ({
     formType,
     selectedAutofillFieldSlug: selectedField?.slug,
     field,
+    submitCallback,
   });
 
-  return <Popover
-    open={open}
-    onClose={onClose}
-    anchorEl={anchorEl}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "left",
-    }}
-    transformOrigin={{
-      vertical: "top",
-      horizontal: "left",
-    }}
-    PaperProps={{
-      style: {
-        overflowY: "visible",
-        overflowX: "visible",
-      },
-    }}
-    {...popoverProps}
-  >
-    <Box padding="12px 8px" minWidth="292px" maxHeight="500px" overflow="auto">
-      {
-        selectedSettings 
-          ? <AdvancedSettings
+  return (
+    <Popover
+      open={open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{
+        vertical: formType === "CREATE" ? "top" : "bottom",
+        // horizontal: formType === "CREATE" ? "right" : "left",
+        horizontal: "right",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+      PaperProps={{
+        style: {
+          overflowY: "visible",
+          overflowX: "visible",
+        },
+      }}
+    >
+      <Box position="relative">
+        <Box minWidth="292px" maxHeight="500px" overflow="auto">
+          {selectedSettings ? (
+            <AdvancedSettings
               title={selectedSettings}
               onClose={() => {
                 onClose();
@@ -80,27 +81,32 @@ export const FieldPopover = ({
             >
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
-          : <FieldParams
-              onClose={onClose}
-              control={control}
-              languages={languages}
-              tableName={tableName}
-              setValue={setValue}
-              watch={watch}
-              register={register}
-              SETTING_TYPES={SETTING_TYPES}
-              handleSelectSetting={handleSelectSetting}
-              handleSubmit={handleSubmit}
-              onSubmit={onSubmit}
-              reset={reset}
-              tableLan={tableLan}
-              field={field}
-              formType={formType}
-              menuItem={menuItem}
-              selectedAutofillFieldSlug={selectedField?.slug}
-              tableSlug={slug}
-            />
-      }
-    </Box>
-  </Popover>
+          ) : (
+            <Box paddingX="8px">
+              <FieldParams
+                onClose={onClose}
+                control={control}
+                languages={languages}
+                tableName={tableName}
+                setValue={setValue}
+                watch={watch}
+                register={register}
+                SETTING_TYPES={SETTING_TYPES}
+                handleSelectSetting={handleSelectSetting}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                reset={reset}
+                tableLan={tableLan}
+                field={field}
+                formType={formType}
+                menuItem={menuItem}
+                selectedAutofillFieldSlug={selectedField?.slug}
+                tableSlug={slug}
+              />
+            </Box>
+          )}
+        </Box>
+      </Box>
+    </Popover>
+  );
 };

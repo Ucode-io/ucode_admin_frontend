@@ -205,98 +205,106 @@ export const ColumnsVisibility = ({
         />
       </InputGroup>
       <Flex
-        className="scrollbarNone"
+        // className="scrollbarNone"
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
         overflow="auto">
-        <>
-          <Flex alignItems={"center"} justifyContent={"space-between"}>
-            <Box
-              p={"2px 0 2px 6px"}
-              fontWeight="600"
-              fontSize={"12px"}
-              color={"#898989"}>
-              Shown in Table
-            </Box>
+        {renderFields?.length > 0 && (
+          <>
+            <Flex alignItems={"center"} justifyContent={"space-between"}>
+              <Box
+                p={"2px 0 2px 6px"}
+                fontWeight="600"
+                fontSize={"12px"}
+                color={"#898989"}>
+                Shown in Table
+              </Box>
 
-            <Box
-              cursor={"pointer"}
-              fontSize={"12px"}
-              color={"#3985d3"}
-              mr={"10px"}
-              onClick={() => onShowAllChange(false)}>
-              Hide All
-            </Box>
-          </Flex>
+              <Box
+                cursor={"pointer"}
+                fontSize={"12px"}
+                color={"#3985d3"}
+                mr={"10px"}
+                onClick={() => onShowAllChange(false)}>
+                Hide All
+              </Box>
+            </Flex>
 
-          <Container onDrop={onDrop}>
-            {renderFields.map((column) => (
-              <Draggable key={column.id}>
-                <Flex
-                  as="label"
-                  p="4px"
-                  columnGap="8px"
-                  alignItems="center"
-                  borderRadius={6}
-                  bg="#fff"
-                  cursor="pointer"
-                  zIndex={999999}>
-                  <Box cursor={"grab"} h={"20px"}>
-                    <DragIndicatorIcon style={{color: "#898989"}} />
-                  </Box>
-                  {column?.type && getColumnIcon({column})}
-
-                  <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
+            <Container onDrop={onDrop}>
+              {renderFields.map((column) => (
+                <Draggable
+                  style={{overflow: "auto", height: "28px"}}
+                  key={column.id}>
                   <Flex
-                    ml="auto"
-                    cursor="pointer"
-                    onClick={() =>
-                      onChange(
-                        column,
-                        !(view?.type === "TIMELINE"
-                          ? view?.attributes?.visible_field?.includes(
-                              column?.slug
-                            )
-                          : view?.columns?.includes(
-                              column?.type === "LOOKUP" ||
-                                column?.type === "LOOKUPS"
-                                ? column?.relation_id
-                                : column?.id
-                            ))
-                      )
-                    }>
-                    {view?.type === "TIMELINE" ? (
-                      view?.attributes?.visible_field?.includes(
-                        column?.slug
-                      ) ? (
-                        <VisibilityIcon />
+                    as="label"
+                    p="4px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    bg="#fff"
+                    h={"28px"}
+                    overflow={"hidden"}
+                    cursor="pointer">
+                    <Box cursor={"grab"} h={"20px"}>
+                      <DragIndicatorIcon style={{color: "#898989"}} />
+                    </Box>
+                    {column?.type && getColumnIcon({column})}
+
+                    <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
+                    <Flex
+                      ml="auto"
+                      cursor="pointer"
+                      onClick={() =>
+                        onChange(
+                          column,
+                          !(view?.type === "TIMELINE"
+                            ? view?.attributes?.visible_field?.includes(
+                                column?.slug
+                              )
+                            : view?.columns?.includes(
+                                column?.type === "LOOKUP" ||
+                                  column?.type === "LOOKUPS"
+                                  ? column?.relation_id
+                                  : column?.id
+                              ))
+                        )
+                      }>
+                      {view?.type === "TIMELINE" ? (
+                        view?.attributes?.visible_field?.includes(
+                          column?.slug
+                        ) ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon style={{color: "#888"}} />
+                        )
+                      ) : view?.columns?.includes(
+                          column?.type === "LOOKUP" ||
+                            column?.type === "LOOKUPS"
+                            ? column?.relation_id
+                            : column?.id
+                        ) ? (
+                        <VisibilityIcon
+                          style={{width: "16px", height: "16px"}}
+                        />
                       ) : (
-                        <VisibilityOffIcon style={{color: "#888"}} />
-                      )
-                    ) : view?.columns?.includes(
-                        column?.type === "LOOKUP" || column?.type === "LOOKUPS"
-                          ? column?.relation_id
-                          : column?.id
-                      ) ? (
-                      <VisibilityIcon style={{width: "16px", height: "16px"}} />
-                    ) : (
-                      <VisibilityOffIcon
-                        style={{color: "#888", width: "16px", height: "16px"}}
-                      />
-                    )}
+                        <VisibilityOffIcon
+                          style={{color: "#888", width: "16px", height: "16px"}}
+                        />
+                      )}
+                    </Flex>
+                    <FieldOptions
+                      view={view}
+                      tableSlug={tableSlug}
+                      field={column}
+                      setCloseOnBlur={setCloseOnBlur}
+                    />
                   </Flex>
-                  <FieldOptions
-                    view={view}
-                    tableSlug={tableSlug}
-                    field={column}
-                    setCloseOnBlur={setCloseOnBlur}
-                  />
-                </Flex>
-              </Draggable>
-            ))}
-          </Container>
-        </>
+                </Draggable>
+              ))}
+            </Container>
+          </>
+        )}
 
         {invisibleFields?.length > 0 && (
           <>
@@ -327,8 +335,7 @@ export const ColumnsVisibility = ({
                 borderRadius={6}
                 bg="#fff"
                 // _hover={{bg: "#EAECF0"}}
-                cursor="pointer"
-                zIndex={999999}>
+                cursor="pointer">
                 {column?.type && getColumnIcon({column})}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Flex

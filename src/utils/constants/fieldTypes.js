@@ -1063,7 +1063,6 @@ export const relationFieldButtons = [
   },
 ];
 
-
 const formulaFormats = [
   {
     label: "Formula frontend",

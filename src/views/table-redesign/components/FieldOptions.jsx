@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   Box,
   Menu,
@@ -13,9 +13,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import constructorFieldService from "../../../services/constructorFieldService";
 import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
+import {FieldPopover} from "../../Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
 
 function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
   const queryClient = useQueryClient();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const [formType, setFormType] = useState("CREATE");
+
   const deleteField = (column) => {
     constructorFieldService.delete(column, tableSlug).then((res) => {
       constructorViewService
@@ -55,7 +61,6 @@ function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
           onClick={(e) => e.stopPropagation()}>
           <MenuItem
             icon={<Icon as={EditIcon} fontSize="18px" />}
-            _hover={{bg: "blue.50", color: "blue.600"}}
             onClick={(e) => {
               e.stopPropagation();
               onEdit?.();
@@ -65,7 +70,6 @@ function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
           <MenuItem
             icon={<Icon as={DeleteIcon} fontSize="18px" />}
             color="red.500"
-            _hover={{bg: "red.50", color: "red.600"}}
             onClick={(e) => {
               e.stopPropagation();
               deleteField(field?.id);
@@ -74,6 +78,21 @@ function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
           </MenuItem>
         </MenuList>
       </Menu>
+
+      {/* <FieldPopover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        formType={formType}
+        getRelationFields={getRelationFields}
+        mainForm={mainForm}
+        tableLan={tableLan}
+        // onSubmit={(index, field) => updateField(field, index)}
+        slug={tableSlug}
+        field={drawerState}
+        selectedField={selectedField}
+        // menuItem={menuItem}
+      /> */}
     </Box>
   );
 }

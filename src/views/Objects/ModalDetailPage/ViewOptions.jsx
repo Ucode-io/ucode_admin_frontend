@@ -347,14 +347,14 @@ const ViewOptions = ({
                 </Flex>
               </Flex>
 
-              <LayoutComponent
+              {/* <LayoutComponent
                 refetchViews={refetchViews}
                 selectedTabIndex={selectedTabIndex}
                 tableLan={tableLan}
                 selectedView={view}
                 isChanged={isChanged}
                 setIsChanged={setIsChanged}
-              />
+              /> */}
 
               <ViewSettingsModal
                 refetchViews={refetchViews}

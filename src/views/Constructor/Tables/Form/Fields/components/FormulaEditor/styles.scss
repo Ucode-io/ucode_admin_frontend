@@ -2,6 +2,11 @@
   border-radius: 4px !important;
   overflow: hidden !important;
   box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px !important;
+  font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, "Courier New", monospace !important;
+
+  & .view-line {
+    font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, "Courier New", monospace !important;
+  }
 }
 
 .field-badge {
@@ -12,5 +17,10 @@
   display: inline-flex !important;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 13px;
+}
+
+.field-badge-hide {
+  opacity: 0;
+  font-size: 0;
 }

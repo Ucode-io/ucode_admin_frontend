@@ -30,6 +30,9 @@ export const FormulaEditor = forwardRef(
           }}
           options={{
             fontSize: 14,
+            lineHeight: 20,
+            fontFamily:
+              "Fira Code, Menlo, Monaco, Consolas, 'Courier New', monospace",
             overviewRulerLanes: 0,
             hideCursorInOverviewRuler: true,
             renderLineHighlight: "none",

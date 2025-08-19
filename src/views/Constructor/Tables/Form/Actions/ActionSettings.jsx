@@ -2,7 +2,7 @@ import {Close} from "@mui/icons-material";
 import {Box, IconButton} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useForm, useWatch} from "react-hook-form";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
@@ -22,6 +22,7 @@ import {useTranslation} from "react-i18next";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import useDebounce from "../../../../../hooks/useDebounce";
 import {useMicrofrontendListQuery} from "../../../../../services/microfrontendService";
+import HFReactSelect from "../../../../../components/FormElements/HFReactSelect";
 
 const actionTypeList = [
   {label: "HTTP", value: "HTTP"},
@@ -51,8 +52,10 @@ const ActionSettings = ({
   action,
   formType,
   height,
+  modalAction = false,
 }) => {
   const {tableSlug} = useParams();
+  const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [loader, setLoader] = useState(false);
   const [debounceValue, setDebouncedValue] = useState("");
@@ -85,7 +88,6 @@ const ActionSettings = ({
           type: "Functions",
           functionType: el?.type,
         }));
-        // return listToOptions(res.functions, "name", "id");
       },
     }
   );
@@ -116,6 +118,7 @@ const ActionSettings = ({
     constructorCustomEventService
       .create(data, tableSlug)
       .then((res) => {
+        modalAction && queryClient.refetchQueries("GET_ACTIONS_LIST");
         closeSettingsBlock();
         onCreate(res);
       })
@@ -128,6 +131,7 @@ const ActionSettings = ({
     constructorCustomEventService
       .update(data, tableSlug)
       .then((res) => {
+        modalAction && queryClient.refetchQueries("GET_ACTIONS_LIST");
         closeSettingsBlock();
         onUpdate(data);
       })
@@ -169,9 +173,9 @@ const ActionSettings = ({
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}>
           <div className="p-2">
-            <FRow label="Icon" required>
-              <HFIconPicker control={control} required name="icon" />
-            </FRow>
+            {/* <FRow label="Icon" required>
+              <HFIconPicker control={control} disabled={false} name="icon" />
+            </FRow> */}
             <FRow label="Label" required>
               <Box
                 style={{display: "flex", flexDirection: "column", gap: "6px"}}>
@@ -187,6 +191,7 @@ const ActionSettings = ({
             </FRow>
             <FRow label="Function" required>
               <HFAutocomplete
+                portal={true}
                 onFieldChange={(e) => inputChangeHandler(e.target.value)}
                 name="event_path"
                 control={control}
@@ -211,7 +216,7 @@ const ActionSettings = ({
               </FRow>
             )}
             <FRow label="Action type">
-              <HFSelect
+              <HFReactSelect
                 name="action_type"
                 control={control}
                 placeholder="action type"
@@ -220,7 +225,7 @@ const ActionSettings = ({
               />
             </FRow>
             <FRow label="Method">
-              <HFSelect
+              <HFReactSelect
                 name="method"
                 control={control}
                 placeholder="Redirect url"

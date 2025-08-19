@@ -20,6 +20,7 @@ const HFAutocomplete = ({
   onChange = () => {},
   onFieldChange = () => {},
   rules = {},
+  portal = false,
   defaultValue = null,
   customChange = () => {},
   ...props
@@ -51,6 +52,7 @@ const HFAutocomplete = ({
           <FormControl style={{width}}>
             <InputLabel size="small">{label}</InputLabel>
             <CAutoCompleteSelect
+              portal={portal}
               value={value}
               tabIndex={tabIndex}
               disabled={disabled}

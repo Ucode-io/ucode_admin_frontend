@@ -31,18 +31,19 @@ import useDownloader from "../../../hooks/useDownloader";
 import constructorObjectService from "../../../services/constructorObjectService";
 import {VIEW_TYPES_MAP} from "../../../utils/constants/viewTypes";
 import {viewsActions} from "../../../store/views/view.slice";
-
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import FieldOptions from "./FieldOptions";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 export const ColumnsVisibility = ({
   relationView = false,
   view,
   fieldsMap,
-  refetchViews,
   onBackClick,
   tableLan,
   tableSlug,
+  setCloseOnBlur = () => {},
   refetchRelationViews = () => {},
 }) => {
   const queryClient = useQueryClient();
@@ -78,6 +79,7 @@ export const ColumnsVisibility = ({
           ? el?.relation_id
           : el?.id;
       }) ?? [];
+
   const invisibleFields =
     allFields.filter((field) => {
       return !view?.columns?.includes(
@@ -91,7 +93,7 @@ export const ColumnsVisibility = ({
     column?.attributes?.[`label_${i18n.language}`] || column?.label;
 
   const allColumns = [...visibleFields, ...invisibleFields];
-  const renderFields = allColumns.filter((column) =>
+  const renderFields = visibleFields?.filter((column) =>
     search === ""
       ? true
       : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
@@ -135,7 +137,7 @@ export const ColumnsVisibility = ({
     mutation.mutate({
       ...view,
       columns: checked
-        ? renderFields.map((column) =>
+        ? allColumns?.map((column) =>
             column?.type === "LOOKUP" || column?.type === "LOOKUPS"
               ? column.relation_id
               : column.id
@@ -145,7 +147,7 @@ export const ColumnsVisibility = ({
   };
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(visibleFields, dropResult);
+    const result = applyDrag(renderFields, dropResult);
     const computedResult = result?.filter((item) => {
       return item?.type === "LOOKUP" || item?.type === "LOOKUPS"
         ? item?.relation_id
@@ -168,6 +170,7 @@ export const ColumnsVisibility = ({
     <Box>
       <Flex justifyContent="space-between" alignItems="center">
         <Button
+          paddingLeft={"0"}
           leftIcon={<ChevronLeftIcon fontSize={22} />}
           rightIcon={
             mutation.isLoading ? <Spinner color="#475467" /> : undefined
@@ -184,16 +187,6 @@ export const ColumnsVisibility = ({
             ) || "Visible columns"}
           </Box>
         </Button>
-
-        {view?.type !== "TIMELINE" && (
-          <Flex as="label" alignItems="center" columnGap="4px" cursor="pointer">
-            <Switch
-              isChecked={allColumns?.length === visibleFields?.length}
-              onChange={(ev) => onShowAllChange(ev.target.checked)}
-            />
-            {t("show_all")}
-          </Flex>
-        )}
       </Flex>
       <InputGroup mt="10px">
         <InputLeftElement>
@@ -212,48 +205,187 @@ export const ColumnsVisibility = ({
         />
       </InputGroup>
       <Flex
-        className="scrollbarNone"
+        // className="scrollbarNone"
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
         overflow="auto">
-        <Container onDrop={onDrop}>
-          {renderFields.map((column) => (
-            <Draggable key={column.id}>
-              <Flex
-                as="label"
-                p="8px"
-                columnGap="8px"
-                alignItems="center"
-                borderRadius={6}
-                bg="#fff"
-                _hover={{bg: "#EAECF0"}}
-                cursor="pointer"
-                zIndex={999999}>
-                {column?.type && getColumnIcon({column})}
-                <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-                <Box ml="auto">
-                  <VisibilityIcon />
-                </Box>
-                {/* <Switch
-                  ml="auto"
-                  onChange={(ev) => onChange(column, ev.target.checked)}
-                  isChecked={
-                    view?.type === "TIMELINE"
-                      ? view?.attributes?.visible_field?.includes(column?.slug)
-                      : view?.columns?.includes(
+        {renderFields?.length > 0 && (
+          <>
+            <Flex alignItems={"center"} justifyContent={"space-between"}>
+              <Box
+                p={"2px 0 2px 6px"}
+                fontWeight="600"
+                fontSize={"12px"}
+                color={"#898989"}>
+                Shown in Table
+              </Box>
+
+              <Box
+                cursor={"pointer"}
+                fontSize={"12px"}
+                color={"#3985d3"}
+                mr={"10px"}
+                onClick={() => onShowAllChange(false)}>
+                Hide All
+              </Box>
+            </Flex>
+
+            <Container onDrop={onDrop}>
+              {renderFields.map((column) => (
+                <Draggable
+                  style={{overflow: "auto", height: "28px"}}
+                  key={column.id}>
+                  <Flex
+                    as="label"
+                    p="4px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    bg="#fff"
+                    h={"28px"}
+                    overflow={"hidden"}
+                    cursor="pointer">
+                    <Box cursor={"grab"} h={"20px"}>
+                      <DragIndicatorIcon style={{color: "#898989"}} />
+                    </Box>
+                    {column?.type && getColumnIcon({column})}
+
+                    <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
+                    <Flex
+                      ml="auto"
+                      cursor="pointer"
+                      onClick={() =>
+                        onChange(
+                          column,
+                          !(view?.type === "TIMELINE"
+                            ? view?.attributes?.visible_field?.includes(
+                                column?.slug
+                              )
+                            : view?.columns?.includes(
+                                column?.type === "LOOKUP" ||
+                                  column?.type === "LOOKUPS"
+                                  ? column?.relation_id
+                                  : column?.id
+                              ))
+                        )
+                      }>
+                      {view?.type === "TIMELINE" ? (
+                        view?.attributes?.visible_field?.includes(
+                          column?.slug
+                        ) ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon style={{color: "#888"}} />
+                        )
+                      ) : view?.columns?.includes(
                           column?.type === "LOOKUP" ||
                             column?.type === "LOOKUPS"
                             ? column?.relation_id
                             : column?.id
-                        )
-                  }
-                /> */}
+                        ) ? (
+                        <VisibilityIcon
+                          style={{width: "16px", height: "16px"}}
+                        />
+                      ) : (
+                        <VisibilityOffIcon
+                          style={{color: "#888", width: "16px", height: "16px"}}
+                        />
+                      )}
+                    </Flex>
+                    <FieldOptions
+                      view={view}
+                      tableSlug={tableSlug}
+                      field={column}
+                      setCloseOnBlur={setCloseOnBlur}
+                    />
+                  </Flex>
+                </Draggable>
+              ))}
+            </Container>
+          </>
+        )}
+
+        {invisibleFields?.length > 0 && (
+          <>
+            <Flex alignItems={"center"} justifyContent={"space-between"}>
+              <Box
+                mt={"6px"}
+                p={"2px 0 2px 6px"}
+                fontSize={"12px"}
+                fontWeight="600"
+                color={"#898989"}>
+                Hidden in Table
+              </Box>
+
+              <Box
+                cursor={"pointer"}
+                color={"#3985d3"}
+                mr={"10px"}
+                onClick={() => onShowAllChange(true)}>
+                Show All
+              </Box>
+            </Flex>
+            {invisibleFields?.map((column) => (
+              <Flex
+                as="label"
+                p="4px"
+                columnGap="8px"
+                alignItems="center"
+                borderRadius={6}
+                bg="#fff"
+                // _hover={{bg: "#EAECF0"}}
+                cursor="pointer">
+                {column?.type && getColumnIcon({column})}
+                <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
+                <Flex
+                  ml="auto"
+                  cursor="pointer"
+                  onClick={() =>
+                    onChange(
+                      column,
+                      !(view?.type === "TIMELINE"
+                        ? view?.attributes?.visible_field?.includes(
+                            column?.slug
+                          )
+                        : view?.columns?.includes(
+                            column?.type === "LOOKUP" ||
+                              column?.type === "LOOKUPS"
+                              ? column?.relation_id
+                              : column?.id
+                          ))
+                    )
+                  }>
+                  {view?.type === "TIMELINE" ? (
+                    view?.attributes?.visible_field?.includes(column?.slug) ? (
+                      <VisibilityIcon style={{width: "16px"}} />
+                    ) : (
+                      <VisibilityOffIcon
+                        style={{color: "#888", width: "16px", height: "16px"}}
+                      />
+                    )
+                  ) : view?.columns?.includes(
+                      column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                        ? column?.relation_id
+                        : column?.id
+                    ) ? (
+                    <VisibilityIcon style={{width: "16px", height: "16px"}} />
+                  ) : (
+                    <VisibilityOffIcon
+                      style={{color: "#888", width: "16px", height: "16px"}}
+                    />
+                  )}
+                </Flex>
+                <FieldOptions
+                  view={view}
+                  tableSlug={tableSlug}
+                  field={column}
+                  setCloseOnBlur={setCloseOnBlur}
+                />
               </Flex>
-            </Draggable>
-          ))}
-        </Container>
-        {/* )} */}
+            ))}
+          </>
+        )}
       </Flex>
     </Box>
   );

@@ -46,6 +46,7 @@ import constructorTableService from "../../../services/constructorTableService";
 import {listToMap} from "../../../utils/listToMap";
 import listToOptions from "../../../utils/listToOptions";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
+import LayoutComponent from "../../table-redesign/LayoutComponent";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -250,9 +251,12 @@ const ViewOptions = ({
     }
   };
 
+  const [closeOnBlur, setCloseOnBlur] = useState(true);
+
   return (
     <Popover
       offset={[-145, 8]}
+      closeOnBlur={closeOnBlur}
       onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
       modifiers={[
         {
@@ -332,8 +336,8 @@ const ViewOptions = ({
                   />
                 </Flex>
                 <ViewOptionTitle>
-                  {generateLangaugeText(tableLan, i18n?.language, "Layouts") ||
-                    "Layout"}
+                  {generateLangaugeText(tableLan, i18n?.language, "General") ||
+                    "General"}
                 </ViewOptionTitle>
                 <Flex ml="auto" columnGap="4px" alignItems="center">
                   <Box color="#667085" fontWeight={400} fontSize={14}>
@@ -342,6 +346,15 @@ const ViewOptions = ({
                   <ChevronRightIcon fontSize={22} />
                 </Flex>
               </Flex>
+
+              {/* <LayoutComponent
+                refetchViews={refetchViews}
+                selectedTabIndex={selectedTabIndex}
+                tableLan={tableLan}
+                selectedView={view}
+                isChanged={isChanged}
+                setIsChanged={setIsChanged}
+              /> */}
 
               <ViewSettingsModal
                 refetchViews={refetchViews}
@@ -353,7 +366,6 @@ const ViewOptions = ({
               />
             </Box>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
-              {/* {(roleInfo === "DEFAULT ADMIN" || permissions?.columns) && ( */}
               <Flex
                 p="8px"
                 h="32px"
@@ -594,6 +606,7 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
+            setCloseOnBlur={setCloseOnBlur}
             relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}

@@ -84,7 +84,8 @@ export const useFormulaFieldProps = ({
     if (
       value?.includes(" ") ||
       value.substring(value.length - 1) === "." ||
-      value.substring(value.length - 1) === ")"
+      value.substring(value.length - 1) === ")" ||
+      value.substring(value.length - 1) === "("
     ) {
       setEditorSearchText("");
     } else {

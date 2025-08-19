@@ -135,6 +135,34 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
         const scope = tokens[i].scopes || tokens[i].type || "";
 
         if (typeof scope === "string" && scope.includes("field")) {
+          //   const word = model.getValueInRange({
+          //     startLineNumber: line,
+          //     startColumn: start,
+          //     endLineNumber: line,
+          //     endColumn: end,
+          //   });
+
+          //   const field = fields.find((f) => f.slug === word);
+
+          //   if (field) {
+          //     decos.push({
+          //       range: {
+          //         startLineNumber: line,
+          //         startColumn: start,
+          //         endLineNumber: line,
+          //         endColumn: end,
+          //       },
+          //       options: {
+          //         inlineClassName: "field-badge",
+          //         before: {
+          //           contentText: field.label,
+          //           inlineClassName: "field-badge-label",
+          //         },
+          //       },
+          //     });
+          //   }
+          // }
+
           decos.push({
             range: {
               startLineNumber: line,
@@ -207,7 +235,6 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
     const model = editor.getModel();
     monaco.editor.setModelLanguage(model, "formula-lang");
 
-    // запуск валидации + бейджей при изменении
     editor.onDidChangeModelContent(() => {
       runValidation(editor.getValue());
       decorateFields();

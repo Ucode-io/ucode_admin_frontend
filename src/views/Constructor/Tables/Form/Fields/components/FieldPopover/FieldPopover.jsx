@@ -1,7 +1,7 @@
-import { Box, Popover } from "@mui/material"
-import { FieldParams } from "../FieldParams";
-import { useFieldPopoverProps } from "./useFieldPopoverProps";
-import { AdvancedSettings } from "../../../components/AdvancedSettings";
+import {Box, Popover} from "@mui/material";
+import {FieldParams} from "../FieldParams";
+import {useFieldPopoverProps} from "./useFieldPopoverProps";
+import {AdvancedSettings} from "../../../components/AdvancedSettings";
 
 export const FieldPopover = ({
   open,
@@ -46,7 +46,7 @@ export const FieldPopover = ({
     field,
     submitCallback,
   });
-
+  console.log("fieldfield", field, selectedField);
   return (
     <Popover
       open={open}
@@ -66,8 +66,7 @@ export const FieldPopover = ({
           overflowY: "visible",
           overflowX: "visible",
         },
-      }}
-    >
+      }}>
       <Box position="relative">
         <Box minWidth="292px" maxHeight="500px" overflow="auto">
           {selectedSettings ? (
@@ -77,8 +76,7 @@ export const FieldPopover = ({
                 onClose();
                 handleSelectSetting("");
               }}
-              onBackClick={() => handleSelectSetting("")}
-            >
+              onBackClick={() => handleSelectSetting("")}>
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (

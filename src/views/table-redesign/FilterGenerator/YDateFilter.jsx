@@ -20,6 +20,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
     const d = new Date(date);
     return d instanceof Date && !isNaN(d);
   };
+
   return (
     <>
       <Box>

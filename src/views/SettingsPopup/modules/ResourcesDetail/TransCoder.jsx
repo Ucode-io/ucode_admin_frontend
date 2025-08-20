@@ -45,9 +45,11 @@ function TransCoder({
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const [orderBy, setOrderBy] = useState("");
-
+  const [date, setDate] = useState(null);
+  console.log("datedate", date);
   const getTransCode = (date) => {
     console.log("dateeeeee", date);
+    setDate(date);
     const params = {
       limit: 10,
       order_by_created_at: 1,
@@ -145,7 +147,7 @@ function TransCoder({
                 label: "Date",
               }}
               placeholder={"Date"}
-              value={new Date()}
+              value={date}
               name={"from_date"}
             />
 

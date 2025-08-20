@@ -251,7 +251,26 @@ const ViewOptions = ({
     }
   };
 
-  const [closeOnBlur, setCloseOnBlur] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setIsOpen(false);
+        setOpenedMenu(null);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <Popover
@@ -606,7 +625,6 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
-            setCloseOnBlur={setCloseOnBlur}
             relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}

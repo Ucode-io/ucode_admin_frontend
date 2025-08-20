@@ -49,6 +49,7 @@ export const ColumnsVisibility = ({
   const queryClient = useQueryClient();
   const {i18n, t} = useTranslation();
   const [search, setSearch] = useState("");
+  const [openMenuId, setOpenMenuId] = useState(null);
   const allFields = Object.values(fieldsMap);
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const dispatch = useDispatch();
@@ -294,10 +295,14 @@ export const ColumnsVisibility = ({
                       )}
                     </Flex>
                     <FieldOptions
+                      tableLan={tableLan}
                       view={view}
                       tableSlug={tableSlug}
                       field={column}
                       setCloseOnBlur={setCloseOnBlur}
+                      isOpen={openMenuId === column.id}
+                      onOpen={() => setOpenMenuId(column.id)}
+                      onClose={() => setOpenMenuId(null)}
                     />
                   </Flex>
                 </Draggable>
@@ -377,10 +382,14 @@ export const ColumnsVisibility = ({
                   )}
                 </Flex>
                 <FieldOptions
+                  tableLan={tableLan}
                   view={view}
                   tableSlug={tableSlug}
                   field={column}
                   setCloseOnBlur={setCloseOnBlur}
+                  isOpen={openMenuId === column.id}
+                  onOpen={() => setOpenMenuId(column.id)}
+                  onClose={() => setOpenMenuId(null)}
                 />
               </Flex>
             ))}

@@ -20,6 +20,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
     const d = new Date(date);
     return d instanceof Date && !isNaN(d);
   };
+
   return (
     <>
       <Box>
@@ -89,7 +90,10 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   field={field}
                   placeholder={field?.label}
                   value={value}
-                  onChange={(val) => onChange(val, name)}
+                  onChange={(val) => {
+                    console.log("vallll", val);
+                    onChange(val, name);
+                  }}
                   withTime={true}
                 />
               </TabPanel>

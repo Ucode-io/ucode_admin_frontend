@@ -256,7 +256,7 @@ const ViewOptions = ({
   return (
     <Popover
       offset={[-145, 8]}
-      closeOnBlur={closeOnBlur}
+      closeOnBlur={false}
       onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
       modifiers={[
         {

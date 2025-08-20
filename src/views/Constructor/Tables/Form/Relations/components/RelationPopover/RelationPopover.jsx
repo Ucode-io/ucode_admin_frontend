@@ -1,7 +1,7 @@
-import { Box, Popover } from "@mui/material"
-import { useRelationPopoverProps } from "./useRelationPopoverProps"
-import { AdvancedSettings } from "../../../components/AdvancedSettings";
-import { RelationFieldParams } from "../RelationFieldParams";
+import {Box, Popover} from "@mui/material";
+import {useRelationPopoverProps} from "./useRelationPopoverProps";
+import {AdvancedSettings} from "../../../components/AdvancedSettings";
+import {RelationFieldParams} from "../RelationFieldParams";
 
 export const RelationPopover = ({
   open,
@@ -48,7 +48,7 @@ export const RelationPopover = ({
         horizontal: formType === "CREATE" ? "right" : "left",
       }}
       transformOrigin={{
-        vertical: "top",
+        vertical: "bottom",
         horizontal: "right",
       }}
       PaperProps={{
@@ -56,21 +56,18 @@ export const RelationPopover = ({
           overflowY: "visible",
           overflowX: "visible",
         },
-      }}
-    >
+      }}>
       <Box position="relative">
         <Box
           padding="12px 8px"
           minWidth="292px"
           maxHeight="500px"
-          overflow="auto"
-        >
+          overflow="auto">
           {selectedSettings ? (
             <AdvancedSettings
               onClose={innerClose}
               onBackClick={() => handleSelectSetting(null)}
-              title={selectedSettings}
-            >
+              title={selectedSettings}>
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (

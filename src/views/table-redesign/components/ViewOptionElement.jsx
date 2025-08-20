@@ -43,7 +43,6 @@ export const ColumnsVisibility = ({
   onBackClick,
   tableLan,
   tableSlug,
-  setCloseOnBlur = () => {},
   refetchRelationViews = () => {},
 }) => {
   const queryClient = useQueryClient();
@@ -299,7 +298,6 @@ export const ColumnsVisibility = ({
                       view={view}
                       tableSlug={tableSlug}
                       field={column}
-                      setCloseOnBlur={setCloseOnBlur}
                       isOpen={openMenuId === column.id}
                       onOpen={() => setOpenMenuId(column.id)}
                       onClose={() => setOpenMenuId(null)}
@@ -386,7 +384,6 @@ export const ColumnsVisibility = ({
                   view={view}
                   tableSlug={tableSlug}
                   field={column}
-                  setCloseOnBlur={setCloseOnBlur}
                   isOpen={openMenuId === column.id}
                   onOpen={() => setOpenMenuId(column.id)}
                   onClose={() => setOpenMenuId(null)}

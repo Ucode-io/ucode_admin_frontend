@@ -15,10 +15,12 @@ import constructorViewService from "../../../services/constructorViewService";
 import {FieldPopover} from "../../Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
 import {useForm} from "react-hook-form";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import {RelationPopover} from "../../Constructor/Tables/Form/Relations/components/RelationPopover";
 
 function FieldOptions({field, view, tableSlug, tableLan}) {
   const queryClient = useQueryClient();
   const [selectedField, setSelectedField] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
   const [anchorMenu, setAnchorMenu] = useState(null);
   const openMenu = Boolean(anchorMenu);
@@ -40,16 +42,17 @@ function FieldOptions({field, view, tableSlug, tableLan}) {
 
   const handleEditClick = (e) => {
     e.stopPropagation();
+    setAnchorEl(e.currentTarget);
+    setMenuAnchor(e.currentTarget);
     setFormType("UPDATE");
     setSelectedField(field);
-    setAnchorEl(e.currentTarget);
     handleMenuClose();
   };
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
-
+  console.log("menuAnchrosss", anchorEl, menuAnchor);
   const deleteField = (column) => {
     constructorFieldService.delete(column, tableSlug).then(() => {
       constructorViewService
@@ -106,17 +109,30 @@ function FieldOptions({field, view, tableSlug, tableLan}) {
         </MenuItem>
       </Menu>
 
-      <FieldPopover
-        open={openPopover}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        formType={formType}
-        mainForm={mainForm}
-        tableLan={tableLan}
-        slug={tableSlug}
-        field={selectedField}
-        selectedField={selectedField}
-      />
+      {selectedField?.type === "LOOKUP" ? (
+        <RelationPopover
+          anchorEl={anchorEl ?? menuAnchor}
+          onClose={handlePopoverClose}
+          tableLan={tableLan}
+          relation={selectedField}
+          closeSettingsBlock={() => handlePopoverClose()}
+          // getRelationFields={getRelationFields}
+          formType={formType}
+          open={Boolean(openPopover)}
+        />
+      ) : (
+        <FieldPopover
+          open={Boolean(openPopover)}
+          anchorEl={anchorEl ?? menuAnchor}
+          onClose={handlePopoverClose}
+          formType={formType}
+          mainForm={mainForm}
+          tableLan={tableLan}
+          slug={tableSlug}
+          field={selectedField}
+          selectedField={selectedField}
+        />
+      )}
     </MaterialUIProvider>
   );
 }

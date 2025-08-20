@@ -28,6 +28,8 @@ import resourceService from "../../../../services/resourceService";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import {resourceTypes} from "../../../../utils/resourceConstants";
 import {useWatch} from "react-hook-form";
+import YDateFilter from "../../../table-redesign/FilterGenerator/YDateFilter";
+import {ArrowUpOutlined, ArrowDownOutlined} from "@ant-design/icons";
 
 function TransCoder({
   control,
@@ -42,12 +44,17 @@ function TransCoder({
   const [pipelines, setPipelines] = useState([]);
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
+  const [orderBy, setOrderBy] = useState("");
 
-  const getTransCode = () => {
+  const getTransCode = (date) => {
+    console.log("dateeeeee", date);
     const params = {
       limit: 10,
       order_by_created_at: 1,
       page: page,
+      from_date: date?.$gte,
+      to_date: date?.$lt,
+      ...(orderBy && {order_by: orderBy}),
     };
     resourceService.getTranscode(params).then((res) => {
       setPipelines(res?.pipelines);
@@ -58,7 +65,7 @@ function TransCoder({
     control,
     name: "resource_type",
   });
-  console.log("resurceTyperesurceType", resurceType);
+
   useEffect(() => {
     getTransCode();
   }, []);
@@ -124,6 +131,59 @@ function TransCoder({
         </Stack>
 
         <Box marginTop="36px">
+          <Box
+            ml={"auto"}
+            mr={"10px"}
+            mb={"10px"}
+            display={"flex"}
+            alignItems={"center"}
+            gap={"10px"}
+            width={"50%"}>
+            <YDateFilter
+              onChange={getTransCode}
+              field={{
+                label: "Date",
+              }}
+              placeholder={"Date"}
+              value={new Date()}
+              name={"from_date"}
+            />
+
+            <Box
+              sx={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1px solid #e5e9eb",
+                borderRadius: "8px",
+                padding: "2px 6px",
+                fontSize: "14px",
+                fontWeight: "500",
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                },
+              }}
+              onClick={() => {
+                setOrderBy(orderBy === 1 ? -1 : 1);
+                getTransCode();
+              }}>
+              {orderBy === 1 ? (
+                <>
+                  <ArrowUpOutlined style={{marginRight: 6, color: "#1890ff"}} />
+                  ASC
+                </>
+              ) : (
+                <>
+                  <ArrowDownOutlined
+                    style={{marginRight: 6, color: "#1890ff"}}
+                  />
+                  DESC
+                </>
+              )}
+            </Box>
+          </Box>
           <CTable loader={false} disablePagination removableHeight={false}>
             <CTableHead>
               <CTableCell className={cls.tableHeadCell} width={15}>

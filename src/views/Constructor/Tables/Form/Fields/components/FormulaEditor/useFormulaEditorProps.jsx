@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
   const monacoRef = useRef(null);
   const parserRef = useRef(null);
+  const badgesRef = useRef([]);
   const badgeDecosRef = useRef([]);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -78,6 +79,8 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
     }
   }
 
+  const fieldsSlugs = useMemo(() => fields.map((f) => f.slug), [fields]);
+
   const functionSuggestions = useMemo(
     () =>
       CUSTOM_FUNCTIONS_META.map((f) => ({
@@ -142,28 +145,14 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
             endColumn: end,
           });
 
-          //   const field = fields.find((f) => f.slug === word);
+          console.log(word);
 
-          //   if (field) {
-          //     decos.push({
-          //       range: {
-          //         startLineNumber: line,
-          //         startColumn: start,
-          //         endLineNumber: line,
-          //         endColumn: end,
-          //       },
-          //       options: {
-          //         inlineClassName: "field-badge",
-          //         before: {
-          //           contentText: field.label,
-          //           inlineClassName: "field-badge-label",
-          //         },
-          //       },
-          //     });
-          //   }
-          // }
-
-          const field = fields.find((f) => f.slug === word);
+          const field = fields.find(
+            (f) =>
+              (
+                f.attributes?.[`label_${i18n.language}`] || f.label
+              )?.toLowerCase() === word?.toLowerCase()
+          );
 
           decos.push({
             range: {
@@ -173,7 +162,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
               endColumn: end,
             },
             options: {
-              inlineClassName: `field-badge field-badge--${field.type}`,
+              inlineClassName: `field-badge field-badge--${field?.type} field-badge-slug--${field?.slug}`,
             },
           });
         }
@@ -186,6 +175,8 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
     );
   }
 
+  const fieldPattern = `\\b(?:${functionsList.join("|")})\\b`;
+
   let completionProviderRegistered = false;
 
   function handleEditorMount(editor, monaco) {
@@ -197,15 +188,31 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
       ignoreCase: true,
       tokenizer: {
         root: [
-          [new RegExp(`\\b(${functionsList.join("|")})\\b`), "keyword"],
+          [new RegExp(`${fieldPattern}(?=\\s*\\()`), "keyword"],
           [
             new RegExp(
               `\\b(${fields
-                .map((f) => f.slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+                .map((f) =>
+                  (
+                    f.attributes?.[`label_${i18n.language}`] || f?.label
+                  ).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+                )
                 .join("|")})\\b`
             ),
             "field",
           ],
+          // [
+          //   new RegExp(
+          //     `\\b(${fields
+          //       .map((f) =>
+          //         (
+          //           f?.attributes?.[`label_${i18n.language}`] || f?.label
+          //         ).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+          //       )
+          //       .join("|")})\\b`
+          //   ),
+          //   "field",
+          // ],
           [/\b(true|false)\b/, "boolean"],
           [/\d+(?:\.\d+)?/, "number"],
           [/\".*?\"/, "string"],
@@ -277,7 +284,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
         const model = editorRef.current.getModel();
         const position = editorRef.current.getPosition();
 
-        // ← LeftArrow
+        // LeftArrow
         if (e.keyCode === monacoRef.current.KeyCode.LeftArrow) {
           const word = model.getWordAtPosition({
             lineNumber: position.lineNumber,
@@ -320,7 +327,11 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
             column: position.column,
           });
 
-          if (word && position.column === word.endColumn) {
+          if (
+            word &&
+            position.column === word.endColumn &&
+            fieldsSlugs.includes(word.word)
+          ) {
             e.preventDefault();
             model.pushEditOperations(
               [],
@@ -363,5 +374,5 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
     parserRef.current = parser;
   }, []);
 
-  return { runValidation, handleEditorMount, error };
+  return { runValidation, handleEditorMount, error, i18n };
 };

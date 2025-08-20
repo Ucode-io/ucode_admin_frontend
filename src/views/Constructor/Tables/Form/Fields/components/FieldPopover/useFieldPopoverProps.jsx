@@ -212,9 +212,11 @@ export const useFieldPopoverProps = ({
       },
     };
 
-    if (formType === "CREATE") createField(data);
-    else updateField(data);
-    submitCallback();
+    console.log({ data });
+
+    // if (formType === "CREATE") createField(data);
+    // else updateField(data);
+    // submitCallback();
   };
 
   const handleSelectSetting = (type) => {

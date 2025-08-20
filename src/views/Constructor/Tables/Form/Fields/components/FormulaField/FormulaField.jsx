@@ -45,6 +45,7 @@ export const FormulaField = ({
     suggestionsFields,
     editorSearchText,
     setEditorSearchText,
+    setExampleType,
   } = useFormulaFieldProps({
     control,
     mainForm,
@@ -262,20 +263,28 @@ export const FormulaField = ({
             >
               {menuList.map((menuItem) => (
                 <Box>
-                  {menuItem?.list?.filter((item) =>
-                    item?.key
-                      ?.toLowerCase()
-                      ?.includes(editorSearchText?.toLowerCase())
+                  {menuItem?.list?.filter(
+                    (item) =>
+                      item?.key
+                        ?.toLowerCase()
+                        ?.includes(editorSearchText?.toLowerCase()) ||
+                      item?.label
+                        ?.toLowerCase()
+                        ?.includes(editorSearchText?.toLowerCase())
                   )?.length ? (
                     <p className={cls.menuTitle}>{menuItem?.name}</p>
                   ) : (
                     ""
                   )}
                   {menuItem?.list
-                    ?.filter((item) =>
-                      item?.key
-                        ?.toLowerCase()
-                        ?.includes(editorSearchText?.toLowerCase())
+                    ?.filter(
+                      (item) =>
+                        item?.key
+                          ?.toLowerCase()
+                          ?.includes(editorSearchText?.toLowerCase()) ||
+                        item?.label
+                          ?.toLowerCase()
+                          ?.includes(editorSearchText?.toLowerCase())
                     )
                     ?.map((item, index) => (
                       <Box
@@ -293,7 +302,13 @@ export const FormulaField = ({
                           if (menuItem.key === "formula")
                             onEditorChange(value + item.key + "()");
                           else {
-                            onEditorChange(value + item.key + ".");
+                            onEditorChange(value + item.label);
+                            // onEditorChange(
+                            //   value +
+                            //     (item?.attributes?.[`label_${i18n.language}`] ||
+                            //       item.label) +
+                            //     " "
+                            // );
                           }
                           setEditorSearchText("");
                           editorRef.current?.focus();

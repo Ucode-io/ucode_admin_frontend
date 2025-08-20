@@ -1210,17 +1210,9 @@ export default function FieldCreateModal({
               </Box>
               // <FormulaAttributes control={control} mainForm={{ control }} />
             )}
-            {formulaFormat === "FORMULA_FRONTEND" &&
+            {/* {formulaFormat === "FORMULA_FRONTEND" &&
               format?.startsWith("FORMULA") && (
                 <Box overflow="auto" maxHeight={"200px"} padding="5px">
-                  {/* <FRow label="Formula format">
-                    <HFSelect
-                      name="formulaFormat"
-                      control={formulaControl}
-                      options={formulaFormatOptions}
-                      isClearable={false}
-                    />
-                  </FRow> */}
                   {watch("attributes.advanced_type") ? (
                     <>
                       <Box className={style.formula}>
@@ -1365,7 +1357,7 @@ export default function FieldCreateModal({
                     ) || "Advanced Editor"}
                   </Box>
                 </Box>
-              )}
+              )} */}
             {format === "RELATION" && !fieldData ? (
               <RelationFieldForm
                 control={control}
@@ -1375,26 +1367,31 @@ export default function FieldCreateModal({
                 relatedTableSlug={relatedTableSlug}
               />
             ) : null}
-            {fieldData && (
-              <button
-                className={clsx(style.btn, style.settings)}
-                onClick={() => {
-                  fieldHandleOpen(fieldData);
-                  // handleOpenFieldDrawer(fieldData);
-                }}
-                onMouseEnter={() => {
-                  setOpenedDropdown(null);
-                }}
-              >
-                <Image src="/img/settings.svg" alt="settings" />
-                {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Advanced settings"
-                ) || "Advanced settings"}
-              </button>
-            )}
+            {fieldData ||
+              (format === FIELD_TYPES.FORMULA_FRONTEND && (
+                <button
+                  className={clsx(style.btn, style.settings)}
+                  onClick={() => {
+                    fieldHandleOpen(
+                      fieldData || {
+                        type: FIELD_TYPES.FORMULA_FRONTEND,
+                      }
+                    );
+                    // handleOpenFieldDrawer(fieldData);
+                  }}
+                  onMouseEnter={() => {
+                    setOpenedDropdown(null);
+                  }}
+                >
+                  <Image src="/img/settings.svg" alt="settings" />
+                  {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced settings"
+                  ) || "Advanced settings"}
+                </button>
+              ))}
             <Box className={style.button_group} sx={{ padding: "0 5px" }}>
               <FormElementButton onClick={handleClick}>
                 {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||

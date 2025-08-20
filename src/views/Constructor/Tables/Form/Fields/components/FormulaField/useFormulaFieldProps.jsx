@@ -82,14 +82,18 @@ export const useFormulaFieldProps = ({
 
   const handleFilterFields = (value) => {
     if (
-      value?.includes(" ") ||
       value.substring(value.length - 1) === "." ||
       value.substring(value.length - 1) === ")" ||
       value.substring(value.length - 1) === "("
     ) {
       setEditorSearchText("");
     } else {
-      setEditorSearchText(value);
+      const splittedVal = value?.split(" ");
+      if (splittedVal[splittedVal.length - 1]) {
+        setEditorSearchText(splittedVal[splittedVal.length - 1]);
+      } else {
+        setEditorSearchText("");
+      }
     }
   };
 
@@ -199,6 +203,48 @@ export const useFormulaFieldProps = ({
     setEditorValue(watch("attributes.formula") ?? "");
   }, []);
 
+  useEffect(() => {
+    const menuLists = menuList?.map((item) => item.list).flat();
+    const filteredMenuLists = menuLists.filter(
+      (item) =>
+        item?.key?.includes(editorSearchText) ||
+        item?.label?.includes(editorSearchText)
+    );
+    setExampleType(filteredMenuLists[0] || {});
+  }, [editorSearchText]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (exampleType) {
+        const splittedVal = editorValue?.split(" ");
+        if (
+          splittedVal.length > 1 &&
+          exampleType?.label.includes(splittedVal[splittedVal.length - 1])
+        ) {
+          e.preventDefault();
+          setEditorValue(
+            splittedVal.slice(0, splittedVal.length - 1).join(" ") +
+              " " +
+              exampleType?.label
+          );
+        } else if (
+          splittedVal.length === 1 &&
+          exampleType?.label.includes(splittedVal[0])
+        ) {
+          e.preventDefault();
+          setEditorValue(exampleType?.label);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [editorValue]);
+
   return {
     formulaTypes,
     computedTables,
@@ -220,5 +266,6 @@ export const useFormulaFieldProps = ({
     suggestionsFields,
     editorSearchText,
     setEditorSearchText,
+    setExampleType,
   };
-};
+}

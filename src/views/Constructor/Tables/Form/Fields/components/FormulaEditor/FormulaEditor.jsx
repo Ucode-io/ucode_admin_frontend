@@ -8,14 +8,32 @@ import { forwardRef } from "react";
 
 export const FormulaEditor = forwardRef(
   ({ onChange = () => {}, value, fields }, ref) => {
-    const { runValidation, handleEditorMount, error } = useFormulaFieldProps({
-      ref,
-      fields,
-      value,
-    });
+    const { runValidation, handleEditorMount, error, i18n } =
+      useFormulaFieldProps({
+        ref,
+        fields,
+        value,
+      });
 
     return (
       <div className={cls.formulaEditor}>
+        {fields?.map((item) => (
+          <style>
+            {`
+                .field-badge-slug--${item?.slug}::after {
+                  content: "${item?.attributes?.[`label_${i18n.language}`] || item?.label}" !important;
+                  position: absolute;
+                  width: calc(100%);
+                  background-color: rgb(84 72 49 / 15%) !important;
+                  border-radius: 6px;
+                  left: 0;
+                  padding-left: 16px;
+                  font-size: 10px;
+                  color: #32302c !important;
+                }
+            `}
+          </style>
+        ))}
         <Editor
           className="monaco-editor"
           height="96px"
@@ -48,12 +66,12 @@ export const FormulaEditor = forwardRef(
             wordWrapColumn: 0,
             wrappingIndent: "same",
             scrollbar: { horizontal: "hidden", handleMouseWheel: true },
-            suggestOnTriggerCharacters: false, // отключает автоподсказки при наборе (. или др.)
-            quickSuggestions: false, // убирает всплывающие подсказки вообще
-            parameterHints: { enabled: false }, // отключает подсказки по параметрам функций
-            wordBasedSuggestions: false, // чтобы не предлагал похожие слова из текста
-            inlineSuggest: { enabled: false }, // отключает ghost-text предложения
-            cursorWidth: 1, // толщина курсора (по умолчанию 2)
+            suggestOnTriggerCharacters: false,
+            quickSuggestions: false,
+            parameterHints: { enabled: false },
+            wordBasedSuggestions: false,
+            inlineSuggest: { enabled: false },
+            cursorWidth: 1,
             cursorStyle: "line",
             padding: {
               top: 8,
@@ -63,25 +81,20 @@ export const FormulaEditor = forwardRef(
             },
           }}
         />
-        {
-          error && (
-            <Badge
-              variant="destructive"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                columnGap: "4px",
-                color: "#cd3c3a",
-                marginY: "12px",
-              }}
-            >
-              <BiXCircle className="w-4 h-4" /> {error}
-            </Badge>
-          )
-          // <Badge className="flex items-center gap-1">
-          //   <Check className="w-4 h-4" /> Нет ошибок
-          // </Badge>
-        }
+        {error && (
+          <Badge
+            variant="destructive"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              columnGap: "4px",
+              color: "#cd3c3a",
+              marginY: "12px",
+            }}
+          >
+            <BiXCircle className="w-4 h-4" /> {error}
+          </Badge>
+        )}
       </div>
     );
   }

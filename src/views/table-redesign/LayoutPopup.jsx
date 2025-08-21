@@ -302,7 +302,6 @@ export const LayoutPopup = ({
                   <Box
                     sx={{
                       display: "flex",
-                      width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
                     }}>
@@ -350,7 +349,6 @@ export const LayoutPopup = ({
                   <Box
                     sx={{
                       display: "flex",
-                      width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
                     }}>
@@ -378,7 +376,6 @@ export const LayoutPopup = ({
                 sx={{
                   display: "flex",
                   width: "100%",
-                  maxWidth: "500px",
                   alignItems: "center",
                   marginTop: "30px",
                 }}>

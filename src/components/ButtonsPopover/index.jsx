@@ -1,12 +1,12 @@
-import "./style.scss"
+import "./style.scss";
 // import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state"
-import { Card, CircularProgress, IconButton, Popover } from "@mui/material"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteIcon from "@mui/icons-material/Delete"
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye"
-import { useId, useState } from "react"
+import {Card, CircularProgress, IconButton, Popover} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import {useId, useState} from "react";
 
 const ButtonsPopover = ({
   onEditClick,
@@ -16,72 +16,76 @@ const ButtonsPopover = ({
   loading,
   openModal = () => {},
   orientation = "vertical",
-  className
+  orient = "bottom",
+  className,
 }) => {
-  const id = useId()
-  const [anchorEl, setAnchorEl] = useState(null)
+  const id = useId();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (e) => {
-    setAnchorEl(e.currentTarget)
-  }
+    setAnchorEl(e.currentTarget);
+  };
 
   const handleClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const open = Boolean(anchorEl);
-
 
   if (loading)
     return (
       <IconButton color="primary">
         <CircularProgress size={17} {...buttonProps} />
       </IconButton>
-    )
-
-  // return null
+    );
 
   return (
-    <div onClick={e => e.stopPropagation()} className={className} >
-      <IconButton color="primary" {...buttonProps} onClick={handleClick} >
+    <div onClick={(e) => e.stopPropagation()} className={className}>
+      <IconButton color="primary" {...buttonProps} onClick={handleClick}>
         {orientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon />}
       </IconButton>
       <Popover
+        disablePortal={true}
         id={id}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "bottom",
-        }}
-      >
+          vertical: orient,
+        }}>
         <Card elevation={12} className="ButtonsPopover">
           {activeEyeButton && (
-            <IconButton color="primary" onClick={(e) => {
-              handleClose()
-              openModal(e, id)
-            }}  >
+            <IconButton
+              color="primary"
+              onClick={(e) => {
+                handleClose();
+                openModal(e, id);
+              }}>
               <RemoveRedEyeIcon />
             </IconButton>
           )}
           {onEditClick && (
-            <IconButton color="success" onClick={(e) => {
-              handleClose()
-              onEditClick(e, id)
-            }}>
+            <IconButton
+              color="success"
+              onClick={(e) => {
+                handleClose();
+                onEditClick(e, id);
+              }}>
               <EditIcon />
             </IconButton>
           )}
-          <IconButton color="error" onClick={(e) => {
-            handleClose()
-            onDeleteClick(e, id)
-          }}>
+          <IconButton
+            color="error"
+            onClick={(e) => {
+              handleClose();
+              onDeleteClick(e, id);
+            }}>
             <DeleteIcon />
           </IconButton>
         </Card>
       </Popover>
     </div>
-  )
-}
+  );
+};
 
-export default ButtonsPopover
+export default ButtonsPopover;

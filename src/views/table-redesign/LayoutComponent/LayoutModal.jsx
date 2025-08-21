@@ -1,7 +1,7 @@
 import {Close} from "@mui/icons-material";
 import {Card, IconButton} from "@mui/material";
 import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import {useForm, useWatch} from "react-hook-form";
 import {useParams} from "react-router-dom";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import constructorCustomEventService from "../../../services/constructorCustomEventService";
@@ -13,6 +13,7 @@ import styles from "./style.module.scss";
 import layoutService from "../../../services/layoutService";
 import {useTranslation} from "react-i18next";
 import {listToMap} from "../../../utils/listToMap";
+import {generateGUID} from "../../../utils/generateID";
 
 const LayoutModal = ({
   closeModal = () => {},
@@ -28,7 +29,30 @@ const LayoutModal = ({
   const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
   const [selectedLayout, setSelectedLayout] = useState({});
 
-  const mainForm = useForm();
+  const mainForm = useForm({
+    defaultValues: {
+      show_in_menu: true,
+      fields: [],
+      app_id: appId,
+      summary_section: {
+        id: generateGUID(),
+        label: "Summary",
+        fields: [],
+        icon: "",
+        order: 1,
+        column: "SINGLE",
+        is_summary_section: true,
+      },
+      label: "",
+      description: "",
+      slug: "",
+      icon: "",
+    },
+    mode: "all",
+  });
+  const values = useWatch({
+    control: mainForm?.control,
+  });
 
   const getData = async () => {
     setLoader(true);
@@ -74,6 +98,7 @@ const LayoutModal = ({
   };
 
   const getRelationFields = async () => {
+    console.log("entered");
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
         {
@@ -94,6 +119,7 @@ const LayoutModal = ({
         getRelations,
         getFieldsData,
       ]);
+      console.log("fieldddddss", fields);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
@@ -148,17 +174,6 @@ const LayoutModal = ({
 
   return (
     <Card className={styles.card}>
-      {/* <div className={styles.header}>
-        <div className={styles.cardTitle}>Layout</div>
-        <IconButton className={styles.closeButton} onClick={closeModal}>
-          <Close className={styles.closeIcon} />
-        </IconButton>
-      </div> */}
-
-      {/* {isLoading ? (
-        <RingLoaderWithWrapper />
-      ) : ( */}
-      {/* <div className={styles.body}> */}
       <Layout
         tableLan={tableLan}
         mainForm={mainForm}
@@ -168,8 +183,6 @@ const LayoutModal = ({
         setSelectedLayout={setSelectedLayout}
         setSelectedTabLayout={setSelectedTab}
       />
-      {/* </div> */}
-      {/* )} */}
     </Card>
   );
 };

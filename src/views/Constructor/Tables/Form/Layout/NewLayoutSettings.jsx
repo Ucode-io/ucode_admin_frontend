@@ -37,7 +37,7 @@ function NewLayoutSettings({
   const dispatch = useDispatch();
   const watchLayout = mainForm
     .watch(`layouts`)
-    .find((layout) => layout.id === selectedLayout.id);
+    .find((layout) => layout?.id === selectedLayout?.id);
 
   const computedData = useMemo(() => {
     return;
@@ -115,24 +115,6 @@ function NewLayoutSettings({
           appendSectionTab={appendSectionTab}
         />
       </div>
-      {/* <Footer
-        extra={
-          <>
-            <SecondaryButton
-              onClick={() => {
-                navigate(-1);
-              }}
-              color="error">
-              {generateLangaugeText(tableLan, i18n?.language, "Close") ||
-                "Close"}
-            </SecondaryButton>
-            <PrimaryButton loader={loader} onClick={updateSelectedLayout}>
-              <Save />{" "}
-              {generateLangaugeText(tableLan, i18n?.language, "Save") || "Save"}
-            </PrimaryButton>
-          </>
-        }
-      /> */}
     </>
   );
 }

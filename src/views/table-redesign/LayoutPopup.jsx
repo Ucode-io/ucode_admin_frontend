@@ -1,25 +1,25 @@
-import { Box, Dialog, DialogActions, DialogContent } from "@mui/material";
+import {Box, Dialog, DialogActions, DialogContent} from "@mui/material";
 import FormCard from "../../components/FormCard";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
 import FRow from "../../components/FormElements/FRow";
 import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFCheckbox from "../../components/FormElements/HFCheckbox";
 import HFSelect from "../../components/FormElements/HFSelect";
 import HFMultipleSelect from "../../components/FormElements/HFMultipleSelect";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import style from "./popup.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useMemo, useState } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useMemo, useState} from "react";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import { LoginStrategy } from "../../mock/FolderSettings";
+import {LoginStrategy} from "../../mock/FolderSettings";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import constructorTableService from "../../services/constructorTableService";
-import { constructorTableActions } from "../../store/constructorTable/constructorTable.slice";
+import {constructorTableActions} from "../../store/constructorTable/constructorTable.slice";
 
 export const LayoutPopup = ({
   onClose = () => {},
@@ -28,12 +28,14 @@ export const LayoutPopup = ({
   control,
   authData,
   handleSubmit,
+  view,
 }) => {
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
 
   const languages = useSelector((state) => state.languages.list);
 
-  const { tableSlug } = useParams();
+  const {tableSlug: tableSlugFromParams} = useParams();
+  const tableSlug = tableSlugFromParams ?? view?.table_slug;
 
   const [btnLoader, setBtnLoader] = useState(false);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -62,6 +64,7 @@ export const LayoutPopup = ({
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     const computedData = {
       ...data,
       id: data?.id,
@@ -78,13 +81,13 @@ export const LayoutPopup = ({
     name: "label",
   });
 
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const { fields: relations } = useFieldArray({
+  const {fields: relations} = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -100,7 +103,7 @@ export const LayoutPopup = ({
     name: "attributes.auth_info.login",
   });
 
-  const { data: computedTableFields } = useQuery(
+  const {data: computedTableFields} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
       if (!tableSlug) return false;
@@ -150,19 +153,17 @@ export const LayoutPopup = ({
       }}
       fullWidth
       open={open}
-      onClose={handleClose}
-    >
-      <DialogContent style={{ padding: "0px" }}>
+      onClose={handleClose}>
+      <DialogContent style={{padding: "0px"}}>
         <FormCard
-          contentStyle={{ paddingBottom: "0px" }}
+          contentStyle={{paddingBottom: "0px"}}
           maxWidth="100%"
           title={
             generateLangaugeText(tableLan, i18n?.language, "General") ||
             "General"
-          }
-        >
+          }>
           <Box display="flex" flexDirection="column" gap="16px">
-            <Box style={{ display: "flex", gap: "6px" }}>
+            <Box style={{display: "flex", gap: "6px"}}>
               <HFTextFieldWithMultiLanguage
                 control={control}
                 name="attributes.label"
@@ -230,11 +231,9 @@ export const LayoutPopup = ({
                   <Box
                     sx={{
                       display: "flex",
-                      width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}
-                  >
+                    }}>
                     <FRow
                       label={
                         generateLangaugeText(
@@ -256,11 +255,9 @@ export const LayoutPopup = ({
                   <Box
                     sx={{
                       display: "flex",
-                      width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}
-                  >
+                    }}>
                     <FRow
                       label={
                         generateLangaugeText(
@@ -282,11 +279,9 @@ export const LayoutPopup = ({
                   <Box
                     sx={{
                       display: "flex",
-                      width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}
-                  >
+                    }}>
                     <FRow
                       label={
                         generateLangaugeText(
@@ -310,8 +305,7 @@ export const LayoutPopup = ({
                       width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}
-                  >
+                    }}>
                     <FRow
                       label={
                         generateLangaugeText(
@@ -333,11 +327,9 @@ export const LayoutPopup = ({
                   <Box
                     sx={{
                       display: "flex",
-                      width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}
-                  >
+                    }}>
                     <FRow
                       label={
                         generateLangaugeText(
@@ -361,8 +353,7 @@ export const LayoutPopup = ({
                       width: "500px",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}
-                  >
+                    }}>
                     <FRow
                       label={
                         generateLangaugeText(
@@ -390,8 +381,7 @@ export const LayoutPopup = ({
                   maxWidth: "500px",
                   alignItems: "center",
                   marginTop: "30px",
-                }}
-              >
+                }}>
                 <FRow
                   label={
                     generateLangaugeText(
@@ -420,8 +410,7 @@ export const LayoutPopup = ({
           loader={btnLoader}
           loading={btnLoader}
           onClick={handleSubmit(onSubmit)}
-          fullWidth
-        >
+          fullWidth>
           {t("save")}
         </PrimaryButton>
       </DialogActions>

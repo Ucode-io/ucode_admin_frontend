@@ -225,7 +225,7 @@ export const useFieldPopoverProps = ({
     switch (type) {
       case SETTING_TYPES.TYPE:
         return (
-          <Box padding="12px 8px">
+          <Box padding="0 8px 0">
             <FieldTypeList
               onSelect={() => handleSelectSetting("")}
               activeType={activeType}

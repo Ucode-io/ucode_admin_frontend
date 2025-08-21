@@ -9,7 +9,7 @@ import {
 import { Parser, SUPPORTED_FORMULAS } from "hot-formula-parser";
 import { useTranslation } from "react-i18next";
 
-export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
+export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
   const monacoRef = useRef(null);
   const parserRef = useRef(null);
   const badgeDecosRef = useRef([]);
@@ -135,6 +135,36 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
         const scope = tokens[i].scopes || tokens[i].type || "";
 
         if (typeof scope === "string" && scope.includes("field")) {
+          const word = model.getValueInRange({
+            startLineNumber: line,
+            startColumn: start,
+            endLineNumber: line,
+            endColumn: end,
+          });
+
+          //   const field = fields.find((f) => f.slug === word);
+
+          //   if (field) {
+          //     decos.push({
+          //       range: {
+          //         startLineNumber: line,
+          //         startColumn: start,
+          //         endLineNumber: line,
+          //         endColumn: end,
+          //       },
+          //       options: {
+          //         inlineClassName: "field-badge",
+          //         before: {
+          //           contentText: field.label,
+          //           inlineClassName: "field-badge-label",
+          //         },
+          //       },
+          //     });
+          //   }
+          // }
+
+          const field = fields.find((f) => f.slug === word);
+
           decos.push({
             range: {
               startLineNumber: line,
@@ -142,7 +172,9 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
               endLineNumber: line,
               endColumn: end,
             },
-            options: { inlineClassName: "field-badge" },
+            options: {
+              inlineClassName: `field-badge field-badge--${field.type}`,
+            },
           });
         }
       }
@@ -207,7 +239,6 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
     const model = editor.getModel();
     monaco.editor.setModelLanguage(model, "formula-lang");
 
-    // запуск валидации + бейджей при изменении
     editor.onDidChangeModelContent(() => {
       runValidation(editor.getValue());
       decorateFields();
@@ -239,6 +270,78 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields }) => {
       "editor.lineHighlightBorder": "#00000000",
     },
   });
+
+  useEffect(() => {
+    if (editorRef.current && monacoRef.current) {
+      editorRef.current.onKeyDown((e) => {
+        const model = editorRef.current.getModel();
+        const position = editorRef.current.getPosition();
+
+        // ← LeftArrow
+        if (e.keyCode === monacoRef.current.KeyCode.LeftArrow) {
+          const word = model.getWordAtPosition({
+            lineNumber: position.lineNumber,
+            column: position.column,
+          });
+
+          if (word) {
+            if (position.column === word.endColumn) {
+              e.preventDefault();
+              editorRef.current.setPosition({
+                lineNumber: position.lineNumber,
+                column: word.startColumn,
+              });
+            }
+          }
+        }
+
+        // RightArrow
+        if (e.keyCode === monacoRef.current.KeyCode.RightArrow) {
+          const word = model.getWordAtPosition({
+            lineNumber: position.lineNumber,
+            column: position.column,
+          });
+
+          if (word) {
+            if (position.column === word.startColumn) {
+              e.preventDefault();
+              editorRef.current.setPosition({
+                lineNumber: position.lineNumber,
+                column: word.endColumn,
+              });
+            }
+          }
+        }
+
+        // Backspace
+        if (e.keyCode === monacoRef.current.KeyCode.Backspace) {
+          const word = model.getWordAtPosition({
+            lineNumber: position.lineNumber,
+            column: position.column,
+          });
+
+          if (word && position.column === word.endColumn) {
+            e.preventDefault();
+            model.pushEditOperations(
+              [],
+              [
+                {
+                  range: new monacoRef.current.Range(
+                    position.lineNumber,
+                    word.startColumn,
+                    position.lineNumber,
+                    word.endColumn
+                  ),
+                  text: "",
+                },
+              ],
+              () => null
+            );
+          }
+        }
+      });
+    }
+  }, [value, editorRef, monacoRef]);
 
   useEffect(() => {
     return () => {

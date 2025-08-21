@@ -2,6 +2,11 @@
   border-radius: 4px !important;
   overflow: hidden !important;
   box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px !important;
+  font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, "Courier New", monospace !important;
+
+  & .view-line {
+    font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace, Menlo, Monaco, "Courier New", monospace !important;
+  }
 }
 
 .field-badge {
@@ -9,8 +14,143 @@
   color:  #32302c !important;
   border-radius: 6px;
   padding: 1px 2px;
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 11.5px;
+
+  &::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+  }
+}
+
+.field-badge--SINGLE_LINE {
+  &::before {
+    background-image: url("/img/text-column.svg");
+  }
+}
+
+.field-badge--MULTI_LINE {
+  &::before {
+    background-image: url("/table-icons/multi-line.svg");
+  }
+}
+
+.field-badge--TEXT {
+  &::before {
+    background-image: url("/img/text-column.svg");
+  }
+}
+
+.field-badge--LINK {
+  &::before {
+    background-image: url("/table-icons/link.svg");
+  }
+}
+
+.field-badge--NUMBER {
+  &::before {
+    background-image: url("/table-icons/number.svg");
+  }
+}
+
+.field-badge--FLOAT {
+  &::before {
+    background-image: url("/table-icons/float.svg");
+  }
+}
+
+.field-badge--MONEY {
+  &::before {
+    background-image: url("/table-icons/money.svg");
+  }
+}
+
+.field-badge--DATE {
+  &::before {
+    background-image: url("/table-icons/date.svg");
+  }
+}
+
+.field-badge--DATE_TIME {
+  &::before {
+    background-image: url("/table-icons/date-time.svg");
+  }
+}
+
+.field-badge--DATE_TIME_WITHOUT_TIME_ZONE {
+  &::before {
+    background-image: url("/table-icons/date-time.svg");
+  }
+}
+
+.field-badge--TIME {
+  &::before {
+    background-image: url("/table-icons/time.svg");
+  }
+}
+
+.field-badge--MULTISELECT {
+  &::before {
+    background-image: url("/table-icons/multi-select.svg");
+  }
+}
+
+.field-badge--STATUS {
+  &::before {
+    background-image: url("/table-icons/status.svg");
+  }
+}
+
+.field-badge--SWITCH {
+  &::before {
+    background-image: url("/table-icons/switch.svg");
+  }
+}
+
+.field-badge--CHECKBOX {
+  &::before {
+    background-image: url("/table-icons/checkbox.svg");
+  }
+}
+
+.field-badge--FORMULA_FRONTEND {
+  &::before {
+    background-image: url("/table-icons/formula.svg");
+  }
+}
+
+.field-badge--LOOKUP {
+  &::before {
+    background-image: url("/table-icons/lookup.svg");
+  }
+}
+
+.field-badge--RELATION {
+  &::before {
+    background-image: url("/table-icons/lookup.svg");
+  }
+}
+
+.field-badge--EMAIL {
+  &::before {
+    background-image: url("/table-icons/email.svg");
+  }
+}
+
+.field-badge--PASSWORD {
+  &::before {
+    background-image: url("/table-icons/password.svg");
+  }
+}
+
+
+.field-badge-hide {
+  opacity: 0;
+  font-size: 0;
 }

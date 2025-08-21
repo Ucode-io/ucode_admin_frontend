@@ -822,7 +822,8 @@ export const NewUiViewsWithGroups = ({
                   borderColor="#D0D5DD"
                   color="#344054"
                   leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px">
+                  borderRadius="8px"
+                >
                   {generateLangaugeText(
                     tableLan,
                     i18n?.language,
@@ -966,7 +967,6 @@ export const NewUiViewsWithGroups = ({
                   bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
                   _hover={viewId === view?.id ? {bg: "#D1E9FF"} : undefined}
                   onClick={(e) => {
-                    console.log("CLICKED");
                     e.stopPropagation();
                     if (overflowedViews?.length > 0) {
                       if (index !== visibleViews?.length - 1) {
@@ -1683,6 +1683,7 @@ export const NewUiViewsWithGroups = ({
         </Flex>
       </ChakraProvider>
       <LayoutPopup
+        view={view}
         open={isPopupOpen}
         onClose={handleClosePopup}
         authData={authInfo}

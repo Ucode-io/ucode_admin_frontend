@@ -80,7 +80,8 @@ function TableActions({tableLan, tableSlug = ""}) {
         colorScheme="gray"
         borderColor="#D0D5DD"
         color="#344054"
-        borderRadius="8px">
+        borderRadius="8px"
+      >
         <Image h={"18px"} src="/img/lighting.svg" alt="settings" />
       </Button>
 
@@ -89,7 +90,8 @@ function TableActions({tableLan, tableSlug = ""}) {
         blockScrollOnMount={false}
         isOpen={isOpen}
         onClose={onClose}
-        size="6xl">
+        size="6xl"
+      >
         <ModalOverlay />
         <ModalContent borderRadius="12px" p="20px 0px" minH="400px">
           <ModalHeader p={0} mb={4}>
@@ -97,7 +99,8 @@ function TableActions({tableLan, tableSlug = ""}) {
               p="0px 20px"
               w="full"
               alignItems="center"
-              justifyContent="space-between">
+              justifyContent="space-between"
+            >
               <Text fontSize="2xl" fontWeight="bold">
                 Actions
               </Text>
@@ -112,7 +115,8 @@ function TableActions({tableLan, tableSlug = ""}) {
                 templateColumns={templateColumns}
                 borderBottom="1px solid #EAECF0"
                 borderLeft="1px solid #EAECF0"
-                fontWeight="bold">
+                fontWeight="bold"
+              >
                 <Th justifyContent="center">
                   <img src="/img/hash.svg" alt="index" />
                 </Th>
@@ -126,9 +130,10 @@ function TableActions({tableLan, tableSlug = ""}) {
                   templateColumns={templateColumns}
                   borderBottom="1px solid #EAECF0"
                   borderLeft="1px solid #EAECF0"
-                  _hover={{bg: "gray.50"}}
+                  _hover={{ bg: "gray.50" }}
                   cursor="pointer"
-                  onClick={() => setDrawerState(row)}>
+                  onClick={() => setDrawerState(row)}
+                >
                   <Td display="flex" justifyContent="center" fontWeight={600}>
                     {index + 1}
                   </Td>
@@ -137,20 +142,22 @@ function TableActions({tableLan, tableSlug = ""}) {
                     <Flex>
                       <Button
                         bg="none"
-                        _hover={{bg: "none"}}
-                        style={{height: "24px", border: "none"}}
-                        onClick={() => setDrawerState(row)}>
+                        _hover={{ bg: "none" }}
+                        style={{ height: "24px", border: "none" }}
+                        onClick={() => setDrawerState(row)}
+                      >
                         <Image src="/img/edit.svg" alt="edit" />
                       </Button>
                       <Button
-                        _hover={{bg: "none"}}
+                        _hover={{ bg: "none" }}
                         bg="none"
-                        style={{height: "24px", border: "none"}}
+                        style={{ height: "24px", border: "none" }}
                         color="error"
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteAction(row, index);
-                        }}>
+                        }}
+                      >
                         <Image src="/img/delete.svg" alt="delete" />
                       </Button>
                     </Flex>
@@ -166,7 +173,8 @@ function TableActions({tableLan, tableSlug = ""}) {
         isOpen={!!drawerState}
         placement="right"
         onClose={() => setDrawerState(null)}
-        size="md">
+        size="md"
+      >
         <DrawerOverlay />
         <DrawerContent w="450px" maxW="450px">
           <DrawerBody p={0}>
@@ -179,6 +187,7 @@ function TableActions({tableLan, tableSlug = ""}) {
                 height={`calc(100vh - 48px)`}
                 onCreate={onCreate}
                 onUpdate={onUpdate}
+                tableSlug={tableSlug}
               />
             </MaterialUIProvider>
           </DrawerBody>

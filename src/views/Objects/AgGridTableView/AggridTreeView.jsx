@@ -157,7 +157,7 @@ function AggridTreeView(props) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const languages = useSelector((state) => state.languages.list);
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const { control, watch, setValue, reset, handleSubmit, register } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
   const [searchParams] = useSearchParams();
@@ -934,24 +934,28 @@ function AggridTreeView(props) {
       sx={{
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
         overflow: "scroll",
-      }}>
+      }}
+    >
       <div className={style.gridTableTree}>
         <div
           className="ag-theme-quartz"
           style={{
             display: "flex",
             width: "100%",
-          }}>
+          }}
+        >
           <Box
             className="scrollbarNone"
-            sx={{width: "100%", background: "#fff"}}>
+            sx={{ width: "100%", background: "#fff" }}
+          >
             {Boolean(tabs?.length) && (
               <Box
                 sx={{
                   display: "flex",
                   padding: "10px 0 0 20px",
                   borderBottom: "1px solid #eee",
-                }}>
+                }}
+              >
                 {tabs?.map((item) => (
                   <Button
                     key={item.value}
@@ -964,7 +968,8 @@ function AggridTreeView(props) {
                       groupTab?.value === item?.value
                         ? style.tabGroupBtnActive
                         : style.tabGroupBtn
-                    }>
+                    }
+                  >
                     {item?.label}
                   </Button>
                 ))}
@@ -975,7 +980,8 @@ function AggridTreeView(props) {
               className="scrollbarNone"
               sx={{
                 height: `calc(100vh - ${calculatedHeight + 85}px)`,
-              }}>
+              }}
+            >
               {!columns?.length ? (
                 <NoFieldsComponent />
               ) : (
@@ -1059,6 +1065,7 @@ function AggridTreeView(props) {
         menuItem={menuItem}
         fieldData={fieldData}
         handleOpenFieldDrawer={handleOpenFieldDrawer}
+        register={register}
       />
 
       {Boolean(!relationView && open && projectInfo?.new_layout) &&
@@ -1134,7 +1141,8 @@ function AggridTreeView(props) {
         open={drawerState}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}
@@ -1153,7 +1161,8 @@ function AggridTreeView(props) {
         open={drawerStateField}
         anchor="right"
         onClose={() => setDrawerState(null)}
-        orientation="horizontal">
+        orientation="horizontal"
+      >
         <RelationSettings
           relation={drawerStateField}
           closeSettingsBlock={() => setDrawerStateField(null)}

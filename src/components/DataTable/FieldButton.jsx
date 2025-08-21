@@ -46,7 +46,7 @@ export default function FieldButton({
   const tableSlug = tableSlugParam || view?.table_slug;
 
   const dispatch = useDispatch();
-  const {control, watch, setValue, reset, handleSubmit} = useForm();
+  const { control, watch, setValue, reset, handleSubmit, register } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
@@ -262,6 +262,7 @@ export default function FieldButton({
           tableLan={tableLan}
           visibleColumns={visibleColumns}
           tableSlug={tableSlug}
+          register={register}
         />
       )}
     </>

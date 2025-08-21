@@ -212,8 +212,35 @@ export const useFieldPopoverProps = ({
       },
     };
 
-    if (formType === "CREATE") createField(data);
-    else updateField(data);
+    let result = data?.attributes?.formula;
+
+    const fieldList =
+      mainForm
+        .getValues("fields")
+        ?.filter(
+          (item) =>
+            item?.type !== FIELD_TYPES.UUID &&
+            !item?.type?.includes("FRONTEND") &&
+            item?.label
+        ) ?? [];
+
+    fieldList.forEach(({ attributes, label, slug }) => {
+      const currentLabel = attributes?.[`label_${i18n?.language}`] || label;
+
+      const regex = new RegExp(`\\b${currentLabel}\\b`, "gi");
+      result = result.replace(regex, slug);
+    });
+
+    const submitData = {
+      ...data,
+      attributes: {
+        ...data?.attributes,
+        formula: result,
+      },
+    };
+
+    if (formType === "CREATE") createField(submitData);
+    else updateField(submitData);
     submitCallback();
   };
 
@@ -304,6 +331,8 @@ export const useFieldPopoverProps = ({
         return null;
     }
   };
+
+  console.log({ formType, field });
 
   useEffect(() => {
     const values = {

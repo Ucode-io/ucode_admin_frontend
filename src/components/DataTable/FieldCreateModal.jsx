@@ -107,6 +107,7 @@ export default function FieldCreateModal({
   sortedDatas,
   setSortedDatas = () => {},
   setFieldData = () => {},
+  formType,
 }) {
   const {id, tableSlug: tableSlugParam} = useParams();
   const {view: viewFromContext} = useViewContext();
@@ -120,7 +121,6 @@ export default function FieldCreateModal({
   const [relationFieldAnchorEl, setRelationFieldAnchorEl] = useState(null);
 
   const [fieldAnchorEl, setFieldAnchorEl] = useState(null);
-  const [formType, setFormType] = useState(null);
   const [drawerState, setDrawerState] = useState(null);
 
   const openField = Boolean(fieldAnchorEl);
@@ -1198,17 +1198,9 @@ export default function FieldCreateModal({
               </Box>
               // <FormulaAttributes control={control} mainForm={{ control }} />
             )}
-            {formulaFormat === "FORMULA_FRONTEND" &&
+            {/* {formulaFormat === "FORMULA_FRONTEND" &&
               format?.startsWith("FORMULA") && (
                 <Box overflow="auto" maxHeight={"200px"} padding="5px">
-                  {/* <FRow label="Formula format">
-                    <HFSelect
-                      name="formulaFormat"
-                      control={formulaControl}
-                      options={formulaFormatOptions}
-                      isClearable={false}
-                    />
-                  </FRow> */}
                   {watch("attributes.advanced_type") ? (
                     <>
                       <Box className={style.formula}>
@@ -1349,7 +1341,7 @@ export default function FieldCreateModal({
                     ) || "Advanced Editor"}
                   </Box>
                 </Box>
-              )}
+              )} */}
             {format === "RELATION" && !fieldData ? (
               <RelationFieldForm
                 control={control}
@@ -1359,18 +1351,21 @@ export default function FieldCreateModal({
                 relatedTableSlug={relatedTableSlug}
               />
             ) : null}
-            {fieldData && (
+            {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
               <button
                 className={clsx(style.btn, style.settings)}
                 onClick={() => {
-                  fieldHandleOpen(fieldData);
-                  // handleOpenFieldDrawer(fieldData);
+                  console.log(fieldData);
+                  fieldHandleOpen(
+                    fieldData ?? {
+                      type: FIELD_TYPES.FORMULA_FRONTEND,
+                    }
+                  );
                 }}
                 onMouseEnter={() => {
                   setOpenedDropdown(null);
                 }}>
                 <Image src="/img/settings.svg" alt="settings" />
-                {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
                 {generateLangaugeText(
                   tableLan,
                   i18n?.language,

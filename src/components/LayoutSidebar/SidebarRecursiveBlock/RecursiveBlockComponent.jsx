@@ -482,7 +482,7 @@ const RecursiveBlock = ({
             />
           ))}
 
-          {/* {Boolean(defaultAdmin) && (
+          {Boolean(defaultAdmin) && (
             <Permissions
               projectSettingLan={projectSettingLan}
               menuStyle={{
@@ -491,7 +491,7 @@ const RecursiveBlock = ({
               }}
               setElement={setElement}
             />
-          )} */}
+          )}
 
           {element.id === folderIds.data_base_folder_id && (
             <>

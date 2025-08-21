@@ -27,6 +27,7 @@ const ConnectionCreateModal = ({
   modalType,
   connectionId,
   settingLan,
+  clientTypeId,
 }) => {
   const queryClient = useQueryClient();
   const {clientId} = useParams();
@@ -40,7 +41,7 @@ const ConnectionCreateModal = ({
       name: "",
       table_slug: "",
       view_slug: "",
-      client_type_id: clientId,
+      client_type_id: clientId ?? clientTypeId,
       "project-id": projectId,
       guid: "",
     },

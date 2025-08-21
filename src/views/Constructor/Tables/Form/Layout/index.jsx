@@ -7,7 +7,6 @@ import NewLayoutSettings from "./NewLayoutSettings";
 import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
 import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
 
 const Layout = ({
   mainForm,
@@ -15,11 +14,12 @@ const Layout = ({
   getData,
   setSelectedTabLayout = () => {},
   tableLan,
+  selectedLayout,
+  setSelectedLayout = () => {},
 }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({mode: "onChange"});
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
-  const [selectedLayout, setSelectedLayout] = useState({});
   const [selectedField, setSelectedField] = useState(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0);

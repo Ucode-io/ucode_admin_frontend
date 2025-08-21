@@ -53,7 +53,7 @@ const NewSectionsBlock = ({
   const fieldsMap = useMemo(() => {
     const map = {};
 
-    fieldsList.forEach((field) => {
+    fieldsList?.forEach((field) => {
       map[field.id] = field;
     });
     return map;
@@ -74,11 +74,12 @@ const NewSectionsBlock = ({
   return (
     <div className={styles.newsectionsBlock} key={index}>
       <Container
+        style={{background: "#000"}}
         lockAxis="y"
         onDrop={onDrop}
         dropPlaceholder={{className: "drag-row-drop-preview"}}>
         {sections.map((section, index) => (
-          <Draggable key={section.id}>
+          <Draggable style={{height: "90px"}} key={section.id}>
             <NewSection
               index={index}
               allTabs={allTabs}

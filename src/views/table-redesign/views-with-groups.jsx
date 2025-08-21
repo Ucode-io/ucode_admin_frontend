@@ -670,8 +670,6 @@ export const NewUiViewsWithGroups = ({
     setAnchorEl(null);
   };
 
-  // useEffect(() => {}, []);
-
   return (
     <ViewProvider state={{ view, fieldsMap }}>
       <ChakraProvider theme={chakraUITheme}>
@@ -917,7 +915,7 @@ export const NewUiViewsWithGroups = ({
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <TableActions tableSlug={tableSlug} tableLan={tableLan} />
               </PermissionWrapperV2>
-              {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <Button
                   h="30px"
                   ml="auto"
@@ -935,7 +933,7 @@ export const NewUiViewsWithGroups = ({
                     "Table Settings"
                   ) || "Table Settings"}
                 </Button>
-              </PermissionWrapperV2> */}
+              </PermissionWrapperV2>
             </Flex>
           )}
 
@@ -1205,6 +1203,7 @@ export const NewUiViewsWithGroups = ({
                 </PermissionWrapperV2>
                 <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                   <ViewOptions
+                    tableInfo={tableInfo}
                     relationView={relationView}
                     refetchViews={refetchViews}
                     selectedTabIndex={selectedTabIndex}

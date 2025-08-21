@@ -1,102 +1,175 @@
 import {Close} from "@mui/icons-material";
 import {Card, IconButton} from "@mui/material";
 import {useEffect, useState} from "react";
-import {useQuery} from "react-query";
+import {useForm} from "react-hook-form";
 import {useParams} from "react-router-dom";
-import styles from "./style.module.scss";
-import constructorTableService from "../../../services/constructorTableService";
 import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import constructorCustomEventService from "../../../services/constructorCustomEventService";
+import constructorFieldService from "../../../services/constructorFieldService";
+import constructorRelationService from "../../../services/constructorRelationService";
+import constructorViewRelationService from "../../../services/constructorViewRelationService";
+import Layout from "../../Constructor/Tables/Form/Layout";
+import styles from "./style.module.scss";
+import layoutService from "../../../services/layoutService";
+import {useTranslation} from "react-i18next";
+import {listToMap} from "../../../utils/listToMap";
 
 const LayoutModal = ({
   closeModal = () => {},
-  setIsChanged,
-  isChanged,
-  viewData,
-  typeNewView,
-  defaultViewTab,
-  setTab,
-  selectedTabIndex,
-  refetchMainView = () => {},
-  setSelectedView = () => {},
   selectedView,
+  tableInfo = {},
+  tableLan = {},
 }) => {
-  const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
+  const {i18n} = useTranslation();
+  const [loader, setLoader] = useState(true);
+  const [btnLoader, setBtnLoader] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const {tableSlug: tableSlugFromParams, appId, menuId, id} = useParams();
   const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
-  const closeForm = () => setSelectedView(null);
+  const [selectedLayout, setSelectedLayout] = useState({});
 
-  const {
-    data: {fields, views, columns, relationColumns} = {
-      fields: [],
-      views: [],
-      columns: [],
-      relationColumns: [],
-    },
-    isLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
-    () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {
-          limit: 10,
-          offset: 0,
-          with_relations: true,
-          app_id: appId ?? menuId,
-        },
+  const mainForm = useForm();
+
+  const getData = async () => {
+    setLoader(true);
+
+    try {
+      const [tableData, {custom_events: actions = []}] = await Promise.all([
+        await constructorViewRelationService.getList({table_slug: tableSlug}),
+        await constructorCustomEventService.getList(
+          {table_slug: tableSlug},
+          tableSlug
+        ),
+        await layoutService
+          .getList(
+            {"table-slug": tableSlug, language_setting: i18n?.language},
+            tableSlug
+          )
+          .then((res) => {
+            setSelectedLayout(res?.layouts?.[0]);
+            mainForm.setValue("layouts", res?.layouts ?? []);
+          }),
+      ]);
+
+      const data = {
+        ...tableData,
+        ...mainForm.getValues(),
+        fields: [],
+        actions,
+      };
+
+      mainForm.reset({
+        ...data,
+        ...values,
+        slug: data?.slug || values?.slug,
+        label: data?.label || values?.label,
       });
-    },
-    {
-      select: ({data}) => {
-        return {
-          fields: data?.fields ?? [],
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
+
+      await getRelationFields();
+    } catch (error) {
+      console.error("An error occurred:", error);
+    } finally {
+      setLoader(false);
     }
-  );
+  };
+
+  const getRelationFields = async () => {
+    return new Promise(async (resolve) => {
+      const getFieldsData = constructorFieldService.getList(
+        {
+          table_id: tableInfo?.id,
+        },
+        tableSlug
+      );
+
+      const getRelations = constructorRelationService.getList(
+        {
+          table_slug: tableSlug,
+          relation_table_slug: tableSlug,
+        },
+        {},
+        tableSlug
+      );
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
+      mainForm.setValue("fields", fields);
+      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
+        ...relation,
+        relatedTableSlug:
+          relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
+      }));
+
+      const layoutRelations = [];
+      const tableRelations = [];
+
+      relationsWithRelatedTableSlug?.forEach((relation) => {
+        if (
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === tableSlug) ||
+          (relation.type === "One2Many" &&
+            relation.table_to?.slug === tableSlug) ||
+          relation.type === "Recursive" ||
+          (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === tableSlug)
+        ) {
+          layoutRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
+      });
+
+      const layoutRelationsFields = layoutRelations.map((relation) => ({
+        ...relation,
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        attributes: {
+          fields: relation.view_fields ?? [],
+        },
+        label:
+          (relation?.label ?? relation[relation.relatedTableSlug]?.label)
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
+      }));
+
+      mainForm.setValue("relations", relations);
+      mainForm.setValue("relationsMap", listToMap(relations));
+      mainForm.setValue("layoutRelations", layoutRelationsFields);
+      mainForm.setValue("tableRelations", tableRelations);
+      resolve();
+    });
+  };
 
   useEffect(() => {
-    if (isChanged === true) {
-      refetchViews();
-      refetchMainView();
-      closeModal();
-    }
-  }, [isChanged]);
-
-  useEffect(() => {
-    setSelectedView(views?.[selectedTabIndex]);
-  }, []);
+    if (!tableInfo?.id) setLoader(false);
+    else getData();
+  }, [tableInfo?.id]);
 
   return (
     <Card className={styles.card}>
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <div className={styles.cardTitle}>Layout</div>
         <IconButton className={styles.closeButton} onClick={closeModal}>
           <Close className={styles.closeIcon} />
         </IconButton>
-      </div>
+      </div> */}
 
-      {isLoading ? (
+      {/* {isLoading ? (
         <RingLoaderWithWrapper />
-      ) : (
-        <div className={styles.body}>
-          {/* <ViewsList
-            views={views}
-            selectedView={selectedView}
-            setSelectedView={setSelectedView}
-          /> */}
-
-          {/* {selectedView && (
-            
-          )} */}
-        </div>
-      )}
+      ) : ( */}
+      {/* <div className={styles.body}> */}
+      <Layout
+        tableLan={tableLan}
+        mainForm={mainForm}
+        getRelationFields={getRelationFields}
+        getData={getData}
+        selectedLayout={selectedLayout}
+        setSelectedLayout={setSelectedLayout}
+        setSelectedTabLayout={setSelectedTab}
+      />
+      {/* </div> */}
+      {/* )} */}
     </Card>
   );
 };

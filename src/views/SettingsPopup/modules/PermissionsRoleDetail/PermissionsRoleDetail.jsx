@@ -74,7 +74,8 @@ export const PermissionsRoleDetail = () => {
             justifyContent: "space-between",
             alignItems: "center",
             width: "100%",
-          }}>
+          }}
+        >
           <Box
             sx={{
               display: "flex",
@@ -84,7 +85,8 @@ export const PermissionsRoleDetail = () => {
               borderRadius: "8px",
               padding: "3px 4px",
               bgcolor: "#f9fafb",
-            }}>
+            }}
+          >
             <Box
               minWidth={"78px"}
               justifyContent={"center"}
@@ -97,12 +99,14 @@ export const PermissionsRoleDetail = () => {
               sx={{
                 cursor: "pointer",
               }}
-              onClick={() => setSelectedIndex(0)}>
+              onClick={() => setSelectedIndex(0)}
+            >
               <span className={cls.clientType}>{activeClientType?.name}</span>
               <button
-                style={{display: selectedIndex === 0 ? "block" : "none"}}
+                style={{ display: selectedIndex === 0 ? "block" : "none" }}
                 className={cls.iconBtn}
-                onClick={handleOpenUpdateModal}>
+                onClick={handleOpenUpdateModal}
+              >
                 <span>
                   <EditIcon />
                 </span>
@@ -116,8 +120,9 @@ export const PermissionsRoleDetail = () => {
               borderRadius={"6px"}
               fontSize={"12px"}
               bgcolor={selectedIndex === 1 ? "#fff" : ""}
-              sx={{cursor: "pointer"}}
-              onClick={() => setSelectedIndex(1)}>
+              sx={{ cursor: "pointer" }}
+              onClick={() => setSelectedIndex(1)}
+            >
               <button className={cls.clientTypeConnect}>{"Connections"}</button>
             </Box>
           </Box>
@@ -126,7 +131,8 @@ export const PermissionsRoleDetail = () => {
             className={cls.saveBtn}
             primary
             onClick={handleSubmit(onSubmit)}
-            variant="contained">
+            variant="contained"
+          >
             Save
           </Button>
         </Box>
@@ -136,7 +142,8 @@ export const PermissionsRoleDetail = () => {
           <Box
             display="flex"
             alignItems={"center"}
-            justifyContent={"space-between"}>
+            justifyContent={"space-between"}
+          >
             <Box className={cls.tabs}>
               {roles?.map((el, index) => (
                 <button
@@ -146,7 +153,8 @@ export const PermissionsRoleDetail = () => {
                   key={el?.guid}
                   onClick={() => {
                     onTabClick(el, index);
-                  }}>
+                  }}
+                >
                   {el?.name}
                 </button>
               ))}
@@ -162,7 +170,8 @@ export const PermissionsRoleDetail = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   isCategoryOpen ? handleCloseCategory() : handleOpenCategory();
-                }}>
+                }}
+              >
                 <span className={cls.categoryDropdownBtnInner}>
                   <span>Category: {categories[activeTab]}</span>
                   <ExpandMoreOutlinedIcon
@@ -182,15 +191,18 @@ export const PermissionsRoleDetail = () => {
                     <li className={cls.categoryItem}>
                       <div
                         className={cls.categoryLabel}
-                        onClick={() => handleChangeTab("table")}>
+                        onClick={() => handleChangeTab("table")}
+                      >
                         <span
                           className={clsx(cls.customRadio, {
                             [cls.active]: activeTab === "table",
-                          })}>
+                          })}
+                        >
                           <span></span>
                         </span>
                         <span
-                          className={clsx(cls.categoryLabelBadge, cls.table)}>
+                          className={clsx(cls.categoryLabelBadge, cls.table)}
+                        >
                           Table
                         </span>
                       </div>
@@ -198,15 +210,18 @@ export const PermissionsRoleDetail = () => {
                     <li className={cls.categoryItem}>
                       <div
                         className={cls.categoryLabel}
-                        onClick={() => handleChangeTab("menu")}>
+                        onClick={() => handleChangeTab("menu")}
+                      >
                         <span
                           className={clsx(cls.customRadio, {
                             [cls.active]: activeTab === "menu",
-                          })}>
+                          })}
+                        >
                           <span></span>
                         </span>
                         <span
-                          className={clsx(cls.categoryLabelBadge, cls.menu)}>
+                          className={clsx(cls.categoryLabelBadge, cls.menu)}
+                        >
                           Menu
                         </span>
                       </div>
@@ -214,18 +229,21 @@ export const PermissionsRoleDetail = () => {
                     <li className={cls.categoryItem}>
                       <div
                         className={cls.categoryLabel}
-                        onClick={() => handleChangeTab("permission")}>
+                        onClick={() => handleChangeTab("permission")}
+                      >
                         <span
                           className={clsx(cls.customRadio, {
                             [cls.active]: activeTab === "permission",
-                          })}>
+                          })}
+                        >
                           <span></span>
                         </span>
                         <span
                           className={clsx(
                             cls.categoryLabelBadge,
                             cls.permission
-                          )}>
+                          )}
+                        >
                           Global Permissions
                         </span>
                       </div>
@@ -246,6 +264,8 @@ export const PermissionsRoleDetail = () => {
               setValue={setValue}
               watch={watch}
               activeTab={activeTab}
+              activeRoleId={activeRoleId}
+              getValues={getValues}
             />
           )}
           {isCreateRoleModalOpen && (

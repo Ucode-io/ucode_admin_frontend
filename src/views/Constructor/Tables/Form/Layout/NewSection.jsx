@@ -1,5 +1,5 @@
 import {Add, Delete} from "@mui/icons-material";
-import {Box, Card, Menu, TextField} from "@mui/material";
+import {Box, Button, Card, Menu, TextField} from "@mui/material";
 import {useFieldArray} from "react-hook-form";
 import {Container, Draggable} from "react-smooth-dnd";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
@@ -49,9 +49,9 @@ const NewSection = ({
     }
 
     const relationsMap = mainForm.getValues("relationsMap");
-    const relationId = field.id.split("#")[1];
+    const relationId = field?.id.split("#")[1];
 
-    const relation = relationsMap[relationId];
+    const relation = relationsMap?.[relationId];
 
     openRelationSettingsBlock(relation);
   };
@@ -88,19 +88,19 @@ const NewSection = ({
     removeSection(index);
   };
 
-  const languages = useSelector((state) => state.languages.list);
+  // const languages = useSelector((state) => state.languages.list);
 
-  const nameGenerator = (language) => {
-    if (
-      mainForm.watch(
-        `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`
-      )
-    ) {
-      return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`;
-    } else {
-      return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
-    }
-  };
+  // const nameGenerator = (language) => {
+  //   if (
+  //     mainForm.watch(
+  //       `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`
+  //     )
+  //   ) {
+  //     return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`;
+  //   } else {
+  //     return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
+  //   }
+  // };
 
   return (
     <Card className={`${styles.newsectionCard}`}>
@@ -124,7 +124,15 @@ const NewSection = ({
           </Menu>
         </div>
 
-        <div className="flex gap-1" style={{marginLeft: "5px"}}>
+        <div
+          className="flex gap-1"
+          style={{
+            margin: "0 10px",
+            height: "80px",
+            display: "flex",
+            alignItems: "center",
+            padding: "0",
+          }}>
           <RectangleIconButton onClick={() => openFieldsBlock("FIELD")}>
             <Add />
           </RectangleIconButton>
@@ -150,7 +158,7 @@ const NewSection = ({
           {sectionFieldsWatch?.map((field, fieldIndex) => (
             <Draggable
               key={fieldIndex}
-              style={{width: "220px", height: "80px"}}>
+              style={{width: "220px", height: "80px", overflow: "auto"}}>
               {field?.attributes?.isTab ? (
                 <div className={styles.tableSectionTable}>
                   <table className={styles.relationTable}>
@@ -172,6 +180,7 @@ const NewSection = ({
                     </tbody>
                   </table>
                   <ButtonsPopover
+                    orient="top"
                     className={styles.deleteButtonSection}
                     onEditClick={() => openSettingsBlock(field)}
                     onDeleteClick={() => removeField(fieldIndex, 1)}
@@ -181,11 +190,13 @@ const NewSection = ({
                 <div className={styles.newsectionCardRow}>
                   <div className={styles.newSectionFieldRow}>
                     <div className={styles.newSectionFieldLabel}>
-                      {field?.label}
+                      {field?.label ??
+                        field?.attributes?.[`label_${i18n?.language}`]}
                     </div>
                     <div className={styles.newSectionField}>
                       <img src="/table-icons/lock.svg" alt="lock" />
                       <ButtonsPopover
+                        orient="top"
                         className={styles.deleteButton}
                         onEditClick={() => openSettingsBlock(field)}
                         onDeleteClick={() => removeField(fieldIndex, 1)}
@@ -206,9 +217,13 @@ const NewSection = ({
         </Container>
       </div>
       <div className={styles.newSectionDelete}>
-        <RectangleIconButton color="error" onClick={deleteSection}>
+        <Button
+          color="error"
+          variant="outlined"
+          onClick={deleteSection}
+          sx={{minWidth: "30px", maxWidth: "30px"}}>
           <Delete color="error" />
-        </RectangleIconButton>
+        </Button>
       </div>
     </Card>
   );

@@ -107,6 +107,7 @@ export default function FieldCreateModal({
   sortedDatas,
   setSortedDatas = () => {},
   setFieldData = () => {},
+  formType,
 }) {
   const { id, tableSlug: tableSlugParam } = useParams();
   const { view: viewFromContext } = useViewContext();
@@ -120,7 +121,6 @@ export default function FieldCreateModal({
   const [relationFieldAnchorEl, setRelationFieldAnchorEl] = useState(null);
 
   const [fieldAnchorEl, setFieldAnchorEl] = useState(null);
-  const [formType, setFormType] = useState(null);
   const [drawerState, setDrawerState] = useState(null);
 
   const openField = Boolean(fieldAnchorEl);
@@ -1367,31 +1367,29 @@ export default function FieldCreateModal({
                 relatedTableSlug={relatedTableSlug}
               />
             ) : null}
-            {fieldData ||
-              (format === FIELD_TYPES.FORMULA_FRONTEND && (
-                <button
-                  className={clsx(style.btn, style.settings)}
-                  onClick={() => {
-                    fieldHandleOpen(
-                      fieldData || {
-                        type: FIELD_TYPES.FORMULA_FRONTEND,
-                      }
-                    );
-                    // handleOpenFieldDrawer(fieldData);
-                  }}
-                  onMouseEnter={() => {
-                    setOpenedDropdown(null);
-                  }}
-                >
-                  <Image src="/img/settings.svg" alt="settings" />
-                  {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
-                  {generateLangaugeText(
-                    tableLan,
-                    i18n?.language,
-                    "Advanced settings"
-                  ) || "Advanced settings"}
-                </button>
-              ))}
+            {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
+              <button
+                className={clsx(style.btn, style.settings)}
+                onClick={() => {
+                  console.log(fieldData);
+                  fieldHandleOpen(
+                    fieldData ?? {
+                      type: FIELD_TYPES.FORMULA_FRONTEND,
+                    }
+                  );
+                }}
+                onMouseEnter={() => {
+                  setOpenedDropdown(null);
+                }}
+              >
+                <Image src="/img/settings.svg" alt="settings" />
+                {generateLangaugeText(
+                  tableLan,
+                  i18n?.language,
+                  "Advanced settings"
+                ) || "Advanced settings"}
+              </button>
+            )}
             <Box className={style.button_group} sx={{ padding: "0 5px" }}>
               <FormElementButton onClick={handleClick}>
                 {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||

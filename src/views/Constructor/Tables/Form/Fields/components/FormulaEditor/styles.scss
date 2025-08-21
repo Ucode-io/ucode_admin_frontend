@@ -19,21 +19,21 @@
   align-items: center;
   // gap: 4px;
   font-size: 14px;
-  color: transparent !important;
+  // color: transparent !important;
 
-  &::before {
-    content: '';
-    width: 12px;
-    height: 12px;
-    position: absolute;
-    left: 0;
-    top: 50%;
-    margin-left: 2px;
-    transform: translateY(-50%);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: contain;
-  }
+  // &::before {
+  //   content: '';
+  //   width: 12px;
+  //   height: 12px;
+  //   position: absolute;
+  //   left: 0;
+  //   top: 50%;
+  //   margin-left: 2px;
+  //   transform: translateY(-50%);
+  //   background-repeat: no-repeat;
+  //   background-position: center center;
+  //   background-size: contain;
+  // }
 }
 
 .field-badge--SINGLE_LINE {

@@ -17,7 +17,7 @@ export const FormulaEditor = forwardRef(
 
     return (
       <div className={cls.formulaEditor}>
-        {fields?.map((item) => (
+        {/* {fields?.map((item) => (
           <style>
             {`
                 .field-badge-slug--${item?.slug}::after {
@@ -33,7 +33,7 @@ export const FormulaEditor = forwardRef(
                 }
             `}
           </style>
-        ))}
+        ))} */}
         <Editor
           className="monaco-editor"
           height="96px"

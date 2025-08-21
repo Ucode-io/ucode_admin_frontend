@@ -626,4 +626,234 @@ export const getFieldIcon = ({ fieldsList }) => {
   ];
 
   return menuList;
+};
+
+const FUNCTIONS_MAP = {
+  Number: [
+    { label: "add()", key: "add", icon: menuIcons.hash },
+    { label: "subtract()", key: "subtract", icon: menuIcons.hash },
+    { label: "multiple()", key: "multiple", icon: menuIcons.hash },
+    { label: "mod()", key: "mod", icon: menuIcons.hash },
+    { label: "pow()", key: "pow", icon: menuIcons.hash },
+    { label: "divide()", key: "divide", icon: menuIcons.hash },
+    { label: "min()", key: "min", icon: menuIcons.hash },
+    { label: "max()", key: "max", icon: menuIcons.hash },
+    { label: "sum()", key: "sum", icon: menuIcons.hash },
+    { label: "median()", key: "median", icon: menuIcons.hash },
+    { label: "mean()", key: "mean", icon: menuIcons.hash },
+    { label: "abs()", key: "abs", icon: menuIcons.hash },
+    { label: "round()", key: "round", icon: menuIcons.hash },
+    { label: "ceil()", key: "ceil", icon: menuIcons.hash },
+    { label: "floor()", key: "floor", icon: menuIcons.hash },
+    { label: "sqrt()", key: "sqrt", icon: menuIcons.hash },
+    { label: "cbrt()", key: "cbrt", icon: menuIcons.hash },
+    { label: "exp()", key: "exp", icon: menuIcons.hash },
+    { label: "ln()", key: "ln", icon: menuIcons.hash },
+    { label: "log10()", key: "log10", icon: menuIcons.hash },
+    { label: "log2()", key: "log2", icon: menuIcons.hash },
+    { label: "sign()", key: "sign", icon: menuIcons.hash },
+    { label: "pi()", key: "pi", icon: menuIcons.hash },
+    { label: "e()", key: "e", icon: menuIcons.hash },
+    { label: "toNumber()", key: "toNumber", icon: menuIcons.hash },
+  ],
+  People: [
+    { label: "name()", key: "name", icon: menuIcons.formula },
+    { label: "email()", key: "email", icon: menuIcons.formula },
+  ],
+  Text: [
+    { label: "substring()", key: "substring", icon: menuIcons.formula },
+    { label: "contains()", key: "contains", icon: menuIcons.formula },
+    { label: "test()", key: "test", icon: menuIcons.formula },
+    { label: "match()", key: "match", icon: menuIcons.formula },
+    { label: "replace()", key: "replace", icon: menuIcons.formula },
+    { label: "replaceAll()", key: "replaceAll", icon: menuIcons.formula },
+    { label: "lower()", key: "lower", icon: menuIcons.formula },
+    { label: "upper()", key: "upper", icon: menuIcons.formula },
+    { label: "trim()", key: "trim", icon: menuIcons.formula },
+    { label: "repeat()", key: "repeat", icon: menuIcons.formula },
+    { label: "concat()", key: "concat", icon: menuIcons.formula },
+    { label: "join()", key: "join", icon: menuIcons.formula },
+    { label: "split()", key: "split", icon: menuIcons.formula },
+  ],
+  General: [
+    { label: "if()", key: "if", icon: menuIcons.checkbox },
+    { label: "ifs()", key: "ifs", icon: menuIcons.checkbox },
+    { label: "and()", key: "and", icon: menuIcons.checkbox },
+    { label: "or()", key: "or", icon: menuIcons.checkbox },
+    { label: "not()", key: "not", icon: menuIcons.checkbox },
+    { label: "empty()", key: "empty", icon: menuIcons.checkbox },
+    { label: "length()", key: "length", icon: menuIcons.checkbox },
+    { label: "format()", key: "format", icon: menuIcons.checkbox },
+    { label: "equal()", key: "equal", icon: menuIcons.checkbox },
+    { label: "unequal()", key: "unequal", icon: menuIcons.checkbox },
+    { label: "let()", key: "let", icon: menuIcons.checkbox },
+    { label: "lets()", key: "lets", icon: menuIcons.checkbox },
+  ],
+  Date: [
+    { label: "now()", key: "now", icon: menuIcons.calendar },
+    { label: "today()", key: "today", icon: menuIcons.calendar },
+    { label: "minute()", key: "minute", icon: menuIcons.calendar },
+    { label: "hour()", key: "hour", icon: menuIcons.calendar },
+    { label: "day()", key: "day", icon: menuIcons.calendar },
+    { label: "date()", key: "date", icon: menuIcons.calendar },
+    { label: "week()", key: "week", icon: menuIcons.calendar },
+    { label: "month()", key: "month", icon: menuIcons.calendar },
+    { label: "year()", key: "year", icon: menuIcons.calendar },
+    { label: "dateAdd()", key: "dateAdd", icon: menuIcons.calendar },
+    { label: "dateSubtract()", key: "dateSubtract", icon: menuIcons.calendar },
+    { label: "dateBetween()", key: "dateBetween", icon: menuIcons.calendar },
+    { label: "dateRange()", key: "dateRange", icon: menuIcons.calendar },
+    { label: "dateStart()", key: "dateStart", icon: menuIcons.calendar },
+    { label: "dateEnd()", key: "dateEnd", icon: menuIcons.calendar },
+    { label: "timestamp()", key: "timestamp", icon: menuIcons.calendar },
+    {
+      label: "fromTimestamp()",
+      key: "fromTimestamp",
+      icon: menuIcons.calendar,
+    },
+    { label: "formatDate()", key: "formatDate", icon: menuIcons.calendar },
+    { label: "parseDate()", key: "parseDate", icon: menuIcons.calendar },
+  ],
+  List: [
+    { label: "at()", key: "at", icon: menuIcons.list },
+    { label: "first()", key: "first", icon: menuIcons.list },
+    { label: "last()", key: "last", icon: menuIcons.list },
+    { label: "slice()", key: "slice", icon: menuIcons.list },
+    { label: "sort()", key: "sort", icon: menuIcons.list },
+    { label: "reverse()", key: "reverse", icon: menuIcons.list },
+    { label: "unique()", key: "unique", icon: menuIcons.list },
+    { label: "includes()", key: "includes", icon: menuIcons.list },
+    { label: "filter()", key: "filter", icon: menuIcons.list },
+    { label: "some()", key: "some", icon: menuIcons.list },
+    { label: "every()", key: "every", icon: menuIcons.list },
+    { label: "map()", key: "map", icon: menuIcons.list },
+    { label: "flat()", key: "flat", icon: menuIcons.list },
+    { label: "count()", key: "count", icon: menuIcons.list },
+  ],
+};
+
+const BUILT_IN_OPERATORS = [
+  {
+    label: "+",
+    key: "+",
+    icon: menuIcons.hash,
+  },
+  {
+    label: "==",
+    key: "==",
+    icon: menuIcons.checkbox,
+  },
+  {
+    label: "!=",
+    key: "!=",
+    icon: menuIcons.checkbox,
+  },
+  {
+    label: ">=",
+    key: ">=",
+    icon: menuIcons.checkbox,
+  },
+  {
+    label: "<=",
+    key: "<=",
+    icon: menuIcons.checkbox,
+  },
+  {
+    label: ">",
+    key: ">",
+    icon: menuIcons.checkbox,
+  },
+  {
+    label: "<",
+    key: "<",
+    icon: menuIcons.checkbox,
+  },
+  {
+    label: "!",
+    key: "!",
+    icon: menuIcons.checkbox,
+  },
+];
+
+const FIELD_TYPE_TO_CATEGORIES = {
+  SINGLE_LINE: ["Text", "General"],
+  MULTI_LINE: ["Text", "General"],
+  EMAIL: ["People", "General"],
+  INTERNATION_PHONE: ["Text", "General"],
+  LOOKUP: ["List", "General"],
+  LOOKUPS: ["List", "General"],
+  MULTISELECT: ["List", "General"],
+  TEXT: ["Text", "General"],
+  NUMBER: ["Number", "General"],
+  DATE: ["Date", "General"],
+  TIME: ["Date", "General"],
+  DATE_TIME: ["Date", "General"],
+  DATE_TIME_WITHOUT_TIME_ZONE: ["Date", "General"],
+  CHECKBOX: ["General"],
+  SWITCH: ["General"],
+  ALL: ["General", "Text", "Number", "Date", "List"],
+};
+
+// Маппинг категорий на иконки
+const CATEGORY_ICONS = {
+  Number: menuIcons.hash,
+  Text: menuIcons.menu,
+  General: menuIcons.formula,
+  Date: menuIcons.calendar,
+  List: menuIcons.list,
+  People: menuIcons.menu,
+  Operators: menuIcons.formula,
+};
+
+export function getFunctionsByFieldType({
+  fieldType = "ALL",
+  fieldsList = [],
+}) {
+  const categories = FIELD_TYPE_TO_CATEGORIES[fieldType] || [];
+  const result = [];
+
+  if (fieldType === "ALL") {
+    result.push({
+      name: "Properties",
+      key: "field",
+      list: fieldsList?.map((field) => ({
+        label: field?.label,
+        key: field?.slug,
+        type: field?.type,
+        icon: getColumnIconPath({ column: field }),
+        ...field,
+      })),
+      icon: CATEGORY_ICONS.Operators,
+    });
+  }
+
+  if (BUILT_IN_OPERATORS.length > 0 && fieldType !== "ALL") {
+    result.push({
+      name: "Operators",
+      key: "formula",
+      list: BUILT_IN_OPERATORS.map((op) => ({
+        label: op.label,
+        key: op.key,
+        icon: op.icon,
+      })),
+      icon: CATEGORY_ICONS.Operators,
+    });
+  }
+
+  categories.forEach((category) => {
+    const list = FUNCTIONS_MAP[category].map((fn) => ({
+      label: fn.label,
+      key: fn.key,
+      icon: fn.icon,
+    }));
+
+    result.push({
+      name: category,
+      key: "formula",
+      list,
+      icon: CATEGORY_ICONS[category] || null,
+    });
+  });
+
+  return result;
 }

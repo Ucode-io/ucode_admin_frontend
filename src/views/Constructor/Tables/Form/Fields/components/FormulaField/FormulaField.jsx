@@ -42,10 +42,10 @@ export const FormulaField = ({
     onItemMouseLeave,
     exampleType,
     i18n,
-    suggestionsFields,
+    fieldsList,
     editorSearchText,
     setEditorSearchText,
-    setExampleType,
+    lastField,
   } = useFormulaFieldProps({
     control,
     mainForm,
@@ -180,7 +180,7 @@ export const FormulaField = ({
                 }}
                 ref={editorRef}
                 value={editorValue}
-                fields={suggestionsFields}
+                fields={fieldsList}
               />
             </Box>
             {/* <textarea
@@ -261,31 +261,30 @@ export const FormulaField = ({
               padding="6px 4px 2px"
               borderRight="1px solid rgba(84, 72, 49, 0.15)"
             >
-              {menuList.map((menuItem) => (
+              {menuList?.map((menuItem) => (
                 <Box>
-                  {menuItem?.list?.filter(
-                    (item) =>
-                      item?.key
-                        ?.toLowerCase()
-                        ?.includes(editorSearchText?.toLowerCase()) ||
-                      item?.label
-                        ?.toLowerCase()
-                        ?.includes(editorSearchText?.toLowerCase())
-                  )?.length ? (
+                  {menuItem?.list?.filter((item) => {
+                    const label =
+                      item?.attributes?.[`label_${i18n.language}`] ||
+                      item?.label;
+                    return label
+                      ?.toLowerCase()
+                      ?.includes(editorSearchText?.toLowerCase());
+                  })?.length ? (
                     <p className={cls.menuTitle}>{menuItem?.name}</p>
                   ) : (
                     ""
                   )}
                   {menuItem?.list
-                    ?.filter(
-                      (item) =>
-                        item?.key
-                          ?.toLowerCase()
-                          ?.includes(editorSearchText?.toLowerCase()) ||
-                        item?.label
-                          ?.toLowerCase()
-                          ?.includes(editorSearchText?.toLowerCase())
-                    )
+                    ?.filter((item) => {
+                      const label =
+                        item?.attributes?.[`label_${i18n.language}`] ||
+                        item?.label;
+
+                      return label
+                        ?.toLowerCase()
+                        ?.includes(editorSearchText?.toLowerCase());
+                    })
                     ?.map((item, index) => (
                       <Box
                         className={clsx(cls.fieldChip, {
@@ -293,28 +292,28 @@ export const FormulaField = ({
                         })}
                         key={item.key + index}
                         onMouseEnter={() => onItemMouseEnter(item)}
-                        // onMouseLeave={() => onItemMouseLeave()}
                         onClick={() => {
                           let value = editorValue;
                           if (editorSearchText) {
                             value = editorValue?.replace(editorSearchText, "");
                           }
-                          if (menuItem.key === "formula")
-                            onEditorChange(value + item.key + "()");
-                          else {
-                            onEditorChange(value + item.label);
-                            // onEditorChange(
-                            //   value +
-                            //     (item?.attributes?.[`label_${i18n.language}`] ||
-                            //       item.label) +
-                            //     " "
-                            // );
+                          if (menuItem.key === "formula") {
+                            if (menuItem.name === "Operators") {
+                              onEditorChange(value + " " + item.key + " ");
+                            } else if (lastField) {
+                              onEditorChange(value + "." + item.key + "()");
+                            } else {
+                              onEditorChange(value + item.key + "()");
+                            }
+                          } else {
+                            onEditorChange(
+                              value +
+                                (item?.attributes?.[`label_${i18n.language}`] ||
+                                  item.label)
+                            );
                           }
                           setEditorSearchText("");
                           editorRef.current?.focus();
-                          // const newValue = watch("attributes.formula") + field.slug;
-                          // handleChange({ target: { value: newValue } });
-                          // setValue(newValue);
                         }}
                       >
                         {typeof item.icon === "string" ? (
@@ -335,27 +334,6 @@ export const FormulaField = ({
                     ))}
                 </Box>
               ))}
-
-              {/* {fieldsList.map((field) => (
-                <Box
-                  className={cls.fieldChip}
-                  key={field.slug}
-                  onClick={() => {
-                    onEditorChange(editorValue + field.slug);
-                    // const newValue = watch("attributes.formula") + field.slug;
-                    // handleChange({ target: { value: newValue } });
-                    // setValue(newValue);
-                  }}
-                >
-                  <img
-                    src={getColumnIconPath({ column: field })}
-                    width={"16px"}
-                    height={"16px"}
-                    alt=""
-                  />
-                  <span>{field.label}</span>
-                </Box>
-              ))} */}
             </Box>
             <Box maxHeight="237px" overflow="auto">
               <Examples item={exampleType} />

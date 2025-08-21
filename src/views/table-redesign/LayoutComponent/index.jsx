@@ -84,7 +84,7 @@ function LayoutComponent({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent zIndex={2} minW="802px" w="802px">
+        <ModalContent zIndex={2} minW="802px" height={"450px"} w="802px">
           <MaterialUIProvider>
             <LayoutModal
               tableInfo={tableInfo}

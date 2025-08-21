@@ -366,16 +366,18 @@ const ViewOptions = ({
                   <ChevronRightIcon fontSize={22} />
                 </Flex>
               </Flex>
-              {/* 
-              <LayoutComponent
-                tableInfo={tableInfo}
-                refetchViews={refetchViews}
-                selectedTabIndex={selectedTabIndex}
-                tableLan={tableLan}
-                selectedView={view}
-                isChanged={isChanged}
-                setIsChanged={setIsChanged}
-              /> */}
+
+              {localStorage.getItem("newLayout") === "false" && (
+                <LayoutComponent
+                  tableInfo={tableInfo}
+                  refetchViews={refetchViews}
+                  selectedTabIndex={selectedTabIndex}
+                  tableLan={tableLan}
+                  selectedView={view}
+                  isChanged={isChanged}
+                  setIsChanged={setIsChanged}
+                />
+              )}
 
               <ViewSettingsModal
                 refetchViews={refetchViews}

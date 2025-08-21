@@ -54,10 +54,6 @@
         display: flex;
         align-items: center;
         gap: 5px;
-
-        .deleteButton {
-          // transform: translateY(10px);
-        }
       }
     }
   }
@@ -167,7 +163,7 @@
 
 .fieldsBlock {
   // height: calc(100vh);
-  height: 680px;
+  height: 350px;
   overflow: auto;
   padding: 8px;
 
@@ -317,12 +313,9 @@
 }
 
 .newsectionsBlock {
-  height: 300px;
   min-width: 350px;
-  padding: 0px 4px 0px 0px;
 
   .newsectionCard {
-    padding-top: 10px;
     display: flex;
     border-radius: 0px;
 
@@ -331,8 +324,7 @@
     }
 
     .newsectionCardHeader {
-      height: 95px;
-      padding: 10px;
+      height: 100px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -366,16 +358,13 @@
         align-items: center;
         flex-direction: row;
         gap: 5px;
-
-        .deleteButton {
-          // transform: translateY(10px);
-        }
       }
     }
   }
 
   .newSectionFieldRow {
     .newSectionFieldLabel {
+      height: 19px;
       margin-bottom: 10px;
       font-weight: 600;
     }
@@ -392,16 +381,23 @@
   }
 
   .newsectionCreateCard {
-    padding: 8px;
+    height: 36px;
+    position: absolute;
+    top: 60px;
+    right: 20px;
 
     .newsectionCreateButton {
+      height: 36px;
+      position: absolute;
+      top: 60px;
+      right: 20px;
       width: 100%;
-      border-radius: 6px;
-      border: 1px dashed rgba(110, 139, 183, 0.5);
+      // border-radius: 6px;
+      border: 1px solid rgba(110, 139, 183, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px;
+      padding: 5px;
       font-size: 16px;
       line-height: 24px;
       color: colors.$primary;
@@ -412,6 +408,30 @@
         border-color: colors.$primary;
       }
     }
+  }
+}
+
+.newsectionCreateButton {
+  width: 130px;
+  height: 36px;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  display: flex;
+  border-radius: 6px;
+  border: 1px solid rgba(110, 139, 183, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  font-size: 16px;
+  line-height: 24px;
+  color: colors.$primary;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    border-color: colors.$primary;
   }
 }
 
@@ -440,7 +460,7 @@
 
 .tabs_section {
   background: #fff;
-  padding: 0px 0px 0 10px;
+  padding: 0px 0px 0 0px;
   width: 100%;
   height: 400px;
 }

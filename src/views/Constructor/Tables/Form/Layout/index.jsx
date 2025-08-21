@@ -4,9 +4,9 @@ import {useFieldArray, useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
 import {mainActions} from "../../../../../store/main/main.slice";
 import NewLayoutSettings from "./NewLayoutSettings";
-import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
 import styles from "./style.module.scss";
+import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const Layout = ({
   mainForm,
@@ -91,7 +91,7 @@ const Layout = ({
 
   return (
     <>
-      {selectedLayout.id ? (
+      {selectedLayout?.id ? (
         <NewLayoutSettings
           tableLan={tableLan}
           mainForm={mainForm}
@@ -111,13 +111,7 @@ const Layout = ({
           appendSectionTab={appendSectionTab}
         />
       ) : (
-        <NewlayoutList
-          tableLan={tableLan}
-          setSelectedLayout={setSelectedLayout}
-          mainForm={mainForm}
-          getData={getData}
-          setSelectedTabLayout={setSelectedTabLayout}
-        />
+        <RingLoaderWithWrapper />
       )}
 
       <div className={styles.page}>

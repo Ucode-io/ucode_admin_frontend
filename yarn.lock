@@ -1069,6 +1069,11 @@
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.2.tgz#2ae5a9d51cc583bd1f5673b3bb70d6d819682473"
   integrity sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==
 
+"@babel/runtime@^7.20.1":
+  version "7.28.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.3.tgz#75c5034b55ba868121668be5d5bb31cc64e6e61a"
+  integrity sha512-9uIQ10o0WGdpP6GDhXcdOJPJuDgFtIDtN/9+ArJQ2NAfAmiuhTQdzkaTGR33v43GYS2UrSA0eX2pPPHoFVvpxA==
+
 "@babel/template@^7.27.1", "@babel/template@^7.27.2":
   version "7.27.2"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.27.2.tgz#fa78ceed3c4e7b63ebf6cb39e5852fca45f6809d"
@@ -2906,6 +2911,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@juggle/resize-observer@^3.3.1", "@juggle/resize-observer@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
+  integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
+
 "@lezer/common@^1.0.0", "@lezer/common@^1.1.0", "@lezer/common@^1.2.0":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@lezer/common/-/common-1.2.3.tgz#138fcddab157d83da557554851017c6c1e5667fd"
@@ -4156,6 +4166,19 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.44.1.tgz#1c982f6a5044ffc2a35cd754a0951bdcb44d5ba0"
   integrity sha512-J8o22LuF0kTe7m+8PvW9wk3/bRq5+mRo5Dqo6+vXb7otCm3TPhYOJqOaQtGU9YMWQSL3krMnoOxMr0+9E6F3Ug==
 
+"@rsuite/icon-font@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@rsuite/icon-font/-/icon-font-4.1.0.tgz#df16ea8a116c04c19b822addba90647dfc47dbb7"
+  integrity sha512-q0Y+uQCVvzhD6lFeAFrvCDd1lTjZfM6MIaBjre3lSW1w586VWbuFnhTiqos3v9HIMlUpm3aAsxd3SuM6gYaqqQ==
+
+"@rsuite/icons@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@rsuite/icons/-/icons-1.3.2.tgz#d66ab142a6772fb42f3be1ea5ea3f96e4a38ea48"
+  integrity sha512-3sOdZpPcVePwTCoWcHHIEg4rsjWp9ehwjC84SjvgyqNyEf/BJNVDm0+jDAGGbhOF0HiWYyfU10LwrwnDSAYltA==
+  dependencies:
+    "@rsuite/icon-font" "^4.1.0"
+    classnames "^2.2.5"
+
 "@rtsao/scc@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@rtsao/scc/-/scc-1.1.0.tgz#927dd2fae9bc3361403ac2c7a00c32ddce9ad7e8"
@@ -4476,6 +4499,11 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.19.tgz#de18c90b7891f00fed7c1273495a2f851efd99c4"
   integrity sha512-NYqRyg/hIQrYPT9lbOeYc3kIRabJDn/k4qQHIXUpx88CBDww2fD15Sg5kbXlW86zm2XEW4g0QxkTI3/Kfkc7xQ==
 
+"@types/lodash@^4.17.15":
+  version "4.17.20"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.20.tgz#1ca77361d7363432d29f5e55950d9ec1e1c6ea93"
+  integrity sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==
+
 "@types/node@>=12.12.47":
   version "24.0.13"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-24.0.13.tgz#93ed8c05c7b188a59760be0ce2ee3fa7ad0f83f6"
@@ -4546,6 +4574,13 @@
   version "4.4.12"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.12.tgz#b5d76568485b02a307238270bfe96cb51ee2a044"
   integrity sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==
+
+"@types/react-window@^1.8.5":
+  version "1.8.8"
+  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-1.8.8.tgz#c20645414d142364fbe735818e1c1e0a145696e3"
+  integrity sha512-8Ls660bHR1AUA2kuRvVG9D/4XpRC6wjAaPT9dil7Ckc76eP9TKWZwwmgfq8Q1LANX3QNDnoU4Zp48A3w+zK69Q==
+  dependencies:
+    "@types/react" "*"
 
 "@types/react@*", "@types/react@>=16.9.11":
   version "19.1.8"
@@ -6703,7 +6738,7 @@ date-fns-tz@^2.0.0:
   resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-2.0.1.tgz#0a9b2099031c0d74120b45de9fd23192e48ea495"
   integrity sha512-fJCG3Pwx8HUoLhkepdsP7Z5RsucUi+ZBOxyM5d0ZZ6c4SdYustq0VMmOu6Wf7bli+yS/Jwp91TOCqn9jMcVrUA==
 
-date-fns@^2.28.0, date-fns@^2.30.0:
+date-fns@^2.28.0, date-fns@^2.29.3, date-fns@^2.30.0:
   version "2.30.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.30.0.tgz#f367e644839ff57894ec6ac480de40cae4b0f4d0"
   integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
@@ -6920,6 +6955,13 @@ dom-iterator@^1.0.0:
   dependencies:
     component-props "1.1.1"
     component-xor "0.0.4"
+
+dom-lib@^3.3.1:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/dom-lib/-/dom-lib-3.3.2.tgz#a5cbe3890f3839040c9359d2f2e4587140691156"
+  integrity sha512-ux0wcf6lggOCcJ6O3Q3mewbCOM/CL9f6+NXmxaWsF0/AKCvFNbfdmmqNnMG7cMVupCr9VeFEYWspSAD9WT/6gA==
+  dependencies:
+    "@babel/runtime" "^7.20.0"
 
 dom-walk@^0.1.0:
   version "0.1.2"
@@ -12591,6 +12633,11 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.2, react-transition-g
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+react-use-set@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-use-set/-/react-use-set-1.0.0.tgz#2b8b442c6e8c77a907534dcc665d54c3f7b3c841"
+  integrity sha512-6BBbOcWc/tOKuwd9gDtdunvOr/g40S0SkCBYvrSJvpI0upzNlHmLoeDvylnoP8PrjQXItClAFxseVGGhEkk7kw==
+
 react-virtualized-auto-sizer@^1.0.24:
   version "1.0.26"
   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.26.tgz#e9470ef6a778dc4f1d5fd76305fa2d8b610c357a"
@@ -12606,7 +12653,7 @@ react-window-infinite-loader@^1.0.9:
   resolved "https://registry.yarnpkg.com/react-window-infinite-loader/-/react-window-infinite-loader-1.0.10.tgz#30aa264c6b2cc6d41153a65377e337cb83c9bdca"
   integrity sha512-NO/csdHlxjWqA2RJZfzQgagAjGHspbO2ik9GtWZb0BY1Nnapq0auG8ErI+OhGCzpjYJsCYerqUlK6hkq9dfAAA==
 
-react-window@^1.8.11:
+react-window@^1.8.11, react-window@^1.8.8:
   version "1.8.11"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.11.tgz#a857b48fa85bd77042d59cc460964ff2e0648525"
   integrity sha512-+SRbUVT2scadgFSWx+R1P754xHPEqvcfSfVX10QYg6POOz+WNgkN48pS+BtZNIMGiL1HYrSEiCkwsMS15QogEQ==
@@ -13089,6 +13136,38 @@ rollup@^4.34.9:
     "@rollup/rollup-win32-x64-msvc" "4.44.1"
     fsevents "~2.3.2"
 
+rsuite-table@^5.19.2:
+  version "5.19.2"
+  resolved "https://registry.yarnpkg.com/rsuite-table/-/rsuite-table-5.19.2.tgz#ae2d7dd235f46ec7499ae64799a5de5dd5f2af60"
+  integrity sha512-0mnAuvTlDjNGo3FTWqIMdlCP2+gx8NJiMYJnGvOoYMt/kcxRsWzayQRrywc2cvnHTEOjMIQFi2uHYfie0irAHg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@juggle/resize-observer" "^3.3.1"
+    classnames "^2.3.1"
+    dom-lib "^3.3.1"
+    lodash "^4.17.21"
+
+rsuite@^5.83.3:
+  version "5.83.3"
+  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-5.83.3.tgz#217f4d5b0c71bb0c2a8278e7fe2496355b9f6879"
+  integrity sha512-L9iNrFTSDyXzSSJCu5tEK1sv9dE2gT4H6b5AQBbdIzdADqYr3DhBJLnOW5WthqSnCc40hupoPUcI9wUrnGbjZQ==
+  dependencies:
+    "@babel/runtime" "^7.20.1"
+    "@juggle/resize-observer" "^3.4.0"
+    "@rsuite/icons" "^1.3.2"
+    "@types/lodash" "^4.17.15"
+    "@types/prop-types" "^15.7.5"
+    "@types/react-window" "^1.8.5"
+    classnames "^2.3.1"
+    date-fns "^2.29.3"
+    dom-lib "^3.3.1"
+    lodash "^4.17.21"
+    prop-types "^15.8.1"
+    react-use-set "^1.0.0"
+    react-window "^1.8.8"
+    rsuite-table "^5.19.2"
+    schema-typed "^2.4.2"
+
 run-parallel@^1.1.9:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/run-parallel/-/run-parallel-1.2.0.tgz#66d1368da7bdf921eb9d95bd1a9229e7f21a43ee"
@@ -13191,6 +13270,13 @@ scheduler@^0.23.2:
   integrity sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==
   dependencies:
     loose-envify "^1.1.0"
+
+schema-typed@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/schema-typed/-/schema-typed-2.4.2.tgz#942e5582857431d837ebd048cbd91e32f5070c6e"
+  integrity sha512-4eYZiheiPps+I7JEKrhm/S8OIPncXqY0lKQbvI/Agn9QMJUQ3cgfFZ2spy4Ta9Qr3xLYB3/qj4wGbsNcVwEO/w==
+  dependencies:
+    lodash "^4.17.21"
 
 schema-utils@^1.0.0:
   version "1.0.0"

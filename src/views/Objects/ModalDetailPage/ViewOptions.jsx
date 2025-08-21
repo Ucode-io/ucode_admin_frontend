@@ -61,6 +61,7 @@ const viewIcons = {
 
 const ViewOptions = ({
   relationView = false,
+  tableInfo = {},
   view,
   viewName,
   refetchViews,
@@ -251,12 +252,31 @@ const ViewOptions = ({
     }
   };
 
-  const [closeOnBlur, setCloseOnBlur] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setIsOpen(false);
+        setOpenedMenu(null);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <Popover
       offset={[-145, 8]}
-      closeOnBlur={closeOnBlur}
+      closeOnBlur={false}
       onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
       modifiers={[
         {
@@ -346,8 +366,9 @@ const ViewOptions = ({
                   <ChevronRightIcon fontSize={22} />
                 </Flex>
               </Flex>
-
-              {/* <LayoutComponent
+              {/* 
+              <LayoutComponent
+                tableInfo={tableInfo}
                 refetchViews={refetchViews}
                 selectedTabIndex={selectedTabIndex}
                 tableLan={tableLan}
@@ -606,7 +627,6 @@ const ViewOptions = ({
 
         {openedMenu === "columns-visibility" && (
           <ColumnsVisibility
-            setCloseOnBlur={setCloseOnBlur}
             relationView={relationView}
             tableSlug={tableSlug}
             tableLan={tableLan}

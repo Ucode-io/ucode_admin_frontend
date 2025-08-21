@@ -56,7 +56,7 @@
         gap: 5px;
 
         .deleteButton {
-          transform: translateY(10px);
+          // transform: translateY(10px);
         }
       }
     }
@@ -107,7 +107,7 @@
       align-items: center;
 
       .tab {
-        padding: 8px 12px;
+        padding: 4px 12px;
         background-color: #fff;
         display: flex;
         align-items: center;
@@ -300,6 +300,7 @@
 .tabs_section {
   background: #fff;
   padding: 5px 0 0;
+  height: calc(100vh - 110px);
 }
 
 .tabs {
@@ -316,26 +317,25 @@
 }
 
 .newsectionsBlock {
-  min-height: 40px;
+  height: 300px;
   min-width: 350px;
-  padding: 0px 8px 0px 0px;
+  padding: 0px 4px 0px 0px;
 
   .newsectionCard {
-    border-radius: 6px;
-    // margin-bottom: 15px;
+    padding-top: 10px;
     display: flex;
+    border-radius: 0px;
 
     &.short {
       min-width: 160px;
     }
 
     .newsectionCardHeader {
-      // box-shadow: inset 0px -1px 0px #e5e9eb;
+      height: 95px;
       padding: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      // background: #f6f8f9;
 
       .newsectionCardHeaderLeftSide {
         display: flex;
@@ -346,9 +346,8 @@
     }
 
     .newsectionCardBody {
-      width: calc(100% - 150px);
+      width: calc(100% - 50px);
       overflow-x: scroll;
-      padding: 10px 16px 16px;
       gap: 60px;
       // width: 100%;
       display: flex;
@@ -360,23 +359,40 @@
       }
 
       .newsectionCardRow {
+        width: 250px;
         background-color: #fff;
         cursor: grab;
         display: flex;
         align-items: center;
         flex-direction: row;
         gap: 5px;
-        margin: 0 10px;
 
         .deleteButton {
-          transform: translateY(10px);
+          // transform: translateY(10px);
         }
       }
     }
   }
 
+  .newSectionFieldRow {
+    .newSectionFieldLabel {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+  }
+
+  .newSectionField {
+    height: 34px;
+    width: 200px;
+    border-radius: 6px;
+    border: 1px solid #9f9e9e;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
   .newsectionCreateCard {
-    padding: 16px;
+    padding: 8px;
 
     .newsectionCreateButton {
       width: 100%;
@@ -400,6 +416,7 @@
 }
 
 .newSectionDelete {
+  height: 90px;
   width: 50px;
   display: flex;
   align-items: center;
@@ -423,8 +440,9 @@
 
 .tabs_section {
   background: #fff;
-  padding: 5px 0 0;
+  padding: 0px 0px 0 10px;
   width: 100%;
+  height: 400px;
 }
 
 .tabs {
@@ -435,12 +453,14 @@
   padding: 10px;
   list-style-type: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   color: #5b6871;
   margin: 0 5px;
 }
 
 .tabsItem {
+  overflow: hidden;
+  height: 35px;
   padding: 5px;
   padding-left: 13px;
   list-style-type: none;
@@ -459,11 +479,12 @@
   &.active {
     background-color: rgba(14, 115, 246, 0.1490196078);
     color: #1890ff !important;
+    overflow: hidden;
   }
 }
 
 .sections_wrapper {
-  height: calc(100vh - 270px);
+  height: 350px;
   overflow: auto;
 }
 
@@ -479,8 +500,6 @@
 .tableSectionTable {
   display: flex;
   align-items: center;
-  .deleteButtonSection {
-  }
 }
 
 .draggableContainer {
@@ -548,4 +567,25 @@
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+.headerSection {
+  width: 100%;
+  background: #fff;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 15px;
+  border-bottom: 1px solid #eee;
+
+  .headerLabel {
+    font-size: 16px;
+  }
+
+  .headerBtns {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 }

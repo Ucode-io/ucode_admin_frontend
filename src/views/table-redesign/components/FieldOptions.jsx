@@ -1,12 +1,11 @@
 import React, {useState} from "react";
 import {
-  Box,
+  IconButton,
   Menu,
-  MenuButton,
-  MenuList,
   MenuItem,
-  Icon,
-} from "@chakra-ui/react";
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -14,16 +13,48 @@ import constructorFieldService from "../../../services/constructorFieldService";
 import {useQueryClient} from "react-query";
 import constructorViewService from "../../../services/constructorViewService";
 import {FieldPopover} from "../../Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
+import {useForm} from "react-hook-form";
+import MaterialUIProvider from "../../../providers/MaterialUIProvider";
+import {RelationPopover} from "../../Constructor/Tables/Form/Relations/components/RelationPopover";
 
-function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
+function FieldOptions({field, view, tableSlug, tableLan}) {
   const queryClient = useQueryClient();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [selectedField, setSelectedField] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
 
+  const [anchorMenu, setAnchorMenu] = useState(null);
+  const openMenu = Boolean(anchorMenu);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openPopover = Boolean(anchorEl);
+
+  const mainForm = useForm();
   const [formType, setFormType] = useState("CREATE");
 
+  const handleMenuOpen = (e) => {
+    e.stopPropagation();
+    setAnchorMenu(e.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorMenu(null);
+  };
+
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    setAnchorEl(e.currentTarget);
+    setMenuAnchor(e.currentTarget);
+    setFormType("UPDATE");
+    setSelectedField(field);
+    handleMenuClose();
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+  console.log("menuAnchrosss", anchorEl, menuAnchor);
   const deleteField = (column) => {
-    constructorFieldService.delete(column, tableSlug).then((res) => {
+    constructorFieldService.delete(column, tableSlug).then(() => {
       constructorViewService
         .update(tableSlug, {
           ...view,
@@ -34,66 +65,75 @@ function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
           queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
+    handleMenuClose();
   };
 
   return (
-    <Box onClick={(e) => e.stopPropagation()}>
-      <Menu placement="bottom-end" autoSelect={false} isLazy portal={false}>
-        <MenuButton
-          onClick={(e) => {
-            setCloseOnBlur(true);
-            e.stopPropagation();
-          }}
-          as={Box}
-          cursor="pointer"
-          h="18px"
-          borderRadius="md"
-          _hover={{bg: "gray.100"}}>
-          <MoreVertIcon fontSize="medium" />
-        </MenuButton>
+    <MaterialUIProvider>
+      <IconButton
+        size="small"
+        onClick={handleMenuOpen}
+        onMouseDown={(e) => e.stopPropagation()}>
+        <MoreVertIcon fontSize="medium" />
+      </IconButton>
 
-        <MenuList
-          portal={false}
-          borderRadius="lg"
-          shadow="xl"
-          minW="180px"
-          py={2}
-          onClick={(e) => e.stopPropagation()}>
-          <MenuItem
-            icon={<Icon as={EditIcon} fontSize="18px" />}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit?.();
-            }}>
-            Edit Field
-          </MenuItem>
-          <MenuItem
-            icon={<Icon as={DeleteIcon} fontSize="18px" />}
-            color="red.500"
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteField(field?.id);
-            }}>
-            Delete Field
-          </MenuItem>
-        </MenuList>
+      <Menu
+        anchorEl={anchorMenu}
+        open={openMenu}
+        onClose={handleMenuClose}
+        anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+        transformOrigin={{vertical: "top", horizontal: "right"}}>
+        <MenuItem
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "140px",
+          }}
+          onClick={handleEditClick}>
+          <ListItemText>Edit Field</ListItemText>
+          <EditIcon fontSize="small" />
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => deleteField(field?.id)}
+          sx={{
+            color: "error.main",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "140px",
+          }}>
+          <ListItemText>Delete Field</ListItemText>
+          <DeleteIcon fontSize="small" color="error" />
+        </MenuItem>
       </Menu>
 
-      {/* <FieldPopover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        formType={formType}
-        getRelationFields={getRelationFields}
-        mainForm={mainForm}
-        tableLan={tableLan}
-        // onSubmit={(index, field) => updateField(field, index)}
-        slug={tableSlug}
-        field={drawerState}
-        selectedField={selectedField}
-        // menuItem={menuItem}
-      /> */}
-    </Box>
+      {selectedField?.type === "LOOKUP" ? (
+        <RelationPopover
+          anchorEl={anchorEl ?? menuAnchor}
+          onClose={handlePopoverClose}
+          tableLan={tableLan}
+          relation={selectedField}
+          closeSettingsBlock={() => handlePopoverClose()}
+          // getRelationFields={getRelationFields}
+          formType={formType}
+          open={Boolean(openPopover)}
+        />
+      ) : (
+        <FieldPopover
+          open={Boolean(openPopover)}
+          anchorEl={anchorEl ?? menuAnchor}
+          onClose={handlePopoverClose}
+          formType={formType}
+          mainForm={mainForm}
+          tableLan={tableLan}
+          slug={tableSlug}
+          field={selectedField}
+          selectedField={selectedField}
+        />
+      )}
+    </MaterialUIProvider>
   );
 }
 

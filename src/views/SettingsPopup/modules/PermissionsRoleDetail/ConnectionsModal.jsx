@@ -21,6 +21,8 @@ function ConnectionsModal({connections}) {
   const [connectionId, setConnectionId] = useState();
   const {i18n} = useTranslation();
 
+  const clientTypeId = store.getState()?.auth?.clientTypes?.id;
+
   const {mutateAsync: deleteRole, isLoading: createLoading} =
     useConnectionDeleteMutation({
       onSuccess: () => {
@@ -126,6 +128,7 @@ function ConnectionsModal({connections}) {
         ))}
         {modalType && (
           <ConnectionCreateModal
+            clientTypeId={clientTypeId}
             settingLan={settingLan}
             closeModal={closeModal}
             modalType={modalType}

@@ -108,18 +108,20 @@ function LayoutTabs({
 
   return (
     <>
-      <div className={"custom-tabs"} style={{width: "100%"}}>
+      <div className={"custom-tabs"} style={{width: "100%", margin: "6px 0"}}>
         <div
           style={{
             display: "flex",
+            height: "45px",
+            alignItems: "center",
           }}>
           <Container
             groupName="table_relation"
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              padding: "0 16px",
+              gap: "6px",
+              padding: "0 0 0 10px",
             }}
             dropPlaceholder={{className: "drag-row-drop-preview"}}
             orientation="horizontal"
@@ -127,21 +129,22 @@ function LayoutTabs({
             getChildPayload={(i) => allTabs[i]}>
             {allTabs?.map((tab, index) => (
               <Draggable
+                style={{
+                  padding: 0,
+                  borderRadius: "6px",
+                }}
                 key={tab.id}
                 onClick={() => {
                   setSelectedTabIndex(index);
                   setSelectedTab(tab);
-                }}
-                // onDrag={() => handleTabsDrag(index)}
-              >
+                }}>
                 <Button
                   onClick={() => {
                     setSelectedTabIndex(index);
                     setSelectedTab(tab);
                   }}
-                  style={{padding: 0}}>
+                  style={{padding: 0, border: "1px solid #eee"}}>
                   <div
-                    // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
                     className={`${styles.tabsItem} ${
                       selectedTab?.id === tab?.id ? styles.active : ""
                     }`}>
@@ -161,9 +164,6 @@ function LayoutTabs({
                           mainForm.watch(
                             `layouts.${selectedLayoutIndex}.tabs.${index}.label`
                           ) ||
-                          // mainForm.watch(
-                          //   `layouts.${selectedLayoutIndex}.tabs.${index}.label`
-                          // ) ??
                           tab?.relation?.attributes?.[
                             `label_to_${i18n?.language}`
                           ] ||
@@ -188,7 +188,13 @@ function LayoutTabs({
               </Draggable>
             ))}
           </Container>
-          <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>
+          <RectangleIconButton
+            style={{
+              height: "37px",
+              width: "40px",
+              marginLeft: "6px",
+            }}
+            onClick={() => openFieldsBlock("RELATION")}>
             <Add />
           </RectangleIconButton>
         </div>

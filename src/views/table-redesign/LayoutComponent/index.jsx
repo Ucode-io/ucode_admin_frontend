@@ -19,6 +19,7 @@ import LayoutModal from "./LayoutModal";
 
 function LayoutComponent({
   selectedView,
+  tableInfo = {},
   tableLan = {},
   isChanged = false,
   viewSetting = false,
@@ -83,9 +84,11 @@ function LayoutComponent({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent zIndex={2} minW="602px" w="602px">
+        <ModalContent zIndex={2} minW="802px" w="802px">
           <MaterialUIProvider>
             <LayoutModal
+              tableInfo={tableInfo}
+              tableLan={tableLan}
               refetchMainView={refetchViews}
               selectedTabIndex={selectedTabIndex}
               closeModal={onClose}

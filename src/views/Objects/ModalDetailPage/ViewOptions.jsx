@@ -61,6 +61,7 @@ const viewIcons = {
 
 const ViewOptions = ({
   relationView = false,
+  tableInfo = {},
   view,
   viewName,
   refetchViews,
@@ -366,14 +367,15 @@ const ViewOptions = ({
                 </Flex>
               </Flex>
 
-              {/* <LayoutComponent
+              <LayoutComponent
+                tableInfo={tableInfo}
                 refetchViews={refetchViews}
                 selectedTabIndex={selectedTabIndex}
                 tableLan={tableLan}
                 selectedView={view}
                 isChanged={isChanged}
                 setIsChanged={setIsChanged}
-              /> */}
+              />
 
               <ViewSettingsModal
                 refetchViews={refetchViews}

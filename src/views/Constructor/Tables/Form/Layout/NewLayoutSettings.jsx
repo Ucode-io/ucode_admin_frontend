@@ -1,6 +1,5 @@
 import React, {useMemo, useState} from "react";
 import styles from "./style.module.scss";
-import SummarySection from "./SummarySection";
 import LayoutTabs from "./LayoutTabs";
 import SecondaryButton from "../../../../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
@@ -79,16 +78,21 @@ function NewLayoutSettings({
 
   return (
     <>
-      <div className={styles.summary_section_layer}>
-        <SummarySection
-          mainForm={mainForm}
-          selectedLayout={selectedLayout}
-          setSelectedLayout={setSelectedLayout}
-          layoutForm={layoutForm}
-          openFieldsBlock={openFieldsBlock}
-          openFieldSettingsBlock={openFieldSettingsBlock}
-          openRelationSettingsBlock={openRelationSettingsBlock}
-        />
+      <div className={styles.headerSection}>
+        <div className={styles.headerLabel}>Layout Settings</div>
+        <div className={styles.headerBtns}>
+          <SecondaryButton
+            onClick={() => {
+              navigate(-1);
+            }}
+            color="error">
+            {generateLangaugeText(tableLan, i18n?.language, "Close") || "Close"}
+          </SecondaryButton>
+          <PrimaryButton loader={loader} onClick={updateSelectedLayout}>
+            <Save />{" "}
+            {generateLangaugeText(tableLan, i18n?.language, "Save") || "Save"}
+          </PrimaryButton>
+        </div>
       </div>
       <div className={styles.tabs_section}>
         <LayoutTabs
@@ -111,8 +115,7 @@ function NewLayoutSettings({
           appendSectionTab={appendSectionTab}
         />
       </div>
-
-      <Footer
+      {/* <Footer
         extra={
           <>
             <SecondaryButton
@@ -129,7 +132,7 @@ function NewLayoutSettings({
             </PrimaryButton>
           </>
         }
-      />
+      /> */}
     </>
   );
 }

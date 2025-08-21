@@ -108,18 +108,6 @@ const NewSection = ({
         <div
           className={styles.newsectionCardHeaderLeftSide}
           style={{display: "flex", flexDirection: "column"}}>
-          {/* {languages.map((language) => (
-            <HFTextField
-              placeholder={`Section ${language.slug}`}
-              required={index === 0}
-              control={mainForm.control}
-              // name={nameGenerator(language.slug)}
-              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}
-              size="small"
-              style={{width: 170}}
-              id={`section_lan_${i18n?.language}`}
-            />
-          ))} */}
           <button onClick={handleClick} className={styles.countBtn}>
             <MoreVertIcon />
           </button>
@@ -160,7 +148,9 @@ const NewSection = ({
           onDrop={(dragResults) => onDrop(dragResults, 1)}
           getChildPayload={(index) => sectionFields.fields[index]}>
           {sectionFieldsWatch?.map((field, fieldIndex) => (
-            <Draggable key={fieldIndex} style={{minWidth: "300px"}}>
+            <Draggable
+              key={fieldIndex}
+              style={{width: "220px", height: "80px"}}>
               {field?.attributes?.isTab ? (
                 <div className={styles.tableSectionTable}>
                   <table className={styles.relationTable}>
@@ -189,22 +179,26 @@ const NewSection = ({
                 </div>
               ) : (
                 <div className={styles.newsectionCardRow}>
-                  <FormElementGenerator
+                  <div className={styles.newSectionFieldRow}>
+                    <div className={styles.newSectionFieldLabel}>
+                      {field?.label}
+                    </div>
+                    <div className={styles.newSectionField}>
+                      <img src="/table-icons/lock.svg" alt="lock" />
+                      <ButtonsPopover
+                        className={styles.deleteButton}
+                        onEditClick={() => openSettingsBlock(field)}
+                        onDeleteClick={() => removeField(fieldIndex, 1)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* <FormElementGenerator
                     control={mainForm.control}
                     field={fieldsMap[field.id] ?? field}
-                    // isLayout={true}
-                    // sectionIndex={index}
-                    // column={1}
-                    // fieldIndex={fieldIndex}
-                    // mainForm={mainForm}
                     checkPermission={false}
                     checkRequired={false}
-                  />
-                  <ButtonsPopover
-                    className={styles.deleteButton}
-                    onEditClick={() => openSettingsBlock(field)}
-                    onDeleteClick={() => removeField(fieldIndex, 1)}
-                  />
+                  /> */}
                 </div>
               )}
             </Draggable>

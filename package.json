@@ -201,6 +201,7 @@
     "redux-persist": "^6.0.0",
     "regenerator-runtime": "^0.14.0",
     "reselect": "^4.1.5",
+    "rsuite": "^5.83.3",
     "shaka-player": "^4.15.9",
     "styled-components": "^6.0.7",
     "tus-js-client": "^3.0.1",

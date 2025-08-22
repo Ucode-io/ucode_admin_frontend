@@ -4,39 +4,39 @@ import {useQuery} from "react-query";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {TabPanel, Tabs} from "react-tabs";
 import FiltersBlock from "../../components/FiltersBlock";
-import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
-import { listToMap, listToMapWithoutRel } from "../../utils/listToMap";
+import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
+import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
 import CalendarHourView from "./CalendarHourView";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
 import ViewsWithGroups from "./ViewsWithGroups";
 import ViewTabSelector from "./components/ViewTypeSelector";
-import { NewUiViewsWithGroups } from "@/views/table-redesign/views-with-groups";
-import { Box, Skeleton } from "@mui/material";
+import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
+import {Box, Skeleton} from "@mui/material";
 import constructorViewService from "../../services/constructorViewService";
-import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
-import { DynamicTable } from "../table-redesign";
-import { groupFieldActions } from "../../store/groupField/groupField.slice";
-import { useDispatch, useSelector } from "react-redux";
-import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
-import { viewsActions } from "../../store/views/view.slice";
+import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import {DynamicTable} from "../table-redesign";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {useDispatch, useSelector} from "react-redux";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import {viewsActions} from "../../store/views/view.slice";
 import NoDataPng from "../../assets/images/no-data.png";
-import { Text } from "@chakra-ui/react";
+import {Text} from "@chakra-ui/react";
 
 const NewObjectsPage = () => {
-  const { state, pathname } = useLocation();
-  const { menuId } = useParams();
+  const {state, pathname} = useLocation();
+  const {menuId} = useParams();
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const [selectedView, setSelectedView] = useState(null);
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
-  const { views: viewsFromStore } = useSelector((state) => state.views);
+  const {views: viewsFromStore} = useSelector((state) => state.views);
 
   const [menuItem, setMenuItem] = useState(null);
 
-  const { data: views, refetch } = useQuery(
+  const {data: views, refetch} = useQuery(
     ["GET_VIEWS_LIST", menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
@@ -68,7 +68,7 @@ const NewObjectsPage = () => {
     }
   );
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
+  const {loader: menuLoader} = useMenuGetByIdQuery({
     menuId: menuId,
     queryParams: {
       enabled: Boolean(menuId),
@@ -108,7 +108,7 @@ const NewObjectsPage = () => {
       enabled: Boolean(
         selectedView?.table_slug && selectedView?.type !== "SECTION"
       ),
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -148,7 +148,7 @@ const NewObjectsPage = () => {
 
   useEffect(() => {
     if (pathname.includes("/login")) {
-      navigate("/", { replace: false });
+      navigate("/", {replace: false});
     }
   }, []);
 
@@ -221,7 +221,7 @@ const NewObjectsPage = () => {
           {viewsFromStore?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({ view })}
+                {getViewComponent([view?.type])({view})}
               </TabPanel>
             );
           })}
@@ -256,8 +256,7 @@ const NewObjectsPage = () => {
             alignItems="center"
             flexDirection="column"
             height="100%"
-            gap="16px"
-          >
+            gap="16px">
             <img src={NoDataPng} alt="No data" width={250} />
             <Text fontSize="16px" fontWeight="500" color="#475467">
               No data found

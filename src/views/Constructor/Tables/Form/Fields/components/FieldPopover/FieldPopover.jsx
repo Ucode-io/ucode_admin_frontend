@@ -46,7 +46,7 @@ export const FieldPopover = ({
     field,
     submitCallback,
   });
-  console.log("fieldfield", field, selectedField);
+
   return (
     <Popover
       open={open}

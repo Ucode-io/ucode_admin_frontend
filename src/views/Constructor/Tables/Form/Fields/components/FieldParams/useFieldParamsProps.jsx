@@ -4,6 +4,9 @@ import { FIELD_TYPES, newFieldTypes } from "@/utils/constants/fieldTypes";
 import { useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { applyDrag } from "../../../../../../../utils/applyDrag";
+import { useQuery } from "react-query";
+import constructorFunctionService from "../../../../../../../services/constructorFunctionService";
+import listToOptions from "../../../../../../../utils/listToOptions";
 
 export const useFieldParamsProps = ({ watch, setValue, control }) => {
   const { i18n } = useTranslation();
@@ -159,6 +162,22 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     }
   };
 
+  const { data: functions = [] } = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return constructorFunctionService.getListV2({});
+    },
+    {
+      enabled: watch("type") === FIELD_TYPES.BUTTON,
+      onError: (err) => {
+        console.log("ERR =>", err);
+      },
+      select: (res) => {
+        return listToOptions(res.functions, "name", "id");
+      },
+    }
+  );
+
   return {
     backetOptions: backetOptions?.menus,
     i18n,
@@ -196,5 +215,6 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     addProgress,
     addComplete,
     onDrop,
+    functions,
   };
 };

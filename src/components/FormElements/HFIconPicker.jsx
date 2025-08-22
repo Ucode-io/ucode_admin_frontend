@@ -25,7 +25,7 @@ const HFIconPicker = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <IconPicker
             id="icon_field"
@@ -45,7 +45,8 @@ const HFIconPicker = ({
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 

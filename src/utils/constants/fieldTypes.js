@@ -32,6 +32,7 @@ export const FIELD_TYPES = {
   DATE_TIME_WITHOUT_TIME_ZONE: "DATE_TIME_WITHOUT_TIME_ZONE",
   UUID: "UUID",
   VIDEO: "VIDEO",
+  BUTTON: "BUTTON",
 };
 
 export const fieldTypes = [

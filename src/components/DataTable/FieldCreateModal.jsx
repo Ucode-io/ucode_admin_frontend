@@ -61,6 +61,9 @@ import {useViewContext} from "../../providers/ViewProvider";
 import {FieldPopover} from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
 import {RelationPopover} from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
 import { FieldCheckbox } from "../../views/Constructor/Tables/Form/components/FieldCheckbox/FieldCheckbox";
+import HFIconPicker from "../FormElements/HFIconPicker";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import listToOptions from "../../utils/listToOptions";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -346,6 +349,22 @@ export default function FieldCreateModal({
   const params = {
     language_setting: i18n?.language,
   };
+
+  const { data: functions = [] } = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return constructorFunctionService.getListV2({});
+    },
+    {
+      enabled: format === FIELD_TYPES.BUTTON,
+      onError: (err) => {
+        console.log("ERR =>", err);
+      },
+      select: (res) => {
+        return listToOptions(res.functions, "name", "id");
+      },
+    }
+  );
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
@@ -868,6 +887,28 @@ export default function FieldCreateModal({
                       />
                     </Box>
                   )}
+                {format === FIELD_TYPES.BUTTON && (
+                  <Box
+                    width="100%"
+                    display="flex"
+                    flexDirection="column"
+                    gap="8px"
+                  >
+                    <HFSelect
+                      placeholder="Function"
+                      required={true}
+                      options={functions}
+                      control={control}
+                      name="attributes.function"
+                    />
+                    <HFIconPicker
+                      required={true}
+                      control={control}
+                      name="attributes.icon"
+                      placeholder="Icon"
+                    />
+                  </Box>
+                )}
                 {format === FIELD_TYPES.MULTISELECT && (
                   <Box
                     width={"100%"}

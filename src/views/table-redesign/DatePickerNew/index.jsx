@@ -1,15 +1,16 @@
 import CloseIcon from "@mui/icons-material/Close";
-import {Box, Popover} from "@mui/material";
-import {format} from "date-fns";
-import React, {useState} from "react";
+import {Box, Popover, TextField} from "@mui/material";
+import {format, parse} from "date-fns";
+import React, {useEffect, useState} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {HFDayPicker} from "./HFDayPicker";
 import HFMonthPicker from "./HFMonthPicker";
 import HFQuarterPicker from "./HFQuarterPicker";
 import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
-import {useWatch} from "react-hook-form";
+import {Controller, useWatch} from "react-hook-form";
 import {Lock} from "@mui/icons-material";
+import InputMask from "react-input-mask";
 
 function HFDatePickerNew({
   withTime = false,
@@ -17,150 +18,177 @@ function HFDatePickerNew({
   name,
   field,
   disabled = false,
-  required = false,
-  placeholder = "",
+  placeholder = "DD.MM.YYYY",
   defaultValue = "",
-  isNewTableView = false,
-  isTransparent = false,
   updateObject = () => {},
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
-  const handleClose = () => setAnchorEl(null);
+  const value = useWatch({control, name});
+  const formatString = withTime ? "dd.MM.yyyy HH:mm" : "dd.MM.yyyy";
 
-  const isValidDate = (date) => {
-    const d = new Date(date);
-    return d instanceof Date && !isNaN(d);
-  };
-  const value = useWatch({
-    control,
-    name: name,
-  });
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    if (value && !isNaN(Date.parse(value))) {
+      setInputValue(format(new Date(value), formatString));
+    } else {
+      setInputValue("");
+    }
+  }, [value, formatString]);
 
   return (
-    <>
-      <Box>
-        <Box
-          onClick={(e) => {
-            !disabled && handleClick(e);
-          }}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "8px",
-            padding: "2px 8px",
-            cursor: "pointer",
-            fontSize: "12px",
-            height: "32px",
-          }}>
+    <Controller
+      name={name}
+      control={control}
+      defaultValue={defaultValue || ""}
+      render={({field: rhfField}) => (
+        <Box>
           <Box
+            onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}
             sx={{
               display: "flex",
               alignItems: "center",
+              justifyContent: "space-between",
+              gap: "8px",
+              fontSize: "12px",
+              height: "30px",
             }}>
-            <span>
-              {isValidDate(value) ? (
-                `${withTime ? format(new Date(value), "dd.MM.yyyy HH:mm") : format(new Date(value), "dd.MM.yyyy")}`
-              ) : (
-                <span style={{color: "#909EAB"}}>{""}</span>
+            <InputMask
+              mask={withTime ? "99.99.9999 99:99" : "99.99.9999"}
+              value={inputValue}
+              onChange={(e) => {
+                let raw = e.target.value;
+
+                let parts = raw.split(".");
+                if (parts.length >= 2) {
+                  let day = parts[0];
+                  let month = parts[1];
+
+                  if (parseInt(month, 10) > 12) {
+                    month = "12";
+                  }
+
+                  if (month.length === 1 && parseInt(month, 10) > 0) {
+                    month = month.padStart(2, "0");
+                  }
+
+                  parts[1] = month;
+                  raw = parts.join(".");
+                }
+
+                setInputValue(raw);
+
+                try {
+                  const parsed = parse(raw, formatString, new Date());
+                  const val = parsed.toISOString();
+                  rhfField.onChange(val);
+                  updateObject();
+                  return;
+                } catch {}
+              }}
+              disabled={disabled}>
+              {(inputProps) => (
+                <TextField
+                  {...inputProps}
+                  placeholder={placeholder}
+                  variant="standard"
+                  InputProps={{
+                    disableUnderline: true,
+                    style: {
+                      fontSize: "12px",
+                      height: "30px",
+                      border: "none",
+                      outline: "none",
+                      boxShadow: "none",
+                      background: "transparent",
+                    },
+                  }}
+                  fullWidth
+                />
               )}
-            </span>
+            </InputMask>
 
-            {/* {Boolean(value) && (
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onChange(undefined);
-                }}
-                sx={{
-                  height: "18px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginLeft: "10px",
-                }}>
-                <CloseIcon style={{height: "16px", width: "16px"}} />
+            {Boolean(disabled) && (
+              <Box sx={{marginRight: "20px"}}>
+                <Lock />
               </Box>
-            )} */}
-          </Box>
-
-          {Boolean(disabled) && (
-            <Box sx={{marginRight: "20px"}}>
-              <Lock />
+            )}
+            <Box
+              sx={{marginRight: "24px", cursor: "pointer"}}
+              onClick={(e) => {
+                !disabled && setAnchorEl(e.currentTarget);
+              }}>
+              <img src="/table-icons/date-time.svg" alt="" />
             </Box>
-          )}
-          <Box>
-            <img src="/table-icons/date-time.svg" alt="" />
           </Box>
-        </Box>
 
-        <Popover
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}>
-          <Box
-            sx={{
-              minWidth: "210px",
-              minHeight: "250px",
-              border: "1px solid #eee",
-              borderRadius: "8px",
+          <Popover
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => setAnchorEl(null)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
             }}>
-            <Tabs className={styles.tabs}>
-              <TabList className={styles.tablist}>
-                <Tab className={styles.tab}>Day</Tab>
-                <Tab className={styles.tab}>Month</Tab>
-                <Tab className={styles.tab}>Quarter</Tab>
-                <Tab className={styles.tab}>Yearly</Tab>
-              </TabList>
-              <TabPanel sx={{height: "200px", width: "100%"}}>
-                <HFDayPicker
-                  control={control}
-                  name={name}
-                  field={field}
-                  placeholder={field?.label}
-                  updateObject={updateObject}
-                  withTime={withTime}
-                />
-              </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
-                <HFMonthPicker
-                  control={control}
-                  name={name}
-                  field={field}
-                  placeholder={field?.label}
-                  updateObject={updateObject}
-                />
-              </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
-                <HFQuarterPicker
-                  control={control}
-                  name={name}
-                  field={field}
-                  placeholder={field?.label}
-                  updateObject={updateObject}
-                />
-              </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
-                <HFYearPicker
-                  control={control}
-                  name={name}
-                  field={field}
-                  placeholder={field?.label}
-                  updateObject={updateObject}
-                />
-              </TabPanel>
-            </Tabs>
-          </Box>
-        </Popover>
-      </Box>
-    </>
+            <Box
+              sx={{
+                minWidth: "210px",
+                minHeight: "250px",
+                border: "1px solid #eee",
+                borderRadius: "8px",
+              }}>
+              <Tabs className={styles.tabs}>
+                <TabList className={styles.tablist}>
+                  <Tab className={styles.tab}>Day</Tab>
+                  <Tab className={styles.tab}>Month</Tab>
+                  <Tab className={styles.tab}>Quarter</Tab>
+                  <Tab className={styles.tab}>Yearly</Tab>
+                </TabList>
+                <TabPanel>
+                  <HFDayPicker
+                    control={control}
+                    name={name}
+                    field={field}
+                    placeholder={field?.label}
+                    updateObject={updateObject}
+                    withTime={withTime}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <HFMonthPicker
+                    control={control}
+                    name={name}
+                    field={field}
+                    placeholder={field?.label}
+                    updateObject={updateObject}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <HFQuarterPicker
+                    control={control}
+                    name={name}
+                    field={field}
+                    placeholder={field?.label}
+                    updateObject={updateObject}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <HFYearPicker
+                    control={control}
+                    name={name}
+                    field={field}
+                    placeholder={field?.label}
+                    updateObject={updateObject}
+                  />
+                </TabPanel>
+              </Tabs>
+            </Box>
+          </Popover>
+        </Box>
+      )}
+    />
   );
 }
 

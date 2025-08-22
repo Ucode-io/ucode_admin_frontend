@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import {Box} from "@mui/material";
 import {useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
@@ -67,6 +67,13 @@ const DrawerRelationTable = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+  const settingsForm = useForm({
+    defaultValues: {
+      calendar_from_slug: "",
+      calendar_to_slug: "",
+    },
+  });
+
   const id = searchParams.get("p");
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -312,6 +319,7 @@ const DrawerRelationTable = ({
             </PermissionWrapperV2>
 
             <ViewOptions
+              settingsForm={settingsForm}
               tableSlug={tableSlug}
               selectedTab={selectedTab}
               data={data}

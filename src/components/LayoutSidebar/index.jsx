@@ -44,7 +44,7 @@ import {useTranslation} from "react-i18next";
 import InlineSVG from "react-inlinesvg";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {Container} from "react-smooth-dnd";
 import useSearchParams from "../../hooks/useSearchParams";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
@@ -91,6 +91,7 @@ const LayoutSidebar = ({
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const {appId} = useParams();
+  const location = useLocation();
 
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
@@ -121,6 +122,8 @@ const LayoutSidebar = ({
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
+  const [childMenu, setChildMenu] = useState(null);
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -203,18 +206,6 @@ const LayoutSidebar = ({
     setSelectedFolder(element);
   };
 
-  const deleteFolder = (element) => {
-    menuSettingsService
-      .delete(element.id)
-      .then(() => {
-        queryClient.refetchQueries(["MENU"], element?.id);
-        getMenuList();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const getMenuList = () => {
     setIsMenuListLoading(true);
 
@@ -228,7 +219,7 @@ const LayoutSidebar = ({
           const permission = el?.data?.permission?.read;
 
           if (id === "c57eedc3-a954-4262-a0af-376c65b5a280") {
-            return false;
+            return true;
           }
 
           const excludedIds = [
@@ -247,6 +238,28 @@ const LayoutSidebar = ({
       })
       .finally(() => {
         setIsMenuListLoading(false);
+      });
+  };
+
+  const deleteFolder = (element) => {
+    menuSettingsService
+      .delete(element.id)
+      .then(() => {
+        if (
+          !element?.parent_id ||
+          element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284"
+        ) {
+          console.log("ENTERED 1");
+          queryClient.refetchQueries(["MENU"], element?.id);
+          getMenuList();
+        } else {
+          console.log("ENTERED 2");
+          setChildMenu(element);
+          queryClient.refetchQueries(["CHILD_MENU"], element?.id);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -318,8 +331,18 @@ const LayoutSidebar = ({
   }, [menuTemplate]);
 
   useEffect(() => {
-    getMenuList();
-  }, []);
+    if (!hasFetchedOnce) {
+      getMenuList();
+      setHasFetchedOnce(true);
+    }
+
+    if (location?.state?.refetch) {
+      getMenuList();
+      setHasFetchedOnce(true);
+
+      window.history.replaceState({...location.state, refetch: undefined}, "");
+    }
+  }, [location?.state?.refetch, hasFetchedOnce]);
 
   useEffect(() => {
     setSelectedApp(menuList?.find((item) => item?.id === appId));
@@ -327,7 +350,7 @@ const LayoutSidebar = ({
 
   useEffect(() => {
     setSelectedApp(menuList?.find((item) => item?.id === appId));
-  }, [appId]);
+  }, []);
 
   useEffect(() => {
     if (
@@ -527,7 +550,6 @@ const LayoutSidebar = ({
                           stroke-linejoin="round"
                         />
                       </svg>
-                      {/* <SearchIcon color="#475467" fontSize={20} /> */}
                     </Box>
                     <span>Search</span>
                   </Flex>
@@ -551,6 +573,8 @@ const LayoutSidebar = ({
                     index={index}
                     child={child}
                     key={index}
+                    childMenu={childMenu}
+                    setChildMenu={setChildMenu}
                     element={element}
                     sidebarIsOpen={sidebarIsOpen}
                     setElement={setElement}
@@ -622,53 +646,6 @@ const LayoutSidebar = ({
               )}
 
               <Box mt={46}>
-                {/* {Boolean(
-                  permissions?.chat && userRoleName === DEFAULT_ADMIN
-                ) && (
-                  <Flex
-                    position="relative"
-                    h={30}
-                    mx={8}
-                    mb={4}
-                    alignItems="center"
-                    whiteSpace="nowrap"
-                    borderRadius={6}
-                    color="#475467"
-                    fontSize={14}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    _hover={{
-                      bg: "#EAECF0",
-                      ".accordionFolderIcon": {
-                        display: "none",
-                      },
-                      ".accordionIcon": {
-                        display: "block",
-                      },
-                    }}
-                    cursor="pointer"
-                    onMouseLeave={
-                      sidebarIsOpen
-                        ? undefined
-                        : () =>
-                            dispatch(
-                              mainActions.setSidebarHighlightedAction(null)
-                            )
-                    }>
-                    <SidebarActionTooltip id="ai-chat" title="AI Chat">
-                      <AIChat
-                        sidebarOpen={sidebarIsOpen}
-                        {...getActionProps("ai-chat")}>
-                        <Flex w="100%" alignItems="center" gap={8}>
-                          <Box pl="6px">
-                            <SearchIcon color="#475467" fontSize={20} />
-                          </Box>
-                          <span>Search</span>
-                        </Flex>
-                      </AIChat>
-                    </SidebarActionTooltip>
-                  </Flex>
-                )} */}
                 {userRoleName === DEFAULT_ADMIN && (
                   <Flex
                     position="relative"
@@ -713,7 +690,6 @@ const LayoutSidebar = ({
                           display="flex"
                           alignItems="center"
                           justifyContent="center">
-                          {/* <SettingsIcon color="#475467" fontSize={16} /> */}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             x="0px"
@@ -772,7 +748,6 @@ const LayoutSidebar = ({
                 ? undefined
                 : () => dispatch(mainActions.setSidebarHighlightedAction(null))
             }>
-            {/* {Boolean(permissions?.settings) && ( */}
             <>
               <SidebarActionTooltip id="user-invite" title="User Invite">
                 <Box
@@ -789,10 +764,7 @@ const LayoutSidebar = ({
                       background: "#F3F3F3",
                     },
                   }}
-                  // onClick={handleOpenUserInvite}
                   onClick={onOpenInviteModal}>
-                  {/* color: rgb(161, 160, 156) */}
-                  {/* <img src={UserIcon} alt="user" /> */}
                   <svg
                     width="20"
                     height="20"
@@ -822,14 +794,8 @@ const LayoutSidebar = ({
                     </span>
                   ) : null}
                 </Box>
-
-                {/* <AIChat
-                  sidebarOpen={sidebarIsOpen}
-                  {...getActionProps("ai-chat")}
-                /> */}
               </SidebarActionTooltip>
             </>
-            {/* )} */}
 
             <DocsChatwootModal
               sidebarIsOpen={sidebarIsOpen}
@@ -935,27 +901,6 @@ const LayoutSidebar = ({
   );
 };
 
-// const Chatwoot = forwardRef(({open, ...props}, ref) => {
-//   const {originalButtonFunction} = useChatwoot();
-
-//   return (
-//     <Flex
-//       ref={ref}
-//       w={open ? "100%" : 36}
-//       h={36}
-//       alignItems="center"
-//       justifyContent="center"
-//       borderRadius={6}
-//       _hover={{bg: "#EAECF0"}}
-//       cursor="pointer"
-//       mb={open ? 0 : 4}
-//       {...props}
-//       onClick={originalButtonFunction}>
-//       <img src="/img/message-text-square.svg" alt="chat" />
-//     </Flex>
-//   );
-// });
-
 const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
   const {
     open,
@@ -1006,7 +951,6 @@ const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
         justifyContent="center"
         alignItems="center">
         {sidebarOpen ? children : <SearchIcon color="#475467" fontSize={16} />}
-        {/* <img src="/img/magic-wand.svg" alt="magic" /> */}
       </Flex>
 
       <AIMenu
@@ -1053,8 +997,6 @@ const Header = ({
   const auth = useSelector((state) => state.auth);
   const {isOpen, onOpen, onClose} = useDisclosure();
   const [connections, setConnections] = useState([]);
-  const clientTypeId = auth?.clientType?.id;
-  const projectId = auth?.projectId;
   const userId = auth?.userInfo?.id;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [env, setEnv] = useState("");
@@ -1309,12 +1251,7 @@ const ProfilePanel = ({
         gap={5}
         mt={10}
         cursor={"pointer"}
-        onClick={handleOpenProfileModal}
-        // onClick={() => {
-        //   navigate(`/settings/auth/matrix/profile/crossed`);
-        //   onClose();
-        // }}
-      >
+        onClick={handleOpenProfileModal}>
         <SettingsIcon style={{color: "#475467"}} />
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
@@ -1395,12 +1332,12 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     });
   };
 
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    dispatch(languagesActions.setDefaultLanguage(lang));
-    localStorage.setItem("defaultLanguage", lang);
-    onClose();
-  };
+  // const changeLanguage = (lang) => {
+  //   i18n.changeLanguage(lang);
+  //   dispatch(languagesActions.setDefaultLanguage(lang));
+  //   localStorage.setItem("defaultLanguage", lang);
+  //   onClose();
+  // };
 
   useEffect(() => {
     if (projectInfo?.project_id) {
@@ -1410,67 +1347,6 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 
   return (
     <Box p={8} ref={popoverRef}>
-      {/* <Popover
-        isOpen={isOpen}
-        onClose={onClose}
-        placement="right-start"
-        closeOnBlur={false}>
-        <PopoverTrigger>
-          <Box
-            sx={{
-              borderRadius: "5px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              paddingLeft: "8px",
-              height: "32px",
-              cursor: "pointer",
-              color: "#475467",
-            }}
-            _hover={{background: "#eeee"}}
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpen();
-            }}>
-            <GTranslateIcon style={{color: "#475467"}} />
-            <span>
-              {" "}
-              {generateLangaugeText(
-                menuLanguages,
-                i18n?.language,
-                "Languages"
-              ) || "Languages"}
-            </span>
-          </Box>
-        </PopoverTrigger>
-
-        <PopoverContent w="250px">
-          <Box
-            minH={50}
-            maxH={250}
-            bg={"white"}
-            p={4}
-            borderRadius={5}
-            boxShadow="0 0 5px rgba(145, 158, 171, 0.3)">
-            <PopoverBody>
-              {languages?.map((item) => (
-                <Box
-                  key={item.slug}
-                  p={4}
-                  borderRadius="6px"
-                  cursor="pointer"
-                  color={item.slug === defaultLanguage ? "#000" : "#333"}
-                  bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
-                  _hover={{bg: "#F0F0F0"}}
-                  onClick={() => changeLanguage(item.slug)}>
-                  {item.title}
-                </Box>
-              ))}
-            </PopoverBody>
-          </Box>
-        </PopoverContent>
-      </Popover> */}
-
       <Box
         sx={{
           borderRadius: "5px",
@@ -1756,75 +1632,12 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
               <Box fontSize={12} fontWeight={500} color="#101828">
                 {project.title}
               </Box>
-              {/* <AccordionIcon ml="auto" fontSize="20px" /> */}
             </AccordionButton>
-
-            {/* <Environments
-              project={project}
-              setEnvirId={setEnvirId}
-              onSelectEnvironment={onSelectEnvironment}
-            /> */}
           </AccordionItem>
         ))}
       </Accordion>
     </AccordionPanel>
   );
 };
-
-// const Environments = ({project, onSelectEnvironment, setEnvirId}) => {
-//   const environmentsQuery = useEnvironmentListQuery({
-//     params: {project_id: project?.project_id},
-//     queryParams: {enabled: Boolean(project?.project_id)},
-//   });
-//   const environments = environmentsQuery.data?.environments ?? [];
-
-//   return (
-//     <AccordionPanel pl="12px" mt="4px">
-//       <Box>
-//         {environments.map((environment) => (
-//           <Flex
-//             key={environment.id}
-//             p={5}
-//             justifyContent="space-between"
-//             alignItems="center"
-//             cursor="pointer"
-//             borderRadius={6}
-//             _hover={{bg: "#EAECF0"}}
-//             onClick={() => {
-//               onSelectEnvironment(environment);
-//               setEnvirId(environment);
-//             }}>
-//             <Flex columnGap={8} alignItems="center">
-//               <Flex
-//                 w={20}
-//                 h={20}
-//                 alignItems="center"
-//                 justifyContent="center"
-//                 borderRadius={4}
-//                 bg="#15B79E"
-//                 fontSize={18}
-//                 fontWeight={500}
-//                 color="#fff">
-//                 {environment.name?.[0]?.toUpperCase()}
-//               </Flex>
-//               <Box mr={36}>
-//                 <Box fontSize={12} fontWeight={500} color="#101828">
-//                   {environment.name}
-//                 </Box>
-//               </Box>
-//             </Flex>
-//             <KeyboardArrowDownIcon
-//               style={{
-//                 alignSelf: "center",
-//                 transform: "rotate(-90deg)",
-//                 fontSize: 20,
-//               }}
-//             />
-//           </Flex>
-//         ))}
-//       </Box>
-//     </AccordionPanel>
-//   );
-// };
 
 export default LayoutSidebar;

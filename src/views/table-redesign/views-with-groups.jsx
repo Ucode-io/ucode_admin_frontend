@@ -188,7 +188,7 @@ export const NewUiViewsWithGroups = ({
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
   const query = new URLSearchParams(window.location.search);
-  const viewId = new_router ? query.get("v") : selectedView?.id;
+  const viewId = query.get("v") ?? selectedView?.id;
 
   const projectId = useSelector((state) => state.auth.projectId);
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
@@ -436,12 +436,12 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleViewClick = (view) => {
+    console.log("viewIdviewIdviewId", view?.id);
     const idx = views?.findIndex((v) => v.id === view.id);
     setSelectedTabIndex(idx);
     viewHandler(view);
     setSelectedView(view);
     dispatch(viewsActions.setSelectedView({view, idx}));
-
     const isSection = view?.type === "SECTION";
     if (!new_router) {
       dispatch(viewsActions.setViewTab({tableSlug, tabIndex: idx}));

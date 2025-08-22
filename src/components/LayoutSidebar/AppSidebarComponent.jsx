@@ -62,6 +62,8 @@ const AppSidebar = ({
   menuDraggable,
   setMenuDraggable,
   getMenuList,
+  childMenu = false,
+  setChildMenu = () => {},
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -125,15 +127,19 @@ const AppSidebar = ({
   //     .replace("{user_id}", userId);
   // }
 
-  const {isLoading} = useMenuListQuery({
+  const {isLoadingm} = useMenuListQuery({
     params: {
-      parent_id: folderItem?.id,
+      parent_id: folderItem?.id ?? childMenu?.parent_id,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(folderItem?.id),
+      enabled: Boolean(folderItem?.id) || Boolean(childMenu),
       onSuccess: (res) => {
-        computeMenuChilds(folderItem?.id, res?.menus ?? []);
+        setChildMenu(null);
+        computeMenuChilds(
+          folderItem?.id ?? childMenu?.parent_id,
+          res?.menus ?? []
+        );
         setLoading(false);
       },
     },
@@ -216,10 +222,6 @@ const AppSidebar = ({
     }
   }
 
-  // if (element?.label === "Settings" && element?.is_static) {
-  //   return;
-  // }
-
   return (
     <Draggable key={index}>
       {element?.type !== "FOLDER" && (
@@ -257,49 +259,35 @@ const AppSidebar = ({
               h={36}
               alignItems="center"
               justifyContent="center">
-              {
-                icon?.includes(":") ? (
-                  <IconGeneratorIconjs
-                    icon={
-                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
-                    }
-                    size={iconSize}
-                    style={{
-                      color:
-                        icon && icon !== "folder.svg"
-                          ? menuStyle?.text || "#475467"
-                          : "#fff",
-                    }}
-                  />
-                ) : isValidUrl(icon) ? (
-                  <img width={"24px"} height={"24px"} src={icon} />
-                ) : (
-                  <IconGenerator
-                    icon={
-                      !icon || icon === "folder.svg" ? "folder-new.svg" : icon
-                    }
-                    size={iconSize}
-                    style={{
-                      color:
-                        icon && icon !== "folder.svg"
-                          ? menuStyle?.text || "#475467"
-                          : "#fff",
-                    }}
-                  />
-                )
-                // <IconGenerator
-                //   icon={
-                //     !icon || icon === "folder.svg" ? "folder-new.svg" : icon
-                //   }
-                //   size={iconSize}
-                //   style={{
-                //     color:
-                //       icon && icon !== "folder.svg"
-                //         ? menuStyle?.text || "#475467"
-                //         : "#fff",
-                //   }}
-                // />
-              }
+              {icon?.includes(":") ? (
+                <IconGeneratorIconjs
+                  icon={
+                    !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                  }
+                  size={iconSize}
+                  style={{
+                    color:
+                      icon && icon !== "folder.svg"
+                        ? menuStyle?.text || "#475467"
+                        : "#fff",
+                  }}
+                />
+              ) : isValidUrl(icon) ? (
+                <img width={"24px"} height={"24px"} src={icon} />
+              ) : (
+                <IconGenerator
+                  icon={
+                    !icon || icon === "folder.svg" ? "folder-new.svg" : icon
+                  }
+                  size={iconSize}
+                  style={{
+                    color:
+                      icon && icon !== "folder.svg"
+                        ? menuStyle?.text || "#475467"
+                        : "#fff",
+                  }}
+                />
+              )}
             </Flex>
 
             <Box

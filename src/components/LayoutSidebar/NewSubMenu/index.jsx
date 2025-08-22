@@ -35,7 +35,6 @@ function NewSubMenu({
   const onDrop = (dropResult) => {
     const {removedIndex, addedIndex, payload} = dropResult;
 
-    // if dropped outside
     if (removedIndex == null && typeof addedIndex === "number" && payload) {
       const addedData = {...payload};
       addedData.parent_id = element?.id;
@@ -43,7 +42,7 @@ function NewSubMenu({
       if (addedData) {
         menuService.update(addedData).then(() => {
           getMenuList();
-          queryClient.refetchQueries(["MENU"]);
+          queryClient.refetchQueries(["MENU_CHILD"]);
         });
       }
       return;
@@ -56,7 +55,7 @@ function NewSubMenu({
           menus: result,
         })
         .then(() => {
-          queryClient.refetchQueries(["MENU"]);
+          queryClient.refetchQueries(["MENU_CHILD"]);
         });
     }
   };

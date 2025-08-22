@@ -52,7 +52,7 @@ const menuService = {
 
 export const useMenuListQuery = ({params = {}, queryParams} = {}) => {
   return useQuery(
-    ["MENU", params],
+    ["MENU_CHILD", params],
     () => {
       return menuService.getList(params);
     },

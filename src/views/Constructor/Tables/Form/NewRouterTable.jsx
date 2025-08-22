@@ -59,6 +59,8 @@ const NewRouterTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tableLan, setTableLan] = useState(null);
   const [menuItem, setMenuItem] = useState(null);
+  const location = useLocation();
+  console.log("location", location);
   const permissions = useSelector((state) =>
     Object.entries(state.permissions?.permissions).map(([key, value]) => ({
       table_slug: key,
@@ -263,9 +265,14 @@ const NewRouterTable = () => {
     )
       .unwrap()
       .then((res) => {
-        queryClient.refetchQueries(["GET_UPDATED_MENU_LIST"]);
+        if (location?.state?.create_table) {
+          queryClient.refetchQueries(["GET_MENU_LIST"]);
+          navigate("/", {replace: true, state: {refetch: true}});
+        } else {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          navigate("/", {replace: true, state: {childRefetch: true}});
+        }
         setPermission(res?.record_permission, res?.slug);
-        navigate("/", {replace: true});
       })
       .catch(() => setBtnLoader(false));
   };

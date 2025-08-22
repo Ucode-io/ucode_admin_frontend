@@ -1,19 +1,17 @@
-import {Box, Divider, Menu} from "@mui/material";
-import {RiPencilFill} from "react-icons/ri";
-import "./style.scss";
-import {BsFillTrashFill} from "react-icons/bs";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import {useNavigate} from "react-router-dom";
-import MenuItemComponent from "./MenuItem";
-import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
-import {analyticItems} from "./SidebarRecursiveBlock/mock/folders";
-import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import AddIcon from "@mui/icons-material/Add";
-import SVG from "react-inlinesvg";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import {Box, Divider, Menu} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import {BsFillTrashFill} from "react-icons/bs";
+import {RiPencilFill} from "react-icons/ri";
+import SVG from "react-inlinesvg";
+import {useNavigate} from "react-router-dom";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
+import MenuItemComponent from "./MenuItem";
+import {analyticItems} from "./SidebarRecursiveBlock/mock/folders";
+import "./style.scss";
 
 const ButtonsMenu = ({
   element,
@@ -59,8 +57,7 @@ const ButtonsMenu = ({
         },
       }}
       key={element?.id}
-      transitionDuration={"auto"}
-    >
+      transitionDuration={"auto"}>
       {menuType === "FOLDER" && (
         <Box className="menu">
           {element?.data?.permission?.update || permissionButton ? (
@@ -510,7 +507,7 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "ROOT" && (
-        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
+        <Box className="menu" style={{width: 224, rowGap: 4}}>
           <MenuItemComponent
             icon={<SVG src="/img/layout-alt-01.svg" color="#475467" />}
             title={
@@ -607,7 +604,7 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "CREATE" && (
-        <Box className="menu" style={{ width: 190 }}>
+        <Box className="menu" style={{width: 190}}>
           <MenuItemComponent
             icon={
               <SVG
@@ -652,7 +649,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
+              setTableModal({id: "c57eedc3-a954-4262-a0af-376c65b5a284"});
               handleCloseNotify();
             }}
           />

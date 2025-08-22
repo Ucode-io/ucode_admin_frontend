@@ -139,7 +139,7 @@ const NewRouter = () => {
       ? "fbs-integrations.mybazar.uz"
       : window.location.hostname;
 
-  const { data, isLoading } = useLoginMicrofrontendQuery({
+  const {data, isLoading} = useLoginMicrofrontendQuery({
     params: {
       subdomain,
       enabled: Boolean(!isAuth),
@@ -191,8 +191,7 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
-      >
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="/">
@@ -209,10 +208,6 @@ const NewRouter = () => {
             path="microfrontend/:microfrontendId"
             element={<Microfrontend />}
           />
-
-          {/* <Route index element={<Navigate to={redirectLink} />} /> */}
-
-          {/* <Route path=":menuId" element={<div></div>} /> */}
 
           <Route path=":menuId/chat" element={<Chat />}>
             <Route path=":chat_id" element={<Chat />} />

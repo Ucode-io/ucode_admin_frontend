@@ -286,7 +286,8 @@ const ViewOptions = ({
             adaptive: false,
           },
         },
-      ]}>
+      ]}
+    >
       <PopoverTrigger>
         <IconButton
           aria-label="more"
@@ -298,7 +299,8 @@ const ViewOptions = ({
       <PopoverContent
         ref={ref}
         w="320px"
-        p={openedMenu === null ? "0px" : "8px"}>
+        p={openedMenu === null ? "0px" : "8px"}
+      >
         {openedMenu === null && (
           <>
             <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
@@ -312,7 +314,8 @@ const ViewOptions = ({
                   borderRadius={6}
                   border="1px solid #D0D5DD"
                   alignItems="center"
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -339,7 +342,7 @@ const ViewOptions = ({
                 columnGap="4px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 as="span"
                 onClick={handleOpenPopup}
                 // to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}
@@ -348,7 +351,8 @@ const ViewOptions = ({
                   minW="36px"
                   h="28px"
                   alignItems="center"
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <SVG
                     src={`/img/${viewIcons[view.type]}`}
                     width={18}
@@ -395,9 +399,10 @@ const ViewOptions = ({
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
-                onClick={() => setOpenedMenu("columns-visibility")}>
+                onClick={() => setOpenedMenu("columns-visibility")}
+              >
                 <Image src="/img/eye.svg" alt="Visibility" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Columns") ||
@@ -432,9 +437,10 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
-                    onClick={() => setOpenedMenu("group")}>
+                    onClick={() => setOpenedMenu("group")}
+                  >
                     <Image src="/img/copy-01.svg" alt="Group by" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -466,9 +472,10 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
-                    onClick={() => setOpenedMenu("tab-group")}>
+                    onClick={() => setOpenedMenu("tab-group")}
+                  >
                     <Image src="/img/browser.svg" alt="Group by" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -500,10 +507,11 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
                     onClick={() => setOpenedMenu("sub-group")}
-                    color="#475467">
+                    color="#475467"
+                  >
                     <HorizontalSplitOutlinedIcon color="inherit" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -532,9 +540,10 @@ const ViewOptions = ({
                     columnGap="8px"
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
-                    onClick={() => setOpenedMenu("fix-column")}>
+                    onClick={() => setOpenedMenu("fix-column")}
+                  >
                     <Image src="/img/layout-left.svg" alt="Fix columns" />
                     <ViewOptionTitle>
                       {generateLangaugeText(
@@ -565,13 +574,14 @@ const ViewOptions = ({
                   columnGap="8px"
                   alignItems="center"
                   borderRadius={6}
-                  _hover={{bg: "#EAECF0"}}
+                  _hover={{ bg: "#EAECF0" }}
                   cursor="pointer"
                   onClick={() =>
                     setOpenedMenu(
                       isTimelineView ? "timeline-settings" : "calendar-settings"
                     )
-                  }>
+                  }
+                >
                   <Image src="/img/settings.svg" alt="Settings" />
                   <ViewOptionTitle>
                     {generateLangaugeText(
@@ -593,13 +603,14 @@ const ViewOptions = ({
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
-                _hover={{bg: "#EAECF0"}}
+                _hover={{ bg: "#EAECF0" }}
                 cursor="pointer"
                 onClick={(e) => {
                   onDocsClick(e);
                   projectId === "c7168030-b876-4d01-8063-f7ad9f92e974" &&
                     navigateToOldTemplate();
-                }}>
+                }}
+              >
                 <Image src="/img/file-docs.svg" alt="Docs" />
                 <ViewOptionTitle>
                   {generateLangaugeText(tableLan, i18n?.language, "Docs") ||
@@ -607,7 +618,11 @@ const ViewOptions = ({
                 </ViewOptionTitle>
                 <ChevronRightIcon ml="auto" fontSize={22} />
               </Flex>
-              <ExcelExportButton tableLan={tableLan} fieldsMap={fieldsMap} />
+              <ExcelExportButton
+                tableLan={tableLan}
+                fieldsMap={fieldsMap}
+                tableSlug={tableSlug}
+              />
               <ExcelImportButton
                 tableLan={tableLan}
                 searchText={searchText}

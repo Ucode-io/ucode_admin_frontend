@@ -46,6 +46,7 @@ function HFDatePickerNew({
       render={({field: rhfField}) => (
         <Box>
           <Box
+            onClick={(e) => !disabled && setAnchorEl(e.currentTarget)}
             sx={{
               display: "flex",
               alignItems: "center",

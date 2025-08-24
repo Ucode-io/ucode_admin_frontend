@@ -223,7 +223,7 @@ const ViewOptions = ({
   };
 
   const computedColumnsFor = useMemo(() => {
-    if (view.type !== "CALENDAR" && view.type !== "GANTT") {
+    if (view?.type !== "CALENDAR" && view?.type !== "GANTT") {
       return visibleColumns;
     } else {
       if (
@@ -235,7 +235,7 @@ const ViewOptions = ({
         return [];
       }
     }
-  }, [visibleColumns, visibleRelationColumns, view.type]);
+  }, [visibleColumns, visibleRelationColumns, view?.type]);
 
   const viewUpdateMutation = useMutation({
     mutationFn: async (data) => {
@@ -317,7 +317,7 @@ const ViewOptions = ({
                   justifyContent="center"
                 >
                   <SVG
-                    src={`/img/${viewIcons[view.type]}`}
+                    src={`/img/${viewIcons?.[view?.type]}`}
                     width={18}
                     height={18}
                   />
@@ -354,7 +354,7 @@ const ViewOptions = ({
                   justifyContent="center"
                 >
                   <SVG
-                    src={`/img/${viewIcons[view.type]}`}
+                    src={`/img/${viewIcons[view?.type]}`}
                     width={18}
                     height={18}
                   />
@@ -430,7 +430,7 @@ const ViewOptions = ({
               {/* )} */}
 
               {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                view.type !== "BOARD" && (
+                view?.type !== "BOARD" && (
                   <Flex
                     p="8px"
                     h="32px"
@@ -500,7 +500,7 @@ const ViewOptions = ({
                   </Flex>
                 )}
               {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                view.type === "BOARD" && (
+                view?.type === "BOARD" && (
                   <Flex
                     p="8px"
                     h="32px"

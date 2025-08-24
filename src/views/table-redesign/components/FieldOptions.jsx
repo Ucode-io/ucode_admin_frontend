@@ -63,7 +63,7 @@ function FieldOptions({setCloseOnBlur = () => {}, field, view, tableSlug}) {
             icon={<Icon as={EditIcon} fontSize="18px" />}
             onClick={(e) => {
               e.stopPropagation();
-              onEdit?.();
+              // onEdit?.();
             }}>
             Edit Field
           </MenuItem>

@@ -184,7 +184,7 @@ export const DynamicTable = ({
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [addNewRow, setAddNewRow] = useState(false);
-  const [formType, setFormType] = useState(null);
+  const [formType, setFormType] = useState("CREATE");
   const isModal =
     relationView && localStorage.getItem("detailPage") === "CenterPeek";
 
@@ -496,6 +496,7 @@ export const DynamicTable = ({
                     setSortedDatas={setSortedDatas}
                     sortedDatas={sortedDatas}
                     formType={formType}
+                    setFormType={setFormType}
                   />
                 </PermissionWrapperV2>
               )}
@@ -745,6 +746,7 @@ const FieldButton = ({
   setSortedDatas,
   tableSlug,
   formType,
+  setFormType,
 }) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
@@ -931,6 +933,7 @@ const FieldButton = ({
         setFieldCreateAnchor={setFieldCreateAnchor}
         setValue={setValue}
         target={target}
+        setFormType={setFormType}
       />
       {fieldCreateAnchor && (
         <FieldCreateModal

@@ -22,6 +22,7 @@ export default function FieldOptionModal({
   setFieldCreateAnchor,
   setValue,
   target,
+  setFormType = () => {},
 }) {
   const { i18n } = useTranslation();
   const open = Boolean(anchorEl);
@@ -36,6 +37,7 @@ export default function FieldOptionModal({
   const handleChange = (e, value) => {
     setAnchorEl(null);
     setValue("attributes.format", value);
+    setFormType("CREATE");
     if (value === "NUMBER") {
       setValue("type", "NUMBER");
     } else if (value === "DATE") {

@@ -58,6 +58,16 @@ export const useFieldPopoverProps = ({
 
   const { i18n } = useTranslation();
 
+  const { handleSubmit, control, reset, watch, setValue, register } = useForm();
+
+  const activeType = newFieldTypes?.find(
+    (item) => item?.value === watch("type")
+  );
+
+  const isFormulaType =
+    activeType?.value === FIELD_TYPES.FORMULA ||
+    activeType?.value === FIELD_TYPES.FORMULA_FRONTEND;
+
   const defaultOptions = {
     todo: {
       options: [
@@ -89,16 +99,11 @@ export const useFieldPopoverProps = ({
   };
 
   const languages = useSelector((state) => state.languages.list);
-  const { handleSubmit, control, reset, watch, setValue, register } = useForm();
 
   const tableName = useWatch({
     control,
     name: "label",
   });
-
-  const activeType = newFieldTypes?.find(
-    (item) => item?.value === watch("type")
-  );
 
   const [selectedSettings, setSelectedSettings] = useState("");
 
@@ -332,8 +337,6 @@ export const useFieldPopoverProps = ({
     }
   };
 
-  console.log({ formType, field });
-
   useEffect(() => {
     const values = {
       attributes: {
@@ -379,5 +382,6 @@ export const useFieldPopoverProps = ({
     getSelectedSettings,
     tableLan,
     onSubmit,
+    isFormulaType,
   };
 };

@@ -95,7 +95,7 @@ const AppSidebar = ({
       localStorage.getItem("new_router") === "true"
         ? newClickHandler
         : oldClickHandler;
-    setSelectedFolder(el);
+
     handler({
       el,
       element,
@@ -104,6 +104,7 @@ const AppSidebar = ({
       setSelectedApp,
       setMenuDraggable,
       menuChilds,
+      selectedFolder,
       setFolderItem,
       setSelectedFolder,
       closeMenu,
@@ -187,7 +188,12 @@ const AppSidebar = ({
 
   function computeMenuChilds(id, children = []) {
     const updated = {...menuChilds};
-    updated[id] = {open: true, children};
+
+    if (updated?.[id]?.open) {
+      updated[id] = {open: true, children};
+    } else {
+      updated[id] = {open: false, children};
+    }
 
     dispatch(menuAccordionActions.toggleMenuChilds(updated));
   }

@@ -25,7 +25,7 @@ const newClickHandler = ({
 
   if (element.type === "FOLDER") {
     setFolderItem(el);
-    setSelectedFolder(el);
+    setSelectedFolder(el?.id ? el : element);
     const isOpen = menuChilds[element.id]?.open;
     if (isOpen) {
       closeMenu(element.id);

@@ -1,5 +1,5 @@
 import {Box} from "@mui/material";
-import {useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import {useFieldArray, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
@@ -16,6 +16,7 @@ import {LoginStrategy} from "../../../../mock/FolderSettings";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import style from "./main.module.scss";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
+import {getAllFromDB} from "../../../../utils/languageDB";
 
 const MainInfo = ({
   control,

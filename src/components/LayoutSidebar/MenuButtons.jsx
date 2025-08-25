@@ -16,6 +16,7 @@ import "./style.scss";
 const ButtonsMenu = ({
   element,
   menu,
+  appId,
   openMenu,
   handleCloseNotify,
   openFolderCreateModal,
@@ -28,6 +29,7 @@ const ButtonsMenu = ({
   setLinkedTableModal,
   setWebsiteModalLink,
   menuLanguages,
+  openTableCreateModal = () => {},
 }) => {
   const navigate = useNavigate();
   const {i18n} = useTranslation();
@@ -149,7 +151,8 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${menuID}/objects/create`);
+              // navigate(`/settings/constructor/apps/${menuID}/objects/create`);
+              openTableCreateModal("create", element);
               handleCloseNotify();
             }}
           />
@@ -519,7 +522,8 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${menuID}/objects/create`);
+              openTableCreateModal("create", null);
+              // navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               handleCloseNotify();
             }}
           />
@@ -623,11 +627,12 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${menuID}/objects/create`, {
-                state: {
-                  create_table: true,
-                },
-              });
+              // navigate(`/settings/constructor/apps/${menuID}/objects/create`, {
+              //   state: {
+              //     create_table: true,
+              //   },
+              // });
+              openTableCreateModal("create", null);
               handleCloseNotify();
             }}
           />
@@ -781,7 +786,8 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/settings/constructor/apps/${menuID}/objects/create`);
+              // navigate(`/settings/constructor/apps/${menuID}/objects/create`);
+              openTableCreateModal("create", element);
               handleCloseNotify();
             }}
           />

@@ -63,6 +63,7 @@ const AppSidebar = ({
   setMenuDraggable,
   getMenuList,
   childMenu = false,
+  setSelectedFolder = () => {},
   setChildMenu = () => {},
 }) => {
   const navigate = useNavigate();
@@ -331,6 +332,8 @@ const AppSidebar = ({
                       id={"create_folder"}
                       className="extra_icon"
                       onClick={(e) => {
+                        console.log("elementttt entered", element);
+                        setSelectedFolder(element);
                         handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
                       <AddIcon
@@ -581,6 +584,8 @@ const AppSidebar = ({
                             className="extra_icon"
                             onClick={(e) => {
                               e.stopPropagation();
+                              console.log("elementttt entered", element);
+                              setSelectedFolder(element);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");
                             }}>
                             <AddIcon

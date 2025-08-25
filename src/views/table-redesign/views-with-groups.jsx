@@ -570,8 +570,9 @@ export const NewUiViewsWithGroups = ({
 
   const tableName = tableInfo?.label;
 
-  const viewName =
-    view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
+  const viewName = relationView
+    ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label
+    : view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
   const {
     getViewSettings,
@@ -991,7 +992,9 @@ export const NewUiViewsWithGroups = ({
                   }}
                 >
                   {view?.is_relation_view
-                    ? view?.table_label || view.type
+                    ? view?.attributes?.[`name_${i18n?.language}`] ||
+                      view?.table_label ||
+                      view.type
                     : view?.attributes?.[`name_${i18n?.language}`] ||
                       view?.name ||
                       view.type}

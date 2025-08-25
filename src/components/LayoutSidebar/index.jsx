@@ -257,12 +257,12 @@ const LayoutSidebar = ({
       .delete(element.id)
       .then(() => {
         if (element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
-          queryClient.refetchQueries(["MENU"], element?.id);
+          // queryClient.refetchQueries(["MENU"], element?.id);
           getMenuList();
           setSelectedFolder(null);
         } else {
           setChildMenu(element);
-          queryClient.refetchQueries(["CHILD_MENU"], element?.id);
+          queryClient.refetchQueries(["MENU_CHILD"]);
           setSelectedFolder(null);
         }
       })

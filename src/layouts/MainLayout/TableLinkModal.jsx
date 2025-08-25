@@ -52,9 +52,14 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
         label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
-        closeModal();
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
+        if (selectedFolder?.id) {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          closeModal();
+        } else {
+          console.log("entered second");
+          getMenuList();
+          closeModal();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -136,8 +141,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFIconPicker name="icon" control={control} />
 
                 {languages?.map((language) => {
@@ -160,8 +164,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFAutocomplete
                   name="table_id"
                   control={control}

@@ -50,9 +50,17 @@ const LinkTableModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
         label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
-        closeModal();
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
+        if (selectedFolder?.id) {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          closeModal();
+        } else {
+          console.log("entered second");
+          getMenuList();
+          closeModal();
+        }
+        // closeModal();
+        // queryClient.refetchQueries(["MENU"], selectedFolder?.id);
+        // getMenuList();
       })
       .catch((err) => {
         console.log(err);

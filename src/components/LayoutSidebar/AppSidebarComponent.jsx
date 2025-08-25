@@ -86,6 +86,24 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
 
+  const {isLoading, refetch} = useMenuListQuery({
+    params: {
+      parent_id: selectedFolder?.id ?? childMenu?.parent_id,
+      search: subSearchText,
+    },
+    queryParams: {
+      enabled: Boolean(selectedFolder?.id) || Boolean(childMenu),
+      onSuccess: (res) => {
+        setChildMenu(null);
+        computeMenuChilds(
+          selectedFolder?.id ?? childMenu?.parent_id,
+          res?.menus ?? []
+        );
+        setLoading(false);
+      },
+    },
+  });
+
   const clickHandler = (el) => {
     dispatch(tableActions.setTable(el?.data?.table));
     dispatch(detailDrawerActions.setMainTabIndex(0));
@@ -106,6 +124,7 @@ const AppSidebar = ({
       menuChilds,
       selectedFolder,
       setFolderItem,
+      refetch,
       setSelectedFolder,
       closeMenu,
       navigate,
@@ -130,24 +149,6 @@ const AppSidebar = ({
   //     .replace("{login_table_slug}", loginTableSlug)
   //     .replace("{user_id}", userId);
   // }
-
-  const {isLoadingm} = useMenuListQuery({
-    params: {
-      parent_id: selectedFolder?.id ?? childMenu?.parent_id,
-      search: subSearchText,
-    },
-    queryParams: {
-      enabled: Boolean(selectedFolder?.id) || Boolean(childMenu),
-      onSuccess: (res) => {
-        setChildMenu(null);
-        computeMenuChilds(
-          selectedFolder?.id ?? childMenu?.parent_id,
-          res?.menus ?? []
-        );
-        setLoading(false);
-      },
-    },
-  });
 
   const activeMenu =
     element?.type === "FOLDER"

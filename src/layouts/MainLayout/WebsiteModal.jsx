@@ -9,13 +9,16 @@ import menuSettingsService from "../../services/menuSettingsService";
 import {useMicrofrontendListQuery} from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import {Delete} from "@mui/icons-material";
-import styles from "./style.module.scss";
 import {store} from "../../store";
 import {useSelector} from "react-redux";
 
-const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
+const WebsiteModal = ({
+  closeModal = () => {},
+  loading,
+  selectedFolder,
+  getMenuList = () => {},
+}) => {
+  console.log("selectedFolderselectedFolder", selectedFolder);
   const queryClient = useQueryClient();
   const {control, handleSubmit, reset} = useForm();
 
@@ -33,7 +36,7 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   });
 
   const onSubmit = (data) => {
-    if (selectedFolder?.data) {
+    if (!selectedFolder?.data) {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -48,9 +51,13 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
         type: "LINK",
       })
       .then(() => {
-        closeModal();
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
+        if (selectedFolder?.id) {
+          queryClient.refetchQueries(["MENU_CHILD"], selectedFolder?.id);
+          closeModal();
+        } else {
+          getMenuList();
+          closeModal();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -62,9 +69,14 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
         ...data,
       })
       .then(() => {
-        closeModal();
-        getMenuList();
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
+        if (selectedFolder?.id) {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          closeModal();
+        } else {
+          console.log("entered second");
+          getMenuList();
+          closeModal();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -104,8 +116,7 @@ const WebsiteModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFIconPicker name="icon" control={control} />
                 {languages?.map((item, index) => (
                   <>

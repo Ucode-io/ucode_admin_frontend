@@ -4,27 +4,25 @@ import {useFieldArray, useForm, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
-import style from "./style.module.scss";
-import constructorObjectService from "../../services/constructorObjectService";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
-import HFTextField from "../../components/FormElements/HFTextField";
-import HFCheckbox from "../../components/FormElements/HFCheckbox";
-import FRow from "../../components/FormElements/FRow";
-import HFSelect from "../../components/FormElements/HFSelect";
-import HFMultipleSelect from "../../components/FormElements/HFMultipleSelect";
+import {useLocation} from "react-router-dom";
 import FormCard from "../../components/FormCard";
-import {generateGUID} from "../../utils/generateID";
-import {getAllFromDB} from "../../utils/languageDB";
+import FRow from "../../components/FormElements/FRow";
+import HFCheckbox from "../../components/FormElements/HFCheckbox";
+import HFMultipleSelect from "../../components/FormElements/HFMultipleSelect";
+import HFSelect from "../../components/FormElements/HFSelect";
+import HFTextField from "../../components/FormElements/HFTextField";
+import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
 import {LoginStrategy} from "../../mock/FolderSettings";
-import {createConstructorTableAction} from "../../store/constructorTable/constructorTable.thunk";
+import constructorObjectService from "../../services/constructorObjectService";
 import constructorTableService from "../../services/constructorTableService";
-import {constructorTableActions} from "../../store/constructorTable/constructorTable.slice";
-import layoutService from "../../services/layoutService";
 import constructorViewRelationService from "../../services/constructorViewRelationService";
-import constructorCustomEventService from "../../services/constructorCustomEventService";
 import {showAlert} from "../../store/alert/alert.thunk";
+import {constructorTableActions} from "../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../store/constructorTable/constructorTable.thunk";
+import {generateGUID} from "../../utils/generateID";
+import {generateLangaugeText} from "../../utils/generateLanguageText";
+import {getAllFromDB} from "../../utils/languageDB";
+import style from "./style.module.scss";
 
 const TableCreateModal = ({
   exist = false,
@@ -36,7 +34,6 @@ const TableCreateModal = ({
   getMenuList = () => {},
   setSelectedFolder = () => {},
 }) => {
-  console.log("selectedFolderselectedFolderselectedFolder", selectedFolder);
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const {state = {}} = useLocation();
@@ -150,7 +147,9 @@ const TableCreateModal = ({
     )
       .unwrap()
       .then((res) => {
-        if (selectedFolder?.id) {
+        if (
+          selectedFolder?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284"
+        ) {
           queryClient.refetchQueries(["MENU_CHILD"]);
           closeModal();
         } else {

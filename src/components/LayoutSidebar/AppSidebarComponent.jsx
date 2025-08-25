@@ -63,6 +63,7 @@ const AppSidebar = ({
   setMenuDraggable,
   getMenuList,
   childMenu = false,
+  selectedFolder,
   setSelectedFolder = () => {},
   setChildMenu = () => {},
 }) => {
@@ -130,15 +131,15 @@ const AppSidebar = ({
 
   const {isLoadingm} = useMenuListQuery({
     params: {
-      parent_id: folderItem?.id ?? childMenu?.parent_id,
+      parent_id: selectedFolder?.id ?? childMenu?.parent_id,
       search: subSearchText,
     },
     queryParams: {
-      enabled: Boolean(folderItem?.id) || Boolean(childMenu),
+      enabled: Boolean(selectedFolder?.id) || Boolean(childMenu),
       onSuccess: (res) => {
         setChildMenu(null);
         computeMenuChilds(
-          folderItem?.id ?? childMenu?.parent_id,
+          selectedFolder?.id ?? childMenu?.parent_id,
           res?.menus ?? []
         );
         setLoading(false);
@@ -232,6 +233,7 @@ const AppSidebar = ({
             onClick={(e) => {
               e.stopPropagation();
               clickHandler(element);
+              setSelectedFolder(element);
               dispatch(mainActions.setSidebarHighlightedMenu(null));
             }}
             position="relative"
@@ -583,8 +585,8 @@ const AppSidebar = ({
                             id={"create_folder"}
                             className="extra_icon"
                             onClick={(e) => {
-                              e.stopPropagation();
                               console.log("elementttt entered", element);
+                              e.stopPropagation();
                               setSelectedFolder(element);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");
                             }}>

@@ -14,7 +14,14 @@ import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import menuService from "../../services/menuService";
 
-const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
+const TableLinkModal = ({
+  closeModal,
+  loading,
+  selectedFolder,
+  setSelectedFolder = () => {},
+  getMenuList = () => {},
+}) => {
+  console.log("selectedFolderselectedFolderselectedFolder", selectedFolder);
   const {projectId} = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
@@ -64,7 +71,9 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
       .catch((err) => {
         console.log(err);
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const updateType = (data, selectedFolder) => {
@@ -166,6 +175,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
                 columnGap={"16px"}
                 className="form-elements">
                 <HFAutocomplete
+                  portal={null}
                   name="table_id"
                   control={control}
                   placeholder="Tables"

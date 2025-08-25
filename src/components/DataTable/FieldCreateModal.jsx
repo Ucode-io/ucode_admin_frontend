@@ -153,10 +153,9 @@ export default function FieldCreateModal({
 
   useEffect(() => {
     if (format === FIELD_TYPES.FORMULA_FRONTEND && formType === "CREATE") {
-      console.log("fieldData", fieldData);
       setFieldOptionAnchor(null);
       setFieldAnchorEl(anchorEl);
-      setDrawerState(fieldData);
+      setDrawerState(fieldData || { type: format });
     }
   }, [anchorEl, formType]);
 
@@ -1404,7 +1403,6 @@ export default function FieldCreateModal({
                 <button
                   className={clsx(style.btn, style.settings)}
                   onClick={() => {
-                    console.log(fieldData);
                     fieldHandleOpen(
                       fieldData ?? {
                         type: FIELD_TYPES.FORMULA_FRONTEND,

@@ -732,7 +732,7 @@ const FUNCTIONS_MAP = {
   ],
 };
 
-const BUILT_IN_OPERATORS = [
+export const BUILT_IN_OPERATORS = [
   {
     label: "+",
     key: "+",
@@ -827,7 +827,7 @@ export function getFunctionsByFieldType({
     });
   }
 
-  if (BUILT_IN_OPERATORS.length > 0 && fieldType !== "ALL") {
+  if (BUILT_IN_OPERATORS.length > 0) {
     result.push({
       name: "Operators",
       key: "formula",

@@ -14,6 +14,8 @@ import { SearchInput } from "../../../components/SearchInput";
 import { FormulaEditor } from "../FormulaEditor";
 import { Examples } from "../Examples";
 import { menuIcons } from "./formulaFieldIcons";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 export const FormulaField = ({
   control,
@@ -46,6 +48,8 @@ export const FormulaField = ({
     editorSearchText,
     setEditorSearchText,
     lastField,
+    handleToggleFields,
+    openedMenus,
   } = useFormulaFieldProps({
     control,
     mainForm,
@@ -271,67 +275,87 @@ export const FormulaField = ({
                       ?.toLowerCase()
                       ?.includes(editorSearchText?.toLowerCase());
                   })?.length ? (
-                    <p className={cls.menuTitle}>{menuItem?.name}</p>
+                    <p
+                      className={cls.menuTitle}
+                      onClick={() => handleToggleFields(menuItem.name)}
+                    >
+                      <span>{menuItem?.name}</span>
+                      <>
+                        {openedMenus[menuItem.name] ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )}
+                      </>
+                    </p>
                   ) : (
                     ""
                   )}
-                  {menuItem?.list
-                    ?.filter((item) => {
-                      const label =
-                        item?.attributes?.[`label_${i18n.language}`] ||
-                        item?.label;
+                  {openedMenus[menuItem.name] && (
+                    <Box>
+                      {menuItem?.list
+                        ?.filter((item) => {
+                          const label =
+                            item?.attributes?.[`label_${i18n.language}`] ||
+                            item?.label;
 
-                      return label
-                        ?.toLowerCase()
-                        ?.includes(editorSearchText?.toLowerCase());
-                    })
-                    ?.map((item, index) => (
-                      <Box
-                        className={clsx(cls.fieldChip, {
-                          [cls.active]: item.label === exampleType.label,
-                        })}
-                        key={item.key + index}
-                        onMouseEnter={() => onItemMouseEnter(item)}
-                        onClick={() => {
-                          let value = editorValue;
-                          if (editorSearchText) {
-                            value = editorValue?.replace(editorSearchText, "");
-                          }
-                          if (menuItem.key === "formula") {
-                            if (menuItem.name === "Operators") {
-                              onEditorChange(value + " " + item.key + " ");
-                            } else if (lastField) {
-                              onEditorChange(value + "." + item.key + "()");
-                            } else {
-                              onEditorChange(value + item.key + "()");
-                            }
-                          } else {
-                            onEditorChange(
-                              value +
-                                (item?.attributes?.[`label_${i18n.language}`] ||
-                                  item.label)
-                            );
-                          }
-                          setEditorSearchText("");
-                          editorRef.current?.focus();
-                        }}
-                      >
-                        {typeof item.icon === "string" ? (
-                          <img
-                            src={item.icon}
-                            width={"16px"}
-                            height={"16px"}
-                            alt=""
-                          />
-                        ) : (
-                          <span className={cls.fieldIcon}>{item.icon}</span>
-                        )}
-                        <span className={cls.fieldName}>
-                          {item?.attributes?.[`label_${i18n.language}`] ||
-                            item.label}
-                        </span>
-                      </Box>
-                    ))}
+                          return label
+                            ?.toLowerCase()
+                            ?.includes(editorSearchText?.toLowerCase());
+                        })
+                        ?.map((item, index) => (
+                          <Box
+                            className={clsx(cls.fieldChip, {
+                              [cls.active]: item.label === exampleType.label,
+                            })}
+                            key={item.key + index}
+                            onMouseEnter={() => onItemMouseEnter(item)}
+                            onClick={() => {
+                              let value = editorValue;
+                              if (editorSearchText) {
+                                value = editorValue?.replace(
+                                  editorSearchText,
+                                  ""
+                                );
+                              }
+                              if (menuItem.key === "formula") {
+                                if (menuItem.name === "Operators") {
+                                  onEditorChange(value + " " + item.key + " ");
+                                } else if (lastField) {
+                                  onEditorChange(value + " " + item.key + "()");
+                                } else {
+                                  onEditorChange(value + item.key + "()");
+                                }
+                              } else {
+                                onEditorChange(
+                                  value +
+                                    (item?.attributes?.[
+                                      `label_${i18n.language}`
+                                    ] || item.label)
+                                );
+                              }
+                              setEditorSearchText("");
+                              editorRef.current?.focus();
+                            }}
+                          >
+                            {typeof item.icon === "string" ? (
+                              <img
+                                src={item.icon}
+                                width={"16px"}
+                                height={"16px"}
+                                alt=""
+                              />
+                            ) : (
+                              <span className={cls.fieldIcon}>{item.icon}</span>
+                            )}
+                            <span className={cls.fieldName}>
+                              {item?.attributes?.[`label_${i18n.language}`] ||
+                                item.label}
+                            </span>
+                          </Box>
+                        ))}
+                    </Box>
+                  )}
                 </Box>
               ))}
             </Box>

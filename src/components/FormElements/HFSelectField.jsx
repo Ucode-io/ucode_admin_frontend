@@ -47,7 +47,8 @@ const HFSelectField = ({
                 required={required}
                 w={"100%"}
                 onChange={(e) => onChange(e.target.value)}
-                options={options}>
+                options={options}
+              >
                 <option defaultChecked disabled>
                   Choose value
                 </option>
@@ -63,7 +64,8 @@ const HFSelectField = ({
                     width: "100%",
                     color: "red",
                     marginLeft: "15px",
-                  }}>
+                  }}
+                >
                   {error?.message}
                 </span>
               )}

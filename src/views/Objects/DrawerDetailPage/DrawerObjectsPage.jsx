@@ -77,7 +77,7 @@ function DrawerObjectsPage({
           dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
         const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.get("v")) {
+        if (!data?.find((item) => item?.id === urlParams.get("v"))) {
           setSelectedView(data?.[0]);
           updateQueryWithoutRerender("v", data?.[0]?.id);
         }

@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useGetLang } from "../../../../hooks/useGetLang";
 import { generateLangaugeText } from "../../../../utils/generateLanguageText";
 import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
+import { FIELD_TYPES } from "../../../../utils/constants/fieldTypes";
 
 const ExcelUploadModal = ({
   fieldsMap,
@@ -104,9 +105,13 @@ const ExcelUploadModal = ({
 
   useEffect(() => {
     reset({
-      fields: Object.values(fieldsMap) ?? [],
+      fields:
+        Object.values(fieldsMap)?.map((el) => ({
+          ...el,
+          excelSlug: excelFieldOptions?.[0]?.value,
+        })) ?? [],
     });
-  }, [fieldsMap, reset]);
+  }, [fieldsMap, reset, excelFieldOptions]);
 
   const viewFieldsToOptions = (options, field) => {
     return (

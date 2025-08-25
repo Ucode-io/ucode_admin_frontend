@@ -14,7 +14,7 @@ const oldClickHandler = ({
   setSubMenuIsOpen,
   setFolderItem,
   auth,
-  setSelectedFolder = () => {},
+  refetch,
 }) => {
   if (element?.id === "USERS_MENU_ITEM_ID") {
     return navigate("/client-types");
@@ -25,8 +25,8 @@ const oldClickHandler = ({
   setSelectedApp(element);
 
   if (element.type === "FOLDER") {
+    refetch();
     setFolderItem(el);
-    setSelectedFolder(el?.id ? el : element);
     setMenuDraggable(false);
     const isOpen = menuChilds[element.id]?.open;
     if (isOpen) {

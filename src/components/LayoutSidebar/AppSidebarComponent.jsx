@@ -95,7 +95,7 @@ const AppSidebar = ({
       localStorage.getItem("new_router") === "true"
         ? newClickHandler
         : oldClickHandler;
-
+    setSelectedFolder(el);
     handler({
       el,
       element,
@@ -105,6 +105,7 @@ const AppSidebar = ({
       setMenuDraggable,
       menuChilds,
       setFolderItem,
+      setSelectedFolder,
       closeMenu,
       navigate,
       dispatch,
@@ -233,7 +234,6 @@ const AppSidebar = ({
             onClick={(e) => {
               e.stopPropagation();
               clickHandler(element);
-              setSelectedFolder(element);
               dispatch(mainActions.setSidebarHighlightedMenu(null));
             }}
             position="relative"

@@ -353,7 +353,7 @@ export const useFieldPopoverProps = ({
       required: false,
       slug: "",
       table_id: tableSlug,
-      type: FIELD_TYPES.SINGLE_LINE,
+      type: field?.type || FIELD_TYPES.SINGLE_LINE,
       relation_field: selectedAutofillFieldSlug,
     };
     if (formType !== "CREATE") {

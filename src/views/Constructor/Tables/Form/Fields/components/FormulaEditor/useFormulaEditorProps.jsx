@@ -363,7 +363,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
                 {
                   range: new monacoRef.current.Range(
                     badge.range.line,
-                    badge.range.start,
+                    badge.range.start + 1,
                     badge.range.line,
                     badge.range.end
                   ),

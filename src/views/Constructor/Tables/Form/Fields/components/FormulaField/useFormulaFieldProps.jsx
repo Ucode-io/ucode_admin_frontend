@@ -5,6 +5,7 @@ import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
 import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
 import {
+  BUILT_IN_OPERATORS,
   getFieldIcon,
   getFunctionsByFieldType,
   menuIcons,
@@ -24,10 +25,14 @@ export const useFormulaFieldProps = ({
   const [editorValue, setEditorValue] = useState("");
   const [editorSearchText, setEditorSearchText] = useState("");
   const [exampleType, setExampleType] = useState("");
+  const [openedMenus, setOpenedMenus] = useState({});
 
   const [fields, setFields] = useState([]);
 
   const editorRef = useRef(null);
+
+  const handleToggleFields = (type) =>
+    setOpenedMenus((prev) => ({ ...prev, [type]: !prev[type] }));
 
   const fieldsList =
     mainForm
@@ -61,11 +66,28 @@ export const useFormulaFieldProps = ({
       setEditorSearchText("");
     }
 
-    return getFunctionsByFieldType({
+    const functionsByType = getFunctionsByFieldType({
       fieldType: lastField?.type || "ALL",
       fieldsList,
     });
+
+    return functionsByType;
   }, [editorValue]);
+
+  useEffect(() => {
+    const functionsByType = getFunctionsByFieldType({
+      fieldType: lastField?.type || "ALL",
+      fieldsList,
+    });
+
+    const menuListNameKeys = {};
+
+    functionsByType.forEach((item) => {
+      menuListNameKeys[item.name] = true;
+    });
+
+    setOpenedMenus(menuListNameKeys);
+  }, []);
 
   const onEditorChange = (value) => {
     setEditorValue(value);
@@ -75,17 +97,52 @@ export const useFormulaFieldProps = ({
   const onItemMouseEnter = (type) => setExampleType(type);
   const onItemMouseLeave = () => setExampleType(null);
 
+  const getIsLastCharOperator = (value) => {
+    let splittedValOperator = "";
+
+    BUILT_IN_OPERATORS.forEach((op) => {
+      if (value?.slice(-1) === op.key || value?.slice(-1) === op.label) {
+        splittedValOperator = op;
+      }
+    });
+
+    return !!splittedValOperator;
+  };
+
   const handleFilterFields = (value) => {
+    const isCharOperator = getIsLastCharOperator(value);
+
     if (
       value.substring(value.length - 1) === "." ||
       value.substring(value.length - 1) === ")" ||
       value.substring(value.length - 1) === "(" ||
-      value.substring(value.length - 1) === " "
+      value.substring(value.length - 1) === " " ||
+      isCharOperator
     ) {
       setEditorSearchText("");
     } else {
       const splittedValSpace = value?.split(" ");
       const splittedValDot = value?.split(".");
+      let splittedValOperator = "";
+
+      let splitOperator = "";
+
+      BUILT_IN_OPERATORS.forEach((op) => {
+        if (value?.includes(op.key) || value?.includes(op.label)) {
+          splitOperator = op.key;
+        }
+      });
+
+      if (splitOperator) {
+        splittedValOperator = value?.split(splitOperator);
+      }
+
+      if (splittedValOperator) {
+        setEditorSearchText(
+          splittedValOperator[splittedValOperator.length - 1]
+        );
+        return;
+      }
 
       const lastSplittedValText = splittedValSpace[splittedValSpace.length - 1];
 
@@ -203,6 +260,24 @@ export const useFormulaFieldProps = ({
           exampleType?.attributes?.[`label_${i18n.language}`] ||
           exampleType?.label;
 
+        const isOperator = BUILT_IN_OPERATORS.find((op) => {
+          return op.key === exampleType.key || op.label === exampleType.label;
+        });
+
+        const isLastCharOperator = getIsLastCharOperator(editorValue);
+
+        if (isLastCharOperator) {
+          e.preventDefault();
+          setEditorValue((prev) => prev + exampleType.label);
+          return;
+        }
+
+        if (isOperator) {
+          e.preventDefault();
+          setEditorValue((prev) => prev + " " + label + " ");
+          return;
+        }
+
         if (
           splittedVal.length > 1 &&
           label
@@ -228,13 +303,9 @@ export const useFormulaFieldProps = ({
         } else if (label?.includes("()")) {
           e.preventDefault();
           setEditorValue(editorValue + "." + label);
-        } else if (
-          splittedVal.length === 1
-          // &&
-          // label?.toLowerCase().includes(splittedVal[0]?.toLowerCase())
-        ) {
-          e.preventDefault();
+        } else if (splittedVal.length === 1) {
           setEditorValue(label);
+          e.preventDefault();
         }
       }
     }
@@ -245,7 +316,7 @@ export const useFormulaFieldProps = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [editorValue]);
+  }, [editorValue, exampleType]);
 
   return {
     formulaTypes,
@@ -270,5 +341,7 @@ export const useFormulaFieldProps = ({
     setEditorSearchText,
     setExampleType,
     lastField,
+    handleToggleFields,
+    openedMenus,
   };
 };

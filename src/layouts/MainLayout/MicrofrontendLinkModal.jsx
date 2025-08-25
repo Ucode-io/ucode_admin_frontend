@@ -52,7 +52,7 @@ const MicrofrontendLinkModal = ({
   };
 
   const onSubmit = (data) => {
-    if (selectedFolder.type === "MICROFRONTEND") {
+    if (selectedFolder?.type === "MICROFRONTEND") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -99,7 +99,7 @@ const MicrofrontendLinkModal = ({
   };
 
   useEffect(() => {
-    if (selectedFolder.type === "MICROFRONTEND")
+    if (selectedFolder?.type === "MICROFRONTEND")
       menuSettingsService
         .getById(selectedFolder.id, company.projectId)
         .then((res) => {

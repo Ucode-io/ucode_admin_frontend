@@ -15,19 +15,19 @@ import {
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
-import {useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ArrowBackIcon,
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import {default as InlineSVG, default as SVG} from "react-inlinesvg";
+import { default as InlineSVG, default as SVG } from "react-inlinesvg";
 import constructorViewService from "../../../services/constructorViewService";
 import {
   ViewOptionSubtitle,
   ViewOptionTitle,
 } from "../../table-redesign/views-with-groups";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
 import ViewSettingsModal from "../../table-redesign/ViewSettings";
 import {
   ColumnsVisibility,
@@ -37,16 +37,17 @@ import {
   FixColumns,
   TabGroup,
 } from "../../table-redesign/components/ViewOptionElement";
-import {SubGroup} from "../../table-redesign/components/SubGroup";
-import {TimelineSettings} from "../../table-redesign/components/TimelineSettings";
-import {CalendarSettings} from "../../table-redesign/components/CalendarSettings";
-import {Group} from "../../table-redesign/components/ViewOptionElement";
+import { SubGroup } from "../../table-redesign/components/SubGroup";
+import { TimelineSettings } from "../../table-redesign/components/TimelineSettings";
+import { CalendarSettings } from "../../table-redesign/components/CalendarSettings";
+import { Group } from "../../table-redesign/components/ViewOptionElement";
 import useDebounce from "../../../hooks/useDebounce";
 import constructorTableService from "../../../services/constructorTableService";
-import {listToMap} from "../../../utils/listToMap";
+import { listToMap } from "../../../utils/listToMap";
 import listToOptions from "../../../utils/listToOptions";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
 import LayoutComponent from "../../table-redesign/LayoutComponent";
+import { viewsActions } from "../../../store/views/view.slice";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -83,15 +84,17 @@ const ViewOptions = ({
   refetchRelationViews,
 }) => {
   const navigate = useNavigate();
-  const {menuId, appId, tableSlug: tableSlugFromProps} = useParams();
+  const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
   const queryClient = useQueryClient();
   const tableSlug = relationView
     ? view?.relation_table_slug
     : (tableSlugFromProps ?? view?.table_slug);
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]
   );
+
+  const dispatch = useDispatch();
 
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -123,12 +126,20 @@ const ViewOptions = ({
 
   const updateView = useMutation({
     mutationFn: async (value) => {
-      await constructorViewService.update(tableSlug, {
+      const viewData = {
         ...view,
         id: view.id,
         columns: view.columns,
-        attributes: {...view?.attributes, [`name_${i18n?.language}`]: value},
-      });
+        attributes: { ...view?.attributes, [`name_${i18n?.language}`]: value },
+      };
+
+      if (relationView) {
+        viewData.table_label = value;
+      }
+
+      await constructorViewService.update(tableSlug, viewData);
+
+      console.log("first", relationView, viewsList);
       if (relationView && viewsList?.length > 1) {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else {
@@ -139,6 +150,16 @@ const ViewOptions = ({
 
   const onViewNameChange = useDebounce((ev) => {
     updateView.mutate(ev.target.value);
+    if (!relationView) {
+      const newView = {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          [`name_${i18n?.language}`]: ev.target.value,
+        },
+      };
+      dispatch(viewsActions.updateView({ view: newView, id: view?.id }));
+    }
   }, 500);
 
   const fixedColumnsCount = Object.values(
@@ -151,11 +172,11 @@ const ViewOptions = ({
     view?.attributes?.visible_field?.split("/")?.length ?? 0;
 
   const {
-    data: {fields, visibleColumns} = {data: []},
+    data: { fields, visibleColumns } = { data: [] },
     isLoading: tableInfoLoading,
     refetch: refetchGetTableInfo,
   } = useQuery(
-    ["GET_TABLE_INFO", {tableSlug}],
+    ["GET_TABLE_INFO", { tableSlug }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {},
@@ -276,7 +297,7 @@ const ViewOptions = ({
   return (
     <Popover
       offset={[-145, 8]}
-      closeOnBlur={false}
+      // closeOnBlur={false}
       onClose={() => setTimeout(() => setOpenedMenu(null), 250)}
       modifiers={[
         {

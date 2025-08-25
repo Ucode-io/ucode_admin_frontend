@@ -87,6 +87,7 @@ function DrawerDetailPage({
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
     updateQueryWithoutRerender("p", null);
+    updateQueryWithoutRerender("v", view?.id);
     // }
   };
 

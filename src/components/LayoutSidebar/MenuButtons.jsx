@@ -29,8 +29,10 @@ const ButtonsMenu = ({
   setLinkedTableModal,
   setWebsiteModalLink,
   menuLanguages,
+  setSelectedFolder = () => {},
   openTableCreateModal = () => {},
 }) => {
+  console.log("elementelementelementelementelement", element);
   const navigate = useNavigate();
   const {i18n} = useTranslation();
   const permissionButton =

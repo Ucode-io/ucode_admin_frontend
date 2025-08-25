@@ -165,26 +165,22 @@ const LayoutSidebar = ({
 
   const setWebsiteModalLink = (element) => {
     setWebsiteModal(true);
-    setSelectedFolder(element);
   };
 
   const setTableModal = (element) => {
     setTableModalOpen(true);
-    setSelectedFolder(element);
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
   };
   const setLinkedTableModal = (element) => {
     setLinkTableModal(true);
-    setSelectedFolder(element);
   };
   const closeLinkedTableModal = () => {
     setLinkTableModal(null);
   };
   const setMicrofrontendModal = (element) => {
     setMicrofrontendModalOpen(true);
-    setSelectedFolder(element);
   };
   const closeMicrofrontendModal = () => {
     setMicrofrontendModalOpen(null);
@@ -205,12 +201,10 @@ const LayoutSidebar = ({
   };
   const openFolderCreateModal = (type, element) => {
     setModalType(type);
-    setSelectedFolder(element);
   };
 
   const openTableCreateModal = (type, element) => {
     setTableType(type);
-    // setSelectedFolder(element);
   };
 
   const closeTableCreateModal = () => {
@@ -257,7 +251,6 @@ const LayoutSidebar = ({
       .delete(element.id)
       .then(() => {
         if (element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
-          // queryClient.refetchQueries(["MENU"], element?.id);
           getMenuList();
           setSelectedFolder(null);
         } else {
@@ -372,9 +365,7 @@ const LayoutSidebar = ({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
-      onSuccess: (res) => {
-        // setMenuItem(res);
-      },
+      onSuccess: (res) => {},
     },
   });
 
@@ -596,6 +587,7 @@ const LayoutSidebar = ({
                     menuLanguages={menuLanguages}
                     setMenuItem={setMenuItem}
                     menuItem={menuItem}
+                    selectedFolder={selectedFolder}
                     openFolderCreateModal={openFolderCreateModal}
                     setFolderModalType={setFolderModalType}
                     setTableModal={setTableModal}
@@ -834,7 +826,6 @@ const LayoutSidebar = ({
             selectedFolder={selectedFolder}
             modalType={modalType}
             appId={appId}
-            setSelectedFolder={setSelectedFolder}
             getMenuList={getMenuList}
           />
         )}
@@ -872,6 +863,7 @@ const LayoutSidebar = ({
 
         {websiteModal && (
           <WebsiteModal
+            websiteModal={websiteModal}
             closeModal={closeWebsiteModal}
             selectedFolder={selectedFolder}
             getMenuList={getMenuList}

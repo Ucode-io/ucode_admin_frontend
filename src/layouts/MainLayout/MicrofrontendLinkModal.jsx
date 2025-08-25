@@ -68,9 +68,14 @@ const MicrofrontendLinkModal = ({
         microfrontend_id: data?.microfrontend_id,
       })
       .then(() => {
-        closeModal();
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
+        if (selectedFolder?.id) {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          closeModal();
+        } else {
+          console.log("entered second");
+          getMenuList();
+          closeModal();
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -126,8 +131,7 @@ const MicrofrontendLinkModal = ({
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFIconPicker name="icon" control={control} />
                 {languages?.map((item, index) => (
                   <HFTextField
@@ -143,8 +147,7 @@ const MicrofrontendLinkModal = ({
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFSelect
                   fullWidth
                   label="Microfrontend"
@@ -171,8 +174,7 @@ const MicrofrontendLinkModal = ({
                 />
                 <RectangleIconButton
                   onClick={() => deleteField(index)}
-                  color="error"
-                >
+                  color="error">
                   <Delete color="error" />
                 </RectangleIconButton>
               </div>
@@ -181,8 +183,7 @@ const MicrofrontendLinkModal = ({
               className={styles.button}
               variant="contained"
               fullWidth
-              onClick={addField}
-            >
+              onClick={addField}>
               Add params
             </Button>
             <div className="btns-row">

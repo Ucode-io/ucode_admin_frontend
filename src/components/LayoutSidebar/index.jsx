@@ -80,6 +80,7 @@ import DocsChatwootModal from "./DocsChatwootModal";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
+import TableCreateModal from "../../layouts/MainLayout/TableCreateModal";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -124,6 +125,7 @@ const LayoutSidebar = ({
   const [languageData, setLanguageData] = useState(null);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const [childMenu, setChildMenu] = useState(null);
+  const [tableType, setTableType] = useState("");
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -206,6 +208,15 @@ const LayoutSidebar = ({
     setSelectedFolder(element);
   };
 
+  const openTableCreateModal = (type, element) => {
+    setTableType(type);
+    // setSelectedFolder(element);
+  };
+
+  const closeTableCreateModal = () => {
+    setTableType(null);
+  };
+
   const getMenuList = () => {
     setIsMenuListLoading(true);
 
@@ -245,17 +256,14 @@ const LayoutSidebar = ({
     menuSettingsService
       .delete(element.id)
       .then(() => {
-        if (
-          !element?.parent_id ||
-          element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284"
-        ) {
-          console.log("ENTERED 1");
+        if (element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
           queryClient.refetchQueries(["MENU"], element?.id);
           getMenuList();
+          setSelectedFolder(null);
         } else {
-          console.log("ENTERED 2");
           setChildMenu(element);
           queryClient.refetchQueries(["CHILD_MENU"], element?.id);
+          setSelectedFolder(null);
         }
       })
       .catch((err) => {
@@ -574,6 +582,7 @@ const LayoutSidebar = ({
                     child={child}
                     key={index}
                     childMenu={childMenu}
+                    setSelectedFolder={setSelectedFolder}
                     setChildMenu={setChildMenu}
                     element={element}
                     sidebarIsOpen={sidebarIsOpen}
@@ -614,6 +623,7 @@ const LayoutSidebar = ({
                     mx={8}
                     marginTop={"5px"}
                     onClick={(e) => {
+                      setSelectedFolder(null);
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
                     }}
@@ -816,6 +826,19 @@ const LayoutSidebar = ({
             getMenuList={getMenuList}
           />
         )}
+        {(tableType === "create" ||
+          tableType === "parent" ||
+          tableType === "update") && (
+          <TableCreateModal
+            closeModal={closeTableCreateModal}
+            selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
+            setSelectedFolder={setSelectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+
         {modalType === "WIKI_UPDATE" || modalType === "WIKI_FOLDER_UPDATE" ? (
           <WikiFolderCreateModal
             closeModal={closeModal}
@@ -872,6 +895,7 @@ const LayoutSidebar = ({
           menu={menu?.event}
           openMenu={openSidebarMenu}
           handleCloseNotify={handleCloseNotify}
+          openTableCreateModal={openTableCreateModal}
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}
           setFolderModalType={setFolderModalType}

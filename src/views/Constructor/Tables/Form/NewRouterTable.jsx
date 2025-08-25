@@ -60,7 +60,7 @@ const NewRouterTable = () => {
   const [tableLan, setTableLan] = useState(null);
   const [menuItem, setMenuItem] = useState(null);
   const location = useLocation();
-  console.log("location", location);
+
   const permissions = useSelector((state) =>
     Object.entries(state.permissions?.permissions).map(([key, value]) => ({
       table_slug: key,

@@ -437,11 +437,20 @@ const LoginFormDesign = ({
         }
       }
     } else {
-      setValue(
-        "client_type",
-        company?.[0]?.projects?.[0]?.resource_environments?.[0]?.client_types
-          ?.response?.[0]?.guid
-      );
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          if (
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.client_types?.response?.length === 1
+          ) {
+            setValue(
+              "client_type",
+              company?.[0]?.projects?.[0]?.resource_environments?.[0]
+                ?.client_types?.response?.[0]?.guid
+            );
+          }
+        }
+      }
     }
   };
 
@@ -463,9 +472,11 @@ const LoginFormDesign = ({
       });
     }
   }, [computedConnections]);
-  console.log("computedCompaniescomputedCompanies", computedCompanies);
+  console.log("computedCompaniescomputedCompanies", computedClientTypes);
   useEffect(() => {
     if (computedCompanies?.length === 1) {
+      setValue("company_id", computedCompanies?.[0]?.value);
+    } else {
       setValue("company_id", computedCompanies?.[0]?.value);
     }
     if (computedProjects?.length === 1) {

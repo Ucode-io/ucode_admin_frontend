@@ -332,10 +332,8 @@ const LayoutSidebar = ({
   }, [menuTemplate]);
 
   useEffect(() => {
-    if (!hasFetchedOnce) {
-      getMenuList();
-      setHasFetchedOnce(true);
-    }
+    getMenuList();
+    setHasFetchedOnce(true);
 
     if (location?.state?.refetch) {
       getMenuList();

@@ -294,7 +294,7 @@ const RecursiveBlock = ({
                         <Box
                           sx={{
                             width: "20px",
-                            minheight: "20px",
+                            height: "20px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",

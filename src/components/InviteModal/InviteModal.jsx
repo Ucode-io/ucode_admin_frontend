@@ -41,6 +41,7 @@ import userService from "../../services/userService";
 import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import styles from "./style.module.scss";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 
 function InviteModal({
   isOpen,
@@ -68,6 +69,8 @@ function InviteModal({
 
   const roleId =
     mainForm.getValues()?.role_id?.guid ?? selectedClientType?.guid;
+
+  const {data: projectInfo} = useProjectGetByIdQuery({project_id});
 
   const handleClose = () => {
     onClose();
@@ -147,7 +150,7 @@ function InviteModal({
     notifyButton();
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}&name=${projectInfo?.title}`
       );
     } catch (err) {
       console.error("Failed to copy!", err);

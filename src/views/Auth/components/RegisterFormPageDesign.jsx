@@ -28,6 +28,7 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [publicCheck, setPublicCheck] = useState(false);
+  const [data, setData] = useState(null);
   const {
     control,
     handleSubmit,
@@ -205,6 +206,9 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
               watch={watch}
               setValue={setValue}
               text={t("register.with.google")}
+              isLogin={false}
+              data={data}
+              setData={setData}
             />
           </Box>
         </Tooltip>

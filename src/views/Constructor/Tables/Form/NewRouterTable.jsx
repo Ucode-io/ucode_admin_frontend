@@ -305,17 +305,18 @@ const NewRouterTable = () => {
       show_in_menu: true,
       menu_id: menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
     };
+    console.log(computedData);
 
-    if (data?.id) {
-      updateConstructorTable(computedData);
-    } else {
-      const keyExists = await getKeyCheck(data?.slug);
-      if (keyExists) {
-        createConstructorTable(computedData);
-      } else {
-        dispatch(showAlert(`Table with key ${data?.slug} already exist`));
-      }
-    }
+    // if (data?.id) {
+    //   updateConstructorTable(computedData);
+    // } else {
+    //   const keyExists = await getKeyCheck(data?.slug);
+    //   if (keyExists) {
+    //     createConstructorTable(computedData);
+    //   } else {
+    //     dispatch(showAlert(`Table with key ${data?.slug} already exist`));
+    //   }
+    // }
   };
 
   const setPermission = (permission, table_slug) => {

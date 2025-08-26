@@ -17,6 +17,7 @@ import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import style from "@/views/Objects/style.module.scss";
 import {getColumnIcon} from "@/views/table-redesign/icons";
 import {ArrowBackIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
 import {
   Box,
   Button,
@@ -35,8 +36,8 @@ import {
 } from "@chakra-ui/react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {Backdrop, CircularProgress} from "@mui/material";
-import {addDays, endOfMonth, startOfMonth} from "date-fns";
+import { Backdrop, CircularProgress } from "@mui/material";
+import { addDays, endOfMonth, startOfMonth } from "date-fns";
 import React, {
   Suspense,
   lazy,
@@ -46,50 +47,52 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {default as InlineSVG, default as SVG} from "react-inlinesvg";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { default as InlineSVG, default as SVG } from "react-inlinesvg";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import {useGetLang} from "../../hooks/useGetLang";
+import { useGetLang } from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import {ViewProvider} from "../../providers/ViewProvider";
+import { ViewProvider } from "../../providers/ViewProvider";
 import constructorFieldService from "../../services/constructorFieldService";
 import constructorRelationService from "../../services/constructorRelationService";
-import {useTableByIdQuery} from "../../services/constructorTableService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
-import {groupFieldActions} from "../../store/groupField/groupField.slice";
-import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
-import {generateGUID} from "../../utils/generateID";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {listToMap} from "../../utils/listToMap";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import constructorTableService, {
+  useTableByIdQuery,
+} from "../../services/constructorTableService";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "../../store/groupField/groupField.slice";
+import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import { generateGUID } from "../../utils/generateID";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { listToMap } from "../../utils/listToMap";
+import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
-import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import ViewOptions from "../Objects/ModalDetailPage/ViewOptions";
-import {ViewCreatePopup} from "../Objects/components/ViewCreatePopup";
-import {FilterButton} from "./FilterButton";
-import {Filter} from "./FilterGenerator";
-import {LayoutPopup} from "./LayoutPopup";
+import { ViewCreatePopup } from "../Objects/components/ViewCreatePopup";
+import { FilterButton } from "./FilterButton";
+import { Filter } from "./FilterGenerator";
+import { LayoutPopup } from "./LayoutPopup";
 import MoreViewsComponent from "./MoreViewsComponent";
-import {ScreenOptions} from "./ScreenOptions";
+import { ScreenOptions } from "./ScreenOptions";
 import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
-import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
+import { useViewWithGroupsProps } from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
 
 const DrawerFormDetailPage = lazy(
@@ -162,13 +165,13 @@ export const NewUiViewsWithGroups = ({
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
   const [isChanged, setIsChanged] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -179,7 +182,7 @@ export const NewUiViewsWithGroups = ({
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -187,11 +190,14 @@ export const NewUiViewsWithGroups = ({
   const viewsRef = useRef();
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
+
+  const [orderBy, setOrderBy] = useState(false);
+
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v") ?? selectedView?.id;
 
   const projectId = useSelector((state) => state.auth.projectId);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const settingsForm = useForm({
     defaultValues: {
@@ -199,6 +205,19 @@ export const NewUiViewsWithGroups = ({
       calendar_to_slug: "",
     },
   });
+
+  const handleSortClick = () => {
+    setOrderBy((prev) => {
+      constructorTableService.update(
+        {
+          ...tableInfo,
+          order_by: !prev,
+        },
+        projectId
+      );
+      return !prev;
+    });
+  };
 
   const handleAddDate = (item) => {
     const startDate = new Date(centerDate).toISOString();
@@ -265,12 +284,12 @@ export const NewUiViewsWithGroups = ({
     mode: "all",
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -280,7 +299,7 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(
+  const { data: tabs } = useQuery(
     queryGenerator(groupField, filters, i18n.language)
   );
 
@@ -387,7 +406,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const {isLoading} = useTableByIdQuery({
+  const { isLoading } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -414,7 +433,7 @@ export const NewUiViewsWithGroups = ({
         dispatch(detailDrawerActions.openDrawer());
         setSelectedRow(null);
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, {id}, menuId);
+        navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
       }
     }
   };
@@ -436,15 +455,14 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleViewClick = (view) => {
-    console.log("viewIdviewIdviewId", view?.id);
     const idx = views?.findIndex((v) => v.id === view.id);
     setSelectedTabIndex(idx);
     viewHandler(view);
     setSelectedView(view);
-    dispatch(viewsActions.setSelectedView({view, idx}));
+    dispatch(viewsActions.setSelectedView({ view, idx }));
     const isSection = view?.type === "SECTION";
     if (!new_router) {
-      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: idx}));
+      dispatch(viewsActions.setViewTab({ tableSlug, tabIndex: idx }));
       setSelectedTabIndex(idx);
     } else {
       if (isSection) {
@@ -500,7 +518,7 @@ export const NewUiViewsWithGroups = ({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -574,31 +592,31 @@ export const NewUiViewsWithGroups = ({
     ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label
     : view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
-  const {
-    getViewSettings,
-    viewsWithSettings,
-    createView,
-    handleSelectViewType,
-    selectedViewAnchor,
-    selectedViewTab,
-    closeViewSettings,
-    loading,
-    computedColumns,
-    viewErrors,
-  } = useViewWithGroupsProps({
-    relationView,
-    tableSlug,
-    viewsList,
-    fieldsMap,
-    fieldsMapRel,
-    i18n,
-    menuId,
-    views,
-    handleClose,
-    refetchViews,
-    handleClosePop,
-    tableRelations,
-  });
+  // const {
+  //   getViewSettings,
+  //   viewsWithSettings,
+  //   createView,
+  //   handleSelectViewType,
+  //   selectedViewAnchor,
+  //   selectedViewTab,
+  //   closeViewSettings,
+  //   loading,
+  //   computedColumns,
+  //   viewErrors,
+  // } = useViewWithGroupsProps({
+  //   relationView,
+  //   tableSlug,
+  //   viewsList,
+  //   fieldsMap,
+  //   fieldsMapRel,
+  //   i18n,
+  //   menuId,
+  //   views,
+  //   handleClose,
+  //   refetchViews,
+  //   handleClosePop,
+  //   tableRelations,
+  // });
 
   const updateVisibleViews = useCallback(() => {
     if (!views || views.length === 0) return;
@@ -670,7 +688,6 @@ export const NewUiViewsWithGroups = ({
   const handleCloseViews = () => {
     setAnchorEl(null);
   };
-
   return (
     <ViewProvider state={{ view, fieldsMap }}>
       <ChakraProvider theme={chakraUITheme}>
@@ -1141,15 +1158,27 @@ export const NewUiViewsWithGroups = ({
             </Popover>
 
             {view?.type !== "SECTION" && (
-              <FilterPopover
-                tableLan={tableLan}
-                view={view}
-                visibleColumns={visibleColumns}
-                refetchViews={refetchViews}
-                tableSlug={tableSlug}
-              >
-                <FilterButton view={view} />
-              </FilterPopover>
+              <Box display="flex">
+                {view?.type === VIEW_TYPES_MAP.TABLE && (
+                  <IconButton
+                    fontSize="1.7rem"
+                    variant="ghost"
+                    color={orderBy ? "#0365F2" : "#475467"}
+                    sx={{ color: orderBy ? "#0365F2" : "#475467" }}
+                    icon={<SwapVertIcon fontSize="inherit" />}
+                    onClick={handleSortClick}
+                  />
+                )}
+                <FilterPopover
+                  tableLan={tableLan}
+                  view={view}
+                  visibleColumns={visibleColumns}
+                  refetchViews={refetchViews}
+                  tableSlug={tableSlug}
+                >
+                  <FilterButton view={view} />
+                </FilterPopover>
+              </Box>
             )}
 
             {view?.type === "TIMELINE" && noDates.length > 0 && (
@@ -1600,6 +1629,8 @@ export const NewUiViewsWithGroups = ({
                           selectedView={selectedView}
                           currentView={view}
                           watch={watch}
+                          setOrderBy={setOrderBy}
+                          orderBy={orderBy}
                         />
                       )}
                     </TabPanel>
@@ -1708,6 +1739,8 @@ export const NewUiViewsWithGroups = ({
                         setSelectedObjects={setSelectedObjects}
                         selectedView={selectedView}
                         watch={watch}
+                        setOrderBy={setOrderBy}
+                        orderBy={orderBy}
                       />
                     )}
                   </>

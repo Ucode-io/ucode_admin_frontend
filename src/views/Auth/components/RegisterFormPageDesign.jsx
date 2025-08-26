@@ -14,7 +14,6 @@ import HFTextFieldPassword from "../../../components/FormElements/HFTextFieldPas
 import {useNavigate} from "react-router-dom";
 import HFFairSelect from "../../../components/FormElements/HFFairSelect";
 import billingService from "../../../services/billingService";
-import NewGoogleAuthLogin from "./LoginFormDesign/ExternalAuth/NewGoogleAuthLogin";
 
 const loginRules = {
   minLength: {

@@ -4,9 +4,12 @@ import { useFieldsListQuery } from "@/services/constructorFieldService";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
 import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
-import { SUPPORTED_FORMULAS } from "hot-formula-parser";
-import { getColumnIconPath } from "../../../../../../table-redesign/icons";
-import { getFieldIcon } from "./formulaFieldIcons";
+import {
+  BUILT_IN_OPERATORS,
+  getFieldIcon,
+  getFunctionsByFieldType,
+  menuIcons,
+} from "./formulaFieldIcons";
 
 export const useFormulaFieldProps = ({
   mainForm,
@@ -22,55 +25,69 @@ export const useFormulaFieldProps = ({
   const [editorValue, setEditorValue] = useState("");
   const [editorSearchText, setEditorSearchText] = useState("");
   const [exampleType, setExampleType] = useState("");
-  const [search, setSearch] = useState("");
+  const [openedMenus, setOpenedMenus] = useState({});
 
   const [fields, setFields] = useState([]);
 
-  const mirrorRef = useRef(null);
   const editorRef = useRef(null);
-  const textareaRef = useRef(null);
 
-  const mathType = watch("attributes.math");
+  const handleToggleFields = (type) =>
+    setOpenedMenus((prev) => ({ ...prev, [type]: !prev[type] }));
 
-  const suggestionsFields =
+  const fieldsList =
     mainForm
       .getValues("fields")
-      ?.filter((item) => item?.type !== FIELD_TYPES.UUID) ?? [];
+      ?.filter(
+        (item) =>
+          item?.type !== FIELD_TYPES.UUID &&
+          !item?.type?.includes("FRONTEND") &&
+          item?.label
+      ) ?? [];
 
-  const fieldsList = useMemo(() => {
-    // if (search) {
-    //   return suggestionsFields.filter((item) =>
-    //     item.label?.toLowerCase()?.includes(search?.toLowerCase())
-    //   );
-    // }
-    return suggestionsFields?.filter(
-      (item) => !item?.type?.includes("FRONTEND") && item?.label
+  const lastField = fieldsList?.find((item) => {
+    const label = item?.attributes?.[`label_${i18n.language}`] || item?.label;
+    const splittedVal = editorValue
+      ?.split(" ")
+      ?.[editorValue?.split(" ")?.length - 1]?.toLowerCase();
+
+    if (!editorValue) return false;
+
+    const splittedLabel = label?.split(" ");
+    return (
+      splittedLabel?.[splittedLabel.length - 1]?.toLowerCase() ===
+        splittedVal?.toLowerCase() ||
+      splittedLabel?.[splittedLabel.length - 1]?.toLowerCase() ===
+        splittedVal?.toLowerCase() + "."
     );
-  }, [search]);
+  });
 
-  const menuList = getFieldIcon({ fieldsList });
+  const menuList = useMemo(() => {
+    if (lastField?.type) {
+      setEditorSearchText("");
+    }
 
-  const [code, setCode] = useState(watch("attributes.formula") ?? "");
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+    const functionsByType = getFunctionsByFieldType({
+      fieldType: lastField?.type || "ALL",
+      fieldsList,
+    });
 
-  const updateMirrorStyle = (el) => {
-    const div = mirrorRef.current;
-    const style = getComputedStyle(textareaRef.current || el);
+    return functionsByType;
+  }, [editorValue]);
 
-    div.style.position = "absolute";
-    div.style.visibility = "hidden";
-    div.style.whiteSpace = "pre-wrap";
-    div.style.wordWrap = "break-word";
-    div.style.overflow = "hidden";
-    div.style.padding = style.padding;
-    div.style.border = style.border;
-    div.style.font = style.font;
-    div.style.lineHeight = style.lineHeight;
-    div.style.letterSpacing = style.letterSpacing;
-    div.style.width = el.offsetWidth + "px";
-    div.style.zIndex = -1;
-  };
+  useEffect(() => {
+    const functionsByType = getFunctionsByFieldType({
+      fieldType: lastField?.type || "ALL",
+      fieldsList,
+    });
+
+    const menuListNameKeys = {};
+
+    functionsByType.forEach((item) => {
+      menuListNameKeys[item.name] = true;
+    });
+
+    setOpenedMenus(menuListNameKeys);
+  }, []);
 
   const onEditorChange = (value) => {
     setEditorValue(value);
@@ -80,46 +97,63 @@ export const useFormulaFieldProps = ({
   const onItemMouseEnter = (type) => setExampleType(type);
   const onItemMouseLeave = () => setExampleType(null);
 
+  const getIsLastCharOperator = (value) => {
+    let splittedValOperator = "";
+
+    BUILT_IN_OPERATORS.forEach((op) => {
+      if (value?.slice(-1) === op.key || value?.slice(-1) === op.label) {
+        splittedValOperator = op;
+      }
+    });
+
+    return !!splittedValOperator;
+  };
+
   const handleFilterFields = (value) => {
+    const isCharOperator = getIsLastCharOperator(value);
+
     if (
-      value?.includes(" ") ||
       value.substring(value.length - 1) === "." ||
       value.substring(value.length - 1) === ")" ||
-      value.substring(value.length - 1) === "("
+      value.substring(value.length - 1) === "(" ||
+      value.substring(value.length - 1) === " " ||
+      isCharOperator
     ) {
       setEditorSearchText("");
     } else {
-      setEditorSearchText(value);
+      const splittedValSpace = value?.split(" ");
+      const splittedValDot = value?.split(".");
+      let splittedValOperator = "";
+
+      let splitOperator = "";
+
+      BUILT_IN_OPERATORS.forEach((op) => {
+        if (value?.includes(op.key) || value?.includes(op.label)) {
+          splitOperator = op.key;
+        }
+      });
+
+      if (splitOperator) {
+        splittedValOperator = value?.split(splitOperator);
+      }
+
+      if (splittedValOperator) {
+        setEditorSearchText(
+          splittedValOperator[splittedValOperator.length - 1]
+        );
+        return;
+      }
+
+      const lastSplittedValText = splittedValSpace[splittedValSpace.length - 1];
+
+      if (lastSplittedValText && !lastSplittedValText.includes(".")) {
+        setEditorSearchText(lastSplittedValText);
+      } else if (splittedValDot[splittedValDot.length - 1]) {
+        setEditorSearchText(splittedValDot[splittedValDot.length - 1]);
+      } else {
+        setEditorSearchText("");
+      }
     }
-  };
-
-  const handleChange = (e) => {
-    const value = e.target.value;
-    setCode(value);
-
-    updateMirrorStyle(e.target);
-
-    const words = value.split(/\s|\n/);
-    const lastWord = words[words.length - 1];
-
-    if (lastWord.length > 0) {
-      const filtered = suggestionsFields.filter((s) =>
-        s?.slug?.startsWith(lastWord)
-      );
-      setFilteredSuggestions(filtered);
-      setShowSuggestions(filtered.length > 0);
-    } else {
-      setShowSuggestions(false);
-    }
-  };
-
-  const handleSuggestionClick = (suggestion) => {
-    const words = code.split(/\s|\n/);
-    words[words.length - 1] = suggestion;
-    const updated = words.join(" ").replace(/\s+/g, " ");
-    setCode(updated);
-    setShowSuggestions(false);
-    textareaRef.current.focus();
   };
 
   const formulaTypes = [
@@ -136,8 +170,6 @@ export const useFormulaFieldProps = ({
     control,
     name: "attributes.formula_filters",
   });
-
-  const handleSearch = (e) => setSearch(e.target.value);
 
   const deleteSummary = (index) => {
     remove(index);
@@ -196,8 +228,95 @@ export const useFormulaFieldProps = ({
   });
 
   useEffect(() => {
-    setEditorValue(watch("attributes.formula") ?? "");
+    let result = watch("attributes.formula") || "";
+
+    if (result) {
+      fieldsList.forEach(({ attributes, label, slug }) => {
+        const currentLabel = attributes?.[`label_${i18n?.language}`] || label;
+
+        const regex = new RegExp(`\\b${slug}\\b`, "gi");
+        result = result.replace(regex, currentLabel);
+      });
+    }
+
+    setEditorValue(result ?? "");
   }, []);
+
+  useEffect(() => {
+    const menuLists = menuList?.map((item) => item.list).flat();
+    const filteredMenuLists = menuLists.filter((item) => {
+      const label = item?.attributes?.[`label_${i18n.language}`] || item?.label;
+      return label?.toLowerCase()?.includes(editorSearchText?.toLowerCase());
+    });
+    setExampleType(filteredMenuLists[0] || "");
+  }, [editorSearchText, menuList]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (exampleType) {
+        const splittedVal = editorValue?.split(" ");
+        const splittedDotVal = editorValue?.split(".");
+        const label =
+          exampleType?.attributes?.[`label_${i18n.language}`] ||
+          exampleType?.label;
+
+        const isOperator = BUILT_IN_OPERATORS.find((op) => {
+          return op.key === exampleType.key || op.label === exampleType.label;
+        });
+
+        const isLastCharOperator = getIsLastCharOperator(editorValue);
+
+        if (isLastCharOperator) {
+          e.preventDefault();
+          setEditorValue((prev) => prev + exampleType.label);
+          return;
+        }
+
+        if (isOperator) {
+          e.preventDefault();
+          setEditorValue((prev) => prev + " " + label + " ");
+          return;
+        }
+
+        if (
+          splittedVal.length > 1 &&
+          label
+            ?.toLowerCase()
+            .includes(splittedVal[splittedVal.length - 1]?.toLowerCase())
+        ) {
+          e.preventDefault();
+          setEditorValue(
+            splittedVal.slice(0, splittedVal.length - 1).join(" ") + " " + label
+          );
+        } else if (
+          splittedDotVal.length > 1 &&
+          label
+            ?.toLowerCase()
+            .includes(splittedDotVal[splittedDotVal.length - 1]?.toLowerCase())
+        ) {
+          e.preventDefault();
+          setEditorValue(
+            splittedDotVal.slice(0, splittedDotVal.length - 1).join(".") +
+              "." +
+              label
+          );
+        } else if (label?.includes("()")) {
+          e.preventDefault();
+          setEditorValue(editorValue + "." + label);
+        } else if (splittedVal.length === 1) {
+          setEditorValue(label);
+          e.preventDefault();
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [editorValue, exampleType]);
 
   return {
     formulaTypes,
@@ -217,8 +336,12 @@ export const useFormulaFieldProps = ({
     onItemMouseLeave,
     exampleType,
     i18n,
-    suggestionsFields,
+    fieldsList,
     editorSearchText,
     setEditorSearchText,
+    setExampleType,
+    lastField,
+    handleToggleFields,
+    openedMenus,
   };
 };

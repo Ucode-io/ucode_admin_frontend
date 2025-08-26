@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
   const monacoRef = useRef(null);
   const parserRef = useRef(null);
+  const badgesRef = useRef([]);
   const badgeDecosRef = useRef([]);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -78,6 +79,8 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
     }
   }
 
+  const fieldsSlugs = useMemo(() => fields.map((f) => f.slug), [fields]);
+
   const functionSuggestions = useMemo(
     () =>
       CUSTOM_FUNCTIONS_META.map((f) => ({
@@ -121,6 +124,8 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
     const tokenized = monaco.editor.tokenize(text, languageId);
 
     const decos = [];
+    const badges = []; // добавим сюда все бейджи
+
     for (let line = 1; line <= lineCount; line++) {
       const tokens = tokenized[line - 1] || [];
       const lineLen = model.getLineLength(line);
@@ -142,49 +147,45 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
             endColumn: end,
           });
 
-          //   const field = fields.find((f) => f.slug === word);
+          const field = fields.find(
+            (f) =>
+              (
+                f.attributes?.[`label_${i18n.language}`] || f.label
+              )?.toLowerCase() === word?.toLowerCase()
+          );
 
-          //   if (field) {
-          //     decos.push({
-          //       range: {
-          //         startLineNumber: line,
-          //         startColumn: start,
-          //         endLineNumber: line,
-          //         endColumn: end,
-          //       },
-          //       options: {
-          //         inlineClassName: "field-badge",
-          //         before: {
-          //           contentText: field.label,
-          //           inlineClassName: "field-badge-label",
-          //         },
-          //       },
-          //     });
-          //   }
-          // }
+          if (field) {
+            decos.push({
+              range: {
+                startLineNumber: line,
+                startColumn: start,
+                endLineNumber: line,
+                endColumn: end,
+              },
+              options: {
+                inlineClassName: `field-badge field-badge--${field?.type}`,
+              },
+            });
 
-          const field = fields.find((f) => f.slug === word);
-
-          decos.push({
-            range: {
-              startLineNumber: line,
-              startColumn: start,
-              endLineNumber: line,
-              endColumn: end,
-            },
-            options: {
-              inlineClassName: `field-badge field-badge--${field.type}`,
-            },
-          });
+            badges.push({
+              label:
+                field.attributes?.[`label_${i18n.language}`] || field.label,
+              range: { line, start, end },
+            });
+          }
         }
       }
     }
+
+    badgesRef.current = badges;
 
     badgeDecosRef.current = editor.deltaDecorations(
       badgeDecosRef.current,
       decos
     );
   }
+
+  const fieldPattern = `\\b(?:${functionsList.join("|")})\\b`;
 
   let completionProviderRegistered = false;
 
@@ -197,11 +198,16 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
       ignoreCase: true,
       tokenizer: {
         root: [
-          [new RegExp(`\\b(${functionsList.join("|")})\\b`), "keyword"],
+          [new RegExp(`${fieldPattern}(?=\\s*\\()`), "keyword"],
+          [new RegExp("(==|!=|<=|>=|=|<|>|\\+|!)", "g"), "operator"],
           [
             new RegExp(
               `\\b(${fields
-                .map((f) => f.slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+                .map((f) =>
+                  (
+                    f.attributes?.[`label_${i18n.language}`] || f?.label
+                  ).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+                )
                 .join("|")})\\b`
             ),
             "field",
@@ -220,6 +226,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
       rules: [
         { token: "keyword", foreground: "#0077aa" },
         { token: "field", foreground: "ffffff", background: "007acc" },
+        { token: "operator", foreground: "#0077aa" },
       ],
       colors: {
         "editor.background": "#f9f8f7",
@@ -277,60 +284,88 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
         const model = editorRef.current.getModel();
         const position = editorRef.current.getPosition();
 
-        // ← LeftArrow
+        // LeftArrow
         if (e.keyCode === monacoRef.current.KeyCode.LeftArrow) {
-          const word = model.getWordAtPosition({
-            lineNumber: position.lineNumber,
-            column: position.column,
-          });
+          const position = editorRef.current.getPosition();
+          const model = editorRef.current.getModel();
+          const lineNumber = position.lineNumber;
 
-          if (word) {
-            if (position.column === word.endColumn) {
+          const decorations = model
+            .getLineDecorations(lineNumber)
+            .filter((d) => d.options.inlineClassName?.includes("field-badge"));
+
+          for (const decoration of decorations) {
+            const { startLineNumber, endLineNumber, startColumn, endColumn } =
+              decoration.range;
+
+            if (
+              lineNumber >= startLineNumber &&
+              lineNumber <= endLineNumber &&
+              position.column === endColumn
+            ) {
               e.preventDefault();
               editorRef.current.setPosition({
-                lineNumber: position.lineNumber,
-                column: word.startColumn,
+                lineNumber,
+                column: startColumn,
               });
+              return;
             }
           }
         }
 
         // RightArrow
         if (e.keyCode === monacoRef.current.KeyCode.RightArrow) {
-          const word = model.getWordAtPosition({
-            lineNumber: position.lineNumber,
-            column: position.column,
-          });
+          const position = editorRef.current.getPosition();
+          const model = editorRef.current.getModel();
+          const lineNumber = position.lineNumber;
 
-          if (word) {
-            if (position.column === word.startColumn) {
+          const decorations = model
+            .getLineDecorations(lineNumber)
+            .filter((d) => d.options.inlineClassName?.includes("field-badge"));
+
+          for (const decoration of decorations) {
+            const { startLineNumber, endLineNumber, startColumn, endColumn } =
+              decoration.range;
+
+            if (
+              lineNumber === startLineNumber &&
+              lineNumber <= endLineNumber &&
+              position.column === startColumn
+            ) {
               e.preventDefault();
               editorRef.current.setPosition({
-                lineNumber: position.lineNumber,
-                column: word.endColumn,
+                lineNumber,
+                column: endColumn,
               });
+              return;
             }
           }
         }
 
         // Backspace
         if (e.keyCode === monacoRef.current.KeyCode.Backspace) {
-          const word = model.getWordAtPosition({
-            lineNumber: position.lineNumber,
-            column: position.column,
+          const model = editorRef.current.getModel();
+          const position = editorRef.current.getPosition();
+
+          const badge = badgesRef.current.find((b) => {
+            return (
+              b.range.line === position.lineNumber &&
+              position.column > b.range.start &&
+              position.column <= b.range.end
+            );
           });
 
-          if (word && position.column === word.endColumn) {
+          if (badge) {
             e.preventDefault();
             model.pushEditOperations(
               [],
               [
                 {
                   range: new monacoRef.current.Range(
-                    position.lineNumber,
-                    word.startColumn,
-                    position.lineNumber,
-                    word.endColumn
+                    badge.range.line,
+                    badge.range.start + 1,
+                    badge.range.line,
+                    badge.range.end
                   ),
                   text: "",
                 },
@@ -363,5 +398,5 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
     parserRef.current = parser;
   }, []);
 
-  return { runValidation, handleEditorMount, error };
+  return { runValidation, handleEditorMount, error, i18n };
 };

@@ -350,6 +350,7 @@ export const ExtraNavbar = ({
                   view={view}
                   searchText={searchText}
                   checkedColumns={checkedColumns}
+                  tableSlug={tableSlug}
                 />
                 <div
                   className={style.template}

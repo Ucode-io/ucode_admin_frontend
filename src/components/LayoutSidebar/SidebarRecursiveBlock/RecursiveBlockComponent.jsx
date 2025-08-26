@@ -49,6 +49,7 @@ const RecursiveBlock = ({
   buttonProps,
   projectSettingLan,
   menuStyles,
+  setSelectedFolder = () => {},
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -227,6 +228,7 @@ const RecursiveBlock = ({
               }}
               className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
               onClick={(e) => {
+                setSelectedFolder(element);
                 customFunc(e);
                 clickHandler(e);
               }}>
@@ -292,7 +294,7 @@ const RecursiveBlock = ({
                         <Box
                           sx={{
                             width: "20px",
-                            height: "20px",
+                            minheight: "20px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -482,7 +484,7 @@ const RecursiveBlock = ({
             />
           ))}
 
-          {Boolean(defaultAdmin) && (
+          {/* {Boolean(defaultAdmin) && (
             <Permissions
               projectSettingLan={projectSettingLan}
               menuStyle={{
@@ -491,7 +493,7 @@ const RecursiveBlock = ({
               }}
               setElement={setElement}
             />
-          )}
+          )} */}
 
           {element.id === folderIds.data_base_folder_id && (
             <>

@@ -650,6 +650,7 @@ const AppSidebar = ({
                       languageData={languageData}
                       folderItem={folderItem}
                       getMenuList={getMenuList}
+                      setSelectedFolder={setSelectedFolder}
                     />
                   )}
                 </AccordionPanel>

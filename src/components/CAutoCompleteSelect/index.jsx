@@ -20,7 +20,7 @@ const CAutoCompleteSelect = ({
   return (
     <div>
       <Autocomplete
-        disablePortal={true}
+        disablePortal={portal}
         id="table_choose"
         multiple={multiple}
         // disablePortal

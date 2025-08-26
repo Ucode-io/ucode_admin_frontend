@@ -63,6 +63,8 @@ const AppSidebar = ({
   setMenuDraggable,
   getMenuList,
   childMenu = false,
+  selectedFolder,
+  setSelectedFolder = () => {},
   setChildMenu = () => {},
 }) => {
   const navigate = useNavigate();
@@ -84,6 +86,24 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
 
+  const {isLoading, refetch} = useMenuListQuery({
+    params: {
+      parent_id: selectedFolder?.id ?? childMenu?.parent_id,
+      search: subSearchText,
+    },
+    queryParams: {
+      enabled: Boolean(selectedFolder?.id) || Boolean(childMenu),
+      onSuccess: (res) => {
+        setChildMenu(null);
+        computeMenuChilds(
+          selectedFolder?.id ?? childMenu?.parent_id,
+          res?.menus ?? []
+        );
+        setLoading(false);
+      },
+    },
+  });
+
   const clickHandler = (el) => {
     dispatch(tableActions.setTable(el?.data?.table));
     dispatch(detailDrawerActions.setMainTabIndex(0));
@@ -102,7 +122,10 @@ const AppSidebar = ({
       setSelectedApp,
       setMenuDraggable,
       menuChilds,
+      selectedFolder,
       setFolderItem,
+      refetch,
+      setSelectedFolder,
       closeMenu,
       navigate,
       dispatch,
@@ -126,24 +149,6 @@ const AppSidebar = ({
   //     .replace("{login_table_slug}", loginTableSlug)
   //     .replace("{user_id}", userId);
   // }
-
-  const {isLoadingm} = useMenuListQuery({
-    params: {
-      parent_id: folderItem?.id ?? childMenu?.parent_id,
-      search: subSearchText,
-    },
-    queryParams: {
-      enabled: Boolean(folderItem?.id) || Boolean(childMenu),
-      onSuccess: (res) => {
-        setChildMenu(null);
-        computeMenuChilds(
-          folderItem?.id ?? childMenu?.parent_id,
-          res?.menus ?? []
-        );
-        setLoading(false);
-      },
-    },
-  });
 
   const activeMenu =
     element?.type === "FOLDER"
@@ -184,7 +189,12 @@ const AppSidebar = ({
 
   function computeMenuChilds(id, children = []) {
     const updated = {...menuChilds};
-    updated[id] = {open: true, children};
+
+    if (updated?.[id]?.open) {
+      updated[id] = {open: true, children};
+    } else {
+      updated[id] = {open: false, children};
+    }
 
     dispatch(menuAccordionActions.toggleMenuChilds(updated));
   }
@@ -331,6 +341,8 @@ const AppSidebar = ({
                       id={"create_folder"}
                       className="extra_icon"
                       onClick={(e) => {
+                        console.log("elementttt entered", element);
+                        setSelectedFolder(element);
                         handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
                       <AddIcon
@@ -580,7 +592,9 @@ const AppSidebar = ({
                             id={"create_folder"}
                             className="extra_icon"
                             onClick={(e) => {
+                              console.log("elementttt entered", element);
                               e.stopPropagation();
+                              setSelectedFolder(element);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");
                             }}>
                             <AddIcon
@@ -636,6 +650,7 @@ const AppSidebar = ({
                       languageData={languageData}
                       folderItem={folderItem}
                       getMenuList={getMenuList}
+                      setSelectedFolder={setSelectedFolder}
                     />
                   )}
                 </AccordionPanel>

@@ -61,9 +61,19 @@ const FolderCreateModal = ({
         label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
-        closeModal();
+        if (
+          selectedFolder?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284"
+        ) {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          closeModal();
+        } else {
+          console.log("entered second");
+          getMenuList();
+          closeModal();
+        }
+        // queryClient.refetchQueries(["MENU"], selectedFolder?.id);
+        // getMenuList();
+        // closeModal();
       })
       .catch((err) => {
         console.log(err);

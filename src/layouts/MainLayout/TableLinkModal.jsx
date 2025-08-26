@@ -14,7 +14,14 @@ import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import menuService from "../../services/menuService";
 
-const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
+const TableLinkModal = ({
+  closeModal,
+  loading,
+  selectedFolder,
+  setSelectedFolder = () => {},
+  getMenuList = () => {},
+}) => {
+  console.log("selectedFolderselectedFolderselectedFolder", selectedFolder);
   const {projectId} = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
@@ -52,14 +59,21 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
         label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
-        closeModal();
-        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
-        getMenuList();
+        if (selectedFolder?.id) {
+          queryClient.refetchQueries(["MENU_CHILD"]);
+          closeModal();
+        } else {
+          console.log("entered second");
+          getMenuList();
+          closeModal();
+        }
       })
       .catch((err) => {
         console.log(err);
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const updateType = (data, selectedFolder) => {
@@ -136,8 +150,7 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFIconPicker name="icon" control={control} />
 
                 {languages?.map((language) => {
@@ -160,9 +173,9 @@ const TableLinkModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
               <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements"
-              >
+                className="form-elements">
                 <HFAutocomplete
+                  portal={null}
                   name="table_id"
                   control={control}
                   placeholder="Tables"

@@ -16,6 +16,7 @@ import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
 import {ToastContainer} from "react-toastify";
 import {iconCategoryActions} from "../../store/IconCategory/iconCategory.slice";
+import AddingGroup from "./AddingGroup";
 
 const MainLayout = ({setFavicon, favicon}) => {
   const dispatch = useDispatch();
@@ -141,6 +142,7 @@ const MainLayout = ({setFavicon, favicon}) => {
           open={openProfileModal}
           onClose={handleCloseProfileModal}
         />
+        <AddingGroup />
       </ThemeProvider>
     </>
   );

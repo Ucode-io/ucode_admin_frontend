@@ -7,12 +7,14 @@ const newClickHandler = ({
   relationTabActions,
   setSelectedApp,
   setFolderItem,
+  setSelectedFolder,
   closeMenu,
   menuChilds,
   coontrolAccordionAction,
   setElement,
   setSubMenuIsOpen,
   auth,
+  refetch,
 }) => {
   if (element?.id === "USERS_MENU_ITEM_ID") {
     return navigate("/client-types");
@@ -23,7 +25,9 @@ const newClickHandler = ({
   setSelectedApp(element);
 
   if (element.type === "FOLDER") {
+    refetch();
     setFolderItem(el);
+    setSelectedFolder(el?.id ? el : element);
     const isOpen = menuChilds[element.id]?.open;
     if (isOpen) {
       closeMenu(element.id);

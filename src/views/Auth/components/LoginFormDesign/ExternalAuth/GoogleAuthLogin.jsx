@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -10,9 +11,12 @@ function GoogleAuthLogin({
   text = "",
   setValue = () => {},
   watch = () => {},
+  isLogin = true,
+  data = null,
+  setData = () => {},
 }) {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState(null);
+  // const [data, setData] = useState(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -33,9 +37,8 @@ function GoogleAuthLogin({
     const credential = response.credential;
 
     const payload = JSON.parse(atob(credential.split(".")[1]));
-    console.log("Google User:", payload);
 
-    setData({ credential, email: payload.email });
+    setData({ email: payload.email });
     setValue("googleToken", credential);
 
     getCompany({
@@ -47,14 +50,27 @@ function GoogleAuthLogin({
   };
 
   const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
+    onSuccess: async (tokenResponse) => {
       setLoading(false);
-      setData(tokenResponse);
-      setValue("googleToken", tokenResponse);
-      getCompany({
-        type: "google",
-        google_token: tokenResponse?.access_token,
-      });
+
+      if (!isLogin) {
+        const { data } = await axios.get(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          }
+        );
+
+        setData({ ...data, ...tokenResponse });
+      } else {
+        setValue("googleToken", tokenResponse);
+        getCompany({
+          type: "google",
+          google_token: tokenResponse?.access_token,
+        });
+      }
     },
     onError: (err) => {
       setLoading(false);

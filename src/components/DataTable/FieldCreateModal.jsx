@@ -57,14 +57,13 @@ import DropdownSelect from "../NewFormElements/DropdownSelect";
 import TextField from "../NewFormElements/TextField/TextField";
 import {Image} from "@chakra-ui/react";
 import clsx from "clsx";
+import {useViewContext} from "../../providers/ViewProvider";
+import {FieldPopover} from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
+import {RelationPopover} from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
 import { FieldCheckbox } from "../../views/Constructor/Tables/Form/components/FieldCheckbox/FieldCheckbox";
 import HFIconPicker from "../FormElements/HFIconPicker";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import listToOptions from "../../utils/listToOptions";
-import { useViewContext } from "../../providers/ViewProvider";
-import { FieldPopover } from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
-import { RelationPopover } from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
-import { SiCounterstrike } from "react-icons/si";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },

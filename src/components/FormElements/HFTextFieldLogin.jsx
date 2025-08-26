@@ -58,10 +58,10 @@ const HFTextFieldLogin = ({
       name={name}
       defaultValue={defaultValue}
       rules={{
-        required: true ? "This is required field" : false,
+        required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <TextField
             size="small"
@@ -97,7 +97,7 @@ const HFTextFieldLogin = ({
               readOnly: disabled,
               inputProps: {
                 tabIndex,
-                style: {height: inputHeight},
+                style: { height: inputHeight },
               },
               classes: {
                 input: classes.input,

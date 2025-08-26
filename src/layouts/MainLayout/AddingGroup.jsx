@@ -29,6 +29,7 @@ function AddingGroup() {
   const envId = query.get("env_id");
   const roleId = query.get("role_id");
   const clientTypeId = query.get("client_type_id");
+  const name = query.get("name");
 
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
@@ -109,15 +110,15 @@ function AddingGroup() {
             fontWeight: "bold",
             fontSize: "20px",
           }}>
-          C
+          {name?.[0]}
         </Box>
       </Box>
 
       <Typography variant="h4" sx={{mb: 1}}>
-        Join Company
+        {name || "Company name"}
       </Typography>
 
-      <Typography variant="body1" color="text.secondary" sx={{mb: 3}}>
+      <Typography variant="body1" color="text.secondary" sx={{mb: 1}}>
         You have been invited to join this company via link.
       </Typography>
 

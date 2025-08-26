@@ -421,6 +421,8 @@ const LoginFormDesign = ({
   useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);
+    } else {
+      setValue("company_id", computedCompanies?.[0]?.value);
     }
     if (computedProjects?.length === 1) {
       setValue("project_id", computedProjects?.[0]?.value);

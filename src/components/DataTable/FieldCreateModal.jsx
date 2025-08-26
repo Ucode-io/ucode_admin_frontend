@@ -809,6 +809,18 @@ export default function FieldCreateModal({
                             </span>
                           </button>
                         </Box>
+                        {(format === FIELD_TYPES.SINGLE_LINE ||
+                          format === FIELD_TYPES.MULTI_LINE) && (
+                          <Box>
+                            <FieldCheckbox
+                              watch={watch}
+                              setValue={setValue}
+                              register={register}
+                              name={"attributes.enable_multilanguage"}
+                              label={"Multiple language"}
+                            />
+                          </Box>
+                        )}
                       </Box>
                     </Box>
                   )}
@@ -851,38 +863,52 @@ export default function FieldCreateModal({
                     </Box>
                   )}
                   {formatIncludes?.includes(format) && !fieldData && (
-                    <Box
-                      width={"100%"}
-                      onMouseEnter={() => {
-                        setOpenedDropdown(dropdownTypes.changeFormat);
-                      }}
-                    >
-                      <Dropdown
-                        openedDropdown={openedDropdown}
-                        name={dropdownTypes.changeFormat}
-                        options={FormatOptionType(format)}
-                        selectedValue={
-                          format?.startsWith("FORMULA")
-                            ? formulaWatch("formulaFormat")
-                            : watch("type")
-                        }
-                        onClick={(option) => {
-                          if (format?.startsWith("FORMULA")) {
-                            formulaSetValue("formulaFormat", option?.value);
-                          } else {
-                            setValue("type", option?.value);
-                          }
+                    <>
+                      <Box
+                        width={"100%"}
+                        onMouseEnter={() => {
+                          setOpenedDropdown(dropdownTypes.changeFormat);
                         }}
-                        label={
-                          generateLangaugeText(
-                            tableLan,
-                            i18n?.language,
-                            "Change format"
-                          ) || "Change format"
-                        }
-                        icon={<FieldFormatIcon />}
-                      />
-                    </Box>
+                      >
+                        <Dropdown
+                          openedDropdown={openedDropdown}
+                          name={dropdownTypes.changeFormat}
+                          options={FormatOptionType(format)}
+                          selectedValue={
+                            format?.startsWith("FORMULA")
+                              ? formulaWatch("formulaFormat")
+                              : watch("type")
+                          }
+                          onClick={(option) => {
+                            if (format?.startsWith("FORMULA")) {
+                              formulaSetValue("formulaFormat", option?.value);
+                            } else {
+                              setValue("type", option?.value);
+                            }
+                          }}
+                          label={
+                            generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Change format"
+                            ) || "Change format"
+                          }
+                          icon={<FieldFormatIcon />}
+                        />
+                      </Box>
+                      {(format === FIELD_TYPES.SINGLE_LINE ||
+                        format === FIELD_TYPES.MULTI_LINE) && (
+                        <Box width="100%">
+                          <FieldCheckbox
+                            watch={watch}
+                            setValue={setValue}
+                            register={register}
+                            name={"attributes.enable_multilanguage"}
+                            label={"Multiple language"}
+                          />
+                        </Box>
+                      )}
+                    </>
                   )}
                   {format === FIELD_TYPES.MULTISELECT && (
                     <Box

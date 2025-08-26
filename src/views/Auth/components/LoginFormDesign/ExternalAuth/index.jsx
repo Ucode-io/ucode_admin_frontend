@@ -3,8 +3,7 @@ import React from "react";
 import GoogleAuthLogin from "./GoogleAuthLogin";
 import ChatwootLogin from "./ChatwootLogin";
 import {useLocation, useNavigate} from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import NewGoogleAuthLogin from "./NewGoogleAuthLogin";
+import { useTranslation } from "react-i18next";
 
 function ExternalAuth({ setFormType = () => {}, getCompany = () => {} }) {
   const navigate = useNavigate();

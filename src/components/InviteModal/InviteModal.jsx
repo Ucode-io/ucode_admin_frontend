@@ -55,7 +55,7 @@ function InviteModal({
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const env_id = useSelector((state) => state.auth?.environmentId);
+  const env_id = useSelector((state) => state.company?.environmentId);
   const [userId, setUserId] = useState("");
 
   const [searchParams, setSearchParams] = useSearchParams();

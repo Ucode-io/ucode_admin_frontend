@@ -447,7 +447,7 @@ const LayoutSidebar = ({
       }
     }
   }, []);
-
+  console.log("selectedFolderselectedFolder", selectedFolder);
   return (
     <>
       <Flex

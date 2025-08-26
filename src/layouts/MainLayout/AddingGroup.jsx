@@ -23,7 +23,7 @@ function AddingGroup() {
   const [open, setOpen] = useState(false);
   const authStore = store.getState();
   const location = useLocation();
-  console.log("authStoreauthStore", authStore);
+
   const query = new URLSearchParams(location?.search);
   const projectId = query.get("project-id");
   const envId = query.get("env_id");
@@ -70,7 +70,6 @@ function AddingGroup() {
       project_id: data.project_id,
       for_env: true,
     };
-    console.log("paramsparams", params);
 
     dispatch(companyActions.setEnvironmentItem(data));
     dispatch(companyActions.setEnvironmentId(data.env_id));

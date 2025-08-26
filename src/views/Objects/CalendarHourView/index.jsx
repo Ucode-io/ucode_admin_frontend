@@ -149,10 +149,18 @@ const CalendarHourView = ({ view, selectedTabIndex, setSelectedTabIndex, views, 
               }}
             >
               <div className={style.menuBar}>
-                <ExcelButtons />
-                <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
+                <ExcelButtons tableSlug={tableSlug} />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}
+                  >
+                    <Description
+                      className={style.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
                   </div>
                   <span>{t("template")}</span>
                 </div>
@@ -177,7 +185,11 @@ const CalendarHourView = ({ view, selectedTabIndex, setSelectedTabIndex, views, 
           selectedView={selectedView}
           setSelectedView={setSelectedView}
         />
-        <CRangePicker interval={"months"} value={dateFilters} onChange={setDateFilters} />
+        <CRangePicker
+          interval={"months"}
+          value={dateFilters}
+          onChange={setDateFilters}
+        />
       </FiltersBlock>
 
       <div

@@ -8,10 +8,11 @@ const ExcelButtons = ({
   computedVisibleFields,
   searchText,
   checkedColumns,
+  tableSlug,
 }) => {
   return (
     <>
-      <ExcelUploadButton fieldsMap={fieldsMap} />
+      <ExcelUploadButton fieldsMap={fieldsMap} tableSlug={tableSlug} />
 
       <ExcelDownloadButton
         computedVisibleFields={computedVisibleFields}

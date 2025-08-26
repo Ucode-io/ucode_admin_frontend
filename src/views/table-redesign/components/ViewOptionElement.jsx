@@ -793,9 +793,9 @@ export const FixColumns = ({
   );
 };
 
-export const ExcelExportButton = ({fieldsMap, tableLan}) => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const {i18n} = useTranslation();
+export const ExcelExportButton = ({ fieldsMap, tableLan, tableSlug }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { i18n } = useTranslation();
   return (
     <>
       <Flex
@@ -804,9 +804,10 @@ export const ExcelExportButton = ({fieldsMap, tableLan}) => {
         columnGap="8px"
         alignItems="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        _hover={{ bg: "#EAECF0" }}
         cursor="pointer"
-        onClick={onOpen}>
+        onClick={onOpen}
+      >
         <Image src="/img/file-download.svg" alt="Docs" />
         <ViewOptionTitle>
           {generateLangaugeText(tableLan, i18n?.language, "Import") || "Import"}
@@ -817,7 +818,11 @@ export const ExcelExportButton = ({fieldsMap, tableLan}) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent zIndex={2} minW="602px" w="602px">
-          <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose} />
+          <ExcelUploadModal
+            fieldsMap={fieldsMap}
+            handleClose={onClose}
+            tableSlug={tableSlug}
+          />
         </ModalContent>
       </Modal>
     </>

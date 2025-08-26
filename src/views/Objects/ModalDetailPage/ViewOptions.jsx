@@ -639,7 +639,11 @@ const ViewOptions = ({
                 </ViewOptionTitle>
                 <ChevronRightIcon ml="auto" fontSize={22} />
               </Flex>
-              <ExcelExportButton tableLan={tableLan} fieldsMap={fieldsMap} />
+              <ExcelExportButton
+                tableLan={tableLan}
+                fieldsMap={fieldsMap}
+                tableSlug={tableSlug}
+              />
               <ExcelImportButton
                 tableLan={tableLan}
                 searchText={searchText}

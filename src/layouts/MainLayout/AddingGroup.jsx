@@ -78,8 +78,8 @@ function AddingGroup() {
       .updateToken({...params}, {...params})
       .then((res) => {
         dispatch(companyActions.setProjectId(data.project_id));
-        dispatch(permissionsActions.setPermissions(data?.permissions));
-        store.dispatch(authActions.setTokens(data));
+        dispatch(permissionsActions.setPermissions(res?.permissions));
+        store.dispatch(authActions.setTokens(res));
         navigate("/");
         window.location.reload();
       })

@@ -37,9 +37,8 @@ function GoogleAuthLogin({
     const credential = response.credential;
 
     const payload = JSON.parse(atob(credential.split(".")[1]));
-    console.log("Google User:", payload);
 
-    setData({ credential, email: payload.email });
+    setData({ email: payload.email });
     setValue("googleToken", credential);
 
     getCompany({
@@ -65,7 +64,6 @@ function GoogleAuthLogin({
         );
 
         setData({ ...data, ...tokenResponse });
-        setValue("googleToken", tokenResponse);
       } else {
         setValue("googleToken", tokenResponse);
         getCompany({

@@ -28,7 +28,7 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [publicCheck, setPublicCheck] = useState(false);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({});
   const {
     control,
     handleSubmit,
@@ -59,8 +59,10 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
     setLoading(true);
     registerCompany({
       ...values,
+      fare_id: fares?.[0]?.value,
       user_info: {
         ...values.user_info,
+        email: data?.email || values?.email,
       },
     });
   };
@@ -81,6 +83,8 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
       },
     }
   );
+
+  console.log({ fares });
 
   return (
     <div className={classes.outletRegister}>
@@ -108,13 +112,13 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
                 }}
               />
             </div>
-            {!watch("googleToken") && (
+            {!watch("googleToken") && !Object.keys(data)?.length && (
               <div style={{ marginBottom: "13px" }} className={classes.formRow}>
                 <p className={classes.label}>{t("email")}</p>
                 <HFTextFieldLogin
                   name="user_info.email"
                   control={control}
-                  required
+                  required={!watch("googleToken")}
                   fullWidth
                   placeholder={t("enter.email.address")}
                   InputProps={{
@@ -173,16 +177,18 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
                 </span>
               )}
             </div>
-            <div style={{ marginBottom: "13px" }} className={classes.formRow}>
-              <p className={classes.label}>{t("Tariff")}</p>
-              <HFFairSelect
-                options={fares}
-                required
-                name="fare_id"
-                control={control}
-                fullWidth
-              />
-            </div>
+            {/* {!data && (
+              <div style={{ marginBottom: "13px" }} className={classes.formRow}>
+                <p className={classes.label}>{t("Tariff")}</p>
+                <HFFairSelect
+                  options={fares}
+                  required
+                  name="fare_id"
+                  control={control}
+                  fullWidth
+                />
+              </div>
+            )} */}
           </Box>
         </form>
 

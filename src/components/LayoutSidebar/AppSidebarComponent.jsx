@@ -105,6 +105,7 @@ const AppSidebar = ({
   });
 
   const clickHandler = (el) => {
+    setSelectedFolder(el);
     dispatch(tableActions.setTable(el?.data?.table));
     dispatch(detailDrawerActions.setMainTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
@@ -341,7 +342,6 @@ const AppSidebar = ({
                       id={"create_folder"}
                       className="extra_icon"
                       onClick={(e) => {
-                        console.log("elementttt entered", element);
                         setSelectedFolder(element);
                         handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
@@ -592,7 +592,6 @@ const AppSidebar = ({
                             id={"create_folder"}
                             className="extra_icon"
                             onClick={(e) => {
-                              console.log("elementttt entered", element);
                               e.stopPropagation();
                               setSelectedFolder(element);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");

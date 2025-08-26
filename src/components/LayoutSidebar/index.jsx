@@ -332,8 +332,10 @@ const LayoutSidebar = ({
   }, [menuTemplate]);
 
   useEffect(() => {
-    getMenuList();
-    setHasFetchedOnce(true);
+    if (!hasFetchedOnce) {
+      getMenuList();
+      setHasFetchedOnce(true);
+    }
 
     if (location?.state?.refetch) {
       getMenuList();
@@ -445,7 +447,7 @@ const LayoutSidebar = ({
       }
     }
   }, []);
-  console.log("selectedFolderselectedFolder", selectedFolder);
+
   return (
     <>
       <Flex

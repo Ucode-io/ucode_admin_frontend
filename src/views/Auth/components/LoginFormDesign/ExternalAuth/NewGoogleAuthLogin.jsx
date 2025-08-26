@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
-import { useGoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
-
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function GoogleAuthLogin({
   getCompany = () => {},
@@ -16,13 +13,15 @@ function GoogleAuthLogin({
   const { t } = useTranslation();
 
   useEffect(() => {
+    /* Инициализация Google One Tap */
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID, // ⚡ Ваш CLIENT_ID
         callback: handleCredentialResponse,
-        auto_select: true,
+        auto_select: true, // если у пользователя один аккаунт, покажет сразу
       });
 
+      /* Отображение One Tap Popup */
       window.google.accounts.id.prompt();
     }
   }, []);
@@ -30,8 +29,10 @@ function GoogleAuthLogin({
   const handleCredentialResponse = (response) => {
     setLoading(true);
 
+    // JWT токен Google
     const credential = response.credential;
 
+    // Здесь можно получить email и имя пользователя
     const payload = JSON.parse(atob(credential.split(".")[1]));
     console.log("Google User:", payload);
 
@@ -46,29 +47,10 @@ function GoogleAuthLogin({
     setLoading(false);
   };
 
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      setLoading(false);
-      setData(tokenResponse);
-      setValue("googleToken", tokenResponse);
-      getCompany({
-        type: "google",
-        google_token: tokenResponse?.access_token,
-      });
-    },
-    onError: (err) => {
-      setLoading(false);
-    },
-  });
-
   return (
     <>
       <PrimaryButton
         disabled={loading || Boolean(watch("googleToken"))}
-        onClick={() => {
-          setLoading(true);
-          login();
-        }}
         size="large"
         style={{
           width: "100%",
@@ -80,10 +62,15 @@ function GoogleAuthLogin({
           fontWeight: "600",
           fontSize: "14px",
         }}
-        type={"button"}
+        type="button"
         loading={loading}
+        onClick={() => {
+          if (window.google) {
+            window.google.accounts.id.prompt();
+          }
+        }}
       >
-        <img src="/img/google.svg" alt="" />
+        <img src="/img/google.svg" alt="google" />
         {text ? text : t("google.continue")}
       </PrimaryButton>
     </>

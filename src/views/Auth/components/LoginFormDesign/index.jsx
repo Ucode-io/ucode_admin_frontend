@@ -348,11 +348,15 @@ const LoginFormDesign = ({
     const validLength = company?.length === 1;
     if (validLength) {
       setValue("company_id", company?.[0]?.id);
+    } else {
+      setValue("company_id", company?.[0]?.id);
     }
     if (validLength) {
       if (company?.[0]?.projects?.length === 1) {
         setValue("project_id", company?.[0]?.projects?.[0]?.id);
       }
+    } else {
+      setValue("project_id", company?.[0]?.projects?.[0]?.id);
     }
 
     if (validLength) {
@@ -365,6 +369,11 @@ const LoginFormDesign = ({
           );
         }
       }
+    } else {
+      setValue(
+        "environment_id",
+        company?.[0]?.projects?.[0]?.resource_environments?.[0]?.environment_id
+      );
     }
     if (validLength) {
       if (company?.[0]?.projects?.length === 1) {
@@ -381,6 +390,12 @@ const LoginFormDesign = ({
           }
         }
       }
+    } else {
+      setValue(
+        "client_type",
+        company?.[0]?.projects?.[0]?.resource_environments?.[0]?.client_types
+          ?.response?.[0]?.guid
+      );
     }
   };
 
@@ -402,7 +417,7 @@ const LoginFormDesign = ({
       });
     }
   }, [computedConnections]);
-
+  console.log("computedCompaniescomputedCompanies", computedCompanies);
   useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);

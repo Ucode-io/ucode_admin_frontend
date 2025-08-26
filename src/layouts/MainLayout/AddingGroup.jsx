@@ -9,11 +9,19 @@ import {
 } from "@mui/material";
 import userService from "../../services/auth/userService";
 import {store} from "../../store";
+import {useLocation, useParams} from "react-router-dom";
 
 function AddingGroup() {
   const [loader, setLoader] = useState(false);
   const [open, setOpen] = useState(false);
   const authStore = store.getState();
+  const location = useLocation();
+
+  const query = new URLSearchParams(location?.search);
+  const projectId = query.get("project-id");
+  const envId = query.get("env_id");
+  const roleId = query.get("role_id");
+  const clientTypeId = query.get("client_type_id");
 
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
@@ -26,11 +34,11 @@ function AddingGroup() {
   const handleAddGroup = () => {
     setLoader(true);
     const data = {
-      project_id: authStore?.auth?.projectId,
-      env_id: authStore?.auth?.environmentId,
+      project_id: projectId,
+      env_id: envId,
       user_id: authStore?.auth?.userId,
-      client_type_id: authStore?.auth?.clientType?.id,
-      role_id: authStore?.auth?.roleInfo?.id,
+      client_type_id: clientTypeId,
+      role_id: roleId,
     };
 
     userService

@@ -1,16 +1,16 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import requestAuth from "../../utils/requestAuth";
 import requestAuthV2 from "../../utils/requestAuthV2";
 
 const userService = {
-  getList: (params) => requestAuth.get(`/user`, { params }),
-  getById: (id, params) => requestAuth.get(`/user/${id}`, { params }),
+  getList: (params) => requestAuth.get(`/user`, {params}),
+  getById: (id, params) => requestAuth.get(`/user/${id}`, {params}),
   create: (data) => requestAuth.post("/user", data),
   update: (data) => requestAuth.put("/user", data),
   delete: (id) => requestAuth.delete(`/user/${id}`),
   updateV2: (data) => requestAuthV2.put("/user", data),
 
-  getUserList: (params) => requestAuthV2.get("/user", { params }),
+  getUserList: (params) => requestAuthV2.get("/user", {params}),
   getUserByID: (params, userId) =>
     requestAuthV2.get(`/user/${userId}`, {
       params,
@@ -23,9 +23,10 @@ const userService = {
         "client-type-id": userMenuId,
       },
     }),
+  userInvite: (data) => requestAuthV2.post("/user/invite", data),
 };
 
-export const useUserListQuery = ({ params = {}, queryParams } = {}) => {
+export const useUserListQuery = ({params = {}, queryParams} = {}) => {
   return useQuery(
     ["USER", params],
     () => {
@@ -35,9 +36,9 @@ export const useUserListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useUserGetByIdQuery = ({ userId, params = {}, queryParams }) => {
+export const useUserGetByIdQuery = ({userId, params = {}, queryParams}) => {
   return useQuery(
-    ["USER_GET_BY_ID", { ...params, userId }],
+    ["USER_GET_BY_ID", {...params, userId}],
     () => {
       return userService.getUserByID(params, userId);
     },

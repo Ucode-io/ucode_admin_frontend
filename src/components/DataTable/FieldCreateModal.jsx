@@ -816,7 +816,7 @@ export default function FieldCreateModal({
                               watch={watch}
                               setValue={setValue}
                               register={register}
-                              name={"attributes.enable_multilanguage"}
+                              name={"enable_multilanguage"}
                               label={"Multiple language"}
                             />
                           </Box>
@@ -903,7 +903,7 @@ export default function FieldCreateModal({
                             watch={watch}
                             setValue={setValue}
                             register={register}
-                            name={"attributes.enable_multilanguage"}
+                            name={"enable_multilanguage"}
                             label={"Multiple language"}
                           />
                         </Box>
@@ -1498,7 +1498,6 @@ export default function FieldCreateModal({
         selectedField={drawerState}
         // menuItem={menuItem}
       />
-      ;
       {fieldData?.type === FIELD_TYPES.LOOKUP ||
       fieldData?.type === FIELD_TYPES.LOOKUPS ? (
         <RelationPopover

@@ -166,7 +166,8 @@ const AddDataColumn = React.memo(
             backgroundColor: "#F6F6F6",
             zIndex: "2",
             textAlign: "center",
-          }}>
+          }}
+        >
           {rows?.length ? rows?.length + 1 : 1}
         </CTableCell>
         {columns?.map((column, index) => (
@@ -202,7 +203,9 @@ const AddDataColumn = React.memo(
                   ? "1"
                   : "0"
               }`,
-            }}>
+              borderColor: `${errors[column?.slug] ? "#f44336" : "inherit"}`,
+            }}
+          >
             <NewTableDataForm
               tableSlug={tableSlug}
               fields={columns}
@@ -253,7 +256,8 @@ const AddDataColumn = React.memo(
             right: "0",
             borderLeft: "1px solid #eee",
             backgroundColor: "#fff",
-          }}>
+          }}
+        >
           <Box display="flex" alignItems="center" justifyContent="center">
             <Button
               sx={{
@@ -267,7 +271,8 @@ const AddDataColumn = React.memo(
               color="error"
               onClick={() => {
                 setAddNewRow(false);
-              }}>
+              }}
+            >
               <ClearIcon color="error" />
             </Button>
             {/* <RectangleIconButton

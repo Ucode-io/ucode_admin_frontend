@@ -816,7 +816,7 @@ export default function FieldCreateModal({
                               watch={watch}
                               setValue={setValue}
                               register={register}
-                              name={"attributes.enable_multilanguage"}
+                              name={"enable_multilanguage"}
                               label={"Multiple language"}
                             />
                           </Box>
@@ -903,7 +903,7 @@ export default function FieldCreateModal({
                             watch={watch}
                             setValue={setValue}
                             register={register}
-                            name={"attributes.enable_multilanguage"}
+                            name={"enable_multilanguage"}
                             label={"Multiple language"}
                           />
                         </Box>

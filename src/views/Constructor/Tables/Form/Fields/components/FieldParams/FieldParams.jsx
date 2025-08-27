@@ -621,7 +621,7 @@ export const FieldParams = ({
                     watch={watch}
                     setValue={setValue}
                     register={register}
-                    name={"attributes.enable_multilanguage"}
+                    name={"enable_multilanguage"}
                     label={"Multiple language"}
                   />
                 </Box>

@@ -30,7 +30,6 @@ const ConnectionCreateModal = ({
   clientTypeId,
 }) => {
   const queryClient = useQueryClient();
-  const {clientId} = useParams();
   const {i18n} = useTranslation();
   const envId = store.getState().company.environmentId;
   const projectId = store.getState().company.projectId;
@@ -41,7 +40,7 @@ const ConnectionCreateModal = ({
       name: "",
       table_slug: "",
       view_slug: "",
-      client_type_id: clientId ?? clientTypeId,
+      client_type_id: clientTypeId,
       "project-id": projectId,
       guid: "",
     },

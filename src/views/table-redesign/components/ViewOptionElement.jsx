@@ -35,6 +35,11 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FieldOptions from "./FieldOptions";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import {
+  FileDownloadIcon,
+  FileExportIcon,
+  TrashIcon,
+} from "../../../utils/constants/icons";
 
 export const ColumnsVisibility = ({
   relationView = false,
@@ -46,7 +51,7 @@ export const ColumnsVisibility = ({
   refetchRelationViews = () => {},
 }) => {
   const queryClient = useQueryClient();
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const [search, setSearch] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
   const allFields = Object.values(fieldsMap);
@@ -61,7 +66,7 @@ export const ColumnsVisibility = ({
         refetchRelationViews();
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else if (!relationView) {
-        dispatch(viewsActions.updateView({view: data, id: view?.id}));
+        dispatch(viewsActions.updateView({ view: data, id: view?.id }));
       } else {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
@@ -426,7 +431,7 @@ export const Group = ({
   tableSlug,
 }) => {
   const queryClient = useQueryClient();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -487,7 +492,8 @@ export const Group = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
             "Group columns"}
@@ -518,9 +524,10 @@ export const Group = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -552,7 +559,7 @@ export const TabGroup = ({
   tableSlug,
 }) => {
   const queryClient = useQueryClient();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [search, setSearch] = useState("");
 
   const mutation = useMutation({
@@ -620,7 +627,8 @@ export const TabGroup = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, label) ||
             "Tab group columns"}
@@ -651,9 +659,10 @@ export const TabGroup = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
             {isBoardView ? (
               <Switch
@@ -700,7 +709,7 @@ export const FixColumns = ({
 }) => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (data) => {
@@ -761,7 +770,8 @@ export const FixColumns = ({
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
-        onClick={onBackClick}>
+        onClick={onBackClick}
+      >
         <Box color="#475467" fontSize={16} fontWeight={600}>
           {generateLangaugeText(tableLan, i18n?.language, "Fix columns") ||
             "Fix columns"}
@@ -792,9 +802,10 @@ export const FixColumns = ({
             columnGap="8px"
             alignItems="center"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
-            cursor="pointer">
-            {column?.type && getColumnIcon({column})}
+            _hover={{ bg: "#EAECF0" }}
+            cursor="pointer"
+          >
+            {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{column?.label}</ViewOptionTitle>
             <Switch
               ml="auto"
@@ -820,18 +831,18 @@ export const ExcelExportButton = ({ fieldsMap, tableLan, tableSlug }) => {
       <Flex
         p="8px"
         h="32px"
-        columnGap="8px"
+        columnGap="4px"
         alignItems="center"
         borderRadius={6}
         _hover={{ bg: "#EAECF0" }}
         cursor="pointer"
         onClick={onOpen}
       >
-        <Image src="/img/file-download.svg" alt="Docs" />
+        <FileDownloadIcon />
         <ViewOptionTitle>
           {generateLangaugeText(tableLan, i18n?.language, "Import") || "Import"}
         </ViewOptionTitle>
-        <ChevronRightIcon ml="auto" fontSize={22} />
+        <ChevronRightIcon ml="auto" fontSize={18} color="#D0D5DD" />
       </Flex>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -856,12 +867,12 @@ export const ExcelImportButton = ({
   tableSlug,
 }) => {
   // const {tableSlug} = useParams();
-  const {download} = useDownloader();
-  const {i18n} = useTranslation();
+  const { download } = useDownloader();
+  const { i18n } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const {data} = await constructorObjectService.downloadExcel(tableSlug, {
+      const { data } = await constructorObjectService.downloadExcel(tableSlug, {
         data: {
           field_ids: computedVisibleFields,
           language: i18n.language,
@@ -880,21 +891,18 @@ export const ExcelImportButton = ({
     <Flex
       p="8px"
       h="32px"
-      columnGap="8px"
+      columnGap="4px"
       alignItems="center"
       borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
+      _hover={{ bg: "#EAECF0" }}
       cursor="pointer"
-      onClick={mutation.mutate}>
-      {mutation.isLoading ? (
-        <Spinner w="20px" h="20px" />
-      ) : (
-        <Image src="/img/file-download.svg" alt="Docs" />
-      )}
+      onClick={mutation.mutate}
+    >
+      {mutation.isLoading ? <Spinner w="20px" h="20px" /> : <FileExportIcon />}
       <ViewOptionTitle>
         {generateLangaugeText(tableLan, i18n?.language, "Export") || "Export"}
       </ViewOptionTitle>
-      <ChevronRightIcon ml="auto" fontSize={22} />
+      <ChevronRightIcon ml="auto" fontSize={18} color="#D0D5DD" />
     </Flex>
   );
 };
@@ -906,9 +914,9 @@ export const DeleteViewButton = ({
   tableLan,
 }) => {
   const dispatch = useDispatch();
-  const {tableSlug: tableSlugFromParams} = useParams();
+  const { tableSlug: tableSlugFromParams } = useParams();
   const tableSlug = tableSlugFromParams ?? view?.table_slug;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const queryClient = useQueryClient();
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const mutation = useMutation({
@@ -928,19 +936,16 @@ export const DeleteViewButton = ({
 
   return (
     <Flex
-      p="8px"
+      padding="6px 8px"
       h="32px"
-      columnGap="8px"
+      columnGap="4px"
       alignItems="center"
       borderRadius={6}
-      _hover={{bg: "#EAECF0"}}
+      _hover={{ bg: "#EAECF0" }}
       cursor="pointer"
-      onClick={() => mutation.mutate()}>
-      {mutation.isLoading ? (
-        <Spinner w="20px" h="20px" />
-      ) : (
-        <Image src="/img/trash.svg" alt="Delete" />
-      )}
+      onClick={() => mutation.mutate()}
+    >
+      {mutation.isLoading ? <Spinner w="20px" h="20px" /> : <TrashIcon />}
       <ViewOptionTitle>
         {generateLangaugeText(tableLan, i18n?.language, "Delete") || "Delete"}
       </ViewOptionTitle>

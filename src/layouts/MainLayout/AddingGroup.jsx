@@ -31,6 +31,8 @@ function AddingGroup() {
   const clientTypeId = query.get("client_type_id");
   const name = query.get("name");
   const companyName = query.get("companyName");
+  const rowData = query.get("data");
+  const data = rowData ? JSON.parse(rowData) : [];
 
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
@@ -48,6 +50,7 @@ function AddingGroup() {
       user_id: authStore?.auth?.userId,
       client_type_id: clientTypeId,
       role_id: roleId,
+      ...data,
     };
 
     userService

@@ -730,7 +730,7 @@ const LayoutSidebar = ({
           )}
         </Box>
 
-        {userRoleName === DEFAULT_ADMIN && (
+        {userRoleName !== DEFAULT_ADMIN && (
           <Flex
             display={sidebarIsOpen ? "flex" : "block"}
             mt="auto"

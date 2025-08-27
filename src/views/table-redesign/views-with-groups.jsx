@@ -2098,8 +2098,8 @@ const FiltersSwitch = ({
   );
 };
 
-export const ViewOptionTitle = ({children}) => (
-  <Box color="#475467" fontWeight={500} fontSize={14}>
+export const ViewOptionTitle = ({ children }) => (
+  <Box color="#101828" fontWeight={400} fontSize={14} lineHeight="20px">
     {children}
   </Box>
 );

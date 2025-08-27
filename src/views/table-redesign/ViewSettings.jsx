@@ -15,6 +15,7 @@ import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import ViewSettings from "../Objects/components/ViewSettings";
 import {default as InlineSVG, default as SVG} from "react-inlinesvg";
+import { FileDownloadIcon } from "../../utils/constants/icons";
 
 function ViewSettingsModal({
   selectedView,
@@ -25,7 +26,7 @@ function ViewSettingsModal({
   refetchViews = () => {},
   setIsChanged = () => {},
 }) {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [typeNewView, setTypeNewView] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const onOpen = () => {
@@ -42,12 +43,17 @@ function ViewSettingsModal({
     <>
       <Flex
         h="32px"
-        columnGap="8px"
+        columnGap="4px"
         alignItems="center"
         borderRadius={6}
         // _hover={{bg: "#EAECF0"}}
         cursor="pointer"
-        onClick={onOpen}>
+        onClick={onOpen}
+        padding="6px 8px"
+        _hover={{
+          bg: "#F2F4F7",
+        }}
+      >
         {viewSetting ? (
           <>
             <Button
@@ -56,25 +62,24 @@ function ViewSettingsModal({
               color={"#000"}
               bg={"none"}
               h={"24px"}
-              _hover={{
-                bg: "#edf2f6",
-              }}>
+            >
               <MoreHorizIcon />
             </Button>
           </>
         ) : (
           <>
             <Flex
-              minW="36px"
-              h="28px"
+              // minW="36px"
+              // h="28px"
               alignItems="center"
-              justifyContent="center">
-              <SVG src={`/img/file-download.svg`} width={20} height={20} />
+              justifyContent="center"
+            >
+              <FileDownloadIcon />
             </Flex>
             <ViewOptionTitle>
               {generateLangaugeText(tableLan, i18n?.language, "View") || "View"}
             </ViewOptionTitle>
-            <ChevronRightIcon ml="auto" fontSize={22} />
+            <ChevronRightIcon ml="auto" fontSize={18} color="#D0D5DD" />
           </>
         )}
       </Flex>
@@ -100,8 +105,8 @@ function ViewSettingsModal({
   );
 }
 
-const ViewOptionTitle = ({children}) => (
-  <Box color="#475467" fontWeight={500} fontSize={14}>
+const ViewOptionTitle = ({ children }) => (
+  <Box color="#101828" fontWeight={400} fontSize={14}>
     {children}
   </Box>
 );

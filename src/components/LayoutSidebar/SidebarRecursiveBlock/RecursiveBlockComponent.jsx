@@ -228,6 +228,7 @@ const RecursiveBlock = ({
               }}
               className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
               onClick={(e) => {
+                console.log("elementtttttttt", element);
                 setSelectedFolder(element);
                 customFunc(e);
                 clickHandler(e);
@@ -481,6 +482,7 @@ const RecursiveBlock = ({
               index={index}
               selectedApp={selectedApp}
               buttonProps={buttonProps}
+              setSelectedFolder={setSelectedFolder}
             />
           ))}
 

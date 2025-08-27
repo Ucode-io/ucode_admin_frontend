@@ -30,6 +30,7 @@ function AddingGroup() {
   const roleId = query.get("role_id");
   const clientTypeId = query.get("client_type_id");
   const name = query.get("name");
+  const companyName = query.get("companyName");
 
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
@@ -119,7 +120,15 @@ function AddingGroup() {
       </Typography>
 
       <Typography variant="body1" color="text.secondary" sx={{mb: 1}}>
-        You have been invited to join this company via link.
+        You have been invited to join this{" "}
+        <Box component="span" sx={{fontWeight: "bold", fontStyle: "normal"}}>
+          {companyName}
+        </Box>{" "}
+        /{" "}
+        <Box component="span" sx={{fontWeight: "bold", fontStyle: "normal"}}>
+          {name}
+        </Box>{" "}
+        via link.
       </Typography>
 
       <DialogActions sx={{justifyContent: "center"}}>
@@ -133,7 +142,7 @@ function AddingGroup() {
           {loader ? (
             <CircularProgress size={30} style={{color: "#007aff"}} />
           ) : (
-            " Join Company"
+            " Join Project"
           )}
         </Button>
       </DialogActions>

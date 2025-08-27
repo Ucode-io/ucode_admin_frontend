@@ -52,6 +52,7 @@ function InviteModal({
   selectedClientType,
 }) {
   const project_id = useSelector((state) => state.company.projectId);
+  const companyName = useSelector((state) => state.company.companyName);
   const finalRef = useRef(null);
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
@@ -150,7 +151,7 @@ function InviteModal({
     notifyButton();
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}&name=${projectInfo?.title}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}&name=${projectInfo?.title}&companyName=${companyName}`
       );
     } catch (err) {
       console.error("Failed to copy!", err);

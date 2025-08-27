@@ -1455,6 +1455,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 };
 
 const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
+  const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const [text, setText] = useState("");
   const [companyId, setCompanyId] = useState("");
@@ -1491,6 +1492,9 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
         {companies?.map((company) => (
           <AccordionItem key={company?.id}>
             <AccordionButton
+              onClick={() => {
+                dispatch(companyActions.setCompanyName(company?.name));
+              }}
               columnGap={8}
               p={5}
               justifyContent="space-between"

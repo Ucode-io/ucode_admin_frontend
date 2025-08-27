@@ -26,6 +26,7 @@ import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
 import {auth} from "./firebase";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import RecoverPassword from "../RecoverPassword";
+import {companyActions} from "../../../../store/company/company.slice";
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
@@ -391,6 +392,7 @@ const LoginFormDesign = ({
   };
 
   const computeCompanyElement = (company) => {
+    dispatch(companyActions.setCompanyName(company?.[0]?.name));
     const validLength = company?.length === 1;
     if (validLength) {
       setValue("company_id", company?.[0]?.id);

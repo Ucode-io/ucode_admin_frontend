@@ -36,8 +36,8 @@ function DrawerFormDetailPage({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
-  const {tableSlug: tableSlugParam, menuId} = useParams();
+  const { i18n } = useTranslation();
+  const { tableSlug: tableSlugParam, menuId } = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();

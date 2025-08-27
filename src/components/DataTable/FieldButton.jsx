@@ -140,6 +140,7 @@ export default function FieldButton({
       required: false,
       show_label: true,
       id: fieldData ? fieldData?.id : generateGUID(),
+      enable_multilanguage: values?.enable_multilanguage,
       attributes: {
         ...values.attributes,
         formula: values?.attributes?.advanced_type

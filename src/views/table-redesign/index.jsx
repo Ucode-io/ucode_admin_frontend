@@ -751,7 +751,7 @@ const FieldButton = ({
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const dispatch = useDispatch();
-  const { control, watch, setValue, reset, handleSubmit } = useForm();
+  const { control, watch, setValue, reset, handleSubmit, register } = useForm();
   const slug = transliterate(watch(`attributes.label_${languages[0]?.slug}`));
   const [fieldOptionAnchor, setFieldOptionAnchor] = useState(null);
   const [target, setTarget] = useState(null);
@@ -842,6 +842,7 @@ const FieldButton = ({
         has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
           values?.type
         ),
+        enable_multilanguage: values?.enable_multilanguage || false,
       },
     };
 
@@ -957,6 +958,7 @@ const FieldButton = ({
           sortedDatas={sortedDatas}
           mainForm={mainForm}
           formType={formType}
+          register={register}
         />
       )}
     </>

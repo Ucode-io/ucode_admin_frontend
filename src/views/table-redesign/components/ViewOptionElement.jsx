@@ -349,7 +349,7 @@ export const ColumnsVisibility = ({
             </Flex>
             {invisibleFields?.map((column) => (
               <Flex
-                as="label"
+                // as="label"
                 p="4px"
                 columnGap="8px"
                 alignItems="center"

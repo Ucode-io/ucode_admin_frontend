@@ -166,7 +166,7 @@ const HFReactSelect = ({
             {!disabledHelperText && error?.message && (
               <FormHelperText>{error?.message}</FormHelperText>
             )}
-            {(selectedValue || value || defaultValue) && (
+            {/* {(selectedValue || value || defaultValue) && (
               <Box sx={{position: "absolute", right: "20px", top: "3px"}}>
                 {isClearable && !disabled && (
                   <IconButton
@@ -176,7 +176,7 @@ const HFReactSelect = ({
                   </IconButton>
                 )}
               </Box>
-            )}
+            )} */}
           </FormControl>
         );
       }}

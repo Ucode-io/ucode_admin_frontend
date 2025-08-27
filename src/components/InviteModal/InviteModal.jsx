@@ -42,6 +42,8 @@ import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGe
 import styles from "./style.module.scss";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {useProjectGetByIdQuery} from "../../services/projectService";
+import ConnectionsInvite from "./ConnectionsInvite";
+import MaterialUIProvider from "../../providers/MaterialUIProvider";
 
 function InviteModal({
   isOpen,
@@ -70,6 +72,8 @@ function InviteModal({
 
   const roleId =
     mainForm.getValues()?.role_id?.guid ?? selectedClientType?.guid;
+
+  const client_type_id = mainForm.getValues()?.client_type_id;
 
   const {data: projectInfo} = useProjectGetByIdQuery({project_id});
 
@@ -149,9 +153,13 @@ function InviteModal({
 
   const copyToClipboard = async () => {
     notifyButton();
+    const query = encodeURIComponent(
+      JSON.stringify(mainForm.getValues()?.tables)
+    );
+
     try {
       await navigator.clipboard.writeText(
-        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}&name=${projectInfo?.title}&companyName=${companyName}`
+        `${import.meta.env.VITE_DOMAIN}/invite-user?project-id=${project_id}&env_id=${env_id}&role_id=${roleId}&client_type_id=${clientTypeId}&name=${projectInfo?.title}&companyName=${companyName}&data=${query}`
       );
     } catch (err) {
       console.error("Failed to copy!", err);
@@ -208,24 +216,6 @@ function InviteModal({
 
             <ModalBody padding={"0 15px"}>
               <>
-                {/* {tabIndex === 3 &&
-                  mainForm.watch("role_id")?.name !== "DEFAULT ADMIN" && (
-                    <Button
-                      onClick={copyToClipboard}
-                      className={styles.copyButton}
-                      isDisabled={
-                        !mainForm.watch("client_type_id") ||
-                        !mainForm.watch("role_id")
-                      }>
-                      <LinkIcon
-                        style={{
-                          transform: "rotate(140deg)",
-                          color: "#A09F9D",
-                        }}
-                      />
-                      Invite Link
-                    </Button>
-                  )} */}
                 <Tabs
                   isLazy={false}
                   index={tabIndex}
@@ -259,10 +249,9 @@ function InviteModal({
                         </Tab>
                       </Flex>
                     </TabList>
-                    {/* )} */}
                   </Box>
                   <TabPanels>
-                    <TabPanel minH={"50px"} mt={0} p={"0"}>
+                    <TabPanel minH={"40px"} mt={0} p={"0"}>
                       <LoginForm
                         guid={guid}
                         userId={userId}
@@ -389,6 +378,15 @@ function InviteModal({
                     </Box>
                   </TabPanels>
                 </Tabs>
+                <Box>
+                  <MaterialUIProvider>
+                    {" "}
+                    <ConnectionsInvite
+                      client_type_id={client_type_id}
+                      mainForm={mainForm}
+                    />
+                  </MaterialUIProvider>
+                </Box>
               </>
             </ModalBody>
             <ModalFooter padding={"5px 10px 10px 10px"}>

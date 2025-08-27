@@ -63,6 +63,12 @@ const CellRelationFormElementForNewColumn = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
+        rules={{
+          required: {
+            value: field.attributes.required,
+            message: "This is required field",
+          },
+        }}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
@@ -166,6 +172,8 @@ const AutoCompleteElement = ({
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug
   );
+  const isRequired = field?.attributes?.required;
+  console.log(field?.attributes?.required);
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -540,6 +548,7 @@ const AutoCompleteElement = ({
         onMenuScrollToBottom={loadMoreItems}
         options={computedOptions ?? []}
         value={localValue}
+        required={isRequired}
         isClearable
         components={{
           ClearIndicator: () =>

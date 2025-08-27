@@ -76,7 +76,6 @@ const HeadingOptions = ({
   const fieldValue = selectedField
     ? (selectedRow?.[selectedField.slug] ?? "")
     : "";
-
   const fieldsList = Object.values(fieldsMap)
     .map((field) => ({
       label: field?.attributes?.[`label_${i18n?.language}`] ?? field?.label,

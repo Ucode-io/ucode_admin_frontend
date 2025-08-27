@@ -1043,6 +1043,7 @@ const Header = ({
 
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
+    dispatch(authActions.updateEnvId(environment.id));
     authService
       .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {

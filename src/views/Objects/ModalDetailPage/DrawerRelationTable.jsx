@@ -74,7 +74,9 @@ const DrawerRelationTable = ({
     },
   });
 
-  const id = searchParams.get("p");
+  const { id: idFromParams } = useParams();
+
+  const id = searchParams.get("p") || idFromParams || idFromProps;
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({});
@@ -89,7 +91,7 @@ const DrawerRelationTable = ({
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
-  const {fields, remove, update} = useFieldArray({
+  const { fields, remove, update } = useFieldArray({
     control,
     name: "multi",
   });
@@ -145,6 +147,8 @@ const DrawerRelationTable = ({
     getRelatedTabeSlug?.type,
     getRelatedTabeSlug?.relation_field_slug,
   ]);
+
+  console.log(computedFilters);
 
   const {
     data: {

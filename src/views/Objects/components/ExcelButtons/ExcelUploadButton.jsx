@@ -11,8 +11,8 @@ const useStyles = makeStyles({
   root: {},
 });
 
-const ExcelUploadButton = ({fieldsMap, withText}) => {
-  const {t} = useTranslation();
+const ExcelUploadButton = ({ fieldsMap, withText, tableSlug }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const handleClick = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -22,7 +22,8 @@ const ExcelUploadButton = ({fieldsMap, withText}) => {
       <div
         id="excel_upload"
         className={style.excelUpload}
-        onClick={() => handleClick()}>
+        onClick={() => handleClick()}
+      >
         <RectangleIconButton color="white" onClick={() => handleClick()}>
           {withText ? "Импорт" : null}
           <Upload />
@@ -31,7 +32,11 @@ const ExcelUploadButton = ({fieldsMap, withText}) => {
       </div>
 
       <Dialog className={classes.root} open={open} onClose={handleClose}>
-        <ExcelUploadModal fieldsMap={fieldsMap} handleClose={handleClose} />
+        <ExcelUploadModal
+          fieldsMap={fieldsMap}
+          tableSlug={tableSlug}
+          handleClose={handleClose}
+        />
       </Dialog>
     </div>
   );

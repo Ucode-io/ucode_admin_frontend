@@ -186,7 +186,7 @@ const GanttView = ({
               }}
             >
               <div className={style.menuBar}>
-                <ExcelButtons />
+                <ExcelButtons tableSlug={tableSlug} />
                 <div
                   className={style.template}
                   onClick={() => setSelectedTabIndex(views?.length)}
@@ -198,7 +198,7 @@ const GanttView = ({
                   >
                     <Description
                       className={style.icon}
-                      style={{color: "#6E8BB7"}}
+                      style={{ color: "#6E8BB7" }}
                     />
                   </div>
                   <span>{t("template")}</span>

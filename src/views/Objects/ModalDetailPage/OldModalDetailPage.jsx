@@ -119,7 +119,7 @@ const ScreenOptions = ({
       navigateToEditPage(selectedRow);
     }
 
-    if (option) setSelectedViewType(option);
+    if (option) setSelectedViewType(option.icon);
     setAnchorEl(null);
   };
 

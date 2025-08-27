@@ -20,14 +20,10 @@ import { generateLangaugeText } from "../../../../utils/generateLanguageText";
 import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
 import { FIELD_TYPES } from "../../../../utils/constants/fieldTypes";
 
-const ExcelUploadModal = ({
-  fieldsMap,
-  handleClose,
-  tableSlug: tableSlugFromProps,
-}) => {
+const ExcelUploadModal = ({ fieldsMap, handleClose, tableSlug : tableSlugFromProps }) => {
   const inputFIle = useRef();
   const { tableSlug: tableSlugFromParams } = useParams();
-  const tableSlug = tableSlugFromParams || tableSlugFromProps;
+  const tableSlug = tableSlugFromProps || tableSlugFromParams;
   const queryClient = useQueryClient();
   const [rows, setRows] = useState();
   const [fileName, setFileName] = useState("");

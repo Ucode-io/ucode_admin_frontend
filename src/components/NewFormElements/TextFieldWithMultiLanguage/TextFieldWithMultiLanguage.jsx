@@ -1,9 +1,17 @@
-import TranslateIcon from "@mui/icons-material/Translate";
-import { Badge, Box, Button, Menu, MenuItem } from "@mui/material";
+import { Box, Menu, MenuItem } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import cls from "./styles.module.scss";
-import TextField from "../TextField/TextField";
+import {
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputLeftElement,
+  InputRightAddon,
+  InputRightElement,
+} from "@chakra-ui/react";
+import { TranslateIcon } from "../../../utils/constants/icons";
+import clsx from "clsx";
 
 export default function TextFieldWithMultiLanguage({
   control,
@@ -27,6 +35,8 @@ export default function TextFieldWithMultiLanguage({
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   id,
+  leftContent,
+  watch = () => {},
   ...props
 }) {
   const [selectedLanguage, setSelectedLanguage] = useState(
@@ -37,18 +47,30 @@ export default function TextFieldWithMultiLanguage({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const watch = useWatch({
-    control,
-  });
+  // const watch = useWatch({
+  //   control,
+  // });
+
+  console.log(watch(fieldName));
 
   const defaultValue = useMemo(
-    () => watch[fieldName] ?? "",
+    () => watch(fieldName) ?? "",
     [watch, fieldName]
   );
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const handleClickLanguage = () => {
+    const activeLanguageIndex = languages?.findIndex(
+      (language) => language.slug === selectedLanguage
+    );
+    if (activeLanguageIndex === languages?.length - 1)
+      setSelectedLanguage(languages[0]?.slug);
+    else setSelectedLanguage(languages[activeLanguageIndex + 1]?.slug);
+  };
+
   const handleClose = (language) => {
     setSelectedLanguage(language);
     setAnchorEl(null);
@@ -66,8 +88,48 @@ export default function TextFieldWithMultiLanguage({
   }, [languages]);
 
   return (
-    <Box display="flex" columnGap="8px">
-      <TextField
+    <Box width={"100%"}>
+      <Controller
+        control={control}
+        name={fieldName}
+        render={({ field: { onChange }, fieldState: { error } }) => (
+          <InputGroup>
+            <Input
+              defaultValue={defaultValue}
+              className={clsx(cls.input, {
+                [cls.leftContent]: leftContent,
+              })}
+              onChange={onChange}
+              // value={value}
+              placeholder={fieldPlaceholder}
+              disabled={disabled}
+              id={id}
+            />
+            {leftContent && (
+              <InputLeftElement
+                sx={{
+                  left: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                {leftContent}
+              </InputLeftElement>
+            )}
+            <InputRightElement
+              sx={{ right: "10px", top: "50%", transform: "translateY(-50%)" }}
+            >
+              <button className={cls.languageBtn} onClick={handleClickLanguage}>
+                <span className={cls.languageBtnInner}>
+                  <TranslateIcon />
+                  <span>{selectedLanguage}</span>
+                </span>
+              </button>
+            </InputRightElement>
+          </InputGroup>
+        )}
+      />
+      {/* <TextField
         key={fieldName}
         control={control}
         name={fieldName}
@@ -93,9 +155,9 @@ export default function TextFieldWithMultiLanguage({
             <TranslateIcon width="16" height="16" />
           </Button>
         </Badge>
-      )}
+      )} */}
 
-      <Menu
+      {/* <Menu
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
@@ -118,7 +180,7 @@ export default function TextFieldWithMultiLanguage({
             {language?.title}
           </MenuItem>
         ))}
-      </Menu>
+      </Menu> */}
     </Box>
   );
 }

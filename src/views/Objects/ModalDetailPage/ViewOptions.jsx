@@ -492,7 +492,6 @@ const ViewOptions = ({
                             {isTimelineView
                               ? visibleColumnsCountForTimeline
                               : visibleColumnsCount}{" "}
-                            {t("shown")}
                           </>
                         )}
                     </Flex>

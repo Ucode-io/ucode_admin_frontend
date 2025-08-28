@@ -36,6 +36,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FieldOptions from "./FieldOptions";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
+  EyeIcon,
+  EyeOffIcon,
   FileDownloadIcon,
   FileExportIcon,
   TrashIcon,
@@ -286,9 +288,9 @@ export const ColumnsVisibility = ({
                         view?.attributes?.visible_field?.includes(
                           column?.slug
                         ) ? (
-                          <VisibilityIcon />
+                          <EyeIcon />
                         ) : (
-                          <VisibilityOffIcon style={{ color: "#888" }} />
+                          <EyeOffIcon color="#888" />
                         )
                       ) : view?.columns?.includes(
                           column?.type === "LOOKUP" ||
@@ -296,17 +298,9 @@ export const ColumnsVisibility = ({
                             ? column?.relation_id
                             : column?.id
                         ) ? (
-                        <VisibilityIcon
-                          style={{ width: "16px", height: "16px" }}
-                        />
+                        <EyeIcon />
                       ) : (
-                        <VisibilityOffIcon
-                          style={{
-                            color: "#888",
-                            width: "16px",
-                            height: "16px",
-                          }}
-                        />
+                        <EyeOffIcon color="#888" />
                       )}
                     </Flex>
                     <FieldOptions
@@ -381,26 +375,18 @@ export const ColumnsVisibility = ({
                 >
                   {view?.type === "TIMELINE" ? (
                     view?.attributes?.visible_field?.includes(column?.slug) ? (
-                      <VisibilityIcon style={{ width: "16px" }} />
+                      <EyeIcon />
                     ) : (
-                      <VisibilityOffIcon
-                        style={{
-                          color: "#888",
-                          width: "16px",
-                          height: "16px",
-                        }}
-                      />
+                      <EyeOffIcon color="#888" />
                     )
                   ) : view?.columns?.includes(
                       column?.type === "LOOKUP" || column?.type === "LOOKUPS"
                         ? column?.relation_id
                         : column?.id
                     ) ? (
-                    <VisibilityIcon style={{ width: "16px", height: "16px" }} />
+                    <EyeIcon />
                   ) : (
-                    <VisibilityOffIcon
-                      style={{ color: "#888", width: "16px", height: "16px" }}
-                    />
+                    <EyeOffIcon color="#888" />
                   )}
                 </Flex>
                 <FieldOptions
@@ -902,7 +888,7 @@ export const ExcelImportButton = ({
       <ViewOptionTitle>
         {generateLangaugeText(tableLan, i18n?.language, "Export") || "Export"}
       </ViewOptionTitle>
-      <ChevronRightIcon ml="auto" fontSize={18} color="#D0D5DD" />
+      {/* <ChevronRightIcon ml="auto" fontSize={18} color="#D0D5DD" /> */}
     </Flex>
   );
 };

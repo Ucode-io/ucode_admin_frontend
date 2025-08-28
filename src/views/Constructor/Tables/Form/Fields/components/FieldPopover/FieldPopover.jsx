@@ -67,7 +67,8 @@ export const FieldPopover = ({
           overflowY: "visible",
           overflowX: "visible",
         },
-      }}>
+      }}
+    >
       <Box position="relative">
         <Box minWidth="292px" maxHeight="500px" overflow="auto">
           {selectedSettings ? (
@@ -96,7 +97,7 @@ export const FieldPopover = ({
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (
-            <Box paddingX="8px">
+            <Box>
               <FieldParams
                 onClose={onClose}
                 control={control}

@@ -1,21 +1,20 @@
 import CloseIcon from "@mui/icons-material/Close";
-import SettingsIcon from "@mui/icons-material/Settings";
 import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
 import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { Box, Button, Card, Menu, Popover, Typography } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import constructorTableService from "../../services/constructorTableService";
 
-import {useRelationGetByIdQuery} from "../../services/relationService";
-import {applyDrag} from "../../utils/applyDrag";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
   FIELD_TYPES,
   FormatOptionType,
@@ -26,7 +25,7 @@ import {
   math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import {colorList} from "../ColorPicker/colorList";
+import { colorList } from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
 import HFSelect from "../FormElements/HFSelect";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -40,30 +39,39 @@ import constructorFieldService, {
   useFieldsListQuery,
 } from "../../services/constructorFieldService";
 import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
 import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attributes/FormulaFilters";
 import constructorRelationService from "../../services/constructorRelationService";
-import {listToMap} from "../../utils/listToMap";
+import { listToMap } from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import Dropdown from "../NewFormElements/Dropdown/Dropdown";
 import FormElementButton from "../NewFormElements/FormElementButton";
 import MultiselectSettings from "./MultiselectSettings";
 import SVG from "react-inlinesvg";
-import {FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon} from "../icons";
-import {paginationActions} from "../../store/pagination/pagination.slice";
+import { FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon } from "../icons";
+import { paginationActions } from "../../store/pagination/pagination.slice";
 import constructorViewService from "../../services/constructorViewService";
 import DropdownSelect from "../NewFormElements/DropdownSelect";
 import TextField from "../NewFormElements/TextField/TextField";
-import {Image} from "@chakra-ui/react";
+import { Image } from "@chakra-ui/react";
 import clsx from "clsx";
-import {useViewContext} from "../../providers/ViewProvider";
-import {FieldPopover} from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
-import {RelationPopover} from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
+import { useViewContext } from "../../providers/ViewProvider";
+import { FieldPopover } from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
+import { RelationPopover } from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
 import { FieldCheckbox } from "../../views/Constructor/Tables/Form/components/FieldCheckbox/FieldCheckbox";
 import HFIconPicker from "../FormElements/HFIconPicker";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import listToOptions from "../../utils/listToOptions";
+import {
+  EyeOffIcon,
+  fieldTypeIcons,
+  PinIcon,
+  SettingsIcon,
+  SortIcon,
+  TrashIcon,
+} from "../../utils/constants/icons";
+import { KeyboardArrowRight } from "@mui/icons-material";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -716,7 +724,6 @@ export default function FieldCreateModal({
                   <Box
                     sx={{
                       width: "100%",
-                      marginBottom: "10px",
                     }}
                   >
                     {!ValueTypes(values?.type) && !FormatTypes(format) ? (
@@ -728,6 +735,8 @@ export default function FieldCreateModal({
                         defaultValue={tableName}
                         languages={languages}
                         id={"text_field_label"}
+                        watch={watch}
+                        leftContent={<Box>{fieldTypeIcons[watch("type")]}</Box>}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -763,7 +772,7 @@ export default function FieldCreateModal({
                   </Box>
                   {fieldData && (
                     <Box width={"100%"}>
-                      <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
+                      <Box borderBottom="1px solid #e5e9eb" paddingY="4px">
                         <Box>
                           <button
                             className={style.btn}
@@ -773,14 +782,14 @@ export default function FieldCreateModal({
                               setOpenedDropdown(null);
                             }}
                           >
-                            <SortByAlphaOutlinedIcon />
+                            <SortIcon />
                             <span>
                               Sort{" "}
-                              {sortedDatas?.find(
+                              {/* {sortedDatas?.find(
                                 (item) => item.field === fieldData.id
                               )?.order === "ASC"
                                 ? "Z -> A"
-                                : "A -> Z"}
+                                : "A -> Z"} */}
                             </span>
                           </button>
                         </Box>
@@ -800,7 +809,7 @@ export default function FieldCreateModal({
                               setOpenedDropdown(null);
                             }}
                           >
-                            <ViewWeekOutlinedIcon />
+                            <PinIcon />
                             <span>
                               {view?.attributes?.fixedColumns?.[fieldData?.id]
                                 ? "Unfix"
@@ -956,8 +965,7 @@ export default function FieldCreateModal({
                   {fieldData && (
                     <Box
                       width="100%"
-                      marginTop="6px"
-                      paddingTop="6px"
+                      marginTop="4px"
                       // borderTop="1px solid #e5e9eb"
                     >
                       <Box width={"100%"}>
@@ -969,11 +977,48 @@ export default function FieldCreateModal({
                             setOpenedDropdown(null);
                           }}
                         >
-                          <VisibilityOffOutlinedIcon />
+                          <EyeOffIcon />
                           <span>Hide field</span>
                         </button>
                       </Box>
-                      <Box width={"100%"} color="red">
+                    </Box>
+                  )}
+                  {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
+                    <button
+                      className={clsx(style.btn, style.settings)}
+                      onClick={() => {
+                        fieldHandleOpen(
+                          fieldData ?? {
+                            type: FIELD_TYPES.FORMULA_FRONTEND,
+                          }
+                        );
+                      }}
+                      onMouseEnter={() => {
+                        setOpenedDropdown(null);
+                      }}
+                    >
+                      <SettingsIcon />
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Settings"
+                      ) || "Settings"}
+                      <span className={style.btnIcon}>
+                        <KeyboardArrowRight
+                          htmlColor="rgba(71, 70, 68, 0.6)"
+                          width={16}
+                          height={16}
+                        />
+                      </span>
+                    </button>
+                  )}
+                  {fieldData && (
+                    <Box
+                      width="100%"
+                      // marginTop="4px"
+                      // borderTop="1px solid #e5e9eb"
+                    >
+                      <Box width={"100%"}>
                         <button
                           className={style.btn}
                           type="button"
@@ -982,7 +1027,7 @@ export default function FieldCreateModal({
                             setOpenedDropdown(null);
                           }}
                         >
-                          <DeleteOutlinedIcon />
+                          <TrashIcon />
                           <span>Delete field</span>
                         </button>
                       </Box>
@@ -1424,28 +1469,6 @@ export default function FieldCreateModal({
                   relatedTableSlug={relatedTableSlug}
                 />
               ) : null}
-              {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
-                <button
-                  className={clsx(style.btn, style.settings)}
-                  onClick={() => {
-                    fieldHandleOpen(
-                      fieldData ?? {
-                        type: FIELD_TYPES.FORMULA_FRONTEND,
-                      }
-                    );
-                  }}
-                  onMouseEnter={() => {
-                    setOpenedDropdown(null);
-                  }}
-                >
-                  <Image src="/img/settings.svg" alt="settings" />
-                  {generateLangaugeText(
-                    tableLan,
-                    i18n?.language,
-                    "Advanced settings"
-                  ) || "Advanced settings"}
-                </button>
-              )}
               <Box className={style.button_group} sx={{ padding: "0 5px" }}>
                 <FormElementButton onClick={handleClick}>
                   {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||

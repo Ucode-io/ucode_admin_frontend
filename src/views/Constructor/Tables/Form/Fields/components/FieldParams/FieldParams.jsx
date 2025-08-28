@@ -20,6 +20,8 @@ import { FieldMenuItem } from "../../../components/FieldMenuItem";
 import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
 import HFIconPicker from "../../../../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../../../../components/FormElements/HFSelect";
+import TextFieldWithMultiLanguage from "../../../../../../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import { TypeIcon } from "../../../../../../../utils/constants/icons";
 
 export const FieldParams = ({
   tableName = "",
@@ -86,23 +88,7 @@ export const FieldParams = ({
             <Box paddingX="8px">
               <FieldMenuItem
                 title="Type"
-                icon={
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1.33325 9.66687L7.7614 12.8809C7.84886 12.9247 7.89259 12.9465 7.93845 12.9551C7.97908 12.9628 8.02076 12.9628 8.06139 12.9551C8.10725 12.9465 8.15098 12.9247 8.23843 12.8809L14.6666 9.66687M1.33325 6.33354L7.7614 3.11946C7.84886 3.07574 7.89259 3.05387 7.93845 3.04527C7.97908 3.03765 8.02076 3.03765 8.06139 3.04527C8.10725 3.05387 8.15098 3.07574 8.23843 3.11946L14.6666 6.33354L8.23843 9.54762C8.15098 9.59134 8.10725 9.61321 8.06139 9.62181C8.02076 9.62943 7.97908 9.62943 7.93845 9.62181C7.89259 9.61321 7.84886 9.59134 7.7614 9.54762L1.33325 6.33354Z"
-                      stroke="#101828"
-                      stroke-width="1.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                }
+                icon={<TypeIcon />}
                 value={
                   activeType?.[`label_${i18n.language}`] || activeType?.label
                 }
@@ -111,7 +97,22 @@ export const FieldParams = ({
             </Box>
             <Box display="flex" columnGap="6px" paddingX="8px">
               {/* <Box className={cls.iconBox}>{fieldTypeIcons[watch("type")]}</Box> */}
-              <MultiLangField
+              <TextFieldWithMultiLanguage
+                control={control}
+                name="attributes.label"
+                placeholder="Name"
+                defaultValue={tableName}
+                languages={languages}
+                id={"field_label"}
+                watch={watch}
+                leftContent={
+                  <Box className={cls.iconBox}>
+                    {fieldTypeIcons[watch("type")]}
+                  </Box>
+                }
+                required
+              />
+              {/* <MultiLangField
                 control={control}
                 name="attributes.label"
                 fullWidth
@@ -121,7 +122,7 @@ export const FieldParams = ({
                 id={"field_label"}
                 watch={watch}
                 required
-              />
+              /> */}
             </Box>
             <Box display="flex" columnGap="6px" paddingX="8px">
               {/* <Box className={cls.iconBox}>
@@ -144,6 +145,7 @@ export const FieldParams = ({
               <HFTextField
                 inputStyles={{
                   padding: "6px 14px 6px 6px",
+                  borderRadius: "8px",
                 }}
                 className={cls.fieldInput}
                 disabledHelperText
@@ -739,15 +741,20 @@ export const FieldParams = ({
           </Box>
         </Box>
       </Box>
-      <Button
-        fullWidth
-        sx={{ marginTop: "8px", lineHeight: "20px", height: "36px" }}
-        size="medium"
-        variant="contained"
-        onClick={handleSubmit(onSubmit)}
-      >
-        Save
-      </Button>
+      <Box padding="8px">
+        <Button
+          fullWidth
+          sx={{
+            lineHeight: "20px",
+            height: "36px",
+          }}
+          size="medium"
+          variant="contained"
+          onClick={handleSubmit(onSubmit)}
+        >
+          Save
+        </Button>
+      </Box>
     </Box>
   );
 };

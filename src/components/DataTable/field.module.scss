@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 6px;
     column-gap: 10px;
   }
 
@@ -388,7 +388,12 @@
 }
 
 .btn.settings {
-  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  
+  .btnIcon {
+    margin-left: auto;
+  }
 }
 
 .btnWrapper {

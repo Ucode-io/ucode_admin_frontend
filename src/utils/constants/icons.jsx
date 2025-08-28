@@ -1073,3 +1073,24 @@ export const TranslateIcon = ({
     />
   </svg>
 );
+
+export const TypeIcon = ({
+  width = "14",
+  height = "12",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M1 3.333h8m0 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM5 8.667h8m-8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
+    />
+  </svg>
+);

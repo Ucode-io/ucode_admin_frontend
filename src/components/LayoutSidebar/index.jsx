@@ -255,8 +255,8 @@ const LayoutSidebar = ({
           setSelectedFolder(null);
         } else {
           setChildMenu(element);
-          queryClient.refetchQueries(["MENU_CHILD"]);
           setSelectedFolder(null);
+          queryClient.refetchQueries(["MENU_CHILD"]);
         }
       })
       .catch((err) => {
@@ -883,7 +883,7 @@ const LayoutSidebar = ({
       {menu?.type?.length ? (
         <ButtonsMenu
           menuLanguages={menuLanguages}
-          element={element}
+          element={element ?? selectedFolder}
           menu={menu?.event}
           openMenu={openSidebarMenu}
           handleCloseNotify={handleCloseNotify}

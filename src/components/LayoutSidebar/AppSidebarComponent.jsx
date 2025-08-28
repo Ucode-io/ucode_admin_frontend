@@ -153,7 +153,7 @@ const AppSidebar = ({
 
   const activeMenu =
     element?.type === "FOLDER"
-      ? Boolean(selectedApp?.id === element?.id)
+      ? Boolean(selectedFolder?.id === element?.id)
       : element?.id === menuId;
 
   if (!permission) {
@@ -324,12 +324,14 @@ const AppSidebar = ({
                         id={"three_dots"}
                         size={13}
                         onClick={(e) => {
+                          setSelectedFolder(element);
+                          e.stopPropagation();
                           handleOpenNotify(e, "FOLDER", true);
                         }}
                         style={{
                           color: activeMenu
                             ? "#32302B"
-                            : (menuStyle?.text ?? "#fff"),
+                            : (menuStyle?.text ?? "#32302B"),
                         }}
                       />
                     </div>
@@ -573,13 +575,14 @@ const AppSidebar = ({
                               id={"three_dots"}
                               size={13}
                               onClick={(e) => {
+                                setSelectedFolder(element);
                                 e.stopPropagation();
                                 handleOpenNotify(e, "FOLDER");
                               }}
                               style={{
                                 color: activeMenu
                                   ? "#32302B"
-                                  : (menuStyle?.text ?? "#fff"),
+                                  : (menuStyle?.text ?? "#32302B"),
                               }}
                             />
                           </div>

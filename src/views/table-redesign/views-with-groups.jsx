@@ -436,7 +436,6 @@ export const NewUiViewsWithGroups = ({
   };
 
   const handleViewClick = (view) => {
-    console.log("viewIdviewIdviewId", view?.id);
     const idx = views?.findIndex((v) => v.id === view.id);
     setSelectedTabIndex(idx);
     viewHandler(view);
@@ -905,6 +904,7 @@ export const NewUiViewsWithGroups = ({
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <TableActions tableSlug={tableSlug} tableLan={tableLan} />
               </PermissionWrapperV2>
+              {/* <AIChat /> */}
               {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <Button
                   h="30px"

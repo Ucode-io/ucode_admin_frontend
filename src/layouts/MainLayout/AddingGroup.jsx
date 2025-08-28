@@ -32,8 +32,8 @@ function AddingGroup() {
   const name = query.get("name");
   const companyName = query.get("companyName");
   const rowData = query.get("data");
-  const data = rowData ? JSON.parse(rowData) : [];
-
+  const tablesData = rowData ? JSON.parse(rowData) : [];
+  console.log("tablesDatatablesData", tablesData);
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
       setOpen(true);
@@ -50,7 +50,9 @@ function AddingGroup() {
       user_id: authStore?.auth?.userId,
       client_type_id: clientTypeId,
       role_id: roleId,
-      ...data,
+      additional_data: {
+        [`${tablesData?.[0]?.table_slug}_id`]: tablesData?.[0]?.object_id,
+      },
     };
 
     userService

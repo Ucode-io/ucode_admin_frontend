@@ -917,7 +917,7 @@ const LayoutSidebar = ({
   );
 };
 
-const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
+const AIChat = forwardRef(({sidebarOpen = false, children, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -1279,6 +1279,7 @@ const ProfilePanel = ({
 };
 
 const ProfileBottom = ({projectInfo, menuLanguages}) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
@@ -1343,6 +1344,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     authService.sendAccessToken({access_token: accessToken}).then((res) => {
       indexedDB.deleteDatabase("SearchTextDB");
       indexedDB.deleteDatabase("ChartDB");
+      navigate("/");
       dispatch(menuAccordionActions.toggleMenuChilds({}));
       store.dispatch(authActions.logout());
       dispatch(companyActions.logout());

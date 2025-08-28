@@ -14,6 +14,8 @@ import { SearchInput } from "../../../components/SearchInput";
 import { FormulaEditor } from "../FormulaEditor";
 import { Examples } from "../Examples";
 import { menuIcons } from "./formulaFieldIcons";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 export const FormulaField = ({
   control,
@@ -42,9 +44,12 @@ export const FormulaField = ({
     onItemMouseLeave,
     exampleType,
     i18n,
-    suggestionsFields,
+    fieldsList,
     editorSearchText,
     setEditorSearchText,
+    lastField,
+    handleToggleFields,
+    openedMenus,
   } = useFormulaFieldProps({
     control,
     mainForm,
@@ -179,7 +184,7 @@ export const FormulaField = ({
                 }}
                 ref={editorRef}
                 value={editorValue}
-                fields={suggestionsFields}
+                fields={fieldsList}
               />
             </Box>
             {/* <textarea
@@ -260,87 +265,99 @@ export const FormulaField = ({
               padding="6px 4px 2px"
               borderRight="1px solid rgba(84, 72, 49, 0.15)"
             >
-              {menuList.map((menuItem) => (
+              {menuList?.map((menuItem) => (
                 <Box>
-                  {menuItem?.list?.filter((item) =>
-                    item?.key
+                  {menuItem?.list?.filter((item) => {
+                    const label =
+                      item?.attributes?.[`label_${i18n.language}`] ||
+                      item?.label;
+                    return label
                       ?.toLowerCase()
-                      ?.includes(editorSearchText?.toLowerCase())
-                  )?.length ? (
-                    <p className={cls.menuTitle}>{menuItem?.name}</p>
+                      ?.includes(editorSearchText?.toLowerCase());
+                  })?.length ? (
+                    <p
+                      className={cls.menuTitle}
+                      onClick={() => handleToggleFields(menuItem.name)}
+                    >
+                      <span>{menuItem?.name}</span>
+                      <>
+                        {openedMenus[menuItem.name] ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )}
+                      </>
+                    </p>
                   ) : (
                     ""
                   )}
-                  {menuItem?.list
-                    ?.filter((item) =>
-                      item?.key
-                        ?.toLowerCase()
-                        ?.includes(editorSearchText?.toLowerCase())
-                    )
-                    ?.map((item, index) => (
-                      <Box
-                        className={clsx(cls.fieldChip, {
-                          [cls.active]: item.label === exampleType.label,
-                        })}
-                        key={item.key + index}
-                        onMouseEnter={() => onItemMouseEnter(item)}
-                        // onMouseLeave={() => onItemMouseLeave()}
-                        onClick={() => {
-                          let value = editorValue;
-                          if (editorSearchText) {
-                            value = editorValue?.replace(editorSearchText, "");
-                          }
-                          if (menuItem.key === "formula")
-                            onEditorChange(value + item.key + "()");
-                          else {
-                            onEditorChange(value + item.key + ".");
-                          }
-                          setEditorSearchText("");
-                          editorRef.current?.focus();
-                          // const newValue = watch("attributes.formula") + field.slug;
-                          // handleChange({ target: { value: newValue } });
-                          // setValue(newValue);
-                        }}
-                      >
-                        {typeof item.icon === "string" ? (
-                          <img
-                            src={item.icon}
-                            width={"16px"}
-                            height={"16px"}
-                            alt=""
-                          />
-                        ) : (
-                          <span className={cls.fieldIcon}>{item.icon}</span>
-                        )}
-                        <span className={cls.fieldName}>
-                          {item?.attributes?.[`label_${i18n.language}`] ||
-                            item.label}
-                        </span>
-                      </Box>
-                    ))}
+                  {openedMenus[menuItem.name] && (
+                    <Box>
+                      {menuItem?.list
+                        ?.filter((item) => {
+                          const label =
+                            item?.attributes?.[`label_${i18n.language}`] ||
+                            item?.label;
+
+                          return label
+                            ?.toLowerCase()
+                            ?.includes(editorSearchText?.toLowerCase());
+                        })
+                        ?.map((item, index) => (
+                          <Box
+                            className={clsx(cls.fieldChip, {
+                              [cls.active]: item.label === exampleType.label,
+                            })}
+                            key={item.key + index}
+                            onMouseEnter={() => onItemMouseEnter(item)}
+                            onClick={() => {
+                              let value = editorValue;
+                              if (editorSearchText) {
+                                value = editorValue?.replace(
+                                  editorSearchText,
+                                  ""
+                                );
+                              }
+                              if (menuItem.key === "formula") {
+                                if (menuItem.name === "Operators") {
+                                  onEditorChange(value + " " + item.key + " ");
+                                } else if (lastField) {
+                                  onEditorChange(value + " " + item.key + "()");
+                                } else {
+                                  onEditorChange(value + item.key + "()");
+                                }
+                              } else {
+                                onEditorChange(
+                                  value +
+                                    (item?.attributes?.[
+                                      `label_${i18n.language}`
+                                    ] || item.label)
+                                );
+                              }
+                              setEditorSearchText("");
+                              editorRef.current?.focus();
+                            }}
+                          >
+                            {typeof item.icon === "string" ? (
+                              <img
+                                src={item.icon}
+                                width={"16px"}
+                                height={"16px"}
+                                alt=""
+                              />
+                            ) : (
+                              <span className={cls.fieldIcon}>{item.icon}</span>
+                            )}
+                            <span className={cls.fieldName}>
+                              {item?.attributes?.[`label_${i18n.language}`] ||
+                                item.label}
+                            </span>
+                          </Box>
+                        ))}
+                    </Box>
+                  )}
                 </Box>
               ))}
-
-              {/* {fieldsList.map((field) => (
-                <Box
-                  className={cls.fieldChip}
-                  key={field.slug}
-                  onClick={() => {
-                    onEditorChange(editorValue + field.slug);
-                    // const newValue = watch("attributes.formula") + field.slug;
-                    // handleChange({ target: { value: newValue } });
-                    // setValue(newValue);
-                  }}
-                >
-                  <img
-                    src={getColumnIconPath({ column: field })}
-                    width={"16px"}
-                    height={"16px"}
-                    alt=""
-                  />
-                  <span>{field.label}</span>
-                </Box>
-              ))} */}
             </Box>
             <Box maxHeight="237px" overflow="auto">
               <Examples item={exampleType} />

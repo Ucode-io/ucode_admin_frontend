@@ -178,7 +178,8 @@ export const ColumnsVisibility = ({
           colorScheme="gray"
           variant="ghost"
           w="fit-content"
-          onClick={onBackClick}>
+          onClick={onBackClick}
+        >
           <Box color="#475467" fontSize={14} fontWeight={600}>
             {generateLangaugeText(
               tableLan,
@@ -209,7 +210,8 @@ export const ColumnsVisibility = ({
         flexDirection="column"
         mt="8px"
         maxHeight="300px"
-        overflow="auto">
+        overflow="auto"
+      >
         {renderFields?.length > 0 && (
           <>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
@@ -217,7 +219,8 @@ export const ColumnsVisibility = ({
                 p={"2px 0 2px 6px"}
                 fontWeight="600"
                 fontSize={"12px"}
-                color={"#898989"}>
+                color={"#898989"}
+              >
                 Shown in Table
               </Box>
 
@@ -226,7 +229,8 @@ export const ColumnsVisibility = ({
                 fontSize={"12px"}
                 color={"#3985d3"}
                 mr={"10px"}
-                onClick={() => onShowAllChange(false)}>
+                onClick={() => onShowAllChange(false)}
+              >
                 Hide All
               </Box>
             </Flex>
@@ -234,10 +238,11 @@ export const ColumnsVisibility = ({
             <Container onDrop={onDrop}>
               {renderFields.map((column) => (
                 <Draggable
-                  style={{overflow: "auto", height: "28px"}}
-                  key={column.id}>
+                  style={{ overflow: "auto", height: "28px" }}
+                  key={column.id}
+                >
                   <Flex
-                    as="label"
+                    // as="label"
                     p="4px"
                     columnGap="8px"
                     alignItems="center"
@@ -245,11 +250,12 @@ export const ColumnsVisibility = ({
                     bg="#fff"
                     h={"28px"}
                     overflow={"hidden"}
-                    cursor="pointer">
+                    cursor="pointer"
+                  >
                     <Box cursor={"grab"} h={"20px"}>
-                      <DragIndicatorIcon style={{color: "#898989"}} />
+                      <DragIndicatorIcon style={{ color: "#898989" }} />
                     </Box>
-                    {column?.type && getColumnIcon({column})}
+                    {column?.type && getColumnIcon({ column })}
 
                     <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                     <Flex
@@ -269,14 +275,15 @@ export const ColumnsVisibility = ({
                                   : column?.id
                               ))
                         )
-                      }>
+                      }
+                    >
                       {view?.type === "TIMELINE" ? (
                         view?.attributes?.visible_field?.includes(
                           column?.slug
                         ) ? (
                           <VisibilityIcon />
                         ) : (
-                          <VisibilityOffIcon style={{color: "#888"}} />
+                          <VisibilityOffIcon style={{ color: "#888" }} />
                         )
                       ) : view?.columns?.includes(
                           column?.type === "LOOKUP" ||
@@ -285,11 +292,15 @@ export const ColumnsVisibility = ({
                             : column?.id
                         ) ? (
                         <VisibilityIcon
-                          style={{width: "16px", height: "16px"}}
+                          style={{ width: "16px", height: "16px" }}
                         />
                       ) : (
                         <VisibilityOffIcon
-                          style={{color: "#888", width: "16px", height: "16px"}}
+                          style={{
+                            color: "#888",
+                            width: "16px",
+                            height: "16px",
+                          }}
                         />
                       )}
                     </Flex>
@@ -317,7 +328,8 @@ export const ColumnsVisibility = ({
                 p={"2px 0 2px 6px"}
                 fontSize={"12px"}
                 fontWeight="600"
-                color={"#898989"}>
+                color={"#898989"}
+              >
                 Hidden in Table
               </Box>
 
@@ -325,21 +337,23 @@ export const ColumnsVisibility = ({
                 cursor={"pointer"}
                 color={"#3985d3"}
                 mr={"10px"}
-                onClick={() => onShowAllChange(true)}>
+                onClick={() => onShowAllChange(true)}
+              >
                 Show All
               </Box>
             </Flex>
             {invisibleFields?.map((column) => (
               <Flex
-                as="label"
+                // as="label"
                 p="4px"
                 columnGap="8px"
                 alignItems="center"
                 borderRadius={6}
                 bg="#fff"
                 // _hover={{bg: "#EAECF0"}}
-                cursor="pointer">
-                {column?.type && getColumnIcon({column})}
+                cursor="pointer"
+              >
+                {column?.type && getColumnIcon({ column })}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
                 <Flex
                   ml="auto"
@@ -358,13 +372,18 @@ export const ColumnsVisibility = ({
                               : column?.id
                           ))
                     )
-                  }>
+                  }
+                >
                   {view?.type === "TIMELINE" ? (
                     view?.attributes?.visible_field?.includes(column?.slug) ? (
-                      <VisibilityIcon style={{width: "16px"}} />
+                      <VisibilityIcon style={{ width: "16px" }} />
                     ) : (
                       <VisibilityOffIcon
-                        style={{color: "#888", width: "16px", height: "16px"}}
+                        style={{
+                          color: "#888",
+                          width: "16px",
+                          height: "16px",
+                        }}
                       />
                     )
                   ) : view?.columns?.includes(
@@ -372,10 +391,10 @@ export const ColumnsVisibility = ({
                         ? column?.relation_id
                         : column?.id
                     ) ? (
-                    <VisibilityIcon style={{width: "16px", height: "16px"}} />
+                    <VisibilityIcon style={{ width: "16px", height: "16px" }} />
                   ) : (
                     <VisibilityOffIcon
-                      style={{color: "#888", width: "16px", height: "16px"}}
+                      style={{ color: "#888", width: "16px", height: "16px" }}
                     />
                   )}
                 </Flex>
@@ -793,9 +812,9 @@ export const FixColumns = ({
   );
 };
 
-export const ExcelExportButton = ({fieldsMap, tableLan}) => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
-  const {i18n} = useTranslation();
+export const ExcelExportButton = ({ fieldsMap, tableLan, tableSlug }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { i18n } = useTranslation();
   return (
     <>
       <Flex
@@ -804,9 +823,10 @@ export const ExcelExportButton = ({fieldsMap, tableLan}) => {
         columnGap="8px"
         alignItems="center"
         borderRadius={6}
-        _hover={{bg: "#EAECF0"}}
+        _hover={{ bg: "#EAECF0" }}
         cursor="pointer"
-        onClick={onOpen}>
+        onClick={onOpen}
+      >
         <Image src="/img/file-download.svg" alt="Docs" />
         <ViewOptionTitle>
           {generateLangaugeText(tableLan, i18n?.language, "Import") || "Import"}
@@ -817,7 +837,11 @@ export const ExcelExportButton = ({fieldsMap, tableLan}) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent zIndex={2} minW="602px" w="602px">
-          <ExcelUploadModal fieldsMap={fieldsMap} handleClose={onClose} />
+          <ExcelUploadModal
+            fieldsMap={fieldsMap}
+            handleClose={onClose}
+            tableSlug={tableSlug}
+          />
         </ModalContent>
       </Modal>
     </>

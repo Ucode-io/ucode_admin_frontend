@@ -256,7 +256,8 @@ const ObjectDataTable = ({
       navigateCreatePage={navigateCreatePage}
       parentRef={parentRef}
       getAllData={getAllData}
-      control={control}>
+      control={control}
+    >
       <CTableHead>
         {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
@@ -311,7 +312,8 @@ const ObjectDataTable = ({
           {!isRelationTable && (
             <PermissionWrapperV2
               tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-              type={"add_field"}>
+              type={"add_field"}
+            >
               <FieldButton
                 openFieldSettings={openFieldSettings}
                 view={view}
@@ -324,6 +326,7 @@ const ObjectDataTable = ({
                 setDrawerState={setDrawerState}
                 setDrawerStateField={setDrawerStateField}
                 menuItem={menuItem}
+                formType={"CREATE"}
               />
             </PermissionWrapperV2>
           )}
@@ -333,7 +336,8 @@ const ObjectDataTable = ({
       <CTableBody
         columnsCount={columns.length}
         dataLength={dataLength || data?.length}
-        title={title}>
+        title={title}
+      >
         {(isRelationTable ? fields : data).map((virtualRowObject, index) => {
           return (
             columns && (
@@ -411,7 +415,8 @@ const ObjectDataTable = ({
               left: "0",
               backgroundColor: "#FFF",
               zIndex: "1",
-            }}>
+            }}
+          >
             <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>
               <Button
                 id="add-row"
@@ -423,7 +428,8 @@ const ObjectDataTable = ({
                 }}
                 onClick={() => {
                   setAddNewRow(true);
-                }}>
+                }}
+              >
                 <AddRoundedIcon />
               </Button>
             </PermissionWrapperV2>

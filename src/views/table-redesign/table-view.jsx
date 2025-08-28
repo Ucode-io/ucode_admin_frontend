@@ -76,13 +76,15 @@ const TableView = ({
   setSelectedRow = () => {},
   setLayoutType = () => {},
   setSelectedView = () => {},
+  setOrderBy = () => {},
+  orderBy,
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
   const open = useSelector((state) => state?.drawer?.openDrawer);
-  const {views: viewFromStore} = useSelector((state) => state.views);
+  const { views: viewFromStore } = useSelector((state) => state.views);
   const [searchParams] = useSearchParams();
 
   const {
@@ -104,7 +106,7 @@ const TableView = ({
     tableSlugFromParams ||
     view?.table_slug;
 
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -152,7 +154,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const {update} = useFieldArray({
+  const { update } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -178,7 +180,7 @@ const TableView = ({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -243,7 +245,7 @@ const TableView = ({
     for (const key in view?.attributes.fixedColumns) {
       if (view?.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view?.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view?.attributes.fixedColumns[key]});
+          result.push({ id: key, value: view?.attributes.fixedColumns[key] });
         }
       }
     }
@@ -292,7 +294,7 @@ const TableView = ({
       );
 
       if (matchingSort) {
-        const {field, order} = matchingSort;
+        const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -319,7 +321,7 @@ const TableView = ({
   }, [filters]);
 
   const {
-    data: {fiedlsarray, fieldView, custom_events} = {
+    data: { fiedlsarray, fieldView, custom_events } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -345,7 +347,11 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         custom_events: res?.data?.custom_events ?? [],
+        orderBy: res?.data?.table_info?.order_by || false,
       };
+    },
+    onSuccess: (data) => {
+      setOrderBy(data?.orderBy);
     },
   });
 
@@ -355,7 +361,7 @@ const TableView = ({
       : searchText;
 
   const {
-    data: {tableData, pageCount, dataCount} = {
+    data: { tableData, pageCount, dataCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -373,9 +379,10 @@ const TableView = ({
         sortedDatas,
         currentPage,
         limit,
-        filters: {...filters, [tab?.slug]: tab?.value},
+        filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
         paginiation,
+        orderBy,
         // currentView,
       },
     ],
@@ -423,7 +430,7 @@ const TableView = ({
   });
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -765,7 +772,8 @@ const TableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -784,7 +792,8 @@ const TableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

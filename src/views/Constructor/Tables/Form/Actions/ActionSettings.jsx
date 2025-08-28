@@ -23,26 +23,27 @@ import constructorFunctionService from "../../../../../services/constructorFunct
 import useDebounce from "../../../../../hooks/useDebounce";
 import {useMicrofrontendListQuery} from "../../../../../services/microfrontendService";
 import HFReactSelect from "../../../../../components/FormElements/HFReactSelect";
+import { useViewContext } from "../../../../../providers/ViewProvider";
 
 const actionTypeList = [
-  {label: "HTTP", value: "HTTP"},
-  {label: "after", value: "after"},
-  {label: "before", value: "before"},
+  { label: "HTTP", value: "HTTP" },
+  { label: "after", value: "after" },
+  { label: "before", value: "before" },
 ];
 const methodList = [
-  {label: "GETLIST", value: "GETLIST"},
-  {label: "UPDATE", value: "UPDATE"},
-  {label: "CREATE", value: "CREATE"},
-  {label: "DELETE", value: "DELETE"},
-  {label: "MULTIPLE_UPDATE", value: "MULTIPLE_UPDATE"},
-  {label: "APPEND_MANY2MANY", value: "APPEND_MANY2MANY"},
-  {label: "DELETE_MANY2MANY", value: "DELETE_MANY2MANY"},
+  { label: "GETLIST", value: "GETLIST" },
+  { label: "UPDATE", value: "UPDATE" },
+  { label: "CREATE", value: "CREATE" },
+  { label: "DELETE", value: "DELETE" },
+  { label: "MULTIPLE_UPDATE", value: "MULTIPLE_UPDATE" },
+  { label: "APPEND_MANY2MANY", value: "APPEND_MANY2MANY" },
+  { label: "DELETE_MANY2MANY", value: "DELETE_MANY2MANY" },
 ];
 
 const typeList = [
-  {label: "TABLE", value: "TABLE"},
-  {label: "OBJECTID", value: "OBJECTID"},
-  {label: "HARDCODE", value: "HARDCODE"},
+  { label: "TABLE", value: "TABLE" },
+  { label: "OBJECTID", value: "OBJECTID" },
+  { label: "HARDCODE", value: "HARDCODE" },
 ];
 
 const ActionSettings = ({
@@ -53,15 +54,17 @@ const ActionSettings = ({
   formType,
   height,
   modalAction = false,
+  tableSlug: tableSlugFromProps,
 }) => {
-  const {tableSlug} = useParams();
+  const { tableSlug: tableSlugFromParams } = useParams();
+  const tableSlug = tableSlugFromParams || tableSlugFromProps;
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const [loader, setLoader] = useState(false);
   const [debounceValue, setDebouncedValue] = useState("");
   const [functionType, setFunctionType] = useState("");
 
-  const {handleSubmit, control, reset, watch, setValue} = useForm({
+  const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       table_slug: tableSlug,
     },
@@ -69,7 +72,7 @@ const ActionSettings = ({
 
   const action_type = watch("action_type");
 
-  const {data: functions = []} = useQuery(
+  const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST", debounceValue],
     () => {
       return constructorFunctionService.getListV2({
@@ -96,7 +99,7 @@ const ActionSettings = ({
     return functions?.find((item) => item?.value === watch("event_path"));
   }, [functions, watch("event_path")]);
 
-  const {data: microfrontend} = useMicrofrontendListQuery();
+  const { data: microfrontend } = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
     return microfrontend?.functions?.map((item, index) => ({
@@ -137,7 +140,7 @@ const ActionSettings = ({
       })
       .catch(() => setLoader(false));
   };
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const submitHandler = (values) => {
     const computedValues = {
       ...values,
@@ -168,17 +171,19 @@ const ActionSettings = ({
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{height}}>
+      <div className={styles.settingsBlockBody} style={{ height }}>
         <form
           onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}>
+          className={styles.fieldSettingsForm}
+        >
           <div className="p-2">
             {/* <FRow label="Icon" required>
               <HFIconPicker control={control} disabled={false} name="icon" />
             </FRow> */}
             <FRow label="Label" required>
               <Box
-                style={{display: "flex", flexDirection: "column", gap: "6px"}}>
+                style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+              >
                 {languages?.map((lang) => (
                   <HFTextField
                     name={`attributes.label_${lang?.slug}`}
@@ -260,9 +265,10 @@ const ActionSettings = ({
             <PrimaryButton
               size="large"
               className={styles.button}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
               onClick={handleSubmit(submitHandler)}
-              loader={loader}>
+              loader={loader}
+            >
               Save
             </PrimaryButton>
           </div>

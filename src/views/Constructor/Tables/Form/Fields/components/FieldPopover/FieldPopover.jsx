@@ -1,7 +1,8 @@
-import {Box, Popover} from "@mui/material";
-import {FieldParams} from "../FieldParams";
-import {useFieldPopoverProps} from "./useFieldPopoverProps";
-import {AdvancedSettings} from "../../../components/AdvancedSettings";
+import { Box, Popover } from "@mui/material"
+import { FieldParams } from "../FieldParams";
+import { useFieldPopoverProps } from "./useFieldPopoverProps";
+import { AdvancedSettings } from "../../../components/AdvancedSettings";
+import { NButton } from "../../../../../../../components/NButton";
 
 export const FieldPopover = ({
   open,
@@ -33,6 +34,7 @@ export const FieldPopover = ({
     getSelectedSettings,
     tableLan,
     onSubmit,
+    isFormulaType,
   } = useFieldPopoverProps({
     mainForm,
     onClose,
@@ -46,7 +48,6 @@ export const FieldPopover = ({
     field,
     submitCallback,
   });
-  console.log("fieldfield", field, selectedField);
   return (
     <Popover
       open={open}
@@ -72,11 +73,26 @@ export const FieldPopover = ({
           {selectedSettings ? (
             <AdvancedSettings
               title={selectedSettings}
+              showBackBtn={!isFormulaType}
+              showCloseBtn={!isFormulaType}
               onClose={() => {
                 onClose();
                 handleSelectSetting("");
               }}
-              onBackClick={() => handleSelectSetting("")}>
+              onBackClick={() => handleSelectSetting("")}
+              addonAfter={
+                isFormulaType ? (
+                  <NButton
+                    primary
+                    onClick={() => {
+                      handleSelectSetting("");
+                    }}
+                  >
+                    Done
+                  </NButton>
+                ) : null
+              }
+            >
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (

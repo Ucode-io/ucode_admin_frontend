@@ -76,8 +76,11 @@ function DrawerObjectsPage({
         if (selectedTabIndex >= data.length) {
           dispatch(detailDrawerActions.setDrawerTabIndex(0));
         }
-        setSelectedView(data?.[0]);
-        updateQueryWithoutRerender("v", data?.[0]?.id);
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!data?.find((item) => item?.id === urlParams.get("v"))) {
+          setSelectedView(data?.[0]);
+          updateQueryWithoutRerender("v", data?.[0]?.id);
+        }
         if (state?.toDocsTab) {
           dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
         }
@@ -103,8 +106,6 @@ function DrawerObjectsPage({
         ),
 
       onSuccess: (data) => {
-        if (selectedTabIndex >= data.length) {
-        }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);
 

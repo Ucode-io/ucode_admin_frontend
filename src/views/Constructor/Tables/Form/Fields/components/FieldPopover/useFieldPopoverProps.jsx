@@ -58,6 +58,16 @@ export const useFieldPopoverProps = ({
 
   const { i18n } = useTranslation();
 
+  const { handleSubmit, control, reset, watch, setValue, register } = useForm();
+
+  const activeType = newFieldTypes?.find(
+    (item) => item?.value === watch("type")
+  );
+
+  const isFormulaType =
+    activeType?.value === FIELD_TYPES.FORMULA ||
+    activeType?.value === FIELD_TYPES.FORMULA_FRONTEND;
+
   const defaultOptions = {
     todo: {
       options: [
@@ -89,16 +99,11 @@ export const useFieldPopoverProps = ({
   };
 
   const languages = useSelector((state) => state.languages.list);
-  const { handleSubmit, control, reset, watch, setValue, register } = useForm();
 
   const tableName = useWatch({
     control,
     name: "label",
   });
-
-  const activeType = newFieldTypes?.find(
-    (item) => item?.value === watch("type")
-  );
 
   const [selectedSettings, setSelectedSettings] = useState("");
 
@@ -212,8 +217,35 @@ export const useFieldPopoverProps = ({
       },
     };
 
-    if (formType === "CREATE") createField(data);
-    else updateField(data);
+    let result = data?.attributes?.formula;
+
+    const fieldList =
+      mainForm
+        .getValues("fields")
+        ?.filter(
+          (item) =>
+            item?.type !== FIELD_TYPES.UUID &&
+            !item?.type?.includes("FRONTEND") &&
+            item?.label
+        ) ?? [];
+
+    fieldList.forEach(({ attributes, label, slug }) => {
+      const currentLabel = attributes?.[`label_${i18n?.language}`] || label;
+
+      const regex = new RegExp(`\\b${currentLabel}\\b`, "gi");
+      result = result.replace(regex, slug);
+    });
+
+    const submitData = {
+      ...data,
+      attributes: {
+        ...data?.attributes,
+        formula: result,
+      },
+    };
+
+    if (formType === "CREATE") createField(submitData);
+    else updateField(submitData);
     submitCallback();
   };
 
@@ -321,7 +353,7 @@ export const useFieldPopoverProps = ({
       required: false,
       slug: "",
       table_id: tableSlug,
-      type: FIELD_TYPES.SINGLE_LINE,
+      type: field?.type || FIELD_TYPES.SINGLE_LINE,
       relation_field: selectedAutofillFieldSlug,
     };
     if (formType !== "CREATE") {
@@ -350,5 +382,6 @@ export const useFieldPopoverProps = ({
     getSelectedSettings,
     tableLan,
     onSubmit,
+    isFormulaType,
   };
 };

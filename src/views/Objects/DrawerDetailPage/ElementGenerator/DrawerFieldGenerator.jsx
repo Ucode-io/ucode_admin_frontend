@@ -309,6 +309,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           updateObject={updateObject}
+          isNewTableView
         />
       );
 

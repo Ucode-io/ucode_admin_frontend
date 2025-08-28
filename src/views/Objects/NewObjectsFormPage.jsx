@@ -89,7 +89,7 @@ function NewObjectsFormPage() {
     }
   );
 
-  const {data: relationViews, refetch: refetchRelationViews} = useQuery(
+  const { data: relationViews, refetch: refetchRelationViews } = useQuery(
     ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
     () =>
       constructorViewService.getViewListMenuId(selectedV?.relation_table_slug),
@@ -104,8 +104,6 @@ function NewObjectsFormPage() {
         ),
 
       onSuccess: (data) => {
-        if (selectedTabIndex >= data.length) {
-        }
         setSelectedView(data?.[0]);
         updateQueryWithoutRerender("v", data?.[0]?.id);
 

@@ -60,11 +60,15 @@ import clsx from "clsx";
 import {useViewContext} from "../../providers/ViewProvider";
 import {FieldPopover} from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
 import {RelationPopover} from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
+import { FieldCheckbox } from "../../views/Constructor/Tables/Form/components/FieldCheckbox/FieldCheckbox";
+import HFIconPicker from "../FormElements/HFIconPicker";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import listToOptions from "../../utils/listToOptions";
 
 const formulaTypes = [
-  {label: "Сумма", value: "SUMM"},
-  {label: "Максимум", value: "MAX"},
-  {label: "Среднее", value: "AVG"},
+  { label: "Сумма", value: "SUMM" },
+  { label: "Максимум", value: "MAX" },
+  { label: "Среднее", value: "AVG" },
 ];
 
 const formulaFormatOptions = [
@@ -107,9 +111,11 @@ export default function FieldCreateModal({
   sortedDatas,
   setSortedDatas = () => {},
   setFieldData = () => {},
+  register = () => {},
+  formType,
 }) {
-  const {id, tableSlug: tableSlugParam} = useParams();
-  const {view: viewFromContext} = useViewContext();
+  const { id, tableSlug: tableSlugParam } = useParams();
+  const { view: viewFromContext } = useViewContext();
   const tableSlug =
     tableSlugParam || view?.table_slug || viewFromContext?.table_slug;
   const tableRelations = useWatch({
@@ -120,7 +126,6 @@ export default function FieldCreateModal({
   const [relationFieldAnchorEl, setRelationFieldAnchorEl] = useState(null);
 
   const [fieldAnchorEl, setFieldAnchorEl] = useState(null);
-  const [formType, setFormType] = useState(null);
   const [drawerState, setDrawerState] = useState(null);
 
   const openField = Boolean(fieldAnchorEl);
@@ -144,6 +149,14 @@ export default function FieldCreateModal({
       setDrawerState(fieldData);
     }
   };
+
+  useEffect(() => {
+    if (format === FIELD_TYPES.FORMULA_FRONTEND && formType === "CREATE") {
+      setFieldOptionAnchor(null);
+      setFieldAnchorEl(anchorEl);
+      setDrawerState(fieldData || { type: format });
+    }
+  }, [anchorEl, formType]);
 
   const fieldHandleClose = () => {
     setFieldAnchorEl(null);
@@ -172,7 +185,7 @@ export default function FieldCreateModal({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -253,11 +266,11 @@ export default function FieldCreateModal({
   const languages = useSelector((state) => state.languages.list);
   const mathType = watch("attributes.math");
   const values = watch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const [openedDropdown, setOpenedDropdown] = useState(null);
 
-  const {isLoading: relationLoading} = useRelationGetByIdQuery({
+  const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,
     queryParams: {
@@ -322,7 +335,7 @@ export default function FieldCreateModal({
     }
   };
 
-  const {isLoading: fieldLoading} = useFieldsListQuery({
+  const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
       table_id: menuItem?.table_id,
       tableSlug: tableSlug,
@@ -334,7 +347,7 @@ export default function FieldCreateModal({
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {
-            return {value: item.slug, label: item.label};
+            return { value: item.slug, label: item.label };
           })
         );
       },
@@ -345,14 +358,30 @@ export default function FieldCreateModal({
     language_setting: i18n?.language,
   };
 
-  const {isLoading: fieldsLoading} = useQuery(
+  const { data: functions = [] } = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return constructorFunctionService.getListV2({});
+    },
+    {
+      enabled: format === FIELD_TYPES.BUTTON,
+      onError: (err) => {
+        console.log("ERR =>", err);
+      },
+      select: (res) => {
+        return listToOptions(res.functions, "name", "id");
+      },
+    }
+  );
+
+  const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
-          data: {limit: 0, offset: 0},
+          data: { limit: 0, offset: 0 },
         },
         params
       );
@@ -617,7 +646,7 @@ export default function FieldCreateModal({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
         setAnchorEl(null);
       });
   };
@@ -631,7 +660,7 @@ export default function FieldCreateModal({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -644,286 +673,362 @@ export default function FieldCreateModal({
 
   return (
     <>
-      <Popover
-        {...popoverAnchorProps}
-        id="menu-appbar"
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        background="red"
-        PaperProps={{
-          style: {
-            overflowY: "visible",
-            overflowX: "visible",
-          },
-        }}>
-        <div className={style.field}>
-          {/* <Typography
-            variant="h6"
-            textTransform="uppercase"
-            className={style.title}
-          >
-            {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
-              "ADD COLUMN"}
-          </Typography> */}
+      {(formType !== "CREATE" ||
+        (formType === "CREATE" && format !== FIELD_TYPES.FORMULA_FRONTEND)) && (
+        <Popover
+          {...popoverAnchorProps}
+          id="menu-appbar"
+          open={open}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          background="red"
+          PaperProps={{
+            style: {
+              overflowY: "visible",
+              overflowX: "visible",
+            },
+          }}
+        >
+          <div className={style.field}>
+            {/* <Typography
+          variant="h6"
+          textTransform="uppercase"
+          className={style.title}
+        >
+          {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
+            "ADD COLUMN"}
+        </Typography> */}
 
-          <div
-            // onSubmit={handleSubmit(
-            //   format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-            // )}
-            className={style.form}>
-            <MaterialUIProvider>
-              <Box
-                className={style.field}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}>
+            <div
+              // onSubmit={handleSubmit(
+              //   format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+              // )}
+              className={style.form}
+            >
+              <MaterialUIProvider>
                 <Box
-                  sx={{
-                    width: "100%",
-                    marginBottom: "10px",
-                  }}>
-                  {!ValueTypes(values?.type) && !FormatTypes(format) ? (
-                    <TextFieldWithMultiLanguage
-                      control={control}
-                      name="attributes.label"
-                      fullWidth
-                      placeholder="Name"
-                      defaultValue={tableName}
-                      languages={languages}
-                      id={"text_field_label"}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleSubmit(
-                            format?.includes("FORMULA")
-                              ? innerOnsubmit
-                              : onSubmit
-                          )();
-                        }
-                      }}
-                    />
-                  ) : // <FRow
-                  //   label={
-                  //     generateLangaugeText(tableLan, i18n?.language, "Label") ||
-                  //     "Label"
-                  //   }
-                  //   classname={style.custom_label}
-                  //   required
-                  // >
-                  //   <Box style={{ display: "flex", gap: "6px" }}>
-                  //     <HFTextFieldWithMultiLanguage
-                  //       control={control}
-                  //       name="attributes.label"
-                  //       fullWidth
-                  //       placeholder="Name"
-                  //       defaultValue={tableName}
-                  //       languages={languages}
-                  //       id={"text_field_label"}
-                  //     />
-                  //   </Box>
-                  // </FRow>
-                  null}
-                </Box>
-                {fieldData && (
-                  <Box width={"100%"}>
-                    <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
-                      <Box>
-                        <button
-                          className={style.btn}
-                          type="button"
-                          onClick={handleSortField}
-                          onMouseEnter={() => {
-                            setOpenedDropdown(null);
-                          }}>
-                          <SortByAlphaOutlinedIcon />
-                          <span>
-                            Sort{" "}
-                            {sortedDatas?.find(
-                              (item) => item.field === fieldData.id
-                            )?.order === "ASC"
-                              ? "Z -> A"
-                              : "A -> Z"}
-                          </span>
-                        </button>
+                  className={style.field}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: "100%",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {!ValueTypes(values?.type) && !FormatTypes(format) ? (
+                      <TextFieldWithMultiLanguage
+                        control={control}
+                        name="attributes.label"
+                        fullWidth
+                        placeholder="Name"
+                        defaultValue={tableName}
+                        languages={languages}
+                        id={"text_field_label"}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleSubmit(
+                              format?.includes("FORMULA")
+                                ? innerOnsubmit
+                                : onSubmit
+                            )();
+                          }
+                        }}
+                      />
+                    ) : // <FRow
+                    //   label={
+                    //     generateLangaugeText(tableLan, i18n?.language, "Label") ||
+                    //     "Label"
+                    //   }
+                    //   classname={style.custom_label}
+                    //   required
+                    // >
+                    //   <Box style={{ display: "flex", gap: "6px" }}>
+                    //     <HFTextFieldWithMultiLanguage
+                    //       control={control}
+                    //       name="attributes.label"
+                    //       fullWidth
+                    //       placeholder="Name"
+                    //       defaultValue={tableName}
+                    //       languages={languages}
+                    //       id={"text_field_label"}
+                    //     />
+                    //   </Box>
+                    // </FRow>
+                    null}
+                  </Box>
+                  {fieldData && (
+                    <Box width={"100%"}>
+                      <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
+                        <Box>
+                          <button
+                            className={style.btn}
+                            type="button"
+                            onClick={handleSortField}
+                            onMouseEnter={() => {
+                              setOpenedDropdown(null);
+                            }}
+                          >
+                            <SortByAlphaOutlinedIcon />
+                            <span>
+                              Sort{" "}
+                              {sortedDatas?.find(
+                                (item) => item.field === fieldData.id
+                              )?.order === "ASC"
+                                ? "Z -> A"
+                                : "A -> Z"}
+                            </span>
+                          </button>
+                        </Box>
+                        <Box width={"100%"}>
+                          <button
+                            className={style.btn}
+                            type="button"
+                            onClick={() =>
+                              fixColumnChangeHandler(
+                                fieldData,
+                                !view?.attributes?.fixedColumns?.[fieldData?.id]
+                                  ? true
+                                  : false
+                              )
+                            }
+                            onMouseEnter={() => {
+                              setOpenedDropdown(null);
+                            }}
+                          >
+                            <ViewWeekOutlinedIcon />
+                            <span>
+                              {view?.attributes?.fixedColumns?.[fieldData?.id]
+                                ? "Unfix"
+                                : "Fix"}{" "}
+                              column
+                            </span>
+                          </button>
+                        </Box>
+                        {(format === FIELD_TYPES.SINGLE_LINE ||
+                          format === FIELD_TYPES.MULTI_LINE) && (
+                          <Box>
+                            <FieldCheckbox
+                              watch={watch}
+                              setValue={setValue}
+                              register={register}
+                              name={"enable_multilanguage"}
+                              label={"Multiple language"}
+                            />
+                          </Box>
+                        )}
                       </Box>
+                    </Box>
+                  )}
+                  {!fieldData && (
+                    <Box
+                      width={"100%"}
+                      paddingY={"6px"}
+                      onMouseEnter={() => {
+                        setOpenedDropdown(dropdownTypes.changeType);
+                      }}
+                    >
+                      <Dropdown
+                        openedDropdown={openedDropdown}
+                        name={dropdownTypes.changeType}
+                        options={fieldData ? fieldFormats : newFieldTypes}
+                        selectedValue={watch("attributes.format")}
+                        onClick={(option) => {
+                          setValue("attributes.format", option?.value);
+                          if (option?.value === "NUMBER") {
+                            setValue("type", "NUMBER");
+                          } else if (option?.value === "DATE") {
+                            setValue("type", "DATE");
+                          } else if (option?.value === "INCREMENT") {
+                            setValue("type", "INCREMENT_ID");
+                          } else if (option?.value === "SINGLE_LINE") {
+                            setValue("type", "SINGLE_LINE");
+                          } else {
+                            setValue("type", option?.value);
+                          }
+                        }}
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Change Type"
+                          ) || "Change type"
+                        }
+                        icon={<FieldTypeIcon />}
+                      />
+                    </Box>
+                  )}
+                  {formatIncludes?.includes(format) && !fieldData && (
+                    <>
+                      <Box
+                        width={"100%"}
+                        onMouseEnter={() => {
+                          setOpenedDropdown(dropdownTypes.changeFormat);
+                        }}
+                      >
+                        <Dropdown
+                          openedDropdown={openedDropdown}
+                          name={dropdownTypes.changeFormat}
+                          options={FormatOptionType(format)}
+                          selectedValue={
+                            format?.startsWith("FORMULA")
+                              ? formulaWatch("formulaFormat")
+                              : watch("type")
+                          }
+                          onClick={(option) => {
+                            if (format?.startsWith("FORMULA")) {
+                              formulaSetValue("formulaFormat", option?.value);
+                            } else {
+                              setValue("type", option?.value);
+                            }
+                          }}
+                          label={
+                            generateLangaugeText(
+                              tableLan,
+                              i18n?.language,
+                              "Change format"
+                            ) || "Change format"
+                          }
+                          icon={<FieldFormatIcon />}
+                        />
+                      </Box>
+                      {(format === FIELD_TYPES.SINGLE_LINE ||
+                        format === FIELD_TYPES.MULTI_LINE) && (
+                        <Box width="100%">
+                          <FieldCheckbox
+                            watch={watch}
+                            setValue={setValue}
+                            register={register}
+                            name={"enable_multilanguage"}
+                            label={"Multiple language"}
+                          />
+                        </Box>
+                      )}
+                    </>
+                  )}
+                  {format === FIELD_TYPES.MULTISELECT && (
+                    <Box
+                      width={"100%"}
+                      paddingY={"6px"}
+                      borderBottom="1px solid #e5e9eb"
+                      onMouseEnter={() => {
+                        setOpenedDropdown(dropdownTypes.editProperty);
+                      }}
+                    >
+                      <Dropdown
+                        openedDropdown={openedDropdown}
+                        name={dropdownTypes.editProperty}
+                        content={
+                          <MultiselectSettings
+                            dropdownFields={dropdownFields}
+                            onDrop={onDrop}
+                            watch={watch}
+                            control={control}
+                            setValue={setValue}
+                            handleOpenColor={handleOpenColor}
+                            dropdownRemove={dropdownRemove}
+                            tableLan={tableLan}
+                            i18n={i18n}
+                            openColor={openColor}
+                            colorEl={colorEl}
+                            handleCloseColor={handleCloseColor}
+                            colorList={colorList}
+                            idx={idx}
+                            dropdownAppend={dropdownAppend}
+                          />
+                        }
+                        label={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Edit property"
+                          ) || "Edit property"
+                        }
+                        optionsClassname={style.editProperty}
+                        icon={<FieldPropertyIcon />}
+                      />
+                    </Box>
+                  )}
+                  {fieldData && (
+                    <Box
+                      width="100%"
+                      marginTop="6px"
+                      paddingTop="6px"
+                      // borderTop="1px solid #e5e9eb"
+                    >
                       <Box width={"100%"}>
                         <button
                           className={style.btn}
                           type="button"
-                          onClick={() =>
-                            fixColumnChangeHandler(
-                              fieldData,
-                              !view?.attributes?.fixedColumns?.[fieldData?.id]
-                                ? true
-                                : false
-                            )
-                          }
+                          onClick={() => updateView(fieldData.id)}
                           onMouseEnter={() => {
                             setOpenedDropdown(null);
-                          }}>
-                          <ViewWeekOutlinedIcon />
-                          <span>
-                            {view?.attributes?.fixedColumns?.[fieldData?.id]
-                              ? "Unfix"
-                              : "Fix"}{" "}
-                            column
-                          </span>
+                          }}
+                        >
+                          <VisibilityOffOutlinedIcon />
+                          <span>Hide field</span>
+                        </button>
+                      </Box>
+                      <Box width={"100%"} color="red">
+                        <button
+                          className={style.btn}
+                          type="button"
+                          onClick={() => deleteField(fieldData.id)}
+                          onMouseEnter={() => {
+                            setOpenedDropdown(null);
+                          }}
+                        >
+                          <DeleteOutlinedIcon />
+                          <span>Delete field</span>
                         </button>
                       </Box>
                     </Box>
-                  </Box>
-                )}
-                {!fieldData && (
-                  <Box
-                    width={"100%"}
-                    paddingY={"6px"}
-                    onMouseEnter={() => {
-                      setOpenedDropdown(dropdownTypes.changeType);
-                    }}>
-                    <Dropdown
-                      openedDropdown={openedDropdown}
-                      name={dropdownTypes.changeType}
-                      options={fieldData ? fieldFormats : newFieldTypes}
-                      selectedValue={watch("attributes.format")}
-                      onClick={(option) => {
-                        setValue("attributes.format", option?.value);
-                        if (option?.value === "NUMBER") {
-                          setValue("type", "NUMBER");
-                        } else if (option?.value === "DATE") {
-                          setValue("type", "DATE");
-                        } else if (option?.value === "INCREMENT") {
-                          setValue("type", "INCREMENT_ID");
-                        } else if (option?.value === "SINGLE_LINE") {
-                          setValue("type", "SINGLE_LINE");
-                        } else {
-                          setValue("type", option?.value);
-                        }
-                      }}
-                      label={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Change Type"
-                        ) || "Change type"
-                      }
-                      icon={<FieldTypeIcon />}
-                    />
-                  </Box>
-                )}
-                {formatIncludes?.includes(format) && !fieldData && (
-                  <Box
-                    width={"100%"}
-                    onMouseEnter={() => {
-                      setOpenedDropdown(dropdownTypes.changeFormat);
-                    }}>
-                    <Dropdown
-                      openedDropdown={openedDropdown}
-                      name={dropdownTypes.changeFormat}
-                      options={FormatOptionType(format)}
-                      selectedValue={
-                        format?.startsWith("FORMULA")
-                          ? formulaWatch("formulaFormat")
-                          : watch("type")
-                      }
-                      onClick={(option) => {
-                        if (format?.startsWith("FORMULA")) {
-                          formulaSetValue("formulaFormat", option?.value);
-                        } else {
-                          setValue("type", option?.value);
-                        }
-                      }}
-                      label={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Change format"
-                        ) || "Change format"
-                      }
-                      icon={<FieldFormatIcon />}
-                    />
-                  </Box>
-                )}
-                {format === FIELD_TYPES.MULTISELECT && (
-                  <Box
-                    width={"100%"}
-                    paddingY={"6px"}
-                    borderBottom="1px solid #e5e9eb"
-                    onMouseEnter={() => {
-                      setOpenedDropdown(dropdownTypes.editProperty);
-                    }}>
-                    <Dropdown
-                      openedDropdown={openedDropdown}
-                      name={dropdownTypes.editProperty}
-                      content={
-                        <MultiselectSettings
-                          dropdownFields={dropdownFields}
-                          onDrop={onDrop}
-                          watch={watch}
-                          control={control}
-                          setValue={setValue}
-                          handleOpenColor={handleOpenColor}
-                          dropdownRemove={dropdownRemove}
-                          tableLan={tableLan}
-                          i18n={i18n}
-                          openColor={openColor}
-                          colorEl={colorEl}
-                          handleCloseColor={handleCloseColor}
-                          colorList={colorList}
-                          idx={idx}
-                          dropdownAppend={dropdownAppend}
-                        />
-                      }
-                      label={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Edit property"
-                        ) || "Edit property"
-                      }
-                      optionsClassname={style.editProperty}
-                      icon={<FieldPropertyIcon />}
-                    />
-                  </Box>
-                )}
-                {fieldData && (
-                  <Box
-                    width="100%"
-                    marginTop="6px"
-                    paddingTop="6px"
-                    // borderTop="1px solid #e5e9eb"
-                  >
-                    <Box width={"100%"}>
-                      <button
-                        className={style.btn}
-                        type="button"
-                        onClick={() => updateView(fieldData.id)}
-                        onMouseEnter={() => {
-                          setOpenedDropdown(null);
-                        }}>
-                        <VisibilityOffOutlinedIcon />
-                        <span>Hide field</span>
-                      </button>
-                    </Box>
-                    <Box width={"100%"} color="red">
-                      <button
-                        className={style.btn}
-                        type="button"
-                        onClick={() => deleteField(fieldData.id)}
-                        onMouseEnter={() => {
-                          setOpenedDropdown(null);
-                        }}>
-                        <DeleteOutlinedIcon />
-                        <span>Delete field</span>
-                      </button>
-                    </Box>
-                  </Box>
-                )}
-                {/* <FRow
+                  )}
+                  {/* <FRow
+                label={
+                  generateLangaugeText(tableLan, i18n?.language, "Type") ||
+                  "Type"
+                }
+                componentClassName="flex gap-2 align-center"
+                required
+                classname={style.custom_label}
+              >
+                <HFSelect
+                  className={style.input}
+                  disabledHelperText
+                  options={fieldData ? fieldFormats : newFieldTypes}
+                  name="attributes.format"
+                  control={control}
+                  disabled={fieldData}
+                  fullWidth
+                  required
+                  onChange={(e) => {
+                    if (e === "NUMBER") {
+                      setValue("type", "NUMBER");
+                    } else if (e === "DATE") {
+                      setValue("type", "DATE");
+                    } else if (e === "INCREMENT") {
+                      setValue("type", "INCREMENT_ID");
+                    } else if (e === "SINGLE_LINE") {
+                      setValue("type", "SINGLE_LINE");
+                    } else {
+                      setValue("type", e);
+                    }
+                  }}
+                  placeholder="Select type"
+                />
+              </FRow> */}
+                </Box>
+                {/* <Box sx={{ padding: "0 5px" }}>
+              {formatIncludes?.includes(format) ? (
+                <FRow
                   label={
-                    generateLangaugeText(tableLan, i18n?.language, "Type") ||
-                    "Type"
+                    generateLangaugeText(tableLan, i18n?.language, "Format") ||
+                    "Format"
                   }
                   componentClassName="flex gap-2 align-center"
                   required
@@ -932,483 +1037,448 @@ export default function FieldCreateModal({
                   <HFSelect
                     className={style.input}
                     disabledHelperText
-                    options={fieldData ? fieldFormats : newFieldTypes}
-                    name="attributes.format"
+                    options={FormatOptionType(format)}
+                    name="type"
                     control={control}
                     disabled={fieldData}
                     fullWidth
                     required
-                    onChange={(e) => {
-                      if (e === "NUMBER") {
-                        setValue("type", "NUMBER");
-                      } else if (e === "DATE") {
-                        setValue("type", "DATE");
-                      } else if (e === "INCREMENT") {
-                        setValue("type", "INCREMENT_ID");
-                      } else if (e === "SINGLE_LINE") {
-                        setValue("type", "SINGLE_LINE");
-                      } else {
-                        setValue("type", e);
-                      }
-                    }}
-                    placeholder="Select type"
-                  />
-                </FRow> */}
-              </Box>
-              {/* <Box sx={{ padding: "0 5px" }}>
-                {formatIncludes?.includes(format) ? (
-                  <FRow
-                    label={
-                      generateLangaugeText(tableLan, i18n?.language, "Format") ||
-                      "Format"
+                    placeholder={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Select type"
+                      ) || "Select type"
                     }
-                    componentClassName="flex gap-2 align-center"
-                    required
-                    classname={style.custom_label}
+                  />
+                </FRow>
+              ) : null}
+              {fieldData && (
+                <Button
+                  fullWidth
+                  className={style.advanced}
+                  onClick={() => {
+                    handleOpenFieldDrawer(fieldData);
+                    closeAllDrawer();
+                  }}
+                >
+                  <SettingsIcon />
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced settings"
+                  ) || "Advanced settings"}
+                </Button>
+              )}
+            </Box> */}
+              </MaterialUIProvider>
+              {/* <div>
+            {format === "MULTISELECT" && (
+              <Box className={style.dropdown}>
+                <Container
+                  lockAxis="y"
+                  orientation="vertical"
+                  onDrop={onDrop}
+                  dragHandleSelector=".column-drag-handle"
+                >
+                  {dropdownFields.map((item, index) => (
+                    <Draggable key={item.id}>
+                      <Box key={item.id} className="column-drag-handle">
+                        <Box
+                        >
+                          <FRow
+                            label={`Option ${index + 1}`}
+                            className={style.option}
+                          >
+                            <span
+                              className={style.startAdornment}
+                              style={{
+                                background: watch(
+                                  `attributes.options.${index}.color`
+                                ),
+                              }}
+                            ></span>
+
+                            <HFTextField
+                              disabledHelperText
+                              name={`attributes.options.${index}.label`}
+                              control={control}
+                              fullWidth
+                              required
+                              placeholder="Type..."
+                              className={style.input}
+                              customOnChange={(e) => {
+                                setValue(
+                                  `attributes.options.${index}.value`,
+                                  e.target.value
+                                );
+                              }}
+                              endAdornment={
+                                <Box className={style.adornment}>
+                                  <p onClick={(e) => handleOpenColor(e, index)}>
+                                    {generateLangaugeText(
+                                      tableLan,
+                                      i18n?.language,
+                                      "Add color"
+                                    ) || "Add color"}
+                                  </p>
+                                  <CloseIcon
+                                    onClick={() => dropdownRemove(index)}
+                                  />
+                                </Box>
+                              }
+                            />
+                          </FRow>
+                        </Box>
+                      </Box>
+                      <Popover
+                        open={openColor}
+                        anchorEl={colorEl}
+                        onClose={handleCloseColor}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                      >
+                        <Card elevation={12} className="ColorPickerPopup">
+                          {colorList.map((color, colorIndex) => (
+                            <div
+                              className="round"
+                              key={colorIndex}
+                              style={{ backgroundColor: color }}
+                              onClick={() => {
+                                setValue(
+                                  `attributes.options.${idx}.color`,
+                                  color
+                                );
+                                setValue(`attributes.has_color`, true);
+                                handleCloseColor();
+                              }}
+                            />
+                          ))}
+                        </Card>
+                      </Popover>
+                    </Draggable>
+                  ))}
+                </Container>
+                {watch("type") === "MULTISELECT" && (
+                  <Button
+                    onClick={() => {
+                      dropdownAppend({
+                        label: "",
+                        value: "",
+                      });
+                    }}
                   >
-                    <HFSelect
+                    +
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Add option"
+                    ) || "Add option"}
+                  </Button>
+                )}
+
+                {watch("type") === "STATUS" && (
+                  <StatusFieldSettings control={control} />
+                )}
+              </Box>
+            )}
+          </div> */}
+              {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
+                <Box padding="5px" overflow="auto" maxHeight="300px">
+                  {/* <FRow label="Formula format">
+                <HFSelect
+                  name="formulaFormat"
+                  control={formulaControl}
+                  options={formulaFormatOptions}
+                  isClearable={false}
+                />
+              </FRow> */}
+                  <FRow label="Formula type">
+                    <DropdownSelect
+                      name="attributes.type"
+                      control={control}
+                      options={formulaTypes}
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
+                    />
+                  </FRow>
+                  {(type === "SUMM" || type === "MAX" || type === "AVG") && (
+                    <>
+                      <FRow label="Table from">
+                        <DropdownSelect
+                          name="attributes.table_from"
+                          control={control}
+                          options={computedTables}
+                          onOpen={() => {
+                            setOpenedDropdown(null);
+                          }}
+                        />
+                      </FRow>
+
+                      <FRow label="Field from">
+                        <DropdownSelect
+                          name="attributes.sum_field"
+                          control={control}
+                          options={fields}
+                          onOpen={() => {
+                            setOpenedDropdown(null);
+                          }}
+                        />
+                      </FRow>
+
+                      <FRow label="Rounds">
+                        <TextField
+                          name="attributes.number_of_rounds"
+                          type="number"
+                          fullWidth
+                          control={control}
+                          options={fields}
+                        />
+                      </FRow>
+
+                      <FRow label="Filters"></FRow>
+
+                      <div className="">
+                        {relation?.map((summary, index) => (
+                          <FormulaFilters
+                            summary={summary}
+                            selectedTableSlug={selectedTableSlug}
+                            index={index}
+                            control={control}
+                            deleteSummary={deleteSummary}
+                          />
+                        ))}
+                        <div
+                          className={style.summaryButton}
+                          onClick={addNewSummary}
+                        >
+                          <button type="button">+ Create new</button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </Box>
+                // <FormulaAttributes control={control} mainForm={{ control }} />
+              )}
+              {/* {formulaFormat === "FORMULA_FRONTEND" &&
+            format?.startsWith("FORMULA") && (
+              <Box overflow="auto" maxHeight={"200px"} padding="5px">
+                {watch("attributes.advanced_type") ? (
+                  <>
+                    <Box className={style.formula}>
+                      <HFTextArea
+                        className={style.input}
+                        disabledHelperText
+                        name="attributes.formula"
+                        control={control}
+                        fullWidth
+                        id="formula_textarea"
+                        required
+                        placeholder={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Formula"
+                          ) || "Formula"
+                        }
+                      />
+                    </Box>
+                    <h2 className={style.fieldHeading}>
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Fields list"
+                      ) || "Fields list"}
+                      :
+                    </h2>
+                    {fields.map((field) => (
+                      <div className={style.fieldsList} key={field.id}>
+                        <span className={style.fieldTitle}>
+                          {field.label}
+                        </span>{" "}
+                        <span className={style.dot}></span>{" "}
+                        <span className={style.fieldValue}>
+                          {field.value}
+                        </span>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <Box className={style.formula}>
+                    <DropdownSelect
                       className={style.input}
                       disabledHelperText
-                      options={FormatOptionType(format)}
-                      name="type"
+                      options={fields}
+                      name="attributes.from_formula"
                       control={control}
-                      disabled={fieldData}
+                      fullWidth
+                      id="variable"
+                      required
+                      placeholder={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Select variable"
+                        ) || "Select variable"
+                      }
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
+                    />
+
+                    <span
+                      id={`math_plus`}
+                      className={`math_${mathType?.label}`}
+                      onClick={(e) => setMathEl(e.currentTarget)}
+                    >
+                      {mathType?.value}
+                    </span>
+                    <DropdownSelect
+                      className={style.input}
+                      disabledHelperText
+                      options={fields}
+                      id="variable_second"
+                      name="attributes.to_formula"
+                      control={control}
                       fullWidth
                       required
                       placeholder={
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Select type"
-                        ) || "Select type"
+                          "Select variable"
+                        ) || "Select variable"
                       }
+                      onOpen={() => {
+                        setOpenedDropdown(null);
+                      }}
                     />
-                  </FRow>
-                ) : null}
-                {fieldData && (
-                  <Button
-                    fullWidth
-                    className={style.advanced}
-                    onClick={() => {
-                      handleOpenFieldDrawer(fieldData);
-                      closeAllDrawer();
-                    }}
-                  >
-                    <SettingsIcon />
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Advanced settings"
-                    ) || "Advanced settings"}
-                  </Button>
-                )}
-              </Box> */}
-            </MaterialUIProvider>
-            {/* <div>
-              {format === "MULTISELECT" && (
-                <Box className={style.dropdown}>
-                  <Container
-                    lockAxis="y"
-                    orientation="vertical"
-                    onDrop={onDrop}
-                    dragHandleSelector=".column-drag-handle"
-                  >
-                    {dropdownFields.map((item, index) => (
-                      <Draggable key={item.id}>
-                        <Box key={item.id} className="column-drag-handle">
-                          <Box
-                          >
-                            <FRow
-                              label={`Option ${index + 1}`}
-                              className={style.option}
-                            >
-                              <span
-                                className={style.startAdornment}
-                                style={{
-                                  background: watch(
-                                    `attributes.options.${index}.color`
-                                  ),
-                                }}
-                              ></span>
 
-                              <HFTextField
-                                disabledHelperText
-                                name={`attributes.options.${index}.label`}
-                                control={control}
-                                fullWidth
-                                required
-                                placeholder="Type..."
-                                className={style.input}
-                                customOnChange={(e) => {
-                                  setValue(
-                                    `attributes.options.${index}.value`,
-                                    e.target.value
-                                  );
-                                }}
-                                endAdornment={
-                                  <Box className={style.adornment}>
-                                    <p onClick={(e) => handleOpenColor(e, index)}>
-                                      {generateLangaugeText(
-                                        tableLan,
-                                        i18n?.language,
-                                        "Add color"
-                                      ) || "Add color"}
-                                    </p>
-                                    <CloseIcon
-                                      onClick={() => dropdownRemove(index)}
-                                    />
-                                  </Box>
-                                }
-                              />
-                            </FRow>
-                          </Box>
-                        </Box>
-                        <Popover
-                          open={openColor}
-                          anchorEl={colorEl}
-                          onClose={handleCloseColor}
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "left",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
-                          }}
-                        >
-                          <Card elevation={12} className="ColorPickerPopup">
-                            {colorList.map((color, colorIndex) => (
-                              <div
-                                className="round"
-                                key={colorIndex}
-                                style={{ backgroundColor: color }}
-                                onClick={() => {
-                                  setValue(
-                                    `attributes.options.${idx}.color`,
-                                    color
-                                  );
-                                  setValue(`attributes.has_color`, true);
-                                  handleCloseColor();
-                                }}
-                              />
-                            ))}
-                          </Card>
-                        </Popover>
-                      </Draggable>
-                    ))}
-                  </Container>
-                  {watch("type") === "MULTISELECT" && (
-                    <Button
-                      onClick={() => {
-                        dropdownAppend({
-                          label: "",
-                          value: "",
-                        });
+                    <Menu
+                      open={openMath}
+                      onClose={handleCloseMath}
+                      anchorEl={mathEl}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
                       }}
                     >
-                      +
-                      {generateLangaugeText(
+                      <Box className="math">
+                        {math.map((item) => {
+                          return (
+                            <span
+                              id={`math_${item?.label}`}
+                              className={`math_${item?.label}`}
+                              onClick={() => {
+                                setValue("attributes.math", item);
+                                setMathEl(null);
+                              }}
+                            >
+                              {item?.value}
+                            </span>
+                          );
+                        })}
+                      </Box>
+                    </Menu>
+                  </Box>
+                )}
+
+                <Box
+                  mt={1}
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    columnGap: "5px",
+                  }}
+                >
+                  <HFSwitch
+                    id="advanced_switch"
+                    control={control}
+                    name="attributes.advanced_type"
+                  />
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced Editor"
+                  ) || "Advanced Editor"}
+                </Box>
+              </Box>
+            )} */}
+              {format === "RELATION" && !fieldData ? (
+                <RelationFieldForm
+                  control={control}
+                  watch={watch}
+                  setValue={setValue}
+                  fieldWatch={fieldWatch}
+                  relatedTableSlug={relatedTableSlug}
+                />
+              ) : null}
+              {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
+                <button
+                  className={clsx(style.btn, style.settings)}
+                  onClick={() => {
+                    fieldHandleOpen(
+                      fieldData ?? {
+                        type: FIELD_TYPES.FORMULA_FRONTEND,
+                      }
+                    );
+                  }}
+                  onMouseEnter={() => {
+                    setOpenedDropdown(null);
+                  }}
+                >
+                  <Image src="/img/settings.svg" alt="settings" />
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Advanced settings"
+                  ) || "Advanced settings"}
+                </button>
+              )}
+              <Box className={style.button_group} sx={{ padding: "0 5px" }}>
+                <FormElementButton onClick={handleClick}>
+                  {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
+                    "Cancel"}
+                </FormElementButton>
+                {/* <Button variant="contained" color="error" onClick={handleClick}>
+              {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
+                "Cancel"}
+            </Button> */}
+                <FormElementButton
+                  onClick={handleSubmit(
+                    format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+                  )}
+                  primary
+                  type="button"
+                >
+                  {fieldData
+                    ? generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Add option"
-                      ) || "Add option"}
-                    </Button>
-                  )}
-
-                  {watch("type") === "STATUS" && (
-                    <StatusFieldSettings control={control} />
-                  )}
-                </Box>
-              )}
-            </div> */}
-            {formulaFormat === "FORMULA" && format.startsWith("FORMULA") && (
-              <Box padding="5px" overflow="auto" maxHeight="300px">
-                {/* <FRow label="Formula format">
-                  <HFSelect
-                    name="formulaFormat"
-                    control={formulaControl}
-                    options={formulaFormatOptions}
-                    isClearable={false}
-                  />
-                </FRow> */}
-                <FRow label="Formula type">
-                  <DropdownSelect
-                    name="attributes.type"
-                    control={control}
-                    options={formulaTypes}
-                    onOpen={() => {
-                      setOpenedDropdown(null);
-                    }}
-                  />
-                </FRow>
-                {(type === "SUMM" || type === "MAX" || type === "AVG") && (
-                  <>
-                    <FRow label="Table from">
-                      <DropdownSelect
-                        name="attributes.table_from"
-                        control={control}
-                        options={computedTables}
-                        onOpen={() => {
-                          setOpenedDropdown(null);
-                        }}
-                      />
-                    </FRow>
-
-                    <FRow label="Field from">
-                      <DropdownSelect
-                        name="attributes.sum_field"
-                        control={control}
-                        options={fields}
-                        onOpen={() => {
-                          setOpenedDropdown(null);
-                        }}
-                      />
-                    </FRow>
-
-                    <FRow label="Rounds">
-                      <TextField
-                        name="attributes.number_of_rounds"
-                        type="number"
-                        fullWidth
-                        control={control}
-                        options={fields}
-                      />
-                    </FRow>
-
-                    <FRow label="Filters"></FRow>
-
-                    <div className="">
-                      {relation?.map((summary, index) => (
-                        <FormulaFilters
-                          summary={summary}
-                          selectedTableSlug={selectedTableSlug}
-                          index={index}
-                          control={control}
-                          deleteSummary={deleteSummary}
-                        />
-                      ))}
-                      <div
-                        className={style.summaryButton}
-                        onClick={addNewSummary}>
-                        <button type="button">+ Create new</button>
-                      </div>
-                    </div>
-                  </>
-                )}
+                        "Save colmn"
+                      ) || "Save column"
+                    : generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Add column"
+                      ) || "Add column"}
+                </FormElementButton>
               </Box>
-              // <FormulaAttributes control={control} mainForm={{ control }} />
-            )}
-            {formulaFormat === "FORMULA_FRONTEND" &&
-              format?.startsWith("FORMULA") && (
-                <Box overflow="auto" maxHeight={"200px"} padding="5px">
-                  {/* <FRow label="Formula format">
-                    <HFSelect
-                      name="formulaFormat"
-                      control={formulaControl}
-                      options={formulaFormatOptions}
-                      isClearable={false}
-                    />
-                  </FRow> */}
-                  {watch("attributes.advanced_type") ? (
-                    <>
-                      <Box className={style.formula}>
-                        <HFTextArea
-                          className={style.input}
-                          disabledHelperText
-                          name="attributes.formula"
-                          control={control}
-                          fullWidth
-                          id="formula_textarea"
-                          required
-                          placeholder={
-                            generateLangaugeText(
-                              tableLan,
-                              i18n?.language,
-                              "Formula"
-                            ) || "Formula"
-                          }
-                        />
-                      </Box>
-                      <h2 className={style.fieldHeading}>
-                        {generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Fields list"
-                        ) || "Fields list"}
-                        :
-                      </h2>
-                      {fields.map((field) => (
-                        <div className={style.fieldsList} key={field.id}>
-                          <span className={style.fieldTitle}>
-                            {field.label}
-                          </span>{" "}
-                          <span className={style.dot}></span>{" "}
-                          <span className={style.fieldValue}>
-                            {field.value}
-                          </span>
-                        </div>
-                      ))}
-                    </>
-                  ) : (
-                    <Box className={style.formula}>
-                      <DropdownSelect
-                        className={style.input}
-                        disabledHelperText
-                        options={fields}
-                        name="attributes.from_formula"
-                        control={control}
-                        fullWidth
-                        id="variable"
-                        required
-                        placeholder={
-                          generateLangaugeText(
-                            tableLan,
-                            i18n?.language,
-                            "Select variable"
-                          ) || "Select variable"
-                        }
-                        onOpen={() => {
-                          setOpenedDropdown(null);
-                        }}
-                      />
-
-                      <span
-                        id={`math_plus`}
-                        className={`math_${mathType?.label}`}
-                        onClick={(e) => setMathEl(e.currentTarget)}>
-                        {mathType?.value}
-                      </span>
-                      <DropdownSelect
-                        className={style.input}
-                        disabledHelperText
-                        options={fields}
-                        id="variable_second"
-                        name="attributes.to_formula"
-                        control={control}
-                        fullWidth
-                        required
-                        placeholder={
-                          generateLangaugeText(
-                            tableLan,
-                            i18n?.language,
-                            "Select variable"
-                          ) || "Select variable"
-                        }
-                        onOpen={() => {
-                          setOpenedDropdown(null);
-                        }}
-                      />
-
-                      <Menu
-                        open={openMath}
-                        onClose={handleCloseMath}
-                        anchorEl={mathEl}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}>
-                        <Box className="math">
-                          {math.map((item) => {
-                            return (
-                              <span
-                                id={`math_${item?.label}`}
-                                className={`math_${item?.label}`}
-                                onClick={() => {
-                                  setValue("attributes.math", item);
-                                  setMathEl(null);
-                                }}>
-                                {item?.value}
-                              </span>
-                            );
-                          })}
-                        </Box>
-                      </Menu>
-                    </Box>
-                  )}
-
-                  <Box
-                    mt={1}
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      columnGap: "5px",
-                    }}>
-                    <HFSwitch
-                      id="advanced_switch"
-                      control={control}
-                      name="attributes.advanced_type"
-                    />
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Advanced Editor"
-                    ) || "Advanced Editor"}
-                  </Box>
-                </Box>
-              )}
-            {format === "RELATION" && !fieldData ? (
-              <RelationFieldForm
-                control={control}
-                watch={watch}
-                setValue={setValue}
-                fieldWatch={fieldWatch}
-                relatedTableSlug={relatedTableSlug}
-              />
-            ) : null}
-            {fieldData && (
-              <button
-                className={clsx(style.btn, style.settings)}
-                onClick={() => {
-                  fieldHandleOpen(fieldData);
-                  // handleOpenFieldDrawer(fieldData);
-                }}
-                onMouseEnter={() => {
-                  setOpenedDropdown(null);
-                }}>
-                <Image src="/img/settings.svg" alt="settings" />
-                {/* <SettingsIcon htmlColor="#32302c" width="18px" height="18px" /> */}
-                {generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Advanced settings"
-                ) || "Advanced settings"}
-              </button>
-            )}
-            <Box className={style.button_group} sx={{padding: "0 5px"}}>
-              <FormElementButton onClick={handleClick}>
-                {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
-                  "Cancel"}
-              </FormElementButton>
-              {/* <Button variant="contained" color="error" onClick={handleClick}>
-                {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
-                  "Cancel"}
-              </Button> */}
-              <FormElementButton
-                onClick={handleSubmit(
-                  format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-                )}
-                primary
-                type="button">
-                {fieldData
-                  ? generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Save colmn"
-                    ) || "Save column"
-                  : generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Add column"
-                    ) || "Add column"}
-              </FormElementButton>
-            </Box>
+            </div>
           </div>
-        </div>
-      </Popover>
+        </Popover>
+      )}
       <FieldPopover
         open={openField}
         anchorEl={fieldAnchorEl}
@@ -1420,7 +1490,7 @@ export default function FieldCreateModal({
         submitCallback={() => {
           setTimeout(() => {
             queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-            queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+            queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
           }, 100);
         }}
         slug={tableSlug}
@@ -1442,7 +1512,9 @@ export default function FieldCreateModal({
           submitCallback={() => {
             setTimeout(() => {
               queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-              queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+              queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {
+                tableSlug,
+              });
             }, 200);
           }}
         />

@@ -18,6 +18,8 @@ import { Container, Draggable } from "react-smooth-dnd";
 import { ParamsHeader } from "../../../components/ParamsHeader";
 import { FieldMenuItem } from "../../../components/FieldMenuItem";
 import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
+import HFIconPicker from "../../../../../../../components/FormElements/HFIconPicker";
+import HFSelect from "../../../../../../../components/FormElements/HFSelect";
 
 export const FieldParams = ({
   tableName = "",
@@ -69,6 +71,7 @@ export const FieldParams = ({
     addProgress,
     addComplete,
     onDrop,
+    functions,
   } = useFieldParamsProps({ watch, setValue, control });
 
   const [activeId, setActiveId] = useState(null);
@@ -566,6 +569,28 @@ export const FieldParams = ({
                 </Box>
               </>
             )}
+            {activeType.value === FIELD_TYPES.BUTTON && (
+              <Box
+                display="flex"
+                flexDirection="column"
+                paddingX="8px"
+                gap="8px"
+              >
+                <HFSelect
+                  placeholder="Function"
+                  required={true}
+                  options={functions}
+                  control={control}
+                  name="attributes.function"
+                />
+                <HFIconPicker
+                  required={true}
+                  control={control}
+                  name="attributes.icon"
+                  placeholder="Icon"
+                />
+              </Box>
+            )}
             <Box display="flex" flexDirection="column">
               {activeType?.value === FIELD_TYPES.MULTISELECT && (
                 <>
@@ -596,7 +621,7 @@ export const FieldParams = ({
                     watch={watch}
                     setValue={setValue}
                     register={register}
-                    name={"attributes.enable_multilanguage"}
+                    name={"enable_multilanguage"}
                     label={"Multiple language"}
                   />
                 </Box>

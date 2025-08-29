@@ -141,16 +141,16 @@ const LayoutSidebar = ({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
-    params: {
-      template_id:
-        menuById?.attributes?.menu_settings_id ||
-        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
-    },
-    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
-  });
+  // const {data: menuTemplate} = useMenuSettingGetByIdQuery({
+  //   params: {
+  //     template_id:
+  //       menuById?.attributes?.menu_settings_id ||
+  //       "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+  //   },
+  //   menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
+  // });
 
-  const menuStyle = menuTemplate?.menu_template;
+  const menuStyle = {};
   const permissions = useSelector((state) => state.auth.globalPermissions);
   const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
@@ -329,13 +329,13 @@ const LayoutSidebar = ({
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
-  useEffect(() => {
-    if (menuTemplate?.icon_style === "MODERN") {
-      setSidebarIsOpen(false);
-    } else {
-      setSidebarIsOpen(true);
-    }
-  }, [menuTemplate]);
+  // useEffect(() => {
+  //   if (menuTemplate?.icon_style === "MODERN") {
+  //     setSidebarIsOpen(false);
+  //   } else {
+  //     setSidebarIsOpen(true);
+  //   }
+  // }, [menuTemplate]);
 
   useEffect(() => {
     if (!hasFetchedOnce) {
@@ -589,7 +589,7 @@ const LayoutSidebar = ({
                     handleOpenNotify={handleOpenNotify}
                     setSelectedApp={setSelectedApp}
                     selectedApp={selectedApp}
-                    menuTemplate={menuTemplate}
+                    // menuTemplate={menuTemplate}
                     menuLanguages={menuLanguages}
                     setMenuItem={setMenuItem}
                     menuItem={menuItem}

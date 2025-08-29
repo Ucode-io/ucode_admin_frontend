@@ -29,6 +29,7 @@ const ButtonsMenu = ({
   setLinkedTableModal,
   setWebsiteModalLink,
   menuLanguages,
+  setTemplatePopover = () => {},
   openTableCreateModal = () => {},
 }) => {
   const navigate = useNavigate();
@@ -79,6 +80,24 @@ const ButtonsMenu = ({
             />
           ) : null}
 
+          {element?.data?.permission?.update || permissionButton ? (
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} color="#475467" />}
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Make Template"
+                ) || "Make Template"
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setTemplatePopover("template");
+                handleCloseNotify();
+              }}
+            />
+          ) : null}
+
           {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
             element?.data?.permission?.delete) ||
           permissionButton ? (
@@ -106,25 +125,9 @@ const ButtonsMenu = ({
               />
             </>
           ) : null}
-          {/* {element?.data?.permission?.menu_settings || permissionButton ? (
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title={
-                generateLangaugeText(
-                  menuLanguages,
-                  i18n?.language,
-                  "Move folder"
-                ) || "Move folder"
-              }
-              onClick={(e) => {
-                e.stopPropagation();
-                setFolderModalType("folder", element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null} */}
         </Box>
       )}
+
       {menuType === "CREATE_TO_FOLDER" && (
         <Box className="menu">
           <MenuItemComponent
@@ -135,7 +138,6 @@ const ButtonsMenu = ({
                 width={18}
                 height={18}
               />
-              // <TableChartIcon size={13} color="#475467" />
             }
             title={
               generateLangaugeText(
@@ -146,7 +148,6 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              // navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               openTableCreateModal("create", element);
               handleCloseNotify();
             }}
@@ -245,23 +246,6 @@ const ButtonsMenu = ({
       )}
       {menuType === "TABLE" && (
         <Box className="menu">
-          {/* {element?.data?.permission?.menu_settings || permissionButton ? (
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title={
-                generateLangaugeText(
-                  menuLanguages,
-                  i18n?.language,
-                  "Move table"
-                ) || "Move table"
-              }
-              onClick={(e) => {
-                e.stopPropagation();
-                setFolderModalType("folder", element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null} */}
           {element.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a282" && (
             <>
               <MenuItemComponent
@@ -317,6 +301,22 @@ const ButtonsMenu = ({
             />
           ) : null}
 
+          <MenuItemComponent
+            icon={<RiPencilFill size={13} />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Make Template"
+              ) || "Make Template"
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              setTemplatePopover("template");
+              handleCloseNotify();
+            }}
+          />
+
           {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
             element?.data?.permission?.delete) ||
           permissionButton ? (
@@ -348,17 +348,6 @@ const ButtonsMenu = ({
       )}
       {menuType === "LINK" && (
         <Box className="menu">
-          {/* {element?.data?.permission?.menu_settings || permissionButton ? (
-            <MenuItemComponent
-              icon={<DriveFileMoveIcon size={13} />}
-              title="Move table"
-              onClick={(e) => {
-                e.stopPropagation();
-                setWebsiteModalLink("folder", element);
-                handleCloseNotify();
-              }}
-            />
-          ) : null} */}
           {element?.data?.permission?.menu_settings || permissionButton ? (
             <MenuItemComponent
               icon={<DriveFileMoveIcon size={13} />}
@@ -518,7 +507,6 @@ const ButtonsMenu = ({
             onClick={(e) => {
               e.stopPropagation();
               openTableCreateModal("create", null);
-              // navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               handleCloseNotify();
             }}
           />
@@ -622,11 +610,6 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              // navigate(`/settings/constructor/apps/${menuID}/objects/create`, {
-              //   state: {
-              //     create_table: true,
-              //   },
-              // });
               openTableCreateModal("create", null);
               handleCloseNotify();
             }}
@@ -781,7 +764,6 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              // navigate(`/settings/constructor/apps/${menuID}/objects/create`);
               openTableCreateModal("create", element);
               handleCloseNotify();
             }}

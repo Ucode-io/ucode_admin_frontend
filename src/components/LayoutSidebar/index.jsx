@@ -81,6 +81,7 @@ import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import TableCreateModal from "../../layouts/MainLayout/TableCreateModal";
+import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -126,6 +127,7 @@ const LayoutSidebar = ({
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const [childMenu, setChildMenu] = useState(null);
   const [tableType, setTableType] = useState("");
+  const [templatePopover, setTemplatePopover] = useState("");
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -163,23 +165,23 @@ const LayoutSidebar = ({
     setWebsiteModal(null);
   };
 
-  const setWebsiteModalLink = (element) => {
+  const setWebsiteModalLink = () => {
     setWebsiteModal(true);
   };
 
-  const setTableModal = (element) => {
+  const setTableModal = () => {
     setTableModalOpen(true);
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
   };
-  const setLinkedTableModal = (element) => {
+  const setLinkedTableModal = () => {
     setLinkTableModal(true);
   };
   const closeLinkedTableModal = () => {
     setLinkTableModal(null);
   };
-  const setMicrofrontendModal = (element) => {
+  const setMicrofrontendModal = () => {
     setMicrofrontendModalOpen(true);
   };
   const closeMicrofrontendModal = () => {
@@ -199,16 +201,20 @@ const LayoutSidebar = ({
   const closeFolderModal = () => {
     setFolderModalType(null);
   };
-  const openFolderCreateModal = (type, element) => {
+  const openFolderCreateModal = (type) => {
     setModalType(type);
   };
 
-  const openTableCreateModal = (type, element) => {
+  const openTableCreateModal = (type) => {
     setTableType(type);
   };
 
   const closeTableCreateModal = () => {
     setTableType(null);
+  };
+
+  const closeTemplate = () => {
+    setTemplatePopover(null);
   };
 
   const getMenuList = () => {
@@ -730,6 +736,13 @@ const LayoutSidebar = ({
           )}
         </Box>
 
+        {templatePopover === "template" && (
+          <TemplateMenu
+            selectedFolder={selectedFolder}
+            closeModal={closeTemplate}
+          />
+        )}
+
         {userRoleName === DEFAULT_ADMIN && (
           <Flex
             display={sidebarIsOpen ? "flex" : "block"}
@@ -898,6 +911,7 @@ const LayoutSidebar = ({
           deleteFolder={deleteFolder}
           getMenuList={getMenuList}
           setWebsiteModalLink={setWebsiteModalLink}
+          setTemplatePopover={setTemplatePopover}
         />
       ) : null}
       {templateModal && <TemplateModal closeModal={closeTemplateModal} />}
@@ -1350,13 +1364,6 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
       dispatch(companyActions.logout());
     });
   };
-
-  // const changeLanguage = (lang) => {
-  //   i18n.changeLanguage(lang);
-  //   dispatch(languagesActions.setDefaultLanguage(lang));
-  //   localStorage.setItem("defaultLanguage", lang);
-  //   onClose();
-  // };
 
   useEffect(() => {
     if (projectInfo?.project_id) {

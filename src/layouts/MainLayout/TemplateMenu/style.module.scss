@@ -1,0 +1,38 @@
+.tabs {
+  width: 100%;
+}
+
+.tabList {
+  display: flex;
+  width: 275px;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  height: 40px;
+  background: #f9fafb;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 4px;
+}
+
+.tab {
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  background: #f9fafb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 6px;
+}
+
+.activeTab {
+  background: #fff;
+  font-weight: 600;
+  color: #111827;
+}
+
+.tabPanel {
+  margin-top: 20px;
+}

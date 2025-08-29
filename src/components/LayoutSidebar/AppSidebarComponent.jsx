@@ -64,6 +64,8 @@ const AppSidebar = ({
   getMenuList,
   childMenu = false,
   selectedFolder,
+  setSelectedMenu = () => {},
+  setTemplatePopover = () => {},
   setSelectedFolder = () => {},
   setChildMenu = () => {},
 }) => {
@@ -145,15 +147,9 @@ const AppSidebar = ({
         : menuTemplate?.menu_template?.text,
   };
 
-  // function replaceValues(inputString, loginTableSlug, userId) {
-  //   return inputString
-  //     .replace("{login_table_slug}", loginTableSlug)
-  //     .replace("{user_id}", userId);
-  // }
-
   const activeMenu =
     element?.type === "FOLDER"
-      ? Boolean(selectedApp?.id === element?.id)
+      ? Boolean(selectedFolder?.id === element?.id)
       : element?.id === menuId;
 
   if (!permission) {
@@ -324,12 +320,15 @@ const AppSidebar = ({
                         id={"three_dots"}
                         size={13}
                         onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedFolder(element);
+                          setElement(null);
                           handleOpenNotify(e, "FOLDER", true);
                         }}
                         style={{
                           color: activeMenu
                             ? "#32302B"
-                            : (menuStyle?.text ?? "#fff"),
+                            : (menuStyle?.text ?? "#32302B"),
                         }}
                       />
                     </div>
@@ -343,6 +342,7 @@ const AppSidebar = ({
                       className="extra_icon"
                       onClick={(e) => {
                         setSelectedFolder(element);
+                        setElement(null);
                         handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
                       <AddIcon
@@ -366,6 +366,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "TABLE");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color: activeMenu ? "#32302B" : menuStyle?.text || "",
@@ -381,6 +382,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "LINK");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color: activeMenu
@@ -398,6 +400,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "MICROFRONTEND");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color:
@@ -416,6 +419,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "WEBPAGE");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color: activeMenu
@@ -574,12 +578,14 @@ const AppSidebar = ({
                               size={13}
                               onClick={(e) => {
                                 e.stopPropagation();
+                                setSelectedFolder(element);
+                                setElement(null);
                                 handleOpenNotify(e, "FOLDER");
                               }}
                               style={{
                                 color: activeMenu
                                   ? "#32302B"
-                                  : (menuStyle?.text ?? "#fff"),
+                                  : (menuStyle?.text ?? "#32302B"),
                               }}
                             />
                           </div>
@@ -594,6 +600,7 @@ const AppSidebar = ({
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedFolder(element);
+                              setElement(null);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");
                             }}>
                             <AddIcon

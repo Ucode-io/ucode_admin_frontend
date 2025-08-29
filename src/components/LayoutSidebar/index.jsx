@@ -1047,7 +1047,6 @@ const Header = ({
   };
 
   const onSelectEnvironment = (environment = {}) => {
-    console.log("environmentenvironment", environment);
     const tablesArr = getValues();
     const params = {
       refresh_token: auth?.refreshToken,
@@ -1190,6 +1189,7 @@ const Header = ({
               onClose={onClose}
             />
             <Companies
+              getConnections={getConnections}
               onSelectEnvironment={onSelectEnvironment}
               setEnvirId={setEnv}
             />
@@ -1466,7 +1466,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   );
 };
 
-const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
+const Companies = ({
+  onSelectEnvironment,
+  setEnvirId = () => {},
+  getConnections = () => {},
+}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const [text, setText] = useState("");
@@ -1556,6 +1560,7 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
               </Flex>
             </AccordionButton>
             <Projects
+              getConnections={getConnections}
               company={company}
               setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
@@ -1605,7 +1610,12 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
   );
 };
 
-const Projects = ({company, onSelectEnvironment = () => {}, setEnvirId}) => {
+const Projects = ({
+  company,
+  onSelectEnvironment = () => {},
+  setEnvirId,
+  getConnections = () => {},
+}) => {
   const [projectID, setProjectID] = useState("");
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
@@ -1625,13 +1635,14 @@ const Projects = ({company, onSelectEnvironment = () => {}, setEnvirId}) => {
       (item) => item?.name === "Production"
     );
 
-    console.log("environmentsenvironments", environments, computedEnv);
     if (Boolean(computedEnv?.project_id)) {
-      console.log("entereedddddddddddd", computedEnv);
+      getConnections(computedEnv);
       onSelectEnvironment(computedEnv);
       setEnvirId(computedEnv);
     } else {
-      console.log("environmentsenvironments", environments, computedEnv);
+      getConnections(
+        Array.isArray(environments) ? environments?.[0] : environments
+      );
       onSelectEnvironment(
         Array.isArray(environments) ? environments?.[0] : environments
       );

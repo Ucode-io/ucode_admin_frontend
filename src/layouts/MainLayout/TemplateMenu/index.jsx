@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   Box,
   Button,
@@ -7,28 +7,46 @@ import {
   Grid,
   Typography,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import {useForm, Controller} from "react-hook-form";
 import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import styles from "./style.module.scss";
 import MainTab from "./MainTab";
+import TemplateTables from "./TemplateTables";
+import {useTemplateCreateMutation} from "../../../services/templateService";
 
-function TemplateMenu({closeModal = () => {}, selectedFolder = {}}) {
+function TemplateMenu({
+  closeModal = () => {},
+  selectedFolder = {},
+  element = {},
+}) {
+  const [loading, setLoading] = useState(false);
   const {handleSubmit, control, reset} = useForm({
     defaultValues: {
       name: "",
       description: "",
-      tableNote: "",
-      functionNote: "",
-      mfNote: "",
+    },
+  });
+
+  const {mutate: createTemplate} = useTemplateCreateMutation({
+    onSuccess: (res) => {
+      closeModal();
+      reset();
+    },
+    onError: () => {
+      setLoading(false);
     },
   });
 
   const onSubmit = (data) => {
-    console.log("Full Form Data:", data);
-    closeModal();
-    reset();
+    setLoading(true);
+    const computedData = {
+      menu_id: selectedFolder?.id,
+      ...data,
+    };
+    createTemplate(computedData);
   };
 
   return (
@@ -65,19 +83,10 @@ function TemplateMenu({closeModal = () => {}, selectedFolder = {}}) {
             </TabPanel>
 
             <TabPanel className={styles.tabPanel}>
-              <Typography variant="h6">Tables</Typography>
-              <Controller
-                name="tableNote"
+              <TemplateTables
+                element={element}
                 control={control}
-                render={({field}) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Table Notes"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                )}
+                selectedFolder={selectedFolder}
               />
             </TabPanel>
 
@@ -132,10 +141,16 @@ function TemplateMenu({closeModal = () => {}, selectedFolder = {}}) {
             Cancel
           </Button>
           <Button
+            disabled={loading}
+            minWidth="111px"
             onClick={handleSubmit(onSubmit)}
             variant="contained"
             color="primary">
-            Make Template
+            {loading ? (
+              <CircularProgress style={{color: "#fff"}} size={20} />
+            ) : (
+              "Make Template"
+            )}
           </Button>
         </Box>
       </Box>

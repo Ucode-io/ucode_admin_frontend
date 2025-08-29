@@ -738,6 +738,7 @@ const LayoutSidebar = ({
 
         {templatePopover === "template" && (
           <TemplateMenu
+            element={element}
             selectedFolder={selectedFolder}
             closeModal={closeTemplate}
           />

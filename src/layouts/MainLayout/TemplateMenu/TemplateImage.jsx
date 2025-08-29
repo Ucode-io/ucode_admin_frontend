@@ -4,15 +4,15 @@ import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import {Box, Button, Modal, Popover, Typography} from "@mui/material";
 import {useRef, useState} from "react";
-import fileService from "../../services/fileService";
-import "./Gallery/style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
 import Rotate90DegreesCcwIcon from "@mui/icons-material/Rotate90DegreesCcw";
 import "./style.scss";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import useDownloader from "../../hooks/useDownloader";
+import fileService from "../../../services/fileService";
+import useDownloader from "../../../hooks/useDownloader";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const style = {
   position: "absolute",
@@ -29,7 +29,7 @@ const style = {
   height: "85vh",
 };
 
-const ImageUpload = ({
+const TemplateImage = ({
   value,
   onChange,
   className = "",
@@ -132,33 +132,32 @@ const ImageUpload = ({
       style={{cursor: disabled ? "not-allowed" : "pointer"}}>
       {value && (
         <>
-          <div
-            style={{padding: drawerDetail ? "0 10px" : 0}}
-            id="photo"
-            className="uploadedImage"
-            aria-describedby={id}
-            // onClick={handleClick}>
-            onClick={() => handleOpenImg()}>
-            <div className="img">
-              <img
-                src={value}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                className="img"
-                alt={splitVal}
-              />
-            </div>
-            <Typography
-              sx={{
-                fontSize: "10px",
-                color: "#747474",
-              }}>
-              {value.split("#")[0].split("_")[1] ?? ""}
-            </Typography>
-          </div>
+          <Box
+            sx={{
+              width: "100%",
+              marginTop: "30px",
+              height: "240px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "8px",
+              border: "1px solid #cccc",
+            }}
+            onClick={() => {
+              handleOpenImg();
+            }}>
+            <img
+              src={value}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+              }}
+              className="img"
+              alt={splitVal}
+            />
+            {/* </div> */}
+          </Box>
 
           <Popover
             id={id}
@@ -364,41 +363,39 @@ const ImageUpload = ({
         </>
       )}
 
-      <Box>
-        {!value && (
-          <Button
-            id="imageUploadBtn"
+      {Boolean(!value) && (
+        <Box
+          sx={{
+            width: "100%",
+            marginTop: "30px",
+            height: "240px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "8px",
+            border: "1px solid #cccc",
+          }}
+          onClick={() => {
+            inputRef.current.click();
+          }}>
+          <input
+            id="img_upload"
+            type="file"
+            className="hidden"
+            ref={inputRef}
+            tabIndex={tabIndex}
+            autoFocus={tabIndex === 1}
+            onChange={inputChangeHandler}
             disabled={disabled}
-            onClick={() => {
-              inputRef.current.click();
-            }}
-            sx={{
-              padding: 0,
-              minWidth: 40,
-              width: 40,
-              height: 27,
-            }}>
-            <input
-              id="img_upload"
-              type="file"
-              className="hidden"
-              ref={inputRef}
-              tabIndex={tabIndex}
-              autoFocus={tabIndex === 1}
-              onChange={inputChangeHandler}
-              disabled={disabled}
-              accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras, .svg"
-            />
-            <img
-              src="/img/newUpload.svg"
-              alt="Upload"
-              style={{width: 22, height: 22}}
-            />
-          </Button>
-        )}
-      </Box>
+            accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras, .svg"
+          />
+          <Box>
+            <FileUploadIcon style={{width: "30px", height: "30px"}} />
+          </Box>
+        </Box>
+      )}
     </div>
   );
 };
 
-export default ImageUpload;
+export default TemplateImage;

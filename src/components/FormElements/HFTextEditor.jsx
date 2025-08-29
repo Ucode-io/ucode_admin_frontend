@@ -27,6 +27,7 @@ const HFTextEditor = ({
   drawerDetail = false,
   disabled = false,
   placeholder = "",
+  radius = "12px",
   updateObject = () => {},
   ...props
 }) => {
@@ -160,7 +161,7 @@ const HFTextEditor = ({
                   maxWidth: "500px",
                   overflow: "hidden",
                   fontFamily: "sans-serif",
-                  borderRadius: "12px",
+                  borderRadius: radius,
                 }}
               />
             </Suspense>

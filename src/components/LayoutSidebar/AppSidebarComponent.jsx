@@ -64,6 +64,7 @@ const AppSidebar = ({
   getMenuList,
   childMenu = false,
   selectedFolder,
+  setTemplatePopover = () => {},
   setSelectedFolder = () => {},
   setChildMenu = () => {},
 }) => {
@@ -144,12 +145,6 @@ const AppSidebar = ({
         ? ""
         : menuTemplate?.menu_template?.text,
   };
-
-  // function replaceValues(inputString, loginTableSlug, userId) {
-  //   return inputString
-  //     .replace("{login_table_slug}", loginTableSlug)
-  //     .replace("{user_id}", userId);
-  // }
 
   const activeMenu =
     element?.type === "FOLDER"
@@ -324,8 +319,8 @@ const AppSidebar = ({
                         id={"three_dots"}
                         size={13}
                         onClick={(e) => {
-                          setSelectedFolder(element);
                           e.stopPropagation();
+                          setSelectedFolder(element);
                           handleOpenNotify(e, "FOLDER", true);
                         }}
                         style={{
@@ -575,8 +570,8 @@ const AppSidebar = ({
                               id={"three_dots"}
                               size={13}
                               onClick={(e) => {
-                                setSelectedFolder(element);
                                 e.stopPropagation();
+                                setSelectedFolder(element);
                                 handleOpenNotify(e, "FOLDER");
                               }}
                               style={{

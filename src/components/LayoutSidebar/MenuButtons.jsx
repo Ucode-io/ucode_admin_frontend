@@ -82,7 +82,7 @@ const ButtonsMenu = ({
 
           {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
-              icon={<RiPencilFill size={13} color="#475467" />}
+              icon={<img src="/img/template.svg" alt="index" />}
               title={
                 generateLangaugeText(
                   menuLanguages,
@@ -302,7 +302,7 @@ const ButtonsMenu = ({
           ) : null}
 
           <MenuItemComponent
-            icon={<RiPencilFill size={13} />}
+            icon={<img src="/img/template.svg" alt="index" />}
             title={
               generateLangaugeText(
                 menuLanguages,

@@ -1047,6 +1047,7 @@ const Header = ({
   };
 
   const onSelectEnvironment = (environment = {}) => {
+    console.log("environmentenvironment", environment);
     const tablesArr = getValues();
     const params = {
       refresh_token: auth?.refreshToken,
@@ -1189,7 +1190,7 @@ const Header = ({
               onClose={onClose}
             />
             <Companies
-              onSelectEnvironment={getConnections}
+              onSelectEnvironment={onSelectEnvironment}
               setEnvirId={setEnv}
             />
             <ProfileBottom
@@ -1604,7 +1605,7 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
   );
 };
 
-const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
+const Projects = ({company, onSelectEnvironment = () => {}, setEnvirId}) => {
   const [projectID, setProjectID] = useState("");
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
@@ -1623,12 +1624,20 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
     const computedEnv = environments?.find(
       (item) => item?.name === "Production"
     );
+
+    console.log("environmentsenvironments", environments, computedEnv);
     if (Boolean(computedEnv?.project_id)) {
+      console.log("entereedddddddddddd", computedEnv);
       onSelectEnvironment(computedEnv);
       setEnvirId(computedEnv);
     } else {
-      onSelectEnvironment(environments?.[0]);
-      setEnvirId(environments?.[0]);
+      console.log("environmentsenvironments", environments, computedEnv);
+      onSelectEnvironment(
+        Array.isArray(environments) ? environments?.[0] : environments
+      );
+      setEnvirId(
+        Array.isArray(environments) ? environments?.[0] : environments
+      );
     }
   }, [projectID, environments?.length]);
 

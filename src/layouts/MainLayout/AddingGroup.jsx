@@ -32,8 +32,9 @@ function AddingGroup() {
   const name = query.get("name");
   const companyName = query.get("companyName");
   const rowData = query.get("data");
-  const tablesData = rowData ? JSON.parse(rowData) : [];
-  console.log("tablesDatatablesData", tablesData);
+
+  const tablesData = rowData !== "undefined" ? JSON.parse(rowData) : [];
+
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
       setOpen(true);

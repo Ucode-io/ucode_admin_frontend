@@ -72,14 +72,16 @@ const TableViewOld = ({
   watch,
   tableLan,
   tableSlugProp = "",
+  setOrderBy = () => {},
+  orderBy,
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const {id, slug, tableSlug: paramsTableSlug, appId} = useParams();
+  const { id, slug, tableSlug: paramsTableSlug, appId } = useParams();
   const tableSlug = tableSlugProp || paramsTableSlug;
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
@@ -126,7 +128,7 @@ const TableViewOld = ({
     mode: "all",
   });
 
-  const {update} = useFieldArray({
+  const { update } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -152,7 +154,7 @@ const TableViewOld = ({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -217,7 +219,7 @@ const TableViewOld = ({
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+          result.push({ id: key, value: view.attributes.fixedColumns[key] });
         }
       }
     }
@@ -266,7 +268,7 @@ const TableViewOld = ({
       );
 
       if (matchingSort) {
-        const {field, order} = matchingSort;
+        const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -293,7 +295,7 @@ const TableViewOld = ({
   }, [filters]);
 
   const {
-    data: {fiedlsarray, fieldView, custom_events} = {
+    data: { fiedlsarray, fieldView, custom_events } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -319,7 +321,11 @@ const TableViewOld = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         custom_events: res?.data?.custom_events ?? [],
+        orderBy: res?.data?.table_info?.order_by || false,
       };
+    },
+    onSuccess(data) {
+      setOrderBy(data?.orderBy);
     },
   });
 
@@ -329,7 +335,7 @@ const TableViewOld = ({
       : searchText;
 
   const {
-    data: {tableData, pageCount, dataCount} = {
+    data: { tableData, pageCount, dataCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -347,9 +353,10 @@ const TableViewOld = ({
         sortedDatas,
         currentPage,
         limit,
-        filters: {...filters, [tab?.slug]: tab?.value},
+        filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
         paginiation,
+        orderBy,
         // currentView,
       },
     ],
@@ -394,7 +401,7 @@ const TableViewOld = ({
   });
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -689,7 +696,8 @@ const TableViewOld = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -708,7 +716,8 @@ const TableViewOld = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

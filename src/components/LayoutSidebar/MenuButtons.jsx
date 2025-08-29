@@ -80,7 +80,7 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          {element?.data?.permission?.update || permissionButton ? (
+          {/* {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<RiPencilFill size={13} color="#475467" />}
               title={
@@ -96,7 +96,7 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
-          ) : null}
+          ) : null} */}
 
           {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
             element?.data?.permission?.delete) ||
@@ -301,7 +301,7 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          <MenuItemComponent
+          {/* <MenuItemComponent
             icon={<RiPencilFill size={13} />}
             title={
               generateLangaugeText(
@@ -315,7 +315,7 @@ const ButtonsMenu = ({
               setTemplatePopover("template");
               handleCloseNotify();
             }}
-          />
+          /> */}
 
           {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
             element?.data?.permission?.delete) ||

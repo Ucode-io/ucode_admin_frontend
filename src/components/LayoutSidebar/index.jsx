@@ -255,8 +255,8 @@ const LayoutSidebar = ({
           setSelectedFolder(null);
         } else {
           setChildMenu(element);
-          queryClient.refetchQueries(["MENU_CHILD"]);
           setSelectedFolder(null);
+          queryClient.refetchQueries(["MENU_CHILD"]);
         }
       })
       .catch((err) => {
@@ -883,7 +883,7 @@ const LayoutSidebar = ({
       {menu?.type?.length ? (
         <ButtonsMenu
           menuLanguages={menuLanguages}
-          element={element}
+          element={element ?? selectedFolder}
           menu={menu?.event}
           openMenu={openSidebarMenu}
           handleCloseNotify={handleCloseNotify}
@@ -917,7 +917,7 @@ const LayoutSidebar = ({
   );
 };
 
-const AIChat = forwardRef(({sidebarOpen, children, ...props}, ref) => {
+const AIChat = forwardRef(({sidebarOpen = false, children, ...props}, ref) => {
   const {
     open,
     anchorEl,
@@ -1043,6 +1043,7 @@ const Header = ({
 
     dispatch(companyActions.setEnvironmentItem(environment));
     dispatch(companyActions.setEnvironmentId(environment.id));
+    dispatch(authActions.updateEnvId(environment.id));
     authService
       .updateToken({...params, env_id: environment.id}, {...params})
       .then((res) => {
@@ -1278,6 +1279,7 @@ const ProfilePanel = ({
 };
 
 const ProfileBottom = ({projectInfo, menuLanguages}) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
@@ -1342,6 +1344,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
     authService.sendAccessToken({access_token: accessToken}).then((res) => {
       indexedDB.deleteDatabase("SearchTextDB");
       indexedDB.deleteDatabase("ChartDB");
+      navigate("/");
       dispatch(menuAccordionActions.toggleMenuChilds({}));
       store.dispatch(authActions.logout());
       dispatch(companyActions.logout());
@@ -1455,6 +1458,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 };
 
 const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
+  const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const [text, setText] = useState("");
   const [companyId, setCompanyId] = useState("");
@@ -1491,6 +1495,9 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
         {companies?.map((company) => (
           <AccordionItem key={company?.id}>
             <AccordionButton
+              onClick={() => {
+                dispatch(companyActions.setCompanyName(company?.name));
+              }}
               columnGap={8}
               p={5}
               justifyContent="space-between"

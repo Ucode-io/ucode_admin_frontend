@@ -933,6 +933,7 @@ export const NewUiViewsWithGroups = ({
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <TableActions tableSlug={tableSlug} tableLan={tableLan} />
               </PermissionWrapperV2>
+              {/* <AIChat /> */}
               {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                 <Button
                   h="30px"

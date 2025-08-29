@@ -14,14 +14,14 @@ import ConnectionCreateModal from "../../../Matrix/ConnectionCreateModal";
 const templateColumns =
   "minmax(72px, 32px) minmax(240px, 1fr) minmax(240px, 1fr) minmax(240px, 1fr) minmax(62px, 1fr)";
 
-function ConnectionsModal({connections}) {
+function ConnectionsModal({connections, activeClientType}) {
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
   const [settingLan, setSettingLan] = useState();
   const [connectionId, setConnectionId] = useState();
   const {i18n} = useTranslation();
 
-  const clientTypeId = store.getState()?.auth?.clientTypes?.id;
+  const clientTypeId = activeClientType?.id;
 
   const {mutateAsync: deleteRole, isLoading: createLoading} =
     useConnectionDeleteMutation({

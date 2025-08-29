@@ -29,7 +29,6 @@ const ButtonsMenu = ({
   setLinkedTableModal,
   setWebsiteModalLink,
   menuLanguages,
-  setSelectedFolder = () => {},
   openTableCreateModal = () => {},
 }) => {
   const navigate = useNavigate();
@@ -37,11 +36,6 @@ const ButtonsMenu = ({
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
-
-  const menuID =
-    element?.type === "FOLDER"
-      ? element?.id
-      : menuId || "c57eedc3-a954-4262-a0af-376c65b5a284";
 
   return (
     <Menu

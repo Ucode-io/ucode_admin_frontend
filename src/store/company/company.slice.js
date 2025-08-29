@@ -12,6 +12,7 @@ const initialState = {
   environmentId: null,
   version: null,
   defaultPage: "",
+  companyName: "",
 };
 
 export const {actions: companyActions, reducer: companyReducer} = createSlice({
@@ -50,6 +51,10 @@ export const {actions: companyActions, reducer: companyReducer} = createSlice({
     },
     setDefaultPage: (state, {payload}) => {
       state.defaultPage = payload ?? "";
+    },
+    setCompanyName: (state, {payload}) => {
+      console.log("payloadpayloadpayloadpayload", payload);
+      state.companyName = payload ?? "";
     },
     logout: (state) => initialState,
   },

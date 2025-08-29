@@ -111,6 +111,9 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
     updateUser(state, {payload}) {
       state.userInfo[payload.key] = payload.value;
     },
+    updateEnvId(state, {payload}) {
+      state.environmentId = payload ?? "";
+    },
     logout: (state) => initialState,
     setStatus(state, payload) {
       state.access_type = payload;

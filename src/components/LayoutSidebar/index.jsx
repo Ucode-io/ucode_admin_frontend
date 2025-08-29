@@ -737,7 +737,10 @@ const LayoutSidebar = ({
         </Box>
 
         {templatePopover === "template" && (
-          <TemplateMenu closeModal={closeTemplate} />
+          <TemplateMenu
+            selectedFolder={selectedFolder}
+            closeModal={closeTemplate}
+          />
         )}
 
         {userRoleName === DEFAULT_ADMIN && (

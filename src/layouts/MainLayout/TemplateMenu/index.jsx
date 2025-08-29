@@ -14,7 +14,7 @@ import "react-tabs/style/react-tabs.css";
 import styles from "./style.module.scss";
 import MainTab from "./MainTab";
 
-function TemplateMenu({closeModal = () => {}, tableLan = {}}) {
+function TemplateMenu({closeModal = () => {}, selectedFolder = {}}) {
   const {handleSubmit, control, reset} = useForm({
     defaultValues: {
       name: "",

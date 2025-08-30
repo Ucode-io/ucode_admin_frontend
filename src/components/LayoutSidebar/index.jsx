@@ -1090,6 +1090,7 @@ const Header = ({
         {"Environment-id": env?.id}
       )
       .then((res) => {
+        console.log("ressssssssssssssssss", res?.data?.response);
         const connections = res?.data?.response;
         setConnections(connections);
         if (!connections?.length) {
@@ -1105,6 +1106,7 @@ const Header = ({
             const guid = options[0]?.guid;
             setValue(`tables.${0}.object_id`, guid);
             setValue(`tables.${0}.table_slug`, connection?.table_slug);
+            onSelectEnvironment(env);
           } else {
             handleDialogOpen();
           }
@@ -1467,7 +1469,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 };
 
 const Companies = ({
-  onSelectEnvironment,
+  onSelectEnvironment = () => {},
   setEnvirId = () => {},
   getConnections = () => {},
 }) => {
@@ -1637,15 +1639,15 @@ const Projects = ({
 
     if (Boolean(computedEnv?.project_id)) {
       getConnections(computedEnv);
-      onSelectEnvironment(computedEnv);
+      // onSelectEnvironment(computedEnv);
       setEnvirId(computedEnv);
     } else {
       getConnections(
         Array.isArray(environments) ? environments?.[0] : environments
       );
-      onSelectEnvironment(
-        Array.isArray(environments) ? environments?.[0] : environments
-      );
+      // onSelectEnvironment(
+      //   Array.isArray(environments) ? environments?.[0] : environments
+      // );
       setEnvirId(
         Array.isArray(environments) ? environments?.[0] : environments
       );

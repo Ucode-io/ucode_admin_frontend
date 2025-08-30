@@ -141,16 +141,16 @@ const LayoutSidebar = ({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
-  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
-    params: {
-      template_id:
-        menuById?.attributes?.menu_settings_id ||
-        "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
-    },
-    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
-  });
+  // const {data: menuTemplate} = useMenuSettingGetByIdQuery({
+  //   params: {
+  //     template_id:
+  //       menuById?.attributes?.menu_settings_id ||
+  //       "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+  //   },
+  //   menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
+  // });
 
-  const menuStyle = menuTemplate?.menu_template;
+  const menuStyle = {};
   const permissions = useSelector((state) => state.auth.globalPermissions);
   const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
@@ -329,13 +329,13 @@ const LayoutSidebar = ({
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
-  useEffect(() => {
-    if (menuTemplate?.icon_style === "MODERN") {
-      setSidebarIsOpen(false);
-    } else {
-      setSidebarIsOpen(true);
-    }
-  }, [menuTemplate]);
+  // useEffect(() => {
+  //   if (menuTemplate?.icon_style === "MODERN") {
+  //     setSidebarIsOpen(false);
+  //   } else {
+  //     setSidebarIsOpen(true);
+  //   }
+  // }, [menuTemplate]);
 
   useEffect(() => {
     if (!hasFetchedOnce) {
@@ -589,7 +589,7 @@ const LayoutSidebar = ({
                     handleOpenNotify={handleOpenNotify}
                     setSelectedApp={setSelectedApp}
                     selectedApp={selectedApp}
-                    menuTemplate={menuTemplate}
+                    // menuTemplate={menuTemplate}
                     menuLanguages={menuLanguages}
                     setMenuItem={setMenuItem}
                     menuItem={menuItem}
@@ -738,6 +738,7 @@ const LayoutSidebar = ({
 
         {templatePopover === "template" && (
           <TemplateMenu
+            element={element}
             selectedFolder={selectedFolder}
             closeModal={closeTemplate}
           />
@@ -1089,6 +1090,7 @@ const Header = ({
         {"Environment-id": env?.id}
       )
       .then((res) => {
+        console.log("ressssssssssssssssss", res?.data?.response);
         const connections = res?.data?.response;
         setConnections(connections);
         if (!connections?.length) {
@@ -1104,6 +1106,7 @@ const Header = ({
             const guid = options[0]?.guid;
             setValue(`tables.${0}.object_id`, guid);
             setValue(`tables.${0}.table_slug`, connection?.table_slug);
+            onSelectEnvironment(env);
           } else {
             handleDialogOpen();
           }
@@ -1188,7 +1191,8 @@ const Header = ({
               onClose={onClose}
             />
             <Companies
-              onSelectEnvironment={getConnections}
+              getConnections={getConnections}
+              onSelectEnvironment={onSelectEnvironment}
               setEnvirId={setEnv}
             />
             <ProfileBottom
@@ -1464,7 +1468,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   );
 };
 
-const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
+const Companies = ({
+  onSelectEnvironment = () => {},
+  setEnvirId = () => {},
+  getConnections = () => {},
+}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const [text, setText] = useState("");
@@ -1554,6 +1562,7 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
               </Flex>
             </AccordionButton>
             <Projects
+              getConnections={getConnections}
               company={company}
               setEnvirId={setEnvirId}
               onSelectEnvironment={onSelectEnvironment}
@@ -1603,7 +1612,12 @@ const Companies = ({onSelectEnvironment, setEnvirId = () => {}}) => {
   );
 };
 
-const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
+const Projects = ({
+  company,
+  onSelectEnvironment = () => {},
+  setEnvirId,
+  getConnections = () => {},
+}) => {
   const [projectID, setProjectID] = useState("");
   const projectsQuery = useProjectListQuery({
     params: {company_id: company?.id},
@@ -1622,12 +1636,21 @@ const Projects = ({company, onSelectEnvironment, setEnvirId}) => {
     const computedEnv = environments?.find(
       (item) => item?.name === "Production"
     );
+
     if (Boolean(computedEnv?.project_id)) {
-      onSelectEnvironment(computedEnv);
+      getConnections(computedEnv);
+      // onSelectEnvironment(computedEnv);
       setEnvirId(computedEnv);
     } else {
-      onSelectEnvironment(environments?.[0]);
-      setEnvirId(environments?.[0]);
+      getConnections(
+        Array.isArray(environments) ? environments?.[0] : environments
+      );
+      // onSelectEnvironment(
+      //   Array.isArray(environments) ? environments?.[0] : environments
+      // );
+      setEnvirId(
+        Array.isArray(environments) ? environments?.[0] : environments
+      );
     }
   }, [projectID, environments?.length]);
 

@@ -64,6 +64,7 @@ const AppSidebar = ({
   getMenuList,
   childMenu = false,
   selectedFolder,
+  setSelectedMenu = () => {},
   setTemplatePopover = () => {},
   setSelectedFolder = () => {},
   setChildMenu = () => {},
@@ -321,6 +322,7 @@ const AppSidebar = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedFolder(element);
+                          setElement(null);
                           handleOpenNotify(e, "FOLDER", true);
                         }}
                         style={{
@@ -340,6 +342,7 @@ const AppSidebar = ({
                       className="extra_icon"
                       onClick={(e) => {
                         setSelectedFolder(element);
+                        setElement(null);
                         handleOpenNotify(e, "CREATE_TO_FOLDER", true);
                       }}>
                       <AddIcon
@@ -363,6 +366,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "TABLE");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color: activeMenu ? "#32302B" : menuStyle?.text || "",
@@ -378,6 +382,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "LINK");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color: activeMenu
@@ -395,6 +400,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "MICROFRONTEND");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color:
@@ -413,6 +419,7 @@ const AppSidebar = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "WEBPAGE");
                   setElement(element);
+                  setSelectedFolder(null);
                 }}
                 style={{
                   color: activeMenu
@@ -572,6 +579,7 @@ const AppSidebar = ({
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelectedFolder(element);
+                                setElement(null);
                                 handleOpenNotify(e, "FOLDER");
                               }}
                               style={{
@@ -592,6 +600,7 @@ const AppSidebar = ({
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedFolder(element);
+                              setElement(null);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");
                             }}>
                             <AddIcon

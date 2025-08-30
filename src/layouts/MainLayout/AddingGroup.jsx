@@ -32,7 +32,6 @@ function AddingGroup() {
   const name = query.get("name");
   const companyName = query.get("companyName");
   const rowData = query.get("data");
-
   const tablesData = rowData !== "undefined" ? JSON.parse(rowData) : [];
 
   useEffect(() => {

@@ -1,6 +1,8 @@
 import {useEffect, useMemo} from "react";
 import HFReactSelect from "../FormElements/HFReactSelect";
 import classes from "./style.module.scss";
+import {useQuery} from "react-query";
+import constructorObjectService from "../../services/constructorObjectService";
 
 const InviteDynamicFields = ({
   control,
@@ -10,11 +12,23 @@ const InviteDynamicFields = ({
   index,
   watch,
   userId,
-  options,
+  // options,
 }) => {
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
+
+  const {data: options = []} = useQuery(
+    ["GET_OBJECT_LIST", connection?.table_slug],
+    () => {
+      return constructorObjectService.getListV2(connection?.table_slug, {
+        data: {},
+      });
+    },
+    {
+      select: (res) => res?.data?.response ?? [],
+    }
+  );
 
   const computedConnections = useMemo(() => {
     return (

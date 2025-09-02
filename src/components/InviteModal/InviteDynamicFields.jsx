@@ -59,16 +59,16 @@ const InviteDynamicFields = ({
     },
   };
 
-  useEffect(() => {
-    if (computedConnections?.length === 1) {
-      setValue(`tables.${index}.object_id`, computedConnections[0]?.value);
-      //   setSelectedCollection(computedConnections[0]?.value);
-    }
-  }, [computedConnections]);
+  // useEffect(() => {
+  //   if (computedConnections?.length === 1) {
+  //     setValue(`tables.${index}.object_id`, computedConnections[0]?.value);
+  //     //   setSelectedCollection(computedConnections[0]?.value);
+  //   }
+  // }, [computedConnections]);
 
-  useEffect(() => {
-    setValue(`tables.${index}.table_slug`, connection?.table_slug);
-  }, [watch(`tables.${index}.object_id`)]);
+  // useEffect(() => {
+  //   setValue(`tables.${index}.table_slug`, connection?.table_slug);
+  // }, [watch(`tables.${index}.object_id`)]);
 
   return (
     <div className={classes.formRow}>

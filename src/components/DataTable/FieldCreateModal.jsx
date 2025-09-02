@@ -108,7 +108,6 @@ export default function FieldCreateModal({
   handleCloseFieldDrawer = () => {},
   setIsUpdatedField = () => {},
   formType,
-  register = () => {},
 }) {
   const { id, tableSlug: tableSlugParam } = useParams();
   const { view: viewFromContext } = useViewContext();
@@ -300,7 +299,7 @@ export default function FieldCreateModal({
     fields: dropdownFields,
     append: dropdownAppend,
     remove: dropdownRemove,
-    replace: dropdownReplace
+    replace: dropdownReplace,
   } = useFieldArray({
     control,
     name: "attributes.options",

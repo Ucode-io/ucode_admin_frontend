@@ -763,6 +763,18 @@ const FieldButton = ({
     }
   };
 
+  const [isUpdatedField, setIsUpdatedField] = useState(false);
+
+  const handleCloseFieldDrawer = () => {
+    setFieldCreateAnchor(null);
+    if (isUpdatedField) {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      queryClient.refetchQueries(["FIELDS"]);
+      queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+      setIsUpdatedField(false);
+    }
+  };
+
   const updateView = (column) => {
     constructorViewService
       .update(tableSlug, {
@@ -957,6 +969,8 @@ const FieldButton = ({
           sortedDatas={sortedDatas}
           mainForm={mainForm}
           formType={formType}
+          handleCloseFieldDrawer={handleCloseFieldDrawer}
+          setIsUpdatedField={setIsUpdatedField}
         />
       )}
     </>

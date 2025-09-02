@@ -18,6 +18,7 @@ export const FieldPopover = ({
   field,
   selectedField,
   submitCallback = () => {},
+  handleUpdateField = () => {},
 }) => {
   const {
     SETTING_TYPES,
@@ -117,6 +118,7 @@ export const FieldPopover = ({
                 menuItem={menuItem}
                 selectedAutofillFieldSlug={selectedField?.slug}
                 tableSlug={slug}
+                handleUpdateField={handleUpdateField}
               />
             </Box>
           )}

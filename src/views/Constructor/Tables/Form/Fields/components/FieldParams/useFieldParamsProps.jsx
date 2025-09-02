@@ -8,7 +8,12 @@ import { useQuery } from "react-query";
 import constructorFunctionService from "../../../../../../../services/constructorFunctionService";
 import listToOptions from "../../../../../../../utils/listToOptions";
 
-export const useFieldParamsProps = ({ watch, setValue, control }) => {
+export const useFieldParamsProps = ({
+  watch,
+  setValue,
+  control,
+  handleUpdateField,
+}) => {
   const { i18n } = useTranslation();
 
   const activeType = newFieldTypes?.find(
@@ -157,8 +162,10 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
 
   const onDrop = (dropResult, name) => {
     const result = applyDrag(watch(name), dropResult);
+    console.log(watch());
     if (result) {
       setValue(name, result);
+      // handleUpdateField(fieldData)
     }
   };
 

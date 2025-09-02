@@ -6,15 +6,26 @@ import {useMenuListQuery} from "../../../services/menuService";
 
 const templateColumns = "minmax(42px,32px) minmax(540px,1fr) minmax(60px,1fr)";
 
-function MicroFunctions({control, selectedFolder = {}, element = {}}) {
-  const tables = useWatch({control, name: "tables"}) || [];
+function MicroFunctions({control, selectedFolder = {}, templatePopover = ""}) {
+  const tables = useWatch({control, name: "microfronts"}) || [];
   const [childs, setChilds] = useState([]);
 
   const {isLoading} = useMenuListQuery({
     params: {parent_id: selectedFolder?.id},
     queryParams: {
       enabled: Boolean(selectedFolder?.id),
-      onSuccess: (res) => setChilds(res?.menus || []),
+      onSuccess: (res) => {
+        // Handle different data structures based on templatePopover
+        if (templatePopover === "create-template") {
+          // For create-template: res?.menus?.microfronts
+          setChilds(res?.menus?.microfronts || []);
+        } else {
+          // For template: res?.menus filtered by MICROFRONTEND type
+          setChilds(
+            res?.menus?.filter((menu) => menu.type === "MICROFRONTEND") || []
+          );
+        }
+      },
     },
   });
 
@@ -24,12 +35,12 @@ function MicroFunctions({control, selectedFolder = {}, element = {}}) {
         <Th justifyContent="center">
           <img src="/img/hash.svg" alt="index" />
         </Th>
-        <Th>Table Name</Th>
+        <Th>Microfrontend Name</Th>
         <Th justifyContent="center">With Data</Th>
       </Grid>
 
       <Box h="260px" overflow="scroll">
-        {(selectedFolder?.id ? childs : [element])?.map((table) => {
+        {childs?.map((table) => {
           const selectedIndex = tables.findIndex((t) => t.id === table.id);
           const isSelected = selectedIndex > -1;
           const withRows = isSelected ? tables[selectedIndex].with_rows : false;
@@ -43,7 +54,7 @@ function MicroFunctions({control, selectedFolder = {}, element = {}}) {
               cursor="pointer">
               <Td justifyContent="center" fontWeight={600}>
                 <Controller
-                  name="tables"
+                  name="microfronts"
                   control={control}
                   render={({field}) => (
                     <Checkbox
@@ -70,7 +81,7 @@ function MicroFunctions({control, selectedFolder = {}, element = {}}) {
 
               <Td display="flex" justifyContent="center">
                 <Controller
-                  name="tables"
+                  name="microfronts"
                   control={control}
                   render={({field}) => (
                     <Checkbox

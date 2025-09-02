@@ -685,12 +685,7 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
+
           <MenuItemComponent
             icon={
               <img
@@ -713,6 +708,28 @@ const ButtonsMenu = ({
                 id: "c57eedc3-a954-4262-a0af-376c65b5a284",
                 type: "FOLDER",
               });
+              handleCloseNotify();
+            }}
+          />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
+
+          <MenuItemComponent
+            icon={<img src="/img/template.svg" alt="index" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Import Template"
+              ) || "Import Template"
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              setTemplatePopover("create-template");
               handleCloseNotify();
             }}
           />

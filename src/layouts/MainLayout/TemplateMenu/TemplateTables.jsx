@@ -6,7 +6,12 @@ import {useMenuListQuery} from "../../../services/menuService";
 
 const templateColumns = "minmax(42px,32px) minmax(540px,1fr) minmax(60px,1fr)";
 
-function TemplateTables({control, selectedFolder = {}, element = {}}) {
+function TemplateTables({
+  control,
+  selectedFolder = {},
+  element = {},
+  templatePopover = "",
+}) {
   const tables = useWatch({control, name: "tables"}) || [];
   const [childs, setChilds] = useState([]);
 
@@ -14,7 +19,13 @@ function TemplateTables({control, selectedFolder = {}, element = {}}) {
     params: {parent_id: selectedFolder?.id},
     queryParams: {
       enabled: Boolean(selectedFolder?.id),
-      onSuccess: (res) => setChilds(res?.menus || []),
+      onSuccess: (res) => {
+        if (templatePopover === "create-template") {
+          setChilds(res?.menus?.tables || []);
+        } else {
+          setChilds(res?.menus || []);
+        }
+      },
     },
   });
 
@@ -30,7 +41,7 @@ function TemplateTables({control, selectedFolder = {}, element = {}}) {
 
       <Box h="260px" overflow="scroll">
         {(selectedFolder?.id ? childs : [element])?.map((table) => {
-          const selectedIndex = tables.findIndex((t) => t.id === table.id);
+          const selectedIndex = tables?.findIndex((t) => t?.id === table?.id);
           const isSelected = selectedIndex > -1;
           const withRows = isSelected ? tables[selectedIndex].with_rows : false;
 
@@ -57,7 +68,7 @@ function TemplateTables({control, selectedFolder = {}, element = {}}) {
                           ]);
                         } else {
                           field.onChange(
-                            tables.filter((t) => t.id !== table.id)
+                            tables?.filter((t) => t.id !== table.id)
                           );
                         }
                       }}
@@ -79,7 +90,7 @@ function TemplateTables({control, selectedFolder = {}, element = {}}) {
                       checked={withRows}
                       onChange={(e) => {
                         if (!isSelected) return;
-                        const newTables = tables.map((t) =>
+                        const newTables = tables?.map((t) =>
                           t.id === table.id
                             ? {...t, with_rows: e.target.checked}
                             : t

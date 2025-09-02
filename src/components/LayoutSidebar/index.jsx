@@ -736,11 +736,14 @@ const LayoutSidebar = ({
           )}
         </Box>
 
-        {templatePopover === "template" && (
+        {(templatePopover === "template" ||
+          templatePopover === "create-template") && (
           <TemplateMenu
             element={element}
             selectedFolder={selectedFolder}
             closeModal={closeTemplate}
+            templatePopover={templatePopover}
+            setTemplatePopover={setTemplatePopover}
           />
         )}
 

@@ -1,34 +1,38 @@
+import {Box, Button, CircularProgress, Dialog} from "@mui/material";
 import React, {useState} from "react";
-import {
-  Box,
-  Button,
-  Dialog,
-  TextField,
-  Grid,
-  Typography,
-  Paper,
-  CircularProgress,
-} from "@mui/material";
-import {useForm, Controller} from "react-hook-form";
-import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
+import {useForm} from "react-hook-form";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import styles from "./style.module.scss";
-import MainTab from "./MainTab";
-import TemplateTables from "./TemplateTables";
-import {useTemplateCreateMutation} from "../../../services/templateService";
+import {
+  useTemplateCreateMutation,
+  useTemplateImportMutation,
+} from "../../../services/templateService";
+import {useMenuTemplateCreateMutation} from "../../../services/menuTemplateService";
 import FunctionsTable from "./FunctionsTable";
+import MainTab from "./MainTab";
 import MicroFunctions from "./MicroFunctions";
+import styles from "./style.module.scss";
+import TemplateSelection from "./TemplateSelection";
+import TemplateTables from "./TemplateTables";
 
 function TemplateMenu({
   closeModal = () => {},
   selectedFolder = {},
   element = {},
+  templatePopover = "",
+  setTemplatePopover = () => {},
 }) {
   const [loading, setLoading] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+
   const {handleSubmit, control, reset} = useForm({
     defaultValues: {
       name: "",
       description: "",
+      tables: [],
+      functions: [],
+      microfronts: [],
+      photo: "",
     },
   });
 
@@ -42,14 +46,81 @@ function TemplateMenu({
     },
   });
 
+  const {mutate: createMenuTemplate} = useMenuTemplateCreateMutation({
+    onSuccess: (res) => {
+      closeModal();
+      reset();
+    },
+    onError: () => {
+      setLoading(false);
+    },
+  });
+
+  const {mutate: importTemplate} = useTemplateImportMutation({
+    onSuccess: (res) => {
+      closeModal();
+      reset();
+    },
+    onError: () => {
+      setLoading(false);
+    },
+  });
+
   const onSubmit = (data) => {
     setLoading(true);
     const computedData = {
-      menu_id: selectedFolder?.id,
+      menu_id:
+        selectedFolder?.id ||
+        element?.id ||
+        "c57eedc3-a954-4262-a0af-376c65b5a284",
       ...data,
     };
-    createTemplate(computedData);
+
+    const computedTemplate = {
+      id: selectedTemplate?.id,
+      ...data,
+      tables: [],
+      microfronts: [],
+      functions: [],
+    };
+
+    if (selectedTemplate?.id) {
+      importTemplate(computedTemplate);
+    } else {
+      if (templatePopover === "create-template") {
+        createMenuTemplate(computedData);
+      } else {
+        createTemplate(computedData);
+      }
+    }
   };
+
+  const handleTemplateSelect = (template) => {
+    setSelectedTemplate(template);
+
+    reset({
+      name: template.name || "",
+      description: template.description || "",
+      tables: template.tables || [],
+      functions: template.functions || [],
+      microfronts: template.microfronts || [],
+      photo: template.photo || "",
+      tables: template.tables?.tables || [],
+    });
+
+    setTemplatePopover("template");
+  };
+
+  if (templatePopover === "create-template") {
+    return (
+      <TemplateSelection
+        closeModal={closeModal}
+        onTemplateSelect={handleTemplateSelect}
+        isLoading={false}
+        templatePopover={templatePopover}
+      />
+    );
+  }
 
   return (
     <Dialog
@@ -89,6 +160,7 @@ function TemplateMenu({
                 element={element}
                 control={control}
                 selectedFolder={selectedFolder}
+                templatePopover={templatePopover}
               />
             </TabPanel>
 
@@ -97,6 +169,7 @@ function TemplateMenu({
                 element={element}
                 control={control}
                 selectedFolder={selectedFolder}
+                templatePopover={templatePopover}
               />
             </TabPanel>
 
@@ -105,6 +178,7 @@ function TemplateMenu({
                 element={element}
                 control={control}
                 selectedFolder={selectedFolder}
+                templatePopover={templatePopover}
               />
             </TabPanel>
           </Tabs>
@@ -118,7 +192,7 @@ function TemplateMenu({
             justifyContent: "center",
             gap: "6px",
             position: "absolute",
-            top: "25px",
+            top: "15px",
             right: "25px",
           }}>
           <Button onClick={closeModal} variant="outlined" color="error">
@@ -132,6 +206,8 @@ function TemplateMenu({
             color="primary">
             {loading ? (
               <CircularProgress style={{color: "#fff"}} size={20} />
+            ) : selectedTemplate?.id ? (
+              "Import Template"
             ) : (
               "Make Template"
             )}

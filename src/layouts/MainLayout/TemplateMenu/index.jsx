@@ -20,6 +20,7 @@ function TemplateMenu({
   selectedFolder = {},
   element = {},
   templatePopover = "",
+  getMenuList = () => {},
   setTemplatePopover = () => {},
 }) {
   const [loading, setLoading] = useState(false);
@@ -60,6 +61,7 @@ function TemplateMenu({
     onSuccess: (res) => {
       closeModal();
       reset();
+      getMenuList();
     },
     onError: () => {
       setLoading(false);

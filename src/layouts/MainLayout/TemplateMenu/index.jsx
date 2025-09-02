@@ -74,7 +74,7 @@ function TemplateMenu({
                 Functions
               </Tab>
               <Tab className={styles.tab} selectedClassName={styles.activeTab}>
-                MF
+                Micro Functions
               </Tab>
             </TabList>
 

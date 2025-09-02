@@ -33,7 +33,7 @@ function AddingGroup() {
   const companyName = query.get("companyName");
   const rowData = query.get("data");
   const tablesData = rowData !== "undefined" ? JSON.parse(rowData) : [];
-
+  console.log("tablesData", tablesData);
   useEffect(() => {
     if (window.location.href.includes("invite-user")) {
       setOpen(true);
@@ -76,6 +76,7 @@ function AddingGroup() {
       env_id: envId,
       project_id: data.project_id,
       for_env: true,
+      tables: [...tablesData],
     };
 
     dispatch(companyActions.setEnvironmentItem(data));

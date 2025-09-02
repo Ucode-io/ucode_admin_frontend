@@ -44,8 +44,6 @@ export default function TextFieldWithMultiLanguage({
   );
   const [fieldName, setFieldName] = useState(name);
   const [fieldPlaceholder, setFieldPlaceholder] = useState(placeholder);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
 
   // const watch = useWatch({
   //   control,
@@ -58,10 +56,6 @@ export default function TextFieldWithMultiLanguage({
     [watch, fieldName]
   );
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const handleClickLanguage = () => {
     const activeLanguageIndex = languages?.findIndex(
       (language) => language.slug === selectedLanguage
@@ -69,11 +63,6 @@ export default function TextFieldWithMultiLanguage({
     if (activeLanguageIndex === languages?.length - 1)
       setSelectedLanguage(languages[0]?.slug);
     else setSelectedLanguage(languages[activeLanguageIndex + 1]?.slug);
-  };
-
-  const handleClose = (language) => {
-    setSelectedLanguage(language);
-    setAnchorEl(null);
   };
 
   useEffect(() => {
@@ -99,7 +88,10 @@ export default function TextFieldWithMultiLanguage({
               className={clsx(cls.input, {
                 [cls.leftContent]: leftContent,
               })}
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e);
+                customOnChange(e, selectedLanguage);
+              }}
               // value={value}
               placeholder={fieldPlaceholder}
               disabled={disabled}

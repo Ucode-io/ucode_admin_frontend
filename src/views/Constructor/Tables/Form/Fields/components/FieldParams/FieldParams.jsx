@@ -36,6 +36,7 @@ export const FieldParams = ({
   handleSelectSetting = () => {},
   handleSubmit = () => {},
   onSubmit = () => {},
+  handleUpdateField = () => {},
 }) => {
   const {
     i18n,
@@ -74,7 +75,7 @@ export const FieldParams = ({
     addComplete,
     onDrop,
     functions,
-  } = useFieldParamsProps({ watch, setValue, control });
+  } = useFieldParamsProps({ watch, setValue, control, handleUpdateField });
 
   const [activeId, setActiveId] = useState(null);
   const containerRef = useRef(null);
@@ -571,7 +572,7 @@ export const FieldParams = ({
                 </Box>
               </>
             )}
-            {activeType.value === FIELD_TYPES.BUTTON && (
+            {activeType?.value === FIELD_TYPES.BUTTON && (
               <Box
                 display="flex"
                 flexDirection="column"

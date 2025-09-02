@@ -16,6 +16,8 @@ import styles from "./style.module.scss";
 import MainTab from "./MainTab";
 import TemplateTables from "./TemplateTables";
 import {useTemplateCreateMutation} from "../../../services/templateService";
+import FunctionsTable from "./FunctionsTable";
+import MicroFunctions from "./MicroFunctions";
 
 function TemplateMenu({
   closeModal = () => {},
@@ -74,7 +76,7 @@ function TemplateMenu({
                 Functions
               </Tab>
               <Tab className={styles.tab} selectedClassName={styles.activeTab}>
-                MF
+                Micro Functions
               </Tab>
             </TabList>
 
@@ -91,36 +93,18 @@ function TemplateMenu({
             </TabPanel>
 
             <TabPanel className={styles.tabPanel}>
-              <Typography variant="h6">Functions</Typography>
-              <Controller
-                name="functionNote"
+              <FunctionsTable
+                element={element}
                 control={control}
-                render={({field}) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Functions Notes"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                )}
+                selectedFolder={selectedFolder}
               />
             </TabPanel>
 
             <TabPanel className={styles.tabPanel}>
-              <Typography variant="h6">MF</Typography>
-              <Controller
-                name="mfNote"
+              <MicroFunctions
+                element={element}
                 control={control}
-                render={({field}) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="MF Notes"
-                    variant="outlined"
-                    margin="normal"
-                  />
-                )}
+                selectedFolder={selectedFolder}
               />
             </TabPanel>
           </Tabs>

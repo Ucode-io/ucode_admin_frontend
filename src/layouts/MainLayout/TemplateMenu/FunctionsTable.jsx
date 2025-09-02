@@ -1,31 +1,42 @@
-import React, {useState} from "react";
+import React from "react";
 import {Box, Grid} from "@chakra-ui/react";
 import {Controller, useWatch} from "react-hook-form";
 import {Checkbox} from "@mui/material";
-import {useMenuListQuery} from "../../../services/menuService";
+import {useQuery} from "react-query";
+import constructorTableService from "../../../services/constructorTableService";
 
-const templateColumns = "minmax(42px,32px) minmax(540px,1fr) minmax(60px,1fr)";
+const templateColumns = "minmax(42px,32px) minmax(540px,1fr)";
 
-function TemplateTables({
+function FunctionsTable({
   control,
   selectedFolder = {},
   element = {},
   templatePopover = "",
 }) {
-  const tables = useWatch({control, name: "tables"}) || [];
-  const [childs, setChilds] = useState([]);
+  const tables = useWatch({control, name: "functions"}) || [];
+  const tableSlug = element?.data?.table?.slug;
 
-  const {isLoading} = useMenuListQuery({
-    params: {parent_id: selectedFolder?.id},
-    queryParams: {
-      enabled: Boolean(selectedFolder?.id),
-      onSuccess: (res) => {
-        if (templatePopover === "create-template") {
-          setChilds(res?.menus?.tables || []);
-        } else {
-          setChilds(res?.menus || []);
-        }
+  const {
+    data: {custom_events} = {
+      custom_events: [],
+    },
+  } = useQuery({
+    queryKey: [
+      "GET_TABLE_INFO_ACTIONS",
+      {
+        tableSlug,
       },
+    ],
+    queryFn: () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data: {},
+      });
+    },
+    enabled: Boolean(tableSlug),
+    select: (res) => {
+      return {
+        custom_events: res?.data?.custom_events ?? [],
+      };
     },
   });
 
@@ -35,15 +46,13 @@ function TemplateTables({
         <Th justifyContent="center">
           <img src="/img/hash.svg" alt="index" />
         </Th>
-        <Th>Table Name</Th>
-        <Th justifyContent="center">With Data</Th>
+        <Th>Action Name</Th>
       </Grid>
 
       <Box h="260px" overflow="scroll">
-        {(selectedFolder?.id ? childs : [element])?.map((table) => {
-          const selectedIndex = tables?.findIndex((t) => t?.id === table?.id);
+        {custom_events?.map((table) => {
+          const selectedIndex = tables.findIndex((t) => t.id === table.id);
           const isSelected = selectedIndex > -1;
-          const withRows = isSelected ? tables[selectedIndex].with_rows : false;
 
           return (
             <Grid
@@ -54,7 +63,7 @@ function TemplateTables({
               cursor="pointer">
               <Td justifyContent="center" fontWeight={600}>
                 <Controller
-                  name="tables"
+                  name="functions"
                   control={control}
                   render={({field}) => (
                     <Checkbox
@@ -62,13 +71,10 @@ function TemplateTables({
                       checked={isSelected}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          field.onChange([
-                            ...tables,
-                            {...table, with_rows: false},
-                          ]);
+                          field.onChange([...tables, {...table}]);
                         } else {
                           field.onChange(
-                            tables?.filter((t) => t.id !== table.id)
+                            tables.filter((t) => t.id !== table.id)
                           );
                         }
                       }}
@@ -78,29 +84,6 @@ function TemplateTables({
               </Td>
 
               <Td>{table?.label}</Td>
-
-              <Td display="flex" justifyContent="center">
-                <Controller
-                  name="tables"
-                  control={control}
-                  render={({field}) => (
-                    <Checkbox
-                      size="small"
-                      disabled={!isSelected}
-                      checked={withRows}
-                      onChange={(e) => {
-                        if (!isSelected) return;
-                        const newTables = tables?.map((t) =>
-                          t.id === table.id
-                            ? {...t, with_rows: e.target.checked}
-                            : t
-                        );
-                        field.onChange(newTables);
-                      }}
-                    />
-                  )}
-                />
-              </Td>
             </Grid>
           );
         })}
@@ -148,4 +131,4 @@ const Td = ({children, ...props}) => (
   </Grid>
 );
 
-export default TemplateTables;
+export default FunctionsTable;

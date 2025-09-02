@@ -6,13 +6,8 @@ import {useMenuListQuery} from "../../../services/menuService";
 
 const templateColumns = "minmax(42px,32px) minmax(540px,1fr) minmax(60px,1fr)";
 
-function TemplateTables({
-  control,
-  selectedFolder = {},
-  element = {},
-  templatePopover = "",
-}) {
-  const tables = useWatch({control, name: "tables"}) || [];
+function MicroFunctions({control, selectedFolder = {}, templatePopover = ""}) {
+  const tables = useWatch({control, name: "microfronts"}) || [];
   const [childs, setChilds] = useState([]);
 
   const {isLoading} = useMenuListQuery({
@@ -20,10 +15,15 @@ function TemplateTables({
     queryParams: {
       enabled: Boolean(selectedFolder?.id),
       onSuccess: (res) => {
+        // Handle different data structures based on templatePopover
         if (templatePopover === "create-template") {
-          setChilds(res?.menus?.tables || []);
+          // For create-template: res?.menus?.microfronts
+          setChilds(res?.menus?.microfronts || []);
         } else {
-          setChilds(res?.menus || []);
+          // For template: res?.menus filtered by MICROFRONTEND type
+          setChilds(
+            res?.menus?.filter((menu) => menu.type === "MICROFRONTEND") || []
+          );
         }
       },
     },
@@ -35,13 +35,13 @@ function TemplateTables({
         <Th justifyContent="center">
           <img src="/img/hash.svg" alt="index" />
         </Th>
-        <Th>Table Name</Th>
+        <Th>Microfrontend Name</Th>
         <Th justifyContent="center">With Data</Th>
       </Grid>
 
       <Box h="260px" overflow="scroll">
-        {(selectedFolder?.id ? childs : [element])?.map((table) => {
-          const selectedIndex = tables?.findIndex((t) => t?.id === table?.id);
+        {childs?.map((table) => {
+          const selectedIndex = tables.findIndex((t) => t.id === table.id);
           const isSelected = selectedIndex > -1;
           const withRows = isSelected ? tables[selectedIndex].with_rows : false;
 
@@ -54,7 +54,7 @@ function TemplateTables({
               cursor="pointer">
               <Td justifyContent="center" fontWeight={600}>
                 <Controller
-                  name="tables"
+                  name="microfronts"
                   control={control}
                   render={({field}) => (
                     <Checkbox
@@ -68,7 +68,7 @@ function TemplateTables({
                           ]);
                         } else {
                           field.onChange(
-                            tables?.filter((t) => t.id !== table.id)
+                            tables.filter((t) => t.id !== table.id)
                           );
                         }
                       }}
@@ -81,7 +81,7 @@ function TemplateTables({
 
               <Td display="flex" justifyContent="center">
                 <Controller
-                  name="tables"
+                  name="microfronts"
                   control={control}
                   render={({field}) => (
                     <Checkbox
@@ -90,7 +90,7 @@ function TemplateTables({
                       checked={withRows}
                       onChange={(e) => {
                         if (!isSelected) return;
-                        const newTables = tables?.map((t) =>
+                        const newTables = tables.map((t) =>
                           t.id === table.id
                             ? {...t, with_rows: e.target.checked}
                             : t
@@ -148,4 +148,4 @@ const Td = ({children, ...props}) => (
   </Grid>
 );
 
-export default TemplateTables;
+export default MicroFunctions;

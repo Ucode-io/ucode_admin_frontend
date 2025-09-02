@@ -80,7 +80,7 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          {/* {element?.data?.permission?.update || permissionButton ? (
+          {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<img src="/img/template.svg" alt="index" />}
               title={
@@ -96,7 +96,7 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
-          ) : null} */}
+          ) : null}
 
           {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
             element?.data?.permission?.delete) ||
@@ -301,7 +301,7 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          {/* <MenuItemComponent
+          <MenuItemComponent
             icon={<img src="/img/template.svg" alt="index" />}
             title={
               generateLangaugeText(
@@ -315,7 +315,7 @@ const ButtonsMenu = ({
               setTemplatePopover("template");
               handleCloseNotify();
             }}
-          /> */}
+          />
 
           {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
             element?.data?.permission?.delete) ||
@@ -685,12 +685,7 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
+
           <MenuItemComponent
             icon={
               <img
@@ -713,6 +708,28 @@ const ButtonsMenu = ({
                 id: "c57eedc3-a954-4262-a0af-376c65b5a284",
                 type: "FOLDER",
               });
+              handleCloseNotify();
+            }}
+          />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
+
+          <MenuItemComponent
+            icon={<img src="/img/template.svg" alt="index" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Import Template"
+              ) || "Import Template"
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              setTemplatePopover("create-template");
               handleCloseNotify();
             }}
           />

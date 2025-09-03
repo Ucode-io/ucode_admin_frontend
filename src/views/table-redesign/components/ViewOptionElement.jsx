@@ -351,6 +351,7 @@ export const ColumnsVisibility = ({
                 bg="#fff"
                 // _hover={{bg: "#EAECF0"}}
                 cursor="pointer"
+                h={"28px"}
               >
                 {column?.type && getColumnIcon({ column })}
                 <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
@@ -512,6 +513,7 @@ export const Group = ({
             borderRadius={6}
             _hover={{ bg: "#EAECF0" }}
             cursor="pointer"
+            height="28px"
           >
             {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
@@ -647,6 +649,7 @@ export const TabGroup = ({
             borderRadius={6}
             _hover={{ bg: "#EAECF0" }}
             cursor="pointer"
+            height="28px"
           >
             {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
@@ -790,6 +793,7 @@ export const FixColumns = ({
             borderRadius={6}
             _hover={{ bg: "#EAECF0" }}
             cursor="pointer"
+            height="28px"
           >
             {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{column?.label}</ViewOptionTitle>

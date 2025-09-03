@@ -57,6 +57,11 @@ import {
 } from "../../utils/constants/icons";
 import { KeyboardArrowRight } from "@mui/icons-material";
 import useDebounce from "../../hooks/useDebounce";
+import {
+  getColumnIconPath,
+  iconsComponents,
+} from "../../views/table-redesign/icons";
+import SVG from "react-inlinesvg";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -716,21 +721,35 @@ export default function FieldCreateModal({
           }}
         >
           <div className={style.field}>
-            {/* <Typography
-          variant="h6"
-          textTransform="uppercase"
-          className={style.title}
-        >
-          {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
-            "ADD COLUMN"}
-        </Typography> */}
-
-            <div
-              // onSubmit={handleSubmit(
-              //   format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-              // )}
-              className={style.form}
-            >
+            <div className={style.form}>
+              <Box className={style.header}>
+                <p className={style.headerTitle}>
+                  {formType === "CREATE" ? "Create field" : "Edit fields"}
+                </p>
+                <button
+                  className={style.closeButton}
+                  onClick={handleClose}
+                  type="button"
+                >
+                  <span>
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8.75 1.25L1.25 8.75M1.25 1.25L8.75 8.75"
+                        stroke="#8F8E8B"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </Box>
               <MaterialUIProvider>
                 <Box
                   className={style.field}
@@ -755,7 +774,19 @@ export default function FieldCreateModal({
                         id={"text_field_label"}
                         customOnChange={handleChangeLabel}
                         watch={watch}
-                        leftContent={<Box>{fieldTypeIcons[watch("type")]}</Box>}
+                        leftContent={
+                          <Box>
+                            {
+                              <SVG
+                                src={getColumnIconPath({
+                                  column: { type: [watch("type")] },
+                                })}
+                                width="16"
+                                height="16"
+                              />
+                            }
+                          </Box>
+                        }
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -837,7 +868,7 @@ export default function FieldCreateModal({
                             </span>
                           </button>
                         </Box>
-                        {(format === FIELD_TYPES.SINGLE_LINE ||
+                        {/* {(format === FIELD_TYPES.SINGLE_LINE ||
                           format === FIELD_TYPES.MULTI_LINE) && (
                           <Box>
                             <FieldCheckbox
@@ -848,7 +879,7 @@ export default function FieldCreateModal({
                               label={"Multiple language"}
                             />
                           </Box>
-                        )}
+                        )} */}
                       </Box>
                     </Box>
                   )}

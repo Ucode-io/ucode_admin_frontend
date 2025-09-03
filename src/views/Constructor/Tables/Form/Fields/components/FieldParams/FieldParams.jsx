@@ -32,6 +32,7 @@ import {
   iconsComponents,
 } from "../../../../../../table-redesign/icons";
 import SVG from "react-inlinesvg";
+import { NButton } from "../../../../../../../components/NButton";
 
 export const FieldParams = ({
   tableName = "",
@@ -766,19 +767,10 @@ export const FieldParams = ({
           </Box>
         </Box>
       </Box>
-      <Box padding="8px">
-        <Button
-          fullWidth
-          sx={{
-            lineHeight: "20px",
-            height: "36px",
-          }}
-          size="medium"
-          variant="contained"
-          onClick={handleSubmit(onSubmit)}
-        >
+      <Box padding="8px" display="flex" justifyContent="flex-end">
+        <NButton primary onClick={handleSubmit(onSubmit)}>
           Save
-        </Button>
+        </NButton>
       </Box>
     </Box>
   );

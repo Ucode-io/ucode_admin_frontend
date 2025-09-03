@@ -44,6 +44,7 @@ const HFTextField = ({
   newUi,
   className,
   inputStyles = {},
+  wrapperStyles = {},
   startAdornment = <></>,
   ...props
 }) => {
@@ -89,6 +90,7 @@ const HFTextField = ({
               margin: "0px",
               border: exist ? "1px solid red" : "0px solid #000",
               borderRadius: "8px",
+              ...wrapperStyles,
             }}
             inputProps={{ style: { height: "25px", padding: "0px 2px 0 7px" } }}
             name={name}

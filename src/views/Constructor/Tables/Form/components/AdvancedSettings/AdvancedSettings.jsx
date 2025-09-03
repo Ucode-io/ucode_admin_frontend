@@ -17,7 +17,7 @@ export const AdvancedSettings = ({
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        padding="12px 8px 0"
+        padding="12px 8px 8px"
       >
         <Box display="flex" alignItems="center" columnGap="4px">
           {showBackBtn && (

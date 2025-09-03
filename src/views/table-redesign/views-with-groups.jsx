@@ -95,6 +95,7 @@ import TableViewOld from "./table-view-old";
 import { useViewWithGroupsProps } from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
 import { SortIcon } from "../../utils/constants/icons";
+import { SortPopover } from "./components/SortPopover";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -192,6 +193,10 @@ export const NewUiViewsWithGroups = ({
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
 
+  const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
+
+  const isSortPopupOpen = Boolean(!!sortPopupAnchorEl);
+
   const [orderBy, setOrderBy] = useState(false);
 
   const query = new URLSearchParams(window.location.search);
@@ -207,7 +212,10 @@ export const NewUiViewsWithGroups = ({
     },
   });
 
-  const handleSortClick = () => {
+  const handleCloseSortPopup = () => setSortPopupAnchorEl(null);
+
+  const handleSortClick = (e) => {
+    setSortPopupAnchorEl(e.currentTarget);
     setOrderBy((prev) => {
       constructorTableService.update(
         {
@@ -1171,6 +1179,14 @@ export const NewUiViewsWithGroups = ({
                     onClick={handleSortClick}
                   />
                 )}
+                <SortPopover
+                  tableSlug={tableSlug}
+                  open={isSortPopupOpen}
+                  anchorEl={sortPopupAnchorEl}
+                  handleClose={handleCloseSortPopup}
+                  fieldsMap={fieldsMap}
+                  setSortedDatas={setSortedDatas}
+                />
                 <FilterPopover
                   tableLan={tableLan}
                   view={view}

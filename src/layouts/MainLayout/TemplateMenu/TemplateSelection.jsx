@@ -86,11 +86,6 @@ function TemplateSelection({
     setLoading(true);
     const computedData = {
       id: selectedTemplate?.id || "",
-      // menu_id:
-      //   selectedFolder?.id ||
-      //   element?.id ||
-      //   "c57eedc3-a954-4262-a0af-376c65b5a284",
-      // ...data,
     };
     importTemplate(computedData);
   };

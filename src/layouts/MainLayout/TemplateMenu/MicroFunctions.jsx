@@ -15,12 +15,9 @@ function MicroFunctions({control, selectedFolder = {}, templatePopover = ""}) {
     queryParams: {
       enabled: Boolean(selectedFolder?.id),
       onSuccess: (res) => {
-        // Handle different data structures based on templatePopover
         if (templatePopover === "create-template") {
-          // For create-template: res?.menus?.microfronts
           setChilds(res?.menus?.microfronts || []);
         } else {
-          // For template: res?.menus filtered by MICROFRONTEND type
           setChilds(
             res?.menus?.filter((menu) => menu.type === "MICROFRONTEND") || []
           );

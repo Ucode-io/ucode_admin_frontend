@@ -82,6 +82,7 @@ import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
 import TableCreateModal from "../../layouts/MainLayout/TableCreateModal";
 import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
+import TemplateSelection from "../../layouts/MainLayout/TemplateMenu/TemplateSelection";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -736,9 +737,19 @@ const LayoutSidebar = ({
           )}
         </Box>
 
-        {(templatePopover === "template" ||
-          templatePopover === "create-template") && (
+        {templatePopover === "template" && (
           <TemplateMenu
+            getMenuList={getMenuList}
+            element={element}
+            selectedFolder={selectedFolder}
+            closeModal={closeTemplate}
+            templatePopover={templatePopover}
+            setTemplatePopover={setTemplatePopover}
+          />
+        )}
+
+        {templatePopover === "create-template" && (
+          <TemplateSelection
             getMenuList={getMenuList}
             element={element}
             selectedFolder={selectedFolder}

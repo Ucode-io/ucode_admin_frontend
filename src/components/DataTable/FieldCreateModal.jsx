@@ -270,6 +270,8 @@ export default function FieldCreateModal({
 
   const [openedDropdown, setOpenedDropdown] = useState(null);
 
+  console.log({ sortedDatas });
+
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
     id: fieldData?.attributes?.relation_data?.id,

@@ -1,0 +1,24 @@
+.sortPopover {
+  width: 350px;
+  padding: 12px 4px;
+}
+
+.sortPopoverBody {
+  display: flex;
+  column-gap: 8px;
+}
+
+.fieldSelect {
+  width: 100%;
+}
+
+.fieldSelectTextField {
+  height: 32px;
+  padding: 0;
+}
+
+.sortPopoverHeader {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}

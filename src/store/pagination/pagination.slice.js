@@ -46,5 +46,10 @@ export const {actions: paginationActions, reducer: paginationReducer} =
           state.sortValues.push({tableSlug, field, order});
         }
       },
+      clearSortValues: (state, {payload: {tableSlug}}) => {
+        state.sortValues = state.sortValues.filter(
+          (item) => item.tableSlug !== tableSlug
+        );
+      },
     },
   });

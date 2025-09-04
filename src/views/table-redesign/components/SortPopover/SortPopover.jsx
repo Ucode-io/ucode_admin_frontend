@@ -7,8 +7,18 @@ import { paginationActions } from "../../../../store/pagination/pagination.slice
 import { useDispatch, useSelector } from "react-redux";
 import { NButton } from "../../../../components/NButton";
 
-export const SortPopover = ({ open, anchorEl, handleClose, fieldsMap, setSortedDatas, sortedDatas, tableSlug }) => {
-
+export const SortPopover = ({
+  open,
+  anchorEl,
+  handleClose,
+  fieldsMap,
+  setSortedDatas,
+  sortedDatas,
+  tableSlug,
+  handleChangeOrder = () => {},
+  orderBy,
+  setOrderBy = () => {},
+}) => {
   const fieldsIds = Object.keys(fieldsMap);
 
   const { i18n } = useTranslation();
@@ -18,162 +28,192 @@ export const SortPopover = ({ open, anchorEl, handleClose, fieldsMap, setSortedD
 
   const dispatch = useDispatch();
 
-  const {sortValues} = useSelector((state) => state.pagination);
+  const { sortValues } = useSelector((state) => state.pagination);
 
-  const firstSortvalue = sortValues?.find(item => item?.tableSlug === tableSlug)
-  
+  const firstSortValue = sortValues?.find(
+    (item) => item?.tableSlug === tableSlug
+  );
+
+  console.log(sortValues);
+
   const fieldDefaultValue = {
-    label: fieldsMap?.[firstSortvalue?.field]?.attributes?.[`label_${i18n.language}`],
-    value: firstSortvalue?.field
-  }
+    label:
+      fieldsMap?.[firstSortValue?.field]?.attributes?.[
+        `label_${i18n.language}`
+      ],
+    value: firstSortValue?.field,
+  };
 
-  const sortDefaultValue =  {
-    label: firstSortvalue?.order || "ASC",
-    value: firstSortvalue?.order || "ASC"
-  }
+  const sortDefaultValue = {
+    label: firstSortValue?.order || "Ascending",
+    value: firstSortValue?.order || "ASC",
+  };
 
   const handleApply = () => {
-    const field = selectedField || firstSortvalue?.field;
-    const order = selectedSort || firstSortvalue?.order || "ASC";
+    const field = selectedField || firstSortValue?.field;
+    const order = selectedSort || firstSortValue?.order || "ASC";
 
-    if(!field) {
-      handleClose()
-      return
+    if (!field) {
+      handleClose();
+      return;
     }
 
-    dispatch(
-      paginationActions.setSortValues({tableSlug, field, order})
-    );
+    handleChangeOrder(!field);
+    dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
 
     setSortedDatas((prev) => {
       let newSortedDatas = [...prev];
-      const index = newSortedDatas.findIndex(
-        (item) => item.field === field
-      );
+      const index = newSortedDatas.findIndex((item) => item.field === field);
       if (index !== -1) {
-        newSortedDatas[index].order = order
+        newSortedDatas[index].order = order;
       } else {
-        newSortedDatas = [{
-          field: field,
-          order,
-        }]
+        newSortedDatas = [
+          {
+            field: field,
+            order,
+          },
+        ];
       }
       return newSortedDatas;
     });
 
-    handleClose()
-  }
+    handleClose();
+  };
 
-  return <MaterialUIProvider>
-    <Popover
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      id="sort-popover"
-      open={open}
-      onClose={handleClose}
-      anchorEl={anchorEl}
-      background="red"
-      PaperProps={{
-        style: {
-          overflowY: "visible",
-          overflowX: "visible",
-        },
-      }}
-    >
-      <div className={cls.sortPopover}>
-        <div className={cls.sortPopoverHeader}>
-          <NButton primary onClick={handleApply}>
-            Apply
-          </NButton>
+  const handleClearSort = () => {
+    dispatch(paginationActions.clearSortValues({ tableSlug }));
+    setSelectedField(null);
+    setSortedDatas([]);
+    handleChangeOrder();
+    handleClose();
+  };
+
+  return (
+    <MaterialUIProvider>
+      <Popover
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        id="sort-popover"
+        open={open}
+        onClose={(e) => {
+          if (!selectedField) {
+            if (orderBy) {
+              handleChangeOrder(false);
+            } else {
+              handleChangeOrder(true);
+            }
+          } else {
+            handleChangeOrder();
+          }
+          handleClose(e);
+        }}
+        anchorEl={anchorEl}
+        background="red"
+        PaperProps={{
+          style: {
+            overflowY: "visible",
+            overflowX: "visible",
+          },
+        }}
+      >
+        <div className={cls.sortPopover}>
+          <div className={cls.sortPopoverBody}>
+            <Autocomplete
+              className={cls.fieldSelect}
+              disablePortal
+              disableClearable
+              options={fieldsIds?.map((id) => ({
+                label: fieldsMap?.[id]?.attributes?.[`label_${i18n.language}`],
+                value: id,
+              }))}
+              defaultValue={fieldDefaultValue?.value ? fieldDefaultValue : null}
+              onChange={(e, val) => {
+                setSelectedField(val?.value);
+                // const field = val?.value;
+                // dispatch(
+                //   paginationActions.setSortValues({tableSlug, field, order: selectedSort})
+                // );
+                // setSortedDatas((prev) => {
+                //   let newSortedDatas = [...prev];
+                //   const index = newSortedDatas.findIndex(
+                //     (item) => item.field === val?.value
+                //   );
+                //   if (index !== -1) {
+                //     newSortedDatas[index].order = selectedSort
+                //   } else {
+                //     newSortedDatas = [{
+                //       field: val?.value,
+                //       order: "ASC",
+                //     }]
+                //   }
+                //   return newSortedDatas;
+                // });
+              }}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => (
+                <TextField
+                  className={cls.fieldSelectTextField}
+                  {...params}
+                  placeholder="Select field"
+                  variant="outlined"
+                  size="small"
+                />
+              )}
+            />
+
+            <Autocomplete
+              className={cls.fieldSelect}
+              options={[
+                { label: "Ascending", value: "ASC" },
+                { label: "Descending", value: "DESC" },
+              ]}
+              disableClearable
+              disablePortal
+              onChange={(e, val) => {
+                setSelectedSort(val?.value);
+                // const field = selectedField;
+
+                // dispatch(
+                //   paginationActions.setSortValues({tableSlug, field, order: val?.value})
+                // );
+                // setSortedDatas((prev) => {
+                //   let newSortedDatas = [...prev];
+                //   const index = newSortedDatas.findIndex(
+                //     (item) => item.field === field
+                //   );
+                //   if (index !== -1) {
+                //     newSortedDatas[index].order = val?.value
+                //   } else {
+                //     newSortedDatas = [{
+                //       field: field,
+                //       order: "ASC",
+                //     }];
+                //   }
+                //   return newSortedDatas;
+                // })
+              }}
+              getOptionLabel={(option) => option.label}
+              defaultValue={sortDefaultValue}
+              renderInput={(params) => (
+                <TextField
+                  className={cls.fieldSelectTextField}
+                  {...params}
+                  variant="outlined"
+                  size="small"
+                />
+              )}
+            />
+          </div>
+          <div className={cls.sortPopoverFooter}>
+            <NButton onClick={handleClearSort}>Clear sort</NButton>
+            <NButton primary onClick={handleApply}>
+              Apply
+            </NButton>
+          </div>
         </div>
-        <div className={cls.sortPopoverBody}>
-          <Autocomplete
-            className={cls.fieldSelect}
-            disablePortal
-            disableClearable
-            options={fieldsIds?.map(id => ({
-              label: fieldsMap?.[id]?.attributes?.[`label_${i18n.language}`],
-              value: id
-            }))}
-            defaultValue={fieldDefaultValue?.value ? fieldDefaultValue : null}
-            onChange={(e, val) => {
-              setSelectedField(val?.value);
-              // const field = val?.value;
-              // dispatch(
-              //   paginationActions.setSortValues({tableSlug, field, order: selectedSort})
-              // );
-              // setSortedDatas((prev) => {
-              //   let newSortedDatas = [...prev];
-              //   const index = newSortedDatas.findIndex(
-              //     (item) => item.field === val?.value
-              //   );
-              //   if (index !== -1) {
-              //     newSortedDatas[index].order = selectedSort
-              //   } else {
-              //     newSortedDatas = [{
-              //       field: val?.value,
-              //       order: "ASC",
-              //     }]
-              //   }
-              //   return newSortedDatas;
-              // });
-            }}
-            getOptionLabel={(option) => option.label}
-            renderInput={(params) => (
-              <TextField
-                className={cls.fieldSelectTextField}
-                {...params}
-                placeholder="Select field"
-                variant="outlined"
-                size="small"
-              />
-            )}
-          />
-
-          <Autocomplete
-            className={cls.fieldSelect}
-            options={[
-              { label: "ASC", value: "ASC" },
-              { label: "DESC", value: "DESC" },
-            ]}
-            onChange={(e, val) => {
-              setSelectedSort(val?.value);
-              // const field = selectedField;
-
-              // dispatch(
-              //   paginationActions.setSortValues({tableSlug, field, order: val?.value})
-              // );
-              // setSortedDatas((prev) => {
-              //   let newSortedDatas = [...prev];
-              //   const index = newSortedDatas.findIndex(
-              //     (item) => item.field === field
-              //   );
-              //   if (index !== -1) {
-              //     newSortedDatas[index].order = val?.value
-              //   } else {
-              //     newSortedDatas = [{
-              //       field: field,
-              //       order: "ASC",
-              //     }];
-              //   }
-              //   return newSortedDatas;
-              // })
-            }}
-            getOptionLabel={(option) => option.label}
-            defaultValue={sortDefaultValue}
-            renderInput={(params) => (
-              <TextField
-                className={cls.fieldSelectTextField}
-                {...params}
-                variant="outlined"
-                size="small"
-              />
-            )}
-          />
-        </div>
-      </div>
-    </Popover>
-  </MaterialUIProvider>
-}
+      </Popover>
+    </MaterialUIProvider>
+  );
+};

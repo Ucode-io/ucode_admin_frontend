@@ -45,7 +45,7 @@ const LoginFormDesign = ({
   selectedTabIndex,
   setSelectedTabIndex,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
@@ -58,7 +58,7 @@ const LoginFormDesign = ({
   const [firebaseToken, setFireBaseToken] = useState("");
   const [connectionCheck, setConnectionCheck] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState();
-  const {control, handleSubmit, watch, setValue} = useForm();
+  const { control, handleSubmit, watch, setValue } = useForm();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -77,12 +77,14 @@ const LoginFormDesign = ({
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const {data: computedConnections = [], isLoading} = useQuery(
+  console.log({ selectedClientTypeID });
+
+  const { data: computedConnections = [], isLoading } = useQuery(
     [
       "GET_CONNECTION_LIST",
-      {"project-id": selectedProjectID},
-      {"environment-id": selectedEnvID},
-      {"user-id": isUserId},
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+      { "user-id": isUserId },
     ],
     () => {
       return connectionServiceV2.getList(
@@ -91,7 +93,7 @@ const LoginFormDesign = ({
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        {"environment-id": selectedEnvID}
+        { "environment-id": selectedEnvID }
       );
     },
     {
@@ -188,9 +190,9 @@ const LoginFormDesign = ({
         });
       } else {
         if (!values?.phone?.includes("+998")) {
-          getSendCodeApp({...values, type: "PHONE", firebase: true});
+          getSendCodeApp({ ...values, type: "PHONE", firebase: true });
         } else {
-          getSendCodeApp({...values, type: "PHONE"});
+          getSendCodeApp({ ...values, type: "PHONE" });
         }
       }
     }
@@ -202,7 +204,7 @@ const LoginFormDesign = ({
           type: "email",
         });
       } else {
-        getSendCodeApp({...values, type: "EMAIL"});
+        getSendCodeApp({ ...values, type: "EMAIL" });
       }
     }
   };
@@ -423,12 +425,22 @@ const LoginFormDesign = ({
         company?.[0]?.projects?.[0]?.resource_environments?.[0]?.environment_id
       );
     }
+    console.log(company?.[0]?.projects);
     if (validLength) {
       if (company?.[0]?.projects?.length === 1) {
         if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
           if (
             company?.[0]?.projects?.[0]?.resource_environments?.[0]
               ?.client_types?.response?.length === 1
+          ) {
+            setValue(
+              "client_type",
+              company?.[0]?.projects?.[0]?.resource_environments?.[0]
+                ?.client_types?.response?.[0]?.guid
+            );
+          } else if (
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.client_types?.response?.length > 1
           ) {
             setValue(
               "client_type",
@@ -474,7 +486,7 @@ const LoginFormDesign = ({
       });
     }
   }, [computedConnections]);
-  console.log("computedCompaniescomputedCompanies", computedClientTypes);
+  // console.log("computedCompanies", computedClientTypes);
   useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);
@@ -527,7 +539,7 @@ const LoginFormDesign = ({
   return (
     <>
       <div id="recaptcha-container"></div>
-      <Box sx={{height: "350px"}}>
+      <Box sx={{ height: "350px" }}>
         {Boolean(
           formType !== "REGISTER" &&
             formType !== "OTP" &&
@@ -552,7 +564,8 @@ const LoginFormDesign = ({
             <Tabs
               selected={selectedTabIndex}
               direction={"ltr"}
-              onSelect={(index) => setSelectedTabIndex(index)}>
+              onSelect={(index) => setSelectedTabIndex(index)}
+            >
               {formType === "OTP" ? (
                 <PhoneOtpInput
                   watch={watch}
@@ -574,28 +587,32 @@ const LoginFormDesign = ({
               ) : formType === "FORGOT_PASSWORD" || formType === "EMAIL_OTP" ? (
                 <ForgotPassword setFormType={setFormType} />
               ) : formType !== "REGISTER" ? (
-                <div style={{padding: "0 20px", marginTop: "20px"}}>
+                <div style={{ padding: "0 20px", marginTop: "20px" }}>
                   <TabList>
                     <Tab
                       onClick={() => setFormType("LOGIN")}
-                      style={{padding: "10px 8px 10px 8px"}}>
+                      style={{ padding: "10px 8px 10px 8px" }}
+                    >
                       {t("login")}
                     </Tab>
                     <Tab
                       onClick={() => setFormType("phone")}
-                      style={{padding: "10px 12px 10px 12px"}}>
+                      style={{ padding: "10px 12px 10px 12px" }}
+                    >
                       {t("phone")}
                     </Tab>
                     <Tab
                       onClick={() => setFormType("email")}
-                      style={{padding: "10px 12px 10px 12px"}}>
+                      style={{ padding: "10px 12px 10px 12px" }}
+                    >
                       {t("email.address")}
                     </Tab>
                   </TabList>
 
                   <div
                     className={classes.formArea}
-                    style={{marginTop: "10px", height: `calc(100vh - 400px)`}}>
+                    style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
+                  >
                     <TabPanel>
                       <LoginTab
                         loading={loading}
@@ -649,7 +666,8 @@ const LoginFormDesign = ({
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               backdropFilter: "blur(5px)",
             },
-          }}>
+          }}
+        >
           <LoginCompaniesList
             computedProjects={computedProjects}
             computedCompanies={computedCompanies}
@@ -670,13 +688,14 @@ const LoginFormDesign = ({
         {formType === "RESET_PASSWORD" && (
           <SecondaryButton
             size="large"
-            style={{marginTop: "20px"}}
+            style={{ marginTop: "20px" }}
             type="button"
             onClick={() => {
               formType === "RESET_PASSWORD"
                 ? setFormType("LOGIN")
                 : setFormType("RESET_PASSWORD");
-            }}>
+            }}
+          >
             Back to login
           </SecondaryButton>
         )}

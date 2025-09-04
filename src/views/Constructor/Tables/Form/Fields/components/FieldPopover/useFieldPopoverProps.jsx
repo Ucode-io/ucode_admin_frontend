@@ -291,7 +291,7 @@ export const useFieldPopoverProps = ({
         );
       case SETTING_TYPES.VALIDATION:
         return (
-          <Box padding="12px 8px">
+          <Box paddingX="8px">
             <Validation
               control={control}
               watch={watch}

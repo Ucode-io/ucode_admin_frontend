@@ -474,3 +474,19 @@
     background-color: #F5F5F5;
   }
 }
+.sortDropdown {
+  width: 200px;
+  left: 100%;
+}
+
+.sortOptions {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}

@@ -1,0 +1,37 @@
+.sortPopover {
+  width: 260px;
+  padding: 12px 4px;
+}
+
+.sortPopoverBody {
+  width: 100%;
+  display: flex;
+  column-gap: 8px;
+  justify-content: center;
+}
+
+.fieldSelect {
+  width: 100%;
+  max-width: 116px;
+
+  & .MuiInputBase-colorPrimary {
+    padding-right: 0;
+  }
+}
+
+.fieldSelectTextField {
+  height: 32px;
+  max-width: 116px;
+  padding: 0;
+
+  input {
+    padding: 0;
+  }
+}
+
+.sortPopoverFooter {
+  margin-top: 12px;
+  display: flex;
+  justify-self: flex-end;
+  column-gap: 8px;
+}

@@ -18,6 +18,7 @@ export const FieldPopover = ({
   field,
   selectedField,
   submitCallback = () => {},
+  handleUpdateField = () => {},
 }) => {
   const {
     SETTING_TYPES,
@@ -67,9 +68,10 @@ export const FieldPopover = ({
           overflowY: "visible",
           overflowX: "visible",
         },
-      }}>
+      }}
+    >
       <Box position="relative">
-        <Box minWidth="292px" maxHeight="500px" overflow="auto">
+        <Box minWidth="250px" maxHeight="500px" overflow="auto">
           {selectedSettings ? (
             <AdvancedSettings
               title={selectedSettings}
@@ -96,7 +98,7 @@ export const FieldPopover = ({
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (
-            <Box paddingX="8px">
+            <Box>
               <FieldParams
                 onClose={onClose}
                 control={control}
@@ -116,6 +118,7 @@ export const FieldPopover = ({
                 menuItem={menuItem}
                 selectedAutofillFieldSlug={selectedField?.slug}
                 tableSlug={slug}
+                handleUpdateField={handleUpdateField}
               />
             </Box>
           )}

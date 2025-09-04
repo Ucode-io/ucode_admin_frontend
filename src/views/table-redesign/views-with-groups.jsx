@@ -94,6 +94,7 @@ import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
 import { useViewWithGroupsProps } from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
+import { SortIcon } from "../../utils/constants/icons";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -1166,7 +1167,7 @@ export const NewUiViewsWithGroups = ({
                     variant="ghost"
                     color={orderBy ? "#0365F2" : "#475467"}
                     sx={{ color: orderBy ? "#0365F2" : "#475467" }}
-                    icon={<SwapVertIcon fontSize="inherit" />}
+                    icon={<SortIcon fontSize="inherit" />}
                     onClick={handleSortClick}
                   />
                 )}
@@ -1774,7 +1775,7 @@ const FilterPopover = ({
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Popover>
@@ -1816,12 +1817,12 @@ const FiltersList = ({
   tableLan,
   tableSlug,
 }) => {
-  const {new_list} = useSelector((state) => state.filter);
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
   useEffect(() => {
@@ -1896,13 +1897,15 @@ const FiltersList = ({
       gap="6px"
       borderBottom="1px solid #EAECF0"
       flexWrap="wrap"
-      id="filterHeight">
+      id="filterHeight"
+    >
       <FilterPopover
         tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
         refetchViews={refetchViews}
-        tableSlug={tableSlug}>
+        tableSlug={tableSlug}
+      >
         <Flex
           alignItems="center"
           columnGap="4px"
@@ -1912,7 +1915,8 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
-          _hover={{bg: "#f3f3f3"}}>
+          _hover={{ bg: "#f3f3f3" }}
+        >
           <InlineSVG
             src="/img/plus-icon.svg"
             width={14}
@@ -1952,7 +1956,7 @@ const FiltersSwitch = ({
   const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
   // const tableSlug = view?.table_slug;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
@@ -2015,7 +2019,7 @@ const FiltersSwitch = ({
 
     await mutation.mutateAsync({
       ...view,
-      attributes: {...view?.attributes, quick_filters: result},
+      attributes: { ...view?.attributes, quick_filters: result },
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -2064,9 +2068,10 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -2084,9 +2089,10 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -2099,13 +2105,13 @@ const FiltersSwitch = ({
   );
 };
 
-export const ViewOptionTitle = ({children}) => (
-  <Box color="#475467" fontWeight={500} fontSize={14}>
+export const ViewOptionTitle = ({ children }) => (
+  <Box color="#101828" fontWeight={400} fontSize={14} lineHeight="20px">
     {children}
   </Box>
 );
 
-export const ViewOptionSubtitle = ({children}) => (
+export const ViewOptionSubtitle = ({ children }) => (
   <Box color="#667085" fontWeight={400} fontSize={14}>
     {children}
   </Box>

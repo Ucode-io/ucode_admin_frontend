@@ -782,3 +782,357 @@ export const fieldTypeIcons = {
     </svg>
   ),
 };
+
+export const TableIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M2 6h12M6 2v12M5.2 2h5.6c1.12 0 1.68 0 2.108.218a2 2 0 0 1 .874.874C14 3.52 14 4.08 14 5.2v5.6c0 1.12 0 1.68-.218 2.108a2 2 0 0 1-.874.874C12.48 14 11.92 14 10.8 14H5.2c-1.12 0-1.68 0-2.108-.218a2 2 0 0 1-.874-.874C2 12.48 2 11.92 2 10.8V5.2c0-1.12 0-1.68.218-2.108a2 2 0 0 1 .874-.874C3.52 2 4.08 2 5.2 2Z"
+    />
+  </svg>
+);
+
+export const SettingsIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="m6.263 12.914.39.876a1.475 1.475 0 0 0 2.696 0l.39-.876a1.617 1.617 0 0 1 1.647-.949l.953.102a1.475 1.475 0 0 0 1.348-2.335l-.564-.776A1.62 1.62 0 0 1 12.816 8c0-.342.108-.676.31-.953l.564-.775a1.474 1.474 0 0 0-1.348-2.335l-.953.101a1.617 1.617 0 0 1-1.647-.953l-.393-.875a1.475 1.475 0 0 0-2.696 0l-.39.876a1.617 1.617 0 0 1-1.646.952l-.957-.101a1.475 1.475 0 0 0-1.348 2.335l.565.775a1.62 1.62 0 0 1 0 1.906l-.565.775a1.474 1.474 0 0 0 1.348 2.335l.954-.102a1.622 1.622 0 0 1 1.65.953Z"
+    />
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+    />
+  </svg>
+);
+
+export const EyeIcon = ({ width = "16", height = "16", color = "#101828" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M1.613 8.475c-.09-.143-.136-.215-.161-.326a.782.782 0 0 1 0-.298c.025-.11.07-.183.161-.327.75-1.188 2.984-4.19 6.387-4.19 3.404 0 5.637 3.002 6.387 4.19.09.144.136.216.162.327.019.083.019.215 0 .298-.026.11-.071.183-.162.326-.75 1.188-2.983 4.192-6.387 4.192-3.403 0-5.636-3.004-6.387-4.192Z"
+    />
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
+    />
+  </svg>
+);
+
+export const EyeOffIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M7.162 3.395c.27-.04.55-.062.838-.062 3.404 0 5.637 3.004 6.387 4.192.09.143.136.215.162.326a.784.784 0 0 1 0 .298c-.026.11-.071.183-.163.328-.2.316-.505.761-.908 1.243M4.483 4.477c-1.441.977-2.42 2.336-2.869 3.047-.091.144-.137.216-.162.327a.782.782 0 0 0 0 .298c.025.11.07.183.161.326.75 1.188 2.984 4.192 6.387 4.192 1.373 0 2.555-.489 3.526-1.15M2 2l12 12M6.586 6.586a2 2 0 0 0 2.828 2.828"
+    />
+  </svg>
+);
+
+export const FileDropdownIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke="#000"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M11.667 14.667h-5.8c-1.12 0-1.68 0-2.108-.218a2 2 0 0 1-.874-.874c-.218-.428-.218-.988-.218-2.108V4.533c0-1.12 0-1.68.218-2.108a2 2 0 0 1 .874-.874c.428-.218.988-.218 2.108-.218h4.266c1.12 0 1.68 0 2.108.218M10.667 5h-6M13 5.333 14 6l1-.667"
+    />
+    <path
+      stroke="#98A2B3"
+      stroke-linecap="round"
+      stroke-width="1.2"
+      d="M6 8h5M6 11h5"
+    />
+  </svg>
+);
+
+export const LayoutIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M14 6H2m12-.8v5.6c0 1.12 0 1.68-.218 2.108a2 2 0 0 1-.874.874C12.48 14 11.92 14 10.8 14H5.2c-1.12 0-1.68 0-2.108-.218a2 2 0 0 1-.874-.874C2 12.48 2 11.92 2 10.8V5.2c0-1.12 0-1.68.218-2.108a2 2 0 0 1 .874-.874C3.52 2 4.08 2 5.2 2h5.6c1.12 0 1.68 0 2.108.218a2 2 0 0 1 .874.874C14 3.52 14 4.08 14 5.2Z"
+    />
+    <path
+      fill="#D0D5DD"
+      stroke="#98A2B3"
+      stroke-width=".2"
+      d="M3 5h10V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1Z"
+    />
+  </svg>
+);
+
+export const PinIcon = ({ width = "16", height = "16", color = "#101828" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M8 10v4.667M5.334 4.872v1.42c0 .14 0 .208-.014.275a.667.667 0 0 1-.06.169c-.03.06-.073.114-.16.223L4.053 8.267c-.443.555-.665.832-.666 1.066 0 .203.093.395.251.521.183.146.538.146 1.248.146h6.228c.71 0 1.066 0 1.248-.146a.667.667 0 0 0 .251-.521c0-.234-.222-.511-.666-1.066l-1.046-1.308a1.407 1.407 0 0 1-.161-.223.669.669 0 0 1-.06-.17c-.013-.066-.013-.135-.013-.274v-1.42c0-.077 0-.115.004-.153a.66.66 0 0 1 .02-.1c.01-.036.024-.072.052-.143l.672-1.68c.196-.49.294-.735.253-.932a.666.666 0 0 0-.284-.42c-.167-.11-.431-.11-.96-.11H5.577c-.528 0-.792 0-.96.11a.667.667 0 0 0-.284.42c-.04.197.057.442.253.932l.672 1.68c.029.071.043.107.053.144a.666.666 0 0 1 .02.099c.004.038.004.076.004.153Z"
+    />
+  </svg>
+);
+
+export const FileIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M9.333 1.513v2.754c0 .373 0 .56.073.702a.667.667 0 0 0 .291.292c.143.072.33.072.703.072h2.754m-3.82 6h-4m5.333-2.666H5.333m8-2.008v4.808c0 1.12 0 1.68-.218 2.108a2 2 0 0 1-.874.874c-.427.218-.987.218-2.108.218H5.867c-1.12 0-1.68 0-2.108-.218a2 2 0 0 1-.874-.874c-.218-.428-.218-.988-.218-2.108V4.533c0-1.12 0-1.68.218-2.108a2 2 0 0 1 .874-.874c.428-.218.988-.218 2.108-.218h2.14c.49 0 .735 0 .965.056a2 2 0 0 1 .578.239c.202.124.375.297.72.643l2.126 2.125c.346.346.519.519.643.72a2 2 0 0 1 .24.579c.054.23.054.475.054.964Z"
+    />
+  </svg>
+);
+
+export const FileDownloadIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M13.333 8.333v-3.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.874c-.427-.218-.987-.218-2.108-.218H5.867c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.874c-.218.428-.218.988-.218 2.108v6.934c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874c.428.218.988.218 2.108.218h2.466m1-7.334h-4M6.667 10H5.333m5.334-5.333H5.333m4.667 8 2 2m0 0 2-2m-2 2v-4"
+    />
+  </svg>
+);
+
+export const FileExportIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M13.333 8.333v-3.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.874c-.427-.218-.987-.218-2.108-.218H5.867c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.874c-.218.428-.218.988-.218 2.108v6.934c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874c.428.218.988.218 2.108.218h2.466m1-7.334h-4M6.667 10H5.333m5.334-5.333H5.333m4.667 8 2-2m0 0 2 2m-2-2v4"
+    />
+  </svg>
+);
+
+export const TrashIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M6 2h4M2 4h12m-1.333 0-.468 7.013c-.07 1.052-.105 1.578-.332 1.977a2 2 0 0 1-.866.81c-.413.2-.94.2-1.995.2H6.994c-1.055 0-1.582 0-1.995-.2a2 2 0 0 1-.866-.81c-.227-.399-.262-.925-.332-1.977L3.333 4m3.334 3v3.333M9.333 7v3.333"
+    />
+  </svg>
+);
+
+export const SortIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M11.333 2.667v10.666m0 0-2.666-2.666m2.666 2.666L14 10.667m-9.333 2.666V2.667m0 0L2 5.333m2.667-2.666 2.666 2.666"
+    />
+  </svg>
+);
+
+export const TranslateIcon = ({
+  width = "16",
+  height = "16",
+  color = "#667085",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.3"
+      d="M8.609 11.333h4.783m-4.783 0L7.333 14m1.276-2.667 1.91-3.994c.154-.321.23-.482.336-.533a.333.333 0 0 1 .29 0c.105.05.182.212.336.533l1.91 3.994m0 0L14.668 14M1.333 3.333h4m0 0h2.334m-2.333 0V2m2.333 1.333h1.667m-1.667 0c-.33 1.972-1.098 3.758-2.223 5.257m1.223.743a6.265 6.265 0 0 1-1.223-.743m0 0C4.542 7.899 3.735 6.95 3.334 6m2.11 2.59A11.53 11.53 0 0 1 1.334 12"
+    />
+  </svg>
+);
+
+export const TypeIcon = ({
+  width = "14",
+  height = "12",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M1 3.333h8m0 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM5 8.667h8m-8 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
+    />
+  </svg>
+);
+
+export const ClipboardCheckIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M10.667 2.667c.62 0 .93 0 1.184.068a2 2 0 0 1 1.414 1.414c.068.254.068.564.068 1.184v6.134c0 1.12 0 1.68-.218 2.108a2 2 0 0 1-.874.874c-.427.218-.987.218-2.108.218H5.867c-1.12 0-1.68 0-2.108-.218a2 2 0 0 1-.874-.874c-.218-.428-.218-.988-.218-2.108V5.333c0-.62 0-.93.068-1.184a2 2 0 0 1 1.414-1.414c.254-.068.564-.068 1.184-.068M6 10l1.333 1.333 3-3M6.4 4h3.2c.373 0 .56 0 .703-.073a.666.666 0 0 0 .291-.291c.073-.143.073-.33.073-.703V2.4c0-.373 0-.56-.073-.703a.666.666 0 0 0-.291-.291c-.143-.073-.33-.073-.703-.073H6.4c-.373 0-.56 0-.703.073a.667.667 0 0 0-.29.291c-.074.143-.074.33-.074.703v.533c0 .374 0 .56.073.703a.667.667 0 0 0 .291.291C5.84 4 6.027 4 6.4 4Z"
+    />
+  </svg>
+);
+
+export const AutofillIcon = ({
+  width = "16",
+  height = "16",
+  color = "#101828",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={width}
+    height={height}
+    fill="none"
+  >
+    <path
+      stroke={color}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.2"
+      d="M8.667 4.667h-5.2c-.747 0-1.12 0-1.406.145-.25.128-.455.332-.582.583-.146.285-.146.658-.146 1.405v2.4c0 .747 0 1.12.146 1.405.127.251.331.455.582.583.285.145.659.145 1.406.145h5.2m2.666-6.666h1.2c.747 0 1.12 0 1.406.145.25.128.454.332.582.583.146.285.146.658.146 1.405v2.4c0 .747 0 1.12-.146 1.405-.128.251-.332.455-.582.583-.286.145-.659.145-1.406.145h-1.2m0 2.667V2M13 2H9.667M13 14H9.667"
+    />
+  </svg>
+);

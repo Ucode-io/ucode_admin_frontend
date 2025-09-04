@@ -31,7 +31,7 @@ export default function TextFieldWithMultiLanguage({
   placeholder = "",
   languages,
   endAdornment,
-  field,
+  // field,
   disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   id,
@@ -48,8 +48,6 @@ export default function TextFieldWithMultiLanguage({
   // const watch = useWatch({
   //   control,
   // });
-
-  console.log(watch(fieldName));
 
   const defaultValue = useMemo(
     () => watch(fieldName) ?? "",
@@ -84,6 +82,7 @@ export default function TextFieldWithMultiLanguage({
         render={({ field: { onChange }, fieldState: { error } }) => (
           <InputGroup>
             <Input
+              {...props}
               defaultValue={defaultValue}
               className={clsx(cls.input, {
                 [cls.leftContent]: leftContent,

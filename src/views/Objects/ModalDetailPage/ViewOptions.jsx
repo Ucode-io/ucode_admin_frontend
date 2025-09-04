@@ -337,7 +337,7 @@ const ViewOptions = ({
             colorScheme="gray"
           />
         </PopoverTrigger>
-        <PopoverContent ref={ref} w="292px" p={"8px"} borderRadius="8px">
+        <PopoverContent ref={ref} w="250px" p={"8px"} borderRadius="8px">
           {openedMenu === null && (
             <>
               <Box py="4px" borderBottom="1px solid #D0D5DD">

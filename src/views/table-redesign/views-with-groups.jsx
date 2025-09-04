@@ -95,6 +95,7 @@ import TableViewOld from "./table-view-old";
 import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
 import {AIMenu, useAIChat} from "@/components/ProfilePanel/AIChat";
+import { SortPopover } from "./components/SortPopover";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")

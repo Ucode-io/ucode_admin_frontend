@@ -59,6 +59,7 @@ import {
   PinIcon,
   SettingsIcon,
 } from "../../../utils/constants/icons";
+import { CloseButton } from "../../../components/CloseButton";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -347,7 +348,8 @@ const ViewOptions = ({
                   justifyContent="space-between"
                 >
                   <span className={cls.optionsTitle}>{t("view_options")}</span>
-                  <button className={cls.closeBtn} onClick={handleClosePopover}>
+                  <CloseButton onClick={handleClosePopover} />
+                  {/* <button className={cls.closeBtn} onClick={handleClosePopover}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="10"
@@ -362,7 +364,7 @@ const ViewOptions = ({
                         d="m8.75 1.25-7.5 7.5m0-7.5 7.5 7.5"
                       />
                     </svg>
-                  </button>
+                  </button> */}
                 </Box>
                 <Flex mt="10px" columnGap="4px" mb="4px">
                   {/* <Flex

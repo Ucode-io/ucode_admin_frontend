@@ -32,13 +32,16 @@ export const LayoutPopup = ({
   authData,
   handleSubmit,
   view,
+  tableSlug: tableSlugFromProps,
+  mainForm,
 }) => {
   const { i18n, t } = useTranslation();
 
   const languages = useSelector((state) => state.languages.list);
 
   const { tableSlug: tableSlugFromParams } = useParams();
-  const tableSlug = tableSlugFromParams ?? view?.table_slug;
+  const tableSlug =
+    tableSlugFromParams || tableSlugFromProps || view?.table_slug;
 
   const [btnLoader, setBtnLoader] = useState(false);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -67,7 +70,6 @@ export const LayoutPopup = ({
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     const computedData = {
       ...data,
       id: data?.id,
@@ -79,10 +81,12 @@ export const LayoutPopup = ({
     }
   };
 
-  const tableName = useWatch({
-    control,
-    name: "label",
-  });
+  // const tableName = useWatch({
+  //   control,
+  //   name: `attributes.label_${i18n.language}`,
+  // });
+
+  const tableName = mainForm?.watch(`attributes.label_${i18n.language}`);
 
   const { fields } = useFieldArray({
     control,
@@ -181,13 +185,14 @@ export const LayoutPopup = ({
             <Box style={{ display: "flex", gap: "6px" }}>
               <TextFieldWithMultiLanguage
                 control={control}
-                name="attributes.label"
+                name={`attributes.label`}
                 fullWidth
                 placeholder="Name"
                 defaultValue={tableName}
                 languages={languages}
                 id={"create_table_name"}
                 style={{ width: "100%", height: "36px" }}
+                watch={mainForm?.watch}
               />
               {/* <HFTextFieldWithMultiLanguage
                 control={control}
@@ -238,14 +243,6 @@ export const LayoutPopup = ({
             >
               {generateLangaugeText(tableLan, i18n?.language, "Soft delete") ||
                 "Soft delete"}
-            </CustomCheckbox>
-            <CustomCheckbox
-              control={control}
-              name="order_by"
-              required
-              size="sm"
-            >
-              {generateLangaugeText(tableLan, i18n?.language, "Sort") || "Sort"}
             </CustomCheckbox>
             <CustomCheckbox
               control={control}

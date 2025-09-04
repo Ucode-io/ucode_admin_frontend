@@ -1783,6 +1783,7 @@ export const NewUiViewsWithGroups = ({
         control={mainForm.control}
         handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
+        mainForm={mainForm}
       />
     </ViewProvider>
   );

@@ -68,15 +68,15 @@ const NewObjectsPage = () => {
     }
   );
 
-  // const {loader: menuLoader} = useMenuGetByIdQuery({
-  //   menuId: menuId,
-  //   queryParams: {
-  //     enabled: Boolean(menuId),
-  //     onSuccess: (res) => {
-  //       setMenuItem(res);
-  //     },
-  //   },
-  // });
+  const { loader: menuLoader } = useMenuGetByIdQuery({
+    menuId: menuId,
+    queryParams: {
+      enabled: Boolean(menuId),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
+    },
+  });
 
   const {
     data: {
@@ -166,6 +166,7 @@ const NewObjectsPage = () => {
       ? "false"
       : "true"
   );
+  console.log({ menuItem });
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
   if (isLoading) {

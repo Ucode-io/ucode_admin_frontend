@@ -95,6 +95,7 @@ import TableViewOld from "./table-view-old";
 import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
 import {AIMenu, useAIChat} from "@/components/ProfilePanel/AIChat";
+import { SortIcon } from "../../utils/constants/icons";
 import { SortPopover } from "./components/SortPopover";
 
 const DrawerFormDetailPage = lazy(
@@ -1164,7 +1165,7 @@ export const NewUiViewsWithGroups = ({
                     variant="ghost"
                     color={orderBy ? "#0365F2" : "#475467"}
                     sx={{color: orderBy ? "#0365F2" : "#475467"}}
-                    icon={<SwapVertIcon fontSize="inherit" />}
+                    icon={<SortIcon />}
                     onClick={handleSortClick}
                   />
                 )}
@@ -1754,6 +1755,7 @@ export const NewUiViewsWithGroups = ({
         control={mainForm.control}
         handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
+        mainForm={mainForm}
       />
     </ViewProvider>
   );

@@ -214,18 +214,22 @@ export const NewUiViewsWithGroups = ({
 
   const handleCloseSortPopup = () => setSortPopupAnchorEl(null);
 
-  const handleSortClick = (e) => {
-    setSortPopupAnchorEl(e.currentTarget);
+  const handleChangeOrder = (order) => {
+    const isGivenFromProps = typeof order === "boolean";
     setOrderBy((prev) => {
       constructorTableService.update(
         {
           ...tableInfo,
-          order_by: !prev,
+          order_by: isGivenFromProps ? order : !prev,
         },
         projectId
       );
-      return !prev;
+      return isGivenFromProps ? order : !prev;
     });
+  };
+
+  const handleSortClick = (e) => {
+    setSortPopupAnchorEl(e.currentTarget);
   };
 
   const handleAddDate = (item) => {
@@ -1171,6 +1175,9 @@ export const NewUiViewsWithGroups = ({
                   handleClose={handleCloseSortPopup}
                   fieldsMap={fieldsMap}
                   setSortedDatas={setSortedDatas}
+                  handleChangeOrder={handleChangeOrder}
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
                 />
                 <FilterPopover
                   tableLan={tableLan}

@@ -17,8 +17,9 @@
   padding: 0;
 }
 
-.sortPopoverHeader {
+.sortPopoverFooter {
+  margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
+  justify-self: flex-end;
+  column-gap: 8px;
 }

@@ -62,6 +62,7 @@ import {
   iconsComponents,
 } from "../../views/table-redesign/icons";
 import SVG from "react-inlinesvg";
+import { North, South } from "@mui/icons-material";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -269,8 +270,6 @@ export default function FieldCreateModal({
   const { i18n } = useTranslation();
 
   const [openedDropdown, setOpenedDropdown] = useState(null);
-
-  console.log({ sortedDatas });
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
@@ -600,12 +599,12 @@ export default function FieldCreateModal({
     };
   }
 
-  const handleSortField = () => {
+  const handleSortField = (order) => {
     const field = fieldData.id;
-    const order =
-      sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
-        ? "DESC"
-        : "ASC";
+    // const order =
+    //   sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
+    //     ? "DESC"
+    //     : "ASC";
     dispatch(
       paginationActions.setSortValues({
         tableSlug,
@@ -680,6 +679,7 @@ export default function FieldCreateModal({
     editProperty: "editProperty",
     changeFormat: "changeFormat",
     changeType: "changeType",
+    sortData: "sortData",
   };
 
   const { mutate: updateField } = useFieldUpdateMutation({});
@@ -824,26 +824,44 @@ export default function FieldCreateModal({
                   </Box>
                   {fieldData && (
                     <Box width={"100%"}>
-                      <Box borderBottom="1px solid #e5e9eb" paddingY="4px">
-                        <Box>
-                          <button
-                            className={style.btn}
-                            type="button"
-                            onClick={handleSortField}
-                            onMouseEnter={() => {
-                              setOpenedDropdown(null);
-                            }}
-                          >
-                            <SortIcon />
-                            <span>
-                              Sort{" "}
-                              {/* {sortedDatas?.find(
-                                (item) => item.field === fieldData.id
-                              )?.order === "ASC"
-                                ? "Z -> A"
-                                : "A -> Z"} */}
-                            </span>
-                          </button>
+                      <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
+                        <Box
+                          width={"100%"}
+                          onMouseEnter={() => {
+                            setOpenedDropdown(dropdownTypes.sortData);
+                          }}
+                        >
+                          <Dropdown
+                            optionsClassname={style.sortDropdown}
+                            openedDropdown={openedDropdown}
+                            name={dropdownTypes.sortData}
+                            content={
+                              <div>
+                                <button
+                                  className={style.sortOptions}
+                                  onClick={() => handleSortField("ASC")}
+                                >
+                                  {" "}
+                                  <span>
+                                    <North />
+                                  </span>{" "}
+                                  <span>Sort ascending</span>
+                                </button>
+                                <button
+                                  className={style.sortOptions}
+                                  onClick={() => handleSortField("DESC")}
+                                >
+                                  {" "}
+                                  <span>
+                                    <South />
+                                  </span>{" "}
+                                  <span>Sort descending</span>
+                                </button>
+                              </div>
+                            }
+                            label={"Sort"}
+                            icon={<SortIcon />}
+                          />
                         </Box>
                         <Box width={"100%"}>
                           <button

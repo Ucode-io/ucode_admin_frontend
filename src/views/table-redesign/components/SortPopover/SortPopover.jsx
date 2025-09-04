@@ -93,19 +93,15 @@ export const SortPopover = ({
       <Popover
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "right",
+          horizontal: "left",
         }}
         id="sort-popover"
         open={open}
         onClose={(e) => {
           if (!selectedField) {
-            if (orderBy) {
-              handleChangeOrder(false);
-            } else {
-              handleChangeOrder(true);
-            }
+            handleChangeOrder(!orderBy);
           } else {
-            handleChangeOrder();
+            handleChangeOrder(false);
           }
           handleClose(e);
         }}
@@ -131,25 +127,12 @@ export const SortPopover = ({
               defaultValue={fieldDefaultValue?.value ? fieldDefaultValue : null}
               onChange={(e, val) => {
                 setSelectedField(val?.value);
-                // const field = val?.value;
-                // dispatch(
-                //   paginationActions.setSortValues({tableSlug, field, order: selectedSort})
-                // );
-                // setSortedDatas((prev) => {
-                //   let newSortedDatas = [...prev];
-                //   const index = newSortedDatas.findIndex(
-                //     (item) => item.field === val?.value
-                //   );
-                //   if (index !== -1) {
-                //     newSortedDatas[index].order = selectedSort
-                //   } else {
-                //     newSortedDatas = [{
-                //       field: val?.value,
-                //       order: "ASC",
-                //     }]
-                //   }
-                //   return newSortedDatas;
-                // });
+              }}
+              sx={{
+                "& .MuiInputBase-root": {
+                  paddingLeft: "0 !important",
+                  paddingRight: "0 !important",
+                },
               }}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => (
@@ -173,26 +156,12 @@ export const SortPopover = ({
               disablePortal
               onChange={(e, val) => {
                 setSelectedSort(val?.value);
-                // const field = selectedField;
-
-                // dispatch(
-                //   paginationActions.setSortValues({tableSlug, field, order: val?.value})
-                // );
-                // setSortedDatas((prev) => {
-                //   let newSortedDatas = [...prev];
-                //   const index = newSortedDatas.findIndex(
-                //     (item) => item.field === field
-                //   );
-                //   if (index !== -1) {
-                //     newSortedDatas[index].order = val?.value
-                //   } else {
-                //     newSortedDatas = [{
-                //       field: field,
-                //       order: "ASC",
-                //     }];
-                //   }
-                //   return newSortedDatas;
-                // })
+              }}
+              sx={{
+                "& .MuiInputBase-root": {
+                  paddingLeft: "0 !important",
+                  paddingRight: "0 !important",
+                },
               }}
               getOptionLabel={(option) => option.label}
               defaultValue={sortDefaultValue}

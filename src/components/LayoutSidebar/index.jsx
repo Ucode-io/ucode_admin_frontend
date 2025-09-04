@@ -507,7 +507,7 @@ const LayoutSidebar = ({
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden">
-          {Boolean(permissions?.chat && userRoleName === DEFAULT_ADMIN) && (
+          {/* {Boolean(permissions?.chat && userRoleName === DEFAULT_ADMIN) && (
             <Flex
               position="relative"
               h={30}
@@ -562,7 +562,7 @@ const LayoutSidebar = ({
                 </AIChat>
               </SidebarActionTooltip>
             </Flex>
-          )}
+          )} */}
           {Array.isArray(menuList) && (
             <div
               className="menu-element"

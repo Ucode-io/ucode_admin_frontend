@@ -64,6 +64,7 @@ import { FieldCheckbox } from "../../views/Constructor/Tables/Form/components/Fi
 import HFIconPicker from "../FormElements/HFIconPicker";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import listToOptions from "../../utils/listToOptions";
+import { North, South } from "@mui/icons-material";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -269,8 +270,6 @@ export default function FieldCreateModal({
   const { i18n } = useTranslation();
 
   const [openedDropdown, setOpenedDropdown] = useState(null);
-
-  console.log({ sortedDatas });
 
   const { isLoading: relationLoading } = useRelationGetByIdQuery({
     tableSlug: tableSlug,
@@ -591,12 +590,12 @@ export default function FieldCreateModal({
     };
   }
 
-  const handleSortField = () => {
+  const handleSortField = (order) => {
     const field = fieldData.id;
-    const order =
-      sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
-        ? "DESC"
-        : "ASC";
+    // const order =
+    //   sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
+    //     ? "DESC"
+    //     : "ASC";
     dispatch(
       paginationActions.setSortValues({
         tableSlug,
@@ -671,6 +670,7 @@ export default function FieldCreateModal({
     editProperty: "editProperty",
     changeFormat: "changeFormat",
     changeType: "changeType",
+    sortData: "sortData",
   };
 
   return (
@@ -766,7 +766,45 @@ export default function FieldCreateModal({
                   {fieldData && (
                     <Box width={"100%"}>
                       <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
-                        <Box>
+                        <Box
+                          width={"100%"}
+                          onMouseEnter={() => {
+                            setOpenedDropdown(dropdownTypes.sortData);
+                          }}
+                        >
+                          <Dropdown
+                            optionsClassname={style.sortDropdown}
+                            openedDropdown={openedDropdown}
+                            name={dropdownTypes.sortData}
+                            content={
+                              <div>
+                                <button
+                                  className={style.sortOptions}
+                                  onClick={() => handleSortField("ASC")}
+                                >
+                                  {" "}
+                                  <span>
+                                    <North />
+                                  </span>{" "}
+                                  <span>Sort ascending</span>
+                                </button>
+                                <button
+                                  className={style.sortOptions}
+                                  onClick={() => handleSortField("DESC")}
+                                >
+                                  {" "}
+                                  <span>
+                                    <South />
+                                  </span>{" "}
+                                  <span>Sort descending</span>
+                                </button>
+                              </div>
+                            }
+                            label={"Sort"}
+                            icon={<SortByAlphaOutlinedIcon />}
+                          />
+                        </Box>
+                        {/* <Box>
                           <button
                             className={style.btn}
                             type="button"
@@ -785,7 +823,7 @@ export default function FieldCreateModal({
                                 : "A -> Z"}
                             </span>
                           </button>
-                        </Box>
+                        </Box> */}
                         <Box width={"100%"}>
                           <button
                             className={style.btn}

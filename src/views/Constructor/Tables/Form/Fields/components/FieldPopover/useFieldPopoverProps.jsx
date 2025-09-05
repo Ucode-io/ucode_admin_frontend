@@ -217,7 +217,7 @@ export const useFieldPopoverProps = ({
       },
     };
 
-    let result = data?.attributes?.formula;
+    let result = data?.attributes?.formula || "";
 
     const fieldList =
       mainForm

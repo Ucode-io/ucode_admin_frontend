@@ -1,21 +1,22 @@
 import {Delete} from "@mui/icons-material";
-import {Box} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useDispatch} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Box, Button } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import FRow from "../../../../components/FormElements/FRow";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorViewService from "../../../../services/constructorViewService";
-import {quickFiltersActions} from "../../../../store/filter/quick_filter";
-import {viewTypes} from "../../../../utils/constants/viewTypes";
+import { quickFiltersActions } from "../../../../store/filter/quick_filter";
+import { viewTypes } from "../../../../utils/constants/viewTypes";
 import NavigateSettings from "./NavigateSettings";
 import styles from "./style.module.scss";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
+import TextFieldWithMultiLanguage from "../../../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 
 const ViewForm = ({
   initialValues,
@@ -31,13 +32,13 @@ const ViewForm = ({
   viewData,
   setTab,
 }) => {
-  const {tableSlug, appId} = useParams();
+  const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
-  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  const { i18n } = useTranslation();
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
   const group_by_columns = initialValues?.attributes?.group_by_columns;
@@ -54,6 +55,8 @@ const ViewForm = ({
 
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
   const attributes = initialValues?.attributes;
+
+  const languages = useSelector((state) => state.languages.list);
 
   const form = useForm();
   const type = form.watch("type");
@@ -75,7 +78,7 @@ const ViewForm = ({
   }, [columns, relationColumns, type]);
 
   const computeFinancialAcc = (values, groupByField, data) => {
-    if (values === undefined) return {chart_of_accounts: []};
+    if (values === undefined) return { chart_of_accounts: [] };
 
     const computedFormat = values.map((row) => {
       return {
@@ -151,7 +154,7 @@ const ViewForm = ({
   }, [initialValues, tableSlug, form, typeNewView]);
 
   useEffect(() => {
-    form.reset({...form.getValues(), number_field: ""});
+    form.reset({ ...form.getValues(), number_field: "" });
   }, [relationObjInput, attributes]);
 
   const onSubmit = (values) => {
@@ -246,10 +249,14 @@ const ViewForm = ({
       <div className={styles.viewForm}>
         <Tabs defaultIndex={defaultViewTab}>
           <div className={styles.section}>
-            <TabList style={{marginBottom: "1px"}}>
-              <Tab>Information</Tab>
+            <TabList className={styles.tabs}>
+              <Tab className={styles.tab} selectedClassName={styles.active}>
+                Information
+              </Tab>
 
-              <Tab>Navigation</Tab>
+              <Tab className={styles.tab} selectedClassName={styles.active}>
+                Navigation
+              </Tab>
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
@@ -257,31 +264,34 @@ const ViewForm = ({
                 <div className={styles.sectionBody}>
                   {viewData?.type === "WEBSITE" && (
                     <div className={styles.formRow}>
-                      <FRow label="Website Link">
-                        <Box style={{display: "flex", gap: "6px"}}>
-                          <HFTextField
-                            control={form.control}
-                            name={`attributes.web_link`}
-                            placeholder={`Website link`}
-                            fullWidth
-                          />
-                        </Box>
-                      </FRow>
+                      <Box style={{ display: "flex", gap: "6px" }}>
+                        <HFTextField
+                          control={form.control}
+                          name={`attributes.web_link`}
+                          placeholder={`Website link`}
+                          fullWidth
+                        />
+                      </Box>
                     </div>
                   )}
                   <div className={styles.formRow}>
-                    <FRow label="Name">
-                      <Box style={{display: "flex", gap: "6px"}}>
-                        <HFTextField
+                    <TextFieldWithMultiLanguage
+                      control={form.control}
+                      name={`attributes.name`}
+                      placeholder="Name"
+                      // defaultValue={tableName}
+                      languages={languages}
+                      style={{ width: "100%", height: "36px" }}
+                      watch={form?.watch}
+                    />
+                    {/* <HFTextField
                           control={form.control}
                           name={`attributes.name_${i18n?.language}`}
                           placeholder={`Name (${i18n?.language})`}
                           fullWidth
-                        />
-                      </Box>
-                    </FRow>
+                        /> */}
                   </div>
-                  <div className={styles.formRow}>
+                  {/* <div className={styles.formRow}>
                     <FRow label="Disable Table Edit">
                       <HFSwitch
                         control={form.control}
@@ -312,7 +322,7 @@ const ViewForm = ({
                         />
                       </FRow>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -342,7 +352,7 @@ const ViewForm = ({
       </div>
 
       <div className={styles.formFooter}>
-        {initialValues !== "NEW" &&
+        {/* {initialValues !== "NEW" &&
           initialValues?.attributes?.view_permission?.delete && (
             <CancelButton
               loading={deleteBtnLoader}
@@ -350,9 +360,15 @@ const ViewForm = ({
               title={"Delete"}
               icon={<Delete />}
             />
-          )}
+          )} */}
         {/* <CancelButton onClick={closeModal} /> */}
-        <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
+        <Button
+          variant="contained"
+          onClick={form.handleSubmit(onSubmit)}
+          loading={btnLoader}
+        >
+          Save
+        </Button>
       </div>
     </div>
   );

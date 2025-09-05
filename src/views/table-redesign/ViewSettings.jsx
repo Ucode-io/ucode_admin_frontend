@@ -86,7 +86,7 @@ function ViewSettingsModal({
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent zIndex={2} minW="602px" w="602px">
+        <ModalContent zIndex={2} minW={"470px"}>
           <MaterialUIProvider>
             <ViewSettings
               refetchMainView={refetchViews}

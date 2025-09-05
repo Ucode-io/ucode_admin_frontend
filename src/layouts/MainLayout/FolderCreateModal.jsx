@@ -1,16 +1,20 @@
-import {Box, Card, Modal, Typography} from "@mui/material";
+import { Box, Button, Card, Modal, Typography } from "@mui/material";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
-import {useParams} from "react-router-dom";
-import {useForm, useWatch} from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { useForm, useWatch } from "react-hook-form";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
-import {useQueryClient} from "react-query";
-import {useEffect} from "react";
+import { useQueryClient } from "react-query";
+import { useEffect } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { CloseButton } from "../../components/CloseButton";
+import cls from "./style.module.scss";
 
 const FolderCreateModal = ({
   closeModal,
@@ -20,9 +24,9 @@ const FolderCreateModal = ({
   selectedFolder,
   getMenuList,
 }) => {
-  const {projectId} = useParams();
+  const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const onSubmit = (data) => {
     if (modalType === "create") {
@@ -34,7 +38,7 @@ const FolderCreateModal = ({
     }
   };
 
-  const {control, handleSubmit, reset, watch} = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       app_id: appId,
     },
@@ -112,34 +116,42 @@ const FolderCreateModal = ({
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
-          <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">
+          <div className={cls.modalHeader}>
+            <h4 className={cls.modalTitle}>
               {modalType === "create" || modalType === "parent"
                 ? "Create folder"
                 : "Edit folder"}
-            </Typography>
-            <ClearIcon
-              color="primary"
-              onClick={closeModal}
-              width="46px"
-              style={{
-                cursor: "pointer",
-              }}
-            />
+            </h4>
+            <CloseButton onClick={closeModal} />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFIconPicker name="icon" control={control} />
-
+          <form onSubmit={handleSubmit(onSubmit)} className={cls.form}>
+            <Box>
               <Box
                 style={{
                   display: "flex",
                   gap: "6px",
                   height: "100%",
                   width: "100%",
-                }}>
-                <HFTextFieldWithMultiLanguage
+                }}
+              >
+                <HFIconPicker
+                  name="icon"
+                  control={control}
+                  shape="rectangle"
+                  size="md"
+                  placeholder={<AddCircleOutlineIcon htmlColor="#98A2B3" />}
+                />
+                <TextFieldWithMultiLanguage
+                  control={control}
+                  name={`attributes.label`}
+                  placeholder="Name"
+                  languages={languages}
+                  id={"create_table_name"}
+                  style={{ width: "100%", height: "36px" }}
+                  watch={watch}
+                />
+                {/* <HFTextFieldWithMultiLanguage
                   control={control}
                   name="attributes.label"
                   fullWidth
@@ -147,16 +159,14 @@ const FolderCreateModal = ({
                   defaultValue={tableName}
                   languages={languages}
                   id={"folder_create"}
-                />
+                /> */}
               </Box>
             </Box>
 
-            <div className="btns-row">
-              {modalType === "crete" ? (
-                <CreateButton type="submit" loading={loading} />
-              ) : (
-                <SaveButton type="submit" loading={loading} />
-              )}
+            <div className={cls.modalFooter}>
+              <Button type="submit" loading={loading} variant="contained">
+                {modalType === "crete" ? "Create" : "Save"}
+              </Button>
             </div>
           </form>
         </Card>

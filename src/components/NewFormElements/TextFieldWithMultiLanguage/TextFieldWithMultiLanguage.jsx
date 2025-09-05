@@ -110,7 +110,11 @@ export default function TextFieldWithMultiLanguage({
             <InputRightElement
               sx={{ right: "10px", top: "50%", transform: "translateY(-50%)" }}
             >
-              <button className={cls.languageBtn} onClick={handleClickLanguage}>
+              <button
+                className={cls.languageBtn}
+                type="button"
+                onClick={handleClickLanguage}
+              >
                 <span className={cls.languageBtnInner}>
                   <TranslateIcon />
                   <span>{selectedLanguage}</span>

@@ -13,6 +13,10 @@ import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import menuService from "../../services/menuService";
+import { CloseButton } from "../../components/CloseButton";
+import cls from "./style.module.scss";
+import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const TableLinkModal = ({
   closeModal,
@@ -21,8 +25,7 @@ const TableLinkModal = ({
   setSelectedFolder = () => {},
   getMenuList = () => {},
 }) => {
-  console.log("selectedFolderselectedFolderselectedFolder", selectedFolder);
-  const {projectId} = useParams();
+  const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
@@ -31,7 +34,15 @@ const TableLinkModal = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
-  const {control, handleSubmit, reset, watch} = useForm();
+  const { control, handleSubmit, reset, watch, getValues } = useForm({
+    defaultValues: {
+      attributes: {
+        label_en: "",
+        label_ru: "",
+      },
+    },
+  });
+  console.log(getValues());
 
   const tableOptions = useMemo(() => {
     return tables?.tables?.map((item, index) => ({
@@ -133,27 +144,25 @@ const TableLinkModal = ({
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
-          <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Attach to table</Typography>
-            <ClearIcon
-              color="primary"
-              onClick={closeModal}
-              width="46px"
-              style={{
-                cursor: "pointer",
-              }}
-            />
+          <div className={cls.modalHeader}>
+            <h4 className={cls.modalTitle}>Attach to table</h4>
+            <CloseButton onClick={closeModal} />
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
-              <Box
-                display={"flex"}
-                columnGap={"16px"}
-                className="form-elements">
-                <HFIconPicker name="icon" control={control} />
+              <Box>
+                <TextFieldWithMultiLanguage
+                  control={control}
+                  name="attributes.label"
+                  placeholder="Name"
+                  languages={languages}
+                  id={"text_field_label"}
+                  style={{ width: "100%", height: "36px" }}
+                  watch={watch}
+                />
 
-                {languages?.map((language) => {
+                {/* {languages?.map((language) => {
                   const languageFieldName = `attributes.label_${language?.slug}`;
                   const fieldValue = watch(languageFieldName);
 
@@ -168,17 +177,21 @@ const TableLinkModal = ({
                       defaultValue={fieldValue || menuItem?.label}
                     />
                   );
-                })}
+                })} */}
               </Box>
-              <Box
-                display={"flex"}
-                columnGap={"16px"}
-                className="form-elements">
+              <Box display={"flex"} gap="6px">
+                <HFIconPicker
+                  name="icon"
+                  control={control}
+                  shape="rectangle"
+                  size="md"
+                  placeholder={<AddCircleOutlineIcon htmlColor="#98A2B3" />}
+                />
                 <HFAutocomplete
                   portal={null}
                   name="table_id"
                   control={control}
-                  placeholder="Tables"
+                  placeholder="Choose table"
                   fullWidth
                   required
                   options={tableOptions}

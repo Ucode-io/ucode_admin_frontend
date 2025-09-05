@@ -7,6 +7,7 @@ import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/Rin
 import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import constructorTableService from "../../../../services/constructorTableService";
+import { CloseButton } from "../../../../components/CloseButton";
 
 const ViewSettings = ({
   closeModal = () => {},
@@ -21,12 +22,12 @@ const ViewSettings = ({
   setSelectedView = () => {},
   selectedView,
 }) => {
-  const {tableSlug: tableSlugFromParams, appId, menuId} = useParams();
+  const { tableSlug: tableSlugFromParams, appId, menuId } = useParams();
   const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
   const closeForm = () => setSelectedView(null);
 
   const {
-    data: {fields, views, columns, relationColumns} = {
+    data: { fields, views, columns, relationColumns } = {
       fields: [],
       views: [],
       columns: [],
@@ -35,7 +36,7 @@ const ViewSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorTableService.getTableInfo(tableSlug, {
         data: {
@@ -47,7 +48,7 @@ const ViewSettings = ({
       });
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fields: data?.fields ?? [],
           views: data?.views ?? [],
@@ -78,9 +79,10 @@ const ViewSettings = ({
     <Card className={styles.card}>
       <div className={styles.header}>
         <div className={styles.cardTitle}>View settings</div>
-        <IconButton className={styles.closeButton} onClick={closeModal}>
+        <CloseButton onClick={closeModal} />
+        {/* <IconButton className={styles.closeButton} onClick={closeModal}>
           <Close className={styles.closeIcon} />
-        </IconButton>
+        </IconButton> */}
       </div>
 
       {isLoading ? (

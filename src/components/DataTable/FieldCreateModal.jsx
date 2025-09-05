@@ -895,7 +895,7 @@ export default function FieldCreateModal({
                             </span>
                           </button>
                         </Box>
-                        {/* {(format === FIELD_TYPES.SINGLE_LINE ||
+                        {(format === FIELD_TYPES.SINGLE_LINE ||
                           format === FIELD_TYPES.MULTI_LINE) && (
                           <Box>
                             <FieldCheckbox
@@ -906,7 +906,7 @@ export default function FieldCreateModal({
                               label={"Multiple language"}
                             />
                           </Box>
-                        )} */}
+                        )}
                       </Box>
                     </Box>
                   )}

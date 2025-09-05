@@ -640,17 +640,18 @@ export const FieldParams = ({
                 </>
               )}
               {(activeType?.value === FIELD_TYPES.SINGLE_LINE ||
-                activeType?.value === FIELD_TYPES.MULTI_LINE) && (
-                <Box>
-                  <FieldCheckbox
-                    watch={watch}
-                    setValue={setValue}
-                    register={register}
-                    name={"enable_multilanguage"}
-                    label={"Multiple language"}
-                  />
-                </Box>
-              )}
+                activeType?.value === FIELD_TYPES.MULTI_LINE) &&
+                formType === "CREATE" && (
+                  <Box>
+                    <FieldCheckbox
+                      watch={watch}
+                      setValue={setValue}
+                      register={register}
+                      name={"enable_multilanguage"}
+                      label={"Multiple language"}
+                    />
+                  </Box>
+                )}
             </Box>
             <FieldMenuItem
               onClick={() => handleSelectSetting(SETTING_TYPES.VALIDATION)}

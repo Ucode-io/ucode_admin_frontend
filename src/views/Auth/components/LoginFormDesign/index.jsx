@@ -45,7 +45,7 @@ const LoginFormDesign = ({
   selectedTabIndex,
   setSelectedTabIndex,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [isUserId, setIsUserId] = useState();
@@ -55,7 +55,7 @@ const LoginFormDesign = ({
   const [codeAppValue, setCodeAppValue] = useState({});
   const [connectionCheck, setConnectionCheck] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState();
-  const {control, handleSubmit, watch, setValue} = useForm();
+  const { control, handleSubmit, watch, setValue } = useForm();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -74,12 +74,14 @@ const LoginFormDesign = ({
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const {data: computedConnections = [], isLoading} = useQuery(
+  console.log({ selectedClientTypeID });
+
+  const { data: computedConnections = [], isLoading } = useQuery(
     [
       "GET_CONNECTION_LIST",
-      {"project-id": selectedProjectID},
-      {"environment-id": selectedEnvID},
-      {"user-id": isUserId},
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+      { "user-id": isUserId },
     ],
     () => {
       return connectionServiceV2.getList(
@@ -88,7 +90,7 @@ const LoginFormDesign = ({
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        {"environment-id": selectedEnvID}
+        { "environment-id": selectedEnvID }
       );
     },
     {
@@ -188,7 +190,7 @@ const LoginFormDesign = ({
           type: "email",
         });
       } else {
-        getSendCodeApp({...values, type: "EMAIL"});
+        getSendCodeApp({ ...values, type: "EMAIL" });
       }
     }
   };
@@ -377,12 +379,22 @@ const LoginFormDesign = ({
         company?.[0]?.projects?.[0]?.resource_environments?.[0]?.environment_id
       );
     }
+    console.log(company?.[0]?.projects);
     if (validLength) {
       if (company?.[0]?.projects?.length === 1) {
         if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
           if (
             company?.[0]?.projects?.[0]?.resource_environments?.[0]
               ?.client_types?.response?.length === 1
+          ) {
+            setValue(
+              "client_type",
+              company?.[0]?.projects?.[0]?.resource_environments?.[0]
+                ?.client_types?.response?.[0]?.guid
+            );
+          } else if (
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.client_types?.response?.length > 1
           ) {
             setValue(
               "client_type",
@@ -428,7 +440,7 @@ const LoginFormDesign = ({
       });
     }
   }, [computedConnections]);
-  console.log("computedCompaniescomputedCompanies", computedClientTypes);
+  // console.log("computedCompanies", computedClientTypes);
   useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);

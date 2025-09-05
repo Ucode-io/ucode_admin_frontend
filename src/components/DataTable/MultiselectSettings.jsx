@@ -112,7 +112,7 @@ const MultiselectSettings = ({
     const data = {
       ...fieldData,
       attributes: {
-        ...fieldData.attributes,
+        ...fieldData?.attributes,
       },
     };
 
@@ -130,7 +130,7 @@ const MultiselectSettings = ({
     const data = {
       ...fieldData,
       attributes: {
-        ...fieldData.attributes,
+        ...fieldData?.attributes,
         options: [...dropdownFields, newOption],
       },
     };

@@ -4,20 +4,25 @@ import { useAutoFilterProps } from "./useAutoFilterProps";
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
 import RectangleIconButton from "../../../../../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
+import DefaultValueBlock from "../../Relations/DefaultValueBlock";
 
-export const AutoFilter = ({
-  watch,
-  control,
-}) => {
+export const AutoFilter = ({ watch, control, register, setValue }) => {
+  const { fields, attributeFields, deleteAutoFilter, addNewAutoFilter } =
+    useAutoFilterProps({ control, watch });
 
-  const {
-    fields,
-    attributeFields,
-    deleteAutoFilter,
-    addNewAutoFilter,
-  } = useAutoFilterProps({ control, watch });
+  const values = watch();
 
-  return <Box>
+  return (
+    <Box>
+      <Box>
+        <DefaultValueBlock
+          control={control}
+          watch={watch}
+          columnsList={values.columnsList}
+          register={register}
+          setValue={setValue}
+        />
+      </Box>
       <Box display="flex" flexDirection="column" rowGap="8px">
         {fields.map((field, index) => (
           <Box display="flex" columnGap="8px">
@@ -35,7 +40,8 @@ export const AutoFilter = ({
             </Box>
             <RectangleIconButton
               color="error"
-              onClick={() => deleteAutoFilter(index)}>
+              onClick={() => deleteAutoFilter(index)}
+            >
               <Delete color="error" />
             </RectangleIconButton>
           </Box>
@@ -46,9 +52,11 @@ export const AutoFilter = ({
           className={cls.addBtn}
           onClick={addNewAutoFilter}
           variant="contained"
-          style={{fontSize: "14px"}}>
+          style={{ fontSize: "14px" }}
+        >
           Add
         </button>
       </div>
-  </Box>
-}
+    </Box>
+  );
+};

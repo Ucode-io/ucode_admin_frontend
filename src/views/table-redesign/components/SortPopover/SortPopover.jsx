@@ -34,8 +34,6 @@ export const SortPopover = ({
     (item) => item?.tableSlug === tableSlug
   );
 
-  console.log(sortValues);
-
   const fieldDefaultValue = {
     label:
       fieldsMap?.[firstSortValue?.field]?.attributes?.[

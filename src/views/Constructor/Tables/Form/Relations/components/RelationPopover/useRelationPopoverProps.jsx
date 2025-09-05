@@ -128,7 +128,14 @@ export const useRelationPopoverProps = ({
           />
         );
       case SETTING_TYPES.AUTO_FILTER:
-        return <AutoFilter control={control} watch={watch} />;
+        return (
+          <AutoFilter
+            control={control}
+            watch={watch}
+            register={register}
+            setValue={setValue}
+          />
+        );
       default:
         return null;
     }

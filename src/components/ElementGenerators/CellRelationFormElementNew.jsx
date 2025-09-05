@@ -167,6 +167,7 @@ const AutoCompleteElement = ({
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState();
+  const [count, setCount] = useState(0);
   const [localValue, setLocalValue] = useState(
     row?.[`${field?.slug}_data`] ?? null
   );
@@ -323,6 +324,7 @@ const AutoCompleteElement = ({
 
         return {
           options,
+          count: res?.data?.count,
         };
       },
       onSuccess: (data) => {
@@ -334,6 +336,7 @@ const AutoCompleteElement = ({
             ...(data.options ?? []),
           ]);
         }
+        setCount(data?.count);
       },
     }
   );
@@ -389,11 +392,8 @@ const AutoCompleteElement = ({
   };
 
   function loadMoreItems() {
-    if (field?.attributes?.function_path) {
-      setPage((prevPage) => prevPage + 1);
-    } else {
-      setPage((prevPage) => prevPage + 1);
-    }
+    if (count >= optionsFromLocale?.count) return;
+    setPage((prevPage) => prevPage + 1);
   }
 
   useEffect(() => {

@@ -601,35 +601,66 @@ export default function FieldCreateModal({
   }
 
   const handleSortField = (order) => {
-    const field = fieldData.id;
+    // const field = fieldData.id;
     // const order =
     //   sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
     //     ? "DESC"
     //     : "ASC";
-    dispatch(
-      paginationActions.setSortValues({
-        tableSlug,
-        field,
-        order,
-      })
-    );
+
+    const field =
+      fieldData?.type === (FIELD_TYPES.LOOKUP || FIELD_TYPES.LOOKUPS)
+        ? fieldData?.relation_id
+        : fieldData.id;
+
+    if (!field) {
+      handleClose();
+      return;
+    }
+
+    dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
+
     setSortedDatas((prev) => {
-      const newSortedDatas = [...prev];
-      const index = newSortedDatas.findIndex(
-        (item) => item.field === fieldData.id
-      );
+      let newSortedDatas = [...prev];
+      const index = newSortedDatas.findIndex((item) => item.field === field);
       if (index !== -1) {
-        newSortedDatas[index].order =
-          newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+        newSortedDatas[index].order = order;
       } else {
-        newSortedDatas.push({
-          field: fieldData.id,
-          order: "ASC",
-        });
+        newSortedDatas = [
+          {
+            field: field,
+            order,
+          },
+        ];
       }
       return newSortedDatas;
     });
+
     setAnchorEl(null);
+
+    // dispatch(
+    //   paginationActions.setSortValues({
+    //     tableSlug,
+    //     field,
+    //     order,
+    //   })
+    // );
+    // setSortedDatas((prev) => {
+    //   const newSortedDatas = [...prev];
+    //   const index = newSortedDatas.findIndex(
+    //     (item) => item.field === fieldData.id
+    //   );
+    //   if (index !== -1) {
+    //     newSortedDatas[index].order =
+    //       newSortedDatas[index].order === "ASC" ? "DESC" : "ASC";
+    //   } else {
+    //     newSortedDatas.push({
+    //       field: fieldData.id,
+    //       order: "ASC",
+    //     });
+    //   }
+    //   return newSortedDatas;
+    // });
+    // setAnchorEl(null);
   };
 
   const fixColumnChangeHandler = (column, e) => {

@@ -95,6 +95,8 @@ import TableViewOld from "./table-view-old";
 import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
 import {AIMenu, useAIChat} from "@/components/ProfilePanel/AIChat";
+import {SortIcon} from "../../utils/constants/icons";
+import {SortPopover} from "./components/SortPopover";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -192,6 +194,10 @@ export const NewUiViewsWithGroups = ({
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
 
+  const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
+
+  const isSortPopupOpen = Boolean(!!sortPopupAnchorEl);
+
   const [orderBy, setOrderBy] = useState(false);
 
   const query = new URLSearchParams(window.location.search);
@@ -207,17 +213,24 @@ export const NewUiViewsWithGroups = ({
     },
   });
 
-  const handleSortClick = () => {
+  const handleCloseSortPopup = () => setSortPopupAnchorEl(null);
+
+  const handleChangeOrder = (order) => {
+    const isGivenFromProps = typeof order === "boolean";
     setOrderBy((prev) => {
       constructorTableService.update(
         {
           ...tableInfo,
-          order_by: !prev,
+          order_by: isGivenFromProps ? order : !prev,
         },
         projectId
       );
-      return !prev;
+      return isGivenFromProps ? order : !prev;
     });
+  };
+
+  const handleSortClick = (e) => {
+    setSortPopupAnchorEl(e.currentTarget);
   };
 
   const handleAddDate = (item) => {
@@ -1156,6 +1169,17 @@ export const NewUiViewsWithGroups = ({
                     onClick={handleSortClick}
                   />
                 )}
+                <SortPopover
+                  tableSlug={tableSlug}
+                  open={isSortPopupOpen}
+                  anchorEl={sortPopupAnchorEl}
+                  handleClose={handleCloseSortPopup}
+                  fieldsMap={fieldsMap}
+                  setSortedDatas={setSortedDatas}
+                  handleChangeOrder={handleChangeOrder}
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
+                />
                 <FilterPopover
                   tableLan={tableLan}
                   view={view}
@@ -1731,6 +1755,7 @@ export const NewUiViewsWithGroups = ({
         control={mainForm.control}
         handleSubmit={mainForm.handleSubmit}
         tableLan={tableLan}
+        mainForm={mainForm}
       />
     </ViewProvider>
   );
@@ -2072,12 +2097,11 @@ const FiltersSwitch = ({
 };
 
 export const ViewOptionTitle = ({children}) => (
-  <Box color="#475467" fontWeight={500} fontSize={14}>
+  <Box color="#101828" fontWeight={400} fontSize={14} lineHeight="20px">
     {children}
   </Box>
 );
 
-// Search Button Component - Similar to LayoutSidebar
 const SearchButton = () => {
   const {
     open,

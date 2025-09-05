@@ -1,9 +1,9 @@
 .checkbox {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  margin-top: 30px;
+  display: flex;
+  column-gap: 16px;
+  padding-top: 16px;
 
   span {
-      padding: 2px;
+    padding: 2px;
   }
 }

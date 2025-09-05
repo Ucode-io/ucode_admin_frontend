@@ -10,9 +10,11 @@ const EditOptionsMenu = ({
   dropdownRemove = () => {},
   dropdownAppend = () => {},
   setIsMenuOpen = () => {},
+  handleChange = () => {},
   isStatusFormat,
   statusFields,
   editingField,
+  setEditingField,
   colorList = [],
   isMenuOpen,
   anchorEl,
@@ -31,7 +33,6 @@ const EditOptionsMenu = ({
     }
   }, [isMenuOpen, anchorEl]);
 
-  console.log(watch(`attributes.options.${editingField.index}.label`));
   return (
     <Portal>
       <div
@@ -49,6 +50,7 @@ const EditOptionsMenu = ({
               : `attributes.options.${editingField.index}.label`
           )}
           onChange={(e) => {
+            handleChange(e, editingField);
             setValue(
               isStatusFormat
                 ? `attributes.${editingField.name}.options.${editingField.index}.label`
@@ -92,6 +94,7 @@ const EditOptionsMenu = ({
                 );
                 setValue(`attributes.has_color`, true);
                 setIsMenuOpen(false);
+                handleChange(null, editingField, color);
               }}
               key={colorIndex}
             >

@@ -1,31 +1,12 @@
-import {
-  Box,
-  Button,
-  Card,
-  Menu,
-  Popover,
-  Portal,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box } from "@mui/material";
 import { Container, Draggable } from "react-smooth-dnd";
 import style from "./field.module.scss";
 import "./style.scss";
-import FRow from "../FormElements/FRow";
-import HFTextField from "../FormElements/HFTextField";
-import { generateLangaugeText } from "../../utils/generateLanguageText";
-import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
 import { AddIcon } from "@chakra-ui/icons";
 import { useEffect, useRef, useState } from "react";
-import TextField from "../NewFormElements/TextField/TextField";
-import { useFieldArray, useForm } from "react-hook-form";
-import {
-  DeleteOutline,
-  DragIndicator,
-  KeyboardArrowRight,
-} from "@mui/icons-material";
+import { useFieldArray } from "react-hook-form";
+import { DragIndicator, KeyboardArrowRight } from "@mui/icons-material";
 import StatusSettings from "./StatusSettings";
-import { PlusIcon } from "../../assets/icons/icon";
 import EditOptionsMenu from "./EditOptionMenu";
 
 const MultiselectSettings = ({
@@ -44,6 +25,9 @@ const MultiselectSettings = ({
   colorList,
   idx,
   dropdownAppend,
+  dropdownReplace,
+  handleUpdateField = () => {},
+  fieldData = {},
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -107,6 +91,53 @@ const MultiselectSettings = ({
     }
   };
 
+  const handleChangeOption = (e, editingField, color) => {
+    const value = e?.target?.value;
+
+    const updatedOptions = dropdownFields?.map((item) => {
+      if (item?.value === editingField.value) {
+        console.log({ item });
+        if (color) {
+          const newItem = { ...item, color };
+          return newItem;
+        } else {
+          const newItem = { ...item, value: value, label: value };
+          return newItem;
+        }
+      } else {
+        return item;
+      }
+    });
+
+    const data = {
+      ...fieldData,
+      attributes: {
+        ...fieldData.attributes,
+      },
+    };
+
+    if (isStatusFormat) {
+      data.attributes[editingField.name] = updatedOptions;
+    } else {
+      data.attributes.options = updatedOptions;
+    }
+
+    handleUpdateField(data);
+    dropdownReplace(updatedOptions);
+  };
+
+  const addOption = (newOption) => {
+    const data = {
+      ...fieldData,
+      attributes: {
+        ...fieldData.attributes,
+        options: [...dropdownFields, newOption],
+      },
+    };
+
+    handleUpdateField(data);
+  };
+
   useEffect(() => {
     window.addEventListener("click", handleCloseAddPopup);
     return () => {
@@ -154,11 +185,13 @@ const MultiselectSettings = ({
             onKeyDown={(e) => {
               if (e.key === "Enter" && e.target.value.trim()) {
                 e.preventDefault();
-                dropdownAppend({
+                const newOption = {
                   label: e.target.value,
                   value: e.target.value,
                   color: colorList[Math.ceil(Math.random() * colorList.length)],
-                });
+                };
+                dropdownAppend(newOption);
+                addOption(newOption);
                 e.target.value = "";
               }
             }}
@@ -300,6 +333,7 @@ const MultiselectSettings = ({
       {isMenuOpen && (
         <EditOptionsMenu
           editingField={editingField}
+          setEditingField={setEditingField}
           isStatusFormat={isStatusFormat}
           statusFields={statusFields}
           colorList={colorList}
@@ -310,6 +344,7 @@ const MultiselectSettings = ({
           setValue={setValue}
           watch={watch}
           anchorEl={anchorEl}
+          handleChange={handleChangeOption}
         />
       )}
 

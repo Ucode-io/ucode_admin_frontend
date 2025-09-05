@@ -20,6 +20,19 @@ import { FieldMenuItem } from "../../../components/FieldMenuItem";
 import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
 import HFIconPicker from "../../../../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../../../../components/FormElements/HFSelect";
+import TextFieldWithMultiLanguage from "../../../../../../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import {
+  AutofillIcon,
+  ClipboardCheckIcon,
+  SettingsIcon,
+  TypeIcon,
+} from "../../../../../../../utils/constants/icons";
+import {
+  getColumnIconPath,
+  iconsComponents,
+} from "../../../../../../table-redesign/icons";
+import SVG from "react-inlinesvg";
+import { NButton } from "../../../../../../../components/NButton";
 
 export const FieldParams = ({
   tableName = "",
@@ -34,6 +47,7 @@ export const FieldParams = ({
   handleSelectSetting = () => {},
   handleSubmit = () => {},
   onSubmit = () => {},
+  handleUpdateField = () => {},
 }) => {
   const {
     i18n,
@@ -72,7 +86,7 @@ export const FieldParams = ({
     addComplete,
     onDrop,
     functions,
-  } = useFieldParamsProps({ watch, setValue, control });
+  } = useFieldParamsProps({ watch, setValue, control, handleUpdateField });
 
   const [activeId, setActiveId] = useState(null);
   const containerRef = useRef(null);
@@ -86,23 +100,7 @@ export const FieldParams = ({
             <Box paddingX="8px">
               <FieldMenuItem
                 title="Type"
-                icon={
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1.33325 9.66687L7.7614 12.8809C7.84886 12.9247 7.89259 12.9465 7.93845 12.9551C7.97908 12.9628 8.02076 12.9628 8.06139 12.9551C8.10725 12.9465 8.15098 12.9247 8.23843 12.8809L14.6666 9.66687M1.33325 6.33354L7.7614 3.11946C7.84886 3.07574 7.89259 3.05387 7.93845 3.04527C7.97908 3.03765 8.02076 3.03765 8.06139 3.04527C8.10725 3.05387 8.15098 3.07574 8.23843 3.11946L14.6666 6.33354L8.23843 9.54762C8.15098 9.59134 8.10725 9.61321 8.06139 9.62181C8.02076 9.62943 7.97908 9.62943 7.93845 9.62181C7.89259 9.61321 7.84886 9.59134 7.7614 9.54762L1.33325 6.33354Z"
-                      stroke="#101828"
-                      stroke-width="1.2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                }
+                icon={<TypeIcon />}
                 value={
                   activeType?.[`label_${i18n.language}`] || activeType?.label
                 }
@@ -111,7 +109,29 @@ export const FieldParams = ({
             </Box>
             <Box display="flex" columnGap="6px" paddingX="8px">
               {/* <Box className={cls.iconBox}>{fieldTypeIcons[watch("type")]}</Box> */}
-              <MultiLangField
+              <TextFieldWithMultiLanguage
+                control={control}
+                name="attributes.label"
+                placeholder="Name"
+                defaultValue={tableName}
+                languages={languages}
+                id={"field_label"}
+                watch={watch}
+                leftContent={
+                  <Box className={cls.iconBox}>
+                    {/* {iconsComponents[watch("type")]} */}
+                    <SVG
+                      width="16"
+                      height="16"
+                      src={getColumnIconPath({
+                        column: { type: watch("type") },
+                      })}
+                    />
+                  </Box>
+                }
+                required
+              />
+              {/* <MultiLangField
                 control={control}
                 name="attributes.label"
                 fullWidth
@@ -121,7 +141,7 @@ export const FieldParams = ({
                 id={"field_label"}
                 watch={watch}
                 required
-              />
+              /> */}
             </Box>
             <Box display="flex" columnGap="6px" paddingX="8px">
               {/* <Box className={cls.iconBox}>
@@ -143,8 +163,13 @@ export const FieldParams = ({
               </Box> */}
               <HFTextField
                 inputStyles={{
-                  padding: "6px 14px 6px 6px",
+                  padding: "6px 14px 6px 32px",
                 }}
+                wrapperStyles={
+                  {
+                    // border: "1px solid #EAECF0",
+                  }
+                }
                 className={cls.fieldInput}
                 disabledHelperText
                 fullWidth
@@ -155,7 +180,7 @@ export const FieldParams = ({
                 withTrim
                 id={"field_key"}
                 startAdornment={
-                  <Box>
+                  <Box position={"absolute"} left={"10px"}>
                     <svg
                       width="16"
                       height="16"
@@ -245,7 +270,7 @@ export const FieldParams = ({
               </TreeView>
             </Box>
           )}
-          <Box>
+          <Box paddingX="8px">
             {activeType?.value === FIELD_TYPES.MULTISELECT && (
               <Box>
                 <AddOption onClick={() => toggleCreateOptionField()} />
@@ -569,7 +594,7 @@ export const FieldParams = ({
                 </Box>
               </>
             )}
-            {activeType.value === FIELD_TYPES.BUTTON && (
+            {activeType?.value === FIELD_TYPES.BUTTON && (
               <Box
                 display="flex"
                 flexDirection="column"
@@ -631,47 +656,49 @@ export const FieldParams = ({
               onClick={() => handleSelectSetting(SETTING_TYPES.VALIDATION)}
               title="Validation"
               icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="none"
-                >
-                  <g clip-path="url(#a)">
-                    <path
-                      stroke="#101828"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="1.2"
-                      d="M14.667 7.39v.614a6.667 6.667 0 1 1-3.954-6.093m3.954.756L8 9.34l-2-2"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="a">
-                      <path fill="#fff" d="M0 0h16v16H0z" />
-                    </clipPath>
-                  </defs>
-                </svg>
+                <ClipboardCheckIcon />
+                // <svg
+                //   xmlns="http://www.w3.org/2000/svg"
+                //   width="16"
+                //   height="16"
+                //   fill="none"
+                // >
+                //   <g clip-path="url(#a)">
+                //     <path
+                //       stroke="#101828"
+                //       stroke-linecap="round"
+                //       stroke-linejoin="round"
+                //       stroke-width="1.2"
+                //       d="M14.667 7.39v.614a6.667 6.667 0 1 1-3.954-6.093m3.954.756L8 9.34l-2-2"
+                //     />
+                //   </g>
+                //   <defs>
+                //     <clipPath id="a">
+                //       <path fill="#fff" d="M0 0h16v16H0z" />
+                //     </clipPath>
+                //   </defs>
+                // </svg>
               }
             />
             <FieldMenuItem
               onClick={() => handleSelectSetting(SETTING_TYPES.AUTO_FILL)}
               title="Autofill"
               icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="none"
-                >
-                  <path
-                    stroke="#101828"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.2"
-                    d="M13.333 8.334v-3.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.875c-.427-.218-.987-.218-2.108-.218H5.867c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.875c-.218.427-.218.987-.218 2.107v6.934c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874c.428.218.988.218 2.108.218H8m1.333-7.333h-4M6.667 10H5.333m5.334-5.333H5.333m4.334 8L11 14l3-3"
-                  />
-                </svg>
+                <AutofillIcon />
+                // <svg
+                //   xmlns="http://www.w3.org/2000/svg"
+                //   width="16"
+                //   height="16"
+                //   fill="none"
+                // >
+                //   <path
+                //     stroke="#101828"
+                //     stroke-linecap="round"
+                //     stroke-linejoin="round"
+                //     stroke-width="1.2"
+                //     d="M13.333 8.334v-3.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.875c-.427-.218-.987-.218-2.108-.218H5.867c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.875c-.218.427-.218.987-.218 2.107v6.934c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874c.428.218.988.218 2.108.218H8m1.333-7.333h-4M6.667 10H5.333m5.334-5.333H5.333m4.334 8L11 14l3-3"
+                //   />
+                // </svg>
               }
             />
             {/* <FieldMenuItem
@@ -721,17 +748,18 @@ export const FieldParams = ({
               <FieldMenuItem
                 title="Field"
                 icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="#101828"
-                      d="M14.25 21.95q-.475.125-.862-.162T13 21v-5q0-.5.388-.788t.887-.162q.925.25 1.85.35t1.875.1 1.888-.1 1.862-.35q.475-.125.863.163T23 16v5q0 .5-.387.788t-.863.162q-.925-.25-1.862-.35T18 21.5t-1.888.1-1.862.35M11 22h-.875q-.375 0-.65-.25t-.325-.625l-.3-2.275q-.325-.125-.612-.3t-.563-.375l-1.55.65q-.625.275-1.25.05t-.975-.8l-1.175-2.05q-.35-.575-.2-1.225t.675-1.075l1.325-1q-.025-.175-.025-.337v-.676q0-.162.025-.337l-1.325-1Q2.675 9.95 2.525 9.3t.2-1.225L3.9 6.025q.35-.575.975-.8t1.25.05l1.55.65q.275-.2.575-.375t.6-.3l.2-1.65q.075-.675.575-1.113T10.8 2.05h2.4q.675 0 1.175.438T14.95 3.6l.2 1.65q.325.125.613.3t.562.375l1.5-.65q.625-.275 1.263-.05t.987.8l1.175 2.05q.35.575.213 1.225t-.663 1.075l-1.325.95q.025.175.025.325v.325q0 .425-.312.725t-.763.3q-.4 0-.663-.3t-.262-.725q0-.375-.05-.75t-.175-.75l2.15-1.625-.975-1.7-2.475 1.05q-.55-.575-1.213-.962t-1.437-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7 2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625.975 1.7 2.475-1.05q.6.625 1.35 1.05T11 17.4zm1.05-13.5q1.4 0 2.4.95t1.1 2.35q.05.5-.238.888t-.787.412q-.425.025-.737-.262t-.263-.713q.1-.65-.35-1.137T12.05 10.5q-.625 0-1.062.438T10.55 12q0 .35.138.638t.387.487q.275.25.25.638t-.325.662q-.35.3-.812.263T9.4 14.3q-.45-.45-.65-1.05T8.55 12q0-1.475 1.025-2.488T12.05 8.5"
-                    />
-                  </svg>
+                  <SettingsIcon />
+                  // <svg
+                  //   xmlns="http://www.w3.org/2000/svg"
+                  //   width="16"
+                  //   height="16"
+                  //   viewBox="0 0 24 24"
+                  // >
+                  //   <path
+                  //     fill="#101828"
+                  //     d="M14.25 21.95q-.475.125-.862-.162T13 21v-5q0-.5.388-.788t.887-.162q.925.25 1.85.35t1.875.1 1.888-.1 1.862-.35q.475-.125.863.163T23 16v5q0 .5-.387.788t-.863.162q-.925-.25-1.862-.35T18 21.5t-1.888.1-1.862.35M11 22h-.875q-.375 0-.65-.25t-.325-.625l-.3-2.275q-.325-.125-.612-.3t-.563-.375l-1.55.65q-.625.275-1.25.05t-.975-.8l-1.175-2.05q-.35-.575-.2-1.225t.675-1.075l1.325-1q-.025-.175-.025-.337v-.676q0-.162.025-.337l-1.325-1Q2.675 9.95 2.525 9.3t.2-1.225L3.9 6.025q.35-.575.975-.8t1.25.05l1.55.65q.275-.2.575-.375t.6-.3l.2-1.65q.075-.675.575-1.113T10.8 2.05h2.4q.675 0 1.175.438T14.95 3.6l.2 1.65q.325.125.613.3t.562.375l1.5-.65q.625-.275 1.263-.05t.987.8l1.175 2.05q.35.575.213 1.225t-.663 1.075l-1.325.95q.025.175.025.325v.325q0 .425-.312.725t-.763.3q-.4 0-.663-.3t-.262-.725q0-.375-.05-.75t-.175-.75l2.15-1.625-.975-1.7-2.475 1.05q-.55-.575-1.213-.962t-1.437-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7 2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625.975 1.7 2.475-1.05q.6.625 1.35 1.05T11 17.4zm1.05-13.5q1.4 0 2.4.95t1.1 2.35q.05.5-.238.888t-.787.412q-.425.025-.737-.262t-.263-.713q.1-.65-.35-1.137T12.05 10.5q-.625 0-1.062.438T10.55 12q0 .35.138.638t.387.487q.275.25.25.638t-.325.662q-.35.3-.812.263T9.4 14.3q-.45-.45-.65-1.05T8.55 12q0-1.475 1.025-2.488T12.05 8.5"
+                  //   />
+                  // </svg>
                 }
                 onClick={() => handleSelectSetting(SETTING_TYPES.FIELD)}
               />
@@ -739,15 +767,11 @@ export const FieldParams = ({
           </Box>
         </Box>
       </Box>
-      <Button
-        fullWidth
-        sx={{ marginTop: "8px", lineHeight: "20px", height: "36px" }}
-        size="medium"
-        variant="contained"
-        onClick={handleSubmit(onSubmit)}
-      >
-        Save
-      </Button>
+      <Box padding="8px" display="flex" justifyContent="flex-end">
+        <NButton primary onClick={handleSubmit(onSubmit)}>
+          Save
+        </NButton>
+      </Box>
     </Box>
   );
 };

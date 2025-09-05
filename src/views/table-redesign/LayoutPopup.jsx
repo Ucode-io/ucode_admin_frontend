@@ -20,6 +20,9 @@ import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import constructorTableService from "../../services/constructorTableService";
 import {constructorTableActions} from "../../store/constructorTable/constructorTable.slice";
+import { CloseButton } from "../../components/CloseButton";
+import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import { CustomCheckbox } from "../../components/CustomCheckbox";
 
 export const LayoutPopup = ({
   onClose = () => {},
@@ -29,13 +32,16 @@ export const LayoutPopup = ({
   authData,
   handleSubmit,
   view,
+  tableSlug: tableSlugFromProps,
+  mainForm,
 }) => {
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const languages = useSelector((state) => state.languages.list);
 
-  const {tableSlug: tableSlugFromParams} = useParams();
-  const tableSlug = tableSlugFromParams ?? view?.table_slug;
+  const { tableSlug: tableSlugFromParams } = useParams();
+  const tableSlug =
+    tableSlugFromParams || tableSlugFromProps || view?.table_slug;
 
   const [btnLoader, setBtnLoader] = useState(false);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -64,7 +70,6 @@ export const LayoutPopup = ({
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     const computedData = {
       ...data,
       id: data?.id,
@@ -76,18 +81,20 @@ export const LayoutPopup = ({
     }
   };
 
-  const tableName = useWatch({
-    control,
-    name: "label",
-  });
+  // const tableName = useWatch({
+  //   control,
+  //   name: `attributes.label_${i18n.language}`,
+  // });
 
-  const {fields} = useFieldArray({
+  const tableName = mainForm?.watch(`attributes.label_${i18n.language}`);
+
+  const { fields } = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const {fields: relations} = useFieldArray({
+  const { fields: relations } = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -103,7 +110,7 @@ export const LayoutPopup = ({
     name: "attributes.auth_info.login",
   });
 
-  const {data: computedTableFields} = useQuery(
+  const { data: computedTableFields } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, i18n?.language],
     () => {
       if (!tableSlug) return false;
@@ -148,23 +155,46 @@ export const LayoutPopup = ({
       sx={{
         "& .MuiPaper-root": {
           width: "100%",
-          maxWidth: "520px",
+          maxWidth: "470px",
         },
       }}
       fullWidth
       open={open}
-      onClose={handleClose}>
-      <DialogContent style={{padding: "0px"}}>
+      onClose={handleClose}
+    >
+      <DialogContent style={{ padding: "0px" }}>
         <FormCard
-          contentStyle={{paddingBottom: "0px"}}
+          contentStyle={{ paddingBottom: "0px" }}
           maxWidth="100%"
           title={
-            generateLangaugeText(tableLan, i18n?.language, "General") ||
-            "General"
-          }>
+            <Box
+              width="100%"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <span>
+                {generateLangaugeText(tableLan, i18n?.language, "General") ||
+                  "General"}
+              </span>
+              <CloseButton onClick={handleClose} />
+            </Box>
+          }
+        >
           <Box display="flex" flexDirection="column" gap="16px">
-            <Box style={{display: "flex", gap: "6px"}}>
-              <HFTextFieldWithMultiLanguage
+            <Box style={{ display: "flex", gap: "6px" }}>
+              <TextFieldWithMultiLanguage
+                control={control}
+                name={`attributes.label`}
+                fullWidth
+                placeholder="Name"
+                defaultValue={tableName}
+                languages={languages}
+                id={"create_table_name"}
+                style={{ width: "100%", height: "36px" }}
+                watch={mainForm?.watch}
+              />
+              {/* <HFTextFieldWithMultiLanguage
                 control={control}
                 name="attributes.label"
                 fullWidth
@@ -172,7 +202,7 @@ export const LayoutPopup = ({
                 defaultValue={tableName}
                 languages={languages}
                 id={"create_table_name"}
-              />
+              /> */}
             </Box>
             <HFTextField
               control={control}
@@ -186,42 +216,42 @@ export const LayoutPopup = ({
           </Box>
 
           <Box className={style.checkbox}>
-            <HFCheckbox
+            <CustomCheckbox
               id="login_table_check"
               control={control}
               name="is_login_table"
               required
-              label={
-                generateLangaugeText(tableLan, i18n?.language, "Login Table") ||
-                "Login Table"
-              }
-            />
-            <HFCheckbox
+              size="sm"
+            >
+              {generateLangaugeText(tableLan, i18n?.language, "Login Table") ||
+                "Login Table"}
+            </CustomCheckbox>
+            <CustomCheckbox
               control={control}
               name="is_cached"
               required
-              label={
-                generateLangaugeText(tableLan, i18n?.language, "Cache") ||
-                "Cache"
-              }
-            />
-            <HFCheckbox
+              size="sm"
+            >
+              {generateLangaugeText(tableLan, i18n?.language, "Cache") ||
+                "Cache"}
+            </CustomCheckbox>
+            <CustomCheckbox
               control={control}
               name="soft_delete"
               required
-              label={
-                generateLangaugeText(tableLan, i18n?.language, "Soft delete") ||
-                "Soft delete"
-              }
-            />
-            <HFCheckbox
+              size="sm"
+            >
+              {generateLangaugeText(tableLan, i18n?.language, "Soft delete") ||
+                "Soft delete"}
+            </CustomCheckbox>
+            <CustomCheckbox
               control={control}
               name="order_by"
               required
-              label={
-                generateLangaugeText(tableLan, i18n?.language, "Sort") || "Sort"
-              }
-            />
+              size="sm"
+            >
+              {generateLangaugeText(tableLan, i18n?.language, "Sort") || "Sort"}
+            </CustomCheckbox>
           </Box>
 
           {loginTable && (
@@ -233,7 +263,8 @@ export const LayoutPopup = ({
                       display: "flex",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}>
+                    }}
+                  >
                     <FRow
                       label={
                         generateLangaugeText(
@@ -257,7 +288,8 @@ export const LayoutPopup = ({
                       display: "flex",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}>
+                    }}
+                  >
                     <FRow
                       label={
                         generateLangaugeText(
@@ -281,7 +313,8 @@ export const LayoutPopup = ({
                       display: "flex",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}>
+                    }}
+                  >
                     <FRow
                       label={
                         generateLangaugeText(
@@ -304,7 +337,8 @@ export const LayoutPopup = ({
                       display: "flex",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}>
+                    }}
+                  >
                     <FRow
                       label={
                         generateLangaugeText(
@@ -328,7 +362,8 @@ export const LayoutPopup = ({
                       display: "flex",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}>
+                    }}
+                  >
                     <FRow
                       label={
                         generateLangaugeText(
@@ -351,7 +386,8 @@ export const LayoutPopup = ({
                       display: "flex",
                       alignItems: "center",
                       margin: "10px 0",
-                    }}>
+                    }}
+                  >
                     <FRow
                       label={
                         generateLangaugeText(
@@ -378,7 +414,8 @@ export const LayoutPopup = ({
                   width: "100%",
                   alignItems: "center",
                   marginTop: "30px",
-                }}>
+                }}
+              >
                 <FRow
                   label={
                     generateLangaugeText(
@@ -401,13 +438,12 @@ export const LayoutPopup = ({
           )}
         </FormCard>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ padding: "16px" }}>
         <PrimaryButton
-          size="large"
           loader={btnLoader}
           loading={btnLoader}
           onClick={handleSubmit(onSubmit)}
-          fullWidth>
+        >
           {t("save")}
         </PrimaryButton>
       </DialogActions>

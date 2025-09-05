@@ -1,21 +1,14 @@
-import CloseIcon from "@mui/icons-material/Close";
-import SettingsIcon from "@mui/icons-material/Settings";
-import SortByAlphaOutlinedIcon from "@mui/icons-material/SortByAlphaOutlined";
-import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import {Box, Button, Card, Menu, Popover, Typography} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { Box, Popover } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import constructorTableService from "../../services/constructorTableService";
 
-import {useRelationGetByIdQuery} from "../../services/relationService";
-import {applyDrag} from "../../utils/applyDrag";
+import { useRelationGetByIdQuery } from "../../services/relationService";
+import { applyDrag } from "../../utils/applyDrag";
 import {
   FIELD_TYPES,
   FormatOptionType,
@@ -23,47 +16,53 @@ import {
   ValueTypes,
   fieldFormats,
   formatIncludes,
-  math,
   newFieldTypes,
 } from "../../utils/constants/fieldTypes";
-import {colorList} from "../ColorPicker/colorList";
+import { colorList } from "../ColorPicker/colorList";
 import FRow from "../FormElements/FRow";
-import HFSelect from "../FormElements/HFSelect";
-import HFSwitch from "../FormElements/HFSwitch";
-import HFTextArea from "../FormElements/HFTextArea";
-import HFTextField from "../FormElements/HFTextField";
-import HFTextFieldWithMultiLanguage from "../FormElements/HFTextFieldWithMultiLanguage";
 import RelationFieldForm from "./RelationFieldForm";
 import style from "./field.module.scss";
 import "./style.scss";
 import constructorFieldService, {
   useFieldsListQuery,
+  useFieldUpdateMutation,
 } from "../../services/constructorFieldService";
-import StatusFieldSettings from "../../views/Constructor/Tables/Form/Fields/StatusFieldSettings";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
 import FormulaFilters from "../../views/Constructor/Tables/Form/Fields/Attributes/FormulaFilters";
 import constructorRelationService from "../../services/constructorRelationService";
-import {listToMap} from "../../utils/listToMap";
+import { listToMap } from "../../utils/listToMap";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import Dropdown from "../NewFormElements/Dropdown/Dropdown";
-import FormElementButton from "../NewFormElements/FormElementButton";
 import MultiselectSettings from "./MultiselectSettings";
-import SVG from "react-inlinesvg";
-import {FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon} from "../icons";
-import {paginationActions} from "../../store/pagination/pagination.slice";
+import { FieldFormatIcon, FieldPropertyIcon, FieldTypeIcon } from "../icons";
+import { paginationActions } from "../../store/pagination/pagination.slice";
 import constructorViewService from "../../services/constructorViewService";
 import DropdownSelect from "../NewFormElements/DropdownSelect";
 import TextField from "../NewFormElements/TextField/TextField";
-import {Image} from "@chakra-ui/react";
 import clsx from "clsx";
-import {useViewContext} from "../../providers/ViewProvider";
-import {FieldPopover} from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
-import {RelationPopover} from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
+import { useViewContext } from "../../providers/ViewProvider";
+import { FieldPopover } from "../../views/Constructor/Tables/Form/Fields/components/FieldPopover/FieldPopover";
+import { RelationPopover } from "../../views/Constructor/Tables/Form/Relations/components/RelationPopover";
 import { FieldCheckbox } from "../../views/Constructor/Tables/Form/components/FieldCheckbox/FieldCheckbox";
-import HFIconPicker from "../FormElements/HFIconPicker";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import listToOptions from "../../utils/listToOptions";
+import {
+  EyeOffIcon,
+  fieldTypeIcons,
+  PinIcon,
+  SettingsIcon,
+  SortIcon,
+  TrashIcon,
+} from "../../utils/constants/icons";
+import { KeyboardArrowRight } from "@mui/icons-material";
+import useDebounce from "../../hooks/useDebounce";
+import {
+  getColumnIconPath,
+  iconsComponents,
+} from "../../views/table-redesign/icons";
+import SVG from "react-inlinesvg";
+import { North, South } from "@mui/icons-material";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -112,6 +111,8 @@ export default function FieldCreateModal({
   setSortedDatas = () => {},
   setFieldData = () => {},
   register = () => {},
+  handleCloseFieldDrawer = () => {},
+  setIsUpdatedField = () => {},
   formType,
 }) {
   const { id, tableSlug: tableSlugParam } = useParams();
@@ -304,6 +305,7 @@ export default function FieldCreateModal({
     fields: dropdownFields,
     append: dropdownAppend,
     remove: dropdownRemove,
+    replace: dropdownReplace,
   } = useFieldArray({
     control,
     name: "attributes.options",
@@ -331,6 +333,13 @@ export default function FieldCreateModal({
   const onDrop = (dropResult) => {
     const result = applyDrag(watch("attributes.options"), dropResult);
     if (result) {
+      handleUpdateField({
+        ...fieldData,
+        attributes: {
+          ...fieldData.attributes,
+          options: result,
+        },
+      });
       setValue("attributes.options", result);
     }
   };
@@ -445,6 +454,7 @@ export default function FieldCreateModal({
     setAnchorEl(null);
     !fieldData && setValue("type", "");
     setFieldData(null);
+    handleCloseFieldDrawer();
   };
 
   const handleCloseColor = () => {
@@ -589,12 +599,12 @@ export default function FieldCreateModal({
     };
   }
 
-  const handleSortField = () => {
+  const handleSortField = (order) => {
     const field = fieldData.id;
-    const order =
-      sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
-        ? "DESC"
-        : "ASC";
+    // const order =
+    //   sortedDatas?.find((item) => item.field === fieldData.id)?.order === "ASC"
+    //     ? "DESC"
+    //     : "ASC";
     dispatch(
       paginationActions.setSortValues({
         tableSlug,
@@ -669,6 +679,29 @@ export default function FieldCreateModal({
     editProperty: "editProperty",
     changeFormat: "changeFormat",
     changeType: "changeType",
+    sortData: "sortData",
+  };
+
+  const { mutate: updateField } = useFieldUpdateMutation({});
+
+  const handleUpdateField = useDebounce((data) => {
+    updateField({ data, tableSlug });
+  }, 1000);
+
+  const handleChangeLabel = (e, lang) => {
+    const value = e.target.value;
+    setIsUpdatedField(true);
+
+    const data = {
+      ...fieldData,
+      attributes: {
+        ...fieldData?.attributes,
+        [`label_${lang}`]: value,
+      },
+      label: value,
+    };
+
+    handleUpdateField(data);
   };
 
   return (
@@ -690,21 +723,35 @@ export default function FieldCreateModal({
           }}
         >
           <div className={style.field}>
-            {/* <Typography
-          variant="h6"
-          textTransform="uppercase"
-          className={style.title}
-        >
-          {generateLangaugeText(tableLan, i18n?.language, "Add column") ||
-            "ADD COLUMN"}
-        </Typography> */}
-
-            <div
-              // onSubmit={handleSubmit(
-              //   format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-              // )}
-              className={style.form}
-            >
+            <div className={style.form}>
+              <Box className={style.header}>
+                <p className={style.headerTitle}>
+                  {formType === "CREATE" ? "Create field" : "Edit fields"}
+                </p>
+                <button
+                  className={style.closeButton}
+                  onClick={handleClose}
+                  type="button"
+                >
+                  <span>
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8.75 1.25L1.25 8.75M1.25 1.25L8.75 8.75"
+                        stroke="#8F8E8B"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </Box>
               <MaterialUIProvider>
                 <Box
                   className={style.field}
@@ -716,7 +763,6 @@ export default function FieldCreateModal({
                   <Box
                     sx={{
                       width: "100%",
-                      marginBottom: "10px",
                     }}
                   >
                     {!ValueTypes(values?.type) && !FormatTypes(format) ? (
@@ -728,6 +774,21 @@ export default function FieldCreateModal({
                         defaultValue={tableName}
                         languages={languages}
                         id={"text_field_label"}
+                        customOnChange={handleChangeLabel}
+                        watch={watch}
+                        leftContent={
+                          <Box>
+                            {
+                              <SVG
+                                src={getColumnIconPath({
+                                  column: { type: [watch("type")] },
+                                })}
+                                width="16"
+                                height="16"
+                              />
+                            }
+                          </Box>
+                        }
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -764,25 +825,43 @@ export default function FieldCreateModal({
                   {fieldData && (
                     <Box width={"100%"}>
                       <Box borderBottom="1px solid #e5e9eb" paddingY="6px">
-                        <Box>
-                          <button
-                            className={style.btn}
-                            type="button"
-                            onClick={handleSortField}
-                            onMouseEnter={() => {
-                              setOpenedDropdown(null);
-                            }}
-                          >
-                            <SortByAlphaOutlinedIcon />
-                            <span>
-                              Sort{" "}
-                              {sortedDatas?.find(
-                                (item) => item.field === fieldData.id
-                              )?.order === "ASC"
-                                ? "Z -> A"
-                                : "A -> Z"}
-                            </span>
-                          </button>
+                        <Box
+                          width={"100%"}
+                          onMouseEnter={() => {
+                            setOpenedDropdown(dropdownTypes.sortData);
+                          }}
+                        >
+                          <Dropdown
+                            optionsClassname={style.sortDropdown}
+                            openedDropdown={openedDropdown}
+                            name={dropdownTypes.sortData}
+                            content={
+                              <div>
+                                <button
+                                  className={style.sortOptions}
+                                  onClick={() => handleSortField("ASC")}
+                                >
+                                  {" "}
+                                  <span>
+                                    <North />
+                                  </span>{" "}
+                                  <span>Sort ascending</span>
+                                </button>
+                                <button
+                                  className={style.sortOptions}
+                                  onClick={() => handleSortField("DESC")}
+                                >
+                                  {" "}
+                                  <span>
+                                    <South />
+                                  </span>{" "}
+                                  <span>Sort descending</span>
+                                </button>
+                              </div>
+                            }
+                            label={"Sort"}
+                            icon={<SortIcon />}
+                          />
                         </Box>
                         <Box width={"100%"}>
                           <button
@@ -800,7 +879,7 @@ export default function FieldCreateModal({
                               setOpenedDropdown(null);
                             }}
                           >
-                            <ViewWeekOutlinedIcon />
+                            <PinIcon />
                             <span>
                               {view?.attributes?.fixedColumns?.[fieldData?.id]
                                 ? "Unfix"
@@ -809,7 +888,7 @@ export default function FieldCreateModal({
                             </span>
                           </button>
                         </Box>
-                        {(format === FIELD_TYPES.SINGLE_LINE ||
+                        {/* {(format === FIELD_TYPES.SINGLE_LINE ||
                           format === FIELD_TYPES.MULTI_LINE) && (
                           <Box>
                             <FieldCheckbox
@@ -820,7 +899,7 @@ export default function FieldCreateModal({
                               label={"Multiple language"}
                             />
                           </Box>
-                        )}
+                        )} */}
                       </Box>
                     </Box>
                   )}
@@ -925,6 +1004,7 @@ export default function FieldCreateModal({
                         content={
                           <MultiselectSettings
                             dropdownFields={dropdownFields}
+                            dropdownReplace={dropdownReplace}
                             onDrop={onDrop}
                             watch={watch}
                             control={control}
@@ -939,6 +1019,8 @@ export default function FieldCreateModal({
                             colorList={colorList}
                             idx={idx}
                             dropdownAppend={dropdownAppend}
+                            handleUpdateField={handleUpdateField}
+                            fieldData={fieldData}
                           />
                         }
                         label={
@@ -956,8 +1038,7 @@ export default function FieldCreateModal({
                   {fieldData && (
                     <Box
                       width="100%"
-                      marginTop="6px"
-                      paddingTop="6px"
+                      marginTop="4px"
                       // borderTop="1px solid #e5e9eb"
                     >
                       <Box width={"100%"}>
@@ -969,11 +1050,49 @@ export default function FieldCreateModal({
                             setOpenedDropdown(null);
                           }}
                         >
-                          <VisibilityOffOutlinedIcon />
+                          <EyeOffIcon />
                           <span>Hide field</span>
                         </button>
                       </Box>
-                      <Box width={"100%"} color="red">
+                    </Box>
+                  )}
+                  {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
+                    <button
+                      className={clsx(style.btn, style.settings)}
+                      onClick={() => {
+                        fieldHandleOpen(
+                          fieldData ?? {
+                            type: FIELD_TYPES.FORMULA_FRONTEND,
+                          }
+                        );
+                      }}
+                      onMouseEnter={() => {
+                        setOpenedDropdown(null);
+                      }}
+                    >
+                      <SettingsIcon />
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Settings"
+                      ) || "Settings"}
+                      <span className={style.btnIcon}>
+                        <KeyboardArrowRight
+                          htmlColor="rgba(71, 70, 68, 0.6)"
+                          width={16}
+                          height={16}
+                        />
+                      </span>
+                    </button>
+                  )}
+                  {fieldData && (
+                    <Box
+                      width="100%"
+                      // marginTop="4px"
+                      borderTop="1px solid #e5e9eb"
+                      paddingTop="4px"
+                    >
+                      <Box width={"100%"}>
                         <button
                           className={style.btn}
                           type="button"
@@ -982,7 +1101,7 @@ export default function FieldCreateModal({
                             setOpenedDropdown(null);
                           }}
                         >
-                          <DeleteOutlinedIcon />
+                          <TrashIcon />
                           <span>Delete field</span>
                         </button>
                       </Box>
@@ -1424,37 +1543,11 @@ export default function FieldCreateModal({
                   relatedTableSlug={relatedTableSlug}
                 />
               ) : null}
-              {(format === FIELD_TYPES.FORMULA_FRONTEND || fieldData) && (
-                <button
-                  className={clsx(style.btn, style.settings)}
-                  onClick={() => {
-                    fieldHandleOpen(
-                      fieldData ?? {
-                        type: FIELD_TYPES.FORMULA_FRONTEND,
-                      }
-                    );
-                  }}
-                  onMouseEnter={() => {
-                    setOpenedDropdown(null);
-                  }}
-                >
-                  <Image src="/img/settings.svg" alt="settings" />
-                  {generateLangaugeText(
-                    tableLan,
-                    i18n?.language,
-                    "Advanced settings"
-                  ) || "Advanced settings"}
-                </button>
-              )}
-              <Box className={style.button_group} sx={{ padding: "0 5px" }}>
+              {/* <Box className={style.button_group} sx={{ padding: "0 5px" }}>
                 <FormElementButton onClick={handleClick}>
                   {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
                     "Cancel"}
                 </FormElementButton>
-                {/* <Button variant="contained" color="error" onClick={handleClick}>
-              {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
-                "Cancel"}
-            </Button> */}
                 <FormElementButton
                   onClick={handleSubmit(
                     format?.includes("FORMULA") ? innerOnsubmit : onSubmit
@@ -1474,7 +1567,7 @@ export default function FieldCreateModal({
                         "Add column"
                       ) || "Add column"}
                 </FormElementButton>
-              </Box>
+              </Box> */}
             </div>
           </div>
         </Popover>
@@ -1496,6 +1589,7 @@ export default function FieldCreateModal({
         slug={tableSlug}
         field={drawerState}
         selectedField={drawerState}
+        handleUpdateField={handleUpdateField}
         // menuItem={menuItem}
       />
       {fieldData?.type === FIELD_TYPES.LOOKUP ||

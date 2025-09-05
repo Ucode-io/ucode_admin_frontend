@@ -101,7 +101,13 @@ export const MultiLangField = ({
         }
         endAdornment={
           <Box paddingLeft="8px" marginY="5px" borderLeft="1px solid #EAECF0">
-            <button className={cls.langButton} onClick={handleClick}>
+            <button className={cls.languageBtn} onClick={handleClick}>
+              <span className={cls.languageBtnInner}>
+                <TranslateIcon />
+                <span>{selectedLanguage}</span>
+              </span>
+            </button>
+            {/* <button className={cls.langButton} onClick={handleClick}>
               <span className={cls.langButtonInner}>
                 {languages?.length > 1 && (
                   <svg
@@ -129,7 +135,7 @@ export const MultiLangField = ({
                 )}
                 <span>{selectedLanguage}</span>
               </span>
-            </button>
+            </button> */}
             {/* <Menu
               id="basic-menu"
               anchorEl={anchorEl}

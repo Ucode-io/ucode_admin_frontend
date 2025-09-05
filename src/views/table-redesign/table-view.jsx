@@ -269,6 +269,7 @@ const TableView = ({
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
+    console.log({ sortedDatas });
 
     let a = sortedDatas
       ?.map((el) => {

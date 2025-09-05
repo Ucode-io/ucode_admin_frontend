@@ -34,7 +34,7 @@ const TableLinkModal = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
-  const { control, handleSubmit, reset, watch, getValues } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       attributes: {
         label_en: "",
@@ -42,7 +42,6 @@ const TableLinkModal = ({
       },
     },
   });
-  console.log(getValues());
 
   const tableOptions = useMemo(() => {
     return tables?.tables?.map((item, index) => ({
@@ -74,7 +73,6 @@ const TableLinkModal = ({
           queryClient.refetchQueries(["MENU_CHILD"]);
           closeModal();
         } else {
-          console.log("entered second");
           getMenuList();
           closeModal();
         }
@@ -157,7 +155,7 @@ const TableLinkModal = ({
                   name="attributes.label"
                   placeholder="Name"
                   languages={languages}
-                  id={"text_field_label"}
+                  id={"attach_table"}
                   style={{ width: "100%", height: "36px" }}
                   watch={watch}
                 />

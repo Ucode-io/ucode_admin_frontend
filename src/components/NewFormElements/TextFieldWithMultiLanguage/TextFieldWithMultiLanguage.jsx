@@ -45,10 +45,6 @@ export default function TextFieldWithMultiLanguage({
   const [fieldName, setFieldName] = useState(name);
   const [fieldPlaceholder, setFieldPlaceholder] = useState(placeholder);
 
-  // const watch = useWatch({
-  //   control,
-  // });
-
   const defaultValue = useMemo(
     () => watch(fieldName) ?? "",
     [watch, fieldName]
@@ -77,9 +73,10 @@ export default function TextFieldWithMultiLanguage({
   return (
     <Box width={"100%"}>
       <Controller
+        key={fieldName}
         control={control}
         name={fieldName}
-        render={({ field: { onChange }, fieldState: { error } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <InputGroup>
             <Input
               {...props}
@@ -91,10 +88,10 @@ export default function TextFieldWithMultiLanguage({
                 onChange(e);
                 customOnChange(e, selectedLanguage);
               }}
-              // value={value}
               placeholder={fieldPlaceholder}
               disabled={disabled}
               id={id}
+              value={value}
             />
             {leftContent && (
               <InputLeftElement
@@ -124,58 +121,6 @@ export default function TextFieldWithMultiLanguage({
           </InputGroup>
         )}
       />
-      {/* <TextField
-        key={fieldName}
-        control={control}
-        name={fieldName}
-        fullWidth
-        placeholder={fieldPlaceholder}
-        defaultValue={defaultValue}
-        id={id}
-        {...props}
-      />
-
-      {languages?.length > 1 && (
-        <Badge badgeContent={selectedLanguage} color="primary">
-          <Button
-            className={cls.btn}
-            id="basic-button"
-            variant="outlined"
-            color="inherit"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            <TranslateIcon width="16" height="16" />
-          </Button>
-        </Badge>
-      )} */}
-
-      {/* <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => {
-          handleClose(selectedLanguage);
-        }}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-      >
-        {languages?.map((language) => (
-          <MenuItem
-            onClick={() => {
-              handleClose(language?.slug);
-            }}
-            style={{
-              background: selectedLanguage === language?.slug ? "#f0f0f0" : "",
-            }}
-          >
-            {language?.title}
-          </MenuItem>
-        ))}
-      </Menu> */}
     </Box>
   );
 }

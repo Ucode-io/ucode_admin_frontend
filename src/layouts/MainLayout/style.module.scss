@@ -35,7 +35,12 @@
 }
 
 .button {
-  margin-top: 10px;
+  margin-top: 16px;
+  border: 1px dashed #3294FF;
+  font-family: Inter;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .tabsBlock {
@@ -636,4 +641,41 @@
       }
     }
   }
+}
+
+.form {
+  padding: 16px;
+  padding-top: 0;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.modalTitle {
+  font-family: "Inter";
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5B5956;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.deleteBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #EAECF0;
+  border-radius: 8px;
 }

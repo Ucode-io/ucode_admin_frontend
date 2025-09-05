@@ -14,6 +14,7 @@ const HFIconPicker = ({
   disabled = false,
   customeClick = false,
   clickItself = () => {},
+  shape,
   ...props
 }) => {
   return (
@@ -33,6 +34,7 @@ const HFIconPicker = ({
             error={error}
             value={value}
             tabIndex={tabIndex}
+            shape={shape}
             onChange={(val) => {
               onChange(val);
               isNewTableView && updateObject();

@@ -10,10 +10,16 @@ import {useMicrofrontendListQuery} from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import {Delete} from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import styles from "./style.module.scss";
-import {store} from "../../store";
-import {useSelector} from "react-redux";
+import { store } from "../../store";
+import { useSelector } from "react-redux";
+import { CloseButton } from "../../components/CloseButton";
+import cls from "./style.module.scss";
+import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
+import { TrashIcon } from "../../utils/constants/icons";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -22,11 +28,11 @@ const MicrofrontendLinkModal = ({
   getMenuList,
 }) => {
   const queryClient = useQueryClient();
-  const {control, handleSubmit, reset} = useForm();
+  const { control, handleSubmit, reset, watch } = useForm();
 
   const company = store.getState().company;
   const languages = useSelector((state) => state.languages.list);
-  const {data: microfrontend} = useMicrofrontendListQuery();
+  const { data: microfrontend } = useMicrofrontendListQuery();
 
   const {
     fields: values,
@@ -114,26 +120,25 @@ const MicrofrontendLinkModal = ({
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
-          <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Привязать microfrontend</Typography>
-            <ClearIcon
-              color="primary"
-              onClick={closeModal}
-              width="46px"
-              style={{
-                cursor: "pointer",
-              }}
-            />
+          <div className={cls.modalHeader}>
+            <h4 className={cls.modalTitle}>Create microfrontend</h4>
+            <CloseButton onClick={closeModal} />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
+          <form className={cls.form} onSubmit={handleSubmit(onSubmit)}>
             <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
-              <Box
-                display={"flex"}
-                columnGap={"16px"}
-                className="form-elements">
-                <HFIconPicker name="icon" control={control} />
-                {languages?.map((item, index) => (
+              <Box>
+                <TextFieldWithMultiLanguage
+                  control={control}
+                  name={`attributes.label`}
+                  placeholder="Name"
+                  languages={languages}
+                  id={"create_table_name"}
+                  style={{ width: "100%", height: "36px" }}
+                  watch={watch}
+                />
+                {/* <HFIconPicker name="icon" control={control} /> */}
+                {/* {languages?.map((item, index) => (
                   <HFTextField
                     autoFocus
                     fullWidth
@@ -142,12 +147,31 @@ const MicrofrontendLinkModal = ({
                     control={control}
                     name={`attributes.label_${item.slug}`}
                   />
-                ))}
+                ))} */}
               </Box>
-              <Box
+              <Box display={"flex"} gap="6px">
+                <HFIconPicker
+                  name="icon"
+                  control={control}
+                  shape="rectangle"
+                  size="md"
+                  placeholder={<AddCircleOutlineIcon htmlColor="#98A2B3" />}
+                />
+                <HFAutocomplete
+                  portal={null}
+                  name="microfrontend_id"
+                  control={control}
+                  placeholder="Choose Microfrontend"
+                  fullWidth
+                  required
+                  options={microfrontendOptions}
+                />
+              </Box>
+              {/* <Box
                 display={"flex"}
                 columnGap={"16px"}
-                className="form-elements">
+                className="form-elements"
+              >
                 <HFSelect
                   fullWidth
                   label="Microfrontend"
@@ -156,7 +180,7 @@ const MicrofrontendLinkModal = ({
                   options={microfrontendOptions}
                   required
                 />
-              </Box>
+              </Box> */}
             </Box>
             {values?.map((elements, index) => (
               <div key={elements?.key} className={styles.navigateWrap}>
@@ -172,22 +196,33 @@ const MicrofrontendLinkModal = ({
                   name={`attributes.params[${index}].value`}
                   placeholder={"value"}
                 />
-                <RectangleIconButton
+                <button
+                  className={styles.deleteBtn}
+                  type="button"
                   onClick={() => deleteField(index)}
-                  color="error">
-                  <Delete color="error" />
-                </RectangleIconButton>
+                >
+                  <TrashIcon />
+                </button>
               </div>
             ))}
             <Button
               className={styles.button}
-              variant="contained"
+              variant="outlined"
               fullWidth
-              onClick={addField}>
+              onClick={addField}
+              startIcon={<Add />}
+            >
               Add params
             </Button>
-            <div className="btns-row">
-              <SaveButton title="Add" type="submit" loading={loading} />
+            <div className={cls.modalFooter}>
+              <Button
+                variant="contained"
+                title="Add"
+                type="submit"
+                loading={loading}
+              >
+                Add
+              </Button>
             </div>
           </form>
         </Card>

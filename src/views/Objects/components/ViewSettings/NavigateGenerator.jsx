@@ -25,7 +25,7 @@ function NavigateGenerator({form}) {
   return (
     <Box mt={3}>
       <div>
-        <FEditableRow label="Params" />
+        <p style={{ marginBottom: "6px" }}>Object URL</p>
         {values?.map((elements, index) => (
           <NavigateFormElements
             form={form}

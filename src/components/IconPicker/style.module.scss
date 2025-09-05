@@ -1,7 +1,23 @@
+.iconPicker {
+  height: 16px;
+}
+
+.iconPicker.md {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  & .iconWrapper {
+    width: 36px;
+    height: 36px;
+  }
+
+}
+
 .iconWrapper {
   width: 26px;
   height: 26px;
-  border: 1px solid silver;
+  border: 1px solid #EAECF0;
   display: flex;
   align-items: center;
   border-radius: 50%;
@@ -10,8 +26,8 @@
   color: #0067f4;
 
   &.rectangle {
-    border-radius: 6px;
-    margin-top: 7px;
+    border-radius: 8px;
+    // margin-top: 7px;
   }
 
   &.error {
@@ -29,6 +45,8 @@
 }
 
 .iconsBlock {
+  height: 230px;
+  overflow: auto;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;

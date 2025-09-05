@@ -8,8 +8,9 @@ import IconGeneratorIconjs from "./IconGeneratorIconjs";
 import OverallCategoryIcons from "./OverallCategoryIcons";
 import styles from "./style.module.scss";
 import {useSelector} from "react-redux";
+import clsx from "clsx";
 
-const defaultOverallTab = {label: "All", category: "", value: "overall"};
+const defaultOverallTab = { label: "All", category: "", value: "overall" };
 
 const IconPicker = ({
   value = "",
@@ -22,6 +23,7 @@ const IconPicker = ({
   shape = "circle",
   disabled,
   placeholder,
+  size = "sm",
   ...props
 }) => {
   const buttonRef = useRef();
@@ -55,7 +57,7 @@ const IconPicker = ({
 
   return (
     <div
-      style={{ height: "16px" }}
+      className={clsx(styles.iconPicker, styles[size])}
       onClick={(e) => e.stopPropagation()}
       {...props}
     >

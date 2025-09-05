@@ -63,6 +63,7 @@ import {
 } from "../../views/table-redesign/icons";
 import SVG from "react-inlinesvg";
 import { North, South } from "@mui/icons-material";
+import FormElementButton from "../NewFormElements/FormElementButton";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -685,23 +686,29 @@ export default function FieldCreateModal({
   const { mutate: updateField } = useFieldUpdateMutation({});
 
   const handleUpdateField = useDebounce((data) => {
-    updateField({ data, tableSlug });
+    if (fieldData) {
+      updateField({ data, tableSlug });
+    } else {
+      return;
+    }
   }, 1000);
 
   const handleChangeLabel = (e, lang) => {
-    const value = e.target.value;
-    setIsUpdatedField(true);
+    if (fieldData) {
+      const value = e.target.value;
+      setIsUpdatedField(true);
 
-    const data = {
-      ...fieldData,
-      attributes: {
-        ...fieldData?.attributes,
-        [`label_${lang}`]: value,
-      },
-      label: value,
-    };
+      const data = {
+        ...fieldData,
+        attributes: {
+          ...fieldData?.attributes,
+          [`label_${lang}`]: value,
+        },
+        label: value,
+      };
 
-    handleUpdateField(data);
+      handleUpdateField(data);
+    } else return;
   };
 
   return (
@@ -1543,31 +1550,27 @@ export default function FieldCreateModal({
                   relatedTableSlug={relatedTableSlug}
                 />
               ) : null}
-              {/* <Box className={style.button_group} sx={{ padding: "0 5px" }}>
-                <FormElementButton onClick={handleClick}>
-                  {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
-                    "Cancel"}
-                </FormElementButton>
-                <FormElementButton
-                  onClick={handleSubmit(
-                    format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-                  )}
-                  primary
-                  type="button"
-                >
-                  {fieldData
-                    ? generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Save colmn"
-                      ) || "Save column"
-                    : generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Add column"
-                      ) || "Add column"}
-                </FormElementButton>
-              </Box> */}
+              {!fieldData && (
+                <Box className={style.button_group} sx={{ padding: "0 5px" }}>
+                  <FormElementButton onClick={handleClick}>
+                    {generateLangaugeText(tableLan, i18n?.language, "Cancel") ||
+                      "Cancel"}
+                  </FormElementButton>
+                  <FormElementButton
+                    onClick={handleSubmit(
+                      format?.includes("FORMULA") ? innerOnsubmit : onSubmit
+                    )}
+                    primary
+                    type="button"
+                  >
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Add column"
+                    ) || "Add column"}
+                  </FormElementButton>
+                </Box>
+              )}
             </div>
           </div>
         </Popover>

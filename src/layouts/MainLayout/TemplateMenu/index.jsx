@@ -11,6 +11,7 @@ import MicroFunctions from "./MicroFunctions";
 import styles from "./style.module.scss";
 import TemplateTables from "./TemplateTables";
 import TemplateSelection from "./TemplateSelection";
+import { NButton } from "../../../components/NButton";
 
 function TemplateMenu({
   closeModal = () => {},
@@ -22,7 +23,7 @@ function TemplateMenu({
   const [loading, setLoading] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-  const {handleSubmit, control, reset, watch} = useForm({
+  const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       name: "",
       description: "",
@@ -36,7 +37,7 @@ function TemplateMenu({
   // Watch form values for conditional rendering
   const formValues = watch();
 
-  const {mutate: createTemplate} = useTemplateCreateMutation({
+  const { mutate: createTemplate } = useTemplateCreateMutation({
     onSuccess: (res) => {
       closeModal();
       reset();
@@ -46,7 +47,7 @@ function TemplateMenu({
     },
   });
 
-  const {mutate: createMenuTemplate} = useMenuTemplateCreateMutation({
+  const { mutate: createMenuTemplate } = useMenuTemplateCreateMutation({
     onSuccess: (res) => {
       closeModal();
       reset();
@@ -110,7 +111,8 @@ function TemplateMenu({
           maxWidth: "800px",
           height: "500px",
         },
-      }}>
+      }}
+    >
       <Box position={"relative"} px={3} pt={2}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Header with Buttons */}
@@ -122,96 +124,70 @@ function TemplateMenu({
               mb: 3,
               pb: 2,
               borderBottom: "1px solid #e5e7eb",
-            }}>
+            }}
+          >
             <Typography
               variant="h5"
               sx={{
                 fontWeight: 600,
                 color: "#374151",
                 fontSize: "18px",
-              }}>
+              }}
+            >
               {selectedTemplate?.id ? "Import Template" : "Create Template"}
             </Typography>
 
-            <Box sx={{display: "flex", gap: 1}}>
-              <Button
-                onClick={closeModal}
-                variant="outlined"
-                sx={{
-                  borderColor: "#d1d5db",
-                  color: "#6b7280",
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  px: 3,
-                  py: 1,
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  "&:hover": {
-                    borderColor: "#9ca3af",
-                    backgroundColor: "#f9fafb",
-                  },
-                }}>
-                Cancel
-              </Button>
-              <Button
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <NButton onClick={closeModal}>Cancel</NButton>
+              <NButton
                 type="submit"
                 disabled={loading}
                 minWidth="120px"
-                variant="contained"
-                sx={{
-                  backgroundColor: "#3b82f6",
-                  color: "#ffffff",
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  px: 3,
-                  py: 1,
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  "&:hover": {
-                    backgroundColor: "#2563eb",
-                  },
-                  "&:disabled": {
-                    backgroundColor: "#9ca3af",
-                  },
-                }}>
+                primary
+              >
                 {loading ? (
-                  <CircularProgress style={{color: "#fff"}} size={20} />
+                  <CircularProgress style={{ color: "#fff" }} size={20} />
                 ) : selectedTemplate?.id ? (
                   "Import Template"
                 ) : (
                   "Create Template"
                 )}
-              </Button>
+              </NButton>
             </Box>
           </Box>
 
           {/* Content Area */}
-          <Box sx={{height: "400px", overflow: "auto"}}>
+          <Box sx={{ height: "400px", overflow: "auto" }}>
             <Tabs className={styles.tabs}>
               <TabList className={styles.tabList}>
                 <Tab
                   className={styles.tab}
-                  selectedClassName={styles.activeTab}>
+                  selectedClassName={styles.activeTab}
+                >
                   Main
                 </Tab>
                 <Tab
                   className={styles.tab}
-                  selectedClassName={styles.activeTab}>
+                  selectedClassName={styles.activeTab}
+                >
                   Tables
                 </Tab>
                 <Tab
                   className={styles.tab}
-                  selectedClassName={styles.activeTab}>
+                  selectedClassName={styles.activeTab}
+                >
                   Functions
                 </Tab>
                 <Tab
                   className={styles.tab}
-                  selectedClassName={styles.activeTab}>
+                  selectedClassName={styles.activeTab}
+                >
                   Micro Functions
                 </Tab>
                 <Tab
                   className={styles.tab}
-                  selectedClassName={styles.activeTab}>
+                  selectedClassName={styles.activeTab}
+                >
                   Details
                 </Tab>
               </TabList>
@@ -224,6 +200,7 @@ function TemplateMenu({
                 <TemplateTables
                   element={element}
                   control={control}
+                  setValue={setValue}
                   selectedFolder={selectedFolder}
                   templatePopover={templatePopover}
                 />
@@ -250,12 +227,12 @@ function TemplateMenu({
               <TabPanel className={styles.tabPanel}>
                 {/* Detail Page - Show template details when template is selected */}
                 {selectedTemplate ? (
-                  <Box sx={{p: 2}}>
-                    <Typography variant="h6" sx={{mb: 2, fontWeight: 600}}>
+                  <Box sx={{ p: 2 }}>
+                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                       Template Details
                     </Typography>
 
-                    <Box sx={{display: "flex", gap: 3, mb: 3}}>
+                    <Box sx={{ display: "flex", gap: 3, mb: 3 }}>
                       {selectedTemplate.photo && (
                         <Box
                           component="img"
@@ -271,17 +248,21 @@ function TemplateMenu({
                         />
                       )}
 
-                      <Box sx={{flex: 1}}>
-                        <Typography variant="h6" sx={{mb: 1, fontWeight: 600}}>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{ mb: 1, fontWeight: 600 }}
+                        >
                           {selectedTemplate.name}
                         </Typography>
                         <Typography
                           variant="body2"
-                          sx={{mb: 2, color: "#6b7280"}}>
+                          sx={{ mb: 2, color: "#6b7280" }}
+                        >
                           {selectedTemplate.description}
                         </Typography>
 
-                        <Box sx={{display: "flex", gap: 2, mb: 2}}>
+                        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
                           <Box
                             sx={{
                               px: 2,
@@ -295,7 +276,8 @@ function TemplateMenu({
                               borderRadius: "4px",
                               fontSize: "12px",
                               fontWeight: 500,
-                            }}>
+                            }}
+                          >
                             {selectedTemplate.is_free ? "Free" : "Premium"}
                           </Box>
 
@@ -305,10 +287,12 @@ function TemplateMenu({
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 0.5,
-                              }}>
+                              }}
+                            >
                               <Typography
                                 variant="body2"
-                                sx={{fontSize: "12px"}}>
+                                sx={{ fontSize: "12px" }}
+                              >
                                 ⭐ {selectedTemplate.rating}
                               </Typography>
                             </Box>
@@ -322,19 +306,22 @@ function TemplateMenu({
                         display: "grid",
                         gridTemplateColumns: "1fr 1fr 1fr",
                         gap: 2,
-                      }}>
+                      }}
+                    >
                       <Box
                         sx={{
                           p: 2,
                           backgroundColor: "#f9fafb",
                           borderRadius: "8px",
-                        }}>
+                        }}
+                      >
                         <Typography
                           variant="subtitle2"
-                          sx={{fontWeight: 600, mb: 1}}>
+                          sx={{ fontWeight: 600, mb: 1 }}
+                        >
                           Tables ({formValues.tables?.length || 0})
                         </Typography>
-                        <Typography variant="body2" sx={{color: "#6b7280"}}>
+                        <Typography variant="body2" sx={{ color: "#6b7280" }}>
                           {formValues.tables?.length > 0
                             ? formValues.tables.map((t) => t.label).join(", ")
                             : "No tables selected"}
@@ -346,13 +333,15 @@ function TemplateMenu({
                           p: 2,
                           backgroundColor: "#f9fafb",
                           borderRadius: "8px",
-                        }}>
+                        }}
+                      >
                         <Typography
                           variant="subtitle2"
-                          sx={{fontWeight: 600, mb: 1}}>
+                          sx={{ fontWeight: 600, mb: 1 }}
+                        >
                           Functions ({formValues.functions?.length || 0})
                         </Typography>
-                        <Typography variant="body2" sx={{color: "#6b7280"}}>
+                        <Typography variant="body2" sx={{ color: "#6b7280" }}>
                           {formValues.functions?.length > 0
                             ? formValues.functions
                                 .map((f) => f.label)
@@ -366,13 +355,15 @@ function TemplateMenu({
                           p: 2,
                           backgroundColor: "#f9fafb",
                           borderRadius: "8px",
-                        }}>
+                        }}
+                      >
                         <Typography
                           variant="subtitle2"
-                          sx={{fontWeight: 600, mb: 1}}>
+                          sx={{ fontWeight: 600, mb: 1 }}
+                        >
                           Microfronts ({formValues.microfronts?.length || 0})
                         </Typography>
-                        <Typography variant="body2" sx={{color: "#6b7280"}}>
+                        <Typography variant="body2" sx={{ color: "#6b7280" }}>
                           {formValues.microfronts?.length > 0
                             ? formValues.microfronts
                                 .map((m) => m.label)
@@ -392,14 +383,16 @@ function TemplateMenu({
                       backgroundColor: "#f9fafb",
                       borderRadius: "8px",
                       border: "2px dashed #d1d5db",
-                    }}>
+                    }}
+                  >
                     <Typography
                       variant="body1"
                       sx={{
                         color: "#6b7280",
                         fontSize: "16px",
                         fontWeight: 500,
-                      }}>
+                      }}
+                    >
                       Select a template to view details
                     </Typography>
                   </Box>

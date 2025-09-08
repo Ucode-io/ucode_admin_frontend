@@ -3,44 +3,75 @@ import {Box, Grid} from "@chakra-ui/react";
 import {Controller, useWatch} from "react-hook-form";
 import {Checkbox} from "@mui/material";
 import {useMenuListQuery} from "../../../services/menuService";
+import { useTablesListQuery } from "../../../services/constructorTableService";
+import { CustomCheckbox } from "../../../components/CustomCheckbox";
 
 const templateColumns = "minmax(42px,32px) minmax(540px,1fr) minmax(60px,1fr)";
 
 function TemplateTables({
   control,
+  setValue = () => {},
   selectedFolder = {},
   element = {},
   templatePopover = "",
 }) {
-  const tables = useWatch({control, name: "tables"}) || [];
+  const tables = useWatch({ control, name: "tables" }) || [];
+  console.log({ tables });
   const [childs, setChilds] = useState([]);
 
-  const {isLoading} = useMenuListQuery({
-    params: {parent_id: selectedFolder?.id},
-    queryParams: {
-      enabled: Boolean(selectedFolder?.id),
-      onSuccess: (res) => {
-        if (templatePopover === "create-template") {
-          setChilds(res?.menus?.tables || []);
-        } else {
-          setChilds(res?.menus || []);
-        }
-      },
-    },
-  });
+  // const { isLoading } = useMenuListQuery({
+  //   params: { parent_id: selectedFolder?.id },
+  //   queryParams: {
+  //     enabled: Boolean(selectedFolder?.id),
+  //     onSuccess: (res) => {
+  //       if (templatePopover === "create-template") {
+  //         setChilds(res?.menus?.tables || []);
+  //       } else {
+  //         setChilds(res?.menus || []);
+  //       }
+  //     },
+  //   },
+  // });
+
+  const { data: tableData } = useTablesListQuery();
 
   return (
     <Box border="1px solid #EAECF0" borderRadius="8px" overflow="hidden">
       <Grid templateColumns={templateColumns} borderBottom="1px solid #EAECF0">
         <Th justifyContent="center">
-          <img src="/img/hash.svg" alt="index" />
+          <Checkbox
+            size="small"
+            onChange={({ target: { checked } }) =>
+              checked
+                ? setValue("tables", tableData?.tables)
+                : setValue("tables", [])
+            }
+          />
+          {/* <img src="/img/hash.svg" alt="index" /> */}
         </Th>
         <Th>Table Name</Th>
-        <Th justifyContent="center">With Data</Th>
+        <Th justifyContent="center">
+          With Data{" "}
+          <Checkbox
+            size="small"
+            disabled={tables?.length !== tableData?.tables?.length}
+            onChange={({ target: { checked } }) =>
+              checked
+                ? setValue(
+                    "tables",
+                    tables?.map((t) => ({ ...t, with_rows: true }))
+                  )
+                : setValue(
+                    "tables",
+                    tables?.map((t) => ({ ...t, with_rows: false }))
+                  )
+            }
+          />
+        </Th>
       </Grid>
 
       <Box h="260px" overflow="scroll">
-        {(selectedFolder?.id ? childs : [element])?.map((table) => {
+        {tableData?.tables?.map((table) => {
           const selectedIndex = tables?.findIndex((t) => t?.id === table?.id);
           const isSelected = selectedIndex > -1;
           const withRows = isSelected ? tables[selectedIndex].with_rows : false;
@@ -50,13 +81,14 @@ function TemplateTables({
               key={table?.id}
               templateColumns={templateColumns}
               borderBottom="1px solid #EAECF0"
-              _hover={{bg: "gray.50"}}
-              cursor="pointer">
+              _hover={{ bg: "gray.50" }}
+              cursor="pointer"
+            >
               <Td justifyContent="center" fontWeight={600}>
                 <Controller
                   name="tables"
                   control={control}
-                  render={({field}) => (
+                  render={({ field }) => (
                     <Checkbox
                       size="small"
                       checked={isSelected}
@@ -64,7 +96,7 @@ function TemplateTables({
                         if (e.target.checked) {
                           field.onChange([
                             ...tables,
-                            {...table, with_rows: false},
+                            { ...table, with_rows: false },
                           ]);
                         } else {
                           field.onChange(
@@ -83,7 +115,7 @@ function TemplateTables({
                 <Controller
                   name="tables"
                   control={control}
-                  render={({field}) => (
+                  render={({ field }) => (
                     <Checkbox
                       size="small"
                       disabled={!isSelected}
@@ -92,7 +124,7 @@ function TemplateTables({
                         if (!isSelected) return;
                         const newTables = tables?.map((t) =>
                           t.id === table.id
-                            ? {...t, with_rows: e.target.checked}
+                            ? { ...t, with_rows: e.target.checked }
                             : t
                         );
                         field.onChange(newTables);
@@ -104,6 +136,71 @@ function TemplateTables({
             </Grid>
           );
         })}
+        {/* {(selectedFolder?.id ? childs : [element])?.map((table) => {
+          const selectedIndex = tables?.findIndex((t) => t?.id === table?.id);
+          const isSelected = selectedIndex > -1;
+          const withRows = isSelected ? tables[selectedIndex].with_rows : false;
+
+          return (
+            <Grid
+              key={table?.id}
+              templateColumns={templateColumns}
+              borderBottom="1px solid #EAECF0"
+              _hover={{ bg: "gray.50" }}
+              cursor="pointer"
+            >
+              <Td justifyContent="center" fontWeight={600}>
+                <Controller
+                  name="tables"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      size="small"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          field.onChange([
+                            ...tables,
+                            { ...table, with_rows: false },
+                          ]);
+                        } else {
+                          field.onChange(
+                            tables?.filter((t) => t.id !== table.id)
+                          );
+                        }
+                      }}
+                    />
+                  )}
+                />
+              </Td>
+
+              <Td>{table?.label}</Td>
+
+              <Td display="flex" justifyContent="center">
+                <Controller
+                  name="tables"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      size="small"
+                      disabled={!isSelected}
+                      checked={withRows}
+                      onChange={(e) => {
+                        if (!isSelected) return;
+                        const newTables = tables?.map((t) =>
+                          t.id === table.id
+                            ? { ...t, with_rows: e.target.checked }
+                            : t
+                        );
+                        field.onChange(newTables);
+                      }}
+                    />
+                  )}
+                />
+              </Td>
+            </Grid>
+          );
+        })} */}
       </Box>
     </Box>
   );

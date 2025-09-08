@@ -2133,7 +2133,16 @@ const FiltersSwitch = ({
 };
 
 export const ViewOptionTitle = ({ children }) => (
-  <Box color="#101828" fontWeight={400} fontSize={14} lineHeight="20px">
+  <Box
+    maxWidth="105px"
+    textOverflow="ellipsis"
+    overflow="hidden"
+    whiteSpace="nowrap"
+    color="#101828"
+    fontWeight={400}
+    fontSize={14}
+    lineHeight="20px"
+  >
     {children}
   </Box>
 );

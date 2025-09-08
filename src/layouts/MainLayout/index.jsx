@@ -30,6 +30,7 @@ const MainLayout = ({setFavicon, favicon}) => {
     projectId,
     queryParams: {
       onSuccess: (data) => {
+        console.log({ icons: data?.icon_categories });
         dispatch(iconCategoryActions.setCategories(data?.icon_categories));
         localStorage.setItem("project_status", data?.status);
         window.dispatchEvent(new Event("storageUpdate"));

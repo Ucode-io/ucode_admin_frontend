@@ -8,12 +8,7 @@ import {useCompanyListQuery} from "@/services/companyService";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {authActions} from "@/store/auth/auth.slice";
 import {companyActions} from "@/store/company/company.slice";
-import {
-  AccordionButton,
-  AccordionIcon,
-  SearchIcon,
-  SettingsIcon,
-} from "@chakra-ui/icons";
+import { AccordionButton, AccordionIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionItem,
@@ -30,22 +25,22 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import {Logout} from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {Dialog, Modal} from "@mui/material";
-import {differenceInCalendarDays, parseISO} from "date-fns";
-import {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
+import { Dialog, Modal } from "@mui/material";
+import { differenceInCalendarDays, parseISO } from "date-fns";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import InlineSVG from "react-inlinesvg";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {Container} from "react-smooth-dnd";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Container } from "react-smooth-dnd";
 import useSearchParams from "../../hooks/useSearchParams";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
@@ -57,23 +52,23 @@ import WebsiteModal from "../../layouts/MainLayout/WebsiteModal";
 import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModal";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../services/auth/connectionService";
-import menuService, {useMenuGetByIdQuery} from "../../services/menuService";
-import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
+import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
+import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import projectService, {
   useProjectGetByIdQuery,
   useProjectListQuery,
 } from "../../services/projectService";
-import {store} from "../../store";
-import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
-import {mainActions} from "../../store/main/main.slice";
-import {menuAccordionActions} from "../../store/menus/menus.slice";
-import {permissionsActions} from "../../store/permissions/permissions.slice";
-import {applyDrag} from "../../utils/applyDrag";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {isJSONParsable} from "../../utils/isJsonValid";
-import {getAllFromDB} from "../../utils/languageDB";
-import {AIMenu, useAIChat} from "../ProfilePanel/AIChat";
+import { store } from "../../store";
+import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
+import { mainActions } from "../../store/main/main.slice";
+import { menuAccordionActions } from "../../store/menus/menus.slice";
+import { permissionsActions } from "../../store/permissions/permissions.slice";
+import { applyDrag } from "../../utils/applyDrag";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { isJSONParsable } from "../../utils/isJsonValid";
+import { getAllFromDB } from "../../utils/languageDB";
+import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
 import AddOrganization from "./AddOrganization";
 import AppSidebar from "./AppSidebarComponent";
 import DocsChatwootModal from "./DocsChatwootModal";
@@ -83,6 +78,7 @@ import ButtonsMenu from "./MenuButtons";
 import TableCreateModal from "../../layouts/MainLayout/TableCreateModal";
 import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
 import TemplateSelection from "../../layouts/MainLayout/TemplateMenu/TemplateSelection";
+import { SettingsIcon } from "../../utils/constants/icons";
 
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
@@ -93,14 +89,14 @@ const LayoutSidebar = ({
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
   const location = useLocation();
 
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
   const projectId = store.getState().company.projectId;
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState(null);
@@ -119,9 +115,9 @@ const LayoutSidebar = ({
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  const [menu, setMenu] = useState({event: "", type: "", root: false});
+  const [menu, setMenu] = useState({ event: "", type: "", root: false });
   const openSidebarMenu = Boolean(menu?.event);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
@@ -138,7 +134,7 @@ const LayoutSidebar = ({
     dispatch(mainActions.setSubMenuIsOpen(val));
   };
 
-  const {data: menuById} = useMenuGetByIdQuery({
+  const { data: menuById } = useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
@@ -156,7 +152,7 @@ const LayoutSidebar = ({
   const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
   const handleOpenNotify = (event, type, root) => {
-    setMenu({event: event?.currentTarget, type: type, root: root});
+    setMenu({ event: event?.currentTarget, type: type, root: root });
   };
   const handleCloseNotify = () => {
     setMenu(null);
@@ -271,7 +267,7 @@ const LayoutSidebar = ({
       });
   };
 
-  const {isLoadingUser} = useQuery(
+  const { isLoadingUser } = useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -297,7 +293,7 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
-    const {removedIndex, addedIndex, payload} = dropResult;
+    const { removedIndex, addedIndex, payload } = dropResult;
 
     if (addedIndex == null && typeof removedIndex === "number" && payload) {
       return;
@@ -306,7 +302,7 @@ const LayoutSidebar = ({
       typeof addedIndex === "number" &&
       payload
     ) {
-      const addedData = {...payload};
+      const addedData = { ...payload };
       addedData.parent_id = menuList?.[0]?.parent_id;
       if (addedData) {
         menuService.update(addedData).then(() => {
@@ -348,7 +344,10 @@ const LayoutSidebar = ({
       getMenuList();
       setHasFetchedOnce(true);
 
-      window.history.replaceState({...location.state, refetch: undefined}, "");
+      window.history.replaceState(
+        { ...location.state, refetch: undefined },
+        ""
+      );
     }
   }, [location?.state?.refetch, hasFetchedOnce]);
 
@@ -368,7 +367,7 @@ const LayoutSidebar = ({
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -780,7 +779,12 @@ const LayoutSidebar = ({
                           alignItems="center"
                           justifyContent="center"
                         >
-                          <svg
+                          <SettingsIcon
+                            width="20"
+                            height="20"
+                            color="rgba(55, 53, 47, 0.85)"
+                          />
+                          {/* <svg
                             xmlns="http://www.w3.org/2000/svg"
                             x="0px"
                             y="0px"
@@ -808,7 +812,7 @@ const LayoutSidebar = ({
                                 <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
                               </g>
                             </g>
-                          </svg>
+                          </svg> */}
                         </Box>
                         {sidebarIsOpen ? <span>Settings</span> : null}
                       </Flex>
@@ -1033,89 +1037,96 @@ const LayoutSidebar = ({
   );
 };
 
-const AIChat = forwardRef(({sidebarOpen = false, children, ...props}, ref) => {
-  const {
-    open,
-    anchorEl,
-    loader,
-    setLoader,
-    inputValue,
-    setInputValue,
-    messages,
-    messagesEndRef,
-    handleClick,
-    handleClose,
-    handleKeyDown,
-    handleSendClick,
-    showInput,
-    setShowInput,
-    handleSuccess,
-    handleError,
-    onExited,
-    appendMessage,
-    selectedEntityType,
-    handleChangeEntityType,
-    setMessages,
-    control,
-    errors,
-    handleSubmit,
-    reset,
-    setAnchorEl,
-    setValue,
-    watch,
-  } = useAIChat();
+const AIChat = forwardRef(
+  ({ sidebarOpen = false, children, ...props }, ref) => {
+    const {
+      open,
+      anchorEl,
+      loader,
+      setLoader,
+      inputValue,
+      setInputValue,
+      messages,
+      messagesEndRef,
+      handleClick,
+      handleClose,
+      handleKeyDown,
+      handleSendClick,
+      showInput,
+      setShowInput,
+      handleSuccess,
+      handleError,
+      onExited,
+      appendMessage,
+      selectedEntityType,
+      handleChangeEntityType,
+      setMessages,
+      control,
+      errors,
+      handleSubmit,
+      reset,
+      setAnchorEl,
+      setValue,
+      watch,
+    } = useAIChat();
 
-  return (
-    <>
-      <Flex
-        w={sidebarOpen ? "100%" : 36}
-        borderRadius={6}
-        // _hover={{
-        //   background: "#37352F0F",
-        // }}
-        h={"25px"}
-        // pl={sidebarOpen ? "35px" : 0}
-        cursor="pointer"
-        mb={sidebarOpen ? 0 : 4}
-        ref={ref}
-        {...props}
-        onClick={handleClick}
-        justifyContent="center"
-        alignItems="center">
-        {sidebarOpen ? children : <SearchIcon color="#475467" fontSize={16} />}
-      </Flex>
+    return (
+      <>
+        <Flex
+          w={sidebarOpen ? "100%" : 36}
+          borderRadius={6}
+          // _hover={{
+          //   background: "#37352F0F",
+          // }}
+          h={"25px"}
+          // pl={sidebarOpen ? "35px" : 0}
+          cursor="pointer"
+          mb={sidebarOpen ? 0 : 4}
+          ref={ref}
+          {...props}
+          onClick={handleClick}
+          justifyContent="center"
+          alignItems="center"
+        >
+          {sidebarOpen ? (
+            children
+          ) : (
+            <SearchIcon color="#475467" fontSize={16} />
+          )}
+        </Flex>
 
-      <AIMenu
-        open={open}
-        anchorEl={anchorEl}
-        loader={loader}
-        setLoader={setLoader}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        messages={messages}
-        messagesEndRef={messagesEndRef}
-        handleClose={handleClose}
-        handleKeyDown={handleKeyDown}
-        handleSendClick={handleSendClick}
-        showInput={showInput}
-        setShowInput={setShowInput}
-        handleSuccess={handleSuccess}
-        handleError={handleError}
-        onExited={onExited}
-        appendMessage={appendMessage}
-        selectedEntityType={selectedEntityType}
-        handleChangeEntityType={handleChangeEntityType}
-        setMessages={setMessages}
-        control={control}
-        errors={errors}
-        handleSubmit={handleSubmit}
-        reset={reset}
-        setValue={setValue}
-        watch={watch}
-      />
-    </>
-  );
-});
+        <AIMenu
+          open={open}
+          anchorEl={anchorEl}
+          loader={loader}
+          setLoader={setLoader}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          messages={messages}
+          messagesEndRef={messagesEndRef}
+          handleClose={handleClose}
+          handleKeyDown={handleKeyDown}
+          handleSendClick={handleSendClick}
+          showInput={showInput}
+          setShowInput={setShowInput}
+          handleSuccess={handleSuccess}
+          handleError={handleError}
+          onExited={onExited}
+          appendMessage={appendMessage}
+          selectedEntityType={selectedEntityType}
+          handleChangeEntityType={handleChangeEntityType}
+          setMessages={setMessages}
+          control={control}
+          errors={errors}
+          handleSubmit={handleSubmit}
+          reset={reset}
+          setValue={setValue}
+          watch={watch}
+        />
+      </>
+    );
+  }
+);
 
 const Header = ({
   sidebarIsOpen,
@@ -1127,13 +1138,13 @@ const Header = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [connections, setConnections] = useState([]);
   const userId = auth?.userInfo?.id;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [env, setEnv] = useState("");
 
-  const {control, watch, setValue, getValues} = useForm();
+  const { control, watch, setValue, getValues } = useForm();
 
   const handleClose = () => {
     onClose();
@@ -1161,7 +1172,7 @@ const Header = ({
     dispatch(companyActions.setEnvironmentId(environment.id));
     dispatch(authActions.updateEnvId(environment.id));
     authService
-      .updateToken({...params, env_id: environment.id}, {...params})
+      .updateToken({ ...params, env_id: environment.id }, { ...params })
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
         dispatch(permissionsActions.setPermissions(res?.permissions));
@@ -1188,7 +1199,7 @@ const Header = ({
           client_type_id: clientTypeId,
           "user-id": userId,
         },
-        {"Environment-id": env?.id}
+        { "Environment-id": env?.id }
       )
       .then((res) => {
         console.log("ressssssssssssssssss", res?.data?.response);
@@ -1220,7 +1231,8 @@ const Header = ({
       <Popover
         offset={[sidebarIsOpen ? 50 : 95, 5]}
         isOpen={isOpen}
-        onClose={handleClose}>
+        onClose={handleClose}
+      >
         <PopoverTrigger>
           <Flex
             w="calc(100% - 0px)"
@@ -1231,17 +1243,19 @@ const Header = ({
             p={5}
             borderRadius={8}
             bg="#fff"
-            _hover={{bg: "#EAECF0"}}
+            _hover={{ bg: "#EAECF0" }}
             cursor="pointer"
             onClick={() => (!isOpen ? onOpen() : null)}
-            onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}>
+            onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
+          >
             <Flex
               w={36}
               h={36}
               position="absolute"
               left={0}
               alignItems="center"
-              justifyContent="center">
+              justifyContent="center"
+            >
               {Boolean(projectInfo?.logo) && (
                 <img src={projectInfo?.logo} alt="" width={20} height={20} />
               )}
@@ -1256,7 +1270,8 @@ const Header = ({
                   alignItems="center"
                   justifyContent="center"
                   fontSize={14}
-                  fontWeight={500}>
+                  fontWeight={500}
+                >
                   {projectInfo?.title?.[0]?.toUpperCase()}
                 </Flex>
               )}
@@ -1269,10 +1284,13 @@ const Header = ({
               fontSize={13}
               fontWeight={500}
               overflow="hidden"
-              textOverflow="ellipsis">
+              textOverflow="ellipsis"
+            >
               {projectInfo?.title}
             </Box>
-            <KeyboardArrowDownIcon style={{marginLeft: "10px", fontSize: 20}} />
+            <KeyboardArrowDownIcon
+              style={{ marginLeft: "10px", fontSize: 20 }}
+            />
           </Flex>
         </PopoverTrigger>
         <PopoverContent
@@ -1284,7 +1302,8 @@ const Header = ({
           boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
           zIndex={999}
           onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
-          onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}>
+          onMouseLeave={() => (!sidebarIsOpen ? onClose() : null)}
+        >
           <>
             <ProfilePanel
               menuLanguages={menuLanguages}
@@ -1320,7 +1339,8 @@ const Header = ({
           },
         }}
         open={dialogOpen}
-        onClose={handleDialogClose}>
+        onClose={handleDialogClose}
+      >
         {connections.length
           ? connections?.map((connection, idx) => (
               <DynamicConnections
@@ -1349,7 +1369,7 @@ const ProfilePanel = ({
 }) => {
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
       <Flex gap={10} alignItems={"center"}>
@@ -1359,10 +1379,11 @@ const ProfilePanel = ({
           justifyContent={"center"}
           w={36}
           h={36}
-          style={{border: "1px solid #eee", fontSize: "24px"}}
+          style={{ border: "1px solid #eee", fontSize: "24px" }}
           borderRadius={"5px"}
           bg={"#04ADD4"}
-          color={"white"}>
+          color={"white"}
+        >
           {state?.userInfo?.login?.slice(0, 1)}
         </Box>
         <Box>
@@ -1376,7 +1397,7 @@ const ProfilePanel = ({
       </Flex>
 
       <Flex
-        _hover={{background: "#eeee"}}
+        _hover={{ background: "#eeee" }}
         alignItems={"center"}
         h={25}
         minW={86}
@@ -1387,8 +1408,9 @@ const ProfilePanel = ({
         gap={5}
         mt={10}
         cursor={"pointer"}
-        onClick={handleOpenProfileModal}>
-        <SettingsIcon style={{color: "#475467"}} />
+        onClick={handleOpenProfileModal}
+      >
+        {/* <SettingsIcon style={{color: "#475467"}} /> */}
         <Box color={"#475467"}>
           {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
         </Box>

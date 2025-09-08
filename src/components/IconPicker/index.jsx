@@ -9,6 +9,7 @@ import OverallCategoryIcons from "./OverallCategoryIcons";
 import styles from "./style.module.scss";
 import {useSelector} from "react-redux";
 import clsx from "clsx";
+import { iconsList } from "../../utils/constants/iconsList";
 
 const defaultOverallTab = { label: "All", category: "", value: "overall" };
 
@@ -28,6 +29,7 @@ const IconPicker = ({
 }) => {
   const buttonRef = useRef();
   const id = useId();
+  const newIconsList = iconsList.slice(0, 17);
   const [selectedTab, setSelectedTab] = useState();
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -64,7 +66,10 @@ const IconPicker = ({
       <div
         ref={buttonRef}
         className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
-        style={{ backgroundColor: value ?? "#fff" }}
+        style={{
+          backgroundColor: value ?? "#fff",
+          color: newIconsList.includes(value) ? "transparent" : "#0067f4",
+        }}
         aria-describedby={id}
         onClick={customeClick ? clickItself : !disabled && handleOpen}
       >

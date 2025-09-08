@@ -33,6 +33,7 @@ import {groupFieldActions} from "../../store/groupField/groupField.slice";
 import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 import {tableActions} from "../../store/table/table.slice";
+import { iconsList } from "../../utils/constants/iconsList";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
@@ -71,9 +72,9 @@ const AppSidebar = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const auth = store.getState().auth;
-  const {menuId, tableSlug} = useParams();
+  const { menuId, tableSlug } = useParams();
 
   const [loading, setLoading] = useState(false);
   const [folderItem, setFolderItem] = useState(null);
@@ -88,7 +89,7 @@ const AppSidebar = ({
     ? readPermission || withoutPermission
     : readPermission;
 
-  const {isLoading, refetch} = useMenuListQuery({
+  const { isLoading, refetch } = useMenuListQuery({
     params: {
       parent_id: selectedFolder?.id ?? childMenu?.parent_id,
       search: subSearchText,
@@ -185,27 +186,27 @@ const AppSidebar = ({
   };
 
   function computeMenuChilds(id, children = []) {
-    const updated = {...menuChilds};
+    const updated = { ...menuChilds };
 
     if (updated?.[id]?.open) {
-      updated[id] = {open: true, children};
+      updated[id] = { open: true, children };
     } else {
-      updated[id] = {open: false, children};
+      updated[id] = { open: false, children };
     }
 
     dispatch(menuAccordionActions.toggleMenuChilds(updated));
   }
 
   function clickElement(item) {
-    const updated = {...menuChilds};
-    updated[item?.id] = {...updated[item?.id], open: true};
+    const updated = { ...menuChilds };
+    updated[item?.id] = { ...updated[item?.id], open: true };
 
     dispatch(menuAccordionActions.toggleMenuChilds(updated));
   }
 
   const closeMenu = (id) => {
-    const updated = {...menuChilds};
-    updated[id] = {...updated[id], open: false};
+    const updated = { ...menuChilds };
+    updated[id] = { ...updated[id], open: false };
 
     dispatch(menuAccordionActions.toggleMenuChilds(updated));
   };
@@ -229,6 +230,8 @@ const AppSidebar = ({
     }
   }
 
+  const newIcons = iconsList.slice(0, 17);
+
   return (
     <Draggable key={index}>
       {element?.type !== "FOLDER" && (
@@ -247,7 +250,7 @@ const AppSidebar = ({
             alignItems="center"
             whiteSpace="nowrap"
             borderRadius={6}
-            _hover={{bg: "#EAECF0"}}
+            _hover={{ bg: "#EAECF0" }}
             cursor="pointer"
             className="parent-folder column-drag-handle"
             bg={activeMenu ? `${"#F0F0EF"} !important` : menuStyle?.background}
@@ -259,13 +262,15 @@ const AppSidebar = ({
                 ? "#5F5E5A"
                 : "#A8A8A8"
             }
-            {...conditionalProps}>
+            {...conditionalProps}
+          >
             <Flex
               position="absolute"
               w={36}
               h={36}
               alignItems="center"
-              justifyContent="center">
+              justifyContent="center"
+            >
               {icon?.includes(":") ? (
                 <IconGeneratorIconjs
                   icon={
@@ -303,7 +308,8 @@ const AppSidebar = ({
               fontSize={14}
               mr="auto"
               overflow="hidden"
-              textOverflow="ellipsis">
+              textOverflow="ellipsis"
+            >
               {title}
             </Box>
 
@@ -344,7 +350,8 @@ const AppSidebar = ({
                         setSelectedFolder(element);
                         setElement(null);
                         handleOpenNotify(e, "CREATE_TO_FOLDER", true);
-                      }}>
+                      }}
+                    >
                       <AddIcon
                         size={13}
                         style={{
@@ -450,7 +457,8 @@ const AppSidebar = ({
         <Accordion
           allowMultiple
           index={menuChilds[element.id]?.open && sidebarIsOpen ? [0] : []}
-          border="none">
+          border="none"
+        >
           <SidebarAppTooltip title={title}>
             <AccordionItem>
               <AccordionButton
@@ -464,7 +472,8 @@ const AppSidebar = ({
                   clickHandler(element);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));
                   setLoading(!loading);
-                }}>
+                }}
+              >
                 <Flex
                   width={sidebarIsOpen ? "100%" : "36px"}
                   key={index}
@@ -499,13 +508,15 @@ const AppSidebar = ({
                       ? "#5F5E5A"
                       : "#A8A8A8"
                   }
-                  {...conditionalProps}>
+                  {...conditionalProps}
+                >
                   <Flex
                     position="absolute"
                     w={36}
                     h={36}
                     alignItems="center"
-                    justifyContent="center">
+                    justifyContent="center"
+                  >
                     <Box display={"none"} className="accordionIcon">
                       {sidebarIsOpen && element?.type === "FOLDER" && (
                         <AccordionIcon
@@ -518,8 +529,12 @@ const AppSidebar = ({
                       )}
                     </Box>
                     <Box
-                      sx={{width: "20px", height: "20px"}}
-                      className={sidebarIsOpen ? "accordionFolderIcon" : ""}>
+                      sx={{
+                        width: "20px",
+                        height: "20px",
+                      }}
+                      className={sidebarIsOpen ? "accordionFolderIcon" : ""}
+                    >
                       {icon?.includes(":") ? (
                         <IconGeneratorIconjs
                           icon={
@@ -543,7 +558,9 @@ const AppSidebar = ({
                           }
                           size={iconSize}
                           style={{
-                            color: getMenuColor(element, icon),
+                            color: newIcons?.includes(icon)
+                              ? "transparent"
+                              : getMenuColor(element, icon),
                           }}
                         />
                       )}
@@ -552,14 +569,16 @@ const AppSidebar = ({
 
                   <Tooltip
                     title={title?.length > 14 ? title : ""}
-                    placement="top">
+                    placement="top"
+                  >
                     <Box
                       color={activeMenu ? "#32302B" : "#5F5E5A"}
                       pl={35}
                       fontSize={14}
                       mr="auto"
                       overflow="hidden"
-                      textOverflow="ellipsis">
+                      textOverflow="ellipsis"
+                    >
                       {title?.length > 14 ? `${title?.slice(0, 14)}...` : title}
                     </Box>
                   </Tooltip>
@@ -602,7 +621,8 @@ const AppSidebar = ({
                               setSelectedFolder(element);
                               setElement(null);
                               handleOpenNotify(e, "CREATE_TO_FOLDER");
-                            }}>
+                            }}
+                          >
                             <AddIcon
                               size={13}
                               style={{

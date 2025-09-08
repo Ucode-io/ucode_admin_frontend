@@ -13,9 +13,8 @@ function OverallCategoryIcons({
   handleClose = () => {},
 }) {
   const [searchText, setSearchText] = useState("");
-  const [computedIconsList, setComputedIconsList] = useState(
-    iconsList.slice(0, 40)
-  );
+  const newIconsList = iconsList.slice(0, 17);
+  const [computedIconsList, setComputedIconsList] = useState(newIconsList);
 
   useDebouncedWatch(
     () => {
@@ -23,7 +22,11 @@ function OverallCategoryIcons({
         icon.includes(searchText)
       );
 
-      setComputedIconsList(filteredList.slice(0, 40));
+      if (searchText) {
+        setComputedIconsList(filteredList.slice(0, 40));
+      } else {
+        setComputedIconsList(newIconsList);
+      }
     },
     [searchText],
     300
@@ -61,21 +64,25 @@ function OverallCategoryIcons({
         fullWidth
         value={searchText}
         autoFocus={tabIndex === 1}
-        inputProps={{tabIndex}}
+        inputProps={{ tabIndex }}
         onChange={(e) => {
           setSearchText(e.target.value);
         }}
-        sx={{marginTop: "10px"}}
+        sx={{ marginTop: "10px" }}
       />
       <div className={styles.iconsBlock}>
         {computedIconsList.map((icon) => (
           <div
             key={icon}
             className={styles.popupIconWrapper}
+            style={{
+              color: newIconsList.includes(icon) ? "transparent" : "#101828",
+            }}
             onClick={() => {
               onChange(icon);
               handleClose();
-            }}>
+            }}
+          >
             {icon.includes(":") ? (
               <IconGeneratorIconjs icon={icon} />
             ) : (

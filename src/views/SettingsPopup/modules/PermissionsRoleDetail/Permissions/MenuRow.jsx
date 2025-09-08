@@ -16,6 +16,7 @@ import menuSettingsService from "../../../../../services/menuSettingsService";
 import { useQuery } from "react-query";
 import { menuAccordionActions } from "../../../../../store/menus/menus.slice";
 import { useMenuListQuery } from "../../../../../services/menuService";
+import { iconsList } from "../../../../../utils/constants/iconsList";
 
 const MenuCheckbox = ({ label, onChange, checked }) => {
   return (
@@ -57,6 +58,8 @@ const MenuRow = ({
 
   const roleId = useSelector((state) => state.settingsModal.roleId);
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
+
+  const newIcons = iconsList.slice(0, 17);
 
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
   const [parentId, setParentId] = useState("");
@@ -282,7 +285,9 @@ const MenuRow = ({
                     }
                     size={16}
                     style={{
-                      color: "#475467",
+                      color: newIcons.includes(icon)
+                        ? "transparent"
+                        : "#475467",
                     }}
                   />
                 )}
@@ -404,7 +409,9 @@ const MenuRow = ({
                     }
                     size={16}
                     style={{
-                      color: "#475467",
+                      color: newIcons?.includes(icon)
+                        ? "transparent"
+                        : "#475467",
                     }}
                   />
                 )}

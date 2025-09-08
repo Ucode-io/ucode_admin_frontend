@@ -663,6 +663,76 @@ const LayoutSidebar = ({
               )}
 
               <Box mt={46}>
+                <Flex
+                  position="relative"
+                  h={30}
+                  mx={8}
+                  mb={4}
+                  alignItems="center"
+                  whiteSpace="nowrap"
+                  borderRadius={6}
+                  color="#475467"
+                  fontSize={14}
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                  _hover={{
+                    bg: "#EAECF0",
+                    ".accordionFolderIcon": {
+                      display: "none",
+                    },
+                    ".accordionIcon": {
+                      display: "block",
+                    },
+                  }}
+                  cursor="pointer"
+                  onMouseLeave={
+                    sidebarIsOpen
+                      ? undefined
+                      : () =>
+                          dispatch(
+                            mainActions.setSidebarHighlightedAction(null)
+                          )
+                  }
+                >
+                  <SidebarActionTooltip id="template" title="Template">
+                    <Flex
+                      w={sidebarIsOpen ? "100%" : 36}
+                      alignItems="center"
+                      justifyContent={sidebarIsOpen ? "flex-start" : "center"}
+                      gap={8}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTemplatePopover("template");
+                        handleCloseNotify();
+                      }}
+                      {...getActionProps("template")}
+                    >
+                      <Box
+                        pl={sidebarIsOpen ? "5px" : 0}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <img
+                          src="/img/template.svg"
+                          alt="index"
+                          width={20}
+                          height={20}
+                        />
+                      </Box>
+                      {sidebarIsOpen ? (
+                        <span>
+                          {generateLangaugeText(
+                            menuLanguages,
+                            i18n?.language,
+                            "Make Template"
+                          ) || "Make Template"}
+                        </span>
+                      ) : null}
+                    </Flex>
+                  </SidebarActionTooltip>
+                  <span></span>
+                </Flex>
                 {userRoleName === DEFAULT_ADMIN && (
                   <Flex
                     position="relative"
@@ -745,76 +815,6 @@ const LayoutSidebar = ({
                     </SidebarActionTooltip>
                   </Flex>
                 )}
-                <Flex
-                  position="relative"
-                  h={30}
-                  mx={8}
-                  mb={4}
-                  alignItems="center"
-                  whiteSpace="nowrap"
-                  borderRadius={6}
-                  color="#475467"
-                  fontSize={14}
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  _hover={{
-                    bg: "#EAECF0",
-                    ".accordionFolderIcon": {
-                      display: "none",
-                    },
-                    ".accordionIcon": {
-                      display: "block",
-                    },
-                  }}
-                  cursor="pointer"
-                  onMouseLeave={
-                    sidebarIsOpen
-                      ? undefined
-                      : () =>
-                          dispatch(
-                            mainActions.setSidebarHighlightedAction(null)
-                          )
-                  }
-                >
-                  <SidebarActionTooltip id="template" title="Template">
-                    <Flex
-                      w={sidebarIsOpen ? "100%" : 36}
-                      alignItems="center"
-                      justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                      gap={8}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTemplatePopover("template");
-                        handleCloseNotify();
-                      }}
-                      {...getActionProps("template")}
-                    >
-                      <Box
-                        pl={sidebarIsOpen ? "5px" : 0}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <img
-                          src="/img/template.svg"
-                          alt="index"
-                          width={20}
-                          height={20}
-                        />
-                      </Box>
-                      {sidebarIsOpen ? (
-                        <span>
-                          {generateLangaugeText(
-                            menuLanguages,
-                            i18n?.language,
-                            "Make Template"
-                          ) || "Make Template"}
-                        </span>
-                      ) : null}
-                    </Flex>
-                  </SidebarActionTooltip>
-                  <span></span>
-                </Flex>
               </Box>
             </div>
           )}

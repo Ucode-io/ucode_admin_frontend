@@ -225,6 +225,10 @@ function AggridTreeView(props) {
   //   }
   // );
 
+  useEffect(() => {
+    import("react-quill");
+  }, []);
+
   const {
     data: {fiedlsarray} = {
       pageCount: 1,

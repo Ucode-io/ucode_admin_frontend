@@ -162,6 +162,7 @@ const AutoCompleteElement = ({
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState();
+  const [count, setCount] = useState(0);
   const [localValue, setLocalValue] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
@@ -326,9 +327,11 @@ const AutoCompleteElement = ({
 
         return {
           options,
+          count: res?.data?.count,
         };
       },
       onSuccess: (data) => {
+        setCount(data?.count);
         if (Object.values(autoFiltersValue)?.length > 0) {
           setAllOptions(data?.options);
         } else if (data?.options?.length) {
@@ -411,6 +414,7 @@ const AutoCompleteElement = ({
   };
 
   function loadMoreItems() {
+    if (count >= allOptions.length) return;
     if (field?.attributes?.function_path) {
       setPage((prevPage) => prevPage + 1);
     } else {

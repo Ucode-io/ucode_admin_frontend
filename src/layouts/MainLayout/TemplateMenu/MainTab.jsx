@@ -24,7 +24,7 @@ function MainTab({control}) {
       </Grid>
 
       <Grid item xs={5}>
-        <PhotoUpload control={control} name={"image"} />
+        <PhotoUpload control={control} name={"photo"} />
       </Grid>
     </Grid>
   );

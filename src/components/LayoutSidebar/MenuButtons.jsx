@@ -55,7 +55,8 @@ const ButtonsMenu = ({
         },
       }}
       key={element?.id}
-      transitionDuration={"auto"}>
+      transitionDuration={"auto"}
+    >
       {menuType === "FOLDER" && (
         <Box className="menu">
           {element?.data?.permission?.update || permissionButton ? (
@@ -494,7 +495,7 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "ROOT" && (
-        <Box className="menu" style={{width: 224, rowGap: 4}}>
+        <Box className="menu" style={{ width: 224, rowGap: 4 }}>
           <MenuItemComponent
             icon={<SVG src="/img/layout-alt-01.svg" color="#475467" />}
             title={
@@ -591,7 +592,7 @@ const ButtonsMenu = ({
         </Box>
       )}
       {menuType === "CREATE" && (
-        <Box className="menu" style={{width: 190}}>
+        <Box className="menu" style={{ width: 190 }}>
           <MenuItemComponent
             icon={
               <SVG
@@ -632,7 +633,7 @@ const ButtonsMenu = ({
             }
             onClick={(e) => {
               e.stopPropagation();
-              setTableModal({id: "c57eedc3-a954-4262-a0af-376c65b5a284"});
+              setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
               handleCloseNotify();
             }}
           />
@@ -685,12 +686,7 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
-          <Divider
-            style={{
-              marginBottom: "4px",
-              marginTop: "4px",
-            }}
-          />
+
           <MenuItemComponent
             icon={
               <img
@@ -713,6 +709,28 @@ const ButtonsMenu = ({
                 id: "c57eedc3-a954-4262-a0af-376c65b5a284",
                 type: "FOLDER",
               });
+              handleCloseNotify();
+            }}
+          />
+          <Divider
+            style={{
+              marginBottom: "4px",
+              marginTop: "4px",
+            }}
+          />
+
+          <MenuItemComponent
+            icon={<img src="/img/template.svg" alt="index" />}
+            title={
+              generateLangaugeText(
+                menuLanguages,
+                i18n?.language,
+                "Import Template"
+              ) || "Import Template"
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              setTemplatePopover("create-template");
               handleCloseNotify();
             }}
           />

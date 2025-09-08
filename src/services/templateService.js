@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
 
 const templateService = {
@@ -6,21 +6,22 @@ const templateService = {
     request.get("/template", {
       params,
     }),
-  getById: ({ id, params, envId }) =>
+  importTemplate: (data) => request.post("/template/execute", data),
+  getById: ({id, params, envId}) =>
     request.get(`/template/${id}`, {
       params,
     }),
   create: (data) =>
     request.post("/template", data, {
-      params: { "project-id": data.project_id },
+      params: {"project-id": data.project_id},
     }),
   update: (data) =>
     request.put("/template", data, {
-      params: { "project-id": data.project_id },
+      params: {"project-id": data.project_id},
     }),
-  delete: ({ id, projectId }) =>
+  delete: ({id, projectId}) =>
     request.delete(`/template/${id}`, {
-      params: { "project-id": projectId },
+      params: {"project-id": projectId},
     }),
 };
 
@@ -30,7 +31,7 @@ export const useTemplatesListQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["TEMPLATES", { ...params, envId }],
+    ["TEMPLATES", {...params, envId}],
     () => {
       return templateService.getList(params, envId);
     },
@@ -38,6 +39,12 @@ export const useTemplatesListQuery = ({
   );
 };
 
+export const useTemplateImportMutation = (mutationSettings) => {
+  return useMutation(
+    (data) => templateService.importTemplate(data),
+    mutationSettings
+  );
+};
 export const useTemplateByIdQuery = ({
   params = {},
   id,
@@ -45,9 +52,9 @@ export const useTemplateByIdQuery = ({
   queryParams,
 } = {}) => {
   return useQuery(
-    ["TEMPLATE_BY_ID", { ...params, id, envId }],
+    ["TEMPLATE_BY_ID", {...params, id, envId}],
     () => {
-      return templateService.getById({ id, params, envId });
+      return templateService.getById({id, params, envId});
     },
     queryParams
   );
@@ -63,7 +70,7 @@ export const useTemplateUpdateMutation = (mutationSettings) => {
 
 export const useTemplateDeleteMutation = (mutationSettings) => {
   return useMutation(
-    ({ id, projectId }) => templateService.delete({ id, projectId }),
+    ({id, projectId}) => templateService.delete({id, projectId}),
     mutationSettings
   );
 };

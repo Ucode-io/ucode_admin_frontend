@@ -16,8 +16,10 @@ import {FieldPopover} from "../../Constructor/Tables/Form/Fields/components/Fiel
 import {useForm} from "react-hook-form";
 import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import {RelationPopover} from "../../Constructor/Tables/Form/Relations/components/RelationPopover";
+import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
+import constructorRelationService from "../../../services/constructorRelationService";
 
-function FieldOptions({field, view, tableSlug, tableLan}) {
+function FieldOptions({ field, view, tableSlug, tableLan }) {
   const queryClient = useQueryClient();
   const [selectedField, setSelectedField] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -52,19 +54,31 @@ function FieldOptions({field, view, tableSlug, tableLan}) {
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
-  console.log("menuAnchrosss", anchorEl, menuAnchor);
+
   const deleteField = (column) => {
-    constructorFieldService.delete(column, tableSlug).then(() => {
-      constructorViewService
-        .update(tableSlug, {
-          ...view,
-          columns: view?.columns?.filter((item) => item !== column),
-        })
+    if (
+      column?.type === FIELD_TYPES.LOOKUP ||
+      column?.type === FIELD_TYPES.LOOKUPS
+    ) {
+      constructorRelationService
+        .delete(column?.relation_id, tableSlug)
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
-    });
+    } else {
+      constructorFieldService.delete(column, tableSlug).then(() => {
+        constructorViewService
+          .update(tableSlug, {
+            ...view,
+            columns: view?.columns?.filter((item) => item !== column),
+          })
+          .then(() => {
+            queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+            queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          });
+      });
+    }
     handleMenuClose();
   };
 
@@ -73,7 +87,8 @@ function FieldOptions({field, view, tableSlug, tableLan}) {
       <IconButton
         size="small"
         onClick={handleMenuOpen}
-        onMouseDown={(e) => e.stopPropagation()}>
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <MoreVertIcon fontSize="medium" />
       </IconButton>
 
@@ -81,8 +96,9 @@ function FieldOptions({field, view, tableSlug, tableLan}) {
         anchorEl={anchorMenu}
         open={openMenu}
         onClose={handleMenuClose}
-        anchorOrigin={{vertical: "bottom", horizontal: "right"}}
-        transformOrigin={{vertical: "top", horizontal: "right"}}>
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+      >
         <MenuItem
           sx={{
             display: "flex",
@@ -90,20 +106,22 @@ function FieldOptions({field, view, tableSlug, tableLan}) {
             justifyContent: "space-between",
             width: "140px",
           }}
-          onClick={handleEditClick}>
+          onClick={handleEditClick}
+        >
           <ListItemText>Edit Field</ListItemText>
           <EditIcon fontSize="small" />
         </MenuItem>
 
         <MenuItem
-          onClick={() => deleteField(field?.id)}
+          onClick={() => deleteField(field)}
           sx={{
             color: "error.main",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             width: "140px",
-          }}>
+          }}
+        >
           <ListItemText>Delete Field</ListItemText>
           <DeleteIcon fontSize="small" color="error" />
         </MenuItem>

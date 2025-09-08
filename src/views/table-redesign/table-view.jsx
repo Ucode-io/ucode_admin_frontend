@@ -269,7 +269,6 @@ const TableView = ({
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
-    console.log({ sortedDatas });
 
     let a = sortedDatas
       ?.map((el) => {
@@ -285,7 +284,9 @@ const TableView = ({
 
     a.forEach((obj) => {
       for (const key in obj) {
-        resultObject[key] = obj[key];
+        if (key) {
+          resultObject[key] = obj[key];
+        }
       }
     });
 
@@ -297,7 +298,9 @@ const TableView = ({
       if (matchingSort) {
         const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
-        resultObject[sortKey] = order === "ASC" ? 1 : -1;
+        if (sortKey) {
+          resultObject[sortKey] = order === "ASC" ? 1 : -1;
+        }
       }
     }
 
@@ -384,7 +387,6 @@ const TableView = ({
         shouldGet,
         paginiation,
         orderBy,
-        // currentView,
       },
     ],
 

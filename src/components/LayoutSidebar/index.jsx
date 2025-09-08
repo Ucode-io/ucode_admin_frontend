@@ -465,7 +465,8 @@ const LayoutSidebar = ({
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
         bg={menuStyle?.background ?? "#fff"}
-        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}>
+        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}
+      >
         <Flex
           position="absolute"
           zIndex={999}
@@ -482,11 +483,12 @@ const LayoutSidebar = ({
           cursor="pointer"
           onClick={() =>
             dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))
-          }>
+          }
+        >
           {sidebarIsOpen ? (
-            <KeyboardDoubleArrowLeftIcon style={{color: "#007aff"}} />
+            <KeyboardDoubleArrowLeftIcon style={{ color: "#007aff" }} />
           ) : (
-            <KeyboardDoubleArrowRightIcon style={{color: "#007aff"}} />
+            <KeyboardDoubleArrowRightIcon style={{ color: "#007aff" }} />
           )}
         </Flex>
 
@@ -506,7 +508,8 @@ const LayoutSidebar = ({
           className="scrollbarNone"
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
-          overflowX="hidden">
+          overflowX="hidden"
+        >
           {/* {Boolean(permissions?.chat && userRoleName === DEFAULT_ADMIN) && (
             <Flex
               position="relative"
@@ -568,12 +571,14 @@ const LayoutSidebar = ({
               className="menu-element"
               onMouseLeave={() =>
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
-              }>
+              }
+            >
               <Container
                 dragHandleSelector=".column-drag-handle"
                 groupName="main-menu"
                 onDrop={onDrop}
-                getChildPayload={(index) => menuList[index]}>
+                getChildPayload={(index) => menuList[index]}
+              >
                 {menuList.map((element, index) => (
                   <AppSidebar
                     index={index}
@@ -617,7 +622,7 @@ const LayoutSidebar = ({
                     h={30}
                     alignItems="center"
                     borderRadius={6}
-                    _hover={{bg: "#EAECF0"}}
+                    _hover={{ bg: "#EAECF0" }}
                     cursor="pointer"
                     mx={8}
                     marginTop={"5px"}
@@ -626,13 +631,15 @@ const LayoutSidebar = ({
                       handleOpenNotify(e, "CREATE", true);
                       dispatch(mainActions.setSidebarHighlightedMenu(null));
                     }}
-                    {...itemConditionalProps}>
+                    {...itemConditionalProps}
+                  >
                     <Flex
                       position="absolute"
                       w={32}
                       h={32}
                       alignItems="center"
-                      justifyContent="center">
+                      justifyContent="center"
+                    >
                       <InlineSVG src="/img/plus-icon.svg" color="#475467" />
                     </Flex>
 
@@ -643,7 +650,8 @@ const LayoutSidebar = ({
                         "#475467"
                       }
                       pl={35}
-                      fontSize={14}>
+                      fontSize={14}
+                    >
                       {generateLangaugeText(
                         menuLanguages,
                         i18n?.language,
@@ -685,7 +693,8 @@ const LayoutSidebar = ({
                             dispatch(
                               mainActions.setSidebarHighlightedAction(null)
                             )
-                    }>
+                    }
+                  >
                     <SidebarActionTooltip id="settings" title="Settings">
                       <Flex
                         w={sidebarIsOpen ? "100%" : 36}
@@ -693,19 +702,22 @@ const LayoutSidebar = ({
                         justifyContent={sidebarIsOpen ? "flex-start" : "center"}
                         gap={8}
                         onClick={handleOpenProfileModal}
-                        {...getActionProps("settings")}>
+                        {...getActionProps("settings")}
+                      >
                         <Box
                           pl={sidebarIsOpen ? "5px" : 0}
                           display="flex"
                           alignItems="center"
-                          justifyContent="center">
+                          justifyContent="center"
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             x="0px"
                             y="0px"
                             width="20"
                             height="20"
-                            viewBox="0,0,256,256">
+                            viewBox="0,0,256,256"
+                          >
                             <g
                               fill="rgba(55, 53, 47, 0.85)"
                               fillRule="nonzero"
@@ -720,7 +732,8 @@ const LayoutSidebar = ({
                               fontWeight="none"
                               fontSize="none"
                               textAnchor="none"
-                              style={{mixBlendMode: "normal"}}>
+                              style={{ mixBlendMode: "normal" }}
+                            >
                               <g transform="scale(10.66667,10.66667)">
                                 <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
                               </g>
@@ -732,6 +745,76 @@ const LayoutSidebar = ({
                     </SidebarActionTooltip>
                   </Flex>
                 )}
+                <Flex
+                  position="relative"
+                  h={30}
+                  mx={8}
+                  mb={4}
+                  alignItems="center"
+                  whiteSpace="nowrap"
+                  borderRadius={6}
+                  color="#475467"
+                  fontSize={14}
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                  _hover={{
+                    bg: "#EAECF0",
+                    ".accordionFolderIcon": {
+                      display: "none",
+                    },
+                    ".accordionIcon": {
+                      display: "block",
+                    },
+                  }}
+                  cursor="pointer"
+                  onMouseLeave={
+                    sidebarIsOpen
+                      ? undefined
+                      : () =>
+                          dispatch(
+                            mainActions.setSidebarHighlightedAction(null)
+                          )
+                  }
+                >
+                  <SidebarActionTooltip id="template" title="Template">
+                    <Flex
+                      w={sidebarIsOpen ? "100%" : 36}
+                      alignItems="center"
+                      justifyContent={sidebarIsOpen ? "flex-start" : "center"}
+                      gap={8}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTemplatePopover("template");
+                        handleCloseNotify();
+                      }}
+                      {...getActionProps("template")}
+                    >
+                      <Box
+                        pl={sidebarIsOpen ? "5px" : 0}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <img
+                          src="/img/template.svg"
+                          alt="index"
+                          width={20}
+                          height={20}
+                        />
+                      </Box>
+                      {sidebarIsOpen ? (
+                        <span>
+                          {generateLangaugeText(
+                            menuLanguages,
+                            i18n?.language,
+                            "Make Template"
+                          ) || "Make Template"}
+                        </span>
+                      ) : null}
+                    </Flex>
+                  </SidebarActionTooltip>
+                  <span></span>
+                </Flex>
               </Box>
             </div>
           )}
@@ -778,7 +861,8 @@ const LayoutSidebar = ({
               sidebarIsOpen
                 ? undefined
                 : () => dispatch(mainActions.setSidebarHighlightedAction(null))
-            }>
+            }
+          >
             <>
               <SidebarActionTooltip id="user-invite" title="User Invite">
                 <Box
@@ -795,13 +879,15 @@ const LayoutSidebar = ({
                       background: "#F3F3F3",
                     },
                   }}
-                  onClick={onOpenInviteModal}>
+                  onClick={onOpenInviteModal}
+                >
                   <svg
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
                     fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <path
                       d="M7.63314 9.68341C7.60814 9.68341 7.59147 9.68341 7.56647 9.68341C7.5248 9.67508 7.46647 9.67508 7.41647 9.68341C4.9998 9.60841 3.1748 7.70841 3.1748 5.36675C3.1748 2.98341 5.11647 1.04175 7.4998 1.04175C9.88314 1.04175 11.8248 2.98341 11.8248 5.36675C11.8165 7.70841 9.98314 9.60841 7.65814 9.68341C7.6498 9.68341 7.64147 9.68341 7.63314 9.68341ZM7.4998 2.29175C5.80814 2.29175 4.4248 3.67508 4.4248 5.36675C4.4248 7.03341 5.7248 8.37508 7.38314 8.43341C7.43314 8.42508 7.54147 8.42508 7.64981 8.43341C9.28314 8.35841 10.5665 7.01675 10.5748 5.36675C10.5748 3.67508 9.19147 2.29175 7.4998 2.29175Z"
                       fill="rgb(161, 160, 156)"
@@ -820,7 +906,7 @@ const LayoutSidebar = ({
                     />
                   </svg>
                   {sidebarIsOpen ? (
-                    <span style={{color: "rgb(161, 160, 156)"}}>
+                    <span style={{ color: "rgb(161, 160, 156)" }}>
                       User Invite
                     </span>
                   ) : null}

@@ -302,7 +302,7 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          {/* <MenuItemComponent
+          <MenuItemComponent
             icon={<img src="/img/template.svg" alt="index" />}
             title={
               generateLangaugeText(
@@ -316,7 +316,7 @@ const ButtonsMenu = ({
               setTemplatePopover("template");
               handleCloseNotify();
             }}
-          /> */}
+          />
 
           {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
             element?.data?.permission?.delete) ||
@@ -712,14 +712,14 @@ const ButtonsMenu = ({
               handleCloseNotify();
             }}
           />
-          <Divider
+          {/* <Divider
             style={{
               marginBottom: "4px",
               marginTop: "4px",
             }}
-          />
+          /> */}
 
-          <MenuItemComponent
+          {/* <MenuItemComponent
             icon={<img src="/img/template.svg" alt="index" />}
             title={
               generateLangaugeText(
@@ -733,7 +733,7 @@ const ButtonsMenu = ({
               setTemplatePopover("create-template");
               handleCloseNotify();
             }}
-          />
+          /> */}
         </Box>
       )}
       {menuType === "WIKI_FOLDER" && (

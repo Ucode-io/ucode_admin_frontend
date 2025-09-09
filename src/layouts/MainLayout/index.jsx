@@ -26,11 +26,10 @@ const MainLayout = ({setFavicon, favicon}) => {
   const updateSearchParam = useSearchParams()[2];
   const location = useLocation();
 
-  const {data: projectInfo} = useProjectGetByIdQuery({
+  const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
     queryParams: {
       onSuccess: (data) => {
-        console.log({ icons: data?.icon_categories });
         dispatch(iconCategoryActions.setCategories(data?.icon_categories));
         localStorage.setItem("project_status", data?.status);
         window.dispatchEvent(new Event("storageUpdate"));

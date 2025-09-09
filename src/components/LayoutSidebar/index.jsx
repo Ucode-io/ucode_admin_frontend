@@ -693,7 +693,7 @@ const LayoutSidebar = ({
                           )
                   }
                 >
-                  <SidebarActionTooltip id="template" title="Template">
+                  <SidebarActionTooltip id="template" title="Import template">
                     <Flex
                       w={sidebarIsOpen ? "100%" : 36}
                       alignItems="center"
@@ -701,7 +701,7 @@ const LayoutSidebar = ({
                       gap={8}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setTemplatePopover("template");
+                        setTemplatePopover("create-template");
                         handleCloseNotify();
                       }}
                       {...getActionProps("template")}
@@ -758,8 +758,8 @@ const LayoutSidebar = ({
                           {generateLangaugeText(
                             menuLanguages,
                             i18n?.language,
-                            "Make Template"
-                          ) || "Make Template"}
+                            "Import Template"
+                          ) || "Import Template"}
                         </span>
                       ) : null}
                     </Flex>

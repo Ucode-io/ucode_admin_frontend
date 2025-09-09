@@ -166,7 +166,7 @@ const NewObjectsPage = () => {
       ? "false"
       : "true"
   );
-  console.log({ menuItem });
+
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
   if (isLoading) {

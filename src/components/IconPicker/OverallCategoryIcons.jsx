@@ -65,6 +65,9 @@ function OverallCategoryIcons({
         value={searchText}
         autoFocus={tabIndex === 1}
         inputProps={{ tabIndex }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
         onChange={(e) => {
           setSearchText(e.target.value);
         }}

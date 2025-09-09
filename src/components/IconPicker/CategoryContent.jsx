@@ -68,9 +68,12 @@ function CategoryContent({
         fullWidth
         value={searchText}
         autoFocus={tabIndex === 1}
-        inputProps={{tabIndex}}
+        inputProps={{ tabIndex }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
         onChange={(e) => setSearchText(e.target.value)}
-        sx={{marginTop: "10px"}}
+        sx={{ marginTop: "10px" }}
       />
       <div className={styles.iconsBlock}>
         {computedIconsList.map((icon) => (
@@ -80,7 +83,8 @@ function CategoryContent({
             onClick={() => {
               onChange(`${selectedTab?.category}:${icon}`);
               handleClose();
-            }}>
+            }}
+          >
             <IconGeneratorIconjs prefix={prefix} icon={icon} />
           </div>
         ))}

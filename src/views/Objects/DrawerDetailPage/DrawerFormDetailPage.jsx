@@ -285,7 +285,10 @@ function DrawerFormDetailPage({
                         {...(Boolean(field?.type === "MULTISELECT")
                           ? { minHeight: "30px" }
                           : Boolean(field?.type === FIELD_TYPES.SINGLE_LINE)
-                            ? { height: "auto !important" }
+                            ? {
+                                height: "auto !important",
+                                padding: "0 !important",
+                              }
                             : { height: "32px" })}
                         py="8px"
                       >

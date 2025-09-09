@@ -74,8 +74,6 @@ const LoginFormDesign = ({
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  console.log({ selectedClientTypeID });
-
   const { data: computedConnections = [], isLoading } = useQuery(
     [
       "GET_CONNECTION_LIST",

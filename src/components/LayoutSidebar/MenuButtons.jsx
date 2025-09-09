@@ -81,7 +81,7 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          {/* {element?.data?.permission?.update || permissionButton ? (
+          {element?.data?.permission?.update || permissionButton ? (
             <MenuItemComponent
               icon={<img src="/img/template.svg" alt="index" />}
               title={
@@ -97,7 +97,7 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
-          ) : null} */}
+          ) : null}
 
           {(element?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea" &&
             element?.data?.permission?.delete) ||

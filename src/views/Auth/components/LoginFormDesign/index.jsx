@@ -27,6 +27,7 @@ import {auth} from "./firebase";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import RecoverPassword from "../RecoverPassword";
 import {companyActions} from "../../../../store/company/company.slice";
+import { useNavigate } from "react-router-dom";
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",

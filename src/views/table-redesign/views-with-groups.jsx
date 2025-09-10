@@ -1097,118 +1097,126 @@ export const NewUiViewsWithGroups = ({
               views={views}
             />
 
-            <Popover placement="bottom-end">
-              <InputGroup ml="auto" w="320px">
-                <InputLeftElement>
-                  <Image src="/img/search-lg.svg" alt="search" />
-                </InputLeftElement>
-                <Input
-                  id="search_input"
-                  defaultValue={searchText}
-                  placeholder={
-                    generateLangaugeText(tableLan, i18n?.language, "Search") ||
-                    "Search"
-                  }
-                  onChange={(ev) => inputChangeHandler(ev.target.value)}
-                />
-
-                {(roleInfo === "DEFAULT ADMIN" ||
-                  permissions?.search_button) && (
-                  <PopoverTrigger>
-                    <InputRightElement>
-                      <IconButton
-                        w="24px"
-                        h="24px"
-                        aria-label="more"
-                        icon={<Image src="/img/dots-vertical.svg" alt="more" />}
-                        variant="ghost"
-                        colorScheme="gray"
-                        size="xs"
-                      />
-                    </InputRightElement>
-                  </PopoverTrigger>
-                )}
-              </InputGroup>
-
-              <PopoverContent
-                w="280px"
-                p="8px"
-                display="flex"
-                flexDirection="column"
-                maxH="300px"
-                overflow="auto"
-              >
-                {columnsForSearch.map((column) => (
-                  <Flex
-                    key={column.id}
-                    as="label"
-                    p="8px"
-                    columnGap="8px"
-                    alignItems="center"
-                    borderRadius={6}
-                    _hover={{ bg: "#EAECF0" }}
-                    cursor="pointer"
-                  >
-                    {getColumnIcon({ column })}
-                    <ViewOptionTitle>
-                      {column?.attributes?.[`label_${i18n.language}`] ||
-                        column?.label}
-                    </ViewOptionTitle>
-                    <Switch
-                      ml="auto"
-                      isChecked={column.is_search}
-                      onChange={(e) =>
-                        updateField({
-                          data: {
-                            fields: columnsForSearch.map((c) =>
-                              c.id === column.id
-                                ? { ...c, is_search: e.target.checked }
-                                : c
-                            ),
-                          },
-                          tableSlug,
-                        })
-                      }
-                    />
-                  </Flex>
-                ))}
-              </PopoverContent>
-            </Popover>
-
-            {view?.type !== "SECTION" && (
-              <Box display="flex">
-                {view?.type === VIEW_TYPES_MAP.TABLE && (
-                  <IconButton
-                    fontSize="1.7rem"
-                    variant="ghost"
-                    color={orderBy ? "#0365F2" : "#475467"}
-                    sx={{ color: orderBy ? "#0365F2" : "#475467" }}
-                    icon={<SortIcon color="currentColor" />}
-                    onClick={handleSortClick}
+            {view?.type !== VIEW_TYPES_MAP.WEBSITE && (
+              <Popover placement="bottom-end">
+                <InputGroup ml="auto" w="320px">
+                  <InputLeftElement>
+                    <Image src="/img/search-lg.svg" alt="search" />
+                  </InputLeftElement>
+                  <Input
+                    id="search_input"
+                    defaultValue={searchText}
+                    placeholder={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Search"
+                      ) || "Search"
+                    }
+                    onChange={(ev) => inputChangeHandler(ev.target.value)}
                   />
-                )}
-                <SortPopover
-                  tableSlug={tableSlug}
-                  open={isSortPopupOpen}
-                  anchorEl={sortPopupAnchorEl}
-                  handleClose={handleCloseSortPopup}
-                  fieldsMap={fieldsMap}
-                  setSortedDatas={setSortedDatas}
-                  handleChangeOrder={handleChangeOrder}
-                  orderBy={orderBy}
-                  setOrderBy={setOrderBy}
-                />
-                <FilterPopover
-                  tableLan={tableLan}
-                  view={view}
-                  visibleColumns={visibleColumns}
-                  refetchViews={refetchViews}
-                  tableSlug={tableSlug}
+
+                  {(roleInfo === "DEFAULT ADMIN" ||
+                    permissions?.search_button) && (
+                    <PopoverTrigger>
+                      <InputRightElement>
+                        <IconButton
+                          w="24px"
+                          h="24px"
+                          aria-label="more"
+                          icon={
+                            <Image src="/img/dots-vertical.svg" alt="more" />
+                          }
+                          variant="ghost"
+                          colorScheme="gray"
+                          size="xs"
+                        />
+                      </InputRightElement>
+                    </PopoverTrigger>
+                  )}
+                </InputGroup>
+
+                <PopoverContent
+                  w="280px"
+                  p="8px"
+                  display="flex"
+                  flexDirection="column"
+                  maxH="300px"
+                  overflow="auto"
                 >
-                  <FilterButton view={view} />
-                </FilterPopover>
-              </Box>
+                  {columnsForSearch.map((column) => (
+                    <Flex
+                      key={column.id}
+                      as="label"
+                      p="8px"
+                      columnGap="8px"
+                      alignItems="center"
+                      borderRadius={6}
+                      _hover={{ bg: "#EAECF0" }}
+                      cursor="pointer"
+                    >
+                      {getColumnIcon({ column })}
+                      <ViewOptionTitle>
+                        {column?.attributes?.[`label_${i18n.language}`] ||
+                          column?.label}
+                      </ViewOptionTitle>
+                      <Switch
+                        ml="auto"
+                        isChecked={column.is_search}
+                        onChange={(e) =>
+                          updateField({
+                            data: {
+                              fields: columnsForSearch.map((c) =>
+                                c.id === column.id
+                                  ? { ...c, is_search: e.target.checked }
+                                  : c
+                              ),
+                            },
+                            tableSlug,
+                          })
+                        }
+                      />
+                    </Flex>
+                  ))}
+                </PopoverContent>
+              </Popover>
             )}
+
+            {view?.type !== "SECTION" &&
+              view?.type !== VIEW_TYPES_MAP.WEBSITE && (
+                <Box display="flex">
+                  {view?.type === VIEW_TYPES_MAP.TABLE && (
+                    <IconButton
+                      fontSize="1.7rem"
+                      variant="ghost"
+                      color={orderBy ? "#0365F2" : "#475467"}
+                      sx={{ color: orderBy ? "#0365F2" : "#475467" }}
+                      icon={<SortIcon color="currentColor" />}
+                      onClick={handleSortClick}
+                    />
+                  )}
+                  <SortPopover
+                    tableSlug={tableSlug}
+                    open={isSortPopupOpen}
+                    anchorEl={sortPopupAnchorEl}
+                    handleClose={handleCloseSortPopup}
+                    fieldsMap={fieldsMap}
+                    setSortedDatas={setSortedDatas}
+                    handleChangeOrder={handleChangeOrder}
+                    orderBy={orderBy}
+                    setOrderBy={setOrderBy}
+                  />
+                  <FilterPopover
+                    tableLan={tableLan}
+                    view={view}
+                    visibleColumns={visibleColumns}
+                    refetchViews={refetchViews}
+                    tableSlug={tableSlug}
+                  >
+                    <FilterButton view={view} />
+                  </FilterPopover>
+                </Box>
+              )}
 
             {view?.type === "TIMELINE" && noDates.length > 0 && (
               <Popover>
@@ -1247,21 +1255,23 @@ export const NewUiViewsWithGroups = ({
 
             {view?.type !== "SECTION" && (
               <>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-                  <Button
-                    minW={"auto"}
-                    width={"auto"}
-                    h={"30px"}
-                    px={4}
-                    onClick={() => navigateCreatePage()}
-                  >
-                    {generateLangaugeText(
-                      tableLan,
-                      i18n?.language,
-                      "Create item"
-                    ) || "Create item"}
-                  </Button>
-                </PermissionWrapperV2>
+                {view?.type !== VIEW_TYPES_MAP.WEBSITE && (
+                  <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                    <Button
+                      minW={"auto"}
+                      width={"auto"}
+                      h={"30px"}
+                      px={4}
+                      onClick={() => navigateCreatePage()}
+                    >
+                      {generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Create item"
+                      ) || "Create item"}
+                    </Button>
+                  </PermissionWrapperV2>
+                )}
                 <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
                   <ViewOptions
                     tableInfo={tableInfo}

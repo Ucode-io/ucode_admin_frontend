@@ -70,6 +70,8 @@ export default function TextFieldWithMultiLanguage({
     }
   }, [languages]);
 
+  console.log({ defaultValue });
+
   return (
     <Box width={"100%"}>
       <Controller
@@ -80,7 +82,7 @@ export default function TextFieldWithMultiLanguage({
           <InputGroup>
             <Input
               {...props}
-              defaultValue={defaultValue}
+              defaultValue={defaultValue || props?.defaultValue}
               className={clsx(cls.input, {
                 [cls.leftContent]: leftContent,
               })}

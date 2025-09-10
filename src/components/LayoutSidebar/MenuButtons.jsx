@@ -12,6 +12,7 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import MenuItemComponent from "./MenuItem";
 import {analyticItems} from "./SidebarRecursiveBlock/mock/folders";
 import "./style.scss";
+import { useSelector } from "react-redux";
 
 const ButtonsMenu = ({
   element,
@@ -32,8 +33,13 @@ const ButtonsMenu = ({
   setTemplatePopover = () => {},
   openTableCreateModal = () => {},
 }) => {
+  const DEFAULT_ADMIN = "DEFAULT ADMIN";
+
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
+
+  const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
+
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting;
@@ -81,7 +87,8 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          {element?.data?.permission?.update || permissionButton ? (
+          {(element?.data?.permission?.update || permissionButton) &&
+          userRoleName === DEFAULT_ADMIN ? (
             <MenuItemComponent
               icon={<img src="/img/template.svg" alt="index" />}
               title={
@@ -302,21 +309,23 @@ const ButtonsMenu = ({
             />
           ) : null}
 
-          <MenuItemComponent
-            icon={<img src="/img/template.svg" alt="index" />}
-            title={
-              generateLangaugeText(
-                menuLanguages,
-                i18n?.language,
-                "Make Template"
-              ) || "Make Template"
-            }
-            onClick={(e) => {
-              e.stopPropagation();
-              setTemplatePopover("template");
-              handleCloseNotify();
-            }}
-          />
+          {userRoleName === DEFAULT_ADMIN && (
+            <MenuItemComponent
+              icon={<img src="/img/template.svg" alt="index" />}
+              title={
+                generateLangaugeText(
+                  menuLanguages,
+                  i18n?.language,
+                  "Make Template"
+                ) || "Make Template"
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setTemplatePopover("template");
+                handleCloseNotify();
+              }}
+            />
+          )}
 
           {(element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" &&
             element?.data?.permission?.delete) ||

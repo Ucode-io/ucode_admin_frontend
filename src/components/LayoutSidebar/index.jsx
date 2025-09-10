@@ -661,112 +661,112 @@ const LayoutSidebar = ({
                 </SidebarAppTooltip>
               )}
 
-              <Box mt={46}>
-                <Flex
-                  position="relative"
-                  h={30}
-                  mx={8}
-                  mb={4}
-                  alignItems="center"
-                  whiteSpace="nowrap"
-                  borderRadius={6}
-                  color="#475467"
-                  fontSize={14}
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  _hover={{
-                    bg: "#EAECF0",
-                    ".accordionFolderIcon": {
-                      display: "none",
-                    },
-                    ".accordionIcon": {
-                      display: "block",
-                    },
-                  }}
-                  cursor="pointer"
-                  onMouseLeave={
-                    sidebarIsOpen
-                      ? undefined
-                      : () =>
-                          dispatch(
-                            mainActions.setSidebarHighlightedAction(null)
-                          )
-                  }
-                >
-                  <SidebarActionTooltip id="template" title="Import template">
-                    <Flex
-                      w={sidebarIsOpen ? "100%" : 36}
-                      alignItems="center"
-                      justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                      gap={8}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTemplatePopover("create-template");
-                        handleCloseNotify();
-                      }}
-                      {...getActionProps("template")}
-                    >
-                      <Box
-                        pl={sidebarIsOpen ? "5px" : 0}
-                        display="flex"
+              {userRoleName === DEFAULT_ADMIN && (
+                <Box mt={46}>
+                  <Flex
+                    position="relative"
+                    h={30}
+                    mx={8}
+                    mb={4}
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    borderRadius={6}
+                    color="#475467"
+                    fontSize={14}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    _hover={{
+                      bg: "#EAECF0",
+                      ".accordionFolderIcon": {
+                        display: "none",
+                      },
+                      ".accordionIcon": {
+                        display: "block",
+                      },
+                    }}
+                    cursor="pointer"
+                    onMouseLeave={
+                      sidebarIsOpen
+                        ? undefined
+                        : () =>
+                            dispatch(
+                              mainActions.setSidebarHighlightedAction(null)
+                            )
+                    }
+                  >
+                    <SidebarActionTooltip id="template" title="Import template">
+                      <Flex
+                        w={sidebarIsOpen ? "100%" : 36}
                         alignItems="center"
-                        justifyContent="center"
+                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
+                        gap={8}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTemplatePopover("create-template");
+                          handleCloseNotify();
+                        }}
+                        {...getActionProps("template")}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          fill="none"
-                          viewBox="0 0 16 16"
+                        <Box
+                          pl={sidebarIsOpen ? "5px" : 0}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
                         >
-                          <g fill="#fff" clip-path="url(#a)">
-                            <circle
-                              cx="5"
-                              cy="9"
-                              r="3.4"
-                              stroke="rgba(55, 53, 47, 0.85)"
-                              stroke-width="1.2"
-                            />
-                            <mask id="b">
-                              <rect width="8" height="8" x="5" y="2" rx="1" />
-                            </mask>
-                            <rect
-                              width="8"
-                              height="8"
-                              x="5"
-                              y="2"
-                              stroke="rgba(55, 53, 47, 0.85)"
-                              stroke-width="2.4"
-                              mask="url(#b)"
-                              rx="1"
-                            />
-                            <path
-                              stroke="rgba(55, 53, 47, 0.85)"
-                              stroke-width="1.2"
-                              d="M9.413 7.35a.1.1 0 0 1 .174 0l3.55 6.15a.1.1 0 0 1-.086.15H5.949a.1.1 0 0 1-.087-.15l3.551-6.15Z"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="a">
-                              <path fill="#fff" d="M0 0h16v16H0z" />
-                            </clipPath>
-                          </defs>
-                        </svg>
-                      </Box>
-                      {sidebarIsOpen ? (
-                        <span>
-                          {generateLangaugeText(
-                            menuLanguages,
-                            i18n?.language,
-                            "Import Template"
-                          ) || "Import Template"}
-                        </span>
-                      ) : null}
-                    </Flex>
-                  </SidebarActionTooltip>
-                  <span></span>
-                </Flex>
-                {userRoleName === DEFAULT_ADMIN && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            viewBox="0 0 16 16"
+                          >
+                            <g fill="#fff" clip-path="url(#a)">
+                              <circle
+                                cx="5"
+                                cy="9"
+                                r="3.4"
+                                stroke="rgba(55, 53, 47, 0.85)"
+                                stroke-width="1.2"
+                              />
+                              <mask id="b">
+                                <rect width="8" height="8" x="5" y="2" rx="1" />
+                              </mask>
+                              <rect
+                                width="8"
+                                height="8"
+                                x="5"
+                                y="2"
+                                stroke="rgba(55, 53, 47, 0.85)"
+                                stroke-width="2.4"
+                                mask="url(#b)"
+                                rx="1"
+                              />
+                              <path
+                                stroke="rgba(55, 53, 47, 0.85)"
+                                stroke-width="1.2"
+                                d="M9.413 7.35a.1.1 0 0 1 .174 0l3.55 6.15a.1.1 0 0 1-.086.15H5.949a.1.1 0 0 1-.087-.15l3.551-6.15Z"
+                              />
+                            </g>
+                            <defs>
+                              <clipPath id="a">
+                                <path fill="#fff" d="M0 0h16v16H0z" />
+                              </clipPath>
+                            </defs>
+                          </svg>
+                        </Box>
+                        {sidebarIsOpen ? (
+                          <span>
+                            {generateLangaugeText(
+                              menuLanguages,
+                              i18n?.language,
+                              "Import Template"
+                            ) || "Import Template"}
+                          </span>
+                        ) : null}
+                      </Flex>
+                    </SidebarActionTooltip>
+                    <span></span>
+                  </Flex>
                   <Flex
                     position="relative"
                     h={30}
@@ -819,41 +819,41 @@ const LayoutSidebar = ({
                             color="rgba(55, 53, 47, 0.85)"
                           />
                           {/* <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0px"
-                            y="0px"
-                            width="20"
-                            height="20"
-                            viewBox="0,0,256,256"
+                          xmlns="http://www.w3.org/2000/svg"
+                          x="0px"
+                          y="0px"
+                          width="20"
+                          height="20"
+                          viewBox="0,0,256,256"
+                        >
+                          <g
+                            fill="rgba(55, 53, 47, 0.85)"
+                            fillRule="nonzero"
+                            stroke="none"
+                            strokeWidth="1"
+                            strokeLinecap="butt"
+                            strokeLinejoin="miter"
+                            strokeMiterlimit="10"
+                            strokeDasharray=""
+                            strokeDashoffset="0"
+                            fontFamily="none"
+                            fontWeight="none"
+                            fontSize="none"
+                            textAnchor="none"
+                            style={{ mixBlendMode: "normal" }}
                           >
-                            <g
-                              fill="rgba(55, 53, 47, 0.85)"
-                              fillRule="nonzero"
-                              stroke="none"
-                              strokeWidth="1"
-                              strokeLinecap="butt"
-                              strokeLinejoin="miter"
-                              strokeMiterlimit="10"
-                              strokeDasharray=""
-                              strokeDashoffset="0"
-                              fontFamily="none"
-                              fontWeight="none"
-                              fontSize="none"
-                              textAnchor="none"
-                              style={{ mixBlendMode: "normal" }}
-                            >
-                              <g transform="scale(10.66667,10.66667)">
-                                <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
-                              </g>
+                            <g transform="scale(10.66667,10.66667)">
+                              <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
                             </g>
-                          </svg> */}
+                          </g>
+                        </svg> */}
                         </Box>
                         {sidebarIsOpen ? <span>Settings</span> : null}
                       </Flex>
                     </SidebarActionTooltip>
                   </Flex>
-                )}
-              </Box>
+                </Box>
+              )}
             </div>
           )}
         </Box>
@@ -980,6 +980,7 @@ const LayoutSidebar = ({
             modalType={modalType}
             appId={appId}
             getMenuList={getMenuList}
+            projectId={projectId}
           />
         )}
 

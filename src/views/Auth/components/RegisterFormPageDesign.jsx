@@ -37,8 +37,6 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
     formState: { errors },
   } = useForm();
 
-  const { mutate: updateObject } = useMutation(() => console.log(""));
-
   const { mutateAsync: registerCompany, isLoading } =
     useRegisterCompanyMutation({
       onSuccess: () => {
@@ -83,8 +81,6 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
       },
     }
   );
-
-  console.log({ fares });
 
   return (
     <div className={classes.outletRegister}>
@@ -192,9 +188,13 @@ const RegisterFormPageDesign = ({ setFormType = () => {} }) => {
           </Box>
         </form>
 
-        <Box sx={{ display: "flex", gap: "10px" }}>
+        <Box sx={{ display: "flex", gap: "10px", flexShrink: 0 }}>
           <Checkbox
-            style={{ width: "16px", height: "16px", marginTop: "2px" }}
+            style={{
+              width: "16px",
+              height: "16px",
+              marginTop: "2px",
+            }}
             onChange={(e) => setPublicCheck(e.target.checked)}
             id="public_offer"
           />

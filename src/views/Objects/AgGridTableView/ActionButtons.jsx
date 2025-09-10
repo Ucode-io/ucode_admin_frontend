@@ -9,7 +9,6 @@ import {Delete} from "@mui/icons-material";
 import ClearIcon from "@mui/icons-material/Clear";
 
 function ActionButtons(props) {
-  console.log({ props });
   const { colDef, data } = props;
 
   useEffect(() => {

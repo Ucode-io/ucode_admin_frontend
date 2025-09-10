@@ -20,6 +20,7 @@ export default function Checkbox(theme) {
               justifyContent: "center",
               backgroundColor: "transparent",
               transition: "all 0.2s ease",
+              flexShrink: 0,
             }}
           />
         ),
@@ -35,6 +36,7 @@ export default function Checkbox(theme) {
               justifyContent: "center",
               backgroundColor: "transparent",
               transition: "all 0.2s ease",
+              flexShrink: 0,
             }}
           >
             <svg

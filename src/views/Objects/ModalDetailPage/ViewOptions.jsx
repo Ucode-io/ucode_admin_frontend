@@ -336,6 +336,7 @@ const ViewOptions = ({
             icon={<Image src="/img/dots-vertical.svg" alt="more" />}
             variant="ghost"
             colorScheme="gray"
+            style={{ marginLeft: "auto" }}
           />
         </PopoverTrigger>
         <PopoverContent ref={ref} w="250px" p={"8px"} borderRadius="8px">

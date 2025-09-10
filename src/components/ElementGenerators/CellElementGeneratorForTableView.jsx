@@ -38,6 +38,7 @@ import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTable";
 import HFDatePickerNew from "../../views/table-redesign/DatePickerNew";
+import useDebounce from "../../hooks/useDebounce";
 
 const parser = new Parser();
 
@@ -61,7 +62,9 @@ const CellElementGeneratorForTableView = ({
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
+
+  const debouncedUpdateObject = useDebounce(updateObject, 1000);
 
   let relationTableSlug = "";
 
@@ -126,7 +129,7 @@ const CellElementGeneratorForTableView = ({
 
     if (!defaultValue) return undefined;
 
-    const {error, result} = parser.parse(defaultValue);
+    const { error, result } = parser.parse(defaultValue);
 
     return error ? undefined : result;
   }, [field, objectIdFromJWT]);
@@ -711,7 +714,7 @@ const CellElementGeneratorForTableView = ({
         <MultiLineCellFormElement
           control={control}
           isWrapField={isWrapField}
-          updateObject={updateObject}
+          updateObject={debouncedUpdateObject}
           isNewTableView={true}
           computedSlug={computedSlug}
           field={field}
@@ -784,7 +787,7 @@ const CellElementGeneratorForTableView = ({
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

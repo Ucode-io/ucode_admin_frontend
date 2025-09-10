@@ -71,7 +71,7 @@ const NewObjectsPage = () => {
   const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: menuId,
     queryParams: {
-      enabled: Boolean(menuId),
+      enabled: Boolean(menuId && menuId !== "login"),
       onSuccess: (res) => {
         setMenuItem(res);
       },

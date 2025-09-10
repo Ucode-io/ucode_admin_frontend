@@ -53,7 +53,6 @@ export const {actions: companyActions, reducer: companyReducer} = createSlice({
       state.defaultPage = payload ?? "";
     },
     setCompanyName: (state, {payload}) => {
-      console.log("payloadpayloadpayloadpayload", payload);
       state.companyName = payload ?? "";
     },
     logout: (state) => initialState,

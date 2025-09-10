@@ -19,8 +19,9 @@ export default function NewTableDataForm({
   watch,
   newUi = false,
   isTableView = false,
+  relationView,
 }) {
-  const {mutate: updateObject} = useMutation(() => console.log(""));
+  const { mutate: updateObject } = useMutation(() => console.log(""));
 
   const isWrapField = useMemo(() => {
     if (!isWrap || !field || !field.id) {
@@ -42,7 +43,8 @@ export default function NewTableDataForm({
       style={{
         position: "relative",
         minWidth: "150px",
-      }}>
+      }}
+    >
       {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
         <CellElementGeneratorForRelation
           key={field?.id}
@@ -63,6 +65,7 @@ export default function NewTableDataForm({
           relationfields={relationfields}
           data={data}
           newUi={newUi}
+          relationView={relationView}
         />
       ) : (
         <CellElementGeneratorForTableView

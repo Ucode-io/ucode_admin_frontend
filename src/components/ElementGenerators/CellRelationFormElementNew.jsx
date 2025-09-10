@@ -60,6 +60,7 @@ const CellRelationFormElementNew = ({
   row,
   newUi,
   objectIdFromJWT,
+  relationView,
 }) => {
   const classes = useStyles();
 
@@ -133,6 +134,7 @@ const CellRelationFormElementNew = ({
               data={data}
               newUi={newUi}
               objectIdFromJWT={objectIdFromJWT}
+              relationView={relationView}
             />
           );
         }}
@@ -159,6 +161,7 @@ const AutoCompleteElement = ({
   row,
   newUi,
   objectIdFromJWT,
+  relationView,
 }) => {
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
@@ -539,11 +542,18 @@ const AutoCompleteElement = ({
   //   </components.SingleValue>
   // );
 
-  const autofilterDisable = useMemo(() => {
-    if (isTableView && Boolean(Object.keys(autoFiltersValue)?.length)) {
-      return true;
-    } else return false;
-  }, [autoFiltersValue]);
+  const openedItemValue = useMemo(() => {
+    const query = new URLSearchParams(window.location.search);
+    const itemId = query.get("p");
+
+    const openedItemOption = allOptions?.find((item) => item?.guid === itemId);
+
+    if (relationView && openedItemOption) {
+      return [openedItemOption];
+    } else {
+      return null;
+    }
+  }, [relationView, allOptions]);
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -603,46 +613,15 @@ const AutoCompleteElement = ({
         }}
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
-        options={computedOptions ?? []}
+        options={openedItemValue ?? computedOptions ?? []}
         value={localValue}
         menuPortalTarget={document.body}
         onMenuOpen={(e) => {
           refetch();
         }}
-        isClearable
+        isClearable={!openedItemValue}
         components={{
-          // ClearIndicator: (props) => {
-          //   console.log({ props });
-          //   return (
-          //     ((Array.isArray(localValue) && localValue?.length) ||
-          //       Boolean(localValue)) && (
-          //       <div
-          //         style={{
-          //           marginRight: "20px",
-          //           cursor: "pointer",
-          //         }}
-          //         onClick={(e) => {
-          //           e.stopPropagation();
-          //           setLocalValue([]);
-          //         }}
-          //       >
-          //         <ClearIcon />
-          //       </div>
-          //     )
-          //   );
-          // },
-          SingleValue: (props) => (
-            <CustomSingleValue
-              tableSlug={tableSlug}
-              disabled={disabled}
-              field={field}
-              isNewRouter={isNewRouter}
-              localValue={localValue}
-              menuId={menuId}
-              refetch={refetch}
-              {...props}
-            />
-          ),
+          SingleValue: CustomSingleValue,
           DropdownIndicator: null,
           ClearIndicator: null,
         }}

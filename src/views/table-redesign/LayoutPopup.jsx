@@ -86,7 +86,9 @@ export const LayoutPopup = ({
   //   name: `attributes.label_${i18n.language}`,
   // });
 
-  const tableName = mainForm?.watch(`attributes.label_${i18n.language}`);
+  const tableName =
+    mainForm?.watch(`attributes.label_${i18n.language}`) ||
+    mainForm?.watch(`label`);
 
   const { fields } = useFieldArray({
     control,

@@ -34,6 +34,7 @@ const TableCreateModal = ({
   modalType,
   appId,
   selectedFolder,
+  projectId,
   getMenuList = () => {},
   setSelectedFolder = () => {},
 }) => {
@@ -156,7 +157,6 @@ const TableCreateModal = ({
           queryClient.refetchQueries(["MENU_CHILD"]);
           closeModal();
         } else {
-          console.log("entered second");
           getMenuList();
           closeModal();
         }
@@ -171,12 +171,11 @@ const TableCreateModal = ({
     // setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
 
-    Promise.all([updateTableData])
-      .then(() => {
-        dispatch(constructorTableActions.setDataById(data));
-        // navigate(-1);
-      })
-      .catch(() => setBtnLoader(false));
+    Promise.all([updateTableData]).then(() => {
+      dispatch(constructorTableActions.setDataById(data));
+      // navigate(-1);
+    });
+    // .catch(() => setBtnLoader(false));
   };
 
   const getKeyCheck = async (id) => {

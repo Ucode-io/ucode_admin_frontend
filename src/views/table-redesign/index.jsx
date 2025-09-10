@@ -1009,6 +1009,7 @@ const Th = ({
   const permissions = useSelector(
     (state) => state.permissions?.permissions?.[tableSlug]
   );
+  const permissions2 = useSelector((state) => state.permissions);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -1067,7 +1068,7 @@ const Th = ({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
       });
   };
 
@@ -1087,7 +1088,7 @@ const Th = ({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -1118,7 +1119,7 @@ const Th = ({
             if (column?.attributes?.relation_data?.id) {
               queryClient.refetchQueries([
                 "RELATION_GET_BY_ID",
-                {tableSlug, id: column?.attributes?.relation_data?.id},
+                { tableSlug, id: column?.attributes?.relation_data?.id },
               ]);
             }
           },
@@ -1145,7 +1146,7 @@ const Th = ({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({tableSlug, field, order})
+              paginationActions.setSortValues({ tableSlug, field, order })
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
@@ -1306,7 +1307,7 @@ const Th = ({
       updateRelationView(computedValuesForRelationView);
     } else {
       constructorViewService.update(tableSlug, computedValues).then(() => {
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {tableSlug});
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
         handleSummaryClose();
       });
     }
@@ -1318,7 +1319,7 @@ const Th = ({
       ? "sticky"
       : "relative";
   const left = view?.attributes?.fixedColumns?.[column?.id]
-    ? `${calculateWidthFixedColumn({columns, column}) + 45}px`
+    ? `${calculateWidthFixedColumn({ columns, column }) + 45}px`
     : "0";
   const bg =
     tableSettings?.[pageName]?.find((item) => item?.id === column?.id)

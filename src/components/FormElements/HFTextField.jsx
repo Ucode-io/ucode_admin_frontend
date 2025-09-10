@@ -113,6 +113,7 @@ const HFTextField = ({
                 ? {
                     background: isNewTableView ? "inherit" : "#c0c0c039",
                     padding: "0px",
+                    paddingLeft: "14px",
                   }
                 : isNewTableView
                   ? {

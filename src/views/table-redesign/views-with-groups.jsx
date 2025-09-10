@@ -97,6 +97,7 @@ import TableActions from "./TableActions";
 import { AIMenu, useAIChat } from "@/components/ProfilePanel/AIChat";
 import { SortIcon } from "../../utils/constants/icons";
 import { SortPopover } from "./components/SortPopover";
+import clsx from "clsx";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
@@ -168,13 +169,13 @@ export const NewUiViewsWithGroups = ({
   const queryClient = useQueryClient();
   const visibleForm = useForm();
   const dispatch = useDispatch();
-  const {filters} = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
   const [isChanged, setIsChanged] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [checkedColumns, setCheckedColumns] = useState([]);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -185,7 +186,7 @@ export const NewUiViewsWithGroups = ({
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const tableLan = useGetLang("Table");
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -204,7 +205,7 @@ export const NewUiViewsWithGroups = ({
   const viewId = query.get("v") ?? selectedView?.id;
 
   const projectId = useSelector((state) => state.auth.projectId);
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const settingsForm = useForm({
     defaultValues: {
@@ -298,12 +299,12 @@ export const NewUiViewsWithGroups = ({
     mode: "all",
   });
 
-  const {fields} = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
 
-  const {mutate: updateField, isLoading: updateLoading} =
+  const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
@@ -313,7 +314,7 @@ export const NewUiViewsWithGroups = ({
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const {data: tabs} = useQuery(
+  const { data: tabs } = useQuery(
     queryGenerator(groupField, filters, i18n.language)
   );
 
@@ -420,7 +421,7 @@ export const NewUiViewsWithGroups = ({
 
   const [authInfo, setAuthInfo] = useState(null);
 
-  const {isLoading} = useTableByIdQuery({
+  const { isLoading } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -447,7 +448,7 @@ export const NewUiViewsWithGroups = ({
         dispatch(detailDrawerActions.openDrawer());
         setSelectedRow(null);
       } else {
-        navigateToForm(tableSlug, "CREATE", {}, {id}, menuId);
+        navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
       }
     }
   };
@@ -473,10 +474,10 @@ export const NewUiViewsWithGroups = ({
     setSelectedTabIndex(idx);
     viewHandler(view);
     setSelectedView(view);
-    dispatch(viewsActions.setSelectedView({view, idx}));
+    dispatch(viewsActions.setSelectedView({ view, idx }));
     const isSection = view?.type === "SECTION";
     if (!new_router) {
-      dispatch(viewsActions.setViewTab({tableSlug, tabIndex: idx}));
+      dispatch(viewsActions.setViewTab({ tableSlug, tabIndex: idx }));
       setSelectedTabIndex(idx);
     } else {
       if (isSection) {
@@ -532,7 +533,7 @@ export const NewUiViewsWithGroups = ({
         {},
         tableSlug
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -1182,7 +1183,7 @@ export const NewUiViewsWithGroups = ({
                     variant="ghost"
                     color={orderBy ? "#0365F2" : "#475467"}
                     sx={{ color: orderBy ? "#0365F2" : "#475467" }}
-                    icon={<SortIcon />}
+                    icon={<SortIcon color="currentColor" />}
                     onClick={handleSortClick}
                   />
                 )}
@@ -1329,7 +1330,13 @@ export const NewUiViewsWithGroups = ({
                     <div className="title" style={{ marginRight: "20px" }}>
                       <h3>{view.table_label}</h3>
                     </div>
-                    <TabList style={{ border: "none", overflowY: "hidden" }}>
+                    <TabList
+                      className={clsx(
+                        style.reactTabsList,
+                        "react-tabs__tab-list"
+                      )}
+                      style={{ border: "none" }}
+                    >
                       {tabs?.map((tab) => (
                         <Tab
                           key={tab.value}

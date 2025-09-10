@@ -21,6 +21,7 @@ import { FieldHide } from "../FieldHide";
 import { Field } from "../Field";
 import { FormulaField } from "../FormulaField";
 import { Box } from "@mui/material";
+import { IncrementField } from "../IncrementField";
 
 export const useFieldPopoverProps = ({
   mainForm,
@@ -323,6 +324,12 @@ export const useFieldPopoverProps = ({
                 setValue={setValue}
                 watch={watch}
               />
+            </Box>
+          );
+        } else if (activeType?.value === FIELD_TYPES.INCREMENT_ID) {
+          return (
+            <Box padding="12px 8px">
+              <IncrementField control={control} />
             </Box>
           );
         } else {

@@ -745,7 +745,8 @@ export const FieldParams = ({
             {(activeType?.value === FIELD_TYPES.MAP ||
               activeType?.value === FIELD_TYPES.POLYGON ||
               activeType?.value === FIELD_TYPES.FORMULA ||
-              activeType?.value === FIELD_TYPES.FORMULA_FRONTEND) && (
+              activeType?.value === FIELD_TYPES.FORMULA_FRONTEND ||
+              activeType?.value === FIELD_TYPES.INCREMENT_ID) && (
               <FieldMenuItem
                 title="Field"
                 icon={

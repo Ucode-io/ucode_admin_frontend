@@ -541,6 +541,7 @@ export const DynamicTable = ({
                       tableSlug={tableSlug}
                       onDeleteClick={onDeleteClick}
                       relationAction={relationAction}
+                      relationView={relationView}
                       onChecked={onChecked}
                       relationFields={fields?.length}
                       data={data}
@@ -577,6 +578,7 @@ export const DynamicTable = ({
                 calculateWidthFixedColumn={calculateWidthFixedColumn}
                 firstRowWidth={45}
                 tableSlugProp={tableSlugProp}
+                relationView={relationView}
               />
             )}
 

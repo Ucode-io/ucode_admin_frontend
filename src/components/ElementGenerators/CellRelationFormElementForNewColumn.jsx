@@ -54,6 +54,7 @@ const CellRelationFormElementForNewColumn = ({
   isNewRow,
   mainForm,
   objectIdFromJWT,
+  relationView,
 }) => {
   const classes = useStyles();
 
@@ -131,6 +132,7 @@ const CellRelationFormElementForNewColumn = ({
               relationfields={relationfields}
               data={data}
               objectIdFromJWT={objectIdFromJWT}
+              relationView={relationView}
             />
           );
         }}
@@ -155,6 +157,7 @@ const AutoCompleteElement = ({
   mainForm,
   setFormValue = () => {},
   objectIdFromJWT,
+  relationView,
 }) => {
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
@@ -174,7 +177,6 @@ const AutoCompleteElement = ({
     (el) => el.slug
   );
   const isRequired = field?.attributes?.required;
-  console.log(field?.attributes?.required);
 
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
@@ -234,6 +236,25 @@ const AutoCompleteElement = ({
     });
     return result;
   }, [autoFilters, filtersHandler, value]);
+
+  const openedItemValue = useMemo(() => {
+    const query = new URLSearchParams(window.location.search);
+    const itemId = query.get("p");
+
+    const openedItemOption = allOptions?.find((item) => item?.guid === itemId);
+
+    if (relationView && openedItemOption) {
+      setValue(openedItemOption?.guid);
+      return [
+        {
+          label: openedItemOption?.[`name_${i18n.language}`],
+          value: openedItemOption?.guid,
+        },
+      ];
+    } else {
+      return null;
+    }
+  }, [relationView, allOptions]);
 
   const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
@@ -332,7 +353,7 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         setCount(data?.count);
-        if (Object.values(autoFiltersValue)?.length > 0) {
+        if (Object.values(autoFiltersValue)?.length > 0 && !openedItemValue) {
           setAllOptions(data?.options);
         } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
@@ -550,10 +571,10 @@ const AutoCompleteElement = ({
         }}
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
-        options={computedOptions ?? []}
-        value={localValue}
+        options={openedItemValue ?? computedOptions ?? []}
+        value={openedItemValue?.[0] || localValue}
         required={isRequired}
-        isClearable
+        isClearable={!openedItemValue}
         components={{
           ClearIndicator: () =>
             (localValue?.length || Boolean(localValue)) && (

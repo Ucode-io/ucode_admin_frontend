@@ -32,10 +32,11 @@ const AddDataColumn = React.memo(
     firstRowWidth = 45,
     isTableView = false,
     tableSlug,
+    relationView,
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
-    const {id} = useParams();
+    const { id } = useParams();
     const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
     const computedTableSlug = isRelationTable ? relatedTableSlug : tableSlug;
@@ -44,7 +45,7 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      formState: {errors},
+      formState: { errors },
     } = useForm({});
     const onSubmit = (values) => {
       const data = {
@@ -222,6 +223,7 @@ const AddDataColumn = React.memo(
               watch={mainForm.watch}
               newUi={true}
               isTableView={isTableView}
+              relationView={relationView}
             />
 
             {/* {(column.attributes?.disabled ||

@@ -325,8 +325,10 @@ const BoardColumn = ({
         Object.keys(computedBoardData?.[0])?.length
       ) {
         setComputedBoardData(boardData);
+      } else if (boardData?.length !== computedBoardData?.length) {
+        setComputedBoardData(boardData);
       }
-    } else if (boardData?.length !== computedBoardData?.length) {
+    } else if (boardData?.length && !computedBoardData?.length) {
       setComputedBoardData(boardData);
     }
   }, [boardData]);

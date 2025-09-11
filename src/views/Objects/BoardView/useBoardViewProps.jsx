@@ -254,7 +254,7 @@ export const useBoardViewProps = ({
           setBoardData(data?.data?.response ?? {});
         } else {
           const newData = data?.data?.response;
-          if (!newData) return;
+          if (!newData || Object.keys(newData).length === 0) return;
 
           setBoardData((prev) => {
             if (subGroupById) {
@@ -469,6 +469,7 @@ export const useBoardViewProps = ({
     const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
 
     const boardDataLength = Object.values(boardData).flat().length;
+    console.log({ lastCard, count, boardDataLength });
 
     if (isLastElementInViewport && !loadingData && boardDataLength < count) {
       setOffset((prev) => prev + limit);

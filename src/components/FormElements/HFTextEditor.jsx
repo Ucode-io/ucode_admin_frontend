@@ -84,11 +84,11 @@ const HFTextEditor = ({
   const modules = {
     toolbar: {
       container: [
-        [{header: "1"}, {header: "2"}],
-        [{list: "ordered"}, {list: "bullet"}],
+        [{ header: "1" }, { header: "2" }],
+        [{ list: "ordered" }, { list: "bullet" }],
         ["bold", "italic", "underline"],
-        [{color: []}],
-        ["link"],
+        [{ color: [] }],
+        ["link", "image"],
         [
           {
             font: [
@@ -110,7 +110,8 @@ const HFTextEditor = ({
     <FRowMultiLine
       label={label}
       required={field?.required}
-      extraClassName={isNewTableView ? "tableView" : ""}>
+      extraClassName={isNewTableView ? "tableView" : ""}
+    >
       <Controller
         control={control}
         name={name}
@@ -118,7 +119,7 @@ const HFTextEditor = ({
           required: required ? "This is a required field" : false,
           ...rules,
         }}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           const computedVal = DOMPurify.sanitize(value, {
             ALLOWED_TAGS: [
               "p",
@@ -131,8 +132,17 @@ const HFTextEditor = ({
               "li",
               "span",
               "br",
+              "img",
             ],
-            ALLOWED_ATTR: ["href", "style"],
+            ALLOWED_ATTR: [
+              "href",
+              "style",
+              "target",
+              "src",
+              "width",
+              "height",
+              "alt",
+            ],
           });
           return (
             <Suspense fallback={<RingLoaderWithWrapper />}>

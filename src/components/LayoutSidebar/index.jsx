@@ -1211,6 +1211,9 @@ const Header = ({
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
         dispatch(permissionsActions.setPermissions(res?.permissions));
+        dispatch(
+          permissionsActions.setGlobalPermissions(res?.global_permission)
+        );
         store.dispatch(authActions.setTokens(res));
         navigate("/");
         window.location.reload();

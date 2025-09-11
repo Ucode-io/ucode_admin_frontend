@@ -661,6 +661,7 @@ const TableViewOld = ({
               selectedViewType={selectedViewType}
               setSelectedViewType={setSelectedViewType}
               navigateToEditPage={navigateToDetailPage}
+              tableSlug={tableSlug}
             />
           ) : (
             <OldModalDetailPage

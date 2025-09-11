@@ -85,6 +85,7 @@ const CalendarTemplate = ({
   menuItem,
   setLayoutType,
   currentDay,
+  tableSlug: tableSlugFromProp,
 }) => {
   const [open, setOpen] = useState();
   const [dateInfo, setDateInfo] = useState({});
@@ -92,7 +93,9 @@ const CalendarTemplate = ({
   const [selectedRow, setSelectedRow] = useState({});
   const [defaultValue, setDefaultValue] = useState(null);
 
-  const { tableSlug, appId } = useParams();
+  const { tableSlug: tableSlugFromParam, appId } = useParams();
+
+  const tableSlug = tableSlugFromProp || tableSlugFromParam;
 
   const projectId = useSelector((state) => state.company?.projectId);
 

@@ -18,6 +18,7 @@ import MaterialUIProvider from "../../../providers/MaterialUIProvider";
 import {RelationPopover} from "../../Constructor/Tables/Form/Relations/components/RelationPopover";
 import { FIELD_TYPES } from "../../../utils/constants/fieldTypes";
 import constructorRelationService from "../../../services/constructorRelationService";
+import deleteField from "../../../utils/deleteField";
 
 function FieldOptions({ field, view, tableSlug, tableLan }) {
   const queryClient = useQueryClient();
@@ -55,30 +56,15 @@ function FieldOptions({ field, view, tableSlug, tableLan }) {
     setAnchorEl(null);
   };
 
-  const deleteField = (column) => {
-    if (
-      column?.type === FIELD_TYPES.LOOKUP ||
-      column?.type === FIELD_TYPES.LOOKUPS
-    ) {
-      constructorRelationService
-        .delete(column?.relation_id, tableSlug)
-        .then(() => {
-          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
-        });
-    } else {
-      constructorFieldService.delete(column, tableSlug).then(() => {
-        constructorViewService
-          .update(tableSlug, {
-            ...view,
-            columns: view?.columns?.filter((item) => item !== column),
-          })
-          .then(() => {
-            queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-            queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
-          });
-      });
-    }
+  const handleDeleteField = (column) => {
+    deleteField({
+      column,
+      tableSlug,
+      callback: () => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+      },
+    });
     handleMenuClose();
   };
 
@@ -113,7 +99,7 @@ function FieldOptions({ field, view, tableSlug, tableLan }) {
         </MenuItem>
 
         <MenuItem
-          onClick={() => deleteField(field)}
+          onClick={() => handleDeleteField(field)}
           sx={{
             color: "error.main",
             display: "flex",

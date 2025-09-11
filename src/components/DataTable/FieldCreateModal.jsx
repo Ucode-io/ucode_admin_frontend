@@ -64,6 +64,7 @@ import {
 import SVG from "react-inlinesvg";
 import { North, South } from "@mui/icons-material";
 import FormElementButton from "../NewFormElements/FormElementButton";
+import deleteField from "../../utils/deleteField";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -693,18 +694,16 @@ export default function FieldCreateModal({
       });
   };
 
-  const deleteField = (column) => {
-    constructorFieldService.delete(column, tableSlug).then((res) => {
-      constructorViewService
-        .update(tableSlug, {
-          ...view,
-          columns: view?.columns?.filter((item) => item !== column),
-        })
-        .then(() => {
-          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
-        });
+  const handleDeleteField = (column) => {
+    deleteField({
+      column,
+      tableSlug,
+      callback: () => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+      },
     });
+    handleClose();
   };
 
   const dropdownTypes = {
@@ -1113,7 +1112,7 @@ export default function FieldCreateModal({
                       <button
                         className={style.btn}
                         type="button"
-                        onClick={() => deleteField(fieldData.id)}
+                        onClick={() => handleDeleteField(fieldData)}
                         onMouseEnter={() => {
                           setOpenedDropdown(null);
                         }}

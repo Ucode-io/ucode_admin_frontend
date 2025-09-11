@@ -37,10 +37,11 @@ function ModalDetailPage({
   selectedViewType,
   setFullScreen = () => {},
   setSelectedViewType = () => {},
+  tableSlug: tableSlugFromProp,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
@@ -58,7 +59,7 @@ function ModalDetailPage({
 
   const [searchParams] = useSearchParams();
 
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const [btnLoader, setBtnLoader] = useState(false);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const {
@@ -74,11 +75,14 @@ function ModalDetailPage({
 
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [data, setData] = useState({});
 
   const tableSlug =
-    tableFromParams || selectedV?.relation_table_slug || view?.table_slug;
+    tableFromParams ||
+    selectedV?.relation_table_slug ||
+    view?.table_slug ||
+    tableSlugFromProp;
 
   const [selectedView, setSelectedView] = useState(null);
 
@@ -116,7 +120,10 @@ function ModalDetailPage({
     );
 
     try {
-      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
 
       const layout1 = {
         ...layout,
@@ -264,7 +271,7 @@ function ModalDetailPage({
     delete data.invite;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         updateLayout();
         dispatch(showAlert("Successfully updated", "success"));
@@ -282,7 +289,7 @@ function ModalDetailPage({
     setBtnLoader(true);
 
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         updateLayout();
         dispatch(detailDrawerActions.closeDrawer());
@@ -406,10 +413,12 @@ function ModalDetailPage({
     <Modal
       open={open}
       onClose={handleClose}
-      sx={{width: "1120px", margin: "0 auto"}}
-      className="child-position-center">
+      sx={{ width: "1120px", margin: "0 auto" }}
+      className="child-position-center"
+    >
       <Card
-        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}>
+        className={`${fullScreen ? styles.cardModal : styles.card} PlatformModal`}
+      >
         <Box zIndex={9}>
           <DrawerObjectsPage
             open={open}

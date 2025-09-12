@@ -11,7 +11,7 @@ const deleteField = ({ column, tableSlug, callback = () => {} }) => {
       .delete(column?.relation_id, tableSlug)
       .then(callback);
   } else {
-    constructorFieldService.delete(column, tableSlug).then(callback);
+    constructorFieldService.delete(column?.id, tableSlug).then(callback);
   }
 };
 

@@ -1,102 +1,12 @@
 include:
-  - .gitlab/ci/*.gitlab-ci.yml
+  - project: 'ucode/ops/ci-cd'
+    ref: master
+    file: 'microservices/ci.gitlab-ci.yml'
+
+  - project: 'ucode/ops/ci-cd'
+    ref: master
+    file: 'microservices/cd.gitlab-ci.yml'
 
 stages:
-  - cypress-testing
   - build
   - deploy
-  - rollback
-
-cypress-testing:
-  stage: cypress-testing
-  extends: .cypress_testing
-  variables:
-    OAUTH_GITLAB_TOKEN: $OAUTH_GITLAB_TOKEN
-    REPOSITORY_URL: gitlab.udevs.io/ucode/ucode_cypress_test.git
-    TEST_DIRECTORY: ucode_cypress_testing
-    TELEGRAM_BOT_TOKEN: $TELEGRAM_BOT_TOKEN
-    TELEGRAM_CHAT_ID: $TELEGRAM_CHAT_ID
-  allow_failure: true 
-  only:
-    - staging
-
-build-dev:
-  stage: build
-  extends: .build_template
-  variables:
-    ENV_TAG: dev
-    DOCKERFILE: Dockerfile-dev
-  only:
-    - dev
-
-build-staging:
-  stage: build
-  extends: .build_template
-  variables:
-    ENV_TAG: test
-    DOCKERFILE: Dockerfile-staging
-  only:
-    - staging
-
-build-prod:
-  stage: build
-  extends: .build_template
-  variables:
-    ENV_TAG: latest
-    DOCKERFILE: Dockerfile
-  only:
-    - master
-
-deploy-dev:
-  stage: deploy
-  extends: .deploy_template
-  variables:
-    NAMESPACE: ucode-dev
-    VALUES_FILE: .helm/values-dev.yml
-    K8SCONFIGJSON: $UCODE_HZN_KUBECONFIG
-  only:
-    - dev
-
-deploy-staging:
-  stage: deploy
-  extends: .deploy_template
-  variables:
-    NAMESPACE: ucode-test
-    VALUES_FILE: .helm/values-test.yml
-    K8SCONFIGJSON: $UCODE_HZN_KUBECONFIG
-  only:
-    - staging
-
-deploy-prod:
-  stage: deploy
-  extends: .deploy_template
-  variables:
-    NAMESPACE: ucode-prod
-    VALUES_FILE: .helm/values-prod.yml
-    K8SCONFIGJSON: $UCODE_KUBECONFIG
-  only:
-    - master
-
-rollback-dev:
-  stage: rollback
-  extends: .rollback_template
-  variables:
-    NAMESPACE: ucode-dev
-    K8SCONFIGJSON: $UCODE_HZN_KUBECONFIG
-  when: manual
-
-rollback-staging:
-  stage: rollback
-  extends: .rollback_template
-  variables:
-    NAMESPACE: ucode-test
-    K8SCONFIGJSON: $UCODE_HZN_KUBECONFIG
-  when: manual
-
-rollback-prod:
-  stage: rollback
-  extends: .rollback_template
-  variables:
-    NAMESPACE: ucode-prod
-    K8SCONFIGJSON: $UCODE_KUBECONFIG
-  when: manual

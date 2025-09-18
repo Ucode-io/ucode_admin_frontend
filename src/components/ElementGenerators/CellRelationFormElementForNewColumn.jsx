@@ -247,7 +247,7 @@ const AutoCompleteElement = ({
       setValue(openedItemOption?.guid);
       return [
         {
-          label: openedItemOption?.[`name_${i18n.language}`],
+          label: openedItemOption?.[`name_${i18n.language}`] ?? openedItemOption?.name,
           value: openedItemOption?.guid,
         },
       ];

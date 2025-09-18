@@ -84,6 +84,9 @@ const DrawerTableView = ({
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
   const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
 
+  const query = new URLSearchParams(window.location.search);
+  const itemId = query.get("p")
+
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo
@@ -337,6 +340,8 @@ const DrawerTableView = ({
       ? parseInt(searchText)
       : searchText;
 
+
+      console.log(Boolean(tableSlug && !!itemId), itemId)
   const selectedV = viewsList?.[viewsList?.length - 1];
   const computedFilter =
     selectedV?.relation_table_slug || selectedV?.table_slug;
@@ -389,7 +394,7 @@ const DrawerTableView = ({
         },
       });
     },
-    enabled: Boolean(tableSlug),
+    enabled: Boolean(tableSlug && !!itemId),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -408,6 +413,7 @@ const DrawerTableView = ({
       });
       setCombinedTableData((prev) => [...prev, ...result]);
     },
+    cacheTime: 0
   });
 
   const {
@@ -587,7 +593,9 @@ const DrawerTableView = ({
   }, [reset, tableData]);
 
   useEffect(() => {
-    refetch();
+    if(!relationView || itemId) {
+      refetch()
+    }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
         view?.attributes?.quick_filters?.length ?? 0
@@ -601,6 +609,8 @@ const DrawerTableView = ({
       localStorage.setItem("detailPage", "SidePeek");
     }
   }, [localStorage.getItem("detailPage")]);
+
+  console.log({tableData})
 
   return (
     <MaterialUIProvider>

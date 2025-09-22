@@ -58,6 +58,13 @@ const ViewForm = ({
 
   const languages = useSelector((state) => state.languages.list);
 
+  const storageItem = localStorage.getItem("newUi");
+  const newUi = JSON.parse(
+    !storageItem || storageItem === "undefined" || storageItem === "false"
+      ? "false"
+      : "true"
+  );
+
   const form = useForm();
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
@@ -352,15 +359,15 @@ const ViewForm = ({
       </div>
 
       <div className={styles.formFooter}>
-        {/* {initialValues !== "NEW" &&
-          initialValues?.attributes?.view_permission?.delete && (
+        {initialValues !== "NEW" &&
+          initialValues?.attributes?.view_permission?.delete && !newUi && (
             <CancelButton
               loading={deleteBtnLoader}
               onClick={deleteView}
               title={"Delete"}
               icon={<Delete />}
             />
-          )} */}
+          )}
         {/* <CancelButton onClick={closeModal} /> */}
         <Button
           variant="contained"

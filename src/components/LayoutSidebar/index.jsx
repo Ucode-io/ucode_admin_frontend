@@ -80,12 +80,13 @@ import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
 import TemplateSelection from "../../layouts/MainLayout/TemplateMenu/TemplateSelection";
 import { SettingsIcon } from "../../utils/constants/icons";
 
+const DEFAULT_ADMIN = "DEFAULT ADMIN";
+
 const LayoutSidebar = ({
   toggleDarkMode = () => {},
   darkMode,
   handleOpenProfileModal = () => {},
 }) => {
-  const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
@@ -1641,6 +1642,8 @@ const Companies = ({
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
   const userId = useSelector((state) => state.auth?.userId);
+  const roleInfo = useSelector((state) => state.auth?.roleInfo);
+
   const authStore = store.getState().auth;
   const companiesQuery = useCompanyListQuery({
     params: {owner_id: authStore?.userInfo?.id},
@@ -1706,7 +1709,8 @@ const Companies = ({
                     {company?.name}
                   </Box>
                 </Flex>
-                <Flex gap={"6px"}>
+                {
+                  roleInfo?.name === DEFAULT_ADMIN && <Flex gap={"6px"}>
                   <Box
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1720,6 +1724,7 @@ const Companies = ({
                   </Box>
                   <AccordionIcon ml="auto" fontSize="20px" />
                 </Flex>
+                }
               </Flex>
             </AccordionButton>
             <Projects
@@ -1768,7 +1773,9 @@ const Companies = ({
           </Box>
         </Box>
       </Dialog>
-      <AddOrganization />
+      {
+        roleInfo?.name === DEFAULT_ADMIN && <AddOrganization />
+      }
     </Box>
   );
 };

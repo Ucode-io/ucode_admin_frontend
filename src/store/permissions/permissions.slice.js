@@ -1,5 +1,27 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+const permissionsMap = {
+  read: true,
+  write: true,
+  update: true,
+  delete: true,
+  pdf_action: true,
+  add_field: true,
+  automation: true,
+  language_btn: true,
+  settings: true,
+  share_modal: true,
+  view_create: true,
+  add_filter: true,
+  field_filter: true,
+  fix_column: true,
+  columns: true,
+  group: true,
+  excel_menu: true,
+  tab_group: true,
+  search_button: true,
+}
+
 export const {actions: permissionsActions, reducer: permissionsReducer} =
   createSlice({
     name: "permissions",
@@ -36,6 +58,9 @@ export const {actions: permissionsActions, reducer: permissionsReducer} =
       },
       setGlobalPermissions: (state, {payload}) => {
         state.globalPermissions = payload;
+      },
+      setPermissionsForNewTable: (state, {payload}) => {
+        state.permissions[payload.table_slug] = permissionsMap;
       },
     },
   });

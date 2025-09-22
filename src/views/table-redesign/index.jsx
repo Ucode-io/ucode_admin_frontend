@@ -497,6 +497,7 @@ export const DynamicTable = ({
                     sortedDatas={sortedDatas}
                     formType={formType}
                     setFormType={setFormType}
+                    renderColumns={renderColumns}
                   />
                 </PermissionWrapperV2>
               )}
@@ -749,6 +750,7 @@ const FieldButton = ({
   tableSlug,
   formType,
   setFormType,
+  renderColumns,
 }) => {
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
@@ -975,6 +977,7 @@ const FieldButton = ({
           register={register}
           handleCloseFieldDrawer={handleCloseFieldDrawer}
           setIsUpdatedField={setIsUpdatedField}
+          renderColumns={renderColumns}
         />
       )}
     </>
@@ -1012,7 +1015,8 @@ const Th = ({
     (state) => state.permissions?.permissions?.[tableSlug]
   );
   const permissions2 = useSelector((state) => state.permissions);
-
+  
+  console.log(permissions2)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

@@ -26,6 +26,7 @@ import style from "./style.module.scss";
 import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import { CloseButton } from "../../components/CloseButton";
 import { CustomCheckbox } from "../../components/CustomCheckbox";
+import { permissionsActions } from "../../store/permissions/permissions.slice";
 
 const TableCreateModal = ({
   exist = false,
@@ -160,6 +161,10 @@ const TableCreateModal = ({
           getMenuList();
           closeModal();
         }
+        console.log({res})
+        dispatch(permissionsActions.setPermissionsForNewTable({
+          table_slug: res?.slug,
+        }))
         // setPermission(res?.record_permission, res?.slug);
       })
       .catch(() => {

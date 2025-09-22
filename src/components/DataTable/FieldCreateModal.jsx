@@ -116,6 +116,7 @@ export default function FieldCreateModal({
   handleCloseFieldDrawer = () => {},
   setIsUpdatedField = () => {},
   formType,
+  renderColumns = [],
 }) {
   const { id, tableSlug: tableSlugParam } = useParams();
   const { view: viewFromContext } = useViewContext();
@@ -590,10 +591,18 @@ export default function FieldCreateModal({
     //   horizontal: "left",
     // };
 
-    popoverAnchorProps.anchorOrigin = {
-      vertical: "bottom",
-      horizontal: "left",
-    };
+    if(!renderColumns.length) {
+      popoverAnchorProps.anchorOrigin = {
+        vertical: "bottom",
+        horizontal: "right",
+      };
+    } else {
+      popoverAnchorProps.anchorOrigin = {
+        vertical: "bottom",
+        horizontal: "left",
+      };
+    }
+
   } else {
     popoverAnchorProps.anchorOrigin = {
       vertical: "bottom",

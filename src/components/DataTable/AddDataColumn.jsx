@@ -26,6 +26,7 @@ const AddDataColumn = React.memo(
     refetch,
     view,
     isRelationTable,
+    fieldsMap,
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
@@ -161,6 +162,7 @@ const AddDataColumn = React.memo(
               width={width}
               index={index}
               watch={mainForm.watch}
+              fieldsMap={fieldsMap}
             />
           </CTableCell>
         ))}

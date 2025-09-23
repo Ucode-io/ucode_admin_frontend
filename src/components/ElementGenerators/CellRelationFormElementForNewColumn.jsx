@@ -55,6 +55,7 @@ const CellRelationFormElementForNewColumn = ({
   mainForm,
   objectIdFromJWT,
   relationView,
+  fieldsMap,
 }) => {
   const classes = useStyles();
 
@@ -133,6 +134,7 @@ const CellRelationFormElementForNewColumn = ({
               data={data}
               objectIdFromJWT={objectIdFromJWT}
               relationView={relationView}
+              fieldsMap={fieldsMap}
             />
           );
         }}
@@ -237,20 +239,16 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
+  const query = new URLSearchParams(window.location.search);
+  const itemId = query.get("p");
+
   const openedItemValue = useMemo(() => {
-    const query = new URLSearchParams(window.location.search);
-    const itemId = query.get("p");
 
     const openedItemOption = allOptions?.find((item) => item?.guid === itemId);
 
     if (relationView && openedItemOption) {
       setValue(openedItemOption?.guid);
-      return [
-        {
-          label: openedItemOption?.[`name_${i18n.language}`] ?? openedItemOption?.name,
-          value: openedItemOption?.guid,
-        },
-      ];
+      return openedItemOption;
     } else {
       return null;
     }
@@ -326,8 +324,8 @@ const AutoCompleteElement = ({
         offset: pageToOffset(page, 10),
       };
 
-      if (value) {
-        const additionalValues = [value];
+      if (value || itemId) {
+        const additionalValues = [value || itemId];
         requestData.additional_request.additional_values =
           additionalValues?.flat();
       }
@@ -355,6 +353,8 @@ const AutoCompleteElement = ({
         setCount(data?.count);
         if (Object.values(autoFiltersValue)?.length > 0 && !openedItemValue) {
           setAllOptions(data?.options);
+        } else if (openedItemValue) {
+          setAllOptions([data?.options?.find((el) => el?.guid === openedItemValue?.guid)]);
         } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
@@ -571,8 +571,10 @@ const AutoCompleteElement = ({
         }}
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
-        options={openedItemValue ?? computedOptions ?? []}
-        value={openedItemValue?.[0] || localValue}
+        // options={openedItemValue ?? computedOptions ?? []}
+        // value={openedItemValue?.[0] || localValue}
+        options={computedOptions ?? []}
+        value={localValue}
         required={isRequired}
         isClearable={!openedItemValue}
         components={{

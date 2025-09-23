@@ -25,6 +25,7 @@ const TableDataForm = ({
   setFormValue = () => {},
   newUi,
   relationView,
+  fieldsMap,
 }) => {
   const { mutate: updateObject } = useMutation(() =>
     constructorObjectService.update(tableSlug, {

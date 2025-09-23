@@ -361,6 +361,7 @@ const DrawerObjectDataTable = ({
                 tableSettings={tableSettings}
                 calculateWidthFixedColumn={calculateWidthFixedColumn}
                 firstRowWidth={45}
+                fieldsMap={fieldsMap}
               />
             )}
 

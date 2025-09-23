@@ -340,8 +340,6 @@ const DrawerTableView = ({
       ? parseInt(searchText)
       : searchText;
 
-
-      console.log(Boolean(tableSlug && !!itemId), itemId)
   const selectedV = viewsList?.[viewsList?.length - 1];
   const computedFilter =
     selectedV?.relation_table_slug || selectedV?.table_slug;
@@ -610,8 +608,6 @@ const DrawerTableView = ({
     }
   }, [localStorage.getItem("detailPage")]);
 
-  console.log({tableData})
-
   return (
     <MaterialUIProvider>
       <div id="wrapper_drag" className={styles.wrapper}>
@@ -673,6 +669,7 @@ const DrawerTableView = ({
           navigateToForm={navigateToForm}
           menuItem={menuItem}
           tableSlugProp={tableSlug}
+          fieldsMap={fieldsMap}
           {...props}
         />
 

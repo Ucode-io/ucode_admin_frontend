@@ -34,6 +34,7 @@ const MainLayout = ({setFavicon, favicon}) => {
         localStorage.setItem("project_status", data?.status);
         window.dispatchEvent(new Event("storageUpdate"));
       },
+      enabled: !!projectId,
     },
   });
 

@@ -1,4 +1,4 @@
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+// import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export const GreyLoader = () => {
   return (

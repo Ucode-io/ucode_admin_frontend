@@ -173,6 +173,7 @@ export const DynamicTable = ({
   isPaginationPositionSticky,
   getAllData = () => {},
   tableSlugProp = "",
+  fieldsMap = {}
 }) => {
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -580,6 +581,7 @@ export const DynamicTable = ({
                 firstRowWidth={45}
                 tableSlugProp={tableSlugProp}
                 relationView={relationView}
+                fieldsMap={fieldsMap}
               />
             )}
 
@@ -1015,8 +1017,7 @@ const Th = ({
     (state) => state.permissions?.permissions?.[tableSlug]
   );
   const permissions2 = useSelector((state) => state.permissions);
-  
-  console.log(permissions2)
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

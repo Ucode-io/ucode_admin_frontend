@@ -33,6 +33,7 @@ const AddDataColumn = React.memo(
     isTableView = false,
     tableSlug,
     relationView,
+    fieldsMap = {},
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
@@ -224,6 +225,7 @@ const AddDataColumn = React.memo(
               newUi={true}
               isTableView={isTableView}
               relationView={relationView}
+              fieldsMap={fieldsMap}
             />
 
             {/* {(column.attributes?.disabled ||

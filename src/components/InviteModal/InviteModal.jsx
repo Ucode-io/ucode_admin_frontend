@@ -75,7 +75,7 @@ function InviteModal({
 
   const client_type_id = mainForm.getValues()?.client_type_id;
 
-  const {data: projectInfo} = useProjectGetByIdQuery({project_id});
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId: project_id});
 
   const handleClose = () => {
     onClose();

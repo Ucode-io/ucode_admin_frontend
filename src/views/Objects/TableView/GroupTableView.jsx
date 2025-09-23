@@ -460,8 +460,9 @@ const GroupTableView = ({
           </Button> */}
         </div>
       </PermissionWrapperV2>
-
-      <ModalDetailPage open={open} setOpen={setOpen} />
+      {
+        open && <ModalDetailPage open={open} setOpen={setOpen} />
+      }
 
       <Drawer
         open={drawerState}

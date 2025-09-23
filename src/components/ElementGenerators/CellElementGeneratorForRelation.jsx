@@ -31,6 +31,7 @@ const CellElementGeneratorForRelation = ({
   setFormValue = () => {},
   newUi,
   relationView,
+  fieldsMap,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -137,6 +138,7 @@ const CellElementGeneratorForRelation = ({
             placeholder={field.attributes?.placeholder}
             objectIdFromJWT={objectIdFromJWT}
             relationView={relationView}
+            fieldsMap={fieldsMap}
           />
         </Suspense>
       ) : (

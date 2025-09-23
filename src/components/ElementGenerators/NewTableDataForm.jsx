@@ -20,6 +20,7 @@ export default function NewTableDataForm({
   newUi = false,
   isTableView = false,
   relationView,
+  fieldsMap,
 }) {
   const { mutate: updateObject } = useMutation(() => console.log(""));
 
@@ -66,6 +67,7 @@ export default function NewTableDataForm({
           data={data}
           newUi={newUi}
           relationView={relationView}
+          fieldsMap={fieldsMap}
         />
       ) : (
         <CellElementGeneratorForTableView

@@ -772,6 +772,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
             tableSlug={tableSlug}
+            modal
           />
         )}
 

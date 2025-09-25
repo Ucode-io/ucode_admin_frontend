@@ -28,6 +28,7 @@ function NewSubMenu({
   folderItem,
   getMenuList = () => {},
   setSelectedFolder = () => {},
+  setSelectedApp = () => {},
 }) {
   const queryClient = useQueryClient();
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
@@ -122,6 +123,7 @@ function NewSubMenu({
                             selectedApp={selectedApp}
                             setSelectedFolder={setSelectedFolder}
                             buttonProps={{className: "highlight-on-hover"}}
+                            setSelectedApp={setSelectedApp}
                           />
                         )
                       )

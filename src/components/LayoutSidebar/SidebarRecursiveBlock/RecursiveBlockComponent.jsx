@@ -50,6 +50,7 @@ const RecursiveBlock = ({
   projectSettingLan,
   menuStyles,
   setSelectedFolder = () => {},
+  setSelectedApp = () => {},
 }) => {
   const menuItem = useSelector((state) => state.menu.menuItem);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -106,6 +107,7 @@ const RecursiveBlock = ({
 
   const clickHandler = (e) => {
 
+    setSelectedApp(null)
     if(menuId === element?.id || oldRouteMenuId === element?.id){
       setSubMenuIsOpen(prev => !prev);
       return
@@ -489,6 +491,7 @@ const RecursiveBlock = ({
               selectedApp={selectedApp}
               buttonProps={buttonProps}
               setSelectedFolder={setSelectedFolder}
+              setSelectedApp={setSelectedApp}
             />
           ))}
 

@@ -108,6 +108,7 @@ const AppSidebar = ({
   });
 
   const clickHandler = (el) => {
+    console.log({el, selectedApp})
     if(el?.id === selectedApp?.id) {
       coontrolAccordionAction(el)
       return

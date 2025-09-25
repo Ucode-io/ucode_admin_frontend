@@ -92,7 +92,6 @@ import {ScreenOptions} from "./ScreenOptions";
 import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
-import {useViewWithGroupsProps} from "./useViewWithGroupsProps";
 import TableActions from "./TableActions";
 import { AIMenu, useAIChat } from "@/components/ProfilePanel/AIChat";
 import { SortIcon } from "../../utils/constants/icons";
@@ -606,32 +605,6 @@ export const NewUiViewsWithGroups = ({
   const viewName = relationView
     ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label
     : view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
-
-  // const {
-  //   getViewSettings,
-  //   viewsWithSettings,
-  //   createView,
-  //   handleSelectViewType,
-  //   selectedViewAnchor,
-  //   selectedViewTab,
-  //   closeViewSettings,
-  //   loading,
-  //   computedColumns,
-  //   viewErrors,
-  // } = useViewWithGroupsProps({
-  //   relationView,
-  //   tableSlug,
-  //   viewsList,
-  //   fieldsMap,
-  //   fieldsMapRel,
-  //   i18n,
-  //   menuId,
-  //   views,
-  //   handleClose,
-  //   refetchViews,
-  //   handleClosePop,
-  //   tableRelations,
-  // });
 
   const updateVisibleViews = useCallback(() => {
     if (!views || views.length === 0) return;

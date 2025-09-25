@@ -108,6 +108,11 @@ const AppSidebar = ({
   });
 
   const clickHandler = (el) => {
+    if(el?.id === selectedApp?.id) {
+      coontrolAccordionAction(el)
+      return
+    }
+
     setSelectedFolder(el);
     dispatch(tableActions.setTable(el?.data?.table));
     dispatch(detailDrawerActions.setMainTabIndex(0));

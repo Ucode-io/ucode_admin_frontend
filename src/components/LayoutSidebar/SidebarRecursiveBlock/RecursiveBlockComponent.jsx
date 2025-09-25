@@ -63,6 +63,7 @@ const RecursiveBlock = ({
   const [child, setChild] = useState();
   const [id, setId] = useState();
   const [searchParams] = useSearchParams();
+  const oldRouteMenuId = searchParams.get("menuId");
   const newRouter = localStorage.getItem("new_router");
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
 
@@ -104,6 +105,12 @@ const RecursiveBlock = ({
       : element?.id === menuItem?.id;
 
   const clickHandler = (e) => {
+
+    if(menuId === element?.id || oldRouteMenuId === element?.id){
+      setSubMenuIsOpen(prev => !prev);
+      return
+    }
+
     dispatch(menuActions.setMenuItem(element));
 
     if (Boolean(newRouter === "true")) {
@@ -228,7 +235,6 @@ const RecursiveBlock = ({
               }}
               className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
               onClick={(e) => {
-                console.log("elementtttttttt", element);
                 setSelectedFolder(element);
                 customFunc(e);
                 clickHandler(e);

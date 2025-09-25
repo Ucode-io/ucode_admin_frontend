@@ -42,7 +42,7 @@ const ObjectsPage = () => {
   );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
-    viewSelectedIndex?.tabIndex || 1
+    viewSelectedIndex || 1
   );
   const [menuItem, setMenuItem] = useState(null);
   const [selectedView, setSelectedView] = useState(null);

@@ -22,6 +22,7 @@ export const HFDatePicker = ({
       render={({field: {onChange, value}}) => {
         return (
           <DatePickerInput
+            key={value}
             id="dateField"
             value={getValue(value)}
             valueFormat="DD.MM.YYYY"

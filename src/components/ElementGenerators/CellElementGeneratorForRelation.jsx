@@ -139,6 +139,7 @@ const CellElementGeneratorForRelation = ({
             objectIdFromJWT={objectIdFromJWT}
             relationView={relationView}
             fieldsMap={fieldsMap}
+            newColumn={true}
           />
         </Suspense>
       ) : (

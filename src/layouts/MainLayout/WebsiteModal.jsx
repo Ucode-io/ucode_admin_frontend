@@ -21,7 +21,6 @@ const WebsiteModal = ({
   selectedFolder,
   getMenuList = () => {},
 }) => {
-  console.log("selectedFolderselectedFolder", selectedFolder);
   const queryClient = useQueryClient();
   const { control, handleSubmit, reset, watch } = useForm();
 
@@ -39,7 +38,7 @@ const WebsiteModal = ({
   });
 
   const onSubmit = (data) => {
-    if (!selectedFolder?.data) {
+    if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -76,7 +75,6 @@ const WebsiteModal = ({
           queryClient.refetchQueries(["MENU_CHILD"]);
           closeModal();
         } else {
-          console.log("entered second");
           getMenuList();
           closeModal();
         }

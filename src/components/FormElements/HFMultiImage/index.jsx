@@ -30,6 +30,7 @@ const HFMultiImage = ({
         <>
           <MultiImageUpload
             name={name}
+            key={value}
             drawerDetail={drawerDetail}
             value={value}
             tabIndex={tabIndex}

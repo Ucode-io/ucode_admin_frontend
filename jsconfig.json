@@ -7,6 +7,7 @@
       "@/hooks/*": ["src/hooks/*"],
       "@/services/*": ["src/services/*"],
       "@/views/*": ["src/views/*"],
+      "@/providers/*": ["src/providers/*"],
     }
   }
 }

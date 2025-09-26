@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
 import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
 import { groupFieldActions } from "../../store/groupField/groupField.slice";
+import { useViewContext } from "@/providers/ViewProvider";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -58,6 +59,7 @@ const CellRelationFormElementNew = ({
   newUi,
   objectIdFromJWT,
   relationView,
+  newColumn,
 }) => {
   const classes = useStyles();
 
@@ -132,6 +134,7 @@ const CellRelationFormElementNew = ({
               newUi={newUi}
               objectIdFromJWT={objectIdFromJWT}
               relationView={relationView}
+              newColumn={newColumn}
             />
           );
         }}
@@ -159,7 +162,9 @@ const AutoCompleteElement = ({
   newUi,
   objectIdFromJWT,
   relationView,
+  newColumn,
 }) => {
+  const {view} = useViewContext()
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
@@ -251,7 +256,7 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler, value]);
 
   const { data: optionsFromLocale, refetch } = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page],
+    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page, field?.table_slug],
     () => {
       if (!field?.table_slug) return null;
 
@@ -286,7 +291,7 @@ const AutoCompleteElement = ({
     {
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)),
+        (!field?.attributes?.function_path && Boolean(debouncedValue)) || newColumn,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -313,6 +318,13 @@ const AutoCompleteElement = ({
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
+
+    if(field?.table_slug === "client_type") {
+      console.log({uniqueObjects, allOptions})
+      return uniqueObjects?.filter((item) => (
+        item?.table_slug === view?.table_slug
+      ))
+    }
 
     if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
       return uniqueObjects?.filter((item) => {

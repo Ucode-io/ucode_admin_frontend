@@ -25,6 +25,7 @@ import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
 import zIndex from "@mui/material/styles/zIndex";
+import { useViewContext } from "@/providers/ViewProvider";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -161,6 +162,7 @@ const AutoCompleteElement = ({
   objectIdFromJWT,
   relationView,
 }) => {
+  const {view} = useViewContext()
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -369,6 +371,17 @@ const AutoCompleteElement = ({
     let uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify))
     ).map(JSON.parse);
+
+    if(field?.table_slug === "client_type") {
+      return uniqueObjects?.filter((item) => (
+        item?.table_slug === view?.table_slug
+      )).map((option) => ({
+        label: option?.attributes?.enable_multi_language
+          ? getRelationFieldTabsLabelLang(field, option)
+          : getRelationFieldTabsLabel(field, option, i18n?.language, languages),
+        value: option?.guid,
+      })) ?? []
+    }
 
     if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
       uniqueObjects = uniqueObjects?.filter(
@@ -608,6 +621,17 @@ const AutoCompleteElement = ({
           </span>
         )}
         styles={customStyles}
+        // getOptionLabel={(option) =>
+        //   field?.attributes?.enable_multi_language
+        //     ? getRelationFieldTabsLabelLang(
+        //         field,
+        //         option,
+        //         i18n?.language,
+        //         languages
+        //       )
+        //     : `${getRelationFieldTabsLabel(field, option)}`
+        // }
+        // getOptionValue={(option) => option.value}
       />
     </div>
   );

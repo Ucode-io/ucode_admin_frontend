@@ -46,6 +46,7 @@ const HFFloatField = ({
         const decimalSeparator = isFloat ? "." : undefined;
         return (
           <NumericFormat
+            key={value}
             id="float-field"
             thousandsGroupStyle="thousand"
             thousandSeparator=" "

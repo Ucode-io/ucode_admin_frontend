@@ -82,6 +82,7 @@ const HFMultipleAutocomplete = ({
         return (
           <AutoCompleteElement
             value={value}
+            key={value}
             classes={classes}
             isBlackBg={isBlackBg}
             options={options}

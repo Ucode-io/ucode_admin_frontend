@@ -82,6 +82,7 @@ const HFNumberField = ({
         return (
           <Box>
             <NumericFormat
+              key={value}
               maxLength={19}
               format="#### #### #### ####"
               mask="_"

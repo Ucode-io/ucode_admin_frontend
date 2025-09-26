@@ -175,6 +175,7 @@ const AddDataColumn = React.memo(
         {columns?.map((column, index) => (
           <CTableCell
             className="data_table__number_cell"
+            key={column?.id}
             style={{
               padding: "0 5px",
               minWidth: "80px",

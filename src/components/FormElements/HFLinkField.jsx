@@ -77,6 +77,7 @@ const HFLinkField = ({
             <TextField
               size="small"
               value={value}
+              key={value}
               onChange={(e) => {
                 onChange(
                   withTrim

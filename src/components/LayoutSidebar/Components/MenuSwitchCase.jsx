@@ -34,6 +34,8 @@ const typeHandlers = {
     navigate(`/${menuId}/user-page/${element?.guid}`),
   PERMISSION: ({menuId, element, navigate}) =>
     navigate(`/${menuId}/permission/${element?.guid}`),
+  LINK: ({menuId, element, navigate}) =>
+    navigate(`/${menuId}/website`, {state: {url: element?.attributes?.website_link}}),
   default: ({menuId, navigate}) => {
     return navigate(`/${menuId}`);
   },
@@ -45,6 +47,7 @@ export const NavigateByType = ({
   navigate,
   navigateAndSaveHistory,
 }) => {
+  console.log(element)
   const handler = typeHandlers[element?.type] || typeHandlers.default;
   return handler({element, menuId, navigate, navigateAndSaveHistory});
 };

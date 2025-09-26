@@ -70,8 +70,6 @@ export default function TextFieldWithMultiLanguage({
     }
   }, [languages]);
 
-  console.log({ defaultValue });
-
   return (
     <Box width={"100%"}>
       <Controller

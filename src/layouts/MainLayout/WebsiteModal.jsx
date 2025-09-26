@@ -39,7 +39,7 @@ const WebsiteModal = ({
   });
 
   const onSubmit = (data) => {
-    if (!selectedFolder?.data) {
+    if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);

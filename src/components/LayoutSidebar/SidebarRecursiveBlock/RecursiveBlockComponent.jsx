@@ -122,7 +122,7 @@ const RecursiveBlock = ({
         dispatch(detailDrawerActions.setMainTabIndex(0));
         dispatch(groupFieldActions.clearViews());
         dispatch(groupFieldActions.clearViewsPath());
-        NavigateByType({element, appId, navigate});
+        NavigateByType({element, menuId: element?.id, navigate});
       }
     } else {
       NavigateByTypeOldRoute({element, menuId: element?.id, navigate});

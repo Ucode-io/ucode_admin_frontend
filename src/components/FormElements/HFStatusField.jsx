@@ -22,7 +22,6 @@ function HFStatusField({
               disabled={disabled}
               id="statusField"
               className={styles.statusSelect}
-              key={value}
               sx={{
                 height: newUi ? "25px" : "41px",
                 border: "none",

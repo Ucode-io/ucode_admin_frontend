@@ -1,6 +1,6 @@
 import {useLocation, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import React, {useEffect, useMemo, useReducer, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {tableSizeAction} from "@/store/tableSize/tableSizeSlice";
 import {
   Box,
@@ -557,7 +557,6 @@ export const DynamicTable = ({
 
             {addNewRow && (
               <AddDataColumn
-                key="add-new-row"
                 rows={isRelationTable ? fields : data}
                 columns={columns}
                 isRelationTable={isRelationTable}

@@ -29,7 +29,6 @@ export default function HFPhotoUpload({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <>
           <ImageUpload
-            key={value}
             drawerDetail={drawerDetail}
             name={name}
             value={value}

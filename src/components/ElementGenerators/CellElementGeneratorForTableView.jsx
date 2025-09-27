@@ -144,9 +144,9 @@ const CellElementGeneratorForTableView = ({
 
   useEffect(() => {
     if (!row?.[field.slug]) {
-      setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue || "");
+      setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
-  }, [row, computedSlug, defaultValue, data]);
+  }, [row, computedSlug, defaultValue]);
   switch (field.type) {
     case "SINGLE_LINE":
       return (

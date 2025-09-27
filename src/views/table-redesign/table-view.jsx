@@ -72,14 +72,12 @@ const TableView = ({
   setCurrentPage = () => {},
   setFilterVisible = () => {},
   reset = () => {},
-  replace = () => {},
   setFormValue = () => {},
   setSelectedRow = () => {},
   setLayoutType = () => {},
   setSelectedView = () => {},
   setOrderBy = () => {},
   orderBy,
-  fields,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -494,10 +492,12 @@ const TableView = ({
       updateQueryWithoutRerender("p", row?.guid);
     } else {
       if (new_router) {
+        console.log("2");
         updateQueryWithoutRerender("p", row?.guid);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
         } else if (projectInfo?.new_layout) {
+          console.log("4");
           setSelectedRow(row);
           dispatch(detailDrawerActions.openDrawer());
         } else {
@@ -601,7 +601,6 @@ const TableView = ({
 
   useEffect(() => {
     if (tableData?.length > 0) {
-      replace(tableData)
       reset({
         multi: tableData.map((i) => i),
       });

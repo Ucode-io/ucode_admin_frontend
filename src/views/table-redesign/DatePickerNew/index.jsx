@@ -58,7 +58,6 @@ function HFDatePickerNew({
             <InputMask
               mask={withTime ? "99.99.9999 99:99" : "99.99.9999"}
               value={inputValue}
-              key={inputValue}
               onChange={(e) => {
                 let raw = e.target.value;
 

@@ -46,7 +46,6 @@ const HFTextFieldWithMask = ({
         <InputMask
           mask={mask}
           value={value ?? undefined}
-          key={value}
           onChange={(e) => {
             onChange(e.target.value);
             updateObject();

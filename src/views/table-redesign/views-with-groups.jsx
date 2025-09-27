@@ -47,7 +47,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {default as InlineSVG, default as SVG} from "react-inlinesvg";
 import {useMutation, useQuery, useQueryClient} from "react-query";
@@ -298,16 +298,10 @@ export const NewUiViewsWithGroups = ({
     mode: "all",
   });
 
-  const { fields, replace } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: "multi",
   });
-
-  const multiFields = useWatch({
-    control,
-  })
-
-  console.log({multiFields, fields})
 
   const { mutate: updateField, isLoading: updateLoading } =
     useFieldSearchUpdateMutation({
@@ -1646,7 +1640,6 @@ export const NewUiViewsWithGroups = ({
                           menuItem={menuItem}
                           selectedTabIndex={selectedTabIndex}
                           reset={reset}
-                          replace={replace}
                           sortedDatas={sortedDatas}
                           fields={fields}
                           checkedColumns={checkedColumns}
@@ -1747,7 +1740,6 @@ export const NewUiViewsWithGroups = ({
                         selectedTabIndex={selectedTabIndex}
                         isTableView={true}
                         reset={reset}
-                        replace={replace}
                         sortedDatas={sortedDatas}
                         menuItem={menuItem}
                         fields={fields}

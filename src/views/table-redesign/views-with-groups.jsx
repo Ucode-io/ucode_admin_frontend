@@ -1,5 +1,7 @@
 import useTabRouter from "@/hooks/useTabRouter";
-import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
+import constructorFieldService, {
+  useFieldSearchUpdateMutation,
+} from "@/services/constructorFieldService";
 import constructorViewService from "@/services/constructorViewService";
 import {filterActions} from "@/store/filter/filter.slice";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
@@ -66,8 +68,7 @@ import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useGetLang} from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import {ViewProvider} from "../../providers/ViewProvider";
-import constructorFieldService from "../../services/constructorFieldService";
+import { ViewProvider } from "../../providers/ViewProvider";
 import constructorRelationService from "../../services/constructorRelationService";
 import constructorTableService, {
   useTableByIdQuery,

@@ -1,0 +1,47 @@
+.actionSettingBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryButton {
+  display: flex;
+  margin-top: 16px;
+
+  button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px dashed #6e8bb780;
+    padding: 8px 16px;
+    flex-grow: 1;
+    border-radius: 6px;
+  }
+}
+
+.tableActions {
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 5px 0;
+  position: relative;
+}
+
+.tableType {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 5px 0;
+  width: 320px;
+}
+
+.tableType_select {
+  width: 220px;
+  margin-left: 30px;
+}
+
+.deleteBtn {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+}

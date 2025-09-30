@@ -79,6 +79,7 @@ import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
 import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
+import { Views } from "@/views/views";
 
 const AuthLayoutDesign = lazy(
   () => import("../layouts/AuthLayout/AuthLayoutDesign")
@@ -383,7 +384,10 @@ const NewRouter = () => {
             path=":menuId"
             element={<ReloadWrapper component={NewObjectsPage} />}
           />
-
+          <Route
+            path="new-optimization/:menuId"
+            element={<Views />}
+          />
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />

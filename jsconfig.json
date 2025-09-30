@@ -8,6 +8,8 @@
       "@/services/*": ["src/services/*"],
       "@/views/*": ["src/views/*"],
       "@/providers/*": ["src/providers/*"],
+      "@/store/*": ["src/store/*"],
+      "@/theme/*": ["src/theme/*"]
     }
   }
 }

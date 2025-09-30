@@ -96,7 +96,7 @@ const NewObjectsPage = () => {
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", selectedView, i18n?.language, selectedTabIndex],
     () => {
-      if (Boolean(!selectedView?.table_slug)) return [];
+      if (!selectedView?.table_slug) return [];
       return menuService.getFieldsListMenu(
         menuId,
         selectedView?.id,
@@ -108,7 +108,7 @@ const NewObjectsPage = () => {
       enabled: Boolean(
         selectedView?.table_slug && selectedView?.type !== "SECTION"
       ),
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
@@ -148,7 +148,7 @@ const NewObjectsPage = () => {
 
   useEffect(() => {
     if (pathname.includes("/login")) {
-      navigate("/", {replace: false});
+      navigate("/", { replace: false });
     }
   }, []);
 

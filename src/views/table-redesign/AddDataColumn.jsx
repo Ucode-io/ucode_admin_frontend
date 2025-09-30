@@ -10,6 +10,7 @@ import {Box, Button} from "@mui/material";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import useDebounce from "../../hooks/useDebounce";
+import { useMutation } from "react-query";
 
 const AddDataColumn = React.memo(
   ({
@@ -34,13 +35,29 @@ const AddDataColumn = React.memo(
     tableSlug,
     relationView,
     fieldsMap = {},
+    setIsLoading,
+    isLoading,
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
     const { id } = useParams();
     const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
-    const [isLoading, setIsLoading] = useState();
     const computedTableSlug = isRelationTable ? relatedTableSlug : tableSlug;
+
+    // Temporary workaround for adding a new row (if this is removed, a new row will be added with duplicated data when inputs are empty).
+    const mutation = useMutation({
+      mutationFn: (data) => constructorObjectService.create(computedTableSlug, { data }),
+      onSuccess: () => {
+        refetch();
+        setAddNewRow(false)
+        dispatch(showAlert("Successfully created!", "success"))
+      },
+      onSettled: () => {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 700)
+      }
+    })
 
     const {
       handleSubmit,
@@ -59,21 +76,21 @@ const AddDataColumn = React.memo(
       };
 
       setIsLoading(true);
-      constructorObjectService
-        .create(computedTableSlug, {
-          data: data,
-        })
-        .then((res) => {
-          setIsLoading(false);
-          refetch();
-          setAddNewRow(false);
-          dispatch(showAlert("Successfully created!", "success"));
-        })
-        .catch((e) => {
-          setIsLoading(false);
-          console.log("ERROR: ", e);
-        })
-        .finally(() => {});
+      mutation.mutate(data);
+      // constructorObjectService
+      //   .create(computedTableSlug, {
+      //     data: data,
+      //   })
+      //   .then((res) => {
+      //     refetch();
+      //     setAddNewRow(false);
+      //     dispatch(showAlert("Successfully created!", "success"));
+      //   })
+      //   .catch((e) => {
+      //     setIsLoading(false);
+      //     console.log("ERROR: ", e);
+      //   })
+      //   .finally(() => {});
     };
 
     const handleKeyDown = useDebounce((event) => {

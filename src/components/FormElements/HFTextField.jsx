@@ -3,7 +3,7 @@ import {makeStyles} from "@mui/styles";
 import {Controller} from "react-hook-form";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {Lock} from "@mui/icons-material";
-import {useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useLocation} from "react-router-dom";
 import clsx from "clsx";
 
@@ -31,6 +31,7 @@ const HFTextField = ({
   defaultValue = "",
   disabled,
   tabIndex,
+  index,
   checkRequiredField,
   placeholder,
   endAdornment,

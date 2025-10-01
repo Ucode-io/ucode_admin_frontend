@@ -1281,6 +1281,7 @@ export const NewUiViewsWithGroups = ({
                     views={views}
                     refetchMenuViews={refetchMenuViews}
                     refetchRelationViews={refetchRelationViews}
+                    filters={filters}
                   />
                 </PermissionWrapperV2>
               </>

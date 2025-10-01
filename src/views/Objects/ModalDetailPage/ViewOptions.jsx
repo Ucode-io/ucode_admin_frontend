@@ -94,6 +94,7 @@ const ViewOptions = ({
   views,
   projectId,
   refetchRelationViews,
+  filters,
 }) => {
   const navigate = useNavigate();
   const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
@@ -865,6 +866,7 @@ const ViewOptions = ({
                   checkedColumns={checkedColumns}
                   computedVisibleFields={computedVisibleFields}
                   tableSlug={tableSlug}
+                  filters={filters}
                 />
               </Box>
               <Box pt="4px">

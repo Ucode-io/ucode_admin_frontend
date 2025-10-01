@@ -16,6 +16,7 @@ export const VIEW_TYPES_MAP = {
   WEBSITE: "WEBSITE",
   GRID: "GRID",
   BOARD: "BOARD",
+  SECTION: "SECTION",
 };
 
 export const viewIcons = {

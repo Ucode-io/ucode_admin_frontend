@@ -61,6 +61,8 @@ export const useGetTableInfo = (queryParams = {}, params = {menuId: "", viewId: 
         data
       );
     },
-    queryParams,
-  )
+    {
+      ...queryParams,
+    }
+  );
 }

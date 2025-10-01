@@ -1,5 +1,14 @@
 import { default as SVG } from "react-inlinesvg";
-import { Box, Button, Flex, IconButton, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Image,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@chakra-ui/react";
 import { VIEW_TYPES_MAP, viewIcons } from "@/utils/constants/viewTypes";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
@@ -9,12 +18,17 @@ import { useHeaderFilterProps } from "./useHeaderFilterProps";
 import { MoreViews } from "../MoreViews";
 import { ViewCreatePopup } from "../ViewCreatePopup";
 import { SearchPopover } from "../SearchPopover";
-import { SortPopover } from "../SortPopover";
-import { FilterPopover } from "../FilterPopover";
-import { FilterButton } from "../FilterButton";
-import { FiltersList } from "../FiltersList";
+import { SortPopover } from "./components/SortPopover";
+import { FilterPopover } from "./components/FilterPopover";
+import { FilterButton } from "./components/FilterButton";
+import { FiltersList } from "./components/FiltersList";
 
-export const HeaderFilter = () => {
+export const HeaderFilter = ({
+  noDates,
+  setNoDates,
+  handleAddDate,
+  navigateCreatePage,
+}) => {
   const {
     viewsRef,
     visibleViews,
@@ -207,61 +221,61 @@ export const HeaderFilter = () => {
             </Box>
           )}
 
-        {/* {viewType === "TIMELINE" && noDates.length > 0 && (
-    <Popover>
-      <PopoverTrigger>
-        <Button
-          variant="text"
-          _hover={{ backgroundColor: "rgba(0, 122, 255, 0.08)" }}
-          fontWeight={400}
-          color={"#888"}
-        >
-          No date ({noDates.length})
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent>
-        <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
-          {noDates.map((item) => (
-            <Box
-              p="8px"
-              h="32px"
-              columnGap="8px"
-              alignItems="center"
-              borderRadius={6}
-              _hover={{ bg: "#EAECF0" }}
-              cursor="pointer"
-              key={item?.guid}
-              fontSize={12}
-              onClick={() => handleAddDate(item)}
-            >
-              {item?.[view?.attributes?.visible_field?.split("/")[0]]}
-            </Box>
-          ))}
-        </Box>
-      </PopoverContent>
-    </Popover>
-  )}
+        {viewType === "TIMELINE" && noDates.length > 0 && (
+          <Popover>
+            <PopoverTrigger>
+              <Button
+                variant="text"
+                _hover={{ backgroundColor: "rgba(0, 122, 255, 0.08)" }}
+                fontWeight={400}
+                color={"#888"}
+              >
+                No date ({noDates.length})
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <Box px="8px" py="4px" borderBottom="1px solid #D0D5DD">
+                {noDates.map((item) => (
+                  <Box
+                    p="8px"
+                    h="32px"
+                    columnGap="8px"
+                    alignItems="center"
+                    borderRadius={6}
+                    _hover={{ bg: "#EAECF0" }}
+                    cursor="pointer"
+                    key={item?.guid}
+                    fontSize={12}
+                    onClick={() => handleAddDate(item)}
+                  >
+                    {item?.[view?.attributes?.visible_field?.split("/")[0]]}
+                  </Box>
+                ))}
+              </Box>
+            </PopoverContent>
+          </Popover>
+        )}
 
-  {viewType !== "SECTION" && (
-    <>
-      {viewType !== VIEW_TYPES_MAP.WEBSITE && (
-        <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-          <Button
-            minW={"auto"}
-            width={"auto"}
-            h={"30px"}
-            px={4}
-            onClick={() => navigateCreatePage()}
-          >
-            {generateLangaugeText(
-              tableLan,
-              i18n?.language,
-              "Create item"
-            ) || "Create item"}
-          </Button>
-        </PermissionWrapperV2>
-      )}
-      <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+        {viewType !== "SECTION" && (
+          <>
+            {viewType !== VIEW_TYPES_MAP.WEBSITE && (
+              <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                <Button
+                  minW={"auto"}
+                  width={"auto"}
+                  h={"30px"}
+                  px={4}
+                  onClick={() => navigateCreatePage()}
+                >
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "Create item"
+                  ) || "Create item"}
+                </Button>
+              </PermissionWrapperV2>
+            )}
+            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
         <ViewOptions
           tableInfo={tableInfo}
           relationView={relationView}
@@ -296,9 +310,9 @@ export const HeaderFilter = () => {
           refetchMenuViews={refetchMenuViews}
           refetchRelationViews={refetchRelationViews}
         />
-      </PermissionWrapperV2>
-    </>
-  )} */}
+      </PermissionWrapperV2> */}
+          </>
+        )}
       </Flex>
       <FiltersList />
     </>

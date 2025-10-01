@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { useFieldsContext } from "../../providers/FieldsProvider";
+import { useFieldsContext } from "../../../../providers/FieldsProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 
 export const useFiltersListProps = () => {

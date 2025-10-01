@@ -4,7 +4,7 @@ import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { useGetViewsList } from "@/services/viewsService/views.service";
 import { useGetTableInfo } from "@/services/menuService/menu.service";
@@ -12,6 +12,11 @@ import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { listToMap, listToMapWithoutRel } from "@/utils/listToMap";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { openDB, saveOrUpdateSearchText } from "@/utils/indexedDb";
+import { updateObject } from "@/services/objectService/object.service";
+import { useForm } from "react-hook-form";
+import { addDays } from "date-fns";
+import { useProjectGetByIdQuery } from "@/services/projectService";
+import useTabRouter from "@/hooks/useTabRouter";
 
 export const useViewsProps = () => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -26,14 +31,31 @@ export const useViewsProps = () => {
 
   const { i18n } = useTranslation();
 
-  const { menuId } = useParams();
+  const { menuId, appId, id } = useParams();
   const { state, pathname } = useLocation();
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
+
+  const { navigateToForm } = useTabRouter();
+
+  const settingsForm = useForm({
+    defaultValues: {
+      calendar_from_slug: "",
+      calendar_to_slug: "",
+    },
+  });
 
   const [selectedView, setSelectedView] = useState(null);
 
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
+
+  // For TIMELINE view
+  const [noDates, setNoDates] = useState([]);
+  const [centerDate, setCenterDate] = useState(null);
+
+  const [selectedRow, setSelectedRow] = useState("");
+  const [layoutType, setLayoutType] = useState("SimpleLayout");
 
   const [orderBy, setOrderBy] = useState(false);
   const [sortedDatas, setSortedDatas] = useState([]);
@@ -58,6 +80,8 @@ export const useViewsProps = () => {
     (state) => state.permissions.permissions?.[tableSlug]
   );
 
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+
   const viewsMap = {
     [VIEW_TYPES_MAP.TABLE]: <></>,
     [VIEW_TYPES_MAP.TREE]: <></>,
@@ -66,6 +90,18 @@ export const useViewsProps = () => {
     [VIEW_TYPES_MAP.TIMELINE]: <></>,
     [VIEW_TYPES_MAP.CALENDAR]: <></>,
     [VIEW_TYPES_MAP.WEBSITE]: <></>,
+  };
+
+  // For TIMELINE view
+  const handleAddDate = (item) => {
+    const startDate = new Date(centerDate).toISOString();
+    const endDate = addDays(new Date(centerDate), 5).toISOString();
+
+    updateObject({
+      ...item,
+      [settingsForm.getValues()["calendar_from_slug"]]: startDate,
+      [settingsForm.getValues()["calendar_to_slug"]]: endDate,
+    });
   };
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
@@ -80,6 +116,26 @@ export const useViewsProps = () => {
 
   const handleSortClick = (e) => {
     setSortPopupAnchorEl(e.currentTarget);
+  };
+
+  const navigateCreatePage = () => {
+    if (projectInfo?.new_layout) {
+      if (view?.attributes?.url_object) {
+        navigate(
+          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
+        );
+      } else {
+        dispatch(detailDrawerActions.openDrawer());
+      }
+      setSelectedRow(null);
+    } else {
+      if (layoutType === "PopupLayout") {
+        dispatch(detailDrawerActions.openDrawer());
+        setSelectedRow(null);
+      } else {
+        navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
+      }
+    }
   };
 
   const { refetch: refetchViewsList, isRefetching } = useGetViewsList(menuId, {
@@ -207,5 +263,9 @@ export const useViewsProps = () => {
     sortedDatas,
     visibleColumns,
     i18n,
+    noDates,
+    setNoDates,
+    handleAddDate,
+    navigateCreatePage,
   };
 };

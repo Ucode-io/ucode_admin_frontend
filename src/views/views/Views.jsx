@@ -34,6 +34,10 @@ export const Views = ({ relationFields, isRelationView = false }) => {
     projectId,
     sortedDatas,
     visibleColumns,
+    noDates,
+    setNoDates,
+    handleAddDate,
+    navigateCreatePage,
   } = useViewsProps();
 
   return (
@@ -76,7 +80,12 @@ export const Views = ({ relationFields, isRelationView = false }) => {
             }}
           >
             <Header tableName={tableName} />
-            <HeaderFilter />
+            <HeaderFilter
+              noDates={noDates}
+              setNoDates={setNoDates}
+              handleAddDate={handleAddDate}
+              navigateCreatePage={navigateCreatePage}
+            />
           </FieldsProvider>
         </FilterProvider>
       </ViewProvider>

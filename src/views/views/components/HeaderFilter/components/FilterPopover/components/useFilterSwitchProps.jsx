@@ -42,39 +42,16 @@ export const useFilterSwitchProps = ({ search }) => {
         ...column,
         is_checked: quickFiltersIds?.includes(column?.id)
       }
-    ))
+    ));
+
     cols?.sort((item1, item2) => item2?.is_checked - item1?.is_checked)
+
+    if(search) {
+      return cols?.filter((item) => getLabel(item)?.toLowerCase().includes(search.toLowerCase()))
+    }
+
     return cols
-  }, [view, quickFilters]);
-
-  const checkedColumns = useMemo(() => {
-    return (
-      quickFilters?.filter((checkedField) =>
-        search
-          ? columnsIds?.includes(checkedField?.id) &&
-            getLabel(checkedField)?.toLowerCase().includes(search.toLowerCase())
-          : columnsIds?.includes(checkedField?.id)
-      ) ?? []
-    );
-  }, [view, search]);
-
-  const unCheckedColumns = useMemo(() => {
-    return (
-      (quickFilters?.length === 0 ||
-      quickFilters?.length === undefined
-        ? search
-          ? visibleColumns?.filter((column) =>
-              getLabel(column)?.toLowerCase().includes(search.toLowerCase())
-            )
-          : visibleColumns
-        : visibleColumns?.filter((column) =>
-            search
-              ? !quickFiltersIds?.includes(column?.id) &&
-                getLabel(column)?.toLowerCase().includes(search.toLowerCase())
-              : !quickFiltersIds?.includes(column?.id)
-          )) ?? []
-    );
-  }, [view, search]);
+  }, [view, quickFilters, search, visibleColumns]);
 
   const updateViewMutation = useUpdateViewMutation(
     tableSlug,
@@ -136,10 +113,8 @@ export const useFilterSwitchProps = ({ search }) => {
 
 
   return { 
-    checkedColumns,
     getLabel,
     onChange,
-    unCheckedColumns,
     allColumns,
    }
 }

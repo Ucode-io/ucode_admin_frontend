@@ -5,10 +5,10 @@ WORKDIR /app
 
 COPY . ./
 
-RUN mv .env.production .env
 RUN yarn install --network-timeout 1000000000
 
-RUN NODE_OPTIONS=--max_old_space_size=4096 yarn build
+RUN export $(cat .env | xargs) && \
+    NODE_OPTIONS=--max_old_space_size=4096 yarn build --mode $ENVIROMENT
 
 FROM nginx:alpine
 COPY --from=builder /app/build /build

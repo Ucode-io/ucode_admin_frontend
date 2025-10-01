@@ -5,11 +5,9 @@ WORKDIR /app
 
 COPY . ./
 
-RUN cat .env
 RUN yarn install --network-timeout 1000000000
 
 RUN export $(cat .env | xargs) && \
-    env | grep ENVIROMENT && \
     NODE_OPTIONS=--max_old_space_size=4096 yarn build --mode $ENVIROMENT
 
 FROM nginx:alpine

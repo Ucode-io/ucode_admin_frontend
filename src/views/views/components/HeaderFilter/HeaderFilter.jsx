@@ -22,12 +22,14 @@ import { SortPopover } from "./components/SortPopover";
 import { FilterPopover } from "./components/FilterPopover";
 import { FilterButton } from "./components/FilterButton";
 import { FiltersList } from "./components/FiltersList";
+import { ViewOptions } from "./components/ViewOptions";
 
 export const HeaderFilter = ({
   noDates,
   setNoDates,
   handleAddDate,
   navigateCreatePage,
+  settingsForm,
 }) => {
   const {
     viewsRef,
@@ -65,6 +67,11 @@ export const HeaderFilter = ({
     fieldsMapRel,
     relationFields,
     visibleColumns,
+    isPopupOpen,
+    handleOpenPopup,
+    handleClosePopup,
+    isChanged,
+    setIsChanged,
   } = useHeaderFilterProps();
 
   return (
@@ -275,46 +282,28 @@ export const HeaderFilter = ({
                 </Button>
               </PermissionWrapperV2>
             )}
-            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-        <ViewOptions
-          tableInfo={tableInfo}
-          relationView={relationView}
-          refetchViews={refetchViews}
-          selectedTabIndex={selectedTabIndex}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          selectedView={selectedView}
-          tableLan={tableLan}
-          view={view}
-          viewName={viewName}
-          fieldsMap={fieldsMap}
-          visibleRelationColumns={visibleRelationColumns}
-          checkedColumns={checkedColumns}
-          projectId={projectId}
-          onDocsClick={() => {
-            dispatch(
-              detailDrawerActions.setDrawerTabIndex(views?.length)
-            );
-            if (new_router) {
-              navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
-            } else {
-              navigate(`/main/${appId}/object/${tableSlug}/templates`);
-            }
-          }}
-          searchText={searchText}
-          computedVisibleFields={computedVisibleFields}
-          handleOpenPopup={handleOpenPopup}
-          queryClient={queryClient}
-          settingsForm={settingsForm}
-          views={views}
-          refetchMenuViews={refetchMenuViews}
-          refetchRelationViews={refetchRelationViews}
-        />
-      </PermissionWrapperV2> */}
+            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+              <ViewOptions
+                handleOpenPopup={handleOpenPopup}
+                isChanged={isChanged}
+                setIsChanged={setIsChanged}
+                settingsForm={settingsForm}
+              />
+            </PermissionWrapperV2>
           </>
         )}
       </Flex>
       <FiltersList />
+      {/* <LayoutPopup
+        view={view}
+        open={isPopupOpen}
+        onClose={handleClosePopup}
+        authData={authInfo}
+        control={mainForm.control}
+        handleSubmit={mainForm.handleSubmit}
+        tableLan={tableLan}
+        mainForm={mainForm}
+      /> */}
     </>
   );
 };

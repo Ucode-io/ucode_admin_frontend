@@ -38,6 +38,7 @@ export const Views = ({ relationFields, isRelationView = false }) => {
     setNoDates,
     handleAddDate,
     navigateCreatePage,
+    settingsForm,
   } = useViewsProps();
 
   return (
@@ -85,6 +86,7 @@ export const Views = ({ relationFields, isRelationView = false }) => {
               setNoDates={setNoDates}
               handleAddDate={handleAddDate}
               navigateCreatePage={navigateCreatePage}
+              settingsForm={settingsForm}
             />
           </FieldsProvider>
         </FilterProvider>

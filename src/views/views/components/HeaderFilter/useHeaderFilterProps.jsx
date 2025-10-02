@@ -46,6 +46,9 @@ export const useHeaderFilterProps = () => {
   const [visibleViews, setVisibleViews] = useState([]);
   const [overflowedViews, setOverflowedViews] = useState([]);
 
+  const [isChanged, setIsChanged] = useState(false);
+  const [isPopupOpen, setPopupOpen] = useState(false);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
@@ -73,6 +76,9 @@ export const useHeaderFilterProps = () => {
   };
 
   const handleCloseSortPopup = () => setSortPopupAnchorEl(null);
+
+  const handleOpenPopup = () => setPopupOpen(true);
+  const handleClosePopup = () => setPopupOpen(false);
 
   const tableUpdateMutation = useUpdateTableMutation();
 
@@ -186,5 +192,10 @@ export const useHeaderFilterProps = () => {
     fieldsMapRel,
     relationFields,
     visibleColumns,
+    isPopupOpen,
+    handleOpenPopup,
+    handleClosePopup,
+    isChanged,
+    setIsChanged,
   };
 };

@@ -25,6 +25,10 @@ const constructorTableService = {
 };
 
 export const useUpdateTableMutation = () => useMutation((data) => constructorTableService.update(data));
+export const useGetTableInfoMutation = (tableSlug, params) =>
+  useMutation((data) =>
+    constructorTableService.getTableInfo(tableSlug, data, params)
+  );
 
 export const useTablesListQuery = ({params = {}, queryParams} = {}) => {
   return useQuery(

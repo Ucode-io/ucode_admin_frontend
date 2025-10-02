@@ -44,9 +44,13 @@ function NavigateGenerator({form}) {
               name={`attributes.navigate.params[${index}].value`}
               placeholder={"value"}
             />
-            <RectangleIconButton onClick={() => deleteField(index)} color="error">
+            <button
+              type="button"
+              onClick={() => remove(index)}
+              className={cls.deleteBtn}
+            >
               <Delete color="error" />
-            </RectangleIconButton>
+            </button>
           </div>
         ))}
       </div>

@@ -267,5 +267,6 @@ export const useViewsProps = () => {
     setNoDates,
     handleAddDate,
     navigateCreatePage,
+    settingsForm,
   };
 };

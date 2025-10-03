@@ -18,13 +18,13 @@ export default defineConfig(({ command, mode }) => {
       federation({
         name: "app",
         remotes: {
-          'remote_empty_app': {
-            external:`new Promise(resolve=>resolve('https://empty-microfrontend.netlify.app/assets/remoteEntry.js'))`,
-            externalType:"promise"
+          remote_empty_app: {
+            external: `new Promise(resolve=>resolve('https://empty-microfrontend.netlify.app/assets/remoteEntry.js'))`,
+            externalType: "promise",
           },
-          'remote_webpage_app': `${env.WEBPAGE_REMOTE_APP_URL}/assets/remoteEntry.js`
+          remote_webpage_app: `${env.WEBPAGE_REMOTE_APP_URL}/assets/remoteEntry.js`,
         },
-        shared: ["react", "react-dom", "react-router-dom"]
+        shared: ["react", "react-dom", "react-router-dom"],
       }),
     ],
     publicDir: "public",
@@ -54,5 +54,5 @@ export default defineConfig(({ command, mode }) => {
         },
       ],
     },
-  }
+  };
 });

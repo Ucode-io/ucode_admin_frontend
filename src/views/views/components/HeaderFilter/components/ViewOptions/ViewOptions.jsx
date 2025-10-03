@@ -44,6 +44,7 @@ import { TimelineSettings } from "../TimelineSettings";
 import { CalendarSettings } from "../CalendarSettings";
 import { Group } from "../Group";
 import { useViewOptionsProps } from "./useViewOptionsProps";
+import LayoutComponent from "../LayoutComponent";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -62,7 +63,6 @@ export const ViewOptions = ({
   setIsChanged = () => {},
   settingsForm,
 }) => {
-
   const {
     isPopoverOpen,
     handleClosePopover,
@@ -180,17 +180,12 @@ export const ViewOptions = ({
                   onClick={handleOpenPopup}
                 />
 
-                {/* {localStorage.getItem("newLayout") === "false" && (
+                {localStorage.getItem("newLayout") === "false" && (
                   <LayoutComponent
-                    tableInfo={tableInfo}
-                    refetchViews={refetchViews}
-                    selectedTabIndex={selectedTabIndex}
-                    tableLan={tableLan}
-                    selectedView={view}
                     isChanged={isChanged}
                     setIsChanged={setIsChanged}
                   />
-                )} */}
+                )}
 
                 <ViewSettingsModal
                   refetchViews={refetchViews}

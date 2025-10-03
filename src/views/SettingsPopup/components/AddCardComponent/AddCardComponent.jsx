@@ -18,8 +18,7 @@ import HFCardField from "../../../../components/FormElements/HFCardField";
 import OTPInput from "react-otp-input";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { loadStripe } from "@stripe/stripe-js";
-import { useEffect, useMemo, useState } from "react";
-import request from "@/utils/request";
+import { useEffect, useState } from "react";
 import {
   PaymentElement,
   Elements,
@@ -41,7 +40,7 @@ function SetupForm() {
     const { error, setupIntent } = await stripe.confirmSetup({
       elements,
       confirmParams: {
-        return_url: "https://app.u-code.io/stripe",
+        return_url: window.location.origin + "?stripeRedirect=true",
       },
     });
 
@@ -55,12 +54,16 @@ function SetupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <PaymentElement />
-      <button disabled={!stripe || loading}>
-        {loading ? "Saving..." : "Save card"}
-      </button>
-    </form>
+    <Box mt={2}>
+      <form onSubmit={handleSubmit}>
+        <PaymentElement />
+        <Box mt={2} display="flex" justifyContent="flex-end">
+          <Button disabled={!stripe || loading} primary>
+            {loading ? "Saving..." : "Save card"}
+          </Button>
+        </Box>
+      </form>
+    </Box>
   );
 }
 const stripePromise = loadStripe(
@@ -73,6 +76,8 @@ export const AddCardComponent = ({
   reset = () => {},
   verifyCard,
   setVerifyCard = () => {},
+  handleSubmit = () => {},
+  onSubmit = () => {},
 }) => {
   const {
     selectedCard,
@@ -89,21 +94,11 @@ export const AddCardComponent = ({
   } = useAddCardComponent({ watch, setVerifyCard });
 
   const [clientSecret, setClientSecret] = useState(null);
+  const [tabIndex, setTabIndex] = useState(0);
 
-  // const promise = useMemo(() => {
-  //   return fetch("https://admin-api.ucode.run/v1/payment-intent", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       amount: 1200,
-  //       currency: "usd",
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data.data);
-  //       return data.data.client_secret;
-  //     });
-  // }, []);
+  const handleTabChange = (index) => {
+    setTabIndex(index);
+  };
 
   useEffect(() => {
     fetch("https://admin-api.ucode.run/v1/payment-intent/stripe", {
@@ -113,7 +108,6 @@ export const AddCardComponent = ({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("clientSecret:", data.data.client_secret);
         setClientSecret(data.data.client_secret);
       });
   }, []);
@@ -214,7 +208,7 @@ export const AddCardComponent = ({
         <DialogTitle sx={{ marginBottom: "20px" }}>Add a New Card</DialogTitle>
         <DialogContent sx={{ padding: "10px 20px" }}>
           {!verifyCard ? (
-            <Tabs>
+            <Tabs tabIndex={tabIndex} onSelect={handleTabChange}>
               <TabList className={cls.tabs}>
                 <Tab className={cls.tab} selectedClassName={cls.active}>
                   Card
@@ -285,33 +279,35 @@ export const AddCardComponent = ({
             </Box>
           )}
         </DialogContent>
-        <DialogActions padding="0">
-          <Button
-            color="error"
-            variant="outlined"
-            onClick={() => {
-              setVerifyCard(false);
-              setOpenDialog(false);
-            }}
-          >
-            Cancel
-          </Button>
-          {verifyCard ? (
-            <Button variant="contained" onClick={confirmOtpFunc}>
-              Confirm
-            </Button>
-          ) : (
+        {tabIndex === 0 && (
+          <DialogActions padding="0">
             <Button
-              disabled={
-                Boolean(!watch("card_number")) || Boolean(!watch("expire"))
-              }
-              variant="contained"
-              onClick={verifyCardNumber}
+              color="error"
+              variant="outlined"
+              onClick={() => {
+                setVerifyCard(false);
+                setOpenDialog(false);
+              }}
             >
-              Add Card
+              Cancel
             </Button>
-          )}
-        </DialogActions>
+            {verifyCard ? (
+              <Button variant="contained" onClick={confirmOtpFunc}>
+                Confirm
+              </Button>
+            ) : (
+              <Button
+                disabled={
+                  Boolean(!watch("card_number")) || Boolean(!watch("expire"))
+                }
+                variant="contained"
+                onClick={verifyCardNumber}
+              >
+                Add Card
+              </Button>
+            )}
+          </DialogActions>
+        )}
       </Dialog>
     </Box>
   );

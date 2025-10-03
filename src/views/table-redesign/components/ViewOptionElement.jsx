@@ -855,6 +855,7 @@ export const ExcelImportButton = ({
   computedVisibleFields,
   tableLan,
   tableSlug,
+  filters,
 }) => {
   // const {tableSlug} = useParams();
   const { download } = useDownloader();
@@ -868,6 +869,7 @@ export const ExcelImportButton = ({
           language: i18n.language,
           search: searchText,
           view_fields: checkedColumns,
+          ...filters,
         },
       });
       return await download({

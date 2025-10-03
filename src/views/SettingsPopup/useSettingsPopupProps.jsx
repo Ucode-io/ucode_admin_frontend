@@ -380,6 +380,9 @@ export const useSettingsPopupProps = ({ onClose }) => {
   useEffect(() => {
     return () => {
       setActiveTab("profile");
+      updateSearchParam("stripeRedirect", null);
+      console.log(searchParams.get("stripeRedirect"));
+      dispatch(settingsModalActions.setActiveTab(TAB_COMPONENTS.PROFILE));
     };
   }, []);
 

@@ -88,6 +88,7 @@ const ViewOptions = ({
   handleOpenPopup,
   isChanged,
   selectedTabIndex,
+  selectedTab,
   setIsChanged = () => {},
   refetchMenuViews = () => {},
   settingsForm,
@@ -95,13 +96,14 @@ const ViewOptions = ({
   projectId,
   refetchRelationViews,
   filters,
+  tableSlug: tableSlugFromProps,
 }) => {
   const navigate = useNavigate();
-  const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
+  const { menuId, appId, tableSlug: tableSlugFromParams } = useParams();
   const queryClient = useQueryClient();
   const tableSlug = relationView
-    ? view?.relation_table_slug
-    : (tableSlugFromProps ?? view?.table_slug);
+    ? view?.relation_table_slug || tableSlugFromProps
+    : (tableSlugFromParams ?? view?.table_slug);
   const { i18n, t } = useTranslation();
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug]

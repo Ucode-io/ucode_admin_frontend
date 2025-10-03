@@ -18,7 +18,7 @@ import HFCardField from "../../../../components/FormElements/HFCardField";
 import OTPInput from "react-otp-input";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { loadStripe } from "@stripe/stripe-js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   PaymentElement,
   Elements,
@@ -100,17 +100,23 @@ export const AddCardComponent = ({
     setTabIndex(index);
   };
 
+  const isFirstRequestStripe = useRef(true);
+
   useEffect(() => {
-    fetch("https://admin-api.ucode.run/v1/payment-intent/stripe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: 1200, currency: "usd" }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setClientSecret(data.data.client_secret);
-      });
-  }, []);
+    if (tabIndex === 1 && isFirstRequestStripe.current) {
+      isFirstRequestStripe.current = false;
+
+      fetch("https://admin-api.ucode.run/v1/payment-intent/stripe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 1200, currency: "usd" }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setClientSecret(data.data.client_secret);
+        });
+    }
+  }, [tabIndex]);
 
   return (
     <Box sx={{ maxWidth: "100%", textAlign: "center" }}>

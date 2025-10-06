@@ -76,7 +76,6 @@ const TableViewOld = ({
   orderBy,
   ...props
 }) => {
-  console.log(sortedDatas);
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();

@@ -43,6 +43,8 @@ const FolderCreateModal = ({
       app_id: appId,
     },
   });
+
+  console.log(watch("icon"));
   const tableName = useWatch({
     control,
     name: "label",

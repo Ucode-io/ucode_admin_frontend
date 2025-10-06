@@ -57,13 +57,13 @@ const DrawerRelationTable = ({
   setSelectedTabIndex = () => {},
 }) => {
   const myRef = useRef();
-  const {i18n} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { i18n } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
-  const {menuId} = useParams();
+  const { menuId } = useParams();
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
@@ -88,6 +88,8 @@ const DrawerRelationTable = ({
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
   }, [relations, selectedTab]);
+
+  console.log({ getRelatedTabeSlug });
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
@@ -148,8 +150,6 @@ const DrawerRelationTable = ({
     getRelatedTabeSlug?.relation_field_slug,
   ]);
 
-  console.log(computedFilters);
-
   const {
     data: {
       tableData = [],
@@ -194,7 +194,7 @@ const DrawerRelationTable = ({
     },
     {
       enabled: !!relatedTableSlug,
-      select: ({data}) => {
+      select: ({ data }) => {
         const tableData = data?.response || [];
         const pageCount =
           isNaN(data?.count) || tableData.length === 0
@@ -228,7 +228,7 @@ const DrawerRelationTable = ({
           ?.filter((el) => el);
 
         const quickFilters = getRelatedTabeSlug.quick_filters
-          ?.map(({field_id}) => fieldsMap[field_id])
+          ?.map(({ field_id }) => fieldsMap[field_id])
           ?.filter((el) => el);
 
         return {
@@ -254,10 +254,6 @@ const DrawerRelationTable = ({
       [relationId]: value,
     }));
   };
-  console.log("tableDataform", tableData);
-  // useEffect(() => {
-  //   update();
-  // }, [update]);
 
   useEffect(() => {
     setSelectedObjects([]);
@@ -277,13 +273,14 @@ const DrawerRelationTable = ({
 
   return (
     <>
-      <Box py={"5px"} sx={{height: "100vh"}}>
+      <Box py={"5px"} sx={{ height: "100vh" }}>
         <ChakraProvider theme={chakraUITheme}>
           <Flex
             px={3}
             mb={"10px"}
             gap={"10px"}
-            justifyContent={"space-between"}>
+            justifyContent={"space-between"}
+          >
             <Popover>
               <InputGroup ml="auto" w="320px">
                 <InputLeftElement>
@@ -306,7 +303,8 @@ const DrawerRelationTable = ({
                 display="flex"
                 flexDirection="column"
                 maxH="300px"
-                overflow="auto"></PopoverContent>
+                overflow="auto"
+              ></PopoverContent>
             </Popover>
             <PermissionWrapperV2 tableSlug={tableSlug} type="write">
               <Button
@@ -317,19 +315,21 @@ const DrawerRelationTable = ({
                       tableSlug: relatedTableSlug,
                     },
                   })
-                }>
+                }
+              >
                 Create item
               </Button>
             </PermissionWrapperV2>
 
             <ViewOptions
               settingsForm={settingsForm}
-              tableSlug={tableSlug}
+              tableSlug={relatedTableSlug || tableSlug}
               selectedTab={selectedTab}
               data={data}
               selectedTabIndex={selectedTabIndex}
               getAllData={getAllData}
               fieldsMap={fieldsMap}
+              relationView
             />
           </Flex>
         </ChakraProvider>

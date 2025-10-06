@@ -19,13 +19,12 @@ export const useGroupProps = () => {
     view,
     tableSlug,
     isRelationView,
-    refetchViews,
     viewsList,
+    handleUpdateView,
+    isViewUpdating,
   } = useViewContext();
 
-  const {
-    fieldsMap
-  } = useFieldsContext();
+  const { fieldsMap } = useFieldsContext();
 
   const [search, setSearch] = useState("");
 
@@ -40,17 +39,6 @@ export const useGroupProps = () => {
       }
     },
   });
-
-  // const mutation = useMutation({
-  //   mutationFn: async (data) => {
-  //     await constructorViewService.update(tableSlug, data);
-  //     if (isRelationView) {
-  //       return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-  //     } else {
-  //       return refetchViews();
-  //     }
-  //   },
-  // });
 
   const allFields = Object.values(fieldsMap);
   const visibleFields =
@@ -76,17 +64,24 @@ export const useGroupProps = () => {
   const onChange = (column, checked) => {
     const columns = view?.attributes?.group_by_columns ?? [];
     const id =
-      column?.type === FIELD_TYPES.LOOKUP || column?.type === FIELD_TYPES.LOOKUPS
+      column?.type === FIELD_TYPES.LOOKUP ||
+      column?.type === FIELD_TYPES.LOOKUPS
         ? column.relation_id
         : column.id;
 
-    updateViewMutation.mutate({
+    let requestColumns = [...columns];
+
+    if (checked) {
+      requestColumns.push(id);
+    } else {
+      requestColumns = requestColumns.filter((c) => c !== id);
+    }
+
+    handleUpdateView({
       ...view,
       attributes: {
         ...view.attributes,
-        group_by_columns: checked
-          ? [...columns, id]
-          : columns.filter((c) => c !== id),
+        group_by_columns: requestColumns,
       },
     });
   };
@@ -101,5 +96,6 @@ export const useGroupProps = () => {
     renderFields,
     view,
     getLabel,
-  }
+    isViewUpdating,
+  };
 }

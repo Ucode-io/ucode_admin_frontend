@@ -29,6 +29,7 @@ export const useHeaderFilterProps = () => {
     tableInfo,
     projectId,
     visibleColumns,
+    viewForm,
   } = useViewContext();
 
   const {
@@ -197,5 +198,6 @@ export const useHeaderFilterProps = () => {
     handleClosePopup,
     isChanged,
     setIsChanged,
+    viewForm,
   };
 };

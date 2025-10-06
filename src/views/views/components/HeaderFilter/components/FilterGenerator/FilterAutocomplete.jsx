@@ -62,7 +62,9 @@ const FilterAutoComplete = ({
         {...props}
       >
         {computedValue?.[0]?.label ??
-          (field?.attributes?.[`label_${i18n?.language}`] || field?.attributes?.[`label_undefined`] || value[0])}
+          (field?.attributes?.[`label_${i18n?.language}`] ||
+            field?.attributes?.[`label_undefined`] ||
+            value[0])}
         {(value?.length ?? 0) > 1 && (
           <span style={{ color: "#6d757e" }}>{` +${value.length - 1}`}</span>
         )}
@@ -92,14 +94,12 @@ const FilterAutoComplete = ({
               key={option.value}
               className={styles.option}
             >
-              {computedValue
-                .map((item) => item.value)
-                .includes(option.value) ? (
-                <Checkbox id="filter_checkbox" checked />
-              ) : (
-                <Checkbox id="filter_checkbox" />
-              )}
-
+              <Checkbox
+                id="filter_checkbox"
+                checked={computedValue
+                  .map((item) => item.value)
+                  .includes(option.value)}
+              />
               <p className={styles.label}>{option.label}</p>
             </div>
           ))}

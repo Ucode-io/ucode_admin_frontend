@@ -1,7 +1,9 @@
 import useDebounce from "@/hooks/useDebounce";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useViewContext } from "@/providers/ViewProvider";
-import constructorTableService from "@/services/tableService/table.service";
+import constructorTableService, {
+  useGetTableInfo,
+} from "@/services/tableService/table.service";
 import constructorViewService from "@/services/viewsService/views.service";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { viewsActions } from "@/store/views/view.slice";
@@ -9,7 +11,7 @@ import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { listToMap } from "@/utils/listToMap";
 import listToOptions from "@/utils/listToOptions";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -17,13 +19,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const useViewOptionsProps = ({ settingsForm }) => {
-
-  
   const navigate = useNavigate();
   const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
-  
+
   const dispatch = useDispatch();
-  
+
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const projectId = useSelector((state) => state.company.projectId);
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
@@ -35,13 +35,10 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     view,
     tableSlug: tableSlugFromContext,
     isRelationView,
-    refetchViews
+    refetchViews,
   } = useViewContext();
 
-  const {
-    visibleRelationColumns,
-    fieldsMap,
-  } = useFieldsContext()
+  const { fieldsMap } = useFieldsContext();
 
   const { i18n, t } = useTranslation();
   const tableLan = useGetLang("Table");
@@ -71,17 +68,13 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   const isCalendarView = view?.type === VIEW_TYPES_MAP.CALENDAR;
 
   const onDocsClick = () => {
-    dispatch(
-      detailDrawerActions.setDrawerTabIndex(views?.length)
-    );
+    dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
     if (new_router) {
       navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
     } else {
-      navigate(
-        `/main/${appId}/object/${tableSlug}/templates`
-      );
+      navigate(`/main/${appId}/object/${tableSlug}/templates`);
     }
-  }
+  };
 
   useEffect(() => {
     if (ref.current) {
@@ -119,7 +112,7 @@ export const useViewOptionsProps = ({ settingsForm }) => {
       if (isRelationView && viewsList?.length > 1) {
         // return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else {
-        return refetchViews()
+        return refetchViews();
         // return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
       }
     },
@@ -149,16 +142,12 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     view?.attributes?.visible_field?.split("/")?.length ?? 0;
 
   const {
-    data: { fields, visibleColumns } = { data: [] },
-    isLoading: tableInfoLoading,
-    refetch: refetchGetTableInfo,
-  } = useQuery(
-    ["GET_TABLE_INFO", { tableSlug }],
-    () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {},
-      });
+    data: { fields, visibleColumns } = {
+      data: [],
     },
+  } = useGetTableInfo(
+    tableSlug,
+    {},
     {
       enabled: false,
       cacheTime: 10,
@@ -219,21 +208,6 @@ export const useViewOptionsProps = ({ settingsForm }) => {
         }
       });
   };
-
-  const computedColumnsFor = useMemo(() => {
-    if (view?.type !== "CALENDAR" && view?.type !== "GANTT") {
-      return visibleColumns;
-    } else {
-      if (
-        Array.isArray(visibleRelationColumns) &&
-        Array.isArray(visibleColumns)
-      ) {
-        return [...visibleColumns, ...visibleRelationColumns];
-      } else {
-        return [];
-      }
-    }
-  }, [visibleColumns, visibleRelationColumns, view?.type]);
 
   const viewUpdateMutation = useMutation({
     mutationFn: async (data) => {
@@ -303,10 +277,7 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     isCalendarView,
     isRelationView,
     tableSlug,
-    queryClient,
     navigateToOldTemplate,
-    computedColumnsFor,
-    refetchGetTableInfo,
     viewUpdateMutation,
     computedColumns,
     saveSettings,
@@ -316,5 +287,5 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     viewName,
     onDocsClick,
     selectedTabIndex,
-  }
+  };
 };

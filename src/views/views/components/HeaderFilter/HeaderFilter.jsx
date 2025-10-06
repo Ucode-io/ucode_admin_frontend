@@ -23,6 +23,8 @@ import { FilterPopover } from "./components/FilterPopover";
 import { FilterButton } from "./components/FilterButton";
 import { FiltersList } from "./components/FiltersList";
 import { ViewOptions } from "./components/ViewOptions";
+import { LayoutPopup } from "./components/LayoutPopup";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const HeaderFilter = ({
   noDates,
@@ -50,8 +52,6 @@ export const HeaderFilter = ({
     setViewAnchorEl,
     handleViewClick,
     handleClick,
-    anchorEl,
-    setAnchorEl,
     tableLan,
     handleSearchOnChange,
     orderBy,
@@ -62,7 +62,6 @@ export const HeaderFilter = ({
     handleChangeOrder,
     setOrderBy,
     setSortedDatas,
-    sortedDatas,
     fieldsMap,
     fieldsMapRel,
     relationFields,
@@ -72,6 +71,7 @@ export const HeaderFilter = ({
     handleClosePopup,
     isChanged,
     setIsChanged,
+    viewForm,
   } = useHeaderFilterProps();
 
   return (
@@ -100,13 +100,13 @@ export const HeaderFilter = ({
             <Button
               p={"0 6px"}
               minW={"80px"}
-              key={view.id}
+              key={view?.id}
               variant="ghost"
               colorScheme="gray"
               mx={"4px"}
               leftIcon={
                 <SVG
-                  src={`/img/${viewIcons[view.type]}`}
+                  src={`/img/${viewIcons[view?.type]}`}
                   color={viewId === view?.id ? "#175CD3" : "#475467"}
                   width={18}
                   height={18}
@@ -132,10 +132,10 @@ export const HeaderFilter = ({
               {view?.is_relation_view
                 ? view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.table_label ||
-                  view.type
+                  view?.type
                 : view?.attributes?.[`name_${i18n?.language}`] ||
                   view?.name ||
-                  view.type}
+                  view?.type}
 
               {overflowedViews?.length > 0 &&
                 index === visibleViews?.length - 1 && (
@@ -294,16 +294,15 @@ export const HeaderFilter = ({
         )}
       </Flex>
       <FiltersList />
-      {/* <LayoutPopup
-        view={view}
-        open={isPopupOpen}
-        onClose={handleClosePopup}
-        authData={authInfo}
-        control={mainForm.control}
-        handleSubmit={mainForm.handleSubmit}
-        tableLan={tableLan}
-        mainForm={mainForm}
-      /> */}
+      <MaterialUIProvider>
+        <LayoutPopup
+          open={isPopupOpen}
+          onClose={handleClosePopup}
+          control={viewForm.control}
+          handleSubmit={viewForm.handleSubmit}
+          viewForm={viewForm}
+        />
+      </MaterialUIProvider>
     </>
   );
 };

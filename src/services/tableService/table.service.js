@@ -58,4 +58,15 @@ export const useTableByIdQuery = ({params = {}, id, queryParams} = {}) => {
   );
 };
 
+export const useGetTableInfo = (tableSlug, data, queryParams = {}) =>
+  useQuery(
+    ["GET_TABLE_INFO", { tableSlug, data }],
+    () => {
+      return constructorTableService.getTableInfo(tableSlug, {
+        data,
+      });
+    },
+    queryParams
+  );
+
 export default constructorTableService;

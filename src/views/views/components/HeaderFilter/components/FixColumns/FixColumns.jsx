@@ -10,43 +10,39 @@ import {
   Spinner,
   Switch,
 } from "@chakra-ui/react";
-import { useGroupProps } from "./useGroupProps";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { getColumnIcon } from "@/utils/constants/tableIcons";
 import { ViewOptionTitle } from "../../../ViewOptionTitle";
-import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { useFixColumnsProps } from "./useFixColumnsProps";
 
-export const Group = ({
+export const FixColumns = ({
   onBackClick,
+  tableLan,
 }) => {
+  
   const {
-    onChange,
-    updateViewMutation,
-    tableLan,
-    i18n,
-    search,
-    setSearch,
-    renderFields,
-    view,
-    getLabel,
     isViewUpdating,
-  } = useGroupProps();
+    setSearch,
+    i18n,
+    columns,
+    onChange,
+    view,
+    search,
+  } = useFixColumnsProps()
 
   return (
     <Box>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={22} />}
-        rightIcon={
-          updateViewMutation.isLoading ? <Spinner color="#475467" /> : undefined
-        }
+        rightIcon={isViewUpdating ? <Spinner color="#475467" /> : undefined}
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
         onClick={onBackClick}
       >
         <Box color="#475467" fontSize={16} fontWeight={600}>
-          {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
-            "Group columns"}
+          {generateLangaugeText(tableLan, i18n?.language, "Fix columns") ||
+            "Fix columns"}
         </Box>
       </Button>
       <InputGroup mt="10px">
@@ -66,7 +62,7 @@ export const Group = ({
         />
       </InputGroup>
       <Flex flexDirection="column" mt="8px" maxHeight="300px" overflow="auto">
-        {renderFields.map((column) => (
+        {columns.map((column) => (
           <Flex
             key={column.id}
             as="label"
@@ -79,17 +75,15 @@ export const Group = ({
             height="28px"
           >
             {column?.type && getColumnIcon({ column })}
-            <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
+            <ViewOptionTitle>{column?.label}</ViewOptionTitle>
             <Switch
-              disabled={isViewUpdating}
               ml="auto"
-              onChange={(ev) => onChange(column, ev.target.checked)}
-              isChecked={view?.attributes?.group_by_columns?.includes(
-                column?.type === FIELD_TYPES.LOOKUP ||
-                  column?.type === FIELD_TYPES.LOOKUPS
-                  ? column?.relation_id
-                  : column?.id
+              isChecked={Boolean(
+                Object.keys(view?.attributes?.fixedColumns ?? {})?.find(
+                  (el) => el === column.id
+                )
               )}
+              onChange={(ev) => onChange(column, ev.target.checked)}
             />
           </Flex>
         ))}

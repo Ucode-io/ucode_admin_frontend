@@ -15,8 +15,11 @@ import deleteField from "@/utils/deleteField";
 import { RelationPopover } from "@/views/Constructor/Tables/Form/Relations/components/RelationPopover";
 import { FieldPopover } from "@/views/Constructor/Tables/Form/Fields/components/FieldPopover";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { useViewContext } from "@/providers/ViewProvider";
 
 export const FieldOptions = ({ field, view, tableSlug, tableLan }) => {
+  const { refetchTableInfo } = useViewContext();
+
   const queryClient = useQueryClient();
   const [selectedField, setSelectedField] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -57,7 +60,7 @@ export const FieldOptions = ({ field, view, tableSlug, tableLan }) => {
       column,
       tableSlug,
       callback: () => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        refetchTableInfo();
         queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
       },
     });

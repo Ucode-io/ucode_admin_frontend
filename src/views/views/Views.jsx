@@ -39,6 +39,11 @@ export const Views = ({ relationFields, isRelationView = false }) => {
     handleAddDate,
     navigateCreatePage,
     settingsForm,
+    viewForm,
+    authInfo,
+    visibleRelationColumns,
+    handleUpdateView,
+    isViewUpdating,
   } = useViewsProps();
 
   return (
@@ -61,6 +66,11 @@ export const Views = ({ relationFields, isRelationView = false }) => {
           projectId,
           menuId,
           visibleColumns,
+          viewForm,
+          authInfo,
+          visibleRelationColumns,
+          handleUpdateView,
+          isViewUpdating,
         }}
       >
         <FilterProvider

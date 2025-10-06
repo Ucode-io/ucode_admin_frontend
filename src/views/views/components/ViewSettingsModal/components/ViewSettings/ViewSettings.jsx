@@ -1,12 +1,12 @@
-import {Card} from "@mui/material";
-import {useEffect} from "react";
-import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
-import RingLoaderWithWrapper from "@/components/Loaders/RingLoader/RingLoaderWithWrapper";
 import cls from "./styles.module.scss";
-import constructorTableService from "@/services/constructorTableService";
+import { Card } from "@mui/material";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import RingLoaderWithWrapper from "@/components/Loaders/RingLoader/RingLoaderWithWrapper";
 import { CloseButton } from "@/components/CloseButton";
 import { ViewForm } from "../ViewForm";
+import { useGetTableInfo } from "@/services/tableService/table.service";
+import { useViewContext } from "@/providers/ViewProvider";
 
 export const ViewSettings = ({
   closeModal = () => {},
@@ -21,9 +21,11 @@ export const ViewSettings = ({
   setSelectedView = () => {},
   selectedView,
 }) => {
-  const { tableSlug: tableSlugFromParams, appId, menuId } = useParams();
-  const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
+  const { appId, menuId } = useParams();
+  // const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
   const closeForm = () => setSelectedView(null);
+
+  const { tableSlug } = useViewContext();
 
   const {
     data: { fields, views, columns, relationColumns } = {
@@ -34,17 +36,13 @@ export const ViewSettings = ({
     },
     isLoading,
     refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorTableService.getTableInfo(tableSlug, {
-        data: {
-          limit: 10,
-          offset: 0,
-          with_relations: true,
-          app_id: appId ?? menuId,
-        },
-      });
+  } = useGetTableInfo(
+    tableSlug,
+    {
+      limit: 10,
+      offset: 0,
+      with_relations: true,
+      app_id: appId ?? menuId,
     },
     {
       select: ({ data }) => {

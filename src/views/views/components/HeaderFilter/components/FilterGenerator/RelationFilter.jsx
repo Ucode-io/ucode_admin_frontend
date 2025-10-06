@@ -1,16 +1,16 @@
-import {useState} from "react";
-import {useQuery} from "react-query";
+import { useState } from "react";
 import FilterAutoComplete from "./FilterAutocomplete";
-import {useTranslation} from "react-i18next";
-import constructorObjectService from "@/services/constructorObjectService";
-import {getRelationFieldTabsLabel} from "@/utils/getRelationFieldLabel";
+import { useTranslation } from "react-i18next";
+import { getRelationFieldTabsLabel } from "@/utils/getRelationFieldLabel";
+import { constructorObjectService } from "@/services/objectService/object.service";
+import { useQuery } from "react-query";
 
-const RelationFilter = ({field = {}, filters, name, onChange}) => {
+const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [chosenField, setChosenField] = useState(null);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const {
-    data: {data: options = []} = {
+    data: { data: options = [] } = {
       data: [],
     },
   } = useQuery({

@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
-import { useGetViewsList } from "@/services/viewsService/views.service";
+import {
+  useGetViewsList,
+  useUpdateViewMutation,
+} from "@/services/viewsService/views.service";
 import { useGetTableInfo } from "@/services/menuService/menu.service";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { listToMap, listToMapWithoutRel } from "@/utils/listToMap";
@@ -17,6 +20,9 @@ import { useForm } from "react-hook-form";
 import { addDays } from "date-fns";
 import { useProjectGetByIdQuery } from "@/services/projectService";
 import useTabRouter from "@/hooks/useTabRouter";
+import { generateGUID } from "@/utils/generateID";
+import { useTableByIdQuery } from "@/services/tableService/table.service";
+import { useMenuGetByIdQuery } from "@/services/menuService";
 
 export const useViewsProps = () => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -47,6 +53,9 @@ export const useViewsProps = () => {
   });
 
   const [selectedView, setSelectedView] = useState(null);
+
+  const [menuItem, setMenuItem] = useState(null);
+  const [authInfo, setAuthInfo] = useState(null);
 
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
 
@@ -91,6 +100,28 @@ export const useViewsProps = () => {
     [VIEW_TYPES_MAP.CALENDAR]: <></>,
     [VIEW_TYPES_MAP.WEBSITE]: <></>,
   };
+
+  const viewForm = useForm({
+    defaultValues: {
+      show_in_menu: true,
+      fields: [],
+      app_id: menuId,
+      summary_section: {
+        id: generateGUID(),
+        label: "Summary",
+        fields: [],
+        icon: "",
+        order: 1,
+        column: "SINGLE",
+        is_summary_section: true,
+      },
+      label: "",
+      description: "",
+      slug: "",
+      icon: "",
+    },
+    mode: "all",
+  });
 
   // For TIMELINE view
   const handleAddDate = (item) => {
@@ -185,11 +216,17 @@ export const useViewsProps = () => {
     {
       enabled: Boolean(tableSlug && viewType !== VIEW_TYPES_MAP.SECTION),
       select: ({ data }) => {
+        const views =
+          data?.views?.filter(
+            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view)
+          ) ?? [];
+
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
           tableInfo: data?.table_info || {},
+          views,
           visibleRelationColumns:
             data?.relation_fields?.map((el) => ({
               ...el,
@@ -218,6 +255,37 @@ export const useViewsProps = () => {
       tableSlug: selectedView?.table_slug,
     }
   );
+
+  const updateViewMutation = useUpdateViewMutation(tableSlug, {
+    onSuccess: () => {
+      refetchViewsList();
+    },
+  });
+
+  const handleUpdateView = (data) => {
+    updateViewMutation.mutate(data);
+  };
+
+  useTableByIdQuery({
+    id: menuItem?.table_id,
+    queryParams: {
+      enabled: !!menuItem?.table_id,
+      onSuccess: (res) => {
+        setAuthInfo(res?.attributes?.auth_info);
+        viewForm.reset(res);
+      },
+    },
+  });
+
+  useMenuGetByIdQuery({
+    menuId: menuId,
+    queryParams: {
+      enabled: Boolean(menuId && menuId !== "login"),
+      onSuccess: (res) => {
+        setMenuItem(res);
+      },
+    },
+  });
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
@@ -268,5 +336,10 @@ export const useViewsProps = () => {
     handleAddDate,
     navigateCreatePage,
     settingsForm,
+    viewForm,
+    authInfo,
+    visibleRelationColumns,
+    handleUpdateView,
+    isViewUpdating: updateViewMutation.isLoading,
   };
 };

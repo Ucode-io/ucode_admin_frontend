@@ -9,7 +9,8 @@
       "@/views/*": ["src/views/*"],
       "@/providers/*": ["src/providers/*"],
       "@/store/*": ["src/store/*"],
-      "@/theme/*": ["src/theme/*"]
+      "@/theme/*": ["src/theme/*"],
+      "@/mock/*": ["src/mock/*"]
     }
   }
 }

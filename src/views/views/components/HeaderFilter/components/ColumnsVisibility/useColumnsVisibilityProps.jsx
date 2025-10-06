@@ -14,17 +14,23 @@ export const useColumnsVisibilityProps = () => {
 
   const dispatch = useDispatch();
   
-  const { tableSlug, isRelationView, refetchViews, refetchRelationViews = () => {}, view, } = useViewContext();
+  const {
+    tableSlug,
+    isRelationView,
+    refetchViews,
+    refetchRelationViews = () => {},
+    handleUpdateView,
+    view,
+  } = useViewContext();
   const { fieldsMap } = useFieldsContext();
-  
+
   const { i18n } = useTranslation();
-  const tableLan = useGetLang("Table")
+  const tableLan = useGetLang("Table");
 
   const [search, setSearch] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const allFields = Object.values(fieldsMap);
-
 
   const updateViewMutation = useUpdateViewMutation(tableSlug, {
     onSuccess: (data) => {
@@ -87,6 +93,7 @@ export const useColumnsVisibilityProps = () => {
 
   const onChange = (column, checked) => {
     const columns = view?.columns ?? [];
+    console.log({ column, checked });
     const id =
       column?.type === "LOOKUP" || column?.type === "LOOKUPS"
         ? column.relation_id
@@ -104,18 +111,29 @@ export const useColumnsVisibilityProps = () => {
           ?.filter((item) => item !== column?.slug)
           ?.join("/");
       }
-      updateViewMutation.mutate({
+      handleUpdateView({
         ...view,
         attributes: {
           ...view?.attributes,
           visible_field: visible_field,
         },
       });
+      // updateViewMutation.mutate({
+      //   ...view,
+      //   attributes: {
+      //     ...view?.attributes,
+      //     visible_field: visible_field,
+      //   },
+      // });
     } else {
-      updateViewMutation.mutate({
+      handleUpdateView({
         ...view,
         columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
       });
+      // updateViewMutation.mutate({
+      //   ...view,
+      //   columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
+      // });
     }
   };
 
@@ -141,7 +159,7 @@ export const useColumnsVisibilityProps = () => {
     });
 
     if (computedResult) {
-      updateViewMutation.mutate({
+      handleUpdateView({
         ...view,
         columns: computedResult?.map((item) =>
           item?.type === "LOOKUP" || item?.type === "LOOKUPS"

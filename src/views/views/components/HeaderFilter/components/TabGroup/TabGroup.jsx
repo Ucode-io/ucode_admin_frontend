@@ -10,43 +10,43 @@ import {
   Spinner,
   Switch,
 } from "@chakra-ui/react";
-import { useGroupProps } from "./useGroupProps";
+import { useTabGroupProps } from "./useTabGroupProps";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { getColumnIcon } from "@/utils/constants/tableIcons";
 import { ViewOptionTitle } from "../../../ViewOptionTitle";
-import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
-export const Group = ({
+export const TabGroup = ({
   onBackClick,
+  tableLan,
+  label = "Tab group columns",
 }) => {
+
   const {
-    onChange,
-    updateViewMutation,
-    tableLan,
     i18n,
     search,
     setSearch,
     renderFields,
-    view,
     getLabel,
+    selected,
+    onChange,
+    view,
+    isBoardView,
     isViewUpdating,
-  } = useGroupProps();
+  } = useTabGroupProps()
 
   return (
     <Box>
       <Button
         leftIcon={<ChevronLeftIcon fontSize={22} />}
-        rightIcon={
-          updateViewMutation.isLoading ? <Spinner color="#475467" /> : undefined
-        }
+        rightIcon={isViewUpdating ? <Spinner color="#475467" /> : undefined}
         colorScheme="gray"
         variant="ghost"
         w="fit-content"
         onClick={onBackClick}
       >
         <Box color="#475467" fontSize={16} fontWeight={600}>
-          {generateLangaugeText(tableLan, i18n?.language, "Group columns") ||
-            "Group columns"}
+          {generateLangaugeText(tableLan, i18n?.language, label) ||
+            "Tab group columns"}
         </Box>
       </Button>
       <InputGroup mt="10px">
@@ -80,17 +80,33 @@ export const Group = ({
           >
             {column?.type && getColumnIcon({ column })}
             <ViewOptionTitle>{getLabel(column)}</ViewOptionTitle>
-            <Switch
-              disabled={isViewUpdating}
-              ml="auto"
-              onChange={(ev) => onChange(column, ev.target.checked)}
-              isChecked={view?.attributes?.group_by_columns?.includes(
-                column?.type === FIELD_TYPES.LOOKUP ||
-                  column?.type === FIELD_TYPES.LOOKUPS
-                  ? column?.relation_id
-                  : column?.id
-              )}
-            />
+            {isBoardView ? (
+              <Switch
+                ml="auto"
+                checked={selected === column?.id}
+                onChange={(ev) => onChange(column, ev.target.checked)}
+                disabled={
+                  isBoardView
+                    ? view?.attributes?.sub_group_by_id === column?.id
+                    : false
+                }
+                isChecked={(view?.group_fields ?? []).includes(
+                  column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                    ? column?.relation_id
+                    : column?.id
+                )}
+              />
+            ) : (
+              <Switch
+                ml="auto"
+                onChange={(ev) => onChange(column, ev.target.checked)}
+                isChecked={(view?.group_fields ?? []).includes(
+                  column?.type === "LOOKUP" || column?.type === "LOOKUPS"
+                    ? column?.relation_id
+                    : column?.id
+                )}
+              />
+            )}
           </Flex>
         ))}
       </Flex>

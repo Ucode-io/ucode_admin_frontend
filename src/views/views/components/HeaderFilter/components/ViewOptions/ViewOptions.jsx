@@ -45,6 +45,8 @@ import { CalendarSettings } from "../CalendarSettings";
 import { Group } from "../Group";
 import { useViewOptionsProps } from "./useViewOptionsProps";
 import LayoutComponent from "../LayoutComponent";
+import { TabGroup } from "../TabGroup";
+import { FixColumns } from "../FixColumns";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -90,10 +92,7 @@ export const ViewOptions = ({
     isCalendarView,
     isRelationView,
     tableSlug,
-    queryClient,
     navigateToOldTemplate,
-    computedColumnsFor,
-    refetchGetTableInfo,
     viewUpdateMutation,
     computedColumns,
     saveSettings,
@@ -405,33 +404,20 @@ export const ViewOptions = ({
             />
           )}
 
-          {/* {openedMenu === "tab-group" && (
+          {openedMenu === "tab-group" && (
             <TabGroup
-              relationView={relationView}
-              tableSlug={tableSlug}
               tableLan={tableLan}
-              view={view}
-              fieldsMap={fieldsMap}
-              refetchViews={refetchViews}
-              visibleRelationColumns={visibleRelationColumns}
               onBackClick={() => setOpenedMenu(null)}
-              visibleColumns={visibleColumns}
               label={isBoardView ? "Group" : ""}
-              isBoardView={isBoardView}
             />
-          )} */}
+          )}
 
-          {/* {openedMenu === "fix-column" && (
+          {openedMenu === "fix-column" && (
             <FixColumns
-              relationView={relationView}
-              tableSlug={tableSlug}
               tableLan={tableLan}
-              view={view}
-              fieldsMap={fieldsMap}
-              refetchViews={refetchViews}
               onBackClick={() => setOpenedMenu(null)}
             />
-          )} */}
+          )}
           {openedMenu === "timeline-settings" && (
             <TimelineSettings
               relationView={isRelationView}

@@ -123,6 +123,7 @@ export const AddCardComponent = ({
       <Grid container sx={{ height: "240px", overflow: "auto" }}>
         {cards?.map((card, index) => (
           <Grid item key={index}>
+            {console.log({ card })}
             <Card
               sx={{
                 margin: "10px",
@@ -153,9 +154,23 @@ export const AddCardComponent = ({
                 </Typography>
 
                 <Box
-                  sx={{ position: "absolute", right: "10px", bottom: "10px" }}
+                  sx={{ position: "absolute", right: "0px", bottom: "10px" }}
                 >
-                  <img src="/img/uzc.svg" alt="uzcard" />
+                  {card?.type === "VISA" ? (
+                    <img
+                      className={cls.cardIcon}
+                      src="/img/visa.svg"
+                      alt="VISA"
+                      width={40}
+                    />
+                  ) : (
+                    <img
+                      className={cls.cardIcon}
+                      src="/img/uzc.svg"
+                      alt="uzcard"
+                      width={40}
+                    />
+                  )}
                 </Box>
               </CardContent>
             </Card>

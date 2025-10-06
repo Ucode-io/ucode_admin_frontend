@@ -110,7 +110,7 @@ export const BillingTable = ({ handClickBalance }) => {
                     {project?.title}
                   </TableCell>
                   <TableCell sx={{ fontSize: "14px" }}>
-                    {numberWithSpaces(row.amount)} UZS
+                    {numberWithSpaces(row.amount)} {row.currency?.code || "UZS"}
                   </TableCell>
                   {/* <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.fare?.name ?? ""}

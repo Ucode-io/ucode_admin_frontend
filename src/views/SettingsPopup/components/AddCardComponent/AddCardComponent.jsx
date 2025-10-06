@@ -25,6 +25,7 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
+import request from "@/utils/request";
 
 function SetupForm() {
   const stripe = useStripe();
@@ -106,14 +107,13 @@ export const AddCardComponent = ({
     if (tabIndex === 1 && isFirstRequestStripe.current) {
       isFirstRequestStripe.current = false;
 
-      fetch("https://admin-api.ucode.run/v1/payment-intent/stripe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 1200, currency: "usd" }),
-      })
-        .then((res) => res.json())
+      request
+        .post("/payment-intent/stripe", {
+          amount: 1200,
+          currency: "usd",
+        })
         .then((data) => {
-          setClientSecret(data.data.client_secret);
+          setClientSecret(data.client_secret);
         });
     }
   }, [tabIndex]);

@@ -1,9 +1,7 @@
 import useDebounce from "@/hooks/useDebounce";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useViewContext } from "@/providers/ViewProvider";
-import constructorTableService, {
-  useGetTableInfo,
-} from "@/services/tableService/table.service";
+import { useGetTableInfo } from "@/services/tableService/table.service";
 import constructorViewService from "@/services/viewsService/views.service";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { viewsActions } from "@/store/views/view.slice";
@@ -14,7 +12,7 @@ import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { useDisclosure } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -36,6 +34,9 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     tableSlug: tableSlugFromContext,
     isRelationView,
     refetchViews,
+    searchText,
+    checkedColumns,
+    computedVisibleFields,
   } = useViewContext();
 
   const { fieldsMap } = useFieldsContext();
@@ -287,5 +288,8 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     viewName,
     onDocsClick,
     selectedTabIndex,
+    searchText,
+    checkedColumns,
+    computedVisibleFields,
   };
 };

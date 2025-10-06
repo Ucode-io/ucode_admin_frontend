@@ -18,16 +18,7 @@ import {
 } from "@chakra-ui/icons";
 import { default as SVG } from "react-inlinesvg";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
-// import {
-  // ColumnsVisibility,
-//   DeleteViewButton,
-//   ExcelExportButton,
-//   ExcelImportButton,
-//   FixColumns,
-//   TabGroup,
-// } from "../../table-redesign/components/ViewOptionElement";
 import HorizontalSplitOutlinedIcon from "@mui/icons-material/HorizontalSplitOutlined";
-// import LayoutComponent from "../../table-redesign/LayoutComponent";
 import {
   EyeIcon,
   FileDropdownIcon,
@@ -47,6 +38,9 @@ import { useViewOptionsProps } from "./useViewOptionsProps";
 import LayoutComponent from "../LayoutComponent";
 import { TabGroup } from "../TabGroup";
 import { FixColumns } from "../FixColumns";
+import { ExcelImport } from "../ExcelImport";
+import { ExcelExport } from "../ExcelExport";
+import { DeleteView } from "../DeleteView";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -102,6 +96,9 @@ export const ViewOptions = ({
     viewName,
     onDocsClick,
     selectedTabIndex,
+    searchText,
+    checkedColumns,
+    computedVisibleFields,
   } = useViewOptionsProps({ settingsForm });
 
   return (
@@ -364,27 +361,27 @@ export const ViewOptions = ({
                   }
                   icon={<FileIcon />}
                 />
-                {/* <ExcelExportButton
+                <ExcelImport
                   tableLan={tableLan}
                   fieldsMap={fieldsMap}
                   tableSlug={tableSlug}
                 />
-                <ExcelImportButton
+                <ExcelExport
                   tableLan={tableLan}
                   searchText={searchText}
                   checkedColumns={checkedColumns}
                   computedVisibleFields={computedVisibleFields}
                   tableSlug={tableSlug}
-                /> */}
+                />
               </Box>
-              {/* <Box pt="4px">
-                <DeleteViewButton
-                  relationView={relationView}
+              <Box pt="4px">
+                <DeleteView
+                  tableSlug={tableSlug}
                   view={view}
                   refetchViews={refetchViews}
                   tableLan={tableLan}
                 />
-              </Box> */}
+              </Box>
             </>
           )}
 

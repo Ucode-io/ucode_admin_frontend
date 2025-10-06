@@ -66,6 +66,9 @@ export const useViewsProps = () => {
   const [selectedRow, setSelectedRow] = useState("");
   const [layoutType, setLayoutType] = useState("SimpleLayout");
 
+  const [searchText, setSearchText] = useState("");
+  const [checkedColumns, setCheckedColumns] = useState([]);
+
   const [orderBy, setOrderBy] = useState(false);
   const [sortedDatas, setSortedDatas] = useState([]);
 
@@ -142,6 +145,7 @@ export const useViewsProps = () => {
 
   const handleSearchOnChange = (value) => {
     setCurrentPage(1);
+    setSearchText(value);
     saveSearchTextToDB(tableSlug, value);
   };
 
@@ -167,6 +171,14 @@ export const useViewsProps = () => {
         navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
       }
     }
+  };
+
+  const selectAll = () => {
+    setCheckedColumns(
+      columnsForSearch
+        .filter((item) => item.is_search === true)
+        .map((item) => item.slug)
+    );
   };
 
   const { refetch: refetchViewsList, isRefetching } = useGetViewsList(menuId, {
@@ -256,6 +268,9 @@ export const useViewsProps = () => {
     }
   );
 
+  const tableName = tableInfo?.label;
+  const view = selectedView;
+
   const updateViewMutation = useUpdateViewMutation(tableSlug, {
     onSuccess: () => {
       refetchViewsList();
@@ -287,6 +302,23 @@ export const useViewsProps = () => {
     },
   });
 
+  const computedVisibleFields = useMemo(() => {
+    const mappedObjects = [];
+    Object.values(fieldsMap)?.forEach((obj) => {
+      if (obj.type === FIELD_TYPES.LOOKUP || obj.type === FIELD_TYPES.LOOKUPS) {
+        if (view?.columns?.includes(obj.relation_id)) {
+          mappedObjects.push(obj);
+        }
+      } else {
+        if (view?.columns?.includes(obj.id)) {
+          mappedObjects.push(obj);
+        }
+      }
+    });
+
+    return mappedObjects.map((obj) => obj.id);
+  }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
+
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
       (el) =>
@@ -300,9 +332,6 @@ export const useViewsProps = () => {
         el?.type === FIELD_TYPES.FORMULA_FRONTEND
     );
   }, [fieldsMap]);
-
-  const tableName = tableInfo?.label;
-  const view = selectedView;
 
   return {
     viewsMap,
@@ -341,5 +370,10 @@ export const useViewsProps = () => {
     visibleRelationColumns,
     handleUpdateView,
     isViewUpdating: updateViewMutation.isLoading,
+    searchText,
+    selectAll,
+    setCheckedColumns,
+    checkedColumns,
+    computedVisibleFields,
   };
 };

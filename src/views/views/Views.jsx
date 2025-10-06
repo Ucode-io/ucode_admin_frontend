@@ -44,6 +44,11 @@ export const Views = ({ relationFields, isRelationView = false }) => {
     visibleRelationColumns,
     handleUpdateView,
     isViewUpdating,
+    searchText,
+    selectAll,
+    setCheckedColumns,
+    checkedColumns,
+    computedVisibleFields,
   } = useViewsProps();
 
   return (
@@ -71,6 +76,11 @@ export const Views = ({ relationFields, isRelationView = false }) => {
           visibleRelationColumns,
           handleUpdateView,
           isViewUpdating,
+          searchText,
+          selectAll,
+          setCheckedColumns,
+          checkedColumns,
+          computedVisibleFields,
         }}
       >
         <FilterProvider

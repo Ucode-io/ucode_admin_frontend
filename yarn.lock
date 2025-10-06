@@ -4228,6 +4228,10 @@
   resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-8.0.0.tgz#826c96834309a2b8f60394ad4496b71ae98fea86"
   integrity sha512-dLvD55KT1cBmrqzgYRgY42qNcw6zW4HS5oRZs0xRvHw9gBWig5yDnWNop/E+/t2JK+OZO30zsnupVBN2MqW2mg==
 
+"@stripe/stripe-js@stripe/stripe-js":
+  version "8.0.0"
+  resolved "https://codeload.github.com/stripe/stripe-js/tar.gz/f3c0d62b5f23fba441105213d5399ebc4d958949"
+
 "@svta/common-media-library@^0.12.4":
   version "0.12.4"
   resolved "https://registry.yarnpkg.com/@svta/common-media-library/-/common-media-library-0.12.4.tgz#1533e7518e6e36952eab8325f11c4e986cea4d4b"

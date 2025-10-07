@@ -27,6 +27,8 @@ import {
 } from "@stripe/react-stripe-js";
 import request from "@/utils/request";
 
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
+
 function SetupForm() {
   const stripe = useStripe();
   const elements = useElements();
@@ -67,9 +69,7 @@ function SetupForm() {
     </Box>
   );
 }
-const stripePromise = loadStripe(
-  "pk_test_51QvC6qCx1p2EqOQpmOucIpxITwTxH9YHdGHdveqmor6uyBlQo1Fhwg9H6vKQ3qKtacTN3u7yC6GmllNNB3OWumGi00Yj8hnwgo"
-);
+const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 export const AddCardComponent = ({
   control,
@@ -108,7 +108,7 @@ export const AddCardComponent = ({
       isFirstRequestStripe.current = false;
 
       request
-        .post("/payment-intent/stripe", {
+        .post("/payment/intent", {
           amount: 1200,
           currency: "usd",
         })

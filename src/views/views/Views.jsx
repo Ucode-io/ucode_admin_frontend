@@ -6,6 +6,7 @@ import { Header } from "./components/Header";
 import { HeaderFilter } from "./components/HeaderFilter";
 import { FilterProvider } from "./providers/FilterProvider";
 import { FieldsProvider } from "./providers/FieldsProvider";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const Views = ({ relationFields, isRelationView = false }) => {
   const {
@@ -49,6 +50,16 @@ export const Views = ({ relationFields, isRelationView = false }) => {
     setCheckedColumns,
     checkedColumns,
     computedVisibleFields,
+    projectInfo,
+    menuItem,
+    paginationCount,
+    currentPage,
+    setCurrentPage,
+    customEvents,
+    layoutType,
+    setLayoutType,
+    selectedRow,
+    setSelectedRow,
   } = useViewsProps();
 
   return (
@@ -81,6 +92,16 @@ export const Views = ({ relationFields, isRelationView = false }) => {
           setCheckedColumns,
           checkedColumns,
           computedVisibleFields,
+          projectInfo,
+          menuItem,
+          paginationCount,
+          currentPage,
+          setCurrentPage,
+          customEvents,
+          layoutType,
+          setLayoutType,
+          selectedRow,
+          setSelectedRow,
         }}
       >
         <FilterProvider
@@ -108,6 +129,7 @@ export const Views = ({ relationFields, isRelationView = false }) => {
               navigateCreatePage={navigateCreatePage}
               settingsForm={settingsForm}
             />
+            {viewsMap[viewType]}
           </FieldsProvider>
         </FilterProvider>
       </ViewProvider>

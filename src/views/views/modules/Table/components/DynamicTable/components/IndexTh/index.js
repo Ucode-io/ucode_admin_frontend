@@ -1,0 +1,1 @@
+export { IndexTh } from "./IndexTh";

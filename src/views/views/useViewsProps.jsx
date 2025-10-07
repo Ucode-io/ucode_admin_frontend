@@ -23,6 +23,8 @@ import useTabRouter from "@/hooks/useTabRouter";
 import { generateGUID } from "@/utils/generateID";
 import { useTableByIdQuery } from "@/services/tableService/table.service";
 import { useMenuGetByIdQuery } from "@/services/menuService";
+import { Table } from "./modules/Table";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const useViewsProps = () => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -95,7 +97,11 @@ export const useViewsProps = () => {
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const viewsMap = {
-    [VIEW_TYPES_MAP.TABLE]: <></>,
+    [VIEW_TYPES_MAP.TABLE]: (
+      <MaterialUIProvider>
+        <Table />
+      </MaterialUIProvider>
+    ),
     [VIEW_TYPES_MAP.TREE]: <></>,
     [VIEW_TYPES_MAP.GRID]: <></>,
     [VIEW_TYPES_MAP.BOARD]: <></>,
@@ -215,6 +221,7 @@ export const useViewsProps = () => {
       visibleColumns,
       visibleRelationColumns,
       tableInfo,
+      customEvents,
     } = {
       fieldsMap: {},
       fieldsMapRel: {},
@@ -244,6 +251,8 @@ export const useViewsProps = () => {
               ...el,
               label: `${el.label} (${el.table_label})`,
             })) ?? [],
+          customEvents: data?.custom_events,
+          orderBy: data?.table_info?.order_by || false,
         };
       },
       onSuccess: (data) => {
@@ -257,6 +266,7 @@ export const useViewsProps = () => {
           })
         );
         dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
+        setOrderBy(data?.orderBy);
       },
       staleTime: 1000 * 60, // 1 min
       cacheTime: 1000 * 60 * 10, // 10 min
@@ -375,5 +385,15 @@ export const useViewsProps = () => {
     setCheckedColumns,
     checkedColumns,
     computedVisibleFields,
+    projectInfo,
+    menuItem,
+    paginationCount,
+    currentPage,
+    setCurrentPage,
+    customEvents,
+    layoutType,
+    setLayoutType,
+    selectedRow,
+    setSelectedRow,
   };
 };

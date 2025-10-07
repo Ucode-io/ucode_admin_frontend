@@ -80,6 +80,7 @@ const TableView = ({
   orderBy,
   ...props
 }) => {
+  console.log({ shouldGet });
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();

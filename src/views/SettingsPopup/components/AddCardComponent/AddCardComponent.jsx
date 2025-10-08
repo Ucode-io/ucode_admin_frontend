@@ -27,7 +27,8 @@ import {
 } from "@stripe/react-stripe-js";
 import request from "@/utils/request";
 
-const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
+// const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
+const STRIPE_PUBLISHABLE_KEY = "pk_live_51QvC6qCx1p2EqOQppTBBcUN5K0PMMp0j8OweixKmnS4QVYEkbn9SaTQ9AWZMQqCz6FgIWrfj8QMssl8lvRCBlBhd00IBajpYUS";
 
 function SetupForm() {
   const stripe = useStripe();

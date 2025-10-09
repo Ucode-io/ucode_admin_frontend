@@ -16,7 +16,6 @@ export const TopUpBalance = ({
   onSubmit = () => {},
   handleSubmit = () => {},
 }) => {
-
   const [verifyCard, setVerifyCard] = useState(false);
 
   return (
@@ -31,15 +30,21 @@ export const TopUpBalance = ({
         position: "absolute",
         transform: "translate(-50%, 50%)",
       }}
-      className="PlatformModal">
+      className="PlatformModal"
+    >
       <Box>
         <div className="modal-header silver-bottom-border">
           <Typography variant="h4">Top Up Balance</Typography>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="form">
+        <div className="form">
           {Boolean(watch("verify")) ? (
-            <TopUpBalanceComponent control={control} loading={loading} />
+            <TopUpBalanceComponent
+              control={control}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+              loading={loading}
+            />
           ) : (
             <AddCardComponent
               watch={watch}
@@ -47,15 +52,22 @@ export const TopUpBalance = ({
               reset={reset}
               verifyCard={verifyCard}
               setVerifyCard={setVerifyCard}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
             />
           )}
-        </form>
+        </div>
       </Box>
     </Box>
   );
 };
 
-const TopUpBalanceComponent = ({control, loading = false}) => {
+const TopUpBalanceComponent = ({
+  control,
+  loading = false,
+  handleSubmit,
+  onSubmit,
+}) => {
   return (
     <Box>
       <HFNumberField
@@ -70,12 +82,13 @@ const TopUpBalanceComponent = ({control, loading = false}) => {
       <Button
         loading={loading}
         disabled={loading}
-        type="submit"
-        sx={{marginTop: "24px", fontSize: "12px"}}
+        onClick={handleSubmit(onSubmit)}
+        sx={{ marginTop: "24px", fontSize: "12px" }}
         variant="contained"
-        fullWidth>
+        fullWidth
+      >
         {loading ? (
-          <CircularProgress size={25} style={{color: "#fff"}} />
+          <CircularProgress size={25} style={{ color: "#fff" }} />
         ) : (
           "Add balance"
         )}

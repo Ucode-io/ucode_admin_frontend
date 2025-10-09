@@ -209,14 +209,10 @@ export const useFormulaFieldProps = ({
   }, [tableRelations]);
 
   const { isLoading: fieldLoading } = useFieldsListQuery({
-    params: {
-      table_id: menuItem?.table_id,
-      tableSlug: tableSlug,
-      table_slug: tableSlug,
-    },
-    tableSlug,
+    params: {},
+    tableSlug: selectedTableSlug?.split("#")[0],
     queryParams: {
-      enabled: Boolean(menuItem?.table_id),
+      enabled: Boolean(tableSlug),
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {

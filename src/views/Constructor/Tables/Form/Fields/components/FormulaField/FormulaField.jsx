@@ -62,7 +62,7 @@ export const FormulaField = ({
   return (
     <Box width="740px">
       {fieldType === FIELD_TYPES.FORMULA ? (
-        <Box display="flex" flexDirection="column" rowGap="8px">
+        <Box display="flex" flexDirection="column" rowGap="8px" padding="8px">
           <DropdownSelect
             name="attributes.type"
             control={control}
@@ -89,7 +89,6 @@ export const FormulaField = ({
                 placeholder="Rounds"
                 fullWidth
                 control={control}
-                options={fields}
               />
               <div className="">
                 {relation?.map((summary, index) => (

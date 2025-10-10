@@ -17,13 +17,14 @@ import useSearchParams from "../../hooks/useSearchParams";
 import {ToastContainer} from "react-toastify";
 import {iconCategoryActions} from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
+import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
 
-const MainLayout = ({setFavicon, favicon}) => {
+const MainLayout = ({ setFavicon, favicon }) => {
   const dispatch = useDispatch();
-  const {appId} = useParams();
+  const { appId } = useParams();
   const projectId = store.getState().company.projectId;
 
-  const updateSearchParam = useSearchParams()[2];
+  const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const location = useLocation();
 
   const { data: projectInfo } = useProjectGetByIdQuery({
@@ -75,7 +76,8 @@ const MainLayout = ({setFavicon, favicon}) => {
   const handleCloseProfileModal = () => setOpenProfileModal(false);
 
   const handleOpenBilling = () => {
-    updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
+    // updateSearchParam("activeTab", TAB_COMPONENTS.BILLING);
+    dispatch(settingsModalActions.setActiveTab(TAB_COMPONENTS.BILLING));
     handleOpenProfileModal();
   };
 
@@ -109,6 +111,13 @@ const MainLayout = ({setFavicon, favicon}) => {
         ? isWarning <= 5
         : isWarning <= 7;
 
+  useEffect(() => {
+    if (searchParams.get("stripeRedirect") === "true") {
+      dispatch(settingsModalActions.setActiveTab(TAB_COMPONENTS.BILLING));
+      setOpenProfileModal(true);
+    }
+  }, []);
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -118,7 +127,8 @@ const MainLayout = ({setFavicon, favicon}) => {
           handleOpenBilling={handleOpenBilling}
         />
         <div
-          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}>
+          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}
+        >
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
             appId={appId}
@@ -133,16 +143,19 @@ const MainLayout = ({setFavicon, favicon}) => {
               location.pathname?.includes("object")
                 ? styles.contentLayout
                 : styles.content
-            }>
+            }
+          >
             <Outlet />
             <ToastContainer hideProgressBar />
           </div>
         </div>
 
-        <SettingsPopup
-          open={openProfileModal}
-          onClose={handleCloseProfileModal}
-        />
+        {openProfileModal && (
+          <SettingsPopup
+            open={openProfileModal}
+            onClose={handleCloseProfileModal}
+          />
+        )}
         <AddingGroup />
       </ThemeProvider>
     </>

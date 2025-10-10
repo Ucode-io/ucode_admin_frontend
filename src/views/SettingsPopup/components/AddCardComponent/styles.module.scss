@@ -1,0 +1,33 @@
+.tabs {
+  height: 26px;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  border-bottom: none;
+  list-style: none;
+}
+
+.tab {
+  // height: 100%;
+  color: #667085;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: "Inter";
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+  
+  &.active {
+    background-color: #007AFF !important;
+    color: #fff !important;
+  }
+}
+
+.form {
+  margin-top: 10px;
+}
+
+// .cardIcon {
+//   margin-left: 20px;
+// }

@@ -1,18 +1,21 @@
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import billingService from "@/services/billingService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { useProjectListQuery } from "@/services/companyService";
 import { store } from "@/store";
 import { companyActions } from "@/store/company/company.slice";
+import useSearchParams from "@/hooks/useSearchParams";
 
 export const useBillingProps = () => {
   const dispatch = useDispatch();
   const project = useSelector((state) => state?.company?.projectItem);
   const company = store.getState().company;
   const queryClient = useQueryClient();
+
+  const [searchParams] = useSearchParams();
 
   const [addBalance, setAddBalance] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -78,6 +81,12 @@ export const useBillingProps = () => {
       })
       .finally(() => setLoading(false));
   };
+
+  useEffect(() => {
+    if (searchParams.get("stripeRedirect") === "true") {
+      setAddBalance(true);
+    }
+  }, [searchParams]);
 
   return {
     project,

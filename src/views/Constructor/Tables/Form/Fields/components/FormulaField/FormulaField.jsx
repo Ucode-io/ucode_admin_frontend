@@ -57,6 +57,7 @@ export const FormulaField = ({
     tableSlug,
     watch,
     setValue,
+    fieldType,
   });
 
   return (

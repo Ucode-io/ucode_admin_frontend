@@ -60,6 +60,7 @@ import {
   SettingsIcon,
 } from "../../../utils/constants/icons";
 import { CloseButton } from "../../../components/CloseButton";
+import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -370,8 +371,9 @@ const ViewOptions = ({
                     </svg>
                   </button> */}
                 </Box>
-                <Flex mt="10px" columnGap="4px" mb="4px">
-                  {/* <Flex
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <Flex mt="10px" columnGap="4px" mb="4px">
+                    {/* <Flex
                     minW="32px"
                     h="26px"
                     borderRadius={6}
@@ -385,41 +387,44 @@ const ViewOptions = ({
                       height={18}
                     />
                   </Flex> */}
-                  <InputGroup>
-                    <Input
-                      h="32px"
-                      placeholder={t("view_name")}
-                      defaultValue={viewName}
-                      onChange={onViewNameChange}
-                      borderRadius="8px"
-                      fontSize="12px"
-                      lineHeight="18px"
-                    />
-                    <InputLeftElement h="32px">
-                      <SVG
-                        src={`/img/${viewIcons?.[view?.type]}`}
-                        width={16}
-                        height={16}
-                        color="#101828"
+                    <InputGroup>
+                      <Input
+                        h="32px"
+                        placeholder={t("view_name")}
+                        defaultValue={viewName}
+                        onChange={onViewNameChange}
+                        borderRadius="8px"
+                        fontSize="12px"
+                        lineHeight="18px"
                       />
-                    </InputLeftElement>
-                    {updateView.isLoading && (
-                      <InputRightElement>
-                        <Spinner color="#475467" />
-                      </InputRightElement>
-                    )}
-                  </InputGroup>
-                </Flex>
-                <OptionItem
-                  icon={view?.type}
-                  title={
-                    generateLangaugeText(tableLan, i18n?.language, "General") ||
-                    "General"
-                  }
-                  rightContent={viewName}
-                  onClick={handleOpenPopup}
-                />
-                {/* <Flex
+                      <InputLeftElement h="32px">
+                        <SVG
+                          src={`/img/${viewIcons?.[view?.type]}`}
+                          width={16}
+                          height={16}
+                          color="#101828"
+                        />
+                      </InputLeftElement>
+                      {updateView.isLoading && (
+                        <InputRightElement>
+                          <Spinner color="#475467" />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
+                  </Flex>
+                  <OptionItem
+                    icon={view?.type}
+                    title={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "General"
+                      ) || "General"
+                    }
+                    rightContent={viewName}
+                    onClick={handleOpenPopup}
+                  />
+                  {/* <Flex
                   color="#475467"
                   padding="6px 8px"
                   mt="4px"
@@ -455,9 +460,19 @@ const ViewOptions = ({
                   </Flex>
                 </Flex> */}
 
-                {localStorage.getItem("newLayout") === "false" && (
-                  <LayoutComponent
-                    tableInfo={tableInfo}
+                  {localStorage.getItem("newLayout") === "false" && (
+                    <LayoutComponent
+                      tableInfo={tableInfo}
+                      refetchViews={refetchViews}
+                      selectedTabIndex={selectedTabIndex}
+                      tableLan={tableLan}
+                      selectedView={view}
+                      isChanged={isChanged}
+                      setIsChanged={setIsChanged}
+                    />
+                  )}
+
+                  <ViewSettingsModal
                     refetchViews={refetchViews}
                     selectedTabIndex={selectedTabIndex}
                     tableLan={tableLan}
@@ -465,45 +480,40 @@ const ViewOptions = ({
                     isChanged={isChanged}
                     setIsChanged={setIsChanged}
                   />
-                )}
-
-                <ViewSettingsModal
-                  refetchViews={refetchViews}
-                  selectedTabIndex={selectedTabIndex}
-                  tableLan={tableLan}
-                  selectedView={view}
-                  isChanged={isChanged}
-                  setIsChanged={setIsChanged}
-                />
+                </PermissionWrapperV2>
               </Box>
-              <Box py="4px" borderBottom="1px solid #D0D5DD">
-                <OptionItem
-                  title={
-                    generateLangaugeText(tableLan, i18n?.language, "Columns") ||
-                    "Columns"
-                  }
-                  icon={<EyeIcon />}
-                  onClick={() => setOpenedMenu("columns-visibility")}
-                  rightContent={
-                    <Flex ml="auto" alignItems="center" columnGap="8px">
-                      {Boolean(
-                        isTimelineView
-                          ? visibleColumnsCountForTimeline
-                          : visibleColumnsCount
-                      ) &&
-                        (isTimelineView
-                          ? visibleColumnsCountForTimeline
-                          : visibleColumnsCount) > 0 && (
-                          <>
-                            {isTimelineView
-                              ? visibleColumnsCountForTimeline
-                              : visibleColumnsCount}{" "}
-                          </>
-                        )}
-                    </Flex>
-                  }
-                />
-                {/* <Flex
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <Box py="4px" borderBottom="1px solid #D0D5DD">
+                  <OptionItem
+                    title={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Columns"
+                      ) || "Columns"
+                    }
+                    icon={<EyeIcon />}
+                    onClick={() => setOpenedMenu("columns-visibility")}
+                    rightContent={
+                      <Flex ml="auto" alignItems="center" columnGap="8px">
+                        {Boolean(
+                          isTimelineView
+                            ? visibleColumnsCountForTimeline
+                            : visibleColumnsCount
+                        ) &&
+                          (isTimelineView
+                            ? visibleColumnsCountForTimeline
+                            : visibleColumnsCount) > 0 && (
+                            <>
+                              {isTimelineView
+                                ? visibleColumnsCountForTimeline
+                                : visibleColumnsCount}{" "}
+                            </>
+                          )}
+                      </Flex>
+                    }
+                  />
+                  {/* <Flex
                   p="8px"
                   h="32px"
                   columnGap="8px"
@@ -541,32 +551,257 @@ const ViewOptions = ({
                   </Flex>
                 </Flex> */}
 
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                  view?.type !== "BOARD" && (
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                    view?.type !== "BOARD" && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("group")}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Group"
+                          ) || "Group"
+                        }
+                        icon={<FileDropdownIcon />}
+                        rightContent={
+                          <>
+                            {Boolean(groupByColumnsCount) && (
+                              <ViewOptionSubtitle>
+                                {groupByColumnsCount}{" "}
+                                {generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Group"
+                                ) || "Group"}
+                              </ViewOptionSubtitle>
+                            )}
+                          </>
+                        }
+                      />
+                      // <Flex
+                      //   p="8px"
+                      //   h="32px"
+                      //   columnGap="8px"
+                      //   alignItems="center"
+                      //   borderRadius={6}
+                      //   _hover={{ bg: "#EAECF0" }}
+                      //   cursor="pointer"
+                      //   onClick={() => setOpenedMenu("group")}
+                      // >
+                      //   <Image src="/img/copy-01.svg" alt="Group by" />
+                      //   <ViewOptionTitle>
+                      //     {generateLangaugeText(
+                      //       tableLan,
+                      //       i18n?.language,
+                      //       "Group"
+                      //     ) || "Group"}
+                      //   </ViewOptionTitle>
+                      //   <Flex ml="auto" alignItems="center" columnGap="8px">
+                      //     {Boolean(groupByColumnsCount) && (
+                      //       <ViewOptionSubtitle>
+                      //         {groupByColumnsCount}{" "}
+                      //         {generateLangaugeText(
+                      //           tableLan,
+                      //           i18n?.language,
+                      //           "Group"
+                      //         ) || "Group"}
+                      //       </ViewOptionSubtitle>
+                      //     )}
+                      //     <ChevronRightIcon fontSize={22} />
+                      //   </Flex>
+                      // </Flex>
+                    )}
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
+                    !isTimelineView && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("tab-group")}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            isBoardView ? "Group" : "Tab Group"
+                          ) || "Tab Group"
+                        }
+                        icon={<LayoutIcon />}
+                        rightContent={
+                          <>
+                            {Boolean(tabGroupColumnsCount) && (
+                              <ViewOptionSubtitle>
+                                {tabGroupColumnsCount}{" "}
+                                {generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Group"
+                                ) || "Group"}
+                              </ViewOptionSubtitle>
+                            )}
+                          </>
+                        }
+                      />
+                      // <Flex
+                      //   p="8px"
+                      //   h="32px"
+                      //   columnGap="8px"
+                      //   alignItems="center"
+                      //   borderRadius={6}
+                      //   _hover={{ bg: "#EAECF0" }}
+                      //   cursor="pointer"
+                      //   onClick={() => setOpenedMenu("tab-group")}
+                      // >
+                      //   <Image src="/img/browser.svg" alt="Group by" />
+                      //   <ViewOptionTitle>
+                      //     {generateLangaugeText(
+                      //       tableLan,
+                      //       i18n?.language,
+                      //       isBoardView ? "Group" : "Tab Group"
+                      //     ) || "Tab Group"}
+                      //   </ViewOptionTitle>
+                      //   <Flex ml="auto" alignItems="center" columnGap="8px">
+                      //     {Boolean(tabGroupColumnsCount) && (
+                      //       <ViewOptionSubtitle>
+                      //         {tabGroupColumnsCount}{" "}
+                      //         {generateLangaugeText(
+                      //           tableLan,
+                      //           i18n?.language,
+                      //           "Group"
+                      //         ) || "Group"}
+                      //       </ViewOptionSubtitle>
+                      //     )}
+                      //     <ChevronRightIcon fontSize={22} />
+                      //   </Flex>
+                      // </Flex>
+                    )}
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                    view?.type === "BOARD" && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("sub-group")}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Sub group"
+                          ) || "Sub group"
+                        }
+                        icon={<HorizontalSplitOutlinedIcon color="inherit" />}
+                        rightContent={
+                          <>
+                            {Boolean(tabGroupColumnsCount) && (
+                              <ViewOptionSubtitle>
+                                {fieldsMap?.[view?.attributes?.sub_group_by_id]
+                                  ?.label || "None"}
+                              </ViewOptionSubtitle>
+                            )}
+                          </>
+                        }
+                      />
+                      // <Flex
+                      //   p="8px"
+                      //   h="32px"
+                      //   columnGap="8px"
+                      //   alignItems="center"
+                      //   borderRadius={6}
+                      //   _hover={{ bg: "#EAECF0" }}
+                      //   cursor="pointer"
+                      //   onClick={() => setOpenedMenu("sub-group")}
+                      //   color="#475467"
+                      // >
+                      //   <HorizontalSplitOutlinedIcon color="inherit" />
+                      //   <ViewOptionTitle>
+                      //     {generateLangaugeText(
+                      //       tableLan,
+                      //       i18n?.language,
+                      //       "Sub group"
+                      //     ) || "Sub group"}
+                      //   </ViewOptionTitle>
+                      //   <Flex ml="auto" alignItems="center" columnGap="8px">
+                      //     {Boolean(tabGroupColumnsCount) && (
+                      //       <ViewOptionSubtitle>
+                      //         {fieldsMap?.[view?.attributes?.sub_group_by_id]
+                      //           ?.label || "None"}
+                      //       </ViewOptionSubtitle>
+                      //     )}
+                      //     <ChevronRightIcon fontSize={22} />
+                      //   </Flex>
+                      // </Flex>
+                    )}
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+                    !isTimelineView &&
+                    !isBoardView && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("fix-column")}
+                        icon={<PinIcon />}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Fix columns"
+                          ) || "Fix columns"
+                        }
+                        rightContent={
+                          <>
+                            {Boolean(fixedColumnsCount) && (
+                              <ViewOptionSubtitle>
+                                {fixedColumnsCount}{" "}
+                                {generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Fixed"
+                                ) || "Fixed"}
+                              </ViewOptionSubtitle>
+                            )}
+                          </>
+                        }
+                      />
+                      // <Flex
+                      //   p="8px"
+                      //   h="32px"
+                      //   columnGap="8px"
+                      //   alignItems="center"
+                      //   borderRadius={6}
+                      //   _hover={{ bg: "#EAECF0" }}
+                      //   cursor="pointer"
+                      //   onClick={() => setOpenedMenu("fix-column")}
+                      // >
+                      //   <Image src="/img/layout-left.svg" alt="Fix columns" />
+                      //   <ViewOptionTitle>
+                      //     {generateLangaugeText(
+                      //       tableLan,
+                      //       i18n?.language,
+                      //       "Fix columns"
+                      //     ) || "Fix columns"}
+                      //   </ViewOptionTitle>
+                      //   <Flex ml="auto" alignItems="center" columnGap="8px">
+                      //     {Boolean(fixedColumnsCount) && (
+                      //       <ViewOptionSubtitle>
+                      //         {fixedColumnsCount}{" "}
+                      //         {generateLangaugeText(
+                      //           tableLan,
+                      //           i18n?.language,
+                      //           "Fixed"
+                      //         ) || "Fixed"}
+                      //       </ViewOptionSubtitle>
+                      //     )}
+                      //     <ChevronRightIcon fontSize={22} />
+                      //   </Flex>
+                      // </Flex>
+                    )}
+                  {(isTimelineView || isCalendarView) && (
                     <OptionItem
-                      onClick={() => setOpenedMenu("group")}
+                      onClick={() =>
+                        setOpenedMenu(
+                          isTimelineView
+                            ? "timeline-settings"
+                            : "calendar-settings"
+                        )
+                      }
                       title={
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Group"
-                        ) || "Group"
+                          "Settings"
+                        ) || "Settings"
                       }
-                      icon={<FileDropdownIcon />}
-                      rightContent={
-                        <>
-                          {Boolean(groupByColumnsCount) && (
-                            <ViewOptionSubtitle>
-                              {groupByColumnsCount}{" "}
-                              {generateLangaugeText(
-                                tableLan,
-                                i18n?.language,
-                                "Group"
-                              ) || "Group"}
-                            </ViewOptionSubtitle>
-                          )}
-                        </>
-                      }
+                      icon={<SettingsIcon />}
                     />
                     // <Flex
                     //   p="8px"
@@ -576,253 +811,30 @@ const ViewOptions = ({
                     //   borderRadius={6}
                     //   _hover={{ bg: "#EAECF0" }}
                     //   cursor="pointer"
-                    //   onClick={() => setOpenedMenu("group")}
+                    //   onClick={() =>
+                    //     setOpenedMenu(
+                    //       isTimelineView
+                    //         ? "timeline-settings"
+                    //         : "calendar-settings"
+                    //     )
+                    //   }
                     // >
-                    //   <Image src="/img/copy-01.svg" alt="Group by" />
+                    //   <Image src="/img/settings.svg" alt="Settings" />
                     //   <ViewOptionTitle>
                     //     {generateLangaugeText(
                     //       tableLan,
                     //       i18n?.language,
-                    //       "Group"
-                    //     ) || "Group"}
+                    //       "Settings"
+                    //     ) || "Settings"}
                     //   </ViewOptionTitle>
-                    //   <Flex ml="auto" alignItems="center" columnGap="8px">
-                    //     {Boolean(groupByColumnsCount) && (
-                    //       <ViewOptionSubtitle>
-                    //         {groupByColumnsCount}{" "}
-                    //         {generateLangaugeText(
-                    //           tableLan,
-                    //           i18n?.language,
-                    //           "Group"
-                    //         ) || "Group"}
-                    //       </ViewOptionSubtitle>
-                    //     )}
+                    //   <Flex ml="auto">
                     //     <ChevronRightIcon fontSize={22} />
                     //   </Flex>
                     // </Flex>
                   )}
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
-                  !isTimelineView && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("tab-group")}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          isBoardView ? "Group" : "Tab Group"
-                        ) || "Tab Group"
-                      }
-                      icon={<LayoutIcon />}
-                      rightContent={
-                        <>
-                          {Boolean(tabGroupColumnsCount) && (
-                            <ViewOptionSubtitle>
-                              {tabGroupColumnsCount}{" "}
-                              {generateLangaugeText(
-                                tableLan,
-                                i18n?.language,
-                                "Group"
-                              ) || "Group"}
-                            </ViewOptionSubtitle>
-                          )}
-                        </>
-                      }
-                    />
-                    // <Flex
-                    //   p="8px"
-                    //   h="32px"
-                    //   columnGap="8px"
-                    //   alignItems="center"
-                    //   borderRadius={6}
-                    //   _hover={{ bg: "#EAECF0" }}
-                    //   cursor="pointer"
-                    //   onClick={() => setOpenedMenu("tab-group")}
-                    // >
-                    //   <Image src="/img/browser.svg" alt="Group by" />
-                    //   <ViewOptionTitle>
-                    //     {generateLangaugeText(
-                    //       tableLan,
-                    //       i18n?.language,
-                    //       isBoardView ? "Group" : "Tab Group"
-                    //     ) || "Tab Group"}
-                    //   </ViewOptionTitle>
-                    //   <Flex ml="auto" alignItems="center" columnGap="8px">
-                    //     {Boolean(tabGroupColumnsCount) && (
-                    //       <ViewOptionSubtitle>
-                    //         {tabGroupColumnsCount}{" "}
-                    //         {generateLangaugeText(
-                    //           tableLan,
-                    //           i18n?.language,
-                    //           "Group"
-                    //         ) || "Group"}
-                    //       </ViewOptionSubtitle>
-                    //     )}
-                    //     <ChevronRightIcon fontSize={22} />
-                    //   </Flex>
-                    // </Flex>
-                  )}
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                  view?.type === "BOARD" && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("sub-group")}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Sub group"
-                        ) || "Sub group"
-                      }
-                      icon={<HorizontalSplitOutlinedIcon color="inherit" />}
-                      rightContent={
-                        <>
-                          {Boolean(tabGroupColumnsCount) && (
-                            <ViewOptionSubtitle>
-                              {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                                ?.label || "None"}
-                            </ViewOptionSubtitle>
-                          )}
-                        </>
-                      }
-                    />
-                    // <Flex
-                    //   p="8px"
-                    //   h="32px"
-                    //   columnGap="8px"
-                    //   alignItems="center"
-                    //   borderRadius={6}
-                    //   _hover={{ bg: "#EAECF0" }}
-                    //   cursor="pointer"
-                    //   onClick={() => setOpenedMenu("sub-group")}
-                    //   color="#475467"
-                    // >
-                    //   <HorizontalSplitOutlinedIcon color="inherit" />
-                    //   <ViewOptionTitle>
-                    //     {generateLangaugeText(
-                    //       tableLan,
-                    //       i18n?.language,
-                    //       "Sub group"
-                    //     ) || "Sub group"}
-                    //   </ViewOptionTitle>
-                    //   <Flex ml="auto" alignItems="center" columnGap="8px">
-                    //     {Boolean(tabGroupColumnsCount) && (
-                    //       <ViewOptionSubtitle>
-                    //         {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                    //           ?.label || "None"}
-                    //       </ViewOptionSubtitle>
-                    //     )}
-                    //     <ChevronRightIcon fontSize={22} />
-                    //   </Flex>
-                    // </Flex>
-                  )}
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
-                  !isTimelineView &&
-                  !isBoardView && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("fix-column")}
-                      icon={<PinIcon />}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Fix columns"
-                        ) || "Fix columns"
-                      }
-                      rightContent={
-                        <>
-                          {Boolean(fixedColumnsCount) && (
-                            <ViewOptionSubtitle>
-                              {fixedColumnsCount}{" "}
-                              {generateLangaugeText(
-                                tableLan,
-                                i18n?.language,
-                                "Fixed"
-                              ) || "Fixed"}
-                            </ViewOptionSubtitle>
-                          )}
-                        </>
-                      }
-                    />
-                    // <Flex
-                    //   p="8px"
-                    //   h="32px"
-                    //   columnGap="8px"
-                    //   alignItems="center"
-                    //   borderRadius={6}
-                    //   _hover={{ bg: "#EAECF0" }}
-                    //   cursor="pointer"
-                    //   onClick={() => setOpenedMenu("fix-column")}
-                    // >
-                    //   <Image src="/img/layout-left.svg" alt="Fix columns" />
-                    //   <ViewOptionTitle>
-                    //     {generateLangaugeText(
-                    //       tableLan,
-                    //       i18n?.language,
-                    //       "Fix columns"
-                    //     ) || "Fix columns"}
-                    //   </ViewOptionTitle>
-                    //   <Flex ml="auto" alignItems="center" columnGap="8px">
-                    //     {Boolean(fixedColumnsCount) && (
-                    //       <ViewOptionSubtitle>
-                    //         {fixedColumnsCount}{" "}
-                    //         {generateLangaugeText(
-                    //           tableLan,
-                    //           i18n?.language,
-                    //           "Fixed"
-                    //         ) || "Fixed"}
-                    //       </ViewOptionSubtitle>
-                    //     )}
-                    //     <ChevronRightIcon fontSize={22} />
-                    //   </Flex>
-                    // </Flex>
-                  )}
-                {(isTimelineView || isCalendarView) && (
-                  <OptionItem
-                    onClick={() =>
-                      setOpenedMenu(
-                        isTimelineView
-                          ? "timeline-settings"
-                          : "calendar-settings"
-                      )
-                    }
-                    title={
-                      generateLangaugeText(
-                        tableLan,
-                        i18n?.language,
-                        "Settings"
-                      ) || "Settings"
-                    }
-                    icon={<SettingsIcon />}
-                  />
-                  // <Flex
-                  //   p="8px"
-                  //   h="32px"
-                  //   columnGap="8px"
-                  //   alignItems="center"
-                  //   borderRadius={6}
-                  //   _hover={{ bg: "#EAECF0" }}
-                  //   cursor="pointer"
-                  //   onClick={() =>
-                  //     setOpenedMenu(
-                  //       isTimelineView
-                  //         ? "timeline-settings"
-                  //         : "calendar-settings"
-                  //     )
-                  //   }
-                  // >
-                  //   <Image src="/img/settings.svg" alt="Settings" />
-                  //   <ViewOptionTitle>
-                  //     {generateLangaugeText(
-                  //       tableLan,
-                  //       i18n?.language,
-                  //       "Settings"
-                  //     ) || "Settings"}
-                  //   </ViewOptionTitle>
-                  //   <Flex ml="auto">
-                  //     <ChevronRightIcon fontSize={22} />
-                  //   </Flex>
-                  // </Flex>
-                )}
-              </Box>
+                </Box>
+              </PermissionWrapperV2>
+              {/* docs import export */}
               <Box py="4px" borderBottom="1px solid #D0D5DD">
                 <OptionItem
                   onClick={(e) => {
@@ -871,14 +883,16 @@ const ViewOptions = ({
                   filters={filters}
                 />
               </Box>
-              <Box pt="4px">
-                <DeleteViewButton
-                  relationView={relationView}
-                  view={view}
-                  refetchViews={refetchViews}
-                  tableLan={tableLan}
-                />
-              </Box>
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <Box pt="4px">
+                  <DeleteViewButton
+                    relationView={relationView}
+                    view={view}
+                    refetchViews={refetchViews}
+                    tableLan={tableLan}
+                  />
+                </Box>
+              </PermissionWrapperV2>
             </>
           )}
 

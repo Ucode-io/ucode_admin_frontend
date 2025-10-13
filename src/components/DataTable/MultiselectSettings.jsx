@@ -28,6 +28,7 @@ const MultiselectSettings = ({
   dropdownReplace,
   handleUpdateField = () => {},
   fieldData = {},
+  languages,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -345,6 +346,8 @@ const MultiselectSettings = ({
           watch={watch}
           anchorEl={anchorEl}
           handleChange={handleChangeOption}
+          languages={languages}
+          control={control}
         />
       )}
 

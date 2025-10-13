@@ -1046,6 +1046,7 @@ export default function FieldCreateModal({
                           dropdownAppend={dropdownAppend}
                           handleUpdateField={handleUpdateField}
                           fieldData={fieldData}
+                          languages={languages}
                         />
                       }
                       label={

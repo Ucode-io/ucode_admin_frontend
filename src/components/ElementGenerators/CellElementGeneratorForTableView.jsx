@@ -209,6 +209,7 @@ const CellElementGeneratorForTableView = ({
           updateObject={updateObject}
           newUi={newUi}
           disabled={isDisabled}
+          index={index}
         />
       );
 

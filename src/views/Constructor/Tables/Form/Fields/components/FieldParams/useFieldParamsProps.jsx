@@ -8,6 +8,7 @@ import { useQuery } from "react-query";
 import constructorFunctionService from "../../../../../../../services/constructorFunctionService";
 import listToOptions from "../../../../../../../utils/listToOptions";
 import { useSelector } from "react-redux";
+import { generateGUID } from "@/utils/generateID";
 
 export const useFieldParamsProps = ({
   watch,
@@ -131,6 +132,7 @@ export const useFieldParamsProps = ({
       [`label_${selectedLanguage}`]: value,
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,
+      value: generateGUID(),
     });
   };
 
@@ -141,6 +143,7 @@ export const useFieldParamsProps = ({
       [`label_${selectedLanguage}`]: value,
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,
+      value: generateGUID(),
     });
   };
 
@@ -151,6 +154,7 @@ export const useFieldParamsProps = ({
       [`label_${selectedLanguage}`]: value,
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,
+      value: generateGUID(),
     });
   };
 
@@ -187,7 +191,6 @@ export const useFieldParamsProps = ({
 
   const onDrop = (dropResult, name) => {
     const result = applyDrag(watch(name), dropResult);
-    console.log(watch());
     if (result) {
       setValue(name, result);
       // handleUpdateField(fieldData)

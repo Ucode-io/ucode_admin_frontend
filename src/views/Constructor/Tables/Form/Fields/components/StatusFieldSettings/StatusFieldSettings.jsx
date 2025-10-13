@@ -27,7 +27,7 @@ export const StatusFieldSettings = ({
         {isMultiLanguage ? (
           <TextFieldWithMultiLanguage
             control={control}
-            name={`${name}.${optionName || "value"}`}
+            name={`${name}.${optionName}`}
             placeholder="Name"
             languages={languages}
             id={"field_label"}

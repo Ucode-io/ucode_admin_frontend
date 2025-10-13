@@ -29,6 +29,9 @@ const MultiselectSettings = ({
   handleUpdateField = () => {},
   fieldData = {},
   languages,
+  toDoFieldArray,
+  inProgressFieldArray,
+  completeFieldArray,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,21 +40,6 @@ const MultiselectSettings = ({
   const [anchorEl, setAnchorEl] = useState(null);
 
   const isStatusFormat = watch("type") === "STATUS";
-
-  const toDoFieldArray = useFieldArray({
-    control,
-    name: "attributes.todo.options",
-  });
-
-  const inProgressFieldArray = useFieldArray({
-    control,
-    name: "attributes.progress.options",
-  });
-
-  const completeFieldArray = useFieldArray({
-    control,
-    name: "attributes.complete.options",
-  });
 
   const statusFields = {
     todo: toDoFieldArray,
@@ -97,7 +85,6 @@ const MultiselectSettings = ({
 
     const updatedOptions = dropdownFields?.map((item) => {
       if (item?.value === editingField.value) {
-        console.log({ item });
         if (color) {
           const newItem = { ...item, color };
           return newItem;

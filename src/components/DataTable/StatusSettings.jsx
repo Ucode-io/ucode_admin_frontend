@@ -9,6 +9,7 @@ import FormElementButton from "../NewFormElements/FormElementButton";
 import { DragIndicator, KeyboardArrowRight } from "@mui/icons-material";
 import style from "./field.module.scss";
 import { useTranslation } from "react-i18next";
+import { generateGUID } from "@/utils/generateID";
 
 function StatusSettings({
   control,
@@ -20,8 +21,6 @@ function StatusSettings({
   colorList,
 }) {
   const { i18n } = useTranslation();
-
-  console.log(watch("attributes"));
 
   const renderOptions = (fieldArray, name, blockName, isLast) => (
     <Box borderBottom={!isLast ? "1px solid #eee" : "none"}>
@@ -44,7 +43,7 @@ function StatusSettings({
             fieldArray.append({
               [`label_${i18n.language}`]: "",
               color: colorList[Math.floor(Math.random() * colorList.length)],
-              value: "",
+              value: generateGUID(),
             })
           }
           style={{

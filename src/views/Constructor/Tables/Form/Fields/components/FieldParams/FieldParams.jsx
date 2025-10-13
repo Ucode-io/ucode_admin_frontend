@@ -433,11 +433,7 @@ export const FieldParams = ({
                                 remove={todoRemove}
                                 control={control}
                                 name={`attributes.todo.options.${index}`}
-                                optionName={
-                                  i18n.language
-                                    ? `label_${i18n.language}`
-                                    : "label"
-                                }
+                                optionName={"label"}
                                 setValue={setValue}
                                 colors={colors}
                                 hasColor={true}
@@ -525,11 +521,7 @@ export const FieldParams = ({
                                 remove={progressRemove}
                                 control={control}
                                 name={`attributes.progress.options.${index}`}
-                                optionName={
-                                  i18n.language
-                                    ? `label_${i18n.language}`
-                                    : "label"
-                                }
+                                optionName={"label"}
                                 setValue={setValue}
                                 colors={colors}
                                 hasColor={true}
@@ -617,11 +609,7 @@ export const FieldParams = ({
                                 remove={completeRemove}
                                 control={control}
                                 name={`attributes.complete.options.${index}`}
-                                optionName={
-                                  i18n.language
-                                    ? `label_${i18n.language}`
-                                    : "label"
-                                }
+                                optionName={"label"}
                                 setValue={setValue}
                                 colors={colors}
                                 hasColor={true}

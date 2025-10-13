@@ -7,6 +7,7 @@ import { applyDrag } from "../../../../../../../utils/applyDrag";
 import { useQuery } from "react-query";
 import constructorFunctionService from "../../../../../../../services/constructorFunctionService";
 import listToOptions from "../../../../../../../utils/listToOptions";
+import { useSelector } from "react-redux";
 
 export const useFieldParamsProps = ({
   watch,
@@ -46,6 +47,8 @@ export const useFieldParamsProps = ({
     FIELD_TYPES.CUSTOM_IMAGE,
   ];
 
+  const languages = useSelector((state) => state.languages.list);
+
   const [check, setCheck] = useState(false);
   const [folder, setFolder] = useState("Choose backet");
 
@@ -53,6 +56,10 @@ export const useFieldParamsProps = ({
   const [isTodoOptionOpen, setIsTodoOptionOpen] = useState(false);
   const [isProgressOptionOpen, setIsProgressOptionOpen] = useState(false);
   const [isCompleteOptionOpen, setIsCompleteOptionOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    languages?.[0]?.slug
+  );
+  const [labelValue, setLabelValue] = useState({ label_en: "" });
 
   const toggleCreateOptionField = () =>
     setIsCreateOptionOpen(!isCreateOptionOpen);
@@ -61,6 +68,21 @@ export const useFieldParamsProps = ({
     setIsProgressOptionOpen(!isProgressOptionOpen);
   const toggleCompleteOptionField = () =>
     setIsCompleteOptionOpen(!isCompleteOptionOpen);
+
+  const handleClickLanguage = (value) => {
+    const activeLanguageIndex = languages?.findIndex(
+      (language) => language.slug === selectedLanguage
+    );
+
+    setLabelValue((prev) => ({
+      ...prev,
+      [`label_${selectedLanguage}`]: value,
+    }));
+
+    if (activeLanguageIndex === languages?.length - 1)
+      setSelectedLanguage(languages[0]?.slug);
+    else setSelectedLanguage(languages[activeLanguageIndex + 1]?.slug);
+  };
 
   const {
     fields: multiSelectFields,
@@ -105,7 +127,8 @@ export const useFieldParamsProps = ({
   const addTodo = (value) => {
     const randomIndex = Math.floor(Math.random() * colors?.length);
     todoAppend({
-      label: value,
+      ...labelValue,
+      [`label_${selectedLanguage}`]: value,
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,
     });
@@ -114,7 +137,8 @@ export const useFieldParamsProps = ({
   const addProgress = (value) => {
     const randomIndex = Math.floor(Math.random() * colors?.length);
     progressAppend({
-      label: value,
+      ...labelValue,
+      [`label_${selectedLanguage}`]: value,
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,
     });
@@ -123,7 +147,8 @@ export const useFieldParamsProps = ({
   const addComplete = (value) => {
     const randomIndex = Math.floor(Math.random() * colors?.length);
     completeAppend({
-      label: value,
+      ...labelValue,
+      [`label_${selectedLanguage}`]: value,
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,
     });
@@ -223,5 +248,8 @@ export const useFieldParamsProps = ({
     addComplete,
     onDrop,
     functions,
+    handleClickLanguage,
+    selectedLanguage,
+    labelValue,
   };
 };

@@ -3,6 +3,8 @@ import { DeleteOutline } from "@mui/icons-material";
 import style from "./field.module.scss";
 import "./style.scss";
 import { useLayoutEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 
 const EditOptionsMenu = ({
   watch = () => {},
@@ -18,7 +20,11 @@ const EditOptionsMenu = ({
   colorList = [],
   isMenuOpen,
   anchorEl,
+  languages,
+  control,
 }) => {
+  const { i18n } = useTranslation();
+
   const [coords, setCoords] = useState({ top: 0, left: 0 });
 
   useLayoutEffect(() => {
@@ -39,31 +45,37 @@ const EditOptionsMenu = ({
         className={style.editOptionMenu}
         style={{ top: coords.top, left: coords.left }}
       >
-        <input
-          className={style.appendInput}
-          placeholder="..."
-          name="option"
-          type="text"
-          value={watch(
-            isStatusFormat
-              ? `attributes.${editingField.name}.options.${editingField.index}.label`
-              : `attributes.options.${editingField.index}.label`
-          )}
-          onChange={(e) => {
-            handleChange(e, editingField);
-            setValue(
-              isStatusFormat
-                ? `attributes.${editingField.name}.options.${editingField.index}.label`
-                : `attributes.options.${editingField.index}.label`,
-              e.target.value
-            );
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-            }
-          }}
-        />
+        {isStatusFormat ? (
+          <TextFieldWithMultiLanguage
+            control={control}
+            name={`attributes.${editingField.name}.options.${editingField.index}.label`}
+            placeholder="Name"
+            languages={languages}
+            id={"field_label"}
+            watch={watch}
+            required
+          />
+        ) : (
+          <input
+            className={style.appendInput}
+            placeholder="..."
+            name="option"
+            type="text"
+            value={watch(`attributes.options.${editingField.index}.label`)}
+            onChange={(e) => {
+              handleChange(e, editingField);
+              setValue(
+                `attributes.options.${editingField.index}.label`,
+                e.target.value
+              );
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+              }
+            }}
+          />
+        )}
         <button
           className={style.deleteOptionBtn}
           type="button"

@@ -2,6 +2,7 @@ import {Box, Select, MenuItem, ListSubheader} from "@mui/material";
 import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
+import { useTranslation } from "react-i18next";
 
 function HFStatusField({
   field = {},
@@ -11,12 +12,14 @@ function HFStatusField({
   newUi,
   disabled = false,
 }) {
+  const { i18n } = useTranslation();
+
   return (
     <>
       <Controller
         name={name}
         control={control}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
           return (
             <Select
               disabled={disabled}
@@ -42,13 +45,13 @@ function HFStatusField({
               renderValue={(selected) => {
                 const selectedOption =
                   field?.attributes?.todo?.options?.find(
-                    (el) => el.label === selected
+                    (el) => el[`label_${i18n?.language}`] === selected
                   ) ||
                   field?.attributes?.progress?.options?.find(
-                    (el) => el.label === selected
+                    (el) => el[`label_${i18n?.language}`] === selected
                   ) ||
                   field?.attributes?.complete?.options?.find(
-                    (el) => el.label === selected
+                    (el) => el[`label_${i18n?.language}`] === selected
                   );
 
                 return (
@@ -60,25 +63,28 @@ function HFStatusField({
                       color: selectedOption?.color || "#000",
                       padding: "4px 8px",
                       borderRadius: "4px",
-                    }}>
+                    }}
+                  >
                     {selected}
                   </Box>
                 );
-              }}>
+              }}
+            >
               <ListSubheader className={styles.selectGroup}>
                 To do
               </ListSubheader>
               {field?.attributes?.todo?.options?.map((el) => (
                 <MenuItem
-                  id={el?.label ?? "selectOptionTodo"}
+                  id={el?.[`label_${i18n.language}`] ?? "selectOptionTodo"}
                   style={{
                     background: `${el?.color}30`,
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.label}
-                  value={el?.label}>
-                  {el?.label}
+                  key={el?.[`label_${i18n.language}`]}
+                  value={el?.[`label_${i18n.language}`]}
+                >
+                  {el?.[`label_${i18n.language}`]}
                 </MenuItem>
               ))}
 
@@ -93,9 +99,10 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.label}
-                  value={el?.label}>
-                  {el?.label}
+                  key={el?.[`label_${i18n.language}`]}
+                  value={el?.[`label_${i18n.language}`]}
+                >
+                  {el?.[`label_${i18n.language}`]}
                 </MenuItem>
               ))}
 
@@ -110,9 +117,10 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.label}
-                  value={el?.label}>
-                  {el?.label}
+                  key={el?.[`label_${i18n.language}`]}
+                  value={el?.[`label_${i18n.language}`]}
+                >
+                  {el?.[`label_${i18n.language}`]}
                 </MenuItem>
               ))}
             </Select>

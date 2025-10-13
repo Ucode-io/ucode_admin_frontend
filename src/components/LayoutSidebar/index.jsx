@@ -1478,7 +1478,7 @@ const ProfilePanel = ({
           cursor={"pointer"}
           onClick={handleOpenProfileModal}
         >
-          {/* <SettingsIcon style={{color: "#475467"}} /> */}
+          <SettingsIcon style={{ color: "#475467" }} />
           <Box color={"#475467"}>
             {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
           </Box>
@@ -1496,13 +1496,8 @@ const ProfilePanel = ({
           cursor={"pointer"}
           onClick={handleClick}
         >
-          {/* <SettingsIcon style={{color: "#475467"}} /> */}
           <Box color={"#475467"} display="flex" alignItems="center" gap="6px">
-            <Box>
-              {generateLangaugeText(lang, i18n?.language, "Language") ||
-                "Language"}{" "}
-              {i18n?.language}
-            </Box>
+            <Box textTransform="uppercase">{i18n?.language}</Box>
             <TranslateIcon />
           </Box>
         </Flex>

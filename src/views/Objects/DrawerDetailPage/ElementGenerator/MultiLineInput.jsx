@@ -15,6 +15,7 @@ const MultiLineInput = ({
   props,
   placeholder = "",
   updateObject = () => {},
+  isRequired,
 }) => {
   const value = watch(name);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -49,7 +50,8 @@ const MultiLineInput = ({
           "&:hover": {
             backgroundColor: "#F7F7F7",
           },
-        }}>
+        }}
+      >
         <Tooltip
           title={
             value
@@ -57,7 +59,8 @@ const MultiLineInput = ({
                   `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
                 )
               : ""
-          }>
+          }
+        >
           <Box
             sx={{
               width: "100%",
@@ -70,13 +73,14 @@ const MultiLineInput = ({
             id="textAreaInput"
             onClick={(e) => {
               handleClick(e);
-            }}>
+            }}
+          >
             {value ? (
               stripHtmlTags(
                 `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
               )
             ) : (
-              <span style={{color: "#adb5bd"}}>Empty</span>
+              <span style={{ color: "#adb5bd" }}>Empty</span>
             )}
           </Box>
         </Tooltip>
@@ -92,8 +96,9 @@ const MultiLineInput = ({
               right: "1px",
               top: "50%",
               transform: "translateY(-50%)",
-            }}>
-            <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+            }}
+          >
+            <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
           </Box>
         )}
 
@@ -109,7 +114,8 @@ const MultiLineInput = ({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}>
+          }}
+        >
           <HFTextEditor
             placeholder={placeholder}
             updateObject={inputUpdateObject}
@@ -126,6 +132,7 @@ const MultiLineInput = ({
             disabled={isDisabled}
             key={name}
             isTransparent={true}
+            required={isRequired}
             {...props}
           />
         </Popover>

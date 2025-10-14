@@ -119,7 +119,7 @@ function DrawerFieldGenerator({
   //   }
   // }, [field.type, field.id, field.relation_type]);
 
-  const {data: functions = []} = useQuery(
+  const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
       return constructorFunctionService.getListV2({});
@@ -148,7 +148,8 @@ function DrawerFieldGenerator({
                 }}
               />
             </>
-          }>
+          }
+        >
           <RelationField
             placeholder={placeholderField}
             updateObject={updateObject}
@@ -174,6 +175,7 @@ function DrawerFieldGenerator({
           field={field}
           watch={watch}
           updateObject={updateObject}
+          isRequired={isRequired}
         />
       );
     case "DATE":
@@ -187,6 +189,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           drawerDetail={drawerDetail}
           setFormValue={setFormValue}
+          required={isRequired}
         />
       );
 
@@ -200,6 +203,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           drawerDetail={drawerDetail}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
     case "DATE_TIME_WITHOUT_TIME_ZONE":
@@ -212,6 +216,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           drawerDetail={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
     case "TIME":
@@ -224,6 +229,7 @@ function DrawerFieldGenerator({
           field={field}
           drawerDetail={drawerDetail}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -236,6 +242,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           updateObject={updateObject}
+          isRequired={isRequired}
         />
       );
 
@@ -248,6 +255,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           updateObject={updateObject}
           isNewTableView={true}
+          required={isRequired}
         />
       );
 
@@ -260,6 +268,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           updateObject={updateObject}
           isNewTableView={true}
+          required={isRequired}
         />
       );
 
@@ -297,6 +306,7 @@ function DrawerFieldGenerator({
           field={field}
           placeholder={placeholderField}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -310,6 +320,7 @@ function DrawerFieldGenerator({
           field={field}
           updateObject={updateObject}
           isNewTableView
+          required={isRequired}
         />
       );
 
@@ -323,6 +334,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -336,6 +348,7 @@ function DrawerFieldGenerator({
           name={computedSlug}
           field={field}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -350,6 +363,7 @@ function DrawerFieldGenerator({
           placeholder={placeholderField}
           isNewTableView={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -363,6 +377,7 @@ function DrawerFieldGenerator({
           field={field}
           placeholder={placeholderField}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -376,6 +391,7 @@ function DrawerFieldGenerator({
           field={field}
           isNewTableView={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -390,6 +406,7 @@ function DrawerFieldGenerator({
           placeholder={placeholderField}
           isNewTableView={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
     case "POLYGON":
@@ -417,6 +434,7 @@ function DrawerFieldGenerator({
           field={field}
           isNewTableView={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
     case "COLOR":
@@ -429,6 +447,7 @@ function DrawerFieldGenerator({
           field={field}
           isNewTableView={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -442,6 +461,7 @@ function DrawerFieldGenerator({
           field={field}
           isNewTableView={true}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -453,6 +473,7 @@ function DrawerFieldGenerator({
           control={control}
           name={computedSlug}
           updateObject={updateObject}
+          required={isRequired}
         />
       );
 
@@ -469,6 +490,7 @@ function DrawerFieldGenerator({
           functions={functions}
           isTextarea={true}
           updateObject={updateObject}
+          isRequired={isRequired}
         />
       );
 
@@ -484,6 +506,7 @@ function DrawerFieldGenerator({
           errors={errors}
           functions={functions}
           updateObject={updateObject}
+          isRequired={isRequired}
         />
       );
   }
@@ -501,6 +524,7 @@ const InputField = ({
   isTextarea,
   placeholder = "Empty",
   updateObject = () => {},
+  isRequired,
 }) => {
   const textareaRef = useRef(null);
 
@@ -539,8 +563,9 @@ const InputField = ({
           message:
             field?.type === "EMAIL" ? "Incorrect email format" : undefined,
         },
+        required: isRequired ? "This is required field" : false,
       }}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value } }) => {
         return (
           <ChakraProvider>
             <ChakraBox position="relative">
@@ -592,7 +617,7 @@ const InputField = ({
                 )}
                 {isDisabled && (
                   <InputRightElement pointerEvents="none">
-                    <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+                    <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
                   </InputRightElement>
                 )}
               </InputGroup>
@@ -605,7 +630,8 @@ const InputField = ({
                     bottom: "-5px",
                     left: "0",
                     paddingLeft: "9.6px",
-                  }}>
+                  }}
+                >
                   {errors?.[name]?.message}
                 </span>
               )}
@@ -624,6 +650,7 @@ const NumberField = ({
   disabled = false,
   placeholder = "",
   updateObject = () => {},
+  required,
 }) => {
   const inputChangeHandler = useDebounce(() => updateObject(), 700);
 
@@ -644,7 +671,10 @@ const NumberField = ({
       <Controller
         control={control}
         name={name}
-        render={({field: {onChange, value}}) => {
+        rules={{
+          required: required ? "This is required field" : false,
+        }}
+        render={({ field: { onChange, value } }) => {
           return (
             <NumericFormat
               maxLength={19}
@@ -688,8 +718,9 @@ const NumberField = ({
             right: 0,
             top: "50%",
             transform: "translateY(-50%)",
-          }}>
-          <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+          }}
+        >
+          <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
         </Box>
       )}
     </Box>

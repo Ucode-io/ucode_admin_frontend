@@ -252,7 +252,10 @@ function DrawerDetailPage({
       .then((res) => {
         updateLayout();
         dispatch(detailDrawerActions.closeDrawer());
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
+        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
+          table_slug: tableSlug,
+        });
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
           tableSlug,

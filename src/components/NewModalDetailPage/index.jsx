@@ -261,7 +261,7 @@ function NewModalDetailPage({
       .then((res) => {
         updateLayout();
         setOpen(false);
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
         queryClient.refetchQueries(
           "GET_OBJECTS_LIST_WITH_RELATIONS",
           tableSlug,

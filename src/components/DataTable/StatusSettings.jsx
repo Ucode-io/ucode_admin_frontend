@@ -8,6 +8,8 @@ import TextField from "../NewFormElements/TextField/TextField";
 import FormElementButton from "../NewFormElements/FormElementButton";
 import { DragIndicator, KeyboardArrowRight } from "@mui/icons-material";
 import style from "./field.module.scss";
+import { useTranslation } from "react-i18next";
+import { generateGUID } from "@/utils/generateID";
 
 function StatusSettings({
   control,
@@ -18,6 +20,8 @@ function StatusSettings({
   completeFieldArray,
   colorList,
 }) {
+  const { i18n } = useTranslation();
+
   const renderOptions = (fieldArray, name, blockName, isLast) => (
     <Box borderBottom={!isLast ? "1px solid #eee" : "none"}>
       <Box
@@ -37,9 +41,9 @@ function StatusSettings({
           type="button"
           onClick={() =>
             fieldArray.append({
-              label: "",
+              [`label_${i18n.language}`]: "",
               color: colorList[Math.floor(Math.random() * colorList.length)],
-              value: "",
+              value: generateGUID(),
             })
           }
           style={{
@@ -84,7 +88,9 @@ function StatusSettings({
                 color: watch(`attributes.${name}.options[${index}].color`),
               }}
             >
-              {watch(`attributes.${name}.options[${index}].label`)}
+              {watch(
+                `attributes.${name}.options[${index}].label${i18n.language ? `_${i18n.language}` : ""}`
+              )}
             </span>
             <KeyboardArrowRight
               htmlColor="rgba(71, 70, 68, 0.6)"

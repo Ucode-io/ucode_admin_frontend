@@ -511,6 +511,21 @@ export default function FieldCreateModal({
     name: "attributes.formula_filters",
   });
 
+  const toDoFieldArray = useFieldArray({
+    control,
+    name: "attributes.todo.options",
+  });
+
+  const inProgressFieldArray = useFieldArray({
+    control,
+    name: "attributes.progress.options",
+  });
+
+  const completeFieldArray = useFieldArray({
+    control,
+    name: "attributes.complete.options",
+  });
+
   const deleteSummary = (index) => {
     remove(index);
   };
@@ -553,16 +568,20 @@ export default function FieldCreateModal({
   }, [formulaFormat]);
 
   const innerOnsubmit = (data) => {
-    const innerData = {
-      ...data,
-      attributes: {
-        ...data?.attributes,
-        format: formulaFormat,
-      },
-      type: formulaFormat,
-    };
+    if (format?.includes("FORMULA")) {
+      const innerData = {
+        ...data,
+        attributes: {
+          ...data?.attributes,
+          format: formulaFormat,
+        },
+        type: formulaFormat,
+      };
 
-    onSubmit(innerData);
+      onSubmit(innerData);
+    } else {
+      onSubmit(data);
+    }
   };
 
   const popoverAnchorProps = {};
@@ -591,7 +610,7 @@ export default function FieldCreateModal({
     //   horizontal: "left",
     // };
 
-    if(!renderColumns.length) {
+    if (!renderColumns.length) {
       popoverAnchorProps.anchorOrigin = {
         vertical: "bottom",
         horizontal: "right",
@@ -602,7 +621,6 @@ export default function FieldCreateModal({
         horizontal: "left",
       };
     }
-
   } else {
     popoverAnchorProps.anchorOrigin = {
       vertical: "bottom",
@@ -837,11 +855,7 @@ export default function FieldCreateModal({
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault();
-                          handleSubmit(
-                            format?.includes("FORMULA")
-                              ? innerOnsubmit
-                              : onSubmit
-                          )();
+                          handleSubmit(innerOnsubmit)();
                         }
                       }}
                     />
@@ -1046,6 +1060,10 @@ export default function FieldCreateModal({
                           dropdownAppend={dropdownAppend}
                           handleUpdateField={handleUpdateField}
                           fieldData={fieldData}
+                          languages={languages}
+                          toDoFieldArray={toDoFieldArray}
+                          inProgressFieldArray={inProgressFieldArray}
+                          completeFieldArray={completeFieldArray}
                         />
                       }
                       label={
@@ -1218,9 +1236,7 @@ export default function FieldCreateModal({
                       "Cancel"}
                   </FormElementButton>
                   <FormElementButton
-                    onClick={handleSubmit(
-                      format?.includes("FORMULA") ? innerOnsubmit : onSubmit
-                    )}
+                    onClick={handleSubmit(innerOnsubmit)}
                     primary
                     type="button"
                   >
@@ -1248,7 +1264,7 @@ export default function FieldCreateModal({
           setTimeout(() => {
             queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
             queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
-          }, 100);
+          }, 1000);
         }}
         slug={tableSlug}
         field={drawerState}

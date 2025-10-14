@@ -4,6 +4,7 @@ const PermissionWrapperV2 = ({children, tableSlug, type}) => {
   const permissions2 = useSelector((state) => state?.permissions?.permissions);
 
   const role = useSelector((state) => state.auth.roleInfo);
+
   if (!tableSlug || role?.name === "DEFAULT ADMIN") return children;
 
   if (typeof type === "object") {

@@ -1246,45 +1246,41 @@ export const NewUiViewsWithGroups = ({
                     </Button>
                   </PermissionWrapperV2>
                 )}
-                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-                  <ViewOptions
-                    tableInfo={tableInfo}
-                    relationView={relationView}
-                    refetchViews={refetchViews}
-                    selectedTabIndex={selectedTabIndex}
-                    isChanged={isChanged}
-                    setIsChanged={setIsChanged}
-                    selectedView={selectedView}
-                    tableLan={tableLan}
-                    view={view}
-                    viewName={viewName}
-                    fieldsMap={fieldsMap}
-                    visibleRelationColumns={visibleRelationColumns}
-                    checkedColumns={checkedColumns}
-                    projectId={projectId}
-                    onDocsClick={() => {
-                      dispatch(
-                        detailDrawerActions.setDrawerTabIndex(views?.length)
-                      );
-                      if (new_router) {
-                        navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
-                      } else {
-                        navigate(
-                          `/main/${appId}/object/${tableSlug}/templates`
-                        );
-                      }
-                    }}
-                    searchText={searchText}
-                    computedVisibleFields={computedVisibleFields}
-                    handleOpenPopup={handleOpenPopup}
-                    queryClient={queryClient}
-                    settingsForm={settingsForm}
-                    views={views}
-                    refetchMenuViews={refetchMenuViews}
-                    refetchRelationViews={refetchRelationViews}
-                    filters={filters}
-                  />
-                </PermissionWrapperV2>
+                <ViewOptions
+                  tableInfo={tableInfo}
+                  relationView={relationView}
+                  refetchViews={refetchViews}
+                  selectedTabIndex={selectedTabIndex}
+                  isChanged={isChanged}
+                  setIsChanged={setIsChanged}
+                  selectedView={selectedView}
+                  tableLan={tableLan}
+                  view={view}
+                  viewName={viewName}
+                  fieldsMap={fieldsMap}
+                  visibleRelationColumns={visibleRelationColumns}
+                  checkedColumns={checkedColumns}
+                  projectId={projectId}
+                  onDocsClick={() => {
+                    dispatch(
+                      detailDrawerActions.setDrawerTabIndex(views?.length)
+                    );
+                    if (new_router) {
+                      navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
+                    } else {
+                      navigate(`/main/${appId}/object/${tableSlug}/templates`);
+                    }
+                  }}
+                  searchText={searchText}
+                  computedVisibleFields={computedVisibleFields}
+                  handleOpenPopup={handleOpenPopup}
+                  queryClient={queryClient}
+                  settingsForm={settingsForm}
+                  views={views}
+                  refetchMenuViews={refetchMenuViews}
+                  refetchRelationViews={refetchRelationViews}
+                  filters={filters}
+                />
               </>
             )}
           </Flex>

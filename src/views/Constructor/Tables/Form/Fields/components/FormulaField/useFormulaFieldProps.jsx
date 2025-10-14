@@ -18,6 +18,7 @@ export const useFormulaFieldProps = ({
   control,
   watch,
   setValue = () => {},
+  fieldType,
 }) => {
   const { i18n } = useTranslation();
   const tableLan = useGetLang("Table");
@@ -209,14 +210,10 @@ export const useFormulaFieldProps = ({
   }, [tableRelations]);
 
   const { isLoading: fieldLoading } = useFieldsListQuery({
-    params: {
-      table_id: menuItem?.table_id,
-      tableSlug: tableSlug,
-      table_slug: tableSlug,
-    },
-    tableSlug,
+    params: {},
+    tableSlug: fieldType === FIELD_TYPES.FORMULA ? selectedTableSlug?.split("#")[0] : tableSlug,
     queryParams: {
-      enabled: Boolean(menuItem?.table_id),
+      enabled: Boolean(tableSlug),
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {

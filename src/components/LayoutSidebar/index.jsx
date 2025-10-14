@@ -58,6 +58,8 @@ import menuSettingsService from "../../services/menuSettingsService";
 import projectService, {
   useProjectGetByIdQuery,
   useProjectListQuery,
+  useProjectsAllSettingQuery,
+  useProjectUpdateMutation,
 } from "../../services/projectService";
 import { store } from "../../store";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
@@ -78,7 +80,8 @@ import ButtonsMenu from "./MenuButtons";
 import TableCreateModal from "../../layouts/MainLayout/TableCreateModal";
 import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
 import TemplateSelection from "../../layouts/MainLayout/TemplateMenu/TemplateSelection";
-import { SettingsIcon } from "../../utils/constants/icons";
+import { SettingsIcon, TranslateIcon } from "../../utils/constants/icons";
+import { useGetLang } from "@/hooks/useGetLang";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -87,7 +90,6 @@ const LayoutSidebar = ({
   darkMode,
   handleOpenProfileModal = () => {},
 }) => {
-
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const { appId } = useParams();
@@ -118,7 +120,10 @@ const LayoutSidebar = ({
   const [subSearchText, setSubSearchText] = useState();
   const [menu, setMenu] = useState({ event: "", type: "", root: false });
   const openSidebarMenu = Boolean(menu?.event);
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId, queryParams: { enabled: !!projectId} });
+  const { data: projectInfo } = useProjectGetByIdQuery({
+    projectId,
+    queryParams: { enabled: !!projectId },
+  });
   const [menuLanguages, setMenuLanguages] = useState(null);
   const [profileSettingLan, setProfileSettingLan] = useState(null);
   const [languageData, setLanguageData] = useState(null);
@@ -1406,9 +1411,33 @@ const ProfilePanel = ({
   menuLanguages,
   handleOpenProfileModal,
 }) => {
+  const dispatch = useDispatch();
+  const { i18n } = useTranslation();
+  const lang = useGetLang("Setting");
+  const [currentLangIndex, setCurrentLangIndex] = useState(0);
+
+  const languages = useSelector((state) => state.languages.list);
+
+  const projectId = store.getState().company.projectId;
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  // const languages = projectInfo?.language;
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    localStorage.setItem("defaultLanguage", lang);
+  };
+
+  const handleClick = () => {
+    if (!languages?.length) return;
+
+    const nextIndex = (currentLangIndex + 1) % languages.length;
+    setCurrentLangIndex(nextIndex);
+    changeLanguage(languages[nextIndex]?.slug);
+  };
+
   const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
-  const { i18n } = useTranslation();
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
       <Flex gap={10} alignItems={"center"}>
@@ -1435,25 +1464,44 @@ const ProfilePanel = ({
         </Box>
       </Flex>
 
-      <Flex
-        _hover={{ background: "#eeee" }}
-        alignItems={"center"}
-        h={25}
-        minW={86}
-        maxW={130}
-        border={"1px solid #eee"}
-        borderRadius={"5px"}
-        justifyContent={"center"}
-        gap={5}
-        mt={10}
-        cursor={"pointer"}
-        onClick={handleOpenProfileModal}
-      >
-        {/* <SettingsIcon style={{color: "#475467"}} /> */}
-        <Box color={"#475467"}>
-          {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
-        </Box>
-      </Flex>
+      <Box display="flex" gap="10px" mt={10}>
+        <Flex
+          _hover={{ background: "#eeee" }}
+          alignItems={"center"}
+          h={25}
+          minW={86}
+          width="100%"
+          border={"1px solid #eee"}
+          borderRadius={"5px"}
+          justifyContent={"center"}
+          gap={5}
+          cursor={"pointer"}
+          onClick={handleOpenProfileModal}
+        >
+          <SettingsIcon style={{ color: "#475467" }} />
+          <Box color={"#475467"}>
+            {generateLangaugeText(menuLanguages, i18n?.language, "Settings")}
+          </Box>
+        </Flex>
+        <Flex
+          _hover={{ background: "#eeee" }}
+          alignItems={"center"}
+          h={25}
+          minW={86}
+          width="100%"
+          border={"1px solid #eee"}
+          borderRadius={"5px"}
+          justifyContent={"center"}
+          gap={5}
+          cursor={"pointer"}
+          onClick={handleClick}
+        >
+          <Box color={"#475467"} display="flex" alignItems="center" gap="6px">
+            <Box textTransform="uppercase">{i18n?.language}</Box>
+            <TranslateIcon />
+          </Box>
+        </Flex>
+      </Box>
     </Box>
   );
 };

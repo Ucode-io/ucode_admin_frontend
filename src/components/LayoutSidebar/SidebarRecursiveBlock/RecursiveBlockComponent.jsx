@@ -125,7 +125,7 @@ const RecursiveBlock = ({
         NavigateByType({element, menuId: element?.id, navigate});
       }
     } else {
-      NavigateByTypeOldRoute({element, menuId: element?.id, navigate});
+      NavigateByTypeOldRoute({ element, appId: element?.id, navigate });
     }
 
     if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {

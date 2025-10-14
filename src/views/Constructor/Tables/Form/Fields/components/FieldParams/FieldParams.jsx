@@ -1,6 +1,6 @@
 import cls from "./styles.module.scss";
 import HFTextField from "@/components/FormElements/HFTextField";
-import { fieldTypeIcons } from "@/utils/constants/icons";
+import { fieldTypeIcons, TranslateIcon } from "@/utils/constants/icons";
 import { MultiLangField } from "../MultiLangField";
 import { Box, Button } from "@mui/material";
 import { useFieldParamsProps } from "./useFieldParamsProps";
@@ -33,6 +33,7 @@ import {
 } from "../../../../../../table-redesign/icons";
 import SVG from "react-inlinesvg";
 import { NButton } from "../../../../../../../components/NButton";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 
 export const FieldParams = ({
   tableName = "",
@@ -86,10 +87,15 @@ export const FieldParams = ({
     addComplete,
     onDrop,
     functions,
+    handleClickLanguage,
+    selectedLanguage,
+    labelValue,
   } = useFieldParamsProps({ watch, setValue, control, handleUpdateField });
 
   const [activeId, setActiveId] = useState(null);
   const containerRef = useRef(null);
+
+  console.log(watch(`attributes.todo.options`));
 
   return (
     <Box ref={containerRef}>
@@ -356,7 +362,14 @@ export const FieldParams = ({
                   />
                   {isTodoOptionOpen && (
                     <Box marginTop="8px">
-                      <input
+                      <MultiLangInput
+                        key={selectedLanguage}
+                        handleClickLanguage={handleClickLanguage}
+                        selectedLanguage={selectedLanguage}
+                        callback={addTodo}
+                        value={labelValue[`label_${selectedLanguage}`]}
+                      />
+                      {/* <input
                         className={cls.addInput}
                         onKeyDown={(e) => {
                           const value = e.target.value;
@@ -367,7 +380,7 @@ export const FieldParams = ({
                         }}
                         type="text"
                         autoFocus
-                      />
+                      /> */}
                     </Box>
                   )}
                   <Box paddingY="8px">
@@ -398,9 +411,14 @@ export const FieldParams = ({
                             setActiveId={setActiveId}
                             title={
                               <FieldChip
-                                value={watch(
-                                  `attributes.todo.options.${index}.label`
-                                )}
+                                value={
+                                  watch(
+                                    `attributes.todo.options.${index}.label_${i18n.language}`
+                                  ) ||
+                                  watch(
+                                    `attributes.todo.options.${index}.label`
+                                  )
+                                }
                                 color={watch(
                                   `attributes.todo.options.${index}.color`
                                 )}
@@ -422,6 +440,8 @@ export const FieldParams = ({
                                 watch={watch}
                                 setActiveId={setActiveId}
                                 group="Todo"
+                                isMultiLanguage
+                                languages={languages}
                               />
                             }
                           />
@@ -479,9 +499,14 @@ export const FieldParams = ({
                             setActiveId={setActiveId}
                             title={
                               <FieldChip
-                                value={watch(
-                                  `attributes.progress.options.${index}.label`
-                                )}
+                                value={
+                                  watch(
+                                    `attributes.progress.options.${index}.label_${i18n.language}`
+                                  ) ||
+                                  watch(
+                                    `attributes.progress.options.${index}.label`
+                                  )
+                                }
                                 color={watch(
                                   `attributes.progress.options.${index}.color`
                                 )}
@@ -503,6 +528,8 @@ export const FieldParams = ({
                                 watch={watch}
                                 setActiveId={setActiveId}
                                 group="Progress"
+                                isMultiLanguage
+                                languages={languages}
                               />
                             }
                           />
@@ -560,9 +587,14 @@ export const FieldParams = ({
                             setActiveId={setActiveId}
                             title={
                               <FieldChip
-                                value={watch(
-                                  `attributes.complete.options.${index}.label`
-                                )}
+                                value={
+                                  watch(
+                                    `attributes.complete.options.${index}.label_${i18n.language}`
+                                  ) ||
+                                  watch(
+                                    `attributes.complete.options.${index}.label`
+                                  )
+                                }
                                 color={watch(
                                   `attributes.complete.options.${index}.color`
                                 )}
@@ -584,6 +616,8 @@ export const FieldParams = ({
                                 watch={watch}
                                 setActiveId={setActiveId}
                                 group="Complete"
+                                isMultiLanguage
+                                languages={languages}
                               />
                             }
                           />
@@ -775,5 +809,52 @@ export const FieldParams = ({
         </NButton>
       </Box>
     </Box>
+  );
+};
+
+const MultiLangInput = ({
+  handleClickLanguage,
+  selectedLanguage,
+  callback,
+  value,
+}) => {
+  const [innerValue, setInnerValue] = useState("");
+  return (
+    <InputGroup>
+      <Input
+        className={cls.addInput}
+        onChange={(e) => setInnerValue(e.target.value)}
+        onKeyDown={(e) => {
+          const value = e.target.value;
+          if (e.key === "Enter" && value?.trim()) {
+            callback(value);
+            e.target.value = "";
+          }
+        }}
+        type="text"
+        defaultValue={value}
+        autoFocus
+      />
+      <InputRightElement
+        sx={{
+          right: "10px",
+          top: "50%",
+          transform: "translateY(-50%)",
+        }}
+      >
+        <button
+          className={cls.languageBtn}
+          type="button"
+          onClick={() => {
+            handleClickLanguage(innerValue);
+          }}
+        >
+          <span className={cls.languageBtnInner}>
+            <TranslateIcon />
+            <span>{selectedLanguage}</span>
+          </span>
+        </button>
+      </InputRightElement>
+    </InputGroup>
   );
 };

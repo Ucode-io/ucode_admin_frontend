@@ -367,6 +367,10 @@ export const useFieldPopoverProps = ({
       reset({
         ...values,
         ...field,
+        attributes: {
+          ...values?.attributes,
+          ...field?.attributes,
+        }
       });
       setFolder(field?.attributes?.path);
     } else {

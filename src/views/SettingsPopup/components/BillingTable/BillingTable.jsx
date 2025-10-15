@@ -29,7 +29,7 @@ const tableHeads = [
   // "Fare",
   // "Payment Type",
   "Type",
-  // "Status",
+  "Status",
   // "Currency",
   "Date",
 ];
@@ -121,10 +121,7 @@ export const BillingTable = ({ handClickBalance }) => {
                   <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
                     {row.transaction_type ?? ""}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
-                    {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
-                  </TableCell>
-                  {/* <TableCell sx={{fontSize: "14px", padding: "8px"}}>
+                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
                     {row.payment_status === "accepted" ? (
                       <Typography
                         variant="body2"
@@ -163,7 +160,10 @@ export const BillingTable = ({ handClickBalance }) => {
                       </Typography>
                     )}
                   </TableCell>
-                  <TableCell sx={{fontSize: "14px"}}>
+                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                    {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
+                  </TableCell>
+                  {/* <TableCell sx={{fontSize: "14px"}}>
                     {row?.currency?.code}
                   </TableCell> */}
                 </TableRow>

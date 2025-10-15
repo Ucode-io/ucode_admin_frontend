@@ -6,7 +6,6 @@ import { Header } from "./components/Header";
 import { HeaderFilter } from "./components/HeaderFilter";
 import { FilterProvider } from "./providers/FilterProvider";
 import { FieldsProvider } from "./providers/FieldsProvider";
-import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const Views = ({ relationFields, isRelationView = false }) => {
   const {

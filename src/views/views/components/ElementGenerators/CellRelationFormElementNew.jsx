@@ -1,5 +1,4 @@
 import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { Box, Popover, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -8,7 +7,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Select, { components } from "react-select";
 import useDebounce from "@/hooks/useDebounce";
 import useTabRouter from "@/hooks/useTabRouter";
@@ -28,7 +27,7 @@ import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { useViewContext } from "@/providers/ViewProvider";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   input: {
     "&::placeholder": {
       color: "#fff",
@@ -155,14 +154,11 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
-  isTableView = false,
-  relationfields,
   setFormValue = () => {},
   row,
   newUi,
   objectIdFromJWT,
   relationView,
-  newColumn,
 }) => {
   const { view } = useViewContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
@@ -181,7 +177,6 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  const [searchParams] = useSearchParams();
   // const menuId = searchParams.get("menuId");
   const { menuId } = useParams();
   const { i18n } = useTranslation();
@@ -190,7 +185,7 @@ const AutoCompleteElement = ({
   );
 
   const customStyles = {
-    control: (provided, state) => ({
+    control: (provided) => ({
       ...provided,
       background: isBlackBg
         ? "#2A2D34"
@@ -296,10 +291,11 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled:
-        (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-        newColumn,
+      // enabled:
+      //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
+      //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
+      //   newColumn,
+      enabled: false,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -553,7 +549,7 @@ const AutoCompleteElement = ({
         options={openedItemValue ?? computedOptions ?? []}
         value={localValue}
         menuPortalTarget={document.body}
-        onMenuOpen={(e) => {
+        onMenuOpen={() => {
           refetch();
         }}
         isClearable={!openedItemValue}
@@ -561,7 +557,7 @@ const AutoCompleteElement = ({
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
-        onChange={(newValue, { action }) => {
+        onChange={(newValue) => {
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (

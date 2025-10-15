@@ -1,16 +1,17 @@
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
-import PageFallback from "../../../components/PageFallback";
-import constructorObjectService from "../../../services/constructorObjectService";
+import { useEffect, useMemo, useState } from "react";
+import PageFallback from "@/components/PageFallback";
+import constructorObjectService from "@/services/constructorObjectService";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import useTabRouter from "../../../hooks/useTabRouter";
+import useTabRouter from "@/hooks/useTabRouter";
 import GroupCascadingLink from "./CascadingRecursiveBlock";
 import { Menu, TextField, InputAdornment } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { SearchIcon } from "../../../assets/icons/icon.jsx";
-import IconGenerator from "../../IconPicker/IconGenerator";
-import SearchInput from "../../SearchInput";
+import { SearchIcon } from "@/assets/icons/icon.jsx";
+import IconGenerator from "@/components/IconPicker/IconGenerator";
+import SearchInput from "@/components/SearchInput";
+// import IconGenerator from "../../IconPicker/IconGenerator";
+// import SearchInput from "../../SearchInput";
 
 const RelationGroupCascading = ({
   field,
@@ -38,24 +39,22 @@ const RelationGroupCascading = ({
   const currentList = useMemo(() => {
     if (!selectedIds?.length) {
       return data.filter(
-        (row) => !row[`${field?.attributes?.cascading_tree_table_slug}_id`]
+        (row) => !row[`${field?.attributes?.cascading_tree_table_slug}_id`],
       );
     } else {
       return data.filter(
         (el) =>
           el[`${field?.attributes?.cascading_tree_table_slug}_id`] ===
-          selectedIds[selectedIds.length - 1]
+          selectedIds[selectedIds.length - 1],
       );
     }
   }, [data, selectedIds, field?.attributes?.cascading_tree_table_slug]);
   //=========COMPUTED VALUE=========
   const computedValue = useMemo(() => {
     let val = "";
-    const slugs = field?.attributes?.view_fields?.map((i) => i.slug)
-      const object = data?.find((item) => item?.guid === value)
-      slugs?.map(
-        (item) => (val += "" + object ? object?.[item] : "")
-      );
+    const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
+    const object = data?.find((item) => item?.guid === value);
+    slugs?.map((item) => (val += "" + object ? object?.[item] : ""));
     return val;
   }, [value, data, field]);
 
@@ -74,7 +73,7 @@ const RelationGroupCascading = ({
         field?.attributes?.cascading_tree_table_slug,
         {
           data: {},
-        }
+        },
       );
 
       setData(data.response ?? []);
@@ -94,7 +93,7 @@ const RelationGroupCascading = ({
   useEffect(() => {
     getAllData();
     setRelTableSlug(
-      field?.table_slug ? field?.table_slug : field?.id.split("#")?.[0]
+      field?.table_slug ? field?.table_slug : field?.id.split("#")?.[0],
     );
   }, []);
 

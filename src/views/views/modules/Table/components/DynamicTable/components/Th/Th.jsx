@@ -1,10 +1,5 @@
 import { getColumnIcon } from "@/utils/constants/tableIcons";
-import {
-  Box,
-  Flex,
-  IconButton,
-  Image,
-} from "@chakra-ui/react";
+import { Box, Flex, IconButton, Image } from "@chakra-ui/react";
 import { Menu } from "@mui/material";
 import { useThProps } from "./useThProps";
 

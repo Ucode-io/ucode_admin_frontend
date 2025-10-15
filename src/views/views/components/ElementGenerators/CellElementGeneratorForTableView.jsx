@@ -8,7 +8,7 @@ import {
 import HFSwitch from "@/views/table-redesign/hf-switch";
 import { HFVideoUpload } from "@/views/table-redesign/hf-video-upload";
 import { Parser } from "hot-formula-parser";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import HFAutocomplete from "@/components/FormElements/HFAutocomplete";
@@ -794,4 +794,11 @@ const CellElementGeneratorForTableView = ({
   }
 };
 
-export default CellElementGeneratorForTableView;
+export default memo(CellElementGeneratorForTableView, (prev, next) => {
+  return (
+    prev.field === next.field &&
+    prev.row === next.row &&
+    prev.isNewRow === next.isNewRow &&
+    prev.isBlackBg === next.isBlackBg
+  );
+});

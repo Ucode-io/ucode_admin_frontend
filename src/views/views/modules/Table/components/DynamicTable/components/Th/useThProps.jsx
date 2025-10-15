@@ -18,18 +18,17 @@ export const useThProps = ({
   columns,
   tableSize,
 }) => {
-
   const { tableSlug, view } = useViewContext();
 
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const [summaryOpen, setSummaryOpen] = useState(null);
   const queryClient = useQueryClient();
   const summaryIsOpen = Boolean(summaryOpen);
 
   const permissions = useSelector(
-    (state) => state.permissions?.permissions?.[tableSlug]
-  )
+    (state) => state.permissions?.permissions?.[tableSlug],
+  );
 
   const formulaTypes = [
     {
@@ -51,7 +50,7 @@ export const useThProps = ({
   };
 
   const updateRelationView = (data) => {
-    relationService.update(data, view?.relatedTable).then((res) => {
+    relationService.update(data, view?.relatedTable).then(() => {
       getAllData();
       handleSummaryClose();
     });
@@ -70,12 +69,12 @@ export const useThProps = ({
           [newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [
             item.field_name,
             item,
-          ])
-        ).values()
+          ]),
+        ).values(),
       );
     } else if (type === "unset") {
       result = view?.attributes?.summaries?.filter(
-        (element) => element?.field_name !== item?.id
+        (element) => element?.field_name !== item?.id,
       );
     }
 
@@ -153,7 +152,6 @@ export const useThProps = ({
     ? tableSize?.[pageName]?.[column.id]
     : "auto";
 
-
   return {
     queryClient,
     position,
@@ -169,5 +167,5 @@ export const useThProps = ({
     summaryIsOpen,
     permissions,
     summaryOpen,
-  }
-}
+  };
+};

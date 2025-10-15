@@ -1,12 +1,12 @@
 import React from "react";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { SearchIcon } from "../../../../src/assets/icons/icon.jsx";
 import { Checkbox } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { numberWithSpaces } from "../../../utils/formatNumbers";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { SearchIcon } from "@/assets/icons/icon";
 
 function CascadingMany2Many({
   currentLevel,

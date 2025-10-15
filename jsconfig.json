@@ -10,7 +10,8 @@
       "@/providers/*": ["src/providers/*"],
       "@/store/*": ["src/store/*"],
       "@/theme/*": ["src/theme/*"],
-      "@/mock/*": ["src/mock/*"]
+      "@/mock/*": ["src/mock/*"],
+      "@/assets/*": ["src/assets/*"]
     }
   }
 }

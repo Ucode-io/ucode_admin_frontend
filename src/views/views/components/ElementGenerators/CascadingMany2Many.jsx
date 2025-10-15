@@ -2,11 +2,11 @@ import React from "react";
 import { numberWithSpaces } from "@/utils/formatNumbers";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { SearchIcon } from "@/assets/icons/icon.jsx";
 import DescriptionIcon from "@mui/icons-material/Description";
 import FolderIcon from "@mui/icons-material/Folder";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Checkbox } from "@mui/material";
+import { SearchIcon } from "@/assets/icons/icon";
 
 function CascadingMany2Many({
   backArrowButton,

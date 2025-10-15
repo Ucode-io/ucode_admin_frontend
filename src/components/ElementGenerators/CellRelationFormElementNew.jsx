@@ -1,13 +1,13 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {Box, Popover, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import React, {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery} from "react-query";
+import { Box, Popover, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 import { useParams, useSearchParams } from "react-router-dom";
 import Select, { components } from "react-select";
 import useDebounce from "../../hooks/useDebounce";
@@ -164,7 +164,7 @@ const AutoCompleteElement = ({
   relationView,
   newColumn,
 }) => {
-  const {view} = useViewContext()
+  const { view } = useViewContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
@@ -174,7 +174,7 @@ const AutoCompleteElement = ({
   const [allOptions, setAllOptions] = useState();
   const [count, setCount] = useState(0);
   const [localValue, setLocalValue] = useState(
-    row?.[`${field?.slug}_data`] ?? null
+    row?.[`${field?.slug}_data`] ?? null,
   );
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
@@ -186,7 +186,7 @@ const AutoCompleteElement = ({
   const { menuId } = useParams();
   const { i18n } = useTranslation();
   const languages = useSelector((state) => state.languages.list)?.map(
-    (el) => el.slug
+    (el) => el.slug,
   );
 
   const customStyles = {
@@ -256,7 +256,14 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler, value]);
 
   const { data: optionsFromLocale, refetch } = useQuery(
-    ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, value, page, field?.table_slug],
+    [
+      "GET_OBJECT_LIST",
+      debouncedValue,
+      autoFiltersValue,
+      value,
+      page,
+      field?.table_slug,
+    ],
     () => {
       if (!field?.table_slug) return null;
 
@@ -285,13 +292,14 @@ const AutoCompleteElement = ({
         },
         {
           language_setting: i18n?.language,
-        }
+        },
       );
     },
     {
       enabled:
         (!field?.attributes?.function_path && Boolean(page > 1)) ||
-        (!field?.attributes?.function_path && Boolean(debouncedValue)) || newColumn,
+        (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
+        newColumn,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -311,19 +319,18 @@ const AutoCompleteElement = ({
         }
         setCount(data?.count);
       },
-    }
+    },
   );
 
   const computedOptions = useMemo(() => {
     const uniqueObjects = Array.from(
-      new Set(allOptions?.map(JSON.stringify))
+      new Set(allOptions?.map(JSON.stringify)),
     ).map(JSON.parse);
 
-    if(field?.table_slug === "client_type") {
-      console.log({uniqueObjects, allOptions})
-      return uniqueObjects?.filter((item) => (
-        item?.table_slug === view?.table_slug
-      ))
+    if (field?.table_slug === "client_type") {
+      return uniqueObjects?.filter(
+        (item) => item?.table_slug === view?.table_slug,
+      );
     }
 
     if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
@@ -442,7 +449,7 @@ const AutoCompleteElement = ({
                     table_slug: data?.table_slug,
                     label: field?.attributes?.[`label_${i18n?.language}`] || "",
                     relation_table_slug: data?.table_slug,
-                  })
+                  }),
                 );
                 dispatch(
                   groupFieldActions.addViewPath({
@@ -451,7 +458,7 @@ const AutoCompleteElement = ({
                     is_relation_view: true,
                     table_slug: data?.table_slug,
                     label: field?.attributes?.[`label_${i18n?.language}`] || "",
-                  })
+                  }),
                 );
                 updateQueryWithoutRerender("p", props?.data?.guid);
                 updateQueryWithoutRerender("field_slug", field?.table_slug);
@@ -572,7 +579,7 @@ const AutoCompleteElement = ({
                 field,
                 option,
                 i18n?.language,
-                languages
+                languages,
               )
             : `${getRelationFieldTabsLabel(field, option)}`
         }

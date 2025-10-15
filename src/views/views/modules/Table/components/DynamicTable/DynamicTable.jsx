@@ -78,7 +78,7 @@ export const DynamicTable = ({
     isRelationView,
     fieldsMap,
   } = useDynamicTableProps({ columns, isResizable, setLimit, data, fields });
-  console.log("Rendered");
+
   return (
     <div
       className="CTableContainer"

@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { useMutation } from "react-query";
 import constructorObjectService from "@/services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
-// import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
+import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
-import { RelationElement } from "../FormComponents/RelationElement";
+// import { RelationElement } from "../FormComponents/RelationElement";
 import { useTranslation } from "react-i18next";
 
 const TableDataForm = ({
@@ -15,7 +15,6 @@ const TableDataForm = ({
   view,
   index,
   field,
-  watch,
   isWrap,
   fields,
   control,
@@ -83,7 +82,7 @@ const TableDataForm = ({
         <CellElementGeneratorForTable field={field} row={row} />
       ) : field?.type === FIELD_TYPES.LOOKUP ||
         field?.type === FIELD_TYPES.LOOKUPS ? (
-        <RelationElement
+        <CellElementGeneratorForRelation
           row={row}
           data={data}
           field={field}
@@ -109,19 +108,13 @@ const TableDataForm = ({
           data={data}
           field={field}
           index={index}
-          watch={watch}
           key={field?.id}
           fields={fields}
           control={control}
-          getValues={getValues}
-          tableView={tableView}
-          tableSlug={tableSlug}
-          relOptions={relOptions}
           isTableView={isTableView}
           isWrapField={isWrapField}
           updateObject={updateObject}
           setFormValue={setFormValue}
-          relationfields={relationfields}
           newUi={newUi}
         />
       )}
@@ -129,4 +122,17 @@ const TableDataForm = ({
   );
 };
 
-export default TableDataForm;
+export default memo(TableDataForm, (prev, next) => {
+  return (
+    prev.row === next.row &&
+    prev.field?.id === next.field?.id &&
+    prev.isNewRow === next.isNewRow &&
+    prev.isWrap === next.isWrap &&
+    prev.view?.id === next.view?.id &&
+    prev.i18n?.language === next.i18n?.language &&
+    prev.newUi === next.newUi &&
+    prev.index === next.index &&
+    prev.isWrapField === next.isWrapField &&
+    prev.isTableView === next.isTableView
+  );
+});

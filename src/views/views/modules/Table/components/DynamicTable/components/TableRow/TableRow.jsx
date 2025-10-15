@@ -8,8 +8,8 @@ import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrappe
 // import TableDataForm from "@/components/ElementGenerators/TableDataForm";
 import { useTableRowProps } from "./useTableRowProps";
 import GeneratePdfFromTable from "@/components/DataTable/GeneratePdfFromTable";
-import TableDataForm from "@/components/ElementGenerators/TableDataForm";
-// import TableDataForm from "../../../../../../components/ElementGenerators/TableDataForm";
+import TableDataForm from "@/views/views/components/ElementGenerators/TableDataForm";
+// import TableDataForm from "@/components/ElementGenerators/TableDataForm";
 
 export const TableRow = ({
   relOptions,
@@ -182,7 +182,6 @@ export const TableRow = ({
                         isTableView={isTableView}
                         relationView={relationView}
                         view={view}
-                        watch={watch}
                         newUi={true}
                       />
                     ) : (

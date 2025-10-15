@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import style from "./style.module.scss";
 import FolderIcon from "@mui/icons-material/Folder";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { numberWithSpaces } from "../../../utils/formatNumbers";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 
 const CascadingRecursiveBlock = ({
   data = [],
@@ -25,10 +25,9 @@ const CascadingRecursiveBlock = ({
   const foundServices = useMemo(() => {
     if (!searchText) return [];
     return serviceData?.filter((item) =>
-      item?.name?.toLowerCase()?.includes(searchText?.toLowerCase())
+      item?.name?.toLowerCase()?.includes(searchText?.toLowerCase()),
     );
   }, [searchText, serviceData]);
-
 
   const setServices = (element) => {
     setValue(element?.guid);
@@ -47,14 +46,17 @@ const CascadingRecursiveBlock = ({
               className={style.cascading_link}
               onClick={(e) => {
                 e.stopPropagation();
-                setServices(item)
+                setServices(item);
               }}
             >
               <div className={style.cascading_link_folder}>
-                <span className={style.cascading_folder} onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedIds([...selectedIds, item?.guid]);
-                }}>
+                <span
+                  className={style.cascading_folder}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedIds([...selectedIds, item?.guid]);
+                  }}
+                >
                   <FolderIcon style={{ color: "#6E8BB7" }} />
                 </span>
                 <span> {item?.name}</span>

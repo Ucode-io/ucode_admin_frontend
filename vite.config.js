@@ -3,12 +3,10 @@ import { resolve } from "path";
 import progress from "vite-plugin-progress";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
-import federation from "@dilesoft/vite-plugin-federation-dynamic"
-
+import federation from "@dilesoft/vite-plugin-federation-dynamic";
 
 export default defineConfig(({ command, mode }) => {
-
-  const env = loadEnv(mode, process.cwd(), '')
+  const env = loadEnv(mode, process.cwd(), "");
 
   return {
     plugins: [

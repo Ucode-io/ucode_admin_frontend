@@ -28,7 +28,6 @@ import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const HeaderFilter = ({
   noDates,
-  setNoDates,
   handleAddDate,
   navigateCreatePage,
   settingsForm,
@@ -277,7 +276,7 @@ export const HeaderFilter = ({
                   {generateLangaugeText(
                     tableLan,
                     i18n?.language,
-                    "Create item"
+                    "Create item",
                   ) || "Create item"}
                 </Button>
               </PermissionWrapperV2>

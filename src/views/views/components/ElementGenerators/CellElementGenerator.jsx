@@ -6,18 +6,18 @@ import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { get } from "@ngard/tiny-get";
 import { useMemo } from "react";
-import { formatDate } from "../../utils/dateFormatter";
-import { numberWithSpaces } from "../../utils/formatNumbers";
-import { generateLink } from "../../utils/generateYandexLink";
-import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
-import { parseBoolean } from "../../utils/parseBoolean";
-import IconGenerator from "../IconPicker/IconGenerator";
-import LogoDisplay from "../LogoDisplay";
-import TableTag from "../TableTag";
+import { formatDate } from "@/utils/dateFormatter";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { generateLink } from "@/utils/generateYandexLink";
+import { getRelationFieldTableCellLabel } from "@/utils/getRelationFieldLabel";
+import { parseBoolean } from "@/utils/parseBoolean";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 import { isValid, parse } from "date-fns";
-import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
+import IconGeneratorIconjs from "@/components/IconPicker/IconGeneratorIconjs";
+import IconGenerator from "@/components/IconPicker/IconGenerator";
+import LogoDisplay from "@/components/LogoDisplay";
+import TableTag from "@/components/TableTag";
 
 const CellElementGenerator = ({
   field = {},

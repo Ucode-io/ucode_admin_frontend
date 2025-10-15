@@ -114,7 +114,7 @@ export const DynamicTable = ({
                 selectedItems={selectedObjectsForDelete}
                 onSelectAll={(checked) =>
                   setSelectedObjectsForDelete(
-                    checked ? (isRelationTable ? fields : data) : []
+                    checked ? (isRelationTable ? fields : data) : [],
                   )
                 }
               />
@@ -188,44 +188,42 @@ export const DynamicTable = ({
             {loader ? (
               <TableDataSkeleton colLength={5 + (!isRelationTable ? 2 : 1)} />
             ) : (
-              (isRelationTable ? fields : data).map(
-                (virtualRowObject, index) => {
-                  return (
-                    <TableRow
-                      key={isRelationTable ? virtualRowObject?.id : index}
-                      row={virtualRowObject}
-                      width={"40px"}
-                      rowIndex={index}
-                      remove={remove}
-                      watch={watch}
-                      getValues={getValues}
-                      control={control}
-                      mainForm={mainForm}
-                      isTableView={isTableView}
-                      selectedObjectsForDelete={selectedObjectsForDelete}
-                      setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                      isRelationTable={isRelationTable}
-                      onRowClick={onRowClick}
-                      calculateWidthFixedColumn={calculateWidthFixedColumn}
-                      currentPage={currentPage}
-                      limit={limit}
-                      setFormValue={setFormValue}
-                      columns={columns}
-                      tableSettings={tableSettings}
-                      pageName={pageName}
-                      tableSlug={tableSlug}
-                      onDeleteClick={onDeleteClick}
-                      relationAction={relationAction}
-                      relationView={isRelationView}
-                      onChecked={onChecked}
-                      relationFields={fields?.length}
-                      data={data}
-                      view={view}
-                      firstRowWidth={45}
-                    />
-                  );
-                }
-              )
+              (isRelationTable ? fields : data).map((rowObject, index) => {
+                return (
+                  <TableRow
+                    key={isRelationTable ? rowObject?.id : index}
+                    row={rowObject}
+                    width={"40px"}
+                    rowIndex={index}
+                    remove={remove}
+                    watch={watch}
+                    getValues={getValues}
+                    control={control}
+                    mainForm={mainForm}
+                    isTableView={isTableView}
+                    selectedObjectsForDelete={selectedObjectsForDelete}
+                    setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+                    isRelationTable={isRelationTable}
+                    onRowClick={onRowClick}
+                    calculateWidthFixedColumn={calculateWidthFixedColumn}
+                    currentPage={currentPage}
+                    limit={limit}
+                    setFormValue={setFormValue}
+                    columns={columns}
+                    tableSettings={tableSettings}
+                    pageName={pageName}
+                    tableSlug={tableSlug}
+                    onDeleteClick={onDeleteClick}
+                    relationAction={relationAction}
+                    relationView={isRelationView}
+                    onChecked={onChecked}
+                    relationFields={fields?.length}
+                    data={data}
+                    view={view}
+                    firstRowWidth={45}
+                  />
+                );
+              })
             )}
             {addNewRow && (
               <AddNewData
@@ -354,7 +352,7 @@ export const DynamicTable = ({
               {generateLangaugeText(
                 tableLan,
                 i18n?.language,
-                "Delete all selected"
+                "Delete all selected",
               ) || "Delete all selected"}
             </Button>
           </RectangleIconButton>

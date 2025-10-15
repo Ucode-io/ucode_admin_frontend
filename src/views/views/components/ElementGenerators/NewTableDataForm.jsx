@@ -1,36 +1,28 @@
 import { Box } from "@mui/material";
 import React, { useMemo } from "react";
 import { useMutation } from "react-query";
-import constructorObjectService from "../../services/constructorObjectService";
-import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
 
-const TableDataForm = ({
-  row,
-  data,
-  view,
-  index,
-  field,
-  watch,
-  isWrap,
-  fields,
-  control,
+export default function NewTableDataForm({
   tableView,
   tableSlug,
-  relOptions,
-  isTableView,
+  fields,
+  field,
+  row,
+  index,
+  control,
+  setFormValue,
   relationfields,
-  getValues = () => {},
-  setFormValue = () => {},
-  newUi,
+  data,
+  isWrap,
+  watch,
+  newUi = false,
+  isTableView = false,
   relationView,
-}) => {
-  const { mutate: updateObject } = useMutation(() =>
-    constructorObjectService.update(tableSlug, {
-      data: { ...getValues(`multi.${index}`) },
-    }),
-  );
+  fieldsMap,
+}) {
+  const { mutate: updateObject } = useMutation(() => console.log(""));
 
   const isWrapField = useMemo(() => {
     if (!isWrap || !field || !field.id) {
@@ -52,55 +44,51 @@ const TableDataForm = ({
       style={{
         position: "relative",
         minWidth: "150px",
-        boxSizing: "border-box",
       }}
     >
-      {Boolean(view?.attributes?.table_editable) ? (
-        <CellElementGeneratorForTable field={field} row={row} />
-      ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
+      {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
         <CellElementGeneratorForRelation
-          row={row}
-          data={data}
-          field={field}
-          index={index}
           key={field?.id}
-          fields={fields}
-          control={control}
+          isTableView={isTableView}
+          isNewRow={true}
           tableView={tableView}
           tableSlug={tableSlug}
-          relOptions={relOptions}
+          name={`multi.${index}.${field.slug}`}
           isWrapField={isWrapField}
-          isTableView={isTableView}
           updateObject={updateObject}
+          fields={fields}
+          field={field}
+          row={row}
+          newColumn={true}
+          index={index}
+          control={control}
           setFormValue={setFormValue}
           relationfields={relationfields}
-          relationView={relationView}
+          data={data}
           newUi={newUi}
+          relationView={relationView}
+          fieldsMap={fieldsMap}
         />
       ) : (
         <CellElementGeneratorForTableView
-          row={row}
-          data={data}
-          field={field}
-          index={index}
-          watch={watch}
-          key={field?.id}
-          fields={fields}
-          control={control}
-          getValues={getValues}
           tableView={tableView}
+          newColumn={true}
           tableSlug={tableSlug}
-          relOptions={relOptions}
-          isTableView={isTableView}
+          isNewRow={true}
+          watch={watch}
           isWrapField={isWrapField}
           updateObject={updateObject}
+          fields={fields}
+          field={field}
+          row={row}
+          index={index}
+          control={control}
           setFormValue={setFormValue}
           relationfields={relationfields}
+          data={data}
           newUi={newUi}
         />
       )}
     </Box>
   );
-};
-
-export default TableDataForm;
+}

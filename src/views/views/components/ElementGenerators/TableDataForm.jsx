@@ -1,10 +1,13 @@
 import { Box } from "@mui/material";
 import React, { useMemo } from "react";
 import { useMutation } from "react-query";
-import constructorObjectService from "../../services/constructorObjectService";
+import constructorObjectService from "@/services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
-import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
+// import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { RelationElement } from "../FormComponents/RelationElement";
+import { useTranslation } from "react-i18next";
 
 const TableDataForm = ({
   row,
@@ -25,12 +28,15 @@ const TableDataForm = ({
   setFormValue = () => {},
   newUi,
   relationView,
+  isNewRow,
 }) => {
   const { mutate: updateObject } = useMutation(() =>
     constructorObjectService.update(tableSlug, {
       data: { ...getValues(`multi.${index}`) },
     }),
   );
+
+  const { i18n } = useTranslation();
 
   const isWrapField = useMemo(() => {
     if (!isWrap || !field || !field.id) {
@@ -47,6 +53,24 @@ const TableDataForm = ({
       .find((x) => x?.id === field?.id)?.status;
   }, [isWrap, field?.id]);
 
+  const computedSlug = useMemo(() => {
+    if (!isNewRow) {
+      if (field?.enable_multilanguage) {
+        return `multi.${index}.${field.slug}`;
+      } else if (field.id?.includes("@")) {
+        return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+      }
+      return `multi.${index}.${field.slug}`;
+    } else {
+      if (field?.enable_multilanguage) {
+        return `${field.slug}`;
+      } else if (field.id?.includes("@")) {
+        return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+      }
+      return `${field.slug}`;
+    }
+  }, [field, i18n?.language]);
+
   return (
     <Box
       style={{
@@ -57,8 +81,9 @@ const TableDataForm = ({
     >
       {Boolean(view?.attributes?.table_editable) ? (
         <CellElementGeneratorForTable field={field} row={row} />
-      ) : field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
-        <CellElementGeneratorForRelation
+      ) : field?.type === FIELD_TYPES.LOOKUP ||
+        field?.type === FIELD_TYPES.LOOKUPS ? (
+        <RelationElement
           row={row}
           data={data}
           field={field}
@@ -76,6 +101,7 @@ const TableDataForm = ({
           relationfields={relationfields}
           relationView={relationView}
           newUi={newUi}
+          name={computedSlug}
         />
       ) : (
         <CellElementGeneratorForTableView

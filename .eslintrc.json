@@ -8,7 +8,7 @@
     "plugin:react/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "react-app"
+    "plugin:prettier/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -17,32 +17,21 @@
       "jsx": true
     }
   },
-  "plugins": ["react", "import"],
+  "plugins": ["react", "import", "prettier"],
   "rules": {
+    "prettier/prettier": "warn",
     "no-undef": "error",
-    "import/no-unresolved": "error",
-    "import/named": "error",
-    "import/default": "error",
-    "import/namespace": "error",
     "react/react-in-jsx-scope": "off",
-    "no-extra-boolean-cast": "off",
     "react/prop-types": "off",
-    "no-async-promise-executor": "off",
-    "no-unsafe-optional-chaining": "off"
+    "no-extra-boolean-cast": "off"
   },
   "settings": {
     "react": {
       "version": "detect"
     },
     "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx"]
-      },
       "alias": {
-        "map": [
-          ["@", "./src"],
-          ["@/", "./src"]
-        ],
+        "map": [["@", "./src"]],
         "extensions": [".js", ".jsx"]
       }
     }

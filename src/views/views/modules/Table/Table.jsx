@@ -10,11 +10,7 @@ import { useTableProps } from "./useTableProps";
 import { DynamicTable } from "./components/DynamicTable";
 // import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
 
-export const Table = ({
-  tab,
-  ...props
-}) => {
-
+export const Table = ({ tab, ...props }) => {
   const {
     tableLan,
     dataCount,
@@ -42,8 +38,7 @@ export const Table = ({
     getValues,
     watch,
     currentPage,
-  } = useTableProps({ tab })
-  
+  } = useTableProps({ tab });
 
   return (
     <MaterialUIProvider>
@@ -79,7 +74,7 @@ export const Table = ({
           loader={loader}
           {...props}
         />
-{/* TEMPORARY COMMENT */}
+        {/* TEMPORARY COMMENT */}
         {/* {Boolean(open && projectInfo?.new_layout) &&
         selectedViewType === "SidePeek" ? (
           new_router ? (

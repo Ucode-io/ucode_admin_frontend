@@ -1,13 +1,15 @@
-import {Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import {Button, Checkbox} from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import {CTableCell, CTableRow} from "@/components/CTable";
+import { CTableCell, CTableRow } from "@/components/CTable";
 import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-import TableDataForm from "@/components/ElementGenerators/TableDataForm";
+// import TableDataForm from "@/components/ElementGenerators/TableDataForm";
 import { useTableRowProps } from "./useTableRowProps";
 import GeneratePdfFromTable from "@/components/DataTable/GeneratePdfFromTable";
+import TableDataForm from "@/components/ElementGenerators/TableDataForm";
+// import TableDataForm from "../../../../../../components/ElementGenerators/TableDataForm";
 
 export const TableRow = ({
   relOptions,
@@ -110,11 +112,10 @@ export const TableRow = ({
             </CTableCell>
 
             {columns.map(
-              (virtualColumn, index) =>
-                virtualColumn?.attributes?.field_permission
-                  ?.view_permission && (
+              (field) =>
+                field?.attributes?.field_permission?.view_permission && (
                   <CTableCell
-                    key={virtualColumn.id}
+                    key={field.id}
                     className="overflow-ellipsis"
                     style={{
                       minWidth: "220px",
@@ -127,35 +128,34 @@ export const TableRow = ({
                       // height: "26px",
                       position: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === field?.id,
                         )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        view?.attributes?.fixedColumns?.[field?.id]
                           ? "sticky"
                           : "relative"
                       }`,
-                      left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                      left: view?.attributes?.fixedColumns?.[field?.id]
                         ? `${
-                            calculateWidthFixedColumn(virtualColumn.id) +
-                            firstRowWidth
+                            calculateWidthFixedColumn(field.id) + firstRowWidth
                           }px`
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === field?.id,
                         )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        view?.attributes?.fixedColumns?.[field?.id]
                           ? "#F6F6F6"
-                          : virtualColumn.attributes?.disabled ||
-                              !virtualColumn.attributes?.field_permission
+                          : field.attributes?.disabled ||
+                              !field.attributes?.field_permission
                                 ?.edit_permission
                             ? "#f8f8f8"
                             : "#fff"
                       }`,
                       zIndex: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === field?.id,
                         )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        view?.attributes?.fixedColumns?.[field?.id]
                           ? "1"
                           : "0"
                       }`,
@@ -168,7 +168,7 @@ export const TableRow = ({
                         relOptions={relOptions}
                         tableSlug={tableSlug}
                         fields={columns}
-                        field={virtualColumn}
+                        field={field}
                         getValues={getValues}
                         mainForm={mainForm}
                         row={row}
@@ -186,7 +186,7 @@ export const TableRow = ({
                         newUi={true}
                       />
                     ) : (
-                      <CellElementGenerator field={virtualColumn} row={row} />
+                      <CellElementGenerator field={field} row={row} />
                     )}
 
                     {/* {index === 0 && ( */}
@@ -197,9 +197,8 @@ export const TableRow = ({
                       <OpenInFullIcon style={{ width: 14 }} fill="#007aff" />
                     </div>
                     {/* )} */}
-                    {(virtualColumn.attributes?.disabled ||
-                      !virtualColumn.attributes?.field_permission
-                        ?.edit_permission) && (
+                    {(field.attributes?.disabled ||
+                      !field.attributes?.field_permission?.edit_permission) && (
                       <div
                         style={{
                           position: "absolute",
@@ -216,7 +215,7 @@ export const TableRow = ({
                       </div>
                     )}
                   </CTableCell>
-                )
+                ),
             )}
             <td
               style={{
@@ -338,7 +337,7 @@ export const TableRow = ({
                     padding: "0 5px",
                     position: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "sticky"
@@ -349,7 +348,7 @@ export const TableRow = ({
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "#F6F6F6"
@@ -357,7 +356,7 @@ export const TableRow = ({
                     }`,
                     zIndex: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "1"
@@ -389,7 +388,7 @@ export const TableRow = ({
                     <CellElementGenerator field={virtualColumn} row={row} />
                   )}
                 </CTableCell>
-              )
+              ),
           )}
           <td
             style={{
@@ -489,7 +488,7 @@ export const TableRow = ({
             </div>
           </CTableCell>
 
-          {columns.map((column, index) => (
+          {columns.map((column) => (
             <CTableCell
               key={column.id}
               className="overflow-ellipsis"
@@ -503,7 +502,7 @@ export const TableRow = ({
                 padding: "0 5px",
                 position: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "sticky"
                     : "relative"
@@ -513,14 +512,14 @@ export const TableRow = ({
                   : "0",
                 backgroundColor: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "#F6F6F6"
                     : "#fff"
                 }`,
                 zIndex: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "1"
                     : "0"

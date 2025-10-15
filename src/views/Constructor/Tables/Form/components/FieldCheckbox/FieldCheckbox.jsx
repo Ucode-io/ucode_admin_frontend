@@ -7,6 +7,7 @@ export const FieldCheckbox = ({
   setValue = () => {},
   register = () => {},
   name,
+  defaultChecked,
 }) => {
 
   return <FormControlLabel
@@ -39,6 +40,7 @@ export const FieldCheckbox = ({
 
         }}
         checked={watch(name)}
+        defaultChecked={defaultChecked}
         onChange={() => {
           setValue(name, !watch(name));
         }}

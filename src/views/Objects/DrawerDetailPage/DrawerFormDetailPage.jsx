@@ -348,7 +348,7 @@ function DrawerFormDetailPage({
                             control={rootForm.control}
                             field={field}
                             watch={rootForm.watch}
-                            isRequired={field?.attributes?.required}
+                            isRequired={field?.required}
                             isDisabled={
                               (field?.attributes?.disabled ||
                                 !field?.attributes?.field_permission
@@ -356,7 +356,7 @@ function DrawerFormDetailPage({
                               isEditing
                             }
                             setFormValue={rootForm.setValue}
-                            errors={rootForm.errors}
+                            errors={rootForm?.formState?.errors}
                           />
                         </Box>
                       </Box>

@@ -37,6 +37,7 @@ export default function TimeLineDataRecursiveRow({
   layoutType,
   selectedView,
   setSelectedView = () => {},
+  visibleFields,
 }) {
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -177,6 +178,7 @@ export default function TimeLineDataRecursiveRow({
             setOpenDrawerModal={setOpenDrawerModal}
             setSelectedRow={setSelectedRow}
             setSelectedView={setSelectedView}
+            visibleFields={visibleFields}
           />
         )}
       </div>
@@ -221,6 +223,7 @@ export default function TimeLineDataRecursiveRow({
                   calendarRef={calendarRef}
                   setOpenDrawerModal={setOpenDrawerModal}
                   setSelectedRow={setSelectedRow}
+                  visibleFields={visibleFields}
                 />
               </Collapse>
             );

@@ -125,6 +125,7 @@ export const useRelationPopoverProps = ({
             watch={watch}
             register={register}
             setValue={setValue}
+            required={relation?.required}
           />
         );
       case SETTING_TYPES.AUTO_FILTER:
@@ -161,6 +162,7 @@ export const useRelationPopoverProps = ({
           view_fields: res?.view_fields?.map((field) => field.id) ?? [],
           field_name: res?.label,
           auto_filters: res?.auto_filters,
+          required: relation?.required,
         });
       },
     },

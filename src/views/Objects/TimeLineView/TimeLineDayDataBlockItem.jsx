@@ -15,6 +15,7 @@ import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {mergeStringAndState} from "../../../utils/jsonPath";
 import {detailDrawerActions} from "../../../store/detailDrawer/detailDrawer.slice";
 import useTabRouter from "../../../hooks/useTabRouter";
+import "../CalendarView/moveable.scss";
 
 const getTranslateXFromMatrix = (element) => {
   const transform = window.getComputedStyle(element).transform;
@@ -51,6 +52,7 @@ export default function TimeLineDayDataBlockItem({
   selectedView,
   projectInfo,
   setSelectedView = () => {},
+  visibleFields,
 }) {
   const ref = useRef();
   const dispatch = useDispatch();
@@ -233,7 +235,7 @@ export default function TimeLineDayDataBlockItem({
     calendar_from_slug,
     calendar_to_slug,
     groupbyFields,
-    visible_field,
+    visibleFields,
     groupByList,
     levelIndex,
     datesList,
@@ -603,7 +605,15 @@ export default function TimeLineDayDataBlockItem({
           onMouseEnter={handleMouseEnter1}
           onMouseLeave={() => setHoveredRowId(null)}
         >
-          {visible_field?.split("/")?.length > 1 ? (
+          {visibleFields?.map((fieldItem) => (
+            <CellElementGenerator
+              isTimelineVariant
+              row={data}
+              field={fieldItem}
+              multiSelectClassName={styles.multiSelectBadge}
+            />
+          ))}
+          {/* {visible_field?.split("/")?.length > 1 ? (
             visible_field
               ?.split("/")
               ?.map((fieldItem) => (
@@ -625,7 +635,7 @@ export default function TimeLineDayDataBlockItem({
                 (field) => field?.slug === visible_field?.split("/")?.[0]
               )}
             />
-          )}
+          )} */}
         </div>
 
         <Moveable

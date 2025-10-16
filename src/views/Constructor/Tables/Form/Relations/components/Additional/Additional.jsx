@@ -19,7 +19,7 @@ export const Additional = ({control, watch, register, setValue, }) => {
         register={register}
         setValue={setValue}
         watch={watch}
-        name="attributes.required"
+        name="required"
         label={
           generateLangaugeText(
             tableLan,

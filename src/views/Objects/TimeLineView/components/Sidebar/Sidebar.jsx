@@ -37,7 +37,7 @@ export const Sidebar = ({
   };
 
   const isAssignee = view?.attributes?.group_by_columns?.length >= 2;
-
+console.log({ computedData });
   return (
     <div className={clsx(cls.group_by, { [cls.isHidden]: !isSidebarOpen })}>
       <div className={clsx(cls.fakeDiv)}>
@@ -75,6 +75,7 @@ export const Sidebar = ({
         <div className={cls.sidebar_columns}>
           {computedData?.map((item, index) => (
             <TimelineRecursiveRow
+              key={index}
               computedData={computedData}
               openedRows={openedRows}
               setOpenedRows={setOpenedRows}

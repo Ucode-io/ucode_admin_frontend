@@ -144,7 +144,7 @@ export default function TimeLineView({
       if (Object.keys(filters)?.some((key) => Boolean(filters[key]))) {
         delete data.gte;
         delete data.lte;
-        delete data.builder_service_view_id;
+        // delete data.builder_service_view_id;
         data.row_view_id = view?.id;
       }
       return constructorObjectService.getListV2(tableSlug, {

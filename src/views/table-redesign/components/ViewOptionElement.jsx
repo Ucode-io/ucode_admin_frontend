@@ -455,10 +455,7 @@ export const Group = ({
 
   const onChange = (column, checked) => {
     const columns = view?.attributes?.group_by_columns ?? [];
-    const id =
-      column?.type === "LOOKUP" || column?.type === "LOOKUPS"
-        ? column.relation_id
-        : column.id;
+    const id = column.id;
 
     mutation.mutate({
       ...view,
@@ -521,9 +518,7 @@ export const Group = ({
               ml="auto"
               onChange={(ev) => onChange(column, ev.target.checked)}
               isChecked={view?.attributes?.group_by_columns?.includes(
-                column?.type === "LOOKUP" || column?.type === "LOOKUPS"
-                  ? column?.relation_id
-                  : column?.id
+                column?.id
               )}
             />
           </Flex>

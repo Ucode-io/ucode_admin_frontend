@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import TimeLineDayDataBlockItem from "./TimeLineDayDataBlockItem";
 import TimeLineDays from "./TimeLineDays";
 import styles from "./styles.module.scss";
@@ -36,6 +36,19 @@ export default function TimeLineDayDataBlock({
   projectInfo,
   setSelectedView = () => {},
 }) {
+  const visibleFields = useMemo(() => {
+    const cols =
+      view?.columns
+        ?.map((id) => fieldsMap[id])
+        .filter((el) => {
+          return el?.type === "LOOKUP" || el?.type === "LOOKUPS"
+            ? el?.relation_id
+            : el?.id;
+        }) ?? [];
+
+    return cols;
+  }, [view?.columns, fieldsMap]);
+
   return (
     <>
       <div
@@ -92,6 +105,7 @@ export default function TimeLineDayDataBlock({
                 setSelectedRow={setSelectedRow}
                 deepLength={view?.attributes?.group_by_columns?.length}
                 setSelectedView={setSelectedView}
+                visibleFields={visibleFields}
               />
             ))}
             {/* <div className={styles.addNewTask}></div> */}
@@ -136,6 +150,7 @@ export default function TimeLineDayDataBlock({
                     setOpenDrawerModal={setOpenDrawerModal}
                     setSelectedRow={setSelectedRow}
                     setSelectedView={setSelectedView}
+                    visibleFields={visibleFields}
                   />
                 </div>
               ))}

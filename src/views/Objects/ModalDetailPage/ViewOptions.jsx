@@ -568,11 +568,11 @@ const ViewOptions = ({
                             {Boolean(groupByColumnsCount) && (
                               <ViewOptionSubtitle>
                                 {groupByColumnsCount}{" "}
-                                {generateLangaugeText(
+                                {/* {generateLangaugeText(
                                   tableLan,
                                   i18n?.language,
                                   "Group"
-                                ) || "Group"}
+                                ) || "Group"} */}
                               </ViewOptionSubtitle>
                             )}
                           </>

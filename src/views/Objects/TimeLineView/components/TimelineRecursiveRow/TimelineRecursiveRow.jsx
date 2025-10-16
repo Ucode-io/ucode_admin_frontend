@@ -90,6 +90,7 @@ return (
             option?.data?.map((optionItem, optionIndex) => (
               <Collapse in={open} timeout="auto" unmountOnExit>
                 <TimelineRecursiveRow
+                  key={optionItem?.createdAt || optionIndex}
                   isFirst={false}
                   openedRows={openedRows}
                   setOpenedRows={setOpenedRows}

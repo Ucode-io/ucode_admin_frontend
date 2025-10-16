@@ -38,6 +38,7 @@ export const useTableProps = ({ tab }) => {
 
 
   const {
+    views,
     view,
     viewId,
     tableSlug,
@@ -57,16 +58,9 @@ export const useTableProps = ({ tab }) => {
     projectInfo,
   } = useViewContext();
 
-  const {
-    fieldsMap
-  } = useFieldsContext();
+  const { fieldsMap } = useFieldsContext();
 
-  const {
-    orderBy,
-    setSortedDatas,
-    sortedDatas,
-  } = useFilterContext();
-
+  const { orderBy, setSortedDatas, sortedDatas } = useFilterContext();
 
   const new_router = localStorage.getItem("new_router") === "true";
   // const viewId = searchParams.get("v") ?? viewProp?.id;
@@ -90,10 +84,10 @@ export const useTableProps = ({ tab }) => {
 
   const [limit, setLimit] = useState(20);
   const [drawerStateField, setDrawerStateField] = useState(null);
-  
+
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
-  
+
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
   const [selectedObjects, setSelectedObjects] = useState([]);
 
@@ -101,7 +95,7 @@ export const useTableProps = ({ tab }) => {
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
       ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+      : localStorage?.getItem("detailPage"),
   );
 
   // const menuId = menuid ?? searchParams.get("menuId");
@@ -109,10 +103,9 @@ export const useTableProps = ({ tab }) => {
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
+    (state) => state?.pagination?.paginationInfo,
   );
   const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
-
 
   const {
     control,
@@ -242,7 +235,9 @@ export const useTableProps = ({ tab }) => {
   const columns = useMemo(() => {
     const result = [];
     for (const key in view?.attributes.fixedColumns) {
-      if (Object.prototype.hasOwnProperty.call(view?.attributes.fixedColumns, key)) {
+      if (
+        Object.prototype.hasOwnProperty.call(view?.attributes.fixedColumns, key)
+      ) {
         if (view?.attributes.fixedColumns[key]) {
           result.push({ id: key, value: view?.attributes.fixedColumns[key] });
         }
@@ -260,11 +255,11 @@ export const useTableProps = ({ tab }) => {
 
     return customSortArray(
       uniqueColumns,
-      result.map((el) => el.id)
+      result.map((el) => el.id),
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
-  }, [view, fieldsMap]);
+  }, [view, fieldsMap, views, viewId]);
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};

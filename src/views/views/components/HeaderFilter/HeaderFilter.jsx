@@ -1,4 +1,3 @@
-import { default as SVG } from "react-inlinesvg";
 import {
   Box,
   Button,
@@ -9,8 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@chakra-ui/react";
-import { VIEW_TYPES_MAP, viewIcons } from "@/utils/constants/viewTypes";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
 import { SortIcon } from "@/utils/constants/icons";
@@ -25,6 +23,7 @@ import { FiltersList } from "./components/FiltersList";
 import { ViewOptions } from "./components/ViewOptions";
 import { LayoutPopup } from "./components/LayoutPopup";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
+import { ViewButton } from "./components/ViewButton";
 
 export const HeaderFilter = ({
   noDates,
@@ -48,6 +47,7 @@ export const HeaderFilter = ({
     setSelectedView,
     handleCloseCreateViewPopup,
     viewAnchorEl,
+    anchorEl,
     setViewAnchorEl,
     handleViewClick,
     handleClick,
@@ -71,6 +71,10 @@ export const HeaderFilter = ({
     isChanged,
     setIsChanged,
     viewForm,
+    getViewName,
+    selectedView,
+    handleCloseViews,
+    selectedTabIndex,
   } = useHeaderFilterProps();
 
   return (
@@ -96,62 +100,32 @@ export const HeaderFilter = ({
           overflow={"scroll"}
         >
           {(visibleViews ?? []).map((view, index) => (
-            <Button
-              p={"0 6px"}
-              minW={"80px"}
+            <ViewButton
               key={view?.id}
-              variant="ghost"
-              colorScheme="gray"
-              mx={"4px"}
-              leftIcon={
-                <SVG
-                  src={`/img/${viewIcons[view?.type]}`}
-                  color={viewId === view?.id ? "#175CD3" : "#475467"}
-                  width={18}
-                  height={18}
-                />
-              }
-              fontSize={13}
-              h={"30px"}
-              fontWeight={500}
-              color={viewId === view?.id ? "#175CD3" : "#475467"}
-              bg={viewId === view?.id ? "#D1E9FF" : "#fff"}
-              _hover={viewId === view?.id ? { bg: "#D1E9FF" } : undefined}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (overflowedViews?.length > 0) {
-                  if (index !== visibleViews?.length - 1) {
-                    handleViewClick(view, index);
-                  } else {
-                    handleClick(e);
-                  }
-                } else handleViewClick(view, index);
-              }}
-            >
-              {view?.is_relation_view
-                ? view?.attributes?.[`name_${i18n?.language}`] ||
-                  view?.table_label ||
-                  view?.type
-                : view?.attributes?.[`name_${i18n?.language}`] ||
-                  view?.name ||
-                  view?.type}
-
-              {overflowedViews?.length > 0 &&
-                index === visibleViews?.length - 1 && (
-                  <Box
-                    onClick={handleClick}
-                    sx={{
-                      height: "19px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <KeyboardArrowDownIcon />
-                  </Box>
-                )}
-            </Button>
+              view={view}
+              viewId={viewId}
+              getViewName={getViewName}
+              handleClick={handleClick}
+              handleViewClick={handleViewClick}
+              overflowedViews={overflowedViews}
+              visibleViews={visibleViews}
+              index={index}
+            />
           ))}
           {overflowedViews?.length > 0 && (
-            <MoreViews tableLan={tableLan} views={overflowedViews} />
+            <MoreViews
+              handleViewClick={handleViewClick}
+              open={Boolean(anchorEl)}
+              refetchViews={refetchViews}
+              selectedView={selectedView}
+              setSelectedView={setSelectedView}
+              handleClose={handleCloseViews}
+              selectedTabIndex={selectedTabIndex}
+              anchorEl={anchorEl}
+              tableLan={tableLan}
+              views={overflowedViews}
+              setViewAnchorEl={setViewAnchorEl}
+            />
           )}
         </Flex>
 

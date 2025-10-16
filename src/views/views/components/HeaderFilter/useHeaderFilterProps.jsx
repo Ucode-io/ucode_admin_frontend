@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useFilterContext } from "../../providers/FilterProvider";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { viewsActions } from "@/store/views/view.slice";
@@ -15,6 +15,8 @@ export const useHeaderFilterProps = () => {
 
   const { i18n } = useTranslation();
   const tableLan = useGetLang("Table");
+
+  const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
 
   const {
     view,
@@ -30,6 +32,7 @@ export const useHeaderFilterProps = () => {
     projectId,
     visibleColumns,
     viewForm,
+    selectedView,
   } = useViewContext();
 
   const {
@@ -56,6 +59,16 @@ export const useHeaderFilterProps = () => {
 
   const isSortPopupOpen = Boolean(!!sortPopupAnchorEl);
 
+  const getViewName = (view) => {
+    return view?.is_relation_view
+      ? view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.table_label ||
+          view?.type
+      : view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.name ||
+          view?.type;
+  };
+
   const handleCloseCreateViewPopup = () => {
     dispatch(groupFieldActions.clearGroupBySlug());
     setViewAnchorEl(null);
@@ -70,6 +83,10 @@ export const useHeaderFilterProps = () => {
   const handleClick = (e) => {
     e.stopPropagation();
     setAnchorEl(e.currentTarget);
+  };
+
+  const handleCloseViews = () => {
+    setAnchorEl(null);
   };
 
   const handleSortClick = (e) => {
@@ -91,7 +108,7 @@ export const useHeaderFilterProps = () => {
           ...tableInfo,
           order_by: isGivenFromProps ? order : !prev,
         },
-        projectId
+        projectId,
       );
       return isGivenFromProps ? order : !prev;
     });
@@ -107,7 +124,7 @@ export const useHeaderFilterProps = () => {
     const viewButtonWidth = 90;
     const maxVisible = Math.max(
       1,
-      Math.floor(containerWidth / viewButtonWidth)
+      Math.floor(containerWidth / viewButtonWidth),
     );
 
     let visible = views.slice(0, maxVisible);
@@ -120,14 +137,14 @@ export const useHeaderFilterProps = () => {
 
         if (!isInVisible) {
           if (visible.length >= maxVisible) {
-            const removed = visible.pop();
-            overflowed = [removed, ...overflowed];
+            // const removed = visible.pop();
+            // overflowed = [removed, ...overflowed];
           }
-          visible.push(chosenView);
-          overflowed = overflowed.filter((v) => v.id !== viewId);
+          // visible.push(chosenView);
+          // overflowed = overflowed.filter((v) => v.id !== viewId);
         } else {
-          visible = visible.filter((v) => v.id !== viewId);
-          visible.push(chosenView);
+          // visible = visible.filter((v) => v.id !== viewId);
+          // visible.push(chosenView);
         }
       }
     }
@@ -199,5 +216,9 @@ export const useHeaderFilterProps = () => {
     isChanged,
     setIsChanged,
     viewForm,
+    getViewName,
+    selectedView,
+    handleCloseViews,
+    selectedTabIndex,
   };
 };

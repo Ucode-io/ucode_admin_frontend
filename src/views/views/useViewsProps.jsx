@@ -233,11 +233,12 @@ export const useViewsProps = () => {
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
+      keepPreviousData: true,
       enabled: Boolean(tableSlug && viewType !== VIEW_TYPES_MAP.SECTION),
       select: ({ data }) => {
         const views =
           data?.views?.filter(
-            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view)
+            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
           ) ?? [];
 
         return {
@@ -263,7 +264,7 @@ export const useViewsProps = () => {
             table_slug: data?.tableInfo.slug,
             relation_table_slug: data?.tableInfo.relation_table_slug,
             is_relation_view: data?.tableInfo?.is_relation_view ?? false,
-          })
+          }),
         );
         dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
         setOrderBy(data?.orderBy);
@@ -275,7 +276,7 @@ export const useViewsProps = () => {
       menuId,
       viewId: selectedView?.id,
       tableSlug: selectedView?.table_slug,
-    }
+    },
   );
 
   const tableName = tableInfo?.label;

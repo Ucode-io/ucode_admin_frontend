@@ -13,8 +13,9 @@ export const Header = ({ tableName }) => {
 
   const { navigate, tableSlug, tableLan } = useHeaderProps()
 
-  return <div className={cls.header}>
-  {/* {relationView && (
+  return (
+    <div className={cls.header}>
+      {/* {relationView && (
     <IconButton
       aria-label="back"
       icon={<ArrowBackIcon fontSize={20} color="#344054" />}
@@ -27,7 +28,7 @@ export const Header = ({ tableName }) => {
     />
   )} */}
 
-  {/* {!relationView && (
+      {/* {!relationView && (
     <IconButton
       aria-label="back"
       icon={<ArrowBackIcon fontSize={20} color="#344054" />}
@@ -40,28 +41,28 @@ export const Header = ({ tableName }) => {
     />
   )} */}
 
-  <IconButton
-    aria-label="home"
-    icon={<img src="/img/home.svg" alt="home" />}
-    variant="ghost"
-    colorScheme="gray"
-    onClick={() => navigate("/")}
-    ml="8px"
-    size="sm"
-  />
-  <ChevronRightIcon fontSize={20} color="#344054" />
-  <div className={cls.tableName}>
-    <div className={cls.tableNameChar}>{tableName?.[0]}</div>
-    {tableName}
-  </div>
+      <IconButton
+        aria-label="home"
+        icon={<img src="/img/home.svg" alt="home" />}
+        variant="ghost"
+        colorScheme="gray"
+        onClick={() => navigate("/")}
+        ml="8px"
+        size="sm"
+      />
+      <ChevronRightIcon fontSize={20} color="#344054" />
+      <div className={cls.tableName}>
+        <div className={cls.tableNameChar}>{tableName?.[0]}</div>
+        {tableName}
+      </div>
 
-  <Flex position="absolute" right="16px" gap="8px">
-    <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-      <TableActions tableSlug={tableSlug} tableLan={tableLan} />
-    </PermissionWrapperV2>
-    <AIButton />
-  </Flex>
-  {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+      <Flex position="absolute" right="16px" gap="8px">
+        <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+          <TableActions tableSlug={tableSlug} tableLan={tableLan} />
+        </PermissionWrapperV2>
+        <AIButton />
+      </Flex>
+      {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
 <Button
   h="30px"
   ml="auto"
@@ -80,5 +81,6 @@ export const Header = ({ tableName }) => {
   ) || "Table Settings"}
 </Button>
 </PermissionWrapperV2> */}
-</div>
+    </div>
+  );
 }

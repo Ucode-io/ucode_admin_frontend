@@ -19,7 +19,7 @@
   },
   "plugins": ["react", "import", "prettier"],
   "rules": {
-    "prettier/prettier": "warn",
+    "prettier/prettier": "off",
     "no-undef": "error",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",

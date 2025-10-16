@@ -552,7 +552,7 @@ const InputField = ({
     disabled || field?.type === "BUTTON" || field?.type === "INCREMENT_ID";
 
   const inputChangeHandler = useDebounce(() => updateObject(), 700);
-
+console.log(errors?.[name]?.message)
   return (
     <Controller
       control={control}
@@ -563,7 +563,10 @@ const InputField = ({
           message:
             field?.type === "EMAIL" ? "Incorrect email format" : undefined,
         },
-        required: isRequired ? "This is required field" : false,
+        required: {
+          value: isRequired,
+          message: "This is required field",
+        },
       }}
       render={({ field: { onChange, value } }) => {
         return (

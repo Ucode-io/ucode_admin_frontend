@@ -49,20 +49,15 @@ import constructorFunctionService from "../../services/constructorFunctionServic
 import listToOptions from "../../utils/listToOptions";
 import {
   EyeOffIcon,
-  fieldTypeIcons,
   PinIcon,
   SettingsIcon,
   SortIcon,
   TrashIcon,
 } from "../../utils/constants/icons";
-import { KeyboardArrowRight } from "@mui/icons-material";
+import { KeyboardArrowRight, North, South } from "@mui/icons-material";
 import useDebounce from "../../hooks/useDebounce";
-import {
-  getColumnIconPath,
-  iconsComponents,
-} from "../../views/table-redesign/icons";
+import { getColumnIconPath } from "../../views/table-redesign/icons";
 import SVG from "react-inlinesvg";
-import { North, South } from "@mui/icons-material";
 import FormElementButton from "../NewFormElements/FormElementButton";
 import deleteField from "../../utils/deleteField";
 
@@ -70,25 +65,6 @@ const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
   { label: "Максимум", value: "MAX" },
   { label: "Среднее", value: "AVG" },
-];
-
-const formulaFormatOptions = [
-  {
-    label: "Formula frontend",
-    label_ru: "Формула frontend",
-    label_en: "Formula frontend",
-    label_uz: "Formula frontend",
-    value: "FORMULA_FRONTEND",
-    icon: "plus-minus.svg",
-  },
-  {
-    label: "Formula backend",
-    label_ru: "Формула backend",
-    label_en: "Formula backend",
-    label_uz: "Formula backend",
-    value: "FORMULA",
-    icon: "plus-minus.svg",
-  },
 ];
 
 export default function FieldCreateModal({
@@ -104,12 +80,10 @@ export default function FieldCreateModal({
   target,
   reset = () => {},
   fieldData,
-  handleOpenFieldDrawer = () => {},
   visibleColumns,
   menuItem,
   mainForm,
   view,
-  sortedDatas,
   setSortedDatas = () => {},
   setFieldData = () => {},
   register = () => {},
@@ -178,7 +152,7 @@ export default function FieldCreateModal({
         {
           table_id: id,
         },
-        tableSlug
+        tableSlug,
       );
 
       const getRelations = constructorRelationService.getList(
@@ -187,7 +161,7 @@ export default function FieldCreateModal({
           relation_table_slug: tableSlug,
         },
         {},
-        tableSlug
+        tableSlug,
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
@@ -316,7 +290,6 @@ export default function FieldCreateModal({
 
   const open = Boolean(anchorEl && !fieldAnchorEl && !relationFieldAnchorEl);
   const openColor = Boolean(colorEl);
-  const openMath = Boolean(mathEl);
 
   const {
     control: formulaControl,
@@ -360,7 +333,7 @@ export default function FieldCreateModal({
         setFields(
           res?.fields?.map((item) => {
             return { value: item.slug, label: item.label };
-          })
+          }),
         );
       },
     },
@@ -383,19 +356,19 @@ export default function FieldCreateModal({
       select: (res) => {
         return listToOptions(res.functions, "name", "id");
       },
-    }
+    },
   );
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
-    () => {
+    (() => {
       if (!relatedTableSlug) return [];
       return constructorTableService.getTableInfo(
         relatedTableSlug,
         {
           data: { limit: 0, offset: 0 },
         },
-        params
+        params,
       );
     },
     {
@@ -418,14 +391,14 @@ export default function FieldCreateModal({
             })
             .filter((field) => field) ?? [];
         const unCheckedColumns = fields.filter(
-          (field) => !values.columns?.includes(field.id)
+          (field) => !values.columns?.includes(field.id),
         );
 
         const checkedFilters =
           values.quick_filters
             ?.map((filter) => {
               const field = fields.find(
-                (field) => field.id === filter.field_id
+                (field) => field.id === filter.field_id,
               );
               if (field)
                 return {
@@ -439,13 +412,13 @@ export default function FieldCreateModal({
         const unCheckedFilters = fields.filter(
           (field) =>
             !values.quick_filters?.some(
-              (filter) => filter.field_id === field.id
-            )
+              (filter) => filter.field_id === field.id,
+            ),
         );
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
       },
-    }
+    }),
   );
 
   const handleClose = () => {
@@ -462,10 +435,6 @@ export default function FieldCreateModal({
 
   const handleCloseColor = () => {
     setColorEl(null);
-  };
-
-  const handleCloseMath = () => {
-    setMathEl(null);
   };
 
   const handleClick = () => {
@@ -808,9 +777,9 @@ export default function FieldCreateModal({
                       <path
                         d="M8.75 1.25L1.25 8.75M1.25 1.25L8.75 8.75"
                         stroke="#8F8E8B"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                   </span>
@@ -911,7 +880,7 @@ export default function FieldCreateModal({
                               fieldData,
                               !view?.attributes?.fixedColumns?.[fieldData?.id]
                                 ? true
-                                : false
+                                : false,
                             )
                           }
                           onMouseEnter={() => {
@@ -936,6 +905,7 @@ export default function FieldCreateModal({
                             register={register}
                             name={"enable_multilanguage"}
                             label={"Multiple language"}
+                            onChange={() => setIsUpdatedField(true)}
                           />
                         </Box>
                       )}
@@ -973,7 +943,7 @@ export default function FieldCreateModal({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Change Type"
+                          "Change Type",
                         ) || "Change type"
                       }
                       icon={<FieldTypeIcon />}
@@ -1008,7 +978,7 @@ export default function FieldCreateModal({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Change format"
+                            "Change format",
                           ) || "Change format"
                         }
                         icon={<FieldFormatIcon />}
@@ -1070,7 +1040,7 @@ export default function FieldCreateModal({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Edit property"
+                          "Edit property",
                         ) || "Edit property"
                       }
                       optionsClassname={style.editProperty}
@@ -1106,7 +1076,7 @@ export default function FieldCreateModal({
                       fieldHandleOpen(
                         fieldData ?? {
                           type: FIELD_TYPES.FORMULA_FRONTEND,
-                        }
+                        },
                       );
                     }}
                     onMouseEnter={() => {
@@ -1117,7 +1087,7 @@ export default function FieldCreateModal({
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Settings"
+                      "Settings",
                     ) || "Settings"}
                     <span className={style.btnIcon}>
                       <KeyboardArrowRight
@@ -1202,6 +1172,7 @@ export default function FieldCreateModal({
                       <div className="">
                         {relation?.map((summary, index) => (
                           <FormulaFilters
+                            key={index}
                             summary={summary}
                             selectedTableSlug={selectedTableSlug}
                             index={index}
@@ -1243,7 +1214,7 @@ export default function FieldCreateModal({
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Add column"
+                      "Add column",
                     ) || "Add column"}
                   </FormElementButton>
                 </Box>
@@ -1252,26 +1223,28 @@ export default function FieldCreateModal({
           </div>
         </Popover>
       )}
-      <FieldPopover
-        open={openField}
-        anchorEl={fieldAnchorEl}
-        onClose={fieldHandleClose}
-        formType={formType}
-        getRelationFields={getRelationFields}
-        mainForm={mainForm}
-        tableLan={tableLan}
-        submitCallback={() => {
-          setTimeout(() => {
-            queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-            queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
-          }, 1000);
-        }}
-        slug={tableSlug}
-        field={drawerState}
-        selectedField={drawerState}
-        handleUpdateField={handleUpdateField}
-        // menuItem={menuItem}
-      />
+      {openField && (
+        <FieldPopover
+          open={openField}
+          anchorEl={fieldAnchorEl}
+          onClose={fieldHandleClose}
+          formType={formType}
+          getRelationFields={getRelationFields}
+          mainForm={mainForm}
+          tableLan={tableLan}
+          submitCallback={() => {
+            setTimeout(() => {
+              queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+              queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+            }, 1000);
+          }}
+          slug={tableSlug}
+          field={drawerState}
+          selectedField={drawerState}
+          handleUpdateField={handleUpdateField}
+          // menuItem={menuItem}
+        />
+      )}
       {fieldData?.type === FIELD_TYPES.LOOKUP ||
       fieldData?.type === FIELD_TYPES.LOOKUPS ? (
         <RelationPopover

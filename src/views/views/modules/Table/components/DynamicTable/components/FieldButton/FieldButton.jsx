@@ -64,7 +64,7 @@ export const FieldButton = ({
       .update(tableSlug, {
         ...view,
         columns: view?.columns
-          ? [...new Set([...view?.columns, column])]
+          ? [...new Set([...view.columns, column])]
           : [column],
       })
       .then(() => {

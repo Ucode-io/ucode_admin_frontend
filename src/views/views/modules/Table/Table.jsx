@@ -17,7 +17,6 @@ export const Table = ({ tab, ...props }) => {
     tableData,
     setDrawerState,
     setDrawerStateField,
-    viewForm,
     multipleDelete,
     fields,
     setCurrentPage,
@@ -50,7 +49,6 @@ export const Table = ({ tab, ...props }) => {
           setDrawerState={setDrawerState}
           setDrawerStateField={setDrawerStateField}
           getValues={getValues}
-          mainForm={viewForm}
           isTableView={true}
           multipleDelete={multipleDelete}
           sortedDatas={sortedDatas}

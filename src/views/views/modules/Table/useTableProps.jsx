@@ -25,7 +25,6 @@ import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 
 export const useTableProps = ({ tab }) => {
-
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
 
@@ -35,7 +34,6 @@ export const useTableProps = ({ tab }) => {
     // tableSlug: tableSlugFromParams,
     appId,
   } = useParams();
-
 
   const {
     views,
@@ -117,6 +115,7 @@ export const useTableProps = ({ tab }) => {
     defaultValues: {
       multi: [],
     },
+    shouldUnregister: true,
   });
 
   const { fields } = useFieldArray({
@@ -146,11 +145,11 @@ export const useTableProps = ({ tab }) => {
   //   mode: "all",
   // });
 
-  const { update } = useFieldArray({
-    control: viewForm.control,
-    name: "fields",
-    keyName: "key",
-  });
+  // const { update } = useFieldArray({
+  //   control: viewForm.control,
+  //   name: "fields",
+  //   keyName: "key",
+  // });
 
   const pagination = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
@@ -286,7 +285,7 @@ export const useTableProps = ({ tab }) => {
 
     if (sortValues && sortValues.length > 0) {
       const matchingSort = sortValues.find(
-        (entry) => entry.tableSlug === tableSlug
+        (entry) => entry.tableSlug === tableSlug,
       );
 
       if (matchingSort) {
@@ -389,7 +388,7 @@ export const useTableProps = ({ tab }) => {
       setCombinedTableData((prev) => [...prev, ...result]);
     },
   });
-
+  console.log({ tableData });
   const {
     data: { layout } = {
       layout: [],
@@ -441,7 +440,7 @@ export const useTableProps = ({ tab }) => {
         relation_table_slug: view.relation_table_slug ?? null,
         is_relation_view: view?.is_relation_view,
         detailId: row?.guid,
-      })
+      }),
     );
     if (Boolean(selectedView?.is_relation_view)) {
       setSelectedView(view);
@@ -498,8 +497,8 @@ export const useTableProps = ({ tab }) => {
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
               param.value,
-              row
-            )}`
+              row,
+            )}`,
         )
         .join("&");
 
@@ -555,8 +554,8 @@ export const useTableProps = ({ tab }) => {
     }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
-        view?.attributes?.quick_filters?.length ?? 0
-      )
+        view?.attributes?.quick_filters?.length ?? 0,
+      ),
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
@@ -567,8 +566,7 @@ export const useTableProps = ({ tab }) => {
     }
   }, [localStorage.getItem("detailPage")]);
 
-
-  const loader = tableLoader || deleteLoader
+  const loader = tableLoader || deleteLoader;
 
   return {
     tableLan,
@@ -597,5 +595,5 @@ export const useTableProps = ({ tab }) => {
     getValues,
     watch,
     currentPage,
-  }
-}
+  };
+};

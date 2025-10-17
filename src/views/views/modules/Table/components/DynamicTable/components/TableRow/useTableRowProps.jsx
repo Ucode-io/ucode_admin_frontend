@@ -6,9 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export const useTableRowProps = ({selectedObjectsForDelete, setSelectedObjectsForDelete, row}) => {
 
-  const {
-    tableSlug
-  } = useViewContext();
+  const { tableSlug, viewForm, view } = useViewContext();
 
   const navigate = useNavigate();
   const projectId = store.getState().auth?.projectId;
@@ -17,7 +15,7 @@ export const useTableRowProps = ({selectedObjectsForDelete, setSelectedObjectsFo
   const changeSetDelete = (row) => {
     if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
       setSelectedObjectsForDelete(
-        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid)
+        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid),
       );
     } else {
       setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
@@ -25,7 +23,7 @@ export const useTableRowProps = ({selectedObjectsForDelete, setSelectedObjectsFo
   };
   const parentRef = useRef(null);
   const selected = Boolean(
-    selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)
+    selectedObjectsForDelete?.find((item) => item?.guid === row?.guid),
   );
 
   return {
@@ -35,5 +33,8 @@ export const useTableRowProps = ({selectedObjectsForDelete, setSelectedObjectsFo
     changeSetDelete,
     parentRef,
     selected,
-  }
+    viewForm,
+    view,
+    tableSlug,
+  };
 }

@@ -9,12 +9,13 @@ import {Box, Button} from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { constructorObjectService } from "@/services/objectService/object.service";
 import useDebounce from "@/hooks/useDebounce";
+import { useViewContext } from "@/providers/ViewProvider";
+import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 
 export const AddNewData = memo(
   ({
     columns,
     getValues,
-    mainForm,
     relationfields,
     data,
     onRowClick,
@@ -22,24 +23,27 @@ export const AddNewData = memo(
     rows,
     setAddNewRow,
     refetch,
-    view,
-    isRelationTable,
+    // view,
+    // isRelationTable,
     pageName,
     tableSettings,
     relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
-    isTableView = false,
-    tableSlug,
-    relationView,
-    fieldsMap = {},
+    // isTableView = false,
+    // tableSlug,
+    // relationView,
+    // fieldsMap = {},
   }) => {
+    const { viewForm, view, isRelationView, tableSlug } = useViewContext();
+    const { fieldsMap } = useFieldsContext();
+
     const rowRef = useRef();
     const dispatch = useDispatch();
     const { id } = useParams();
-    const computedSlug = isRelationTable ? `${relatedTableSlug}_id` : tableSlug;
+    const computedSlug = isRelationView ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
-    const computedTableSlug = isRelationTable ? relatedTableSlug : tableSlug;
+    const computedTableSlug = isRelationView ? relatedTableSlug : tableSlug;
 
     const {
       handleSubmit,
@@ -49,8 +53,8 @@ export const AddNewData = memo(
     } = useForm({});
     const onSubmit = (values) => {
       const data = {
-        [isRelationTable && computedSlug]: Boolean(
-          values?.[computedSlug]?.length
+        [isRelationView && computedSlug]: Boolean(
+          values?.[computedSlug]?.length,
         )
           ? values?.[computedSlug]
           : (id ?? view?.id),
@@ -62,7 +66,7 @@ export const AddNewData = memo(
         .create(computedTableSlug, {
           data: data,
         })
-        .then((res) => {
+        .then(() => {
           setIsLoading(false);
           refetch();
           setAddNewRow(false);
@@ -76,21 +80,21 @@ export const AddNewData = memo(
     };
 
     const handleKeyDown = useDebounce((event) => {
-      const activeEl = document.activeElement;
+      // const activeEl = document.activeElement;
 
-      const isTextInput =
-        activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
-      const isContentEditable = activeEl?.isContentEditable;
+      // const isTextInput =
+      //   activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
+      // const isContentEditable = activeEl?.isContentEditable;
 
-      const isInMantineDateField = activeEl?.closest(
-        ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root"
-      );
+      // const isInMantineDateField = activeEl?.closest(
+      //   ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root",
+      // );
 
       if (
         event.key === "Enter" &&
-        !event.shiftKey &&
-        (isTextInput || isContentEditable) &&
-        !isInMantineDateField &&
+        // !event.shiftKey &&
+        // (isTextInput || isContentEditable) &&
+        // !isInMantineDateField &&
         !isLoading
       ) {
         event.preventDefault();
@@ -105,33 +109,33 @@ export const AddNewData = memo(
       };
     }, []);
 
-    useEffect(() => {
-      const handleClickOutside = (event) => {
-        const clickedInsideRow = rowRef.current?.contains(event.target);
+    // useEffect(() => {
+    //   const handleClickOutside = (event) => {
+    //     const clickedInsideRow = rowRef.current?.contains(event.target);
 
-        const isInDropdown = event.target.closest(
-          [
-            ".MuiPopover-root",
-            ".MuiMenu-paper",
-            ".MuiAutocomplete-popper",
-            ".dropdown-menu",
-            "[role='listbox']",
-            ".mantine-Popover-root",
-            ".mantine-Popover-dropdown",
-            "[data-mantine-portal]",
-          ].join(", ")
-        );
+    //     const isInDropdown = event.target.closest(
+    //       [
+    //         ".MuiPopover-root",
+    //         ".MuiMenu-paper",
+    //         ".MuiAutocomplete-popper",
+    //         ".dropdown-menu",
+    //         "[role='listbox']",
+    //         ".mantine-Popover-root",
+    //         ".mantine-Popover-dropdown",
+    //         "[data-mantine-portal]",
+    //       ].join(", "),
+    //     );
 
-        if (!clickedInsideRow && !isInDropdown) {
-          handleSubmit(onSubmit)();
-        }
-      };
+    //     if (!clickedInsideRow && !isInDropdown) {
+    //       handleSubmit(onSubmit)();
+    //     }
+    //   };
 
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, []);
+    //   document.addEventListener("mousedown", handleClickOutside);
+    //   return () => {
+    //     document.removeEventListener("mousedown", handleClickOutside);
+    //   };
+    // }, []);
 
     return (
       <CTableRow parentRef={rowRef}>
@@ -157,7 +161,7 @@ export const AddNewData = memo(
               minWidth: "80px",
               position: `${
                 tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
+                  (item) => item?.id === column?.id,
                 )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                   ? "sticky"
                   : "relative"
@@ -167,7 +171,7 @@ export const AddNewData = memo(
                 : "0",
               backgroundColor: `${
                 tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
+                  (item) => item?.id === column?.id,
                 )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                   ? "#F6F6F6"
                   : column.attributes?.disabled ||
@@ -177,7 +181,7 @@ export const AddNewData = memo(
               }`,
               zIndex: `${
                 tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
+                  (item) => item?.id === column?.id,
                 )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                   ? "1"
                   : "0"
@@ -190,7 +194,7 @@ export const AddNewData = memo(
               fields={columns}
               field={column}
               getValues={getValues}
-              mainForm={mainForm}
+              mainForm={viewForm}
               control={control}
               setFormValue={setFormValue}
               relationfields={relationfields}
@@ -198,10 +202,10 @@ export const AddNewData = memo(
               onRowClick={onRowClick}
               width={width}
               index={index}
-              watch={mainForm.watch}
+              watch={viewForm.watch}
               newUi={true}
-              isTableView={isTableView}
-              relationView={relationView}
+              isTableView={true}
+              relationView={isRelationView}
               fieldsMap={fieldsMap}
             />
           </CTableCell>
@@ -243,7 +247,7 @@ export const AddNewData = memo(
         </CTableCell>
       </CTableRow>
     );
-  }
+  },
 );
 
 AddNewData.displayName = "AddNewData";

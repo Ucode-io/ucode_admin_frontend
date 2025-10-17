@@ -1,4 +1,4 @@
-export const mockColumns = Array.from({length: 5}, (_, index) => ({
+export const mockColumns = Array.from({ length: 4 }, (_, index) => ({
   attributes: {
     field_permission: {
       edit_permission: true,

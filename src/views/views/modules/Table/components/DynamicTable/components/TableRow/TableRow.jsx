@@ -14,7 +14,6 @@ import TableDataForm from "@/views/views/components/ElementGenerators/TableDataF
 export const TableRow = ({
   relOptions,
   row,
-  key,
   width,
   rowIndex,
   control,
@@ -22,10 +21,10 @@ export const TableRow = ({
   onRowClick,
   calculateWidthFixedColumn,
   onDeleteClick,
-  mainForm,
+  // mainForm,
   getValues,
   currentPage,
-  view,
+  // view,
   columns,
   selectedObjectsForDelete,
   setSelectedObjectsForDelete,
@@ -33,7 +32,7 @@ export const TableRow = ({
   pageName,
   watch,
   setFormValue,
-  tableSlug,
+  // tableSlug,
   remove,
   limit = 10,
   relationAction,
@@ -51,6 +50,9 @@ export const TableRow = ({
     changeSetDelete,
     parentRef,
     selected,
+    tableSlug,
+    viewForm,
+    view,
   } = useTableRowProps({
     selectedObjectsForDelete,
     setSelectedObjectsForDelete,
@@ -62,7 +64,6 @@ export const TableRow = ({
       {!relationAction ? (
         <>
           <CTableRow
-            key={key}
             style={{ ...style, height: "32px" }}
             className="new-ui"
             ref={parentRef}
@@ -170,7 +171,7 @@ export const TableRow = ({
                         fields={columns}
                         field={field}
                         getValues={getValues}
-                        mainForm={mainForm}
+                        mainForm={viewForm}
                         row={row}
                         index={rowIndex}
                         control={control}
@@ -321,10 +322,10 @@ export const TableRow = ({
           </CTableCell>
 
           {columns.map(
-            (virtualColumn) =>
-              virtualColumn?.attributes?.field_permission?.view_permission && (
+            (column) =>
+              column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
-                  key={virtualColumn.id}
+                  key={column.id}
                   className="overflow-ellipsis"
                   style={{
                     minWidth: "220px",
@@ -336,28 +337,25 @@ export const TableRow = ({
                     padding: "0 5px",
                     position: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id,
-                      )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        (item) => item?.id === column?.id,
+                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                         ? "sticky"
                         : "relative"
                     }`,
-                    left: view?.attributes?.fixedColumns?.[virtualColumn?.id]
-                      ? `${calculateWidthFixedColumn(virtualColumn.id) + firstRowWidth}px`
+                    left: view?.attributes?.fixedColumns?.[column?.id]
+                      ? `${calculateWidthFixedColumn(column.id) + firstRowWidth}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id,
-                      )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        (item) => item?.id === column?.id,
+                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                         ? "#F6F6F6"
                         : "#fff"
                     }`,
                     zIndex: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id,
-                      )?.isStiky ||
-                      view?.attributes?.fixedColumns?.[virtualColumn?.id]
+                        (item) => item?.id === column?.id,
+                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                         ? "1"
                         : "0"
                     }`,
@@ -368,9 +366,9 @@ export const TableRow = ({
                       relOptions={relOptions}
                       tableSlug={tableSlug}
                       fields={columns}
-                      field={virtualColumn}
+                      field={column}
                       getValues={getValues}
-                      mainForm={mainForm}
+                      mainForm={viewForm}
                       row={row}
                       index={rowIndex}
                       control={control}
@@ -384,7 +382,7 @@ export const TableRow = ({
                       watch={watch}
                     />
                   ) : (
-                    <CellElementGenerator field={virtualColumn} row={row} />
+                    <CellElementGenerator field={column} row={row} />
                   )}
                 </CTableCell>
               ),
@@ -532,7 +530,7 @@ export const TableRow = ({
                 fields={columns}
                 field={column}
                 getValues={getValues}
-                mainForm={mainForm}
+                mainForm={viewForm}
                 row={row}
                 index={rowIndex}
                 control={control}

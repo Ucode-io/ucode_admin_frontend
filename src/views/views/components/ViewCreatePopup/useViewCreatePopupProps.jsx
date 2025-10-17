@@ -238,7 +238,7 @@ export const useViewCreatePopupProps = ({
           table_slug: table_slug,
           relation_table_slug: watch("table_slug"),
         })
-        .then((res) => {
+        .then(() => {
           dispatch(groupFieldActions.clearGroupBySlug());
           dispatch(showAlert("Successful created", "success"));
           if (relationView && viewsList?.length > 1) {
@@ -269,7 +269,7 @@ export const useViewCreatePopupProps = ({
       select: ({ data }) => ({
         fieldsMapRelRelation: listToMapWithoutRel(data?.fields ?? []),
       }),
-    }
+    },
   );
 
   const computedColumnsForTabGroup = (
@@ -278,12 +278,12 @@ export const useViewCreatePopupProps = ({
         ? data?.fieldsMapRelRelation || {}
         : groupByTableSlug
           ? fieldsMapRel
-          : fieldsMap
+          : fieldsMap,
     ) ?? []
   ).filter((column) =>
     ["LOOKUP", "PICK_LIST", "LOOKUPS", "MULTISELECT", "STATUS"].includes(
-      column.type
-    )
+      column.type,
+    ),
   );
 
   const computedColumnsForTabGroupOptions = computedColumnsForTabGroup.map(
@@ -298,7 +298,7 @@ export const useViewCreatePopupProps = ({
         el?.type === "LOOKUP" || el?.type === "LOOKUPS"
           ? el?.relation_id
           : el?.id,
-    })
+    }),
   );
 
   const { data: tableInfoData } = useQuery(
@@ -316,7 +316,7 @@ export const useViewCreatePopupProps = ({
 
         return { fields };
       },
-    }
+    },
   );
 
   const { data: tableInfoDataRelation } = useQuery(
@@ -333,7 +333,7 @@ export const useViewCreatePopupProps = ({
         const fields = res?.data?.fields ?? [];
         return { fields };
       },
-    }
+    },
   );
 
   const fieldsData = relationView
@@ -342,7 +342,7 @@ export const useViewCreatePopupProps = ({
 
   const computedColumns = useMemo(() => {
     const filteredFields = fieldsData?.filter(
-      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME",
     );
     return listToOptions(filteredFields, "label", "slug");
   }, [fieldsData]);

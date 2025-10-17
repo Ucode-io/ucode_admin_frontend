@@ -89,6 +89,7 @@ export default function FieldCreateModal({
   register = () => {},
   handleCloseFieldDrawer = () => {},
   setIsUpdatedField = () => {},
+  submitCallback,
   formType,
   renderColumns = [],
 }) {
@@ -1232,12 +1233,18 @@ export default function FieldCreateModal({
           getRelationFields={getRelationFields}
           mainForm={mainForm}
           tableLan={tableLan}
-          submitCallback={() => {
-            setTimeout(() => {
-              queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-              queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
-            }, 1000);
-          }}
+          submitCallback={
+            submitCallback
+              ? submitCallback
+              : () => {
+                  setTimeout(() => {
+                    queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+                    queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", {
+                      tableSlug,
+                    });
+                  }, 1000);
+                }
+          }
           slug={tableSlug}
           field={drawerState}
           selectedField={drawerState}

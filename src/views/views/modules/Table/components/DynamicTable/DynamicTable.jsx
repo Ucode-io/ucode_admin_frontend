@@ -1,4 +1,4 @@
-import { ChakraProvider, Flex } from "@chakra-ui/react";
+import { ChakraProvider, Flex, Skeleton } from "@chakra-ui/react";
 import { Pagination, Button } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -23,7 +23,7 @@ export const DynamicTable = ({
   setDrawerStateField,
   getValues,
   additionalRow,
-  mainForm,
+  // mainForm,
   isTableView = true,
   remove,
   multipleDelete,
@@ -73,10 +73,8 @@ export const DynamicTable = ({
     getLimitValue,
     calculatedHeight,
     tableSlug,
-    view,
     menuItem,
     isRelationView,
-    fieldsMap,
   } = useDynamicTableProps({ columns, isResizable, setLimit, data, fields });
 
   return (
@@ -104,8 +102,7 @@ export const DynamicTable = ({
               borderBottom: "1px solid #EAECF0",
               position: "sticky",
               top: 0,
-              zIndex: 0,
-              background: "red",
+              zIndex: 5,
             }}
           >
             <tr>
@@ -120,22 +117,14 @@ export const DynamicTable = ({
               />
               {loader
                 ? mockColumns.map((column) => (
-                    <Th
-                      key={column.id}
-                      tableSlug={tableSlug}
-                      columns={columns}
-                      column={column}
-                      tableSettings={tableSettings}
-                      tableSize={tableSize}
-                      pageName={pageName}
-                      sortedDatas={sortedDatas}
-                      setSortedDatas={setSortedDatas}
-                      relationAction={relationAction}
-                      isRelationTable={isRelationTable}
-                      getAllData={getAllData}
-                      setFieldCreateAnchor={setFieldCreateAnchor}
-                      setFieldData={setFieldData}
-                    />
+                    <th key={column.id}>
+                      <Skeleton
+                        height="32px"
+                        width="316px"
+                        startColor="#d9d6d6"
+                        endColor="#ffffff"
+                      />
+                    </th>
                   ))
                 : renderColumns.map((column) => (
                     <Th
@@ -163,10 +152,10 @@ export const DynamicTable = ({
                   id="addField"
                 >
                   <FieldButton
-                    tableSlug={tableSlug}
+                    // tableSlug={tableSlug}
                     tableLan={tableLan}
-                    view={view}
-                    mainForm={mainForm}
+                    // view={view}
+                    // mainForm={mainForm}
                     setFieldCreateAnchor={setFieldCreateAnchor}
                     fieldCreateAnchor={fieldCreateAnchor}
                     fieldData={fieldData}
@@ -186,12 +175,36 @@ export const DynamicTable = ({
           </thead>
           <tbody>
             {loader ? (
-              <TableDataSkeleton colLength={5 + (!isRelationTable ? 2 : 1)} />
+              <TableDataSkeleton colLength={4 + (!isRelationTable ? 2 : 1)} />
             ) : (
               (isRelationTable ? fields : data).map((rowObject, index) => {
+                // return (
+                //   <tr key={rowObject?.guid || rowObject?.id}>
+                //     <td></td>
+                //     {columns?.map((field) => (
+                //       <td
+                //         key={field.id}
+                //         style={{
+                //           padding: "0 4px",
+                //           position: "sticky",
+                //           left: "0",
+                //           backgroundColor: "#F6F6F6",
+                //           zIndex: "1",
+                //           height: "20px",
+                //         }}
+                //       >
+                //         {rowObject?.[field?.slug]}
+                //       </td>
+                //     ))}
+                //     <td></td>
+                //   </tr>
+                // );
                 return (
                   <TableRow
-                    key={isRelationTable ? rowObject?.id : index}
+                    key={
+                      (isRelationTable ? rowObject?.id : rowObject?.guid) ||
+                      index
+                    }
                     row={rowObject}
                     width={"40px"}
                     rowIndex={index}
@@ -199,7 +212,7 @@ export const DynamicTable = ({
                     watch={watch}
                     getValues={getValues}
                     control={control}
-                    mainForm={mainForm}
+                    // mainForm={mainForm}
                     isTableView={isTableView}
                     selectedObjectsForDelete={selectedObjectsForDelete}
                     setSelectedObjectsForDelete={setSelectedObjectsForDelete}
@@ -212,14 +225,14 @@ export const DynamicTable = ({
                     columns={columns}
                     tableSettings={tableSettings}
                     pageName={pageName}
-                    tableSlug={tableSlug}
+                    // tableSlug={tableSlug}
                     onDeleteClick={onDeleteClick}
                     relationAction={relationAction}
                     relationView={isRelationView}
                     onChecked={onChecked}
                     relationFields={fields?.length}
                     data={data}
-                    view={view}
+                    // view={view}
                     firstRowWidth={45}
                   />
                 );
@@ -227,17 +240,18 @@ export const DynamicTable = ({
             )}
             {addNewRow && (
               <AddNewData
+                key={`addNewData`}
                 rows={isRelationTable ? fields : data}
                 columns={columns}
-                isRelationTable={isRelationTable}
+                // isRelationTable={isRelationTable}
                 setAddNewRow={setAddNewRow}
                 isTableView={isTableView}
                 tableSlug={tableSlug}
                 getValues={getValues}
-                mainForm={mainForm}
+                // mainForm={mainForm}
                 relationfields={fields}
                 data={data}
-                view={view}
+                // view={view}
                 onRowClick={onRowClick}
                 width={"80px"}
                 refetch={refetch}
@@ -245,8 +259,8 @@ export const DynamicTable = ({
                 tableSettings={tableSettings}
                 calculateWidthFixedColumn={calculateWidthFixedColumn}
                 firstRowWidth={45}
-                relationView={isRelationView}
-                fieldsMap={fieldsMap}
+                // relationView={isRelationView}
+                // fieldsMap={fieldsMap}
               />
             )}
             <PermissionWrapperV2 tableSlug={tableSlug} type={"write"}>

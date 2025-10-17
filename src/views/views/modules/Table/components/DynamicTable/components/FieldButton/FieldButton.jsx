@@ -1,7 +1,13 @@
 import FieldCreateModal from "@/components/DataTable/FieldCreateModal";
 import FieldOptionModal from "@/components/DataTable/FieldOptionModal";
-import { useFieldUpdateMutation, useFieldCreateMutation } from "@/services/constructorFieldService";
-import { useRelationFieldUpdateMutation, useRelationsCreateMutation } from "@/services/relationService";
+import {
+  useFieldUpdateMutation,
+  useFieldCreateMutation,
+} from "@/services/constructorFieldService";
+import {
+  useRelationFieldUpdateMutation,
+  useRelationsCreateMutation,
+} from "@/services/relationService";
 import constructorViewService from "@/services/viewsService/views.service";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
@@ -13,25 +19,33 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { useViewContext } from "@/providers/ViewProvider";
 
 export const FieldButton = ({
   tableLan,
-  view,
+  // view,
   setFieldCreateAnchor,
   fieldCreateAnchor,
   fieldData,
   setFieldData,
   setDrawerState,
   setDrawerStateField,
-  menuItem,
-  mainForm,
+  // menuItem,
+  // mainForm,
   sortedDatas,
   setSortedDatas,
-  tableSlug,
+  // tableSlug,
   formType,
   setFormType,
   renderColumns,
 }) => {
+  const { menuItem, viewForm, tableSlug, view, refetchTableInfo } =
+    useViewContext();
+
+  const submitCallback = () => {
+    refetchTableInfo();
+  };
+
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const dispatch = useDispatch();
@@ -60,6 +74,7 @@ export const FieldButton = ({
   };
 
   const updateView = (column) => {
+    console.log("UPDATE FIELD");
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -136,7 +151,7 @@ export const FieldButton = ({
             " " +
             values?.attributes?.to_formula,
         has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
-          values?.type
+          values?.type,
         ),
         enable_multilanguage: values?.enable_multilanguage || false,
       },
@@ -151,10 +166,13 @@ export const FieldButton = ({
           languages.map((lang) => [
             `label_${lang.slug}`,
             values?.table_to?.split("/")?.[0],
-          ])
+          ]),
         ),
         ...Object.fromEntries(
-          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
+          languages.map((lang) => [
+            `label_to_${lang.slug}`,
+            values?.table_from,
+          ]),
         ),
       },
       table_to: values?.table_to?.split("/")?.[1],
@@ -252,12 +270,13 @@ export const FieldButton = ({
           view={view}
           setSortedDatas={setSortedDatas}
           sortedDatas={sortedDatas}
-          mainForm={mainForm}
+          mainForm={viewForm}
           formType={formType}
           register={register}
           handleCloseFieldDrawer={handleCloseFieldDrawer}
           setIsUpdatedField={setIsUpdatedField}
           renderColumns={renderColumns}
+          submitCallback={submitCallback}
         />
       )}
     </>

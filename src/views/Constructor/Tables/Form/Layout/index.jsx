@@ -91,34 +91,31 @@ const Layout = ({
 
   return (
     <>
-      {selectedLayout?.id ? (
-        <NewLayoutSettings
-          tableLan={tableLan}
-          mainForm={mainForm}
-          selectedLayout={selectedLayout}
-          selectedTab={selectedTab}
-          setSelectedTab={setSelectedTab}
-          setSelectedLayout={setSelectedLayout}
-          layoutForm={layoutForm}
-          openFieldsBlock={openFieldsBlock}
-          openFieldSettingsBlock={openFieldSettingsBlock}
-          openRelationSettingsBlock={openRelationSettingsBlock}
-          sectionTabs={sectionTabs}
-          replaceSectionTab={replaceSectionTab}
-          insertSectionTab={insertSectionTab}
-          removeSectionTab={removeSectionTab}
-          moveSectionTab={moveSectionTab}
-          appendSectionTab={appendSectionTab}
-        />
-      ) : (
-        <RingLoaderWithWrapper />
-      )}
+      <NewLayoutSettings
+        tableLan={tableLan}
+        mainForm={mainForm}
+        selectedLayout={selectedLayout}
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+        setSelectedLayout={setSelectedLayout}
+        layoutForm={layoutForm}
+        openFieldsBlock={openFieldsBlock}
+        openFieldSettingsBlock={openFieldSettingsBlock}
+        openRelationSettingsBlock={openRelationSettingsBlock}
+        sectionTabs={sectionTabs}
+        replaceSectionTab={replaceSectionTab}
+        insertSectionTab={insertSectionTab}
+        removeSectionTab={removeSectionTab}
+        moveSectionTab={moveSectionTab}
+        appendSectionTab={appendSectionTab}
+      />
 
       <div className={styles.page}>
         <Collapse
           in={settingsBlockVisible}
           unmountOnExit
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <SettingsBlock
             updateSectionTab={updateSectionTab}
             mainForm={mainForm}

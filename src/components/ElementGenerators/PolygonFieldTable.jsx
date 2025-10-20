@@ -1,6 +1,6 @@
 import {Box, Button, Modal} from "@mui/material";
 import {useState} from "react";
-import HFPolygonField from "../FormElements/HFPolygonField";
+import HFPolygonField from "../FormElements/HFPolygonFieldOptimization";
 import {get} from "@ngard/tiny-get";
 
 const style = {

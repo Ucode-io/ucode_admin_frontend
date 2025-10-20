@@ -1,7 +1,5 @@
 import { Box } from "@mui/material";
 import React, { memo, useMemo } from "react";
-import { useMutation } from "react-query";
-import constructorObjectService from "@/services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
@@ -23,18 +21,13 @@ const TableDataForm = ({
   relOptions,
   isTableView,
   relationfields,
-  getValues = () => {},
   setFormValue = () => {},
   newUi,
   relationView,
   isNewRow,
+  updateObject = () => {},
+  handleChange = () => {},
 }) => {
-  const { mutate: updateObject } = useMutation(() =>
-    constructorObjectService.update(tableSlug, {
-      data: { ...getValues(`multi.${index}`) },
-    }),
-  );
-
   const { i18n } = useTranslation();
 
   const isWrapField = useMemo(() => {
@@ -116,6 +109,7 @@ const TableDataForm = ({
           updateObject={updateObject}
           setFormValue={setFormValue}
           newUi={newUi}
+          handleChange={handleChange}
         />
       )}
     </Box>

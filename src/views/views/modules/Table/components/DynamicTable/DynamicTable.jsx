@@ -51,6 +51,8 @@ export const DynamicTable = ({
   loader,
   isPaginationPositionSticky,
   getAllData = () => {},
+  handleChange = () => {},
+  rows,
 }) => {
   const {
     i18n,
@@ -177,7 +179,8 @@ export const DynamicTable = ({
             {loader ? (
               <TableDataSkeleton colLength={4 + (!isRelationTable ? 2 : 1)} />
             ) : (
-              (isRelationTable ? fields : data).map((rowObject, index) => {
+              // (isRelationTable ? fields : data)
+              rows.map((rowObject, index) => {
                 // return (
                 //   <tr key={rowObject?.guid || rowObject?.id}>
                 //     <td></td>
@@ -234,6 +237,8 @@ export const DynamicTable = ({
                     data={data}
                     // view={view}
                     firstRowWidth={45}
+                    rows={rows}
+                    handleChange={handleChange}
                   />
                 );
               })

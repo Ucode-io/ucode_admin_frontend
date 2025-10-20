@@ -25,7 +25,7 @@ export const IndexTh = ({ items, selectedItems, onSelectAll }) => {
       {showCheckbox && (
         <Checkbox
           style={{ width: 10, height: 10 }}
-          checked={items?.length === selectedItems?.length}
+          checked={items?.length === selectedItems?.length && items?.length > 0}
           indeterminate={
             selectedItems?.length > 0 && items?.length !== selectedItems?.length
           }

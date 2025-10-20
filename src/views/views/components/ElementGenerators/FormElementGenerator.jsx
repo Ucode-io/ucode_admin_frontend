@@ -24,7 +24,7 @@ import HFNumberField from "@/components/FormElements/HFNumberField";
 import HFImageUpload from "@/components/FormElements/HFImageUpload";
 import HFVideoUpload from "@/components/FormElements/HFVideoUpload";
 import HFQrFieldComponent from "@/components/FormElements/HFQrField";
-import HFPolygonField from "@/components/FormElements/HFPolygonField";
+import HFPolygonField from "@/components/FormElements/HFPolygonFieldOptimization";
 import HFAutocomplete from "@/components/FormElements/HFAutocomplete";
 import HFFormulaField from "@/components/FormElements/HFFormulaField";
 import HFDateTimePicker from "@/components/FormElements/HFDateTimePicker";

@@ -40,10 +40,10 @@ export const AddNewData = memo(
 
     const rowRef = useRef();
     const dispatch = useDispatch();
-    const { id } = useParams();
-    const computedSlug = isRelationView ? `${relatedTableSlug}_id` : tableSlug;
+    // const { id } = useParams();
+    // const computedSlug = isRelationView ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
-    const computedTableSlug = isRelationView ? relatedTableSlug : tableSlug;
+    // const computedTableSlug = isRelationView ? relatedTableSlug : tableSlug;
 
     const {
       handleSubmit,
@@ -51,19 +51,20 @@ export const AddNewData = memo(
       setValue: setFormValue,
       formState: { errors },
     } = useForm({});
+
     const onSubmit = (values) => {
       const data = {
-        [isRelationView && computedSlug]: Boolean(
-          values?.[computedSlug]?.length,
-        )
-          ? values?.[computedSlug]
-          : (id ?? view?.id),
+        // [isRelationView && computedSlug]: Boolean(
+        //   values?.[computedSlug]?.length,
+        // )
+        //   ? values?.[computedSlug]
+        //   : (id ?? view?.id),
         ...values,
       };
-
+      console.log({ data });
       setIsLoading(true);
       constructorObjectService
-        .create(computedTableSlug, {
+        .create(tableSlug, {
           data: data,
         })
         .then(() => {

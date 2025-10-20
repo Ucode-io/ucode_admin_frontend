@@ -46,6 +46,10 @@ export const FieldButton = ({
     refetchTableInfo();
   };
 
+  const deleteCallback = () => {
+    refetchTableInfo();
+  };
+
   const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const dispatch = useDispatch();
@@ -277,6 +281,7 @@ export const FieldButton = ({
           setIsUpdatedField={setIsUpdatedField}
           renderColumns={renderColumns}
           submitCallback={submitCallback}
+          deleteCallback={deleteCallback}
         />
       )}
     </>

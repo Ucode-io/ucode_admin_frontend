@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import React, { useMemo } from "react";
-import { useMutation } from "react-query";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
 import CellElementGeneratorForRelation from "./CellElementGeneratorForRelation";
 
@@ -22,7 +21,7 @@ export default function NewTableDataForm({
   relationView,
   fieldsMap,
 }) {
-  const { mutate: updateObject } = useMutation(() => console.log(""));
+  // const { mutate: updateObject } = useMutation(() => console.log(""));
 
   const isWrapField = useMemo(() => {
     if (!isWrap || !field || !field.id) {
@@ -55,7 +54,7 @@ export default function NewTableDataForm({
           tableSlug={tableSlug}
           name={`multi.${index}.${field.slug}`}
           isWrapField={isWrapField}
-          updateObject={updateObject}
+          updateObject={() => {}}
           fields={fields}
           field={field}
           row={row}
@@ -77,7 +76,7 @@ export default function NewTableDataForm({
           isNewRow={true}
           watch={watch}
           isWrapField={isWrapField}
-          updateObject={updateObject}
+          updateObject={() => {}}
           fields={fields}
           field={field}
           row={row}

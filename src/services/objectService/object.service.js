@@ -13,7 +13,7 @@ export const constructorObjectService = {
     request.post(
       `/object/get-list-group-by/${tableSlug}/${rowTableSlug}`,
       data,
-      { params }
+      { params },
     ),
   getAutofilterList: ({ tableSlug, ...params }, data) =>
     request.post(`/object/get-list/${tableSlug}`, data, { params }),
@@ -22,8 +22,8 @@ export const constructorObjectService = {
     request.post(`/object-upsert/${tableSlug}`, data),
   create: (tableSlug, data) => requestV2.post(`/items/${tableSlug}`, data),
   getById: (tableSlug, id) => requestV2.get(`/items/${tableSlug}/${id}`),
-  getItems: (tableSlug, id) => requestV2.get(`/items/${tableSlug}`),
-  getObjectByID: ({ tableSlug, resourceId, id, envId, projectId }) =>
+  getItems: (tableSlug) => requestV2.get(`/items/${tableSlug}`),
+  getObjectByID: ({ tableSlug, resourceId, id, projectId }) =>
     request.get(`/object/${tableSlug}/${id}`, {
       headers: {
         "resource-id": resourceId,
@@ -56,7 +56,7 @@ export const constructorObjectService = {
           "resource-id": data.resourceId,
           "environment-id": data.envId,
         },
-      }
+      },
     ),
   createObject: (data) =>
     request.post(
@@ -67,7 +67,7 @@ export const constructorObjectService = {
           "resource-id": data.resourceId,
           "environment-id": data.envId,
         },
-      }
+      },
     ),
   deleteMultiple: (tableSlug, data) =>
     request.delete(`/object/${tableSlug}`, { data }),

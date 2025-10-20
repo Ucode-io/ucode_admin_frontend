@@ -90,6 +90,7 @@ export default function FieldCreateModal({
   handleCloseFieldDrawer = () => {},
   setIsUpdatedField = () => {},
   submitCallback,
+  deleteCallback,
   formType,
   renderColumns = [],
 }) {
@@ -696,8 +697,12 @@ export default function FieldCreateModal({
       column,
       tableSlug,
       callback: () => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        if (deleteCallback) {
+          deleteCallback();
+        } else {
+          queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+        }
       },
     });
     handleClose();

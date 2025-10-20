@@ -1,39 +1,39 @@
-import HFCheckbox from "@/views/table-redesign/hf-checkbox";
-import HFAutocomplete from "@/components/FormElements/HFAutocomplete";
-import HFButtonField from "@/components/FormElements/HFButtonField";
-import HFColorPicker from "@/components/FormElements/HFColorPicker";
-import HFFileUpload from "@/components/FormElements/HFFileUpload";
-import HFFloatField from "@/components/FormElements/HFFloatField";
-import HFFormulaField from "@/components/FormElements/HFFormulaField";
-import HFIconPicker from "@/components/FormElements/HFIconPicker";
-import HFInternationPhone from "@/components/FormElements/HFInternationPhone";
-import HFLinkField from "@/components/FormElements/HFLinkField";
-import HFModalMap from "@/components/FormElements/HFModalMap";
-import HFMultiFile from "@/components/FormElements/HFMultiFile";
-import HFMultiImage from "@/components/FormElements/HFMultiImage";
-import HFMultipleAutocomplete from "@/components/FormElements/HFMultipleAutocomplete";
-import HFNumberField from "@/components/FormElements/HFNumberField";
-import HFPassword from "@/components/FormElements/HFPassword";
-import HFPhotoUpload from "@/components/FormElements/HFPhotoUpload";
-import HFQrFieldComponent from "@/components/FormElements/HFQrField";
-import HFStatusField from "@/components/FormElements/HFStatusField";
-import HFTextComponent from "@/components/FormElements/HFTextComponent";
-import HFTextField from "@/components/FormElements/HFTextField";
-import HFTextFieldWithMask from "@/components/FormElements/HFTextFieldWithMask";
-import InventoryBarCode from "@/components/FormElements/InventoryBarcode";
-import NewCHFFormulaField from "@/components/FormElements/NewCHFormulaField";
+import HFCheckbox from "@/views/table-redesign/hf-checkbox-optimization";
+// import HFAutocomplete from "@/components/FormElementsOptimization/HFAutocomplete";
+import HFButtonField from "@/components/FormElementsOptimization/HFButtonField";
+import HFColorPicker from "@/components/FormElementsOptimization/HFColorPicker";
+import HFFileUpload from "@/components/FormElementsOptimization/HFFileUpload";
+import HFFloatField from "@/components/FormElementsOptimization/HFFloatField";
+import HFFormulaField from "@/components/FormElementsOptimization/HFFormulaField";
+import HFIconPicker from "@/components/FormElementsOptimization/HFIconPicker";
+import HFInternationPhone from "@/components/FormElementsOptimization/HFInternationPhone";
+import HFLinkField from "@/components/FormElementsOptimization/HFLinkField";
+import HFModalMap from "@/components/FormElementsOptimization/HFModalMap";
+import HFMultiFile from "@/components/FormElementsOptimization/HFMultiFile";
+import HFMultiImage from "@/components/FormElementsOptimization/HFMultiImage";
+import HFMultipleAutocomplete from "@/components/FormElementsOptimization/HFMultipleAutocomplete";
+import HFNumberField from "@/components/FormElementsOptimization/HFNumberField";
+import HFPassword from "@/components/FormElementsOptimization/HFPassword";
+import HFPhotoUpload from "@/components/FormElementsOptimization/HFPhotoUpload";
+import HFQrFieldComponent from "@/components/FormElementsOptimization/HFQrFieldOptimization";
+import HFStatusField from "@/components/FormElementsOptimization/HFStatusField";
+import HFTextComponent from "@/components/FormElementsOptimization/HFTextComponent";
+import HFTextField from "@/components/FormElementsOptimization/HFTextField";
+import HFTextFieldWithMask from "@/components/FormElementsOptimization/HFTextFieldWithMask";
+import InventoryBarCode from "@/components/FormElementsOptimization/InventoryBarcode";
+import NewCHFFormulaField from "@/components/FormElementsOptimization/NewCHFormulaField";
 import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
-import PolygonFieldTable from "./PolygonFieldTable";
+import PolygonFieldTable from "./PolygonFieldTableOptimization";
 import {
   HFDateDatePickerWithoutTimeZoneTable,
   HFDatePicker,
   HFDateTimePicker,
-  HFTimePicker,
+  HFTimePickerNew,
 } from "@/views/table-redesign/hf-date";
-import HFSwitch from "@/views/table-redesign/hf-switch";
-import { HFVideoUpload } from "@/views/table-redesign/hf-video-upload";
-import HFDatePickerNew from "@/views/table-redesign/DatePickerNew";
+import HFSwitch from "@/views/table-redesign/hf-switch-optimization";
+import { HFVideoUpload } from "@/views/table-redesign/hf-video-upload-optimization";
+import HFDatePickerNew from "@/views/table-redesign/DatePickerOptimization";
 
 export const getFieldByType = ({
   isDisabled,
@@ -46,31 +46,27 @@ export const getFieldByType = ({
   row,
   newUi,
   index,
-  setFormValue,
   newColumn,
-  data,
   isTableView = false,
   fields,
   isWrapField,
-  debouncedUpdateObject,
+  handleChange,
 }) => {
-
   const fieldsMap = {
     SINGLE_LINE: (
       <HFTextField
         disabled={isDisabled}
         isFormEdit
-        updateObject={updateObject}
         isNewTableView={true}
         isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
         fullWidth
         field={field}
         inputHeight={20}
         required={field.required}
         placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
+        row={row}
+        handleChange={handleChange}
         rules={{
           pattern: {
             value: new RegExp(field?.attributes?.validation),
@@ -81,18 +77,16 @@ export const getFieldByType = ({
     ),
     LINK: (
       <HFLinkField
-        isFormEdit
         disabled={isDisabled}
-        updateObject={updateObject}
         isNewTableView={true}
         isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
         fullWidth
         field={field}
         required={field.required}
         placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
+        row={row}
+        handleChange={handleChange}
       />
     ),
     TEXT: <HFTextComponent isTableView={true} field={field} />,
@@ -108,220 +102,133 @@ export const getFieldByType = ({
         newUi={newUi}
         disabled={isDisabled}
         index={index}
+        handleChange={handleChange}
       />
     ),
     PASSWORD: (
       <HFPassword
-        isDisabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
         isNewTableView={true}
         isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
-        fullWidth
         field={field}
         isTransparent={true}
-        required={field.required}
-        type="password"
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
         newUi={newUi}
+        row={row}
+        handleChange={handleChange}
       />
     ),
     SCAN_BARCODE: (
       <InventoryBarCode
-        control={control}
         name={computedSlug}
         fullWidth
-        updateObject={updateObject}
-        isNewTableView={true}
-        setFormValue={setFormValue}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
         field={field}
         disabled={isDisabled}
+        row={row}
       />
     ),
     PHONE: (
       <HFTextFieldWithMask
         disabled={isDisabled}
         isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
         isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
         fullWidth
         isTransparent={true}
         required={field.required}
         placeholder={field.attributes?.placeholder}
         mask={"(99) 999-99-99"}
-        defaultValue={defaultValue}
+        field={field}
+        row={row}
+        handleChange={handleChange}
       />
     ),
     PHOTO: (
       <HFPhotoUpload
         disabled={isDisabled}
-        isFormEdit
         field={field}
-        updateObject={updateObject}
         isNewTableView={true}
-        isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
-        fullWidth
-        isTransparent={true}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     MULTI_IMAGE: (
       <HFMultiImage
         disabled={isDisabled}
-        isFormEdit
         field={field}
         isTableView={true}
         updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
-        fullWidth
-        isTransparent={true}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
         newUi={newUi}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     MULTI_FILE: (
       <HFMultiFile
         disabled={isDisabled}
-        isFormEdit
         field={field}
         isTableView={true}
         updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
-        fullWidth
-        isTransparent={true}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
         newUi={newUi}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     FORMULA: (
       <HFFormulaField
         disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
         isTableView={true}
-        isBlackBg={isBlackBg}
-        control={control}
         name={computedSlug}
-        fullWidth
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        mask={"(99) 999-99-99"}
-        defaultValue={defaultValue}
-        isTransparent={true}
+        row={row}
       />
     ),
     FORMULA_FRONTEND: (
       <NewCHFFormulaField
-        setFormValue={setFormValue}
-        control={control}
-        updateObject={updateObject}
-        isNewTableView={true}
         isTableView={true}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
         name={computedSlug}
         fieldsList={fields}
         disabled={!isDisabled}
         isTransparent={true}
         field={field}
-        index={index}
-        defaultValue={defaultValue}
         newUi={newUi}
-      />
-    ),
-    PICK_LIST: (
-      <HFAutocomplete
-        disabled={isDisabled}
-        isBlackBg={isBlackBg}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        control={control}
-        name={computedSlug}
-        width="100%"
-        options={field?.attributes?.options}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
+        row={row}
       />
     ),
     INTERNATION_PHONE: (
       <HFInternationPhone
-        control={control}
-        isBlackBg={isBlackBg}
         isTableView={isTableView}
         name={computedSlug}
-        tabIndex={field?.tabIndex}
-        updateObject={updateObject}
-        isNewTableView={true}
-        fullWidth
-        required={field?.required}
-        placeholder={field.attributes?.placeholder}
-        mask={"(99) 999-99-99"}
-        defaultValue={defaultValue}
         disabled={isDisabled}
         newUi={newUi}
+        row={row}
+        handleChange={handleChange}
+        field={field}
       />
     ),
     MULTISELECT: (
       <HFMultipleAutocomplete
         disabled={isDisabled}
         isFormEdit
-        updateObject={updateObject}
         isNewTableView={true}
-        control={control}
-        name={computedSlug}
         width="100%"
         required={field.required}
         field={field}
         placeholder={field.attributes?.placeholder}
         isBlackBg={isBlackBg}
-        defaultValue={defaultValue}
-        data={data}
         newUi={newUi}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     DATE: newUi ? (
       <HFDatePickerNew
         field={field}
-        control={control}
-        name={computedSlug}
-        fullWidth
-        updateObject={updateObject}
-        isNewTableView={true}
-        width={"100%"}
-        mask={"99.99.9999"}
-        isFormEdit
-        isBlackBg={isBlackBg}
-        required={field.required}
         placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
         disabled={isDisabled}
-        isTransparent={true}
+        handleChange={handleChange}
+        row={row}
       />
     ) : (
       <HFDatePicker
@@ -343,21 +250,12 @@ export const getFieldByType = ({
     ),
     DATE_TIME: newUi ? (
       <HFDatePickerNew
-        withTime={true}
-        dateTime={true}
         field={field}
-        disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        showCopyBtn={false}
-        control={control}
-        name={computedSlug}
-        required={field.required}
         placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
-        isTransparent={true}
+        disabled={isDisabled}
+        handleChange={handleChange}
+        row={row}
+        withTime={true}
       />
     ) : (
       <HFDateTimePicker
@@ -377,22 +275,12 @@ export const getFieldByType = ({
     ),
     DATE_TIME_WITHOUT_TIME_ZONE: newUi ? (
       <HFDatePickerNew
-        withTime={true}
-        dateTime={true}
-        timezone={true}
         field={field}
-        disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        showCopyBtn={false}
-        control={control}
-        name={computedSlug}
-        required={field.required}
         placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
-        isTransparent={true}
+        disabled={isDisabled}
+        handleChange={handleChange}
+        row={row}
+        withTime={true}
       />
     ) : (
       <HFDateDatePickerWithoutTimeZoneTable
@@ -411,84 +299,58 @@ export const getFieldByType = ({
       />
     ),
     TIME: (
-      <HFTimePicker
+      <HFTimePickerNew
         disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        isBlackBg={isBlackBg}
-        control={control}
-        name={computedSlug}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        defaultValue={defaultValue}
-        isTransparent={true}
+        row={row}
+        handleChange={handleChange}
+        field={field}
       />
     ),
     NUMBER: (
       <HFNumberField
         disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
         isNewTableView={true}
-        control={control}
         name={computedSlug}
         fullWidth
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
         isBlackBg={isBlackBg}
-        defaultValue={defaultValue}
         isTransparent={true}
         newColumn={newColumn}
         newUi={newUi}
+        row={row}
+        field={field}
+        handleChange={handleChange}
       />
     ),
     FLOAT: (
       <HFFloatField
         disabled={isDisabled}
         isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
-        control={control}
-        name={computedSlug}
         fullWidth
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
         isBlackBg={isBlackBg}
-        defaultValue={defaultValue}
         isTransparent={true}
-        newUi={newUi}
+        row={row}
+        field={field}
+        handleChange={handleChange}
       />
     ),
     CHECKBOX: (
       <HFCheckbox
         field={field}
-        newColumn={newColumn}
         disabled={isDisabled}
-        isFormEdit
-        updateObject={updateObject}
-        isNewTableView={true}
         isBlackBg={isBlackBg}
-        control={control}
-        name={computedSlug}
-        required={field.required}
-        defaultValue={defaultValue}
-        newUi={newUi}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     SWITCH: (
       <HFSwitch
         newColumn={newColumn}
         disabled={isDisabled}
-        isFormEdit
         field={field}
-        updateObject={updateObject}
-        isNewTableView={true}
         isBlackBg={isBlackBg}
-        control={control}
-        name={computedSlug}
         required={field.required}
-        defaultValue={defaultValue}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     EMAIL: (
@@ -510,96 +372,63 @@ export const getFieldByType = ({
         required={field.required}
         placeholder={field.attributes?.placeholder}
         defaultValue={defaultValue}
+        row={row}
+        field={field}
       />
     ),
     ICON: (
       <HFIconPicker
-        isFormEdit
         disabled={isDisabled}
-        control={control}
-        updateObject={updateObject}
-        isNewTableView={true}
-        name={computedSlug}
-        required={field.required}
-        defaultValue={defaultValue}
+        handleChange={handleChange}
+        row={row}
+        field={field}
       />
     ),
     MAP: (
       <HFModalMap
         isTransparent={true}
-        control={control}
-        updateObject={updateObject}
-        isNewTableView={true}
         field={field}
         defaultValue={defaultValue}
-        isFormEdit
-        name={computedSlug}
-        required={field?.required}
+        handleChange={handleChange}
+        row={row}
       />
     ),
     QR: (
       <HFQrFieldComponent
         disabled={isDisabled}
-        isTransparent={true}
-        control={control}
-        updateObject={updateObject}
         isTableView={isTableView}
         field={field}
-        defaultValue={defaultValue}
-        isFormEdit
-        name={computedSlug}
         required={field?.required}
         newColumn={newColumn}
+        row={row}
       />
     ),
     POLYGON: (
       <PolygonFieldTable
         field={field}
-        control={control}
-        updateObject={updateObject}
         computedSlug={computedSlug}
         isDisabled={isDisabled}
         isNewTableView={true}
         row={row}
-        newColumn={newColumn}
+        handleChange={handleChange}
+        disabled={isDisabled}
       />
     ),
     MULTI_LINE: (
       <MultiLineCellFormElement
-        control={control}
         isWrapField={isWrapField}
-        updateObject={debouncedUpdateObject}
         isNewTableView={true}
-        computedSlug={computedSlug}
         field={field}
         isDisabled={isDisabled}
+        row={row}
+        handleChange={handleChange}
       />
     ),
     CUSTOM_IMAGE: (
-      <HFFileUpload
-        isTransparent={true}
-        control={control}
-        updateObject={updateObject}
-        isNewTableView={true}
-        name={computedSlug}
-        defaultValue={defaultValue}
-        isFormEdit
-        required={field.required}
-      />
+      <HFFileUpload field={field} handleChange={handleChange} row={row} />
     ),
     VIDEO: (
-      <HFVideoUpload
-        control={control}
-        updateObject={updateObject}
-        isNewTableView={true}
-        name={computedSlug}
-        defaultValue={defaultValue}
-        isFormEdit
-        isBlackBg={isBlackBg}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        isTransparent={true}
-      />
+      <HFVideoUpload row={row} field={field} handleChange={handleChange} />
     ),
     FILE: (
       <HFFileUpload
@@ -617,22 +446,19 @@ export const getFieldByType = ({
     ),
     COLOR: (
       <HFColorPicker
+        field={field}
+        row={row}
+        handleChange={handleChange}
         disabled={isDisabled}
-        control={control}
-        updateObject={updateObject}
-        isNewTableView={true}
-        name={computedSlug}
-        defaultValue={defaultValue}
-        isFormEdit
-        isBlackBg={isBlackBg}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
-        isTransparent={true}
       />
     ),
     default: (
       <div style={{ padding: "0 4px" }}>
-        <CellElementGenerator field={field} row={row} />
+        <CellElementGenerator
+          field={field}
+          row={row}
+          handleChange={handleChange}
+        />
       </div>
     ),
   };

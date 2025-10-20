@@ -1,7 +1,6 @@
-import React from "react";
-import HFTextEditor from "@/components/FormElements/HFTextEditor";
+import React, { useEffect, useState } from "react";
+import HFTextEditor from "@/components/FormElements/HFTextEditorOptimization";
 import { Box, Popover } from "@mui/material";
-import { useWatch } from "react-hook-form";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useDispatch } from "react-redux";
 import { showAlert } from "@/store/alert/alert.thunk";
@@ -9,35 +8,35 @@ import cls from "./style.module.scss";
 import { parseHTMLToText } from "@/utils/parseHTMLToText";
 
 export default function MultiLineCellFormElement({
-  control,
-  computedSlug,
   isWrapField,
-  updateObject,
   isNewTableView = false,
   field,
   isDisabled,
+  row,
+  handleChange,
   ...props
 }) {
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
+  const [innerValue, setInnerValue] = useState(row?.[field?.slug]);
 
-  const value = useWatch({
-    control,
-    name: computedSlug,
-  });
+  const defaultValue = row?.[field?.slug];
 
   const stripHtmlTags = (input) => {
     return input.replace(/<[^>]*>/g, "");
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
+    console.log("CLOSE");
+    handleChange({
+      value: innerValue,
+      name: field?.slug,
+      rowId: row?.guid,
+    });
     setAnchorEl(null);
   };
 
@@ -53,6 +52,12 @@ export default function MultiLineCellFormElement({
     dispatch(showAlert("Copied to clipboard", "success"));
   };
 
+  useEffect(() => {
+    if (row?.[field?.slug] !== innerValue) {
+      setInnerValue(row?.[field?.slug]);
+    }
+  }, [row]);
+
   return (
     <>
       <Box
@@ -63,7 +68,7 @@ export default function MultiLineCellFormElement({
       >
         <button
           className={cls.multiLineCellFormElementBtn}
-          onClick={() => handleCopy(value)}
+          onClick={() => handleCopy(defaultValue)}
         >
           <span>
             <ContentCopyIcon style={{ width: "17px", height: "17px" }} />
@@ -94,8 +99,8 @@ export default function MultiLineCellFormElement({
           }
         >
           {stripHtmlTags(
-            value
-              ? `${value?.slice(0, 36)}${value?.length > 200 ? "..." : ""}`
+            defaultValue
+              ? `${defaultValue?.slice(0, 36)}${defaultValue?.length > 200 ? "..." : ""}`
               : "",
           )}
         </p>
@@ -115,64 +120,18 @@ export default function MultiLineCellFormElement({
           }}
         >
           <HFTextEditor
-            id="multi_line"
-            control={control}
-            updateObject={updateObject}
+            field={field}
+            row={row}
             isNewTableView={isNewTableView}
-            name={computedSlug}
             tabIndex={field?.tabIndex}
-            fullWidth
-            multiline
-            rows={4}
-            defaultValue={field.defaultValue}
             disabled={isDisabled}
-            key={computedSlug}
             isTransparent={true}
+            setInnerValue={setInnerValue}
+            innerValue={innerValue}
             {...props}
           />
         </Popover>
-
-        {/* <Button
-          onClick={handleOpen}
-          sx={{
-            width: "30px",
-            height: "30px",
-            minWidth: "30px",
-          }}
-        >
-          <ZoomOutMapIcon />
-        </Button> */}
       </Box>
-
-      {/* <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-        <Box sx={style}>
-          <HFTextEditor
-            control={control}
-            updateObject={updateObject}
-            isNewTableView={isNewTableView}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            fullWidth
-            multiline
-            rows={4}
-            defaultValue={field.defaultValue}
-            disabled={isDisabled}
-            key={computedSlug}
-            isTransparent={true}
-            {...props}
-          />
-          <Button
-            variant="contained"
-            style={{
-              marginTop: "1rem",
-              width: "100%",
-            }}
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-        </Box>
-      </Modal> */}
     </>
   );
 }

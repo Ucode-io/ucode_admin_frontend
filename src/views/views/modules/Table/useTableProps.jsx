@@ -8,17 +8,17 @@ import {quickFiltersActions} from "@/store/filter/quick_filter";
 import {mergeStringAndState} from "@/utils/jsonPath";
 // import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
-import { useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 // import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 // import useSearchParams from "@/hooks/useSearchParams";
 import menuService from "@/services/menuService";
-import {detailDrawerActions} from "@/store/detailDrawer/detailDrawer.slice";
-import {groupFieldActions} from "@/store/groupField/groupField.slice";
-import {updateQueryWithoutRerender} from "@/utils/useSafeQueryUpdater";
+import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "@/store/groupField/groupField.slice";
+import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { useFilterContext } from "../../providers/FilterProvider";
@@ -83,6 +83,8 @@ export const useTableProps = ({ tab }) => {
   const [limit, setLimit] = useState(20);
   const [drawerStateField, setDrawerStateField] = useState(null);
 
+  const [rows, setRows] = useState([]);
+
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
 
@@ -104,6 +106,29 @@ export const useTableProps = ({ tab }) => {
     (state) => state?.pagination?.paginationInfo,
   );
   const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
+
+  const { mutate: updateObject } = useMutation(({ data, rowId }) => {
+    return constructorObjectService.update(tableSlug, {
+      data: { ...data, guid: rowId },
+    });
+  });
+
+  const handleChangeInput = useCallback(({ name, value, rowId }) => {
+    console.log({ name, value, rowId });
+    if (name && value && rowId) {
+      let row = {};
+      setRows((prev) => {
+        return prev.map((item) => {
+          if (item.guid === rowId) {
+            row = { ...item, [name]: value };
+            return row;
+          }
+          return item;
+        });
+      });
+      updateObject({ data: row, rowId });
+    }
+  }, []);
 
   const {
     control,
@@ -323,7 +348,7 @@ export const useTableProps = ({ tab }) => {
       : searchText;
 
   const {
-    data: { tableData, pageCount, dataCount } = {
+    data: { tableData, dataCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -377,18 +402,19 @@ export const useTableProps = ({ tab }) => {
       };
     },
     onSuccess: (data) => {
-      const checkdublicate =
-        combinedTableData?.filter((item) => {
-          return data?.tableData?.find((el) => el.guid === item.guid);
-        }) ?? [];
-      const result =
-        data?.tableData?.filter((item) => {
-          return !checkdublicate?.find((el) => el.guid === item.guid);
-        }) ?? [];
-      setCombinedTableData((prev) => [...prev, ...result]);
+      setRows(data?.tableData);
+      // const checkdublicate =
+      //   combinedTableData?.filter((item) => {
+      //     return data?.tableData?.find((el) => el.guid === item.guid);
+      //   }) ?? [];
+      // const result =
+      //   data?.tableData?.filter((item) => {
+      //     return !checkdublicate?.find((el) => el.guid === item.guid);
+      //   }) ?? [];
+      // setCombinedTableData((prev) => [...prev, ...result]);
     },
   });
-  console.log({ tableData });
+
   const {
     data: { layout } = {
       layout: [],
@@ -595,5 +621,7 @@ export const useTableProps = ({ tab }) => {
     getValues,
     watch,
     currentPage,
+    rows,
+    handleChange: handleChangeInput,
   };
 };

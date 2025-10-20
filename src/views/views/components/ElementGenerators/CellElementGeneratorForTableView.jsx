@@ -21,6 +21,7 @@ const CellElementGeneratorForTableView = ({
   isTableView = false,
   setFormValue = () => {},
   updateObject = () => {},
+  handleChange = () => {},
   newUi = false,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
@@ -130,6 +131,7 @@ const CellElementGeneratorForTableView = ({
     fields,
     isWrapField,
     debouncedUpdateObject,
+    handleChange,
   });
 };
 

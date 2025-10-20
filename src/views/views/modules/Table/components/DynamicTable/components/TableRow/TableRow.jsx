@@ -42,6 +42,7 @@ export const TableRow = ({
   style,
   firstRowWidth = 80,
   relationView,
+  handleChange,
 }) => {
   const {
     navigate,
@@ -57,6 +58,8 @@ export const TableRow = ({
     selectedObjectsForDelete,
     setSelectedObjectsForDelete,
     row,
+    rowIndex,
+    getValues,
   });
 
   return (
@@ -184,6 +187,7 @@ export const TableRow = ({
                         relationView={relationView}
                         view={view}
                         newUi={true}
+                        handleChange={handleChange}
                       />
                     ) : (
                       <CellElementGenerator field={field} row={row} />

@@ -28,7 +28,7 @@ export const HFDatePickerField = ({
       defaultValue={defaultValue || undefined}
       render={({field: {onChange, value}}) => {
         return (
-          <Box position="relative">
+          <Box position="relative" zIndex={9999}>
             <DatePickerInput
               placeholder={placeholder}
               id="dateField"
@@ -74,8 +74,9 @@ export const HFDatePickerField = ({
                   right: "1px",
                   top: "50%",
                   transform: "translateY(-50%)",
-                }}>
-                <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+                }}
+              >
+                <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
               </Box>
             )}
           </Box>

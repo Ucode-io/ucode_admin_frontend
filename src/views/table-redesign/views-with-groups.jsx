@@ -594,6 +594,16 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
+  const getViewName = (view) => {
+    return view?.is_relation_view
+      ? view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.table_label ||
+          view?.type
+      : view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.name ||
+          view?.type;
+  };
+
   const TableComponent =
     !relationView && !new_router
       ? TableViewOld
@@ -607,6 +617,14 @@ export const NewUiViewsWithGroups = ({
     ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label
     : view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
+  function getTextWidth(text, font = "13px Inter") {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+  }
+
   const updateVisibleViews = useCallback(() => {
     if (!views || views.length === 0) return;
 
@@ -614,10 +632,20 @@ export const NewUiViewsWithGroups = ({
     if (!container) return;
 
     const containerWidth = container.offsetWidth;
-    const viewButtonWidth = 90;
+
+    let maxTextWidth = 90;
+
+    views?.forEach((v) => {
+      const width = getTextWidth(getViewName(v));
+      if (width > maxTextWidth) {
+        maxTextWidth = width;
+      }
+    });
+
+    const viewButtonWidth = maxTextWidth || 90;
     const maxVisible = Math.max(
       1,
-      Math.floor(containerWidth / viewButtonWidth)
+      Math.floor(containerWidth / viewButtonWidth),
     );
 
     let visible = views.slice(0, maxVisible);
@@ -1000,14 +1028,7 @@ export const NewUiViewsWithGroups = ({
                     } else handleViewClick(view, index);
                   }}
                 >
-                  {view?.is_relation_view
-                    ? view?.attributes?.[`name_${i18n?.language}`] ||
-                      view?.table_label ||
-                      view.type
-                    : view?.attributes?.[`name_${i18n?.language}`] ||
-                      view?.name ||
-                      view.type}
-
+                  {getViewName(view)}
                   {overflowedViews?.length > 0 &&
                     index === visibleViews?.length - 1 && (
                       <Box
@@ -1084,7 +1105,7 @@ export const NewUiViewsWithGroups = ({
                       generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Search"
+                        "Search",
                       ) || "Search"
                     }
                     onChange={(ev) => inputChangeHandler(ev.target.value)}
@@ -1143,7 +1164,7 @@ export const NewUiViewsWithGroups = ({
                               fields: columnsForSearch.map((c) =>
                                 c.id === column.id
                                   ? { ...c, is_search: e.target.checked }
-                                  : c
+                                  : c,
                               ),
                             },
                             tableSlug,
@@ -1241,7 +1262,7 @@ export const NewUiViewsWithGroups = ({
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Create item"
+                        "Create item",
                       ) || "Create item"}
                     </Button>
                   </PermissionWrapperV2>
@@ -1263,7 +1284,7 @@ export const NewUiViewsWithGroups = ({
                   projectId={projectId}
                   onDocsClick={() => {
                     dispatch(
-                      detailDrawerActions.setDrawerTabIndex(views?.length)
+                      detailDrawerActions.setDrawerTabIndex(views?.length),
                     );
                     if (new_router) {
                       navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
@@ -1314,7 +1335,7 @@ export const NewUiViewsWithGroups = ({
                     <TabList
                       className={clsx(
                         style.reactTabsList,
-                        "react-tabs__tab-list"
+                        "react-tabs__tab-list",
                       )}
                       style={{ border: "none" }}
                     >

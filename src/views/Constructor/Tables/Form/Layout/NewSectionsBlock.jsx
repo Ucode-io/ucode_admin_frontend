@@ -73,13 +73,21 @@ const NewSectionsBlock = ({
 
   return (
     <div className={styles.newsectionsBlock} key={index}>
+      <div className={styles.newsectionCreateButton} onClick={addNewSection}>
+        <Add color="primary" />
+        <p>
+          {generateLangaugeText(tableLan, i18n?.language, "Add section") ||
+            "Add section"}
+        </p>
+      </div>
       <Container
-        style={{background: "#000"}}
+        style={{ background: "#000" }}
         lockAxis="y"
         onDrop={onDrop}
-        dropPlaceholder={{className: "drag-row-drop-preview"}}>
+        dropPlaceholder={{ className: "drag-row-drop-preview" }}
+      >
         {sections.map((section, index) => (
-          <Draggable style={{height: "100px", padding: "0"}} key={section.id}>
+          <Draggable style={{ height: "100px", padding: "0" }} key={section.id}>
             <NewSection
               index={index}
               allTabs={allTabs}
@@ -100,14 +108,6 @@ const NewSectionsBlock = ({
           </Draggable>
         ))}
       </Container>
-
-      <div className={styles.newsectionCreateButton} onClick={addNewSection}>
-        <Add color="primary" />
-        <p>
-          {generateLangaugeText(tableLan, i18n?.language, "Add section") ||
-            "Add section"}
-        </p>
-      </div>
     </div>
   );
 };

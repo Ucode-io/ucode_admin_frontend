@@ -91,24 +91,28 @@ const Layout = ({
 
   return (
     <>
-      <NewLayoutSettings
-        tableLan={tableLan}
-        mainForm={mainForm}
-        selectedLayout={selectedLayout}
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-        setSelectedLayout={setSelectedLayout}
-        layoutForm={layoutForm}
-        openFieldsBlock={openFieldsBlock}
-        openFieldSettingsBlock={openFieldSettingsBlock}
-        openRelationSettingsBlock={openRelationSettingsBlock}
-        sectionTabs={sectionTabs}
-        replaceSectionTab={replaceSectionTab}
-        insertSectionTab={insertSectionTab}
-        removeSectionTab={removeSectionTab}
-        moveSectionTab={moveSectionTab}
-        appendSectionTab={appendSectionTab}
-      />
+      {selectedLayout?.id ? (
+        <NewLayoutSettings
+          tableLan={tableLan}
+          mainForm={mainForm}
+          selectedLayout={selectedLayout}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+          setSelectedLayout={setSelectedLayout}
+          layoutForm={layoutForm}
+          openFieldsBlock={openFieldsBlock}
+          openFieldSettingsBlock={openFieldSettingsBlock}
+          openRelationSettingsBlock={openRelationSettingsBlock}
+          sectionTabs={sectionTabs}
+          replaceSectionTab={replaceSectionTab}
+          insertSectionTab={insertSectionTab}
+          removeSectionTab={removeSectionTab}
+          moveSectionTab={moveSectionTab}
+          appendSectionTab={appendSectionTab}
+        />
+      ) : (
+        <RingLoaderWithWrapper />
+      )}
 
       <div className={styles.page}>
         <Collapse

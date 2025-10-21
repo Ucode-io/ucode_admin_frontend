@@ -53,13 +53,14 @@ const OldRouterTableSettings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tableLan, setTableLan] = useState(null);
   const [menuItem, setMenuItem] = useState(null);
+  const [selectedLayout, setSelectedLayout] = useState({});
   const permissions = useSelector((state) =>
     Object.entries(state.permissions?.permissions).map(([key, value]) => ({
       table_slug: key,
       ...value,
-    }))
+    })),
   );
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const mainForm = useForm({
     defaultValues: {
@@ -98,7 +99,7 @@ const OldRouterTableSettings = () => {
     }
   }, []);
 
-  const {isLoading, data: tableByIdQueryData} = useTableByIdQuery({
+  const { isLoading, data: tableByIdQueryData } = useTableByIdQuery({
     id: id,
     queryParams: {
       enabled: !!id,
@@ -117,18 +118,19 @@ const OldRouterTableSettings = () => {
     setLoader(true);
 
     try {
-      const [tableData, {custom_events: actions = []}] = await Promise.all([
-        await constructorViewRelationService.getList({table_slug: tableSlug}),
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([
+        await constructorViewRelationService.getList({ table_slug: tableSlug }),
         await constructorCustomEventService.getList(
-          {table_slug: tableSlug},
-          tableSlug
+          { table_slug: tableSlug },
+          tableSlug,
         ),
         await layoutService
           .getList(
-            {"table-slug": tableSlug, language_setting: i18n?.language},
-            tableSlug
+            { "table-slug": tableSlug, language_setting: i18n?.language },
+            tableSlug,
           )
           .then((res) => {
+            setSelectedLayout(res?.layouts?.[0]);
             mainForm.setValue("layouts", res?.layouts ?? []);
           }),
       ]);
@@ -348,7 +350,8 @@ const OldRouterTableSettings = () => {
   return (
     <>
       <div
-        className={`${isWarningActive || projectInfo?.status === "inactive" ? "pageWithStickyFooterWarning" : "pageWithStickyFooter"}`}>
+        className={`${isWarningActive || projectInfo?.status === "inactive" ? "pageWithStickyFooterWarning" : "pageWithStickyFooter"}`}
+      >
         {id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>
@@ -360,20 +363,21 @@ const OldRouterTableSettings = () => {
                 subtitle={id ? tableSubtitle : "Add"}
                 icon={mainForm.getValues("icon")}
                 backButtonLink={-1}
-                sticky>
+                sticky
+              >
                 <TabList>
                   <Tab onClick={() => setSelectedTab(0)}>
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Details"
+                      "Details",
                     ) || "Details"}
                   </Tab>
                   <Tab onClick={() => setSelectedTab(1)}>
                     {generateLangaugeText(
                       tableLan,
                       i18n?.language,
-                      "Layouts"
+                      "Layouts",
                     ) || "Layouts"}
                   </Tab>
                   <Tab onClick={() => setSelectedTab(2)}>
@@ -385,7 +389,7 @@ const OldRouterTableSettings = () => {
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Relations"
+                        "Relations",
                       ) || "Relations"}
                     </Tab>
                   )}
@@ -394,7 +398,7 @@ const OldRouterTableSettings = () => {
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Actions"
+                        "Actions",
                       ) || "Actions"}
                     </Tab>
                   )}
@@ -403,7 +407,7 @@ const OldRouterTableSettings = () => {
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Custom errors"
+                        "Custom errors",
                       ) || "Custom errors"}
                     </Tab>
                   )}
@@ -426,6 +430,8 @@ const OldRouterTableSettings = () => {
                   getRelationFields={getRelationFields}
                   getData={getData}
                   setSelectedTabLayout={setSelectedTab}
+                  selectedLayout={selectedLayout}
+                  setSelectedLayout={setSelectedLayout}
                 />
               </TabPanel>
 
@@ -466,7 +472,8 @@ const OldRouterTableSettings = () => {
               title={id ? mainForm.getValues("label") : "Create table"}
               icon={mainForm.getValues("icon")}
               backButtonLink={-1}
-              sticky></HeaderSettings>
+              sticky
+            ></HeaderSettings>
 
             <MainInfo
               control={mainForm.control}
@@ -492,7 +499,8 @@ const OldRouterTableSettings = () => {
               <PrimaryButton
                 loader={btnLoader}
                 onClick={mainForm.handleSubmit(onSubmit)}
-                loading={btnLoader}>
+                loading={btnLoader}
+              >
                 <Save />{" "}
                 {generateLangaugeText(tableLan, i18n?.language, "Save") ||
                   "Save"}

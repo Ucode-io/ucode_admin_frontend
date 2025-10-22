@@ -151,29 +151,38 @@ const AutoCompleteElement = ({
   const [localOptions, setLocalOptions] = useState(options ?? []);
 
   const computedValue = useMemo(() => {
-    console.log({ localOptions });
     if (!value?.length) return [];
 
     if (isMultiSelect)
       if (Array.isArray(value)) {
         return (
           value?.map((el) =>
-            localOptions?.find(
-              (option) => option.slug === el || option.value === el,
-            ),
+            localOptions?.find((option) => {
+              return (
+                option.slug === el || option.value === el || option.label === el
+              );
+            }),
           ) ?? []
         );
       } else {
         return localOptions?.find((item) => {
-          item?.slug === value || item?.value === value;
+          return (
+            item?.slug === value ||
+            item?.value === value ||
+            item?.label === value
+          );
         });
       }
-    else
+    else {
       return [
         localOptions?.find(
-          (option) => option.value === value[0] || option.slug === value[0],
+          (option) =>
+            option.value === value[0] ||
+            option.slug === value[0] ||
+            option.label === value[0],
         ),
       ];
+    }
   }, [value, localOptions, isMultiSelect]);
 
   const addNewOption = (newOption) => {
@@ -229,9 +238,10 @@ const AutoCompleteElement = ({
         getOptionLabel={(option) =>
           option?.[`label_${i18n.language}`] ?? option?.label ?? option?.value
         }
-        isOptionEqualToValue={(option, value) =>
-          option?.slug === value?.slug || option?.value === value?.value
-        }
+        isOptionEqualToValue={(option, value) => {
+          if (option?.slug) return option?.slug === value?.slug;
+          return option?.value === value?.value;
+        }}
         onChange={changeHandler}
         filterOptions={(options, params) => {
           const filtered = filter(options, params);

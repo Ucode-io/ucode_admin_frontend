@@ -105,7 +105,8 @@ function LayoutSettings() {
           w={"77%"}
           borderRadius={12}
           borderBottomRadius={0}
-          bg={"#fff"}>
+          bg={"#fff"}
+        >
           <LayoutSections
             sections={sections}
             setSections={setSections}
@@ -127,6 +128,7 @@ function LayoutSettings() {
             updateSectionFields={updateSectionFields}
             selectedSection={selectedSection}
             setSelectedSection={setSelectedSection}
+            sections={sections}
           />
         </Box>
       </Flex>

@@ -58,7 +58,6 @@ export const FieldParams = ({
     addNewOption,
     multiSelectFields,
     hasColor,
-    hasIcon,
     isCreateOptionOpen,
     toggleCreateOptionField,
     toggleTodoOptionField,
@@ -67,25 +66,20 @@ export const FieldParams = ({
     multiSelectRemove,
     colors,
     todoFields,
-    todoAppend,
     todoRemove,
     progressFields,
-    progressAppend,
     progressRemove,
     completeFields,
-    completeAppend,
     completeRemove,
     isTodoOptionOpen,
     isProgressOptionOpen,
     isCompleteOptionOpen,
-    addTodo,
-    addProgress,
-    addComplete,
     onDrop,
     functions,
     handleClickLanguage,
     selectedLanguage,
     labelValue,
+    addStatusOption,
   } = useFieldParamsProps({ watch, setValue, control, handleUpdateField });
 
   const [activeId, setActiveId] = useState(null);
@@ -361,21 +355,9 @@ export const FieldParams = ({
                         key={selectedLanguage}
                         handleClickLanguage={handleClickLanguage}
                         selectedLanguage={selectedLanguage}
-                        callback={addTodo}
+                        callback={(value) => addStatusOption(value, "todo")}
                         value={labelValue[`label_${selectedLanguage}`]}
                       />
-                      {/* <input
-                        className={cls.addInput}
-                        onKeyDown={(e) => {
-                          const value = e.target.value;
-                          if (e.key === "Enter" && value?.trim()) {
-                            addTodo(value);
-                            e.target.value = "";
-                          }
-                        }}
-                        type="text"
-                        autoFocus
-                      /> */}
                     </Box>
                   )}
                   <Box paddingY="8px">
@@ -452,17 +434,12 @@ export const FieldParams = ({
                   />
                   {isProgressOptionOpen && (
                     <Box marginTop="8px">
-                      <input
-                        className={cls.addInput}
-                        onKeyDown={(e) => {
-                          const value = e.target.value;
-                          if (e.key === "Enter" && value?.trim()) {
-                            addProgress(value);
-                            e.target.value = "";
-                          }
-                        }}
-                        type="text"
-                        autoFocus
+                      <MultiLangInput
+                        key={selectedLanguage}
+                        handleClickLanguage={handleClickLanguage}
+                        selectedLanguage={selectedLanguage}
+                        callback={(value) => addStatusOption(value, "progress")}
+                        value={labelValue[`label_${selectedLanguage}`]}
                       />
                     </Box>
                   )}
@@ -540,17 +517,12 @@ export const FieldParams = ({
                   />
                   {isCompleteOptionOpen && (
                     <Box marginTop="8px">
-                      <input
-                        className={cls.addInput}
-                        onKeyDown={(e) => {
-                          const value = e.target.value;
-                          if (e.key === "Enter" && value?.trim()) {
-                            addComplete(value);
-                            e.target.value = "";
-                          }
-                        }}
-                        type="text"
-                        autoFocus
+                      <MultiLangInput
+                        key={selectedLanguage}
+                        handleClickLanguage={handleClickLanguage}
+                        selectedLanguage={selectedLanguage}
+                        callback={(value) => addStatusOption(value, "complete")}
+                        value={labelValue[`label_${selectedLanguage}`]}
                       />
                     </Box>
                   )}

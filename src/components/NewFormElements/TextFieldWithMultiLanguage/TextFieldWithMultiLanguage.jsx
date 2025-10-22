@@ -1,13 +1,11 @@
-import { Box, Menu, MenuItem } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import cls from "./styles.module.scss";
 import {
   Input,
   InputGroup,
-  InputLeftAddon,
   InputLeftElement,
-  InputRightAddon,
   InputRightElement,
 } from "@chakra-ui/react";
 import { TranslateIcon } from "../../../utils/constants/icons";
@@ -16,23 +14,9 @@ import clsx from "clsx";
 export default function TextFieldWithMultiLanguage({
   control,
   name = "",
-  isFormEdit = false,
-  isBlackBg,
-  updateObject,
-  isNewTableView = false,
-  disabledHelperText = false,
-  required = false,
-  fullWidth = false,
-  withTrim = false,
-  rules = {},
   disabled,
-  tabIndex,
-  checkRequiredField,
   placeholder = "",
   languages,
-  endAdornment,
-  // field,
-  disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   id,
   leftContent,
@@ -40,19 +24,19 @@ export default function TextFieldWithMultiLanguage({
   ...props
 }) {
   const [selectedLanguage, setSelectedLanguage] = useState(
-    languages?.[0]?.slug
+    languages?.[0]?.slug,
   );
   const [fieldName, setFieldName] = useState(name);
   const [fieldPlaceholder, setFieldPlaceholder] = useState(placeholder);
 
   const defaultValue = useMemo(
     () => watch(fieldName) ?? "",
-    [watch, fieldName]
+    [watch, fieldName],
   );
 
   const handleClickLanguage = () => {
     const activeLanguageIndex = languages?.findIndex(
-      (language) => language.slug === selectedLanguage
+      (language) => language.slug === selectedLanguage,
     );
     if (activeLanguageIndex === languages?.length - 1)
       setSelectedLanguage(languages[0]?.slug);
@@ -76,7 +60,7 @@ export default function TextFieldWithMultiLanguage({
         key={fieldName}
         control={control}
         name={fieldName}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
+        render={({ field: { onChange, value } }) => (
           <InputGroup>
             <Input
               {...props}

@@ -1440,6 +1440,7 @@ export const NewUiViewsWithGroups = ({
                         sortedDatas={sortedDatas}
                         menuItem={menuItem}
                         fields={fields}
+                        tableSlug={tableSlug}
                         setFormValue={setFormValue}
                         control={control}
                         setFormVisible={setFormVisible}

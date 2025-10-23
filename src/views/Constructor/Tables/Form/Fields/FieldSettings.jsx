@@ -399,6 +399,7 @@ const FieldSettings = ({
       <Box className={styles.additional}>
         {fieldButtons.map((item) => (
           <Button
+            key={item}
             className={
               item.value === drawerType ? styles.active : styles.inactive
             }
@@ -475,7 +476,7 @@ const FieldSettings = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Name"
+                          "Name",
                         ) || "Name"
                       }
                       classname={styles.custom_label}
@@ -501,7 +502,7 @@ const FieldSettings = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Value"
+                          "Value",
                         ) || "Value"
                       }
                       classname={styles.custom_label}
@@ -560,7 +561,7 @@ const FieldSettings = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Photo formats"
+                            "Photo formats",
                           ) || "Photo format"
                         }
                       >
@@ -578,7 +579,7 @@ const FieldSettings = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Ratio"
+                            "Ratio",
                           ) || "Ratio"
                         }
                       >
@@ -677,7 +678,7 @@ const FieldSettings = ({
                             {generateLangaugeText(
                               tableLan,
                               i18n?.language,
-                              "Selected folder"
+                              "Selected folder",
                             ) || "Selected folder"}
                             : {folder}
                           </Typography>
@@ -695,6 +696,7 @@ const FieldSettings = ({
                       >
                         {backetOptions?.menus?.map((item) => (
                           <FieldTreeView
+                            key={item?.id}
                             element={item}
                             setCheck={setCheck}
                             check={check}
@@ -742,7 +744,7 @@ const FieldSettings = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Error message"
+                            "Error message",
                           ) || "Error message"
                         }
                         classname={styles.custom_label}
@@ -763,7 +765,7 @@ const FieldSettings = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Disabled"
+                            "Disabled",
                           ) || "Disabled"
                         }
                         labelClassName={styles.custom_label}
@@ -775,7 +777,7 @@ const FieldSettings = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Required"
+                            "Required",
                           ) || "Required"
                         }
                         labelClassName={styles.custom_label}
@@ -787,7 +789,7 @@ const FieldSettings = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Duplicate"
+                            "Duplicate",
                           ) || "Duplicate"
                         }
                         labelClassName={styles.custom_label}
@@ -804,7 +806,7 @@ const FieldSettings = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Autofill table"
+                          "Autofill table",
                         ) || "Autofill table"
                       }
                       classname={styles.custom_label}
@@ -824,7 +826,7 @@ const FieldSettings = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Autofill field"
+                          "Autofill field",
                         ) || "Autofill field"
                       }
                       classname={styles.custom_label}
@@ -845,7 +847,7 @@ const FieldSettings = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Automatic"
+                          "Automatic",
                         ) || "Automatic"
                       }
                       labelClassName={styles.custom_label}
@@ -862,7 +864,7 @@ const FieldSettings = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Hide Field from"
+                          "Hide Field from",
                         ) || "Hide Field From"
                       }
                       classname={styles.custom_label}
@@ -906,7 +908,7 @@ const FieldSettings = ({
                             generateLangaugeText(
                               tableLan,
                               i18n?.language,
-                              "Hide Value"
+                              "Hide Value",
                             ) || "Hide Value"
                           }
                         >
@@ -925,7 +927,7 @@ const FieldSettings = ({
                             generateLangaugeText(
                               tableLan,
                               i18n?.language,
-                              "Number Range"
+                              "Number Range",
                             ) || "Number Range"
                           }
                         >

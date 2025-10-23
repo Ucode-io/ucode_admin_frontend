@@ -1,0 +1,33 @@
+.header {
+  height: 36px;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid #EAECF0;
+  background-color: #fff;
+}
+
+.tableName {
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #344054;
+  background-color: #EAECF0;
+}
+
+.tableNameChar {
+  width: 16px;
+  height: 16px;
+  background-color: #EE46BC;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: 500;
+  font-size: 11px;
+}

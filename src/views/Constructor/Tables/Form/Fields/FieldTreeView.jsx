@@ -52,6 +52,7 @@ const FieldTreeView = ({
     >
       {child?.map((item) => (
         <FieldTreeView
+          key={item?.id}
           nodes={child}
           element={item}
           setCheck={setCheck}

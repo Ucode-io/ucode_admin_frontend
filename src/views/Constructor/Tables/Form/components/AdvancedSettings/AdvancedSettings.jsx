@@ -32,9 +32,9 @@ export const AdvancedSettings = ({
                 <path
                   d="M14.25 9H3.75M3.75 9L9 14.25M3.75 9L9 3.75"
                   stroke="#C7C5C1"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>

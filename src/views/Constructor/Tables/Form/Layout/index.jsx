@@ -118,12 +118,15 @@ const Layout = ({
         <Collapse
           in={settingsBlockVisible}
           unmountOnExit
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <SettingsBlock
             updateSectionTab={updateSectionTab}
             mainForm={mainForm}
             layoutForm={layoutForm}
             closeSettingsBlock={closeSettingsBlock}
+            selectedLayout={selectedLayout}
+            setSelectedLayout={setSelectedLayout}
             selectedField={selectedField}
             selectedRelation={selectedRelation}
             selectedSettingsTab={selectedSettingsTab}

@@ -1,0 +1,106 @@
+.row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background 0.2s ease-in-out;
+
+  // &:first-child {
+  //   padding-top: 8px;
+  // }
+
+  // &:last-child {
+  //   padding-bottom: 8px;
+  // }
+
+  .label {
+    font-weight: bold;
+  }
+
+  .image {
+    border-radius: 6px;
+  }
+
+  &:hover {
+    background: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.row.isEmpty {
+  &:hover .rowHint {
+    display: block;
+  }
+}
+
+.coloredElement {
+  display: block !important;
+  min-width: auto !important;
+}
+
+.rowWrapper {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.rowHint {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  bottom: 100%;
+  left: 0;
+  pointer-events: none;
+  border-radius: 6px;
+  background: rgb(15, 15, 15);
+  backdrop-filter: none;
+  max-width: calc(-24px + 100vw);
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px;
+  overflow: hidden;
+  color: rgb(255, 255, 255);
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rowWrapper:hover ~ .rowHint {
+  display: block;
+}
+
+.rowHint.left {
+  left: auto;
+  right: 100%;
+  bottom: auto;
+  top: 0;
+}
+
+.rowHint.right {
+  left: 100%;
+  right: auto;
+  bottom: auto;
+  top: 0;
+}
+
+.value {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.photorow {
+  .label {
+    font-weight: bold;
+  }
+}
+
+.miniImage {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+  object-position: center;
+}

@@ -7,7 +7,7 @@ import {useEffect, useRef, useState} from "react";
 import {useLocation} from "react-router-dom";
 import clsx from "clsx";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   input: {
     padding: "0px",
     "&::placeholder": {
@@ -31,18 +31,14 @@ const HFTextField = ({
   defaultValue = "",
   disabled,
   tabIndex,
-  index,
-  checkRequiredField,
   placeholder,
   endAdornment,
   field,
   inputHeight,
-  watch = () => {},
   disabled_text = "This field is disabled for this role!",
   setFormValue = () => {},
   customOnChange = () => {},
   exist = false,
-  newUi,
   className,
   inputStyles = {},
   wrapperStyles = {},
@@ -64,7 +60,7 @@ const HFTextField = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? ""}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,
@@ -80,7 +76,7 @@ const HFTextField = ({
                   ? e.target.value?.trim()
                   : typeof e.target.value === "number"
                     ? numberWithSpaces(e.target.value)
-                    : e.target.value
+                    : e.target.value,
               );
               customOnChange(e);
               isNewTableView && updateObject();

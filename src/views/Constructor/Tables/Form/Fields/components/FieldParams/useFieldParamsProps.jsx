@@ -8,18 +8,12 @@ import { useQuery } from "react-query";
 import constructorFunctionService from "../../../../../../../services/constructorFunctionService";
 import listToOptions from "../../../../../../../utils/listToOptions";
 import { useSelector } from "react-redux";
-import { generateGUID } from "@/utils/generateID";
 
-export const useFieldParamsProps = ({
-  watch,
-  setValue,
-  control,
-  handleUpdateField,
-}) => {
+export const useFieldParamsProps = ({ watch, setValue, control }) => {
   const { i18n } = useTranslation();
 
   const activeType = newFieldTypes?.find(
-    (item) => item?.value === watch("type")
+    (item) => item?.value === watch("type"),
   );
 
   const colors = [
@@ -58,21 +52,56 @@ export const useFieldParamsProps = ({
   const [isProgressOptionOpen, setIsProgressOptionOpen] = useState(false);
   const [isCompleteOptionOpen, setIsCompleteOptionOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(
-    languages?.[0]?.slug
+    languages?.[0]?.slug,
   );
   const [labelValue, setLabelValue] = useState({ label_en: "" });
 
-  const toggleCreateOptionField = () =>
-    setIsCreateOptionOpen(!isCreateOptionOpen);
-  const toggleTodoOptionField = () => setIsTodoOptionOpen(!isTodoOptionOpen);
-  const toggleProgressOptionField = () =>
-    setIsProgressOptionOpen(!isProgressOptionOpen);
-  const toggleCompleteOptionField = () =>
-    setIsCompleteOptionOpen(!isCompleteOptionOpen);
+  const closeAllOptions = () => {
+    setIsCreateOptionOpen(false);
+    setIsTodoOptionOpen(false);
+    setIsProgressOptionOpen(false);
+    setIsCompleteOptionOpen(false);
+  };
+
+  const toggleCreateOptionField = () => {
+    if (isCreateOptionOpen) {
+      setIsCreateOptionOpen(false);
+    } else {
+      closeAllOptions();
+      setIsCreateOptionOpen(true);
+    }
+  };
+
+  const toggleTodoOptionField = () => {
+    if (isTodoOptionOpen) {
+      setIsTodoOptionOpen(false);
+    } else {
+      closeAllOptions();
+      setIsTodoOptionOpen(true);
+    }
+  };
+
+  const toggleProgressOptionField = () => {
+    if (isProgressOptionOpen) {
+      setIsProgressOptionOpen(false);
+    } else {
+      closeAllOptions();
+      setIsProgressOptionOpen(true);
+    }
+  };
+
+  const toggleCompleteOptionField = () => {
+    if (isCompleteOptionOpen) {
+      setIsCompleteOptionOpen(false);
+    } else {
+      closeAllOptions();
+      setIsCompleteOptionOpen(true);
+    }
+  };
 
   const handleClickLanguage = (value) => {
     const activeLanguageIndex = languages?.findIndex(
-      (language) => language.slug === selectedLanguage
+      (language) => language.slug === selectedLanguage,
     );
 
     setLabelValue((prev) => ({
@@ -125,37 +154,33 @@ export const useFieldParamsProps = ({
     keyName: "key",
   });
 
-  const addTodo = (value) => {
+  const addStatusOption = (value, type) => {
     const randomIndex = Math.floor(Math.random() * colors?.length);
-    todoAppend({
-      ...labelValue,
-      [`label_${selectedLanguage}`]: value,
-      color: colors[randomIndex].color,
-      colorName: colors[randomIndex].name,
-      value: generateGUID(),
-    });
-  };
-
-  const addProgress = (value) => {
-    const randomIndex = Math.floor(Math.random() * colors?.length);
-    progressAppend({
-      ...labelValue,
-      [`label_${selectedLanguage}`]: value,
-      color: colors[randomIndex].color,
-      colorName: colors[randomIndex].name,
-      value: generateGUID(),
-    });
-  };
-
-  const addComplete = (value) => {
-    const randomIndex = Math.floor(Math.random() * colors?.length);
-    completeAppend({
-      ...labelValue,
-      [`label_${selectedLanguage}`]: value,
-      color: colors[randomIndex].color,
-      colorName: colors[randomIndex].name,
-      value: generateGUID(),
-    });
+    if (type === "todo") {
+      todoAppend({
+        ...labelValue,
+        [`label_${selectedLanguage}`]: value,
+        color: colors[randomIndex].color,
+        colorName: colors[randomIndex].name,
+        value: value + "_slug",
+      });
+    } else if (type === "progress") {
+      progressAppend({
+        ...labelValue,
+        [`label_${selectedLanguage}`]: value,
+        color: colors[randomIndex].color,
+        colorName: colors[randomIndex].name,
+        value: value + "_slug",
+      });
+    } else if (type === "complete") {
+      completeAppend({
+        ...labelValue,
+        [`label_${selectedLanguage}`]: value,
+        color: colors[randomIndex].color,
+        colorName: colors[randomIndex].name,
+        value: value + "_slug",
+      });
+    }
   };
 
   const addNewOption = (value) => {
@@ -167,11 +192,6 @@ export const useFieldParamsProps = ({
       colorName: colors[randomIndex].name,
     });
   };
-
-  const hasIcon = useWatch({
-    control,
-    name: "attributes.has_icon",
-  });
 
   const hasColor = useWatch({
     control,
@@ -210,23 +230,21 @@ export const useFieldParamsProps = ({
       select: (res) => {
         return listToOptions(res.functions, "name", "id");
       },
-    }
+    },
   );
 
   return {
-    backetOptions: backetOptions?.menus,
     i18n,
-    activeType,
     mediaTypes,
+    activeType,
+    backetOptions: backetOptions?.menus,
     check,
     folder,
     setCheck,
-    setFolder,
     handleSelect,
-    multiSelectFields,
-    hasIcon,
-    hasColor,
     addNewOption,
+    multiSelectFields,
+    hasColor,
     isCreateOptionOpen,
     toggleCreateOptionField,
     toggleTodoOptionField,
@@ -235,24 +253,19 @@ export const useFieldParamsProps = ({
     multiSelectRemove,
     colors,
     todoFields,
-    todoAppend,
     todoRemove,
     progressFields,
-    progressAppend,
     progressRemove,
     completeFields,
-    completeAppend,
     completeRemove,
     isTodoOptionOpen,
     isProgressOptionOpen,
     isCompleteOptionOpen,
-    addTodo,
-    addProgress,
-    addComplete,
     onDrop,
     functions,
     handleClickLanguage,
     selectedLanguage,
     labelValue,
+    addStatusOption,
   };
 };

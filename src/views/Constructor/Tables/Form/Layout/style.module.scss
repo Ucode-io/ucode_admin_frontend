@@ -414,10 +414,12 @@
 .newsectionCreateButton {
   width: 130px;
   height: 36px;
-  position: absolute;
-  top: 60px;
-  right: 20px;
+  // position: absolute;
+  // top: 60px;
+  // right: 260px;
   display: flex;
+  margin-left: auto;
+  margin-bottom: 16px;
   border-radius: 6px;
   border: 1px solid rgba(110, 139, 183, 0.5);
   display: flex;
@@ -462,7 +464,7 @@
   background: #fff;
   padding: 0px 0px 0 0px;
   width: 100%;
-  height: 400px;
+  height: 100%;
 }
 
 .tabs {
@@ -504,7 +506,7 @@
 }
 
 .sections_wrapper {
-  height: 350px;
+  height: 100%;
   overflow: auto;
 }
 

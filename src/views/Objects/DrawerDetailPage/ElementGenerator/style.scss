@@ -80,3 +80,7 @@
 .datePickerInput > div > button > span {
   color: #adb5bd;
 }
+
+.mantine-Popover-dropdown {
+  z-index: 9999 !important;
+}

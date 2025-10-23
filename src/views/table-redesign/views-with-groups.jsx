@@ -1,5 +1,7 @@
 import useTabRouter from "@/hooks/useTabRouter";
-import {useFieldSearchUpdateMutation} from "@/services/constructorFieldService";
+import constructorFieldService, {
+  useFieldSearchUpdateMutation,
+} from "@/services/constructorFieldService";
 import constructorViewService from "@/services/constructorViewService";
 import {filterActions} from "@/store/filter/filter.slice";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
@@ -66,8 +68,7 @@ import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
 import {useGetLang} from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
-import {ViewProvider} from "../../providers/ViewProvider";
-import constructorFieldService from "../../services/constructorFieldService";
+import { ViewProvider } from "../../providers/ViewProvider";
 import constructorRelationService from "../../services/constructorRelationService";
 import constructorTableService, {
   useTableByIdQuery,
@@ -593,6 +594,16 @@ export const NewUiViewsWithGroups = ({
     selectAll();
   }, [view, fieldsMap]);
 
+  const getViewName = (view) => {
+    return view?.is_relation_view
+      ? view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.table_label ||
+          view?.type
+      : view?.attributes?.[`name_${i18n?.language}`] ||
+          view?.name ||
+          view?.type;
+  };
+
   const TableComponent =
     !relationView && !new_router
       ? TableViewOld
@@ -606,6 +617,14 @@ export const NewUiViewsWithGroups = ({
     ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label
     : view?.attributes?.[`name_${i18n?.language}`] || view?.name || view.type;
 
+  function getTextWidth(text, font = "13px Inter") {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+  }
+
   const updateVisibleViews = useCallback(() => {
     if (!views || views.length === 0) return;
 
@@ -613,17 +632,31 @@ export const NewUiViewsWithGroups = ({
     if (!container) return;
 
     const containerWidth = container.offsetWidth;
-    const viewButtonWidth = 90;
+
+    let maxTextWidth = 90;
+
+    views?.forEach((v) => {
+      const width = getTextWidth(getViewName(v));
+      if (width > maxTextWidth) {
+        maxTextWidth = width;
+      }
+    });
+
+    const viewButtonWidth = maxTextWidth || 90;
     const maxVisible = Math.max(
       1,
-      Math.floor(containerWidth / viewButtonWidth)
+      Math.floor(containerWidth / viewButtonWidth) - 1,
     );
 
-    let visible = views.slice(0, maxVisible);
-    let overflowed = views.slice(maxVisible);
+    const filteredViews = views.filter(
+      (v) => v?.type !== VIEW_TYPES_MAP.SECTION,
+    );
+
+    let visible = filteredViews.slice(0, maxVisible);
+    let overflowed = filteredViews.slice(maxVisible);
 
     if (overflowed.length > 0) {
-      const chosenView = views.find((v) => v.id === viewId);
+      const chosenView = filteredViews.find((v) => v.id === viewId);
       if (chosenView) {
         const isInVisible = visible.some((v) => v.id === viewId);
 
@@ -639,6 +672,11 @@ export const NewUiViewsWithGroups = ({
           visible.push(chosenView);
         }
       }
+    }
+
+    const sectionView = views.find((v) => v?.type === VIEW_TYPES_MAP.SECTION);
+    if (sectionView) {
+      visible = [sectionView, ...visible];
     }
 
     setVisibleViews(visible);
@@ -999,14 +1037,7 @@ export const NewUiViewsWithGroups = ({
                     } else handleViewClick(view, index);
                   }}
                 >
-                  {view?.is_relation_view
-                    ? view?.attributes?.[`name_${i18n?.language}`] ||
-                      view?.table_label ||
-                      view.type
-                    : view?.attributes?.[`name_${i18n?.language}`] ||
-                      view?.name ||
-                      view.type}
-
+                  {getViewName(view)}
                   {overflowedViews?.length > 0 &&
                     index === visibleViews?.length - 1 && (
                       <Box
@@ -1083,7 +1114,7 @@ export const NewUiViewsWithGroups = ({
                       generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Search"
+                        "Search",
                       ) || "Search"
                     }
                     onChange={(ev) => inputChangeHandler(ev.target.value)}
@@ -1142,7 +1173,7 @@ export const NewUiViewsWithGroups = ({
                               fields: columnsForSearch.map((c) =>
                                 c.id === column.id
                                   ? { ...c, is_search: e.target.checked }
-                                  : c
+                                  : c,
                               ),
                             },
                             tableSlug,
@@ -1240,7 +1271,7 @@ export const NewUiViewsWithGroups = ({
                       {generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Create item"
+                        "Create item",
                       ) || "Create item"}
                     </Button>
                   </PermissionWrapperV2>
@@ -1262,7 +1293,7 @@ export const NewUiViewsWithGroups = ({
                   projectId={projectId}
                   onDocsClick={() => {
                     dispatch(
-                      detailDrawerActions.setDrawerTabIndex(views?.length)
+                      detailDrawerActions.setDrawerTabIndex(views?.length),
                     );
                     if (new_router) {
                       navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
@@ -1313,7 +1344,7 @@ export const NewUiViewsWithGroups = ({
                     <TabList
                       className={clsx(
                         style.reactTabsList,
-                        "react-tabs__tab-list"
+                        "react-tabs__tab-list",
                       )}
                       style={{ border: "none" }}
                     >
@@ -1418,6 +1449,7 @@ export const NewUiViewsWithGroups = ({
                         sortedDatas={sortedDatas}
                         menuItem={menuItem}
                         fields={fields}
+                        tableSlug={tableSlug}
                         setFormValue={setFormValue}
                         control={control}
                         setFormVisible={setFormVisible}

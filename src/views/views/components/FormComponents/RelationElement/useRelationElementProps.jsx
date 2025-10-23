@@ -1,0 +1,3 @@
+export const useRelationElementProps = () => {
+  return {};
+};

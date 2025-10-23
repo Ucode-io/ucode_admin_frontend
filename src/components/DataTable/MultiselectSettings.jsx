@@ -8,6 +8,7 @@ import { useFieldArray } from "react-hook-form";
 import { DragIndicator, KeyboardArrowRight } from "@mui/icons-material";
 import StatusSettings from "./StatusSettings";
 import EditOptionsMenu from "./EditOptionMenu";
+import TextFieldWithMultiLanguage from "../NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 
 const MultiselectSettings = ({
   dropdownFields,
@@ -82,11 +83,10 @@ const MultiselectSettings = ({
 
   const handleChangeOption = (e, editingField, color) => {
     const value = e?.target?.value;
-
     const updatedOptions = dropdownFields?.map((item) => {
-      if (item?.value === editingField.value) {
+      if (item?.slug === editingField.slug) {
         if (color) {
-          const newItem = { ...item, color };
+          const newItem = { ...item, ...editingField, color };
           return newItem;
         } else {
           const newItem = { ...item, value: value, label: value };
@@ -174,9 +174,11 @@ const MultiselectSettings = ({
               if (e.key === "Enter" && e.target.value.trim()) {
                 e.preventDefault();
                 const newOption = {
+                  [`label_${i18n.language}`]: e.target.value,
                   label: e.target.value,
                   value: e.target.value,
                   color: colorList[Math.ceil(Math.random() * colorList.length)],
+                  slug: e.target.value,
                 };
                 dropdownAppend(newOption);
                 addOption(newOption);
@@ -216,7 +218,7 @@ const MultiselectSettings = ({
                     color: watch(`attributes.options.${index}.color`),
                   }}
                 >
-                  {watch(`attributes.options.${index}.label`)}
+                  {watch(`attributes.options.${index}.label_${i18n.language}`)}
                 </span>
                 <KeyboardArrowRight
                   htmlColor="rgba(71, 70, 68, 0.6)"

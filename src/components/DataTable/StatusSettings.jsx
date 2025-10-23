@@ -1,18 +1,11 @@
 import React from "react";
-import { useFieldArray } from "react-hook-form";
 import { Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import HFColorPicker from "@/components/FormElements/HFColorPicker";
-import TextField from "../NewFormElements/TextField/TextField";
-import FormElementButton from "../NewFormElements/FormElementButton";
-import { DragIndicator, KeyboardArrowRight } from "@mui/icons-material";
+import { KeyboardArrowRight } from "@mui/icons-material";
 import style from "./field.module.scss";
 import { useTranslation } from "react-i18next";
-import { generateGUID } from "@/utils/generateID";
 
 function StatusSettings({
-  control,
   watch,
   handleOpenEdit,
   toDoFieldArray,
@@ -43,7 +36,7 @@ function StatusSettings({
             fieldArray.append({
               [`label_${i18n.language}`]: "",
               color: colorList[Math.floor(Math.random() * colorList.length)],
-              value: generateGUID(),
+              value: "",
             })
           }
           style={{
@@ -51,7 +44,6 @@ function StatusSettings({
             border: "none",
             cursor: "pointer",
           }}
-          variant="outlined"
         >
           <AddIcon style={{ color: "#999", fontSize: "24px" }} />
         </button>
@@ -89,7 +81,7 @@ function StatusSettings({
               }}
             >
               {watch(
-                `attributes.${name}.options[${index}].label${i18n.language ? `_${i18n.language}` : ""}`
+                `attributes.${name}.options[${index}].label${i18n.language ? `_${i18n.language}` : ""}`,
               )}
             </span>
             <KeyboardArrowRight

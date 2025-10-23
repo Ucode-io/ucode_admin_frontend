@@ -1,6 +1,6 @@
-import {Box, Skeleton} from "@mui/material";
-import React, {Suspense, lazy, useMemo} from "react";
-import {useMutation} from "react-query";
+import { Box } from "@mui/material";
+import React, { useMemo } from "react";
+import { useMutation } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import CellElementGeneratorForTable from "./CellElementGeneratorForTable";
 import CellElementGeneratorForTableView from "./CellElementGeneratorForTableView";
@@ -25,12 +25,11 @@ const TableDataForm = ({
   setFormValue = () => {},
   newUi,
   relationView,
-  fieldsMap,
 }) => {
   const { mutate: updateObject } = useMutation(() =>
     constructorObjectService.update(tableSlug, {
       data: { ...getValues(`multi.${index}`) },
-    })
+    }),
   );
 
   const isWrapField = useMemo(() => {

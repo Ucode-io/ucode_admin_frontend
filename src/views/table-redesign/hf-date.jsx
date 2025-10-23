@@ -152,6 +152,26 @@ export const HFTimePicker = ({
   );
 };
 
+export const HFTimePickerNew = ({ disabled, handleChange, field, row }) => {
+  const value = row?.[field?.slug];
+  return (
+    <TimeInput
+      id="timeField"
+      value={value}
+      rightSection={<img src="/table-icons/time.svg" alt="" />}
+      onChange={(value) => {
+        handleChange({
+          value,
+          name: field?.slug,
+          rowId: row?.guid,
+        });
+      }}
+      styles={{ input: { background: "inherit", border: "none" } }}
+      disabled={disabled}
+    />
+  );
+};
+
 const getValue = (value) => {
   if (!value || value === "CURRENT_TIMESTAMP") return null;
   if (value instanceof Date && isValid(value)) return value;

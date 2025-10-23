@@ -2,19 +2,20 @@ import { useEffect, useState } from "react"
 import { useForm, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { FieldTypeList } from "../FieldTypeList";
-import { newFieldTypes } from "@/utils/constants/fieldTypes";
+import { newFieldTypes, FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { Validation } from "../Validation";
 import { useGetLang } from "@/hooks/useGetLang";
 import { generateGUID } from "@/utils/generateID";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { useFieldCreateMutation } from "@/services/constructorFieldService";
+import {
+  useFieldCreateMutation,
+  useFieldUpdateMutation,
+} from "@/services/constructorFieldService";
 import constructorViewService from "@/services/constructorViewService";
 import { useQuery, useQueryClient } from "react-query";
 import constructorTableService from "@/services/constructorTableService";
-import { useFieldUpdateMutation } from "@/services/constructorFieldService";
 import { useViewContext } from "@/providers/ViewProvider";
-import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { AutoFill } from "../AutoFill";
 import { AutoFilter } from "../AutoFilter";
 import { FieldHide } from "../FieldHide";
@@ -62,7 +63,7 @@ export const useFieldPopoverProps = ({
   const { handleSubmit, control, reset, watch, setValue, register } = useForm();
 
   const activeType = newFieldTypes?.find(
-    (item) => item?.value === watch("type")
+    (item) => item?.value === watch("type"),
   );
 
   const isFormulaType =
@@ -123,7 +124,7 @@ export const useFieldPopoverProps = ({
 
   const { mutate: updateOldField, isLoading: updateLoading } =
     useFieldUpdateMutation({
-      onSuccess: (res) => {
+      onSuccess: () => {
         // updateFieldInform(field);
         onClose();
         getRelationFields();
@@ -159,7 +160,7 @@ export const useFieldPopoverProps = ({
             })) ?? [],
         };
       },
-    }
+    },
   );
 
   const addColumnToView = (data) => {
@@ -227,7 +228,7 @@ export const useFieldPopoverProps = ({
           (item) =>
             item?.type !== FIELD_TYPES.UUID &&
             !item?.type?.includes("FRONTEND") &&
-            item?.label
+            item?.label,
         ) ?? [];
 
     fieldList.forEach(({ attributes, label, slug }) => {
@@ -370,7 +371,7 @@ export const useFieldPopoverProps = ({
         attributes: {
           ...values?.attributes,
           ...field?.attributes,
-        }
+        },
       });
       setFolder(field?.attributes?.path);
     } else {

@@ -9,10 +9,10 @@ export const TableDataSkeleton = ({
   return (
     <>
       {Array.from({ length: rowLength }).map(() => (
-        <CTableRow>
+        <CTableRow key={Math.random()}>
           {Array.from({ length: colLength })?.map(() => {
             return (
-              <CTableCell>
+              <CTableCell key={Math.random()}>
                 <Skeleton
                   variant="rounded"
                   animation="wave"

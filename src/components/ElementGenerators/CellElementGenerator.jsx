@@ -4,19 +4,19 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import DownloadIcon from "@mui/icons-material/Download";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import {get} from "@ngard/tiny-get";
-import {useMemo} from "react";
-import {formatDate} from "../../utils/dateFormatter";
-import {numberWithSpaces} from "../../utils/formatNumbers";
-import {generateLink} from "../../utils/generateYandexLink";
-import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
-import {parseBoolean} from "../../utils/parseBoolean";
+import { get } from "@ngard/tiny-get";
+import { useMemo } from "react";
+import { formatDate } from "../../utils/dateFormatter";
+import { numberWithSpaces } from "../../utils/formatNumbers";
+import { generateLink } from "../../utils/generateYandexLink";
+import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
+import { parseBoolean } from "../../utils/parseBoolean";
 import IconGenerator from "../IconPicker/IconGenerator";
 import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import Many2ManyValue from "./Many2ManyValue";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import {isValid, parse} from "date-fns";
+import { isValid, parse } from "date-fns";
 import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const CellElementGenerator = ({
@@ -31,7 +31,7 @@ const CellElementGenerator = ({
     const result = getRelationFieldTableCellLabel(
       field,
       row,
-      field.slug + "_data"
+      field.slug + "_data",
     );
 
     return result;
@@ -65,7 +65,7 @@ const CellElementGenerator = ({
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? {...el.table, ...el} : el;
+        return el.table ? { ...el.table, ...el } : el;
       }) ?? []
     );
   }, [field.attributes?.dynamic_tables]);
@@ -137,7 +137,8 @@ const CellElementGenerator = ({
         <span
           dangerouslySetInnerHTML={{
             __html: `${value.slice(0, 200)}${value.length > 200 ? "..." : ""}`,
-          }}></span>
+          }}
+        ></span>
       </div>
     ),
     DATE_TIME_WITHOUT_TIME_ZONE: () => {
@@ -148,7 +149,8 @@ const CellElementGenerator = ({
         <span
           dangerouslySetInnerHTML={{
             __html: "*".repeat(value?.length),
-          }}></span>
+          }}
+        ></span>
       </div>
     ),
     CHECKBOX: () =>
@@ -192,7 +194,8 @@ const CellElementGenerator = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}>
+          }}
+        >
           <LogoDisplay url={value} />
         </span>
       ) : (
@@ -205,10 +208,11 @@ const CellElementGenerator = ({
           target="_blank"
           href={`${generateLink(
             value?.split(",")?.[0],
-            value?.split(",")?.[1]
+            value?.split(",")?.[1],
           )}`}
           rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}>
+          onClick={(e) => e.stopPropagation()}
+        >
           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
         </a>
       ) : (
@@ -222,30 +226,33 @@ const CellElementGenerator = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-          }}>
+          }}
+        >
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-            }}>
+            }}
+          >
             <span
               style={{
                 marginRight: "10px",
-              }}>
+              }}
+            >
               {computedFileExtension(getFileName(value)) === "pdf" ? (
-                <PictureAsPdfIcon style={{color: "red"}} />
+                <PictureAsPdfIcon style={{ color: "red" }} />
               ) : computedFileExtension(getFileName(value)) === "xlsx" ? (
-                <BackupTableIcon style={{color: "green"}} />
+                <BackupTableIcon style={{ color: "green" }} />
               ) : computedFileExtension(getFileName(value)) === "png" ||
                 computedFileExtension(getFileName(value)) === "jpeg" ||
                 computedFileExtension(getFileName(value)) === "jpg" ? (
-                <PhotoLibraryIcon style={{color: "green"}} />
+                <PhotoLibraryIcon style={{ color: "green" }} />
               ) : computedFileExtension(getFileName(value)) === "txt" ||
                 computedFileExtension(getFileName(value)) === "docx" ? (
-                <DescriptionIcon style={{color: "#007AFF"}} />
+                <DescriptionIcon style={{ color: "#007AFF" }} />
               ) : (
-                <AttachFileIcon style={{color: "blue"}} />
+                <AttachFileIcon style={{ color: "blue" }} />
               )}
             </span>
             {getFileName(value)}
@@ -257,9 +264,10 @@ const CellElementGenerator = ({
               download
               target="_blank"
               onClick={(e) => e.stopPropagation()}
-              rel="noreferrer">
+              rel="noreferrer"
+            >
               <DownloadIcon
-                style={{width: "25px", height: "25px", fontSize: "30px"}}
+                style={{ width: "25px", height: "25px", fontSize: "30px" }}
               />
             </a>
           </div>
@@ -270,7 +278,7 @@ const CellElementGenerator = ({
     MONEY: () => {
       if (!value[0])
         return (
-          <span style={{whiteSpace: "nowrap"}}>
+          <span style={{ whiteSpace: "nowrap" }}>
             [{0}, {value[1]}]
           </span>
         );
@@ -280,11 +288,11 @@ const CellElementGenerator = ({
   if (!value) return "";
 
   return renderInputValues[field?.type] ? (
-    <div style={{whiteSpace: isTimelineVariant ? "nowrap" : "wrap"}}>
+    <div style={{ whiteSpace: isTimelineVariant ? "nowrap" : "wrap" }}>
       {renderInputValues[field?.type]()}
     </div>
   ) : (
-    <div style={{whiteSpace: isTimelineVariant ? "nowrap" : "wrap"}}>
+    <div style={{ whiteSpace: isTimelineVariant ? "nowrap" : "wrap" }}>
       {typeof value === "object" ? JSON.stringify(value) : value}
     </div>
   );

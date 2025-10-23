@@ -197,9 +197,7 @@ function DrawerFormDetailPage({
     constructorObjectService
       .update(tableSlug, { data: { ...computedData, guid: itemId } })
       .then((res) => {
-        queryClient.refetchQueries("GET_OBJECTS_LIST", tableSlug, {
-          table_slug: tableSlug,
-        });
+        queryClient.refetchQueries("GET_OBJECTS_LIST");
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {});

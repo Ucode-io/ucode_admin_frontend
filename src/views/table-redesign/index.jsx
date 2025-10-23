@@ -797,8 +797,8 @@ const FieldButton = ({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["FIELDS"]);
-        queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+        // queryClient.refetchQueries(["FIELDS"]);
+        // queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
       });
   };
 
@@ -864,7 +864,7 @@ const FieldButton = ({
             " " +
             values?.attributes?.to_formula,
         has_color: [FIELD_TYPES.MULTISELECT, FIELD_TYPES.STATUS].includes(
-          values?.type
+          values?.type,
         ),
         enable_multilanguage: values?.enable_multilanguage || false,
       },
@@ -879,10 +879,13 @@ const FieldButton = ({
           languages.map((lang) => [
             `label_${lang.slug}`,
             values?.table_to?.split("/")?.[0],
-          ])
+          ]),
         ),
         ...Object.fromEntries(
-          languages.map((lang) => [`label_to_${lang.slug}`, values?.table_from])
+          languages.map((lang) => [
+            `label_to_${lang.slug}`,
+            values?.table_from,
+          ]),
         ),
       },
       table_to: values?.table_to?.split("/")?.[1],
@@ -1017,10 +1020,10 @@ const Th = ({
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const summaryIsOpen = Boolean(summaryOpen);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const permissions = useSelector(
-    (state) => state.permissions?.permissions?.[tableSlug]
+    (state) => state.permissions?.permissions?.[tableSlug],
   );
   const permissions2 = useSelector((state) => state.permissions);
 
@@ -1081,7 +1084,7 @@ const Th = ({
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS");
       });
   };
 
@@ -1101,7 +1104,7 @@ const Th = ({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
         });
     });
   };
@@ -1109,7 +1112,7 @@ const Th = ({
   const computedViewSummaries = useMemo(() => {
     if (
       view?.attributes?.summaries?.find(
-        (item) => item?.field_name === column?.id
+        (item) => item?.field_name === column?.id,
       )
     )
       return true;
@@ -1159,12 +1162,12 @@ const Th = ({
                 ? "DESC"
                 : "ASC";
             dispatch(
-              paginationActions.setSortValues({ tableSlug, field, order })
+              paginationActions.setSortValues({ tableSlug, field, order }),
             );
             setSortedDatas((prev) => {
               const newSortedDatas = [...prev];
               const index = newSortedDatas.findIndex(
-                (item) => item.field === column.id
+                (item) => item.field === column.id,
               );
               if (index !== -1) {
                 newSortedDatas[index].order =
@@ -1207,7 +1210,7 @@ const Th = ({
           onClickAction: () => {
             textWrapChangeHandler(
               column,
-              !view?.attributes?.textWrap?.[column?.id] ? true : false
+              !view?.attributes?.textWrap?.[column?.id] ? true : false,
             );
           },
         },
@@ -1220,7 +1223,7 @@ const Th = ({
           onClickAction: () => {
             fixColumnChangeHandler(
               column,
-              !view?.attributes?.fixedColumns?.[column?.id] ? true : false
+              !view?.attributes?.fixedColumns?.[column?.id] ? true : false,
             );
           },
         },
@@ -1278,12 +1281,12 @@ const Th = ({
           [newSummary, ...(view?.attributes?.summaries ?? [])]?.map((item) => [
             item.field_name,
             item,
-          ])
-        ).values()
+          ]),
+        ).values(),
       );
     } else if (type === "unset") {
       result = view?.attributes?.summaries?.filter(
-        (element) => element?.field_name !== item?.id
+        (element) => element?.field_name !== item?.id,
       );
     }
 
@@ -1373,13 +1376,15 @@ const Th = ({
       left={left}
       bg={bg}
       zIndex={zIndex}
-      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}>
+      onMouseEnter={(e) => setCurrentColumnWidth(e.relatedTarget.offsetWidth)}
+    >
       <Flex
         alignItems="center"
         columnGap="8px"
         whiteSpace="nowrap"
-        minW="max-content">
-        {getColumnIcon({column})}
+        minW="max-content"
+      >
+        {getColumnIcon({ column })}
         {label}
         {permissions?.field_filter && (
           <IconButton
@@ -1388,7 +1393,7 @@ const Th = ({
               <Image
                 src="/img/chevron-down.svg"
                 alt="more"
-                style={{minWidth: 20}}
+                style={{ minWidth: 20 }}
               />
             }
             variant="ghost"
@@ -1400,7 +1405,7 @@ const Th = ({
               if (column?.attributes?.relation_data?.id) {
                 queryClient.refetchQueries([
                   "RELATION_GET_BY_ID",
-                  {tableSlug, id: column?.attributes?.relation_data?.id},
+                  { tableSlug, id: column?.attributes?.relation_data?.id },
                 ]);
               }
             }}
@@ -1514,7 +1519,7 @@ const Th = ({
         anchorEl={summaryOpen}
         open={summaryIsOpen}
         onClose={handleSummaryClose}
-        anchorOrigin={{horizontal: "right"}}
+        anchorOrigin={{ horizontal: "right" }}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -1528,13 +1533,15 @@ const Th = ({
               mr: 1,
             },
           },
-        }}>
+        }}
+      >
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-          }}>
+          }}
+        >
           {formulaTypes?.map((item) => (
             <div
               style={{
@@ -1545,7 +1552,8 @@ const Th = ({
               }}
               onClick={() => {
                 handleAddSummary(item, "add");
-              }}>
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -1553,13 +1561,15 @@ const Th = ({
                   justifyContent: "space-between",
                   width: "100%",
                 }}
-                className="subMenuItem">
+                className="subMenuItem"
+              >
                 <span
                   style={{
                     marginRight: "5px",
                     width: "20px",
                     height: "20px",
-                  }}>
+                  }}
+                >
                   {item.icon}
                 </span>
                 {item?.label}

@@ -25,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { applyDrag } from "../../utils/applyDrag";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 function PageSettings({
   selectedSection,
@@ -87,7 +88,20 @@ const SettingFields = ({
     enabled: Boolean(tableSlug),
     select: (res) => {
       return {
-        fields: res?.data?.fields ?? [],
+        fields:
+          res?.data?.fields?.map((item) => {
+            if (
+              item?.type === FIELD_TYPES.LOOKUP ||
+              item?.type === FIELD_TYPES.LOOKUPS
+            ) {
+              return {
+                ...item,
+                id: `${item?.table_slug}#${item?.relation_id}`,
+              };
+            } else {
+              return item;
+            }
+          }) ?? [],
       };
     },
   });
@@ -97,7 +111,7 @@ const SettingFields = ({
 
     return fields.filter(
       (field) =>
-        !sectionFields.some((sectionField) => sectionField.slug === field.slug)
+        !sectionFields.some((sectionField) => sectionField.slug === field.slug),
     );
   }, [fields, sectionFields, selectedSection]);
 
@@ -125,7 +139,7 @@ const SettingFields = ({
               field_hide_layout: !field.attributes?.field_hide_layout,
             },
           }
-        : field
+        : field,
     );
 
     setSelectedSection({ ...selectedSection, fields: updatedFields });
@@ -136,7 +150,7 @@ const SettingFields = ({
     if (!selectedSection?.fields) return;
 
     const updatedFields = selectedSection.fields.filter(
-      (field) => field?.slug !== fieldSlug
+      (field) => field?.slug !== fieldSlug,
     );
 
     setSelectedSection({ ...selectedSection, fields: updatedFields });

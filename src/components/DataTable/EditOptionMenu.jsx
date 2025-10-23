@@ -1,4 +1,4 @@
-import { Portal } from "@mui/material";
+import { Box, Portal } from "@mui/material";
 import { DeleteOutline } from "@mui/icons-material";
 import style from "./field.module.scss";
 import "./style.scss";
@@ -46,33 +46,102 @@ const EditOptionsMenu = ({
         style={{ top: coords.top, left: coords.left }}
       >
         {isStatusFormat ? (
-          <TextFieldWithMultiLanguage
-            control={control}
-            name={`attributes.${editingField.name}.options.${editingField.index}.label`}
-            placeholder="Name"
-            languages={languages}
-            id={"field_label"}
-            watch={watch}
+          <Box mb="12px">
+            <TextFieldWithMultiLanguage
+              control={control}
+              name={`attributes.${editingField.name}.options.${editingField.index}.label`}
+              placeholder="Name"
+              languages={languages}
+              id={"field_label"}
+              watch={watch}
+              required
+            />
+          </Box>
+        ) : (
+          <Box mb="12px">
+            <TextFieldWithMultiLanguage
+              control={control}
+              name={`attributes.options.${editingField.index}.label`}
+              placeholder="Name"
+              languages={languages}
+              id={"field_label"}
+              watch={watch}
+              customOnChange={(e, lang) => {
+                handleChange(e, {
+                  ...editingField,
+                  [`label_${lang}`]: e.target.value,
+                });
+                setValue(
+                  `attributes.options.${editingField.index}.label_${lang}`,
+                  e.target.value,
+                );
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                }
+              }}
+              required
+            />
+          </Box>
+          // <input
+          //   className={style.appendInput}
+          //   placeholder="..."
+          //   name="option"
+          //   type="text"
+          //   value={watch(`attributes.options.${editingField.index}.label`)}
+          //   onChange={(e) => {
+          //     handleChange(e, editingField);
+          //     setValue(
+          //       `attributes.options.${editingField.index}.label`,
+          //       e.target.value,
+          //     );
+          //   }}
+          //   onKeyDown={(e) => {
+          //     if (e.key === "Enter") {
+          //       e.preventDefault();
+          //     }
+          //   }}
+          // />
+        )}
+        {isStatusFormat ? (
+          <input
+            className={style.appendInput}
+            placeholder="Option slug"
+            type="text"
+            name="option_slug"
             required
+            value={watch(
+              `attributes.${editingField.name}.options.${editingField.index}.value`,
+            )}
+            onChange={(e) => {
+              handleChange(e, {
+                ...editingField,
+                slug: e.target.value,
+              });
+              setValue(
+                `attributes.${editingField.name}.options.${editingField.index}.value`,
+                e.target.value,
+              );
+            }}
           />
         ) : (
           <input
             className={style.appendInput}
-            placeholder="..."
-            name="option"
+            placeholder="Option slug"
             type="text"
-            value={watch(`attributes.options.${editingField.index}.label`)}
+            name="option_slug"
+            required
+            value={watch(`attributes.options.${editingField.index}.slug`)}
             onChange={(e) => {
-              handleChange(e, editingField);
+              handleChange(e, {
+                ...editingField,
+                slug: e.target.value,
+              });
               setValue(
-                `attributes.options.${editingField.index}.label`,
-                e.target.value
+                `attributes.options.${editingField.index}.slug`,
+                e.target.value,
               );
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-              }
             }}
           />
         )}
@@ -102,7 +171,7 @@ const EditOptionsMenu = ({
                   isStatusFormat
                     ? `attributes.${editingField.name}.options.${editingField.index}.color`
                     : `attributes.options.${editingField.index}.color`,
-                  color
+                  color,
                 );
                 setValue(`attributes.has_color`, true);
                 setIsMenuOpen(false);

@@ -1,0 +1,1 @@
+export { AddNewData } from "./AddNewData";

@@ -1,8 +1,13 @@
 import cls from "./styles.module.scss";
 import HFTextField from "@/components/FormElements/HFTextField";
-import { fieldTypeIcons, TranslateIcon } from "@/utils/constants/icons";
-import { MultiLangField } from "../MultiLangField";
-import { Box, Button } from "@mui/material";
+import {
+  TranslateIcon,
+  AutofillIcon,
+  ClipboardCheckIcon,
+  SettingsIcon,
+  TypeIcon,
+} from "@/utils/constants/icons";
+import { Box } from "@mui/material";
 import { useFieldParamsProps } from "./useFieldParamsProps";
 import FieldTreeView from "../../FieldTreeView";
 import { TreeView } from "@mui/x-tree-view";
@@ -21,18 +26,9 @@ import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
 import HFIconPicker from "../../../../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../../../../components/FormElements/HFSelect";
 import TextFieldWithMultiLanguage from "../../../../../../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
-import {
-  AutofillIcon,
-  ClipboardCheckIcon,
-  SettingsIcon,
-  TypeIcon,
-} from "../../../../../../../utils/constants/icons";
-import {
-  getColumnIconPath,
-  iconsComponents,
-} from "../../../../../../table-redesign/icons";
+import { getColumnIconPath } from "../../../../../../table-redesign/icons";
 import SVG from "react-inlinesvg";
-import { NButton } from "../../../../../../../components/NButton";
+import { NButton } from "@/components/NButton";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 
 export const FieldParams = ({
@@ -62,7 +58,6 @@ export const FieldParams = ({
     addNewOption,
     multiSelectFields,
     hasColor,
-    hasIcon,
     isCreateOptionOpen,
     toggleCreateOptionField,
     toggleTodoOptionField,
@@ -71,31 +66,24 @@ export const FieldParams = ({
     multiSelectRemove,
     colors,
     todoFields,
-    todoAppend,
     todoRemove,
     progressFields,
-    progressAppend,
     progressRemove,
     completeFields,
-    completeAppend,
     completeRemove,
     isTodoOptionOpen,
     isProgressOptionOpen,
     isCompleteOptionOpen,
-    addTodo,
-    addProgress,
-    addComplete,
     onDrop,
     functions,
     handleClickLanguage,
     selectedLanguage,
     labelValue,
+    addStatusOption,
   } = useFieldParamsProps({ watch, setValue, control, handleUpdateField });
 
   const [activeId, setActiveId] = useState(null);
   const containerRef = useRef(null);
-
-  console.log(watch(`attributes.todo.options`));
 
   return (
     <Box ref={containerRef}>
@@ -197,9 +185,9 @@ export const FieldParams = ({
                       <path
                         d="M11.3333 5.99996C11.3333 5.65874 11.2031 5.31753 10.9428 5.05719C10.6825 4.79684 10.3412 4.66667 10 4.66667M10 10C12.2091 10 14 8.20914 14 6C14 3.79086 12.2091 2 10 2C7.79086 2 6 3.79086 6 6C6 6.18245 6.01222 6.36205 6.03587 6.53802C6.07478 6.82745 6.09424 6.97217 6.08114 7.06373C6.0675 7.1591 6.05013 7.2105 6.00313 7.2946C5.958 7.37533 5.87847 7.45486 5.71942 7.61391L2.31242 11.0209C2.19712 11.1362 2.13947 11.1939 2.09824 11.2611C2.06169 11.3208 2.03475 11.3858 2.01842 11.4538C2 11.5306 2 11.6121 2 11.7752V12.9333C2 13.3067 2 13.4934 2.07266 13.636C2.13658 13.7614 2.23856 13.8634 2.36401 13.9273C2.50661 14 2.6933 14 3.06667 14H4.66667V12.6667H6V11.3333H7.33333L8.38609 10.2806C8.54514 10.1215 8.62467 10.042 8.7054 9.99687C8.7895 9.94987 8.8409 9.9325 8.93627 9.91886C9.02783 9.90576 9.17255 9.92522 9.46198 9.96413C9.63795 9.98778 9.81755 10 10 10Z"
                         stroke="#101828"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                   </Box>
@@ -218,6 +206,7 @@ export const FieldParams = ({
               >
                 {backetOptions?.map((item) => (
                   <FieldTreeView
+                    key={item?.id}
                     element={item}
                     setCheck={setCheck}
                     check={check}
@@ -233,9 +222,9 @@ export const FieldParams = ({
                         <path
                           d="M1 1L5 5L9 1"
                           stroke="#D0D5DD"
-                          stroke-width="1.3"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="1.3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </svg>
                     }
@@ -250,9 +239,9 @@ export const FieldParams = ({
                         <path
                           d="M1 1L5 5L9 1"
                           stroke="#D0D5DD"
-                          stroke-width="1.3"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeWidth="1.3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
                       </svg>
                     }
@@ -366,21 +355,9 @@ export const FieldParams = ({
                         key={selectedLanguage}
                         handleClickLanguage={handleClickLanguage}
                         selectedLanguage={selectedLanguage}
-                        callback={addTodo}
+                        callback={(value) => addStatusOption(value, "todo")}
                         value={labelValue[`label_${selectedLanguage}`]}
                       />
-                      {/* <input
-                        className={cls.addInput}
-                        onKeyDown={(e) => {
-                          const value = e.target.value;
-                          if (e.key === "Enter" && value?.trim()) {
-                            addTodo(value);
-                            e.target.value = "";
-                          }
-                        }}
-                        type="text"
-                        autoFocus
-                      /> */}
                     </Box>
                   )}
                   <Box paddingY="8px">
@@ -413,14 +390,14 @@ export const FieldParams = ({
                               <FieldChip
                                 value={
                                   watch(
-                                    `attributes.todo.options.${index}.label_${i18n.language}`
+                                    `attributes.todo.options.${index}.label_${i18n.language}`,
                                   ) ||
                                   watch(
-                                    `attributes.todo.options.${index}.label`
+                                    `attributes.todo.options.${index}.label`,
                                   )
                                 }
                                 color={watch(
-                                  `attributes.todo.options.${index}.color`
+                                  `attributes.todo.options.${index}.color`,
                                 )}
                               />
                             }
@@ -457,17 +434,12 @@ export const FieldParams = ({
                   />
                   {isProgressOptionOpen && (
                     <Box marginTop="8px">
-                      <input
-                        className={cls.addInput}
-                        onKeyDown={(e) => {
-                          const value = e.target.value;
-                          if (e.key === "Enter" && value?.trim()) {
-                            addProgress(value);
-                            e.target.value = "";
-                          }
-                        }}
-                        type="text"
-                        autoFocus
+                      <MultiLangInput
+                        key={selectedLanguage}
+                        handleClickLanguage={handleClickLanguage}
+                        selectedLanguage={selectedLanguage}
+                        callback={(value) => addStatusOption(value, "progress")}
+                        value={labelValue[`label_${selectedLanguage}`]}
                       />
                     </Box>
                   )}
@@ -501,14 +473,14 @@ export const FieldParams = ({
                               <FieldChip
                                 value={
                                   watch(
-                                    `attributes.progress.options.${index}.label_${i18n.language}`
+                                    `attributes.progress.options.${index}.label_${i18n.language}`,
                                   ) ||
                                   watch(
-                                    `attributes.progress.options.${index}.label`
+                                    `attributes.progress.options.${index}.label`,
                                   )
                                 }
                                 color={watch(
-                                  `attributes.progress.options.${index}.color`
+                                  `attributes.progress.options.${index}.color`,
                                 )}
                               />
                             }
@@ -545,17 +517,12 @@ export const FieldParams = ({
                   />
                   {isCompleteOptionOpen && (
                     <Box marginTop="8px">
-                      <input
-                        className={cls.addInput}
-                        onKeyDown={(e) => {
-                          const value = e.target.value;
-                          if (e.key === "Enter" && value?.trim()) {
-                            addComplete(value);
-                            e.target.value = "";
-                          }
-                        }}
-                        type="text"
-                        autoFocus
+                      <MultiLangInput
+                        key={selectedLanguage}
+                        handleClickLanguage={handleClickLanguage}
+                        selectedLanguage={selectedLanguage}
+                        callback={(value) => addStatusOption(value, "complete")}
+                        value={labelValue[`label_${selectedLanguage}`]}
                       />
                     </Box>
                   )}
@@ -589,14 +556,14 @@ export const FieldParams = ({
                               <FieldChip
                                 value={
                                   watch(
-                                    `attributes.complete.options.${index}.label_${i18n.language}`
+                                    `attributes.complete.options.${index}.label_${i18n.language}`,
                                   ) ||
                                   watch(
-                                    `attributes.complete.options.${index}.label`
+                                    `attributes.complete.options.${index}.label`,
                                   )
                                 }
                                 color={watch(
-                                  `attributes.complete.options.${index}.color`
+                                  `attributes.complete.options.${index}.color`,
                                 )}
                               />
                             }
@@ -768,9 +735,9 @@ export const FieldParams = ({
                 >
                   <path
                     stroke="#101828"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.2"
                     d="M7.162 3.395c.27-.04.55-.062.838-.062 3.404 0 5.637 3.004 6.387 4.192.09.143.136.215.162.326a.784.784 0 0 1 0 .298c-.026.11-.071.183-.163.328-.2.316-.505.761-.908 1.243M4.483 4.477c-1.441.977-2.42 2.336-2.869 3.047-.091.144-.137.216-.162.327a.782.782 0 0 0 0 .298c.025.11.07.183.161.326.75 1.188 2.984 4.192 6.387 4.192 1.373 0 2.555-.489 3.526-1.15M2 2l12 12M6.586 6.586a2 2 0 0 0 2.828 2.828"
                   />
                 </svg>

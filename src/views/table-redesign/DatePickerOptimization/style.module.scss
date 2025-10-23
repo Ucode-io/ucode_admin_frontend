@@ -1,0 +1,86 @@
+.tabs {
+  .tablist {
+    border-bottom: 1px solid #fff;
+    display: flex;
+    // background-color: #eee;
+    padding: 0 10px 5px;
+
+    .tab {
+      padding: 5px;
+      font-size: 12px;
+      list-style: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 200px;
+  height: 210px;
+  overflow-y: auto;
+  font-family: sans-serif;
+  padding: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.year {
+  font-size: 12px;
+  font-weight: 700;
+  width: 48px;
+  color: #3e4650;
+  text-align: center;
+}
+
+.quarterButton {
+  padding: 6px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.startQuarter {
+  background-color: rgba(0, 123, 255, 0.2);
+}
+
+.endQuarter {
+  background-color: rgba(0, 123, 255, 0.2);
+}
+
+.inRange {
+  background-color: rgba(0, 123, 255, 0.2);
+}
+
+.hoveredRange {
+  background-color: rgba(0, 123, 255, 0.2);
+  transition: background-color 0.2s ease;
+}
+
+.wrapper {
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.year {
+  width: 50px;
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.selectedQuarter {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}

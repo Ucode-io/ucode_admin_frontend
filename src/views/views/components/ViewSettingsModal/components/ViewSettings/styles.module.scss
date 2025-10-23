@@ -1,0 +1,23 @@
+.card {
+  border: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.cardTitle {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5B5956;
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+}

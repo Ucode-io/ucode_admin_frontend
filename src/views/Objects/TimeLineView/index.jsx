@@ -142,8 +142,8 @@ export default function TimeLineView({
           view?.attributes?.group_by_columns?.length !== 0 ? view?.id : null,
       };
       if (Object.keys(filters)?.some((key) => Boolean(filters[key]))) {
-        delete data.gte;
-        delete data.lte;
+        // delete data.gte;
+        // delete data.lte;
         // delete data.builder_service_view_id;
         data.row_view_id = view?.id;
       }

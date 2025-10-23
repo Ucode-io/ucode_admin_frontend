@@ -1,3 +1,39 @@
 {
-  "extends": "react-app"
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["react", "import", "prettier"],
+  "rules": {
+    "prettier/prettier": "off",
+    "no-undef": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "no-extra-boolean-cast": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".jsx"]
+      }
+    }
+  }
 }

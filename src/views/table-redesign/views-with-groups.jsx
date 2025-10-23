@@ -645,14 +645,18 @@ export const NewUiViewsWithGroups = ({
     const viewButtonWidth = maxTextWidth || 90;
     const maxVisible = Math.max(
       1,
-      Math.floor(containerWidth / viewButtonWidth),
+      Math.floor(containerWidth / viewButtonWidth) - 1,
     );
 
-    let visible = views.slice(0, maxVisible);
-    let overflowed = views.slice(maxVisible);
+    const filteredViews = views.filter(
+      (v) => v?.type !== VIEW_TYPES_MAP.SECTION,
+    );
+
+    let visible = filteredViews.slice(0, maxVisible);
+    let overflowed = filteredViews.slice(maxVisible);
 
     if (overflowed.length > 0) {
-      const chosenView = views.find((v) => v.id === viewId);
+      const chosenView = filteredViews.find((v) => v.id === viewId);
       if (chosenView) {
         const isInVisible = visible.some((v) => v.id === viewId);
 
@@ -668,6 +672,11 @@ export const NewUiViewsWithGroups = ({
           visible.push(chosenView);
         }
       }
+    }
+
+    const sectionView = views.find((v) => v?.type === VIEW_TYPES_MAP.SECTION);
+    if (sectionView) {
+      visible = [sectionView, ...visible];
     }
 
     setVisibleViews(visible);

@@ -219,7 +219,7 @@ const AutoCompleteElement = ({
     }),
     menuPortal: (provided) => ({
       ...provided,
-      zIndex: 100,
+      zIndex: 9999,
     }),
   };
 

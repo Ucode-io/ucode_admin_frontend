@@ -136,7 +136,7 @@ const CellElementGenerator = ({
       <div className=" text_overflow_line">
         <span
           dangerouslySetInnerHTML={{
-            __html: `${value.slice(0, 200)}${value.length > 200 ? "..." : ""}`,
+            __html: `${value?.slice(0, 200)}${value.length > 200 ? "..." : ""}`,
           }}
         ></span>
       </div>

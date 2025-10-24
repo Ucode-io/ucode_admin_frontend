@@ -69,8 +69,8 @@ function DrawerObjectsPage({
       select: (res) =>
         sortViews(
           res?.views?.filter(
-            (item) => item?.type === "SECTION" || item?.is_relation_view
-          ) ?? []
+            (item) => item?.type === "SECTION" || item?.is_relation_view,
+          ) ?? [],
         ),
       onSuccess: (data) => {
         if (selectedTabIndex >= data.length) {
@@ -88,7 +88,7 @@ function DrawerObjectsPage({
           setLoading(false);
         }, 500);
       },
-    }
+    },
   );
 
   const { data: relationViews, refetch: refetchRelationViews } = useQuery(
@@ -101,8 +101,8 @@ function DrawerObjectsPage({
       select: (res) =>
         sortViews(
           res?.views?.filter(
-            (item) => item?.type === "SECTION" || item?.is_relation_view
-          ) ?? []
+            (item) => item?.type === "SECTION" || item?.is_relation_view,
+          ) ?? [],
         ),
 
       onSuccess: (data) => {
@@ -116,7 +116,7 @@ function DrawerObjectsPage({
           setLoading(false);
         }, 500);
       },
-    }
+    },
   );
 
   const views = useMemo(() => {
@@ -150,7 +150,7 @@ function DrawerObjectsPage({
         menuId,
         isNewRouter ? selectedV?.id : view?.id,
         lastPath?.relation_table_slug || lastPath?.table_slug,
-        {}
+        {},
       ),
     {
       enabled:
@@ -166,7 +166,7 @@ function DrawerObjectsPage({
             label: `${el.label} (${el.table_label})`,
           })) ?? [],
       }),
-    }
+    },
   );
 
   const { data: { relations } = { relations: [] } } = useQuery(
@@ -181,11 +181,11 @@ function DrawerObjectsPage({
         },
         {},
         viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
-          viewsList?.[viewsList?.length - 1]?.table_slug
+          viewsList?.[viewsList?.length - 1]?.table_slug,
       ),
     {
       enabled: Boolean(viewsList?.[0]?.table_slug),
-    }
+    },
   );
 
   return (

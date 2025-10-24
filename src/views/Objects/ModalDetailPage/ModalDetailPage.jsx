@@ -39,6 +39,7 @@ function ModalDetailPage({
   refetch = () => {},
   setSelectedViewType = () => {},
   tableSlug: tableSlugFromProp,
+  oldViewId,
 }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -56,6 +57,10 @@ function ModalDetailPage({
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
     updateQueryWithoutRerender("p", null);
+    console.log({ oldViewId });
+    if (oldViewId) {
+      updateQueryWithoutRerender("v", oldViewId);
+    }
   };
 
   const [searchParams] = useSearchParams();
@@ -117,7 +122,7 @@ function ModalDetailPage({
       menuId,
       viewId,
       tableSlug,
-      itemId
+      itemId,
     );
 
     try {
@@ -131,7 +136,7 @@ function ModalDetailPage({
         tabs: layout?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
+            tab?.type === "section",
         ),
       };
       const layout2 = {
@@ -174,7 +179,7 @@ function ModalDetailPage({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
 
       rootForm.reset(data?.response ?? {});
@@ -201,7 +206,7 @@ function ModalDetailPage({
         tabs: layout?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
+            tab?.type === "section",
         ),
       };
       const layout2 = {
@@ -243,7 +248,7 @@ function ModalDetailPage({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
       if (!menuId) {
         setLoader(false);
@@ -300,7 +305,7 @@ function ModalDetailPage({
           tableSlug,
           {
             table_slug: tableSlug,
-          }
+          },
         );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
@@ -313,14 +318,14 @@ function ModalDetailPage({
             tableSlug,
             {
               table_slug: tableSlug,
-            }
+            },
           );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
-          refetch()
+          refetch();
         } else {
           navigate(-1);
           handleClose();
-          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
+          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
         dispatch(showAlert("Successfully updated!", "success"));
       })
@@ -341,7 +346,7 @@ function ModalDetailPage({
               layout_heading: rootForm.watch("attributes.layout_heading"),
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {

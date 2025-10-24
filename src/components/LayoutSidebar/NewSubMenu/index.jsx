@@ -77,18 +77,20 @@ function NewSubMenu({
         position: "relative",
         minHeight: "32px",
         padding: "0 0 0 15px",
-      }}>
+      }}
+    >
       <div className="body">
         <Box
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-          }}>
+          }}
+        >
           <div>
             <Box className="nav-block">
               <div className="menu-element">
-                {isLoading ? (
+                {isLoading && !menuChilds?.[element?.id]?.children ? (
                   <Box px="5px">
                     <Skeleton height={42} animation="wave" />
                     <Skeleton height={42} animation="wave" />
@@ -101,7 +103,8 @@ function NewSubMenu({
                     getChildPayload={(index) =>
                       menuChilds?.[element?.id]?.children[index]
                     }
-                    onDrop={onDrop}>
+                    onDrop={onDrop}
+                  >
                     {menuChilds?.[element?.id]?.children?.length ? (
                       menuChilds?.[element?.id]?.children?.map(
                         (childElement, index) => (
@@ -122,10 +125,10 @@ function NewSubMenu({
                             index={index}
                             selectedApp={selectedApp}
                             setSelectedFolder={setSelectedFolder}
-                            buttonProps={{className: "highlight-on-hover"}}
+                            buttonProps={{ className: "highlight-on-hover" }}
                             setSelectedApp={setSelectedApp}
                           />
-                        )
+                        ),
                       )
                     ) : (
                       <Box
@@ -135,7 +138,8 @@ function NewSubMenu({
                           height: "30px",
                           display: "flex",
                           alignItems: "center",
-                        }}>
+                        }}
+                      >
                         No pages inside
                       </Box>
                     )}

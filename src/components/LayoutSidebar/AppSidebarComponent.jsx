@@ -65,8 +65,6 @@ const AppSidebar = ({
   getMenuList,
   childMenu = false,
   selectedFolder,
-  setSelectedMenu = () => {},
-  setTemplatePopover = () => {},
   setSelectedFolder = () => {},
   setChildMenu = () => {},
 }) => {
@@ -74,9 +72,8 @@ const AppSidebar = ({
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
   const auth = store.getState().auth;
-  const { menuId, tableSlug } = useParams();
+  const { menuId } = useParams();
 
-  const [loading, setLoading] = useState(false);
   const [folderItem, setFolderItem] = useState(null);
 
   const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
@@ -100,17 +97,16 @@ const AppSidebar = ({
         setChildMenu(null);
         computeMenuChilds(
           selectedFolder?.id ?? childMenu?.parent_id,
-          res?.menus ?? []
+          res?.menus ?? [],
         );
-        setLoading(false);
       },
     },
   });
 
   const clickHandler = (el) => {
-    if(el?.id === selectedApp?.id) {
-      coontrolAccordionAction(el)
-      return
+    if (el?.id === selectedApp?.id) {
+      coontrolAccordionAction(el);
+      return;
     }
 
     setSelectedFolder(el);
@@ -262,7 +258,7 @@ const AppSidebar = ({
             color={
               Boolean(
                 menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                  menuId === element?.id
+                  menuId === element?.id,
               ) || menuId === element?.id
                 ? "#5F5E5A"
                 : "#A8A8A8"
@@ -476,7 +472,6 @@ const AppSidebar = ({
                   e.stopPropagation();
                   clickHandler(element);
                   dispatch(mainActions.setSidebarHighlightedMenu(null));
-                  setLoading(!loading);
                 }}
               >
                 <Flex
@@ -508,7 +503,7 @@ const AppSidebar = ({
                   color={
                     Boolean(
                       menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                        menuId === element?.id
+                        menuId === element?.id,
                     ) || menuId === element?.id
                       ? "#5F5E5A"
                       : "#A8A8A8"
@@ -648,42 +643,30 @@ const AppSidebar = ({
 
               {element?.type === "FOLDER" && (
                 <AccordionPanel>
-                  {loading ? (
-                    <Skeleton
-                      animation="wave"
-                      variant="text"
-                      style={{
-                        width: "94%",
-                        margin: "-5px auto 0px",
-                        height: "42px",
-                        borderRadius: "8px",
-                      }}
-                    />
-                  ) : (
-                    <NewSubMenu
-                      menuLanguages={menuLanguages}
-                      element={element}
-                      menuChilds={menuChilds}
-                      subMenuIsOpen={subMenuIsOpen}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      openFolderCreateModal={openFolderCreateModal}
-                      setFolderModalType={setFolderModalType}
-                      setTableModal={setTableModal}
-                      setLinkedTableModal={setLinkedTableModal}
-                      setSubSearchText={setSubSearchText}
-                      handleOpenNotify={handleOpenNotify}
-                      setElement={setElement}
-                      selectedApp={selectedApp}
-                      subSearchText={subSearchText}
-                      menuStyle={menuStyle}
-                      setSelectedApp={setSelectedApp}
-                      menuItem={menuItem}
-                      languageData={languageData}
-                      folderItem={folderItem}
-                      getMenuList={getMenuList}
-                      setSelectedFolder={setSelectedFolder}
-                    />
-                  )}
+                  <NewSubMenu
+                    isLoading={isLoading}
+                    menuLanguages={menuLanguages}
+                    element={element}
+                    menuChilds={menuChilds}
+                    subMenuIsOpen={subMenuIsOpen}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                    openFolderCreateModal={openFolderCreateModal}
+                    setFolderModalType={setFolderModalType}
+                    setTableModal={setTableModal}
+                    setLinkedTableModal={setLinkedTableModal}
+                    setSubSearchText={setSubSearchText}
+                    handleOpenNotify={handleOpenNotify}
+                    setElement={setElement}
+                    selectedApp={selectedApp}
+                    subSearchText={subSearchText}
+                    menuStyle={menuStyle}
+                    setSelectedApp={setSelectedApp}
+                    menuItem={menuItem}
+                    languageData={languageData}
+                    folderItem={folderItem}
+                    getMenuList={getMenuList}
+                    setSelectedFolder={setSelectedFolder}
+                  />
                 </AccordionPanel>
               )}
             </AccordionItem>

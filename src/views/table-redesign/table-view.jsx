@@ -744,6 +744,7 @@ const TableView = ({
               setSelectedViewType={setSelectedViewType}
               navigateToEditPage={navigateToDetailPage}
               tableSlug={tableSlug}
+              oldViewId={viewId}
             />
           ) : (
             <OldModalDetailPage
@@ -757,6 +758,7 @@ const TableView = ({
               selectedViewType={selectedViewType}
               setSelectedViewType={setSelectedViewType}
               navigateToEditPage={navigateToDetailPage}
+              oldViewId={viewId}
             />
           )
         ) : null}
@@ -774,6 +776,7 @@ const TableView = ({
             setSelectedViewType={setSelectedViewType}
             navigateToEditPage={navigateToDetailPage}
             tableSlug={tableSlug}
+            oldViewId={viewId}
             modal
           />
         )}

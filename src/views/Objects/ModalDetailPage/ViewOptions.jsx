@@ -38,11 +38,11 @@ import {
   ExcelImportButton,
   FixColumns,
   TabGroup,
+  Group,
 } from "../../table-redesign/components/ViewOptionElement";
 import { SubGroup } from "../../table-redesign/components/SubGroup";
 import { TimelineSettings } from "../../table-redesign/components/TimelineSettings";
 import { CalendarSettings } from "../../table-redesign/components/CalendarSettings";
-import { Group } from "../../table-redesign/components/ViewOptionElement";
 import useDebounce from "../../../hooks/useDebounce";
 import constructorTableService from "../../../services/constructorTableService";
 import { listToMap } from "../../../utils/listToMap";
@@ -84,7 +84,6 @@ const ViewOptions = ({
   searchText,
   checkedColumns,
   onDocsClick,
-  computedVisibleFields,
   tableLan,
   handleOpenPopup,
   isChanged,
@@ -98,6 +97,7 @@ const ViewOptions = ({
   refetchRelationViews,
   filters,
   tableSlug: tableSlugFromProps,
+  orderedFieldIds,
 }) => {
   const navigate = useNavigate();
   const { menuId, appId, tableSlug: tableSlugFromParams } = useParams();
@@ -107,7 +107,7 @@ const ViewOptions = ({
     : (tableSlugFromParams ?? view?.table_slug);
   const { i18n, t } = useTranslation();
   const permissions = useSelector(
-    (state) => state.permissions.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug],
   );
 
   const dispatch = useDispatch();
@@ -132,11 +132,11 @@ const ViewOptions = ({
   useEffect(() => {
     settingsForm.setValue(
       "calendar_from_slug",
-      view?.attributes?.calendar_from_slug
+      view?.attributes?.calendar_from_slug,
     );
     settingsForm.setValue(
       "calendar_to_slug",
-      view?.attributes?.calendar_to_slug
+      view?.attributes?.calendar_to_slug,
     );
     settingsForm.setValue("group_fields", view?.group_fields);
   }, [view]);
@@ -180,7 +180,7 @@ const ViewOptions = ({
   }, 500);
 
   const fixedColumnsCount = Object.values(
-    view?.attributes?.fixedColumns || {}
+    view?.attributes?.fixedColumns || {},
   ).length;
   const groupByColumnsCount = view?.attributes?.group_by_columns?.length;
   const visibleColumnsCount = view?.columns?.length ?? 0;
@@ -226,12 +226,12 @@ const ViewOptions = ({
             })) ?? [],
         };
       },
-    }
+    },
   );
 
   const computedColumns = useMemo(() => {
     const filteredFields = fields?.filter(
-      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME",
     );
     return listToOptions(filteredFields, "label", "slug");
   }, [fields]);
@@ -418,7 +418,7 @@ const ViewOptions = ({
                       generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "General"
+                        "General",
                       ) || "General"
                     }
                     rightContent={viewName}
@@ -489,7 +489,7 @@ const ViewOptions = ({
                       generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Columns"
+                        "Columns",
                       ) || "Columns"
                     }
                     icon={<EyeIcon />}
@@ -499,7 +499,7 @@ const ViewOptions = ({
                         {Boolean(
                           isTimelineView
                             ? visibleColumnsCountForTimeline
-                            : visibleColumnsCount
+                            : visibleColumnsCount,
                         ) &&
                           (isTimelineView
                             ? visibleColumnsCountForTimeline
@@ -559,7 +559,7 @@ const ViewOptions = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Group"
+                            "Group",
                           ) || "Group"
                         }
                         icon={<FileDropdownIcon />}
@@ -619,7 +619,7 @@ const ViewOptions = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            isBoardView ? "Group" : "Tab Group"
+                            isBoardView ? "Group" : "Tab Group",
                           ) || "Tab Group"
                         }
                         icon={<LayoutIcon />}
@@ -631,7 +631,7 @@ const ViewOptions = ({
                                 {generateLangaugeText(
                                   tableLan,
                                   i18n?.language,
-                                  "Group"
+                                  "Group",
                                 ) || "Group"}
                               </ViewOptionSubtitle>
                             )}
@@ -679,7 +679,7 @@ const ViewOptions = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Sub group"
+                            "Sub group",
                           ) || "Sub group"
                         }
                         icon={<HorizontalSplitOutlinedIcon color="inherit" />}
@@ -734,7 +734,7 @@ const ViewOptions = ({
                           generateLangaugeText(
                             tableLan,
                             i18n?.language,
-                            "Fix columns"
+                            "Fix columns",
                           ) || "Fix columns"
                         }
                         rightContent={
@@ -745,7 +745,7 @@ const ViewOptions = ({
                                 {generateLangaugeText(
                                   tableLan,
                                   i18n?.language,
-                                  "Fixed"
+                                  "Fixed",
                                 ) || "Fixed"}
                               </ViewOptionSubtitle>
                             )}
@@ -791,14 +791,14 @@ const ViewOptions = ({
                         setOpenedMenu(
                           isTimelineView
                             ? "timeline-settings"
-                            : "calendar-settings"
+                            : "calendar-settings",
                         )
                       }
                       title={
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Settings"
+                          "Settings",
                         ) || "Settings"
                       }
                       icon={<SettingsIcon />}
@@ -878,7 +878,7 @@ const ViewOptions = ({
                   tableLan={tableLan}
                   searchText={searchText}
                   checkedColumns={checkedColumns}
-                  computedVisibleFields={computedVisibleFields}
+                  orderedFieldIds={orderedFieldIds}
                   tableSlug={tableSlug}
                   filters={filters}
                 />

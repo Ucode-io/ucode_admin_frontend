@@ -350,9 +350,13 @@ export const NewUiViewsWithGroups = ({
     );
   }, [view, fieldsMap]);
 
-  const computedVisibleFields = useMemo(() => {
+  const { computedVisibleFields, orderedFieldIds } = useMemo(() => {
     const mappedObjects = [];
-    Object.values(fieldsMap)?.forEach((obj) => {
+
+    const fieldsMapIds = Object.keys(fieldsMap);
+    const fieldsMapVals = Object.values(fieldsMap);
+
+    fieldsMapVals?.forEach((obj) => {
       if (obj.type === "LOOKUP" || obj.type === "LOOKUPS") {
         if (view?.columns?.includes(obj.relation_id)) {
           mappedObjects.push(obj);
@@ -364,7 +368,14 @@ export const NewUiViewsWithGroups = ({
       }
     });
 
-    return mappedObjects.map((obj) => obj.id);
+    const orderedFieldIds = view?.columns?.filter((item) =>
+      fieldsMapIds.includes(item),
+    );
+
+    return {
+      computedVisibleFields: mappedObjects.map((obj) => obj.id),
+      orderedFieldIds,
+    };
   }, [Object.values(fieldsMap)?.length, view?.columns?.length]);
 
   const inputChangeHandler = useDebounce((val) => {
@@ -377,7 +388,7 @@ export const NewUiViewsWithGroups = ({
     setCheckedColumns(
       columnsForSearch
         .filter((item) => item.is_search === true)
-        .map((item) => item.slug)
+        .map((item) => item.slug),
     );
   };
 
@@ -408,7 +419,7 @@ export const NewUiViewsWithGroups = ({
 
   const tableRelations = getTableRelations(
     relationFields,
-    viewsList?.[0]?.table_slug
+    viewsList?.[0]?.table_slug,
   );
 
   const saveSearchTextToDB = async (tableSlug, searchText) => {
@@ -437,7 +448,7 @@ export const NewUiViewsWithGroups = ({
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
         navigate(
-          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
+          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
         );
       } else {
         dispatch(detailDrawerActions.openDrawer());
@@ -492,7 +503,7 @@ export const NewUiViewsWithGroups = ({
         dispatch(
           groupFieldActions.addViewPath({
             ...view,
-          })
+          }),
         );
       } else {
         dispatch(detailDrawerActions.setMainTabIndex(idx));
@@ -531,7 +542,7 @@ export const NewUiViewsWithGroups = ({
           relation_table_slug: tableSlug,
         },
         {},
-        tableSlug
+        tableSlug,
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
@@ -864,24 +875,24 @@ export const NewUiViewsWithGroups = ({
                 ))}
 
               {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-                <Button
-                  h="30px"
-                  ml="auto"
-                  onClick={navigateToSettingsPage}
-                  variant="outline"
-                  colorScheme="gray"
-                  borderColor="#D0D5DD"
-                  color="#344054"
-                  leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px"
-                >
-                  {generateLangaugeText(
-                    tableLan,
-                    i18n?.language,
-                    "Table Settings"
-                  ) || "Table Settings"}
-                </Button>
-              </PermissionWrapperV2> */}
+                  <Button
+                    h="30px"
+                    ml="auto"
+                    onClick={navigateToSettingsPage}
+                    variant="outline"
+                    colorScheme="gray"
+                    borderColor="#D0D5DD"
+                    color="#344054"
+                    leftIcon={<Image src="/img/settings.svg" alt="settings" />}
+                    borderRadius="8px"
+                  >
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Table Settings"
+                    ) || "Table Settings"}
+                  </Button>
+                </PermissionWrapperV2> */}
             </Flex>
           ) : (
             <Flex
@@ -963,24 +974,24 @@ export const NewUiViewsWithGroups = ({
                 <SearchButton />
               </Flex>
               {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-                <Button
-                  h="30px"
-                  ml="auto"
-                  onClick={navigateToSettingsPage}
-                  variant="outline"
-                  colorScheme="gray"
-                  borderColor="#D0D5DD"
-                  color="#344054"
-                  leftIcon={<Image src="/img/settings.svg" alt="settings" />}
-                  borderRadius="8px"
-                >
-                  {generateLangaugeText(
-                    tableLan,
-                    i18n?.language,
-                    "Table Settings"
-                  ) || "Table Settings"}
-                </Button>
-              </PermissionWrapperV2> */}
+                  <Button
+                    h="30px"
+                    ml="auto"
+                    onClick={navigateToSettingsPage}
+                    variant="outline"
+                    colorScheme="gray"
+                    borderColor="#D0D5DD"
+                    color="#344054"
+                    leftIcon={<Image src="/img/settings.svg" alt="settings" />}
+                    borderRadius="8px"
+                  >
+                    {generateLangaugeText(
+                      tableLan,
+                      i18n?.language,
+                      "Table Settings"
+                    ) || "Table Settings"}
+                  </Button>
+                </PermissionWrapperV2> */}
             </Flex>
           )}
 
@@ -1303,6 +1314,7 @@ export const NewUiViewsWithGroups = ({
                   }}
                   searchText={searchText}
                   computedVisibleFields={computedVisibleFields}
+                  orderedFieldIds={orderedFieldIds}
                   handleOpenPopup={handleOpenPopup}
                   queryClient={queryClient}
                   settingsForm={settingsForm}

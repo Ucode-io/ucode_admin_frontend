@@ -847,7 +847,7 @@ export const ExcelExportButton = ({ fieldsMap, tableLan, tableSlug }) => {
 export const ExcelImportButton = ({
   searchText,
   checkedColumns,
-  computedVisibleFields,
+  orderedFieldIds,
   tableLan,
   tableSlug,
   filters,
@@ -860,7 +860,7 @@ export const ExcelImportButton = ({
     mutationFn: async () => {
       const { data } = await constructorObjectService.downloadExcel(tableSlug, {
         data: {
-          field_ids: computedVisibleFields,
+          field_ids: orderedFieldIds,
           language: i18n.language,
           search: searchText,
           view_fields: checkedColumns,

@@ -20,7 +20,7 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
     const result = getRelationFieldTableCellLabel(
       field,
       row,
-      field.slug + "_data"
+      field.slug + "_data",
     );
 
     return result;
@@ -48,7 +48,7 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? {...el.table, ...el} : el;
+        return el.table ? { ...el.table, ...el } : el;
       }) ?? []
     );
   }, [field.attributes?.dynamic_tables]);
@@ -122,7 +122,7 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
   //     <div className=" text_overflow_line">
   //       <span
   //         dangerouslySetInnerHTML={{
-  //           __html: `${value.slice(0, 200)}${value.length > 200 ? "..." : ""}`,
+  //           __html: `${value?.slice(0, 200)}${value?.length > 200 ? "..." : ""}`,
   //         }}></span>
   //     </div>
   //   ),
@@ -222,7 +222,7 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
       return (
         ((row?.group_by_slug ||
           !view?.attributes?.group_by_columns?.find(
-            (item) => item === field?.relation_id
+            (item) => item === field?.relation_id,
           )) &&
           resultString) ||
         getRelationFieldTableCellLabel(field, row, field.slug + "_data")
@@ -251,10 +251,11 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
         <div className=" text_overflow_line">
           <span
             dangerouslySetInnerHTML={{
-              __html: `${value.slice(0, 200)}${
-                value.length > 200 ? "..." : ""
+              __html: `${value?.slice(0, 200)}${
+                value?.length > 200 ? "..." : ""
               }`,
-            }}></span>
+            }}
+          ></span>
         </div>
       );
 
@@ -267,7 +268,8 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
           <span
             dangerouslySetInnerHTML={{
               __html: "*".repeat(value?.length),
-            }}></span>
+            }}
+          ></span>
         </div>
       );
 
@@ -310,7 +312,8 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}>
+          }}
+        >
           <LogoDisplay url={value} />
         </span>
       );
@@ -321,10 +324,11 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
           target="_blank"
           href={`${generateLink(
             value?.split(",")?.[0],
-            value?.split(",")?.[1]
+            value?.split(",")?.[1],
           )}`}
           rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}>
+          onClick={(e) => e.stopPropagation()}
+        >
           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
         </a>
       ) : (
@@ -339,9 +343,10 @@ const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
           download
           target="_blank"
           onClick={(e) => e.stopPropagation()}
-          rel="noreferrer">
+          rel="noreferrer"
+        >
           <DownloadIcon
-            style={{width: "25px", height: "25px", fontSize: "30px"}}
+            style={{ width: "25px", height: "25px", fontSize: "30px" }}
           />
         </a>
       ) : (

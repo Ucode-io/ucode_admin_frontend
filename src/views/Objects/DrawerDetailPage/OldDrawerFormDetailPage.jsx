@@ -53,6 +53,7 @@ function OldDrawerFormDetailPage({
   );
 
   useEffect(() => {
+    console.log({ data });
     setSections(data?.tabs?.[0]?.sections || []);
   }, [data]);
 
@@ -62,7 +63,7 @@ function OldDrawerFormDetailPage({
     const newSections = [...sections];
     newSections[secIndex].fields = applyDrag(
       newSections[secIndex].fields,
-      dropResult
+      dropResult,
     );
 
     setSections(newSections);
@@ -79,7 +80,7 @@ function OldDrawerFormDetailPage({
               ...tab?.attributes,
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {
@@ -94,16 +95,16 @@ function OldDrawerFormDetailPage({
     if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
       setFormValue(
         selectedRow?.FROM_DATE_SLUG,
-        selectedRow?.[selectedRow?.FROM_DATE_SLUG]
+        selectedRow?.[selectedRow?.FROM_DATE_SLUG],
       );
       setFormValue(
         selectedRow?.TO_DATE_SLUG,
-        selectedRow?.[selectedRow?.TO_DATE_SLUG]
+        selectedRow?.[selectedRow?.TO_DATE_SLUG],
       );
     }
     setFormValue(
       "attributes.layout_heading",
-      selectedTab?.attributes?.layout_heading
+      selectedTab?.attributes?.layout_heading,
     );
   }, [selectedTab, selectedRow]);
 
@@ -113,12 +114,12 @@ function OldDrawerFormDetailPage({
     const updatedSections = data.tabs[0].sections.map((section) => ({
       ...section,
       fields: section?.fields?.filter(
-        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id
+        (el) => el?.slug !== watch("attributes.layout_heading") && el?.id,
       ),
     }));
 
     setSections((prevSections) =>
-      isEqual(prevSections, updatedSections) ? prevSections : updatedSections
+      isEqual(prevSections, updatedSections) ? prevSections : updatedSections,
     );
   }, [data, watch("attributes.layout_heading")]);
 
@@ -145,7 +146,7 @@ function OldDrawerFormDetailPage({
       field?.enable_multilanguage || field?.enable_multi_language
         ? field?.enable_multilanguage || field?.enable_multi_language
         : (field?.attributes?.enable_multilanguage ||
-            field?.attributes?.enable_multi_language) === true
+            field?.attributes?.enable_multi_language) === true,
     );
   }, [selectedTab]);
 
@@ -297,6 +298,7 @@ function OldDrawerFormDetailPage({
                           isDisabled={isDisabled(field)}
                           setFormValue={setFormValue}
                           errors={errors}
+                          isRequired={field?.required}
                         />
                       </Box>
                     </Box>

@@ -552,7 +552,7 @@ const InputField = ({
     disabled || field?.type === "BUTTON" || field?.type === "INCREMENT_ID";
 
   const inputChangeHandler = useDebounce(() => updateObject(), 700);
-console.log(errors?.[name]?.message)
+console.log({ isRequired });
   return (
     <Controller
       control={control}

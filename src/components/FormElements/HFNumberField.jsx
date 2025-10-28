@@ -34,7 +34,7 @@ const HFNumberField = ({
     if (parsedValue || parsedValue === 0) {
       onChange(parsedValue);
     } else {
-      onChange("");
+      onChange(null);
     }
 
     if (isNewTableView) {

@@ -15,7 +15,8 @@ import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
 
 const GroupCellElementGenerator = ({field = {}, row, view, index}) => {
   const value = useMemo(() => {
-    if (field.type !== "LOOKUPS") return get(row, field.slug, "");
+    if (field.type !== "LOOKUPS" || field.type !== "LOOKUP")
+      return get(row, field.slug, "");
 
     const result = getRelationFieldTableCellLabel(
       field,

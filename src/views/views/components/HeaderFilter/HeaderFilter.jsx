@@ -201,7 +201,7 @@ export const HeaderFilter = ({
             </Box>
           )}
 
-        {viewType === "TIMELINE" && noDates.length > 0 && (
+        {viewType === VIEW_TYPES_MAP.TIMELINE && noDates.length > 0 && (
           <Popover>
             <PopoverTrigger>
               <Button
@@ -236,7 +236,7 @@ export const HeaderFilter = ({
           </Popover>
         )}
 
-        {viewType !== "SECTION" && (
+        {!isRelationView && (
           <>
             {viewType !== VIEW_TYPES_MAP.WEBSITE && (
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
@@ -266,7 +266,7 @@ export const HeaderFilter = ({
           </>
         )}
       </Flex>
-      <FiltersList />
+      {view?.attributes?.quick_filters?.length > 0 && <FiltersList />}
       <MaterialUIProvider>
         <LayoutPopup
           open={isPopupOpen}

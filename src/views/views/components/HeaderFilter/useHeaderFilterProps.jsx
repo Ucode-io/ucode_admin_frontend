@@ -9,6 +9,8 @@ import { viewsActions } from "@/store/views/view.slice";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useUpdateTableMutation } from "@/services/tableService/table.service";
 import { useFieldsContext } from "../../providers/FieldsProvider";
+import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
+import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 
 export const useHeaderFilterProps = () => {
   const dispatch = useDispatch();
@@ -75,9 +77,33 @@ export const useHeaderFilterProps = () => {
   };
 
   const handleViewClick = (view, idx) => {
-    updateQueryWithoutRerender("v", view?.id);
+    if (isRelationView) {
+      updateQueryWithoutRerender("dv", view?.id);
+    } else {
+      updateQueryWithoutRerender("v", view?.id);
+    }
     setSelectedView(view);
     dispatch(viewsActions.setSelectedView({ view, idx }));
+
+    const isSection = view?.type === VIEW_TYPES_MAP.SECTION;
+
+    if (isSection) {
+      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
+      dispatch(groupFieldActions.trimViewsDataUntil(view));
+      dispatch(groupFieldActions.trimViewsUntil(view));
+      return;
+    }
+
+    if (isRelationView && !isSection) {
+      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
+      dispatch(
+        groupFieldActions.addViewPath({
+          ...view,
+        }),
+      );
+    } else {
+      dispatch(detailDrawerActions.setMainTabIndex(idx));
+    }
   };
 
   const handleClick = (e) => {

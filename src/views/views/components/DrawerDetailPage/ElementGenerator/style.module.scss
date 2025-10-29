@@ -1,0 +1,233 @@
+.selectGroup {
+  font-size: 11px;
+  font-weight: 400;
+  color: #787774;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #eee;
+}
+
+.optionField {
+  font-size: 11.8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin: 0 0 6px 0;
+  text-align: center;
+  background: #eee;
+  width: fit-content;
+  margin-left: 15px;
+  height: 24px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0;
+
+  &:hover {
+    background: #eee;
+  }
+}
+
+.statusSelect {
+  fieldset {
+    display: none !important;
+  }
+}
+
+.dialog {
+  width: 350px;
+  height: 260px;
+  padding: 20px;
+  z-index: 666;
+
+  h2 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .dialog_content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .color_picker {
+    width: 90px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .icon_picker {
+    width: 90px;
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .form_control {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 0 10px;
+  }
+
+  .input_control {
+    width: 140px;
+    min-height: 30px;
+    margin: 0 10px 5px;
+
+    &:nth-child(2) {
+      margin-right: 20px;
+    }
+  }
+
+  .submit_btn {
+    width: 120px;
+    height: 34px;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+}
+
+.valuesWrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 11px;
+  height: 22px;
+}
+
+.multipleAutocompleteTags {
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 4px;
+  color: #000;
+  background-color: #c0c0c039;
+  height: 22px;
+
+  .value {
+    margin-right: 4px;
+  }
+}
+
+.iconWrapper {
+  width: 26px;
+  height: 26px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+  color: #0067f4;
+
+  &.rectangle {
+    border-radius: 6px;
+    margin-top: 7px;
+  }
+
+  &.error {
+    border-color: red !important;
+  }
+}
+
+.menuList {
+  padding: 10px;
+  width: 300px;
+}
+
+.iconsBlock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.popupIconWrapper {
+  width: 30px;
+  height: 30px;
+  border: 1px solid silver;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.inputTable {
+  margin-left: 12px;
+  outline: none;
+  input {
+    height: 35px;
+    border: 0px solid #eee;
+    padding: 3px;
+    outline: none;
+    background: transparent;
+
+    &:disabled {
+      cursor: not-allowed;
+      color: #adb5bd;
+    }
+
+    &:hover {
+      outline: none;
+    }
+  }
+}
+
+.tabs {
+  margin-top: 10px;
+
+  .tabList {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .tab {
+    width: auto;
+    min-width: unset;
+    padding: 5px 7px;
+    border-bottom: 0;
+    border-radius: 7px;
+    cursor: pointer;
+    border: 1px solid #fff;
+    flex-shrink: 0;
+    list-style: none;
+
+    &::marker {
+      color: #fff;
+    }
+  }
+
+  .active {
+    background: #007afe;
+    color: #fff;
+    border: 1px solid #e5e9eb;
+    border-radius: 8px;
+    padding: 5px 7px;
+    cursor: pointer;
+  }
+}

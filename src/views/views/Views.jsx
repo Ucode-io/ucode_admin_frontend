@@ -6,8 +6,18 @@ import { Header } from "./components/Header";
 import { HeaderFilter } from "./components/HeaderFilter";
 import { FilterProvider } from "./providers/FilterProvider";
 import { FieldsProvider } from "./providers/FieldsProvider";
+import DrawerDetailPage from "./components/DrawerDetailPage";
 
-export const Views = ({ relationFields, isRelationView = false }) => {
+export const Views = ({
+  relationFields,
+  isRelationView = false,
+  handleCloseDrawer = () => {},
+  onSectionSubmit = () => {},
+  updateLayout = () => {},
+  handleMouseDown = () => {},
+  layoutData = {},
+  rootForm,
+}) => {
   const {
     viewsMap,
     viewId,
@@ -59,7 +69,11 @@ export const Views = ({ relationFields, isRelationView = false }) => {
     setLayoutType,
     selectedRow,
     setSelectedRow,
-  } = useViewsProps();
+    layout,
+    selectedViewType,
+    setSelectedViewType,
+    selectedView,
+  } = useViewsProps({ isRelationView });
 
   return (
     <ChakraProvider theme={chakraUITheme}>
@@ -98,9 +112,19 @@ export const Views = ({ relationFields, isRelationView = false }) => {
           setCurrentPage,
           customEvents,
           layoutType,
+          layout,
           setLayoutType,
           selectedRow,
           setSelectedRow,
+          handleCloseDrawer,
+          selectedView,
+          selectedViewType,
+          setSelectedViewType,
+          layoutData,
+          rootForm,
+          onSectionSubmit,
+          updateLayout,
+          handleMouseDown,
         }}
       >
         <FilterProvider
@@ -128,8 +152,112 @@ export const Views = ({ relationFields, isRelationView = false }) => {
               navigateCreatePage={navigateCreatePage}
               settingsForm={settingsForm}
             />
+
             {viewsMap[viewType]}
+
+            {!isRelationView && (
+              <DrawerDetailPage
+                tableSlug={tableSlug}
+                menuId={menuId}
+                view={view}
+                projectInfo={projectInfo}
+                selectedRow={selectedRow}
+                menuItem={menuItem}
+                layout={layout}
+                selectedViewType={selectedViewType}
+                setSelectedViewType={setSelectedViewType}
+              />
+            )}
           </FieldsProvider>
+          {/* TEMPORARY COMMENT */}
+          {/* {Boolean(open && projectInfo?.new_layout) &&
+          selectedViewType === "SidePeek" ? (
+            new_router ? (
+              <DrawerDetailPage
+                view={view}
+                projectInfo={projectInfo}
+                open={open}
+                setFormValue={setFormValue}
+                selectedRow={selectedRow}
+                menuItem={menuItem}
+                layout={layout}
+                fieldsMap={fieldsMap}
+                refetch={refetch}
+                layoutType={layoutType}
+                setLayoutType={setLayoutType}
+                selectedViewType={selectedViewType}
+                setSelectedViewType={setSelectedViewType}
+                navigateToEditPage={navigateToDetailPage}
+              />
+            ) : (
+              <OldDrawerDetailPage
+                view={view}
+                projectInfo={projectInfo}
+                open={open}
+                setFormValue={setFormValue}
+                selectedRow={selectedRow}
+                menuItem={menuItem}
+                layout={layout}
+                fieldsMap={fieldsMap}
+                refetch={refetch}
+                layoutType={layoutType}
+                setLayoutType={setLayoutType}
+                selectedViewType={selectedViewType}
+                setSelectedViewType={setSelectedViewType}
+                navigateToEditPage={navigateToDetailPage}
+              />
+            )
+          ) : selectedViewType === "CenterPeek" ? (
+            Boolean(new_router) ? (
+              <ModalDetailPage
+                view={view}
+                projectInfo={projectInfo}
+                open={open}
+                setFormValue={setFormValue}
+                selectedRow={selectedRow}
+                menuItem={menuItem}
+                layout={layout}
+                fieldsMap={fieldsMap}
+                refetch={refetch}
+                layoutType={layoutType}
+                setLayoutType={setLayoutType}
+                selectedViewType={selectedViewType}
+                setSelectedViewType={setSelectedViewType}
+                navigateToEditPage={navigateToDetailPage}
+                tableSlug={tableSlug}
+              />
+            ) : (
+              <OldModalDetailPage
+                open={open}
+                selectedRow={selectedRow}
+                menuItem={menuItem}
+                layout={layout}
+                fieldsMap={fieldsMap}
+                refetch={refetch}
+                setLayoutType={setLayoutType}
+                selectedViewType={selectedViewType}
+                setSelectedViewType={setSelectedViewType}
+                navigateToEditPage={navigateToDetailPage}
+              />
+            )
+          ) : null} */}
+
+          {/* {Boolean(open && !projectInfo?.new_layout) && (
+            <ModalDetailPage
+              open={open}
+              selectedRow={selectedRow}
+              menuItem={menuItem}
+              layout={layout}
+              fieldsMap={fieldsMap}
+              refetch={refetch}
+              setLayoutType={setLayoutType}
+              selectedViewType={selectedViewType}
+              setSelectedViewType={setSelectedViewType}
+              navigateToEditPage={navigateToDetailPage}
+              tableSlug={tableSlug}
+              modal
+            />
+          )} */}
         </FilterProvider>
       </ViewProvider>
     </ChakraProvider>

@@ -192,7 +192,8 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+      >
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="/">
@@ -384,10 +385,7 @@ const NewRouter = () => {
             path=":menuId"
             element={<ReloadWrapper component={NewObjectsPage} />}
           />
-          <Route
-            path="new-optimization/:menuId"
-            element={<Views />}
-          />
+          <Route path="new-optimization/:menuId" element={<Views />} />
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />

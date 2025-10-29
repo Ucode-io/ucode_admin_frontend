@@ -31,3 +31,21 @@
   font-weight: 500;
   font-size: 11px;
 }
+
+.screenOptions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.screenOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(55, 53, 47, 0.5);
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}

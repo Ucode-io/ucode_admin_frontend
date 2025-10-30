@@ -80,7 +80,6 @@ const TableView = ({
   orderBy,
   ...props
 }) => {
-
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
@@ -111,7 +110,7 @@ const TableView = ({
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
+    (state) => state?.pagination?.paginationInfo,
   );
   const [limit, setLimit] = useState(20);
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
@@ -130,7 +129,7 @@ const TableView = ({
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage") === "FullPage"
       ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+      : localStorage?.getItem("detailPage"),
   );
 
   const mainForm = useForm({
@@ -179,7 +178,7 @@ const TableView = ({
           relation_table_slug: tableSlug,
         },
         {},
-        tableSlug
+        tableSlug,
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
@@ -262,7 +261,7 @@ const TableView = ({
 
     return customSortArray(
       uniqueColumns,
-      result.map((el) => el.id)
+      result.map((el) => el.id),
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
@@ -293,7 +292,7 @@ const TableView = ({
 
     if (sortValues && sortValues.length > 0) {
       const matchingSort = sortValues.find(
-        (entry) => entry.tableSlug === tableSlug
+        (entry) => entry.tableSlug === tableSlug,
       );
 
       if (matchingSort) {
@@ -484,7 +483,7 @@ const TableView = ({
         relation_table_slug: view.relation_table_slug ?? null,
         is_relation_view: view?.is_relation_view,
         detailId: row?.guid,
-      })
+      }),
     );
     if (Boolean(selectedView?.is_relation_view)) {
       setSelectedView(view);
@@ -557,8 +556,8 @@ const TableView = ({
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
               param.value,
-              row
-            )}`
+              row,
+            )}`,
         )
         .join("&");
 
@@ -614,8 +613,8 @@ const TableView = ({
     }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
-        view?.attributes?.quick_filters?.length ?? 0
-      )
+        view?.attributes?.quick_filters?.length ?? 0,
+      ),
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 

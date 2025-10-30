@@ -30,9 +30,9 @@ function DrawerDetailPage({
   setSelectedViewType = () => {},
   modal,
 }) {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
   const menu = store.getState().menu;
   const isInvite = menu.invite;
   const queryClient = useQueryClient();
@@ -40,7 +40,7 @@ function DrawerDetailPage({
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const selectedV =
     viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
-  const {menuId, tableSlug: tableFromParams} = useParams();
+  const { menuId, tableSlug: tableFromParams } = useParams();
   const [tabRelations, setTableRelations] = useState();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [loader, setLoader] = useState(true);
@@ -102,18 +102,21 @@ function DrawerDetailPage({
       menuId,
       viewId,
       tableSlug,
-      itemId
+      itemId,
     );
 
     try {
-      const [{data = {}}, layout] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, layout] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
 
       const layout1 = {
         ...layout,
         tabs: layout?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
+            tab?.type === "section",
         ),
       };
       const layout2 = {
@@ -156,7 +159,7 @@ function DrawerDetailPage({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
       rootForm.reset(data?.response ?? {});
 
@@ -180,7 +183,7 @@ function DrawerDetailPage({
         tabs: layout?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
+            tab?.type === "section",
         ),
       };
       const layout2 = {
@@ -222,7 +225,7 @@ function DrawerDetailPage({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
       if (!menuId) {
         setLoader(false);
@@ -248,7 +251,7 @@ function DrawerDetailPage({
 
   function create(data) {
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then((res) => {
         updateLayout();
         dispatch(detailDrawerActions.closeDrawer());
@@ -261,7 +264,7 @@ function DrawerDetailPage({
           tableSlug,
           {
             table_slug: tableSlug,
-          }
+          },
         );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
@@ -274,7 +277,7 @@ function DrawerDetailPage({
             tableSlug,
             {
               table_slug: tableSlug,
-            }
+            },
           );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
@@ -298,7 +301,7 @@ function DrawerDetailPage({
               layout_heading: rootForm.watch("attributes.layout_heading"),
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {

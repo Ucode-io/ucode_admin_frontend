@@ -98,9 +98,10 @@ import { AIMenu, useAIChat } from "@/components/ProfilePanel/AIChat";
 import { SortIcon } from "../../utils/constants/icons";
 import { SortPopover } from "./components/SortPopover";
 import clsx from "clsx";
+import menuService from "@/services/menuService";
 
 const DrawerFormDetailPage = lazy(
-  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage")
+  () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage"),
 );
 const WebsiteView = lazy(() => import("@/views/Objects/WebsiteView"));
 const BoardView = lazy(() => import("../Objects/BoardView"));
@@ -224,7 +225,7 @@ export const NewUiViewsWithGroups = ({
           ...tableInfo,
           order_by: isGivenFromProps ? order : !prev,
         },
-        projectId
+        projectId,
       );
       return isGivenFromProps ? order : !prev;
     });
@@ -246,10 +247,10 @@ export const NewUiViewsWithGroups = ({
   };
 
   const permissions = useSelector(
-    (state) => state.permissions.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug],
   );
   const paginationCount = useSelector(
-    (state) => state?.pagination?.paginationCount
+    (state) => state?.pagination?.paginationCount,
   );
 
   const paginiationCount = useMemo(() => {
@@ -315,7 +316,7 @@ export const NewUiViewsWithGroups = ({
   const groupField = fieldsMap[groupFieldId];
 
   const { data: tabs } = useQuery(
-    queryGenerator(groupField, filters, i18n.language)
+    queryGenerator(groupField, filters, i18n.language),
   );
 
   const navigateToSettingsPage = () => {
@@ -346,7 +347,7 @@ export const NewUiViewsWithGroups = ({
         el?.type === "EMAIL" ||
         el?.type === "INTERNATION_PHONE" ||
         el?.type === "INCREMENT_ID" ||
-        el?.type === "FORMULA_FRONTEND"
+        el?.type === "FORMULA_FRONTEND",
     );
   }, [view, fieldsMap]);
 
@@ -1048,7 +1049,14 @@ export const NewUiViewsWithGroups = ({
                     } else handleViewClick(view, index);
                   }}
                 >
-                  {getViewName(view)}
+                  <Box
+                    maxW="100px"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                  >
+                    {getViewName(view)}
+                  </Box>
                   {overflowedViews?.length > 0 &&
                     index === visibleViews?.length - 1 && (
                       <Box

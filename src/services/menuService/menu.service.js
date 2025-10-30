@@ -50,19 +50,45 @@ const menuService = {
     ),
 };
 
-export const useGetTableInfo = (queryParams = {}, params = {menuId: "", viewId: "", tableSlug: ""}, data = {}) => {
+export const useGetTableInfo = (
+  queryParams = {},
+  params = { menuId: "", viewId: "", tableSlug: "" },
+  data = {},
+) => {
   return useQuery(
-    ["GET_VIEWS_AND_FIELDS", params],
+    ["GET_VIEWS_AND_FIELDS", params.tableSlug],
     () => {
       return menuService.getFieldsListMenu(
         params.menuId,
         params.viewId,
         params.tableSlug,
-        data
+        data,
       );
     },
     {
       ...queryParams,
-    }
+    },
   );
-}
+};
+
+export const useGetTableDataById = (
+  queryParams = {},
+  params = { menuId: "", viewId: "", tableSlug: "" },
+  data = {},
+) => {
+  return useQuery(
+    ["GET_TABLE_DATA_BY_ID", params],
+    () => {
+      return menuService.getFieldsTableDataById(
+        params.menuId,
+        params.viewId,
+        params.tableSlug,
+        data,
+      );
+    },
+    {
+      ...queryParams,
+    },
+  );
+};
+

@@ -1374,7 +1374,7 @@ export const NewUiViewsWithGroups = ({
                           selectedClassName={style.activeTab}
                           className={`${style.disableTab} react-tabs__tab`}
                         >
-                          {tab.label}
+                          {tab?.[`label_${i18n.language}`] || tab.label}
                         </Tab>
                       ))}
                     </TabList>

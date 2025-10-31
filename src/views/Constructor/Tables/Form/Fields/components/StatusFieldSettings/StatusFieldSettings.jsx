@@ -3,6 +3,7 @@ import cls from "./styles.module.scss";
 import { Box } from "@mui/material"
 import clsx from "clsx";
 import TextFieldWithMultiLanguage from "@/components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
+import { useSelector } from "react-redux";
 
 export const StatusFieldSettings = ({
   item,
@@ -19,8 +20,8 @@ export const StatusFieldSettings = ({
   watch = () => {},
   setActiveId = () => {},
   isMultiLanguage,
-  languages,
 }) => {
+  const languages = useSelector((state) => state.languages.list);
   return (
     <Box className={cls.card}>
       <Box>
@@ -43,10 +44,27 @@ export const StatusFieldSettings = ({
             />
           </Box>
         ) : (
-          <HFTextField
-            control={control}
-            name={`${name}.${optionName || "value"}`}
-          />
+          // <HFTextField
+          //   control={control}
+          //   name={`${name}.${optionName || "value"}`}
+          // />
+          <Box>
+            <TextFieldWithMultiLanguage
+              control={control}
+              name={`${name}.label`}
+              placeholder="Name"
+              languages={languages}
+              id={"field_label"}
+              watch={watch}
+              required
+            />
+            <input
+              className={cls.slugInput}
+              onChange={(e) => setValue(`${name}.slug`, e.target.value)}
+              placeholder="Slug"
+              value={watch(`${name}.slug`)}
+            />
+          </Box>
         )}
         <button
           className={cls.removeBtn}

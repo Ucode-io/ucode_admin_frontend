@@ -5,6 +5,7 @@ import {Chip} from "./chip";
 import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
 import {useTranslation} from "react-i18next";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 const FilterAutoComplete = ({
   options = [],
@@ -52,6 +53,18 @@ const FilterAutoComplete = ({
     onChange(undefined);
   };
 
+  const isChecked = (option) => {
+    const computedSlugs = options.map((item) => item.slug);
+    const computedValues = options.map((item) => item.value);
+
+    if (
+      field.type === FIELD_TYPES.MULTISELECT ||
+      field.type === FIELD_TYPES.STATUS
+    ) {
+      return computedSlugs.includes(option.slug);
+    } else return computedValues.includes(option.value);
+  };
+
   return (
     <>
       <Chip
@@ -92,15 +105,14 @@ const FilterAutoComplete = ({
               key={option.value}
               className={styles.option}
             >
-              {computedValue
-                .map((item) => item.value)
-                .includes(option.value) ? (
-                <Checkbox id="filter_checkbox" checked />
+              <Checkbox id="filter_checkbox" checked={isChecked(option)} />
+              {/* {computedValue.includes(option.value) ? (
               ) : (
                 <Checkbox id="filter_checkbox" />
-              )}
-
-              <p className={styles.label}>{option.label}</p>
+              )} */}
+              <p className={styles.label}>
+                {option?.[`label_${i18n?.language}`] ?? option.label}
+              </p>
             </div>
           ))}
         </div>

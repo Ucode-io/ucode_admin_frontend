@@ -297,7 +297,9 @@ export const FieldParams = ({
                         title={
                           hasColor ? (
                             <FieldChip
-                              value={watch(`attributes.options.${index}.value`)}
+                              value={watch(
+                                `attributes.options.${index}.label_${i18n.language}`,
+                              )}
                               color={watch(`attributes.options.${index}.color`)}
                             />
                           ) : (
@@ -326,19 +328,30 @@ export const FieldParams = ({
                 </Container>
                 {isCreateOptionOpen && (
                   <Box marginTop="8px">
-                    <input
-                      className={cls.addInput}
-                      onKeyDown={(e) => {
-                        const value = e.target.value;
-                        if (e.key === "Enter" && value?.trim()) {
-                          addNewOption(value);
-                          e.target.value = "";
-                        }
-                      }}
-                      type="text"
-                      autoFocus
+                    <MultiLangInput
+                      key={selectedLanguage}
+                      handleClickLanguage={handleClickLanguage}
+                      selectedLanguage={selectedLanguage}
+                      callback={(value) =>
+                        addNewOption(value, selectedLanguage)
+                      }
+                      value={labelValue[`label_${selectedLanguage}`]}
                     />
                   </Box>
+                  // <Box marginTop="8px">
+                  //   <input
+                  //     className={cls.addInput}
+                  //     onKeyDown={(e) => {
+                  //       const value = e.target.value;
+                  //       if (e.key === "Enter" && value?.trim()) {
+                  //         addNewOption(value);
+                  //         e.target.value = "";
+                  //       }
+                  //     }}
+                  //     type="text"
+                  //     autoFocus
+                  //   />
+                  // </Box>
                 )}
               </Box>
             )}

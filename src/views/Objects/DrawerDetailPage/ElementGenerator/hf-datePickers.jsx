@@ -26,7 +26,7 @@ export const HFDatePickerField = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue || undefined}
-      render={({field: {onChange, value}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <Box position="relative" zIndex={9999}>
             <DatePickerInput
@@ -50,7 +50,7 @@ export const HFDatePickerField = ({
               styles={{
                 input: {
                   background: "inherit",
-                  border: "none",
+                  border: error ? "1px solid red" : "none",
                   "&:hover": {
                     background: "red",
                   },
@@ -77,6 +77,11 @@ export const HFDatePickerField = ({
                 }}
               >
                 <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
+              </Box>
+            )}
+            {error && (
+              <Box color="red" fontSize="12px">
+                {error.message}
               </Box>
             )}
           </Box>

@@ -68,7 +68,7 @@ const CellRelationFormElementForNewColumn = ({
         defaultValue={defaultValue}
         rules={{
           required: {
-            value: field.attributes.required,
+            value: field.required,
             message: "This is required field",
           },
         }}

@@ -260,7 +260,7 @@ export const useViewCreatePopupProps = ({
     }
   };
 
-  const { data, isLoading, refetch } = useQuery(
+  const { data, refetch } = useQuery(
     ["GET_VIEW_FIELDS_CREATE", i18n?.language, groupByTableSlug],
     () =>
       menuService.getFieldsListMenu(menuId, lastPath?.id, groupByTableSlug, {}),

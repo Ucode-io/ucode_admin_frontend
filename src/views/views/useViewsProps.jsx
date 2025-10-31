@@ -25,16 +25,25 @@ import { useTableByIdQuery } from "@/services/tableService/table.service";
 import { useMenuGetByIdQuery } from "@/services/menuService";
 import { Table } from "./modules/Table";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
+import { useGetLayout } from "@/services/layoutService/layout.service";
+import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerContants";
+import { Section } from "./modules/Section";
 
-export const useViewsProps = () => {
+export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
   const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
 
   const roleName = useSelector((state) => state.auth?.roleInfo?.name);
   const projectId = useSelector((state) => state.auth.projectId);
 
+  const viewsPath = useSelector((state) => state.groupField.viewsPath);
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const lastPath = viewsPath?.[viewsPath.length - 1];
+  const selectedV = viewsList?.[viewsList.length - 1];
+
   const paginationCounts = useSelector(
-    (state) => state?.pagination?.paginationCount
+    (state) => state?.pagination?.paginationCount,
   );
 
   const { i18n } = useTranslation();
@@ -54,6 +63,7 @@ export const useViewsProps = () => {
     },
   });
 
+  const [relationViews, setRelationViews] = useState([]);
   const [selectedView, setSelectedView] = useState(null);
 
   const [menuItem, setMenuItem] = useState(null);
@@ -61,12 +71,18 @@ export const useViewsProps = () => {
 
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
 
+  const [selectedViewType, setSelectedViewType] = useState(
+    localStorage?.getItem("detailPage") === "FullPage"
+      ? "SidePeek"
+      : localStorage?.getItem("detailPage"),
+  );
+
   // For TIMELINE view
   const [noDates, setNoDates] = useState([]);
   const [centerDate, setCenterDate] = useState(null);
 
   const [selectedRow, setSelectedRow] = useState("");
-  const [layoutType, setLayoutType] = useState("SimpleLayout");
+  const [layoutType, setLayoutType] = useState(DRAWER_LAYOUT_TYPES.POPUP);
 
   const [searchText, setSearchText] = useState("");
   const [checkedColumns, setCheckedColumns] = useState([]);
@@ -75,14 +91,15 @@ export const useViewsProps = () => {
   const [sortedDatas, setSortedDatas] = useState([]);
 
   const query = new URLSearchParams(window.location.search);
-  const viewId = query.get("v") ?? selectedView?.id;
+  const viewId =
+    (isRelationView ? query.get("dv") : query.get("v")) ?? selectedView?.id;
 
   const tableSlug = selectedView?.table_slug;
   const viewType = selectedView?.type;
 
   const paginationCount = useMemo(() => {
     const getObject = paginationCounts.find(
-      (el) => el?.tableSlug === tableSlug
+      (el) => el?.tableSlug === tableSlug,
     );
 
     return getObject?.pageCount ?? 1;
@@ -91,7 +108,7 @@ export const useViewsProps = () => {
   const [currentPage, setCurrentPage] = useState(paginationCount);
 
   const permissions = useSelector(
-    (state) => state.permissions.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug],
   );
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
@@ -108,6 +125,11 @@ export const useViewsProps = () => {
     [VIEW_TYPES_MAP.TIMELINE]: <></>,
     [VIEW_TYPES_MAP.CALENDAR]: <></>,
     [VIEW_TYPES_MAP.WEBSITE]: <></>,
+    [VIEW_TYPES_MAP.SECTION]: (
+      <MaterialUIProvider>
+        <Section />
+      </MaterialUIProvider>
+    ),
   };
 
   const viewForm = useForm({
@@ -163,7 +185,7 @@ export const useViewsProps = () => {
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
         navigate(
-          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`
+          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
         );
       } else {
         dispatch(detailDrawerActions.openDrawer());
@@ -183,36 +205,77 @@ export const useViewsProps = () => {
     setCheckedColumns(
       columnsForSearch
         .filter((item) => item.is_search === true)
-        .map((item) => item.slug)
+        .map((item) => item.slug),
     );
   };
 
   const { refetch: refetchViewsList, isRefetching } = useGetViewsList(menuId, {
     enabled: Boolean(menuId),
     select: (res) => {
-      return (
+      const relationViews =
         res?.views?.filter(
-          (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view)
-        ) ?? []
-      );
-    },
-    onSuccess: (data) => {
-      if (
-        !selectedView ||
-        selectedView?.id !== data?.[selectedTabIndex]?.id ||
-        isRefetching
-      ) {
-        setSelectedView(data?.[selectedTabIndex]);
-      }
-      dispatch(viewsActions.setViews(data));
+          (item) => item?.type === "SECTION" || item?.is_relation_view,
+        ) ?? [];
 
-      if (!pathname.includes("/login")) {
-        updateQueryWithoutRerender("v", data?.[selectedTabIndex]?.id);
+      const views =
+        res?.views?.filter(
+          (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
+        ) ?? [];
+
+      return { views, relationViews };
+    },
+    onSuccess: ({ views, relationViews }) => {
+      if (
+        (!selectedView ||
+          selectedView?.id !== views?.[selectedTabIndex]?.id ||
+          isRefetching) &&
+        !isRelationView
+      ) {
+        setSelectedView(views?.[selectedTabIndex]);
       }
-      if (state?.toDocsTab)
-        dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
+
+      if (isRelationView) {
+        setSelectedView(relationViews?.[selectedTabIndex]);
+        setRelationViews(relationViews);
+        updateQueryWithoutRerender("dv", relationViews?.[selectedTabIndex]?.id);
+        // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+      } else {
+        dispatch(viewsActions.setViews(views));
+
+        if (!pathname.includes("/login")) {
+          updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+        }
+        if (state?.toDocsTab)
+          dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
+      }
     },
   });
+
+  const {
+    data: { layout } = {
+      layout: [],
+    },
+  } = useGetLayout(
+    {
+      select: (data) => {
+        return {
+          layout: data ?? {},
+        };
+      },
+      onSuccess: (data) => {
+        if (data?.layout?.type === DRAWER_LAYOUT_TYPES.POPUP) {
+          setLayoutType(DRAWER_LAYOUT_TYPES.POPUP);
+        } else {
+          setLayoutType(DRAWER_LAYOUT_TYPES.SIMPLE);
+        }
+      },
+      enabled: Boolean(isRelationView && tableSlug && menuId),
+    },
+    {
+      menuId,
+      tableSlug,
+    },
+  );
 
   const {
     data: {
@@ -229,24 +292,19 @@ export const useViewsProps = () => {
       visibleColumns: [],
       visibleRelationColumns: [],
     },
-    isLoading,
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
       keepPreviousData: true,
-      enabled: Boolean(tableSlug && viewType !== VIEW_TYPES_MAP.SECTION),
+      enabled: isRelationView
+        ? Boolean(lastPath?.relation_table_slug || lastPath?.table_slug)
+        : Boolean(tableSlug && viewType !== VIEW_TYPES_MAP.SECTION),
       select: ({ data }) => {
-        const views =
-          data?.views?.filter(
-            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
-          ) ?? [];
-
         return {
           fieldsMap: listToMap(data?.fields),
           fieldsMapRel: listToMapWithoutRel(data?.fields ?? []),
           visibleColumns: data?.fields ?? [],
           tableInfo: data?.table_info || {},
-          views,
           visibleRelationColumns:
             data?.relation_fields?.map((el) => ({
               ...el,
@@ -257,25 +315,29 @@ export const useViewsProps = () => {
         };
       },
       onSuccess: (data) => {
-        dispatch(
-          groupFieldActions.addViewPath({
-            id: data?.tableInfo.id,
-            label: data?.tableInfo.label,
-            table_slug: data?.tableInfo.slug,
-            relation_table_slug: data?.tableInfo.relation_table_slug,
-            is_relation_view: data?.tableInfo?.is_relation_view ?? false,
-          }),
-        );
-        dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
-        setOrderBy(data?.orderBy);
+        if (!isRelationView) {
+          dispatch(
+            groupFieldActions.addViewPath({
+              id: data?.tableInfo.id,
+              label: data?.tableInfo.label,
+              table_slug: data?.tableInfo.slug,
+              relation_table_slug: data?.tableInfo.relation_table_slug,
+              is_relation_view: data?.tableInfo?.is_relation_view ?? false,
+            }),
+          );
+          dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
+          setOrderBy(data?.orderBy);
+        }
       },
       staleTime: 1000 * 60, // 1 min
       cacheTime: 1000 * 60 * 10, // 10 min
     },
     {
       menuId,
-      viewId: selectedView?.id,
-      tableSlug: selectedView?.table_slug,
+      viewId: isRelationView ? selectedV?.id : selectedView?.id,
+      tableSlug: isRelationView
+        ? lastPath?.relation_table_slug || lastPath?.table_slug
+        : selectedView?.table_slug,
     },
   );
 
@@ -340,7 +402,7 @@ export const useViewsProps = () => {
         el?.type === FIELD_TYPES.EMAIL ||
         el?.type === FIELD_TYPES.INTERNATION_PHONE ||
         el?.type === FIELD_TYPES.INCREMENT_ID ||
-        el?.type === FIELD_TYPES.FORMULA_FRONTEND
+        el?.type === FIELD_TYPES.FORMULA_FRONTEND,
     );
   }, [fieldsMap]);
 
@@ -354,7 +416,7 @@ export const useViewsProps = () => {
     menuId,
     refetchViews: refetchViewsList,
     setSelectedView,
-    views: viewsFromStore,
+    views: isRelationView ? relationViews : viewsFromStore,
     view,
     refetchTableInfo,
     permissions,
@@ -396,5 +458,9 @@ export const useViewsProps = () => {
     setLayoutType,
     selectedRow,
     setSelectedRow,
+    layout,
+    selectedViewType,
+    setSelectedViewType,
+    selectedView,
   };
 };

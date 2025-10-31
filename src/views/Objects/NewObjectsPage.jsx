@@ -36,7 +36,7 @@ const NewObjectsPage = () => {
 
   const [menuItem, setMenuItem] = useState(null);
 
-  const {data: views, refetch} = useQuery(
+  const { data: views, refetch } = useQuery(
     ["GET_VIEWS_LIST", menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
@@ -46,7 +46,7 @@ const NewObjectsPage = () => {
       select: (res) => {
         return (
           res?.views?.filter(
-            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view)
+            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
           ) ?? []
         );
       },
@@ -65,7 +65,7 @@ const NewObjectsPage = () => {
         if (state?.toDocsTab)
           dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
       },
-    }
+    },
   );
 
   const { loader: menuLoader } = useMenuGetByIdQuery({
@@ -101,12 +101,12 @@ const NewObjectsPage = () => {
         menuId,
         selectedView?.id,
         selectedView?.table_slug,
-        {}
+        {},
       );
     },
     {
       enabled: Boolean(
-        selectedView?.table_slug && selectedView?.type !== "SECTION"
+        selectedView?.table_slug && selectedView?.type !== "SECTION",
       ),
       select: ({ data }) => {
         return {
@@ -139,11 +139,11 @@ const NewObjectsPage = () => {
             table_slug: data?.tableInfo.slug,
             relation_table_slug: data?.tableInfo.relation_table_slug,
             is_relation_view: data?.tableInfo?.is_relation_view ?? false,
-          })
+          }),
         );
         dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
       },
-    }
+    },
   );
 
   useEffect(() => {

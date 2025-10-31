@@ -1,45 +1,54 @@
 import cls from "./styles.module.scss";
-import {
-  Flex,
-  IconButton,
-} from "@chakra-ui/react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
+import { Flex, IconButton } from "@chakra-ui/react";
+import { ArrowBackIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import { useHeaderProps } from "./useHeaderProps";
 import { TableActions } from "../TableActions";
 import { AIButton } from "../AIButton";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
+import { ScreenOptions } from "../ScreenOptions";
 
-export const Header = ({ tableName }) => {
-
-  const { navigate, tableSlug, tableLan } = useHeaderProps()
+export const Header = ({ tableName, data }) => {
+  const {
+    navigate,
+    tableSlug,
+    tableLan,
+    isRelationView,
+    handleCloseDrawer,
+    handleSpaceDashboardClick,
+  } = useHeaderProps({ data });
 
   return (
     <div className={cls.header}>
-      {/* {relationView && (
-    <IconButton
-      aria-label="back"
-      icon={<ArrowBackIcon fontSize={20} color="#344054" />}
-      variant="ghost"
-      colorScheme="gray"
-      onClick={() => {
-        handleClose();
-      }}
-      size="sm"
-    />
-  )} */}
+      <IconButton
+        aria-label="back"
+        icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+        variant="ghost"
+        colorScheme="gray"
+        onClick={() => {
+          if (isRelationView) {
+            handleCloseDrawer();
+          } else {
+            navigate(-1);
+          }
+        }}
+        size="sm"
+      />
 
-      {/* {!relationView && (
-    <IconButton
-      aria-label="back"
-      icon={<ArrowBackIcon fontSize={20} color="#344054" />}
-      variant="ghost"
-      colorScheme="gray"
-      onClick={() => {
-        navigate(-1);
-      }}
-      size="sm"
-    />
-  )} */}
+      {isRelationView && (
+        <MaterialUIProvider>
+          <div className={cls.screenOptions}>
+            <ScreenOptions />
+            <div
+              onClick={handleSpaceDashboardClick}
+              className={cls.screenOption}
+            >
+              <SpaceDashboardIcon />
+            </div>
+          </div>
+        </MaterialUIProvider>
+      )}
 
       <IconButton
         aria-label="home"
@@ -56,12 +65,15 @@ export const Header = ({ tableName }) => {
         {tableName}
       </div>
 
-      <Flex position="absolute" right="16px" gap="8px">
-        <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-          <TableActions tableSlug={tableSlug} tableLan={tableLan} />
-        </PermissionWrapperV2>
-        <AIButton />
-      </Flex>
+      {!isRelationView && (
+        <Flex position="absolute" right="16px" gap="8px">
+          <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+            <TableActions tableSlug={tableSlug} tableLan={tableLan} />
+          </PermissionWrapperV2>
+          <AIButton />
+        </Flex>
+      )}
+
       {/* <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
 <Button
   h="30px"
@@ -83,4 +95,4 @@ export const Header = ({ tableName }) => {
 </PermissionWrapperV2> */}
     </div>
   );
-}
+};

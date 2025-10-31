@@ -3,7 +3,7 @@ import useTabRouter from "@/hooks/useTabRouter";
 // import constructorFieldService from "@/services/constructorFieldService";
 import constructorObjectService from "@/services/constructorObjectService";
 // import constructorRelationService from "@/services/constructorRelationService";
-import layoutService from "@/services/layoutService";
+// import layoutService from "@/services/layoutService";
 import {quickFiltersActions} from "@/store/filter/quick_filter";
 import {mergeStringAndState} from "@/utils/jsonPath";
 // import {listToMap} from "@/utils/listToMap";
@@ -114,7 +114,6 @@ export const useTableProps = ({ tab }) => {
   });
 
   const handleChangeInput = useCallback(({ name, value, rowId }) => {
-    console.log({ name, value, rowId });
     if (name && value && rowId) {
       let row = {};
       setRows((prev) => {
@@ -415,37 +414,37 @@ export const useTableProps = ({ tab }) => {
     },
   });
 
-  const {
-    data: { layout } = {
-      layout: [],
-    },
-  } = useQuery({
-    queryKey: [
-      "GET_LAYOUT",
-      {
-        tableSlug,
-      },
-    ],
-    enabled: Boolean(tableSlug && menuId),
-    queryFn: () => {
-      return layoutService.getLayout(tableSlug, menuId);
-    },
-    select: (data) => {
-      return {
-        layout: data ?? {},
-      };
-    },
-    onSuccess: (data) => {
-      if (data?.layout?.type === "PopupLayout") {
-        setLayoutType("PopupLayout");
-      } else {
-        setLayoutType("SimpleLayout");
-      }
-    },
-    onError: (error) => {
-      console.error("Error", error);
-    },
-  });
+  // const {
+  //   data: { layout } = {
+  //     layout: [],
+  //   },
+  // } = useQuery({
+  //   queryKey: [
+  //     "GET_LAYOUT",
+  //     {
+  //       tableSlug,
+  //     },
+  //   ],
+  //   enabled: Boolean(tableSlug && menuId),
+  //   queryFn: () => {
+  //     return layoutService.getLayout(tableSlug, menuId);
+  //   },
+  //   select: (data) => {
+  //     return {
+  //       layout: data ?? {},
+  //     };
+  //   },
+  //   onSuccess: (data) => {
+  //     if (data?.layout?.type === "PopupLayout") {
+  //       setLayoutType("PopupLayout");
+  //     } else {
+  //       setLayoutType("SimpleLayout");
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error", error);
+  //   },
+  // });
 
   const deleteHandler = async (row) => {
     setDeleteLoader(true);
@@ -474,36 +473,50 @@ export const useTableProps = ({ tab }) => {
       dispatch(detailDrawerActions.openDrawer());
       updateQueryWithoutRerender("p", row?.guid);
     } else {
-      if (new_router) {
-        updateQueryWithoutRerender("p", row?.guid);
-        if (view?.attributes?.url_object) {
-          navigateToDetailPage(row);
-        } else if (projectInfo?.new_layout) {
-          setSelectedRow(row);
-          dispatch(detailDrawerActions.openDrawer());
-        } else {
-          if (layoutType === "PopupLayout") {
-            setSelectedRow(row);
-            dispatch(detailDrawerActions.openDrawer());
-          } else {
-            navigateToDetailPage(row);
-          }
-        }
+      updateQueryWithoutRerender("p", row?.guid);
+      if (view?.attributes?.url_object) {
+        navigateToDetailPage(row);
+      } else if (projectInfo?.new_layout) {
+        setSelectedRow(row);
+        dispatch(detailDrawerActions.openDrawer());
       } else {
-        if (view?.attributes?.url_object) {
-          navigateToDetailPage(row);
-        } else if (projectInfo?.new_layout) {
+        if (layoutType === "PopupLayout") {
           setSelectedRow(row);
           dispatch(detailDrawerActions.openDrawer());
         } else {
-          if (layoutType === "PopupLayout") {
-            setSelectedRow(row);
-            dispatch(detailDrawerActions.openDrawer());
-          } else {
-            navigateToDetailPage(row);
-          }
+          navigateToDetailPage(row);
         }
       }
+      // if (new_router) {
+      //   updateQueryWithoutRerender("p", row?.guid);
+      //   if (view?.attributes?.url_object) {
+      //     navigateToDetailPage(row);
+      //   } else if (projectInfo?.new_layout) {
+      //     setSelectedRow(row);
+      //     dispatch(detailDrawerActions.openDrawer());
+      //   } else {
+      //     if (layoutType === "PopupLayout") {
+      //       setSelectedRow(row);
+      //       dispatch(detailDrawerActions.openDrawer());
+      //     } else {
+      //       navigateToDetailPage(row);
+      //     }
+      //   }
+      // } else {
+      //   if (view?.attributes?.url_object) {
+      //     navigateToDetailPage(row);
+      //   } else if (projectInfo?.new_layout) {
+      //     setSelectedRow(row);
+      //     dispatch(detailDrawerActions.openDrawer());
+      //   } else {
+      //     if (layoutType === "PopupLayout") {
+      //       setSelectedRow(row);
+      //       dispatch(detailDrawerActions.openDrawer());
+      //     } else {
+      //       navigateToDetailPage(row);
+      //     }
+      //   }
+      // }
     }
   };
 

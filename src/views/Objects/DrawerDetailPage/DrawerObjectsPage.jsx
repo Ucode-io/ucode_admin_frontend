@@ -39,22 +39,25 @@ function DrawerObjectsPage({
   setSelectedView = () => {},
   setSelectedViewType = () => {},
 }) {
-  const {view} = useViewContext();
-  const {state} = useLocation();
+  const { view } = useViewContext();
+  const { state } = useLocation();
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const {menuId: menuIdParam} = useParams();
+  const { menuId: menuIdParam } = useParams();
   const menuId = menuIdParam || searchParams.get("menuId");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const isNewRouter = localStorage.getItem("new_router") === "true";
+
+  const query = new URLSearchParams(window.location.search);
+  const viewId = query.get("v") ?? selectedView?.id;
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const selectedTabIndex = useSelector(
-    (state) => state?.drawer?.drawerTabIndex
+    (state) => state?.drawer?.drawerTabIndex,
   );
 
   const selectedV = viewsList?.[viewsList.length - 1];
@@ -122,6 +125,12 @@ function DrawerObjectsPage({
   const views = useMemo(() => {
     return !isRelationView ? menuViews : relationViews;
   }, [menuViews, relationViews, isRelationView, viewsList?.length]);
+  console.log({ viewsList, viewsPath });
+
+  const currentView = viewsPath?.find(
+    (item) => item?.is_relation_view && item?.id === viewId,
+  );
+
 
   const {
     data: {
@@ -149,7 +158,10 @@ function DrawerObjectsPage({
       menuService.getFieldsListMenu(
         menuId,
         isNewRouter ? selectedV?.id : view?.id,
-        lastPath?.relation_table_slug || lastPath?.table_slug,
+        currentView?.relation_table_slug ||
+          currentView?.table_slug ||
+          lastPath?.table_slug ||
+          lastPath?.relation_table_slug,
         {},
       ),
     {

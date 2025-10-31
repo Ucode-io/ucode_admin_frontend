@@ -19,6 +19,8 @@ import {pageToOffset} from "../../../utils/pageToOffset";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import styles from "./styles.module.scss";
+import { useDispatch } from "react-redux";
+import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 
 const GroupTableView = ({
   tab,
@@ -27,6 +29,7 @@ const GroupTableView = ({
   selectedView,
   reset = () => {},
   fieldsMap,
+  fieldsMapRel,
   isDocView,
   sortedDatas = [],
   setSortedDatas,
@@ -48,6 +51,8 @@ const GroupTableView = ({
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
   const { id, slug, tableSlug: tableSlugFromParams, appId } = useParams();
+  const dispatch = useDispatch();
+
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
@@ -332,6 +337,7 @@ const GroupTableView = ({
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
+      dispatch(detailDrawerActions.openDrawer());
       setOpen(true);
     } else {
       navigateToDetailPage(row);
@@ -387,7 +393,7 @@ const GroupTableView = ({
       setElementHeight(height);
     }
   }, []);
-  console.log(view?.columns);
+
   return (
     <div className={styles.wrapper}>
       {/* {(view?.quick_filters?.length > 0 ||
@@ -462,7 +468,7 @@ const GroupTableView = ({
           </Button> */}
         </div>
       </PermissionWrapperV2>
-      {open && <ModalDetailPage open={open} setOpen={setOpen} />}
+      {open && <ModalDetailPage open={open} setOpen={setOpen} view={view} />}
 
       <Drawer
         open={drawerState}

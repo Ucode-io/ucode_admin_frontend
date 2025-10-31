@@ -1,7 +1,10 @@
 import {get} from "@ngard/tiny-get";
 import {useMemo} from "react";
 import DownloadIcon from "@mui/icons-material/Download";
-import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
+import {
+  getRelationFieldGroupTableCellLabel,
+  getRelationFieldTableCellLabel,
+} from "../../utils/getRelationFieldLabel";
 import Many2ManyValue from "../ElementGenerators/Many2ManyValue";
 import { formatDate } from "../../utils/dateFormatter";
 import { numberWithSpaces } from "../../utils/formatNumbers";
@@ -228,20 +231,25 @@ const GroupCellElementGenerator = ({ field = {}, row, view, index }) => {
   // ) : (
   //   typeof value === 'object' ? JSON.stringify(value) :
   // )
-  console.log({ resultString });
+  if (field?.type === "LOOKUP")
+    console.log(
+      view?.attributes?.group_by_columns?.find(
+        (item) => item === field?.relation_id,
+      ),
+    );
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
 
     case "LOOKUP":
-      return (
-        ((row?.group_by_slug ||
-          !view?.attributes?.group_by_columns?.find(
-            (item) => item === field?.relation_id,
-          )) &&
-          resultString) ||
-        getRelationFieldTableCellLabel(field, row, field.slug + "_data")
-      );
+      return ((row?.group_by_slug ||
+        !view?.attributes?.group_by_columns?.find(
+          (item) => item === field?.relation_id,
+        )) &&
+        resultString) ||
+        row?.data?.length
+        ? getRelationFieldGroupTableCellLabel(field, row, field.slug + "_data")
+        : getRelationFieldTableCellLabel(field, row, field.slug + "_data");
 
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;

@@ -1479,6 +1479,7 @@ export const NewUiViewsWithGroups = ({
                         view={view}
                         setSortedDatas={setSortedDatas}
                         fieldsMap={fieldsMap}
+                        fieldsMapRel={fieldsMapRel}
                         searchText={searchText}
                         selectedObjects={selectedObjects}
                         setSelectedObjects={setSelectedObjects}

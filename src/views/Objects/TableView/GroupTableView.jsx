@@ -387,7 +387,7 @@ const GroupTableView = ({
       setElementHeight(height);
     }
   }, []);
-
+  console.log(view?.columns);
   return (
     <div className={styles.wrapper}>
       {/* {(view?.quick_filters?.length > 0 ||

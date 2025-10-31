@@ -105,12 +105,36 @@ export const getRelationFieldTabsLabelLang = (
   return langLabel ? langLabel : label.trim();
 };
 
+export const getRelationFieldGroupTableCellLabel = (
+  field,
+  option,
+  tableSlug,
+) => {
+  let label = "";
+
+  field.view_fields?.forEach((el) => {
+    let result = "";
+    option?.data?.forEach((item) => {
+      let value = get(item, `${tableSlug}.${el?.slug}`);
+
+      if (el?.type === "DATE")
+        result = value ? format(new Date(value), "dd.MM.yyyy") : "";
+      else if (el?.type === "DATE_TIME")
+        result = value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "";
+      else if (el?.type === "NUMBER") result = numberWithSpaces(value);
+      else result = value;
+    });
+    label += ` ${result ?? " "}`;
+  });
+
+  return label;
+};
+
 export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
   let label = "";
 
   field.view_fields?.forEach((el) => {
     let result = "";
-
     let value = get(option, `${tableSlug}.${el?.slug}`);
 
     if (el?.type === "DATE")

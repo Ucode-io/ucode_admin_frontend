@@ -51,9 +51,9 @@ export const FieldMenuItem = ({
               <path
                 d="M1 1L5 5L9 1"
                 stroke="#D0D5DD"
-                stroke-width="1.3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </span>

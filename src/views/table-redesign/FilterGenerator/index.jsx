@@ -70,6 +70,7 @@ export const Filter = ({
         return {
           value: option.value,
           label: option.label ?? option.value,
+          ...option,
         };
     });
   }, [field.attributes?.options, field.type]);

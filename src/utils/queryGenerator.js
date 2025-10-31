@@ -18,6 +18,7 @@ export const queryGenerator = (groupField, filters = {}, lang) => {
           label: el?.label ?? el.value,
           value: el?.value,
           slug: groupField?.slug,
+          ...el,
         })),
     };
   }

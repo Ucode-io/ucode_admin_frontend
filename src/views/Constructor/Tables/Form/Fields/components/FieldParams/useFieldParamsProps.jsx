@@ -183,10 +183,13 @@ export const useFieldParamsProps = ({ watch, setValue, control }) => {
     }
   };
 
-  const addNewOption = (value) => {
+  const addNewOption = (value, lang) => {
     const randomIndex = Math.floor(Math.random() * colors?.length);
     multiSelectAppend({
       value,
+      ...labelValue,
+      [`label_${lang}`]: value,
+      slug: value + "_slug",
       icon: "",
       color: colors[randomIndex].color,
       colorName: colors[randomIndex].name,

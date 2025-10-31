@@ -89,7 +89,12 @@ const MultiselectSettings = ({
           const newItem = { ...item, ...editingField, color };
           return newItem;
         } else {
-          const newItem = { ...item, value: value, label: value };
+          const newItem = {
+            ...item,
+            ...editingField,
+            value: value,
+            label: value,
+          };
           return newItem;
         }
       } else {

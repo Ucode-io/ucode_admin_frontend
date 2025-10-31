@@ -11,8 +11,7 @@ import {
   InputAdornment,
   Box,
 } from "@mui/material";
-import {useEffect, useState} from "react";
-import {useMemo} from "react";
+import { useEffect, useState, useMemo } from "react";
 import {Controller, useForm, useWatch} from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import {makeStyles} from "@mui/styles";
@@ -152,15 +151,32 @@ const AutoCompleteElement = ({
       if (Array.isArray(value)) {
         return (
           value?.map((el) =>
-            localOptions?.find((option) => option.value === el)
+            localOptions?.find((option) => {
+              return (
+                option.slug === el || option.value === el || option.label === el
+              );
+            }),
           ) ?? []
         );
       } else {
         return localOptions?.find((item) => {
-          return item?.value === value;
+          return (
+            item?.slug === value ||
+            item?.value === value ||
+            item?.label === value
+          );
         });
       }
-    else return [localOptions?.find((option) => option.value === value[0])];
+    else {
+      return [
+        localOptions?.find(
+          (option) =>
+            option.value === value[0] ||
+            option.slug === value[0] ||
+            option.label === value[0],
+        ),
+      ];
+    }
   }, [value, localOptions, isMultiSelect]);
 
   const addNewOption = (newOption) => {

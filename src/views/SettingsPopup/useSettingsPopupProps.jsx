@@ -83,6 +83,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
   );
 
   const showSettings = globalPermissions?.settings_button;
+  const showBilling = globalPermissions?.billing;
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
 
@@ -127,13 +128,13 @@ export const useSettingsPopupProps = ({ onClose }) => {
                 read: true,
               },
             },
-          }))
+          })),
         );
       },
       onError: () => {
         setIsLoading(false);
       },
-    }
+    },
   );
 
   const { isLoading: loading } = useMenuListQuery({
@@ -277,7 +278,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
     },
   ];
 
-  if (!isDefaultAdmin) {
+  if (!isDefaultAdmin || !showBilling) {
     accountTabs.splice(1, 1);
   }
 

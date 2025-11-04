@@ -1,16 +1,11 @@
-import {
-  AccountBalance,
-  AttachMoney,
-  HourglassBottom,
-} from "@mui/icons-material";
-import {Box, Card, CardContent, Grid, Modal, Typography} from "@mui/material";
-import {useBillingProps} from "./useBillingProps";
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {BillingTable} from "../../components/BillingTable";
-import {TopUpBalance} from "../../components/TopUpBalance";
-import {Fares} from "../Fares";
-import {useSearchParams} from "react-router-dom";
-import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
+import { Box, Card, CardContent, Modal, Typography } from "@mui/material";
+import { useBillingProps } from "./useBillingProps";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { BillingTable } from "../../components/BillingTable";
+import { TopUpBalance } from "../../components/TopUpBalance";
+import { useSearchParams } from "react-router-dom";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
+import AddIcon from "@mui/icons-material/Add";
 
 export const Billing = () => {
   const {
@@ -28,144 +23,179 @@ export const Billing = () => {
     dispatch,
   } = useBillingProps();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
   return (
     <>
       <Box>
-        <Grid container spacing={4} alignItems="stretch" mt="0">
-          <Grid item paddingTop="0 !important" xs={12} sm={4}>
-            <Card
+        <Card
+          sx={{
+            boxShadow: "none",
+            border: "1px solid #EAECF0",
+            borderRadius: "12px",
+            mb: 3,
+          }}
+        >
+          <CardContent sx={{ padding: "24px !important" }}>
+            <Box
               sx={{
-                height: "100%",
-                boxShadow: "none",
-                border: "1px solid rgba(55, 53, 47, 0.06)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                mb: 3,
               }}
             >
-              <CardContent
+              <Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    color: "#000",
+                    mb: 0.5,
+                  }}
+                >
+                  Your invoice
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 400,
+                    color: "rgba(0, 0, 0, 0.5)",
+                  }}
+                >
+                  Details on your next invoice to be paid
+                </Typography>
+              </Box>
+              <Box
+                onClick={handClickBalance}
                 sx={{
-                  height: "100%",
+                  width: "186px",
+                  backgroundColor: "#2563eb",
+                  color: "white",
+                  borderRadius: "8px",
+                  padding: "8px 16px",
                   display: "flex",
                   alignItems: "center",
-                  padding: "16px",
-                  paddingBottom: "16px !important",
+                  gap: "8px",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    backgroundColor: "#1d4ed8",
+                  },
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  {/* <AccountBalance color="primary" fontSize="large" /> */}
-                  <img
-                    src="img/bank.svg"
-                    width={"26px"}
-                    height={"26px"}
-                    alt=""
-                  />
-                  <Box>
-                    <Typography variant="h6">Balance</Typography>
-                    <Typography variant="h6" color="primary">
-                      {numberWithSpaces(project?.balance)}{" "}
-                      {data?.currency && data?.currency?.toUpperCase()}
-                    </Typography>
-                    <Typography variant="subtitle1" color="error">
-                      (-{numberWithSpaces(project?.credit_limit)})
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+                <AddIcon />
+                <Typography sx={{ fontSize: "14px", fontWeight: 600 }}>
+                  Top up
+                </Typography>
+              </Box>
+            </Box>
 
-          <Grid item paddingTop="0 !important" xs={12} sm={4}>
-            <Card
+            <Box
               sx={{
-                height: "100%",
-                boxShadow: "none",
-                border: "1px solid rgba(55, 53, 47, 0.06)",
+                display: "grid",
+                gridTemplateColumns: "repeat(4, 1fr)",
+                gap: 2,
               }}
             >
-              <CardContent
+              <Box
                 sx={{
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "16px",
-                  paddingBottom: "16px !important",
+                  borderRight: "1px solid rgba(55, 53, 47, 0.09)",
+                  pr: 2,
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  {/* <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: "700",
-                      color: "#18c19d",
-                    }}>
-                    UZS
-                  </Typography> */}
-                  <img
-                    src="img/cash.svg"
-                    width={"26px"}
-                    height={"26px"}
-                    alt=""
-                  />
-                  <Box>
-                    <Typography variant="h6">Tariff</Typography>
-                    <Typography
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => {
-                        dispatch(settingsModalActions.setTab("fares"));
-                      }}
-                      variant="h6"
-                      color="success.main"
-                    >
-                      {data?.name}
-                      <Typography variant="subtitle1" sx={{ color: "#000" }}>
-                        {numberWithSpaces(data?.price * 12927.17)}
-                        {data?.currency?.toUpperCase()}
-                      </Typography>
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "rgba(0, 0, 0, 0.5)", mb: 1 }}
+                >
+                  Balance
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    color: "#101828",
+                  }}
+                >
+                  {numberWithSpaces(project?.balance)}{" "}
+                  {data?.currency?.toLowerCase() || "uzs"}
+                </Typography>
+              </Box>
 
-          <Grid item paddingTop="0 !important" xs={12} sm={4}>
-            <Card
-              sx={{
-                height: "100%",
-                boxShadow: "none",
-                border: "1px solid rgba(55, 53, 47, 0.06)",
-              }}
-            >
-              <CardContent
+              <Box
                 sx={{
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "16px",
-                  paddingBottom: "16px !important",
+                  borderRight: "1px solid rgba(55, 53, 47, 0.09)",
+                  pr: 2,
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  {/* <HourglassBottom color="warning" fontSize="large" /> */}
-                  <img
-                    src="img/time.svg"
-                    width={"26px"}
-                    height={"26px"}
-                    alt=""
-                  />
-                  <Box>
-                    <Typography variant="h6">Expire Date</Typography>
-                    <Typography variant="h6" color="text.secondary">
-                      {data?.subscription?.end_date}
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "rgba(0, 0, 0, 0.5)", mb: 1 }}
+                >
+                  Your plan
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    color: "#101828",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    dispatch(settingsModalActions.setTab("fares"));
+                  }}
+                >
+                  {data?.name || "Small"}
+                </Typography>
+              </Box>
 
-        <BillingTable handClickBalance={handClickBalance} />
+              <Box
+                sx={{
+                  borderRight: "1px solid rgba(55, 53, 47, 0.09)",
+                  pr: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{ color: "rgba(0, 0, 0, 0.5)", mb: 1 }}
+                >
+                  Total amount
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    color: "#101828",
+                  }}
+                >
+                  {numberWithSpaces(data?.price * 12927.17 || 0)}{" "}
+                  {data?.currency?.toLowerCase() || "uzs"}
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "rgba(0, 0, 0, 0.5)", mb: 1 }}
+                >
+                  Expire date
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    color: "#101828",
+                  }}
+                >
+                  {data?.subscription?.end_date || "17 Oct, 2025"}
+                </Typography>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+
+        <BillingTable />
 
         <Modal
           onClose={handCloseBalance}

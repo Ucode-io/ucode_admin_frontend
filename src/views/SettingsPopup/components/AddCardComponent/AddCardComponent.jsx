@@ -37,7 +37,7 @@ import request from "@/utils/request";
 
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
 
-function SetupForm() {
+function SetupForm({ onSwitchToUzcard }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -68,7 +68,32 @@ function SetupForm() {
     <Box mt={2}>
       <form onSubmit={handleSubmit}>
         <PaymentElement />
-        <Box mt={2} display="flex" justifyContent="flex-end">
+        <Box
+          mt={2}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography
+            onClick={onSwitchToUzcard}
+            sx={{
+              fontSize: "14px",
+              fontWeight: 500,
+              color: "#2563eb",
+              cursor: "pointer",
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              "&:hover": {
+                textDecoration: "underline",
+                opacity: 0.9,
+              },
+            }}
+          >
+            <CreditCardIcon sx={{ fontSize: 16 }} />
+            Add uzcard or humo
+          </Typography>
           <Button disabled={!stripe || loading} primary>
             {loading ? "Saving..." : "Save card"}
           </Button>
@@ -102,9 +127,9 @@ export const AddCardComponent = ({
     otpVal,
     confirmOtpFunc,
   } = useAddCardComponent({ watch, setVerifyCard });
-  console.log("selectedCardselectedCardselectedCard", selectedCard);
+
   const [clientSecret, setClientSecret] = useState(null);
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(1);
   const [amount, setAmount] = useState("");
 
   const handleTabChange = (index) => {
@@ -454,15 +479,24 @@ export const AddCardComponent = ({
 
       <Dialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="xs"
+        onClose={() => {
+          setOpenDialog(false);
+          setVerifyCard(false);
+          setTabIndex(1);
+          isFirstRequestStripe.current = true;
+        }}
+        maxWidth="sm"
         fullWidth
       >
-        <DialogTitle sx={{ marginBottom: "20px" }}>Add a New Card</DialogTitle>
+        <DialogTitle
+          sx={{ fontWeight: 600, fontSize: "20px", paddingBottom: "16px" }}
+        >
+          Add card
+        </DialogTitle>
         <DialogContent sx={{ padding: "10px 20px" }}>
           {!verifyCard ? (
-            <Tabs tabIndex={tabIndex} onSelect={handleTabChange}>
-              <TabList className={cls.tabs}>
+            <Tabs selectedIndex={tabIndex} onSelect={handleTabChange}>
+              <TabList className={cls.tabs} style={{ display: "none" }}>
                 <Tab className={cls.tab} selectedClassName={cls.active}>
                   Card
                 </Tab>
@@ -495,11 +529,9 @@ export const AddCardComponent = ({
                 {!clientSecret ? (
                   "Loading..."
                 ) : (
-                  <Box>
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <SetupForm />
-                    </Elements>
-                  </Box>
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <SetupForm onSwitchToUzcard={() => setTabIndex(0)} />
+                  </Elements>
                 )}
               </TabPanel>
             </Tabs>
@@ -540,6 +572,7 @@ export const AddCardComponent = ({
               onClick={() => {
                 setVerifyCard(false);
                 setOpenDialog(false);
+                setTabIndex(1);
               }}
             >
               Cancel

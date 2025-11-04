@@ -84,7 +84,7 @@ export const SettingsPopup = ({open, onClose}) => {
                       </Typography>
                       {tab?.tabs?.map((tab, tabIndex) => {
                         return (
-                          <Box>
+                          <Box key={tabIndex}>
                             {tab?.children ? (
                               <Accordion
                                 sx={{
@@ -101,7 +101,8 @@ export const SettingsPopup = ({open, onClose}) => {
                                     paddingLeft: "12px",
                                     paddingRight: "12px",
                                   },
-                                }}>
+                                }}
+                              >
                                 <AccordionSummary
                                   expandIcon={<ExpandMoreIcon />}
                                   aria-controls="panel1-content"
@@ -112,7 +113,8 @@ export const SettingsPopup = ({open, onClose}) => {
                                       backgroundColor:
                                         "rgba(55, 53, 47, 0.06) !important",
                                     },
-                                  }}>
+                                  }}
+                                >
                                   <TabTitle tab={tab}>{tab?.title}</TabTitle>
                                 </AccordionSummary>
                                 <AccordionDetails>
@@ -126,14 +128,16 @@ export const SettingsPopup = ({open, onClose}) => {
                                             child?.guid === activeChildId
                                               ? "rgba(55, 53, 47, 0.06)"
                                               : "transparent",
-                                        }}>
+                                        }}
+                                      >
                                         <TabTitle
                                           tab={child}
                                           onClick={() => {
                                             child?.type === "MINIO_FOLDER"
                                               ? handleFilesClick(child)
                                               : handlePermissionClick(child);
-                                          }}>
+                                          }}
+                                        >
                                           {child?.name ?? child?.label}
                                         </TabTitle>
                                       </Box>
@@ -142,7 +146,8 @@ export const SettingsPopup = ({open, onClose}) => {
                                   {tab?.key === "permissions" && (
                                     <button
                                       className={cls.addClientTypeBtn}
-                                      onClick={handleOpenClientTypeModal}>
+                                      onClick={handleOpenClientTypeModal}
+                                    >
                                       <span>
                                         <span className={cls.addIcon}>
                                           <AddIcon />
@@ -160,7 +165,8 @@ export const SettingsPopup = ({open, onClose}) => {
                                 })}
                                 onClick={() => handleChangeTab(tab?.key)}
                                 alignItems="center"
-                                key={tabIndex}>
+                                key={tabIndex}
+                              >
                                 <TabTitle tab={tab}>{tab?.title}</TabTitle>
                               </Flex>
                             )}

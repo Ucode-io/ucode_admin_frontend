@@ -319,8 +319,6 @@ export const NewUiViewsWithGroups = ({
     queryGenerator(groupField, filters, i18n.language),
   );
 
-  console.log({ tabs });
-
   const navigateToSettingsPage = () => {
     if (new_router) {
       const url = `/settings/constructor/apps/${menuId}/objects/${tableSlug}?menuId=${menuId}`;

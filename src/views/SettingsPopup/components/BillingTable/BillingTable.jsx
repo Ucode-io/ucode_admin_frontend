@@ -1,12 +1,6 @@
-import cls from "./styles.module.scss";
-import {format} from "date-fns";
-import {numberWithSpaces} from "../../../../utils/formatNumbers";
-import {
-  Done,
-  HourglassTop,
-  Block as BlockIcon,
-  BackupTable as BackupTableIcon,
-} from "@mui/icons-material";
+import { format } from "date-fns";
+import { numberWithSpaces } from "../../../../utils/formatNumbers";
+import { BackupTable as BackupTableIcon } from "@mui/icons-material";
 import {
   Box,
   Paper,
@@ -19,22 +13,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import {useBillingTableProps} from "./useBillingTableProps";
-import {Button} from "../Button";
-import {AddIcon} from "@chakra-ui/icons";
+import { useBillingTableProps } from "./useBillingTableProps";
 
-const tableHeads = [
-  "Project",
-  "Amount",
-  // "Fare",
-  // "Payment Type",
-  "Type",
-  "Status",
-  // "Currency",
-  "Date",
-];
+const tableHeads = ["Project", "Amount", "Type", "Date"];
 
-export const BillingTable = ({ handClickBalance }) => {
+export const BillingTable = () => {
   const { transactions, project, isLoading } = useBillingTableProps();
 
   return (
@@ -43,25 +26,16 @@ export const BillingTable = ({ handClickBalance }) => {
         variant="h6"
         sx={{
           mb: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          fontWeight: 600,
+          color: "#000",
         }}
       >
         Transactions
-        <Button className={cls.btn} onClick={handClickBalance} primary>
-          <Box display="flex" alignItems="center" gap="4px">
-            <AddIcon />
-            <span>Top Up</span>
-          </Box>
-        </Button>
       </Typography>
       <TableContainer
         component={Paper}
         sx={{
           borderRadius: 1,
-          // borderTop: "2px solid #dbe0e4",
-          // maxHeight: "calc(100vh - 550px)",
           minHeight: "calc(100vh - 650px)",
           marginBottom: "15px",
         }}
@@ -103,69 +77,38 @@ export const BillingTable = ({ handClickBalance }) => {
                         paddingRight: "15px",
                       },
                     },
-                    // "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
                   }}
                 >
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
+                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
                     {project?.title}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px" }}>
+                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
                     {numberWithSpaces(row.amount)} {row.currency?.code || "UZS"}
                   </TableCell>
-                  {/* <TableCell sx={{fontSize: "14px", padding: "8px"}}>
-                    {row.fare?.name ?? ""}
+                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                    <Box
+                      sx={{
+                        display: "inline-block",
+                        padding: "4px 12px",
+                        borderRadius: "16px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        backgroundColor:
+                          row.transaction_type?.toLowerCase() === "subscription"
+                            ? "#d1fae5"
+                            : "#dbeafe",
+                        color:
+                          row.transaction_type?.toLowerCase() === "subscription"
+                            ? "#059669"
+                            : "#2563eb",
+                      }}
+                    >
+                      {row.transaction_type || "Top up"}
+                    </Box>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
-                    {row.payment_type ?? ""}
-                  </TableCell> */}
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
-                    {row.transaction_type ?? ""}
+                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                    {format(new Date(row.created_at), "dd.MM.yyyy, HH:mm")}
                   </TableCell>
-                  <TableCell sx={{fontSize: "14px", padding: "8px"}}>
-                    {row.payment_status === "accepted" ? (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "success.main",
-                          fontSize: "14px",
-                        }}>
-                        <Done /> Paid
-                      </Typography>
-                    ) : row?.payment_status === "cancelled" ? (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "red",
-                          fontSize: "16px",
-                        }}>
-                        <BlockIcon /> Cancelled
-                      </Typography>
-                    ) : (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          color: "warning.main",
-                          fontSize: "14px",
-                        }}>
-                        <HourglassTop /> Pending
-                      </Typography>
-                    )}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "8px" }}>
-                    {format(new Date(row.created_at), "dd.MM.yyyy HH:mm")}
-                  </TableCell>
-                  {/* <TableCell sx={{fontSize: "14px"}}>
-                    {row?.currency?.code}
-                  </TableCell> */}
                 </TableRow>
               ))
             ) : (
@@ -198,10 +141,12 @@ export const BillingTable = ({ handClickBalance }) => {
   );
 };
 
-const TableHeadCell = ({children, ...props}) => {
+const TableHeadCell = ({ children, ...props }) => {
   return (
     <TableCell
       sx={{
+        background: "#fff",
+        borderBottom: "1px solid #dbe0e4",
         "&:last-of-type": {
           paddingRight: "15px",
           borderRadius: "0",
@@ -217,7 +162,8 @@ const TableHeadCell = ({children, ...props}) => {
         boxShadow: "none !important",
         padding: "8px",
       }}
-      {...props}>
+      {...props}
+    >
       {children}
     </TableCell>
   );
@@ -226,29 +172,18 @@ const TableHeadCell = ({children, ...props}) => {
 const TableSkeleton = () => {
   return (
     <TableRow>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
+      <TableCell sx={{ textAlign: "center", padding: "0" }}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
+      <TableCell sx={{ textAlign: "center", padding: "0" }}>
         <Skeleton height="53px" />
       </TableCell>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell sx={{textAlign: "center", padding: "0"}}>
+      <TableCell sx={{ textAlign: "center", padding: "0" }}>
         <Skeleton height="53px" />
       </TableCell>
       <TableCell
-        sx={{textAlign: "center", padding: "0", paddingRight: "0 !important"}}>
+        sx={{ textAlign: "center", padding: "0", paddingRight: "0 !important" }}
+      >
         <Skeleton height="53px" />
       </TableCell>
     </TableRow>

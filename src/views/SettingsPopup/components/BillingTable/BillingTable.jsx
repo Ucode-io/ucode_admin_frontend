@@ -20,6 +20,10 @@ const tableHeads = ["Project", "Amount", "Type", "Date"];
 export const BillingTable = () => {
   const { transactions, project, isLoading } = useBillingTableProps();
 
+  function isOdd(number) {
+    return number % 2 !== 0;
+  }
+
   return (
     <Box sx={{ mt: 2 }}>
       <Typography
@@ -70,6 +74,8 @@ export const BillingTable = () => {
                   key={index}
                   sx={{
                     "& .MuiTableCell-root": {
+                      borderBottom: "1px solid #EAECF0",
+                      background: isOdd(index + 1) ? "#F9FAFB" : "#fff",
                       ":first-of-type": {
                         paddingLeft: "15px",
                       },
@@ -146,6 +152,7 @@ const TableHeadCell = ({ children, ...props }) => {
     <TableCell
       sx={{
         background: "#fff",
+        border: "none",
         borderBottom: "1px solid #dbe0e4",
         "&:last-of-type": {
           paddingRight: "15px",
@@ -172,17 +179,40 @@ const TableHeadCell = ({ children, ...props }) => {
 const TableSkeleton = () => {
   return (
     <TableRow>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell sx={{ textAlign: "center", padding: "0" }}>
+      <TableCell
+        sx={{
+          textAlign: "center",
+          padding: "0",
+          borderBottom: "1px solid #EAECF0",
+        }}
+      >
         <Skeleton height="53px" />
       </TableCell>
       <TableCell
-        sx={{ textAlign: "center", padding: "0", paddingRight: "0 !important" }}
+        sx={{
+          textAlign: "center",
+          padding: "0",
+          borderBottom: "1px solid #EAECF0",
+        }}
+      >
+        <Skeleton height="53px" />
+      </TableCell>
+      <TableCell
+        sx={{
+          textAlign: "center",
+          padding: "0",
+          borderBottom: "1px solid #EAECF0",
+        }}
+      >
+        <Skeleton height="53px" />
+      </TableCell>
+      <TableCell
+        sx={{
+          textAlign: "center",
+          padding: "0",
+          paddingRight: "0 !important",
+          borderBottom: "1px solid #EAECF0",
+        }}
       >
         <Skeleton height="53px" />
       </TableCell>

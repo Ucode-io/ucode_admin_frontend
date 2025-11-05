@@ -33,17 +33,17 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
-  handleClose,
+  handleClose = () => {},
   modal = false,
   selectedRow,
   dateInfo,
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(false);
@@ -60,7 +60,11 @@ const ObjectsFormPage = ({
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
 
-  const {menuId, tableSlug: tableSlugFromParam, id: idFromParam} = useParams();
+  const {
+    menuId,
+    tableSlug: tableSlugFromParam,
+    id: idFromParam,
+  } = useParams();
   const itemId = searchParams.get("p") ?? idFromParam;
 
   const tableSlug = tableSlugFromParam ?? state?.table_slug ?? state?.tableSlug;

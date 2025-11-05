@@ -445,10 +445,6 @@ export const NewUiViewsWithGroups = ({
     },
   });
 
-  const { pathname } = useLocation();
-
-  const urlQuery = new URLSearchParams(window.location.search);
-
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
@@ -472,13 +468,29 @@ export const NewUiViewsWithGroups = ({
             },
             menuId,
           );
-          dispatch(detailDrawerActions.closeDrawer());
+          handleViewClick(views?.[0]);
         }
       }
       setSelectedRow(null);
     } else {
       if (layoutType === "PopupLayout") {
-        dispatch(detailDrawerActions.openDrawer());
+        if (relationView) {
+          navigateToForm(
+            tableSlug,
+            "CREATE",
+            {},
+            {
+              [`${tableSlug}_id`]: view.menu_id,
+              tableSlug,
+              // navigateUrl: `${pathname}?${urlQuery.get("v") ? `v=${urlQuery.get("v")}` : ``}${urlQuery.get("p") ? `&p=${urlQuery.get("p")}` : ``}`,
+              navigateUrl: `/${menuId || appId}`,
+            },
+            menuId,
+          );
+          handleViewClick(views?.[0]);
+        } else {
+          dispatch(detailDrawerActions.openDrawer());
+        }
         setSelectedRow(null);
       } else {
         navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);

@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useBillingTableProps } from "./useBillingTableProps";
 
-const tableHeads = ["Project", "Amount", "Type", "Date"];
+const tableHeads = ["Project", "Amount", "Type", "Date", "Payment Status"];
 
 export const BillingTable = () => {
   const { transactions, project, isLoading } = useBillingTableProps();
@@ -114,6 +114,27 @@ export const BillingTable = () => {
                   </TableCell>
                   <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
                     {format(new Date(row.created_at), "dd.MM.yyyy, HH:mm")}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                    <Box
+                      sx={{
+                        display: "inline-block",
+                        padding: "4px 12px",
+                        borderRadius: "16px",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        backgroundColor:
+                          row.payment_status?.toLowerCase() === "accepted"
+                            ? "#d1fae5"
+                            : "#D92D20",
+                        color:
+                          row.payment_status?.toLowerCase() === "accepted"
+                            ? "#059669"
+                            : "#fff",
+                      }}
+                    >
+                      {row.payment_status}
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))

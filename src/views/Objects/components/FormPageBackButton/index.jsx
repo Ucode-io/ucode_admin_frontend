@@ -4,15 +4,15 @@ import useTabRouter from "../../../../hooks/useTabRouter";
 import {relationTabActions} from "../../../../store/relationTab/relationTab.slice";
 import {useDispatch} from "react-redux";
 
-const FormPageBackButton = () => {
-  const {deleteTab} = useTabRouter();
-  const {pathname} = useLocation();
+const FormPageBackButton = ({ url }) => {
+  const { deleteTab } = useTabRouter();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const clickHandler = () => {
     deleteTab(pathname);
-    navigate(-1);
+    navigate(url || -1);
     dispatch(relationTabActions.clear());
   };
 

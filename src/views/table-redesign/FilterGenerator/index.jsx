@@ -7,6 +7,7 @@ import RelationFilter from "./RelationFilter";
 import TableOrderingButton from "@/components/TableOrderingButton";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 import YDateFilter from "./YDateFilter";
+import { useTranslation } from "react-i18next";
 
 const FilterGenerator = ({
   field,
@@ -17,7 +18,7 @@ const FilterGenerator = ({
 }) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
-    [filters.order, name]
+    [filters.order, name],
   );
 
   const onOrderingChange = (value) => {
@@ -29,7 +30,7 @@ const FilterGenerator = ({
   };
 
   return (
-    <div style={{display: "flex", alignItems: "center"}}>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
     </div>
   );
@@ -45,18 +46,18 @@ export const Filter = ({
   tableSlug,
 }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
-
+  const { i18n } = useTranslation();
   const computedOptions = useMemo(() => {
     if (field.type === FIELD_TYPES.STATUS) {
-      const {todo, complete, progress} = field.attributes;
+      const { todo, complete, progress } = field.attributes;
       const options = [
         ...todo?.options,
         ...complete?.options,
         ...progress?.options,
       ];
       return options?.map((item) => ({
-        label: item.label,
-        value: item.label,
+        label: item?.[`label_${i18n.language}`] || item.label,
+        value: item.value || item.label,
       }));
     }
     if (!field.attributes?.options) return [];
@@ -68,8 +69,9 @@ export const Filter = ({
         };
       if (field.type === "MULTISELECT")
         return {
-          value: option.value,
-          label: option.label ?? option.value,
+          value: option.slug || option.value,
+          label:
+            option?.[`label_${i18n.language}`] || option.label || option.value,
           ...option,
         };
     });

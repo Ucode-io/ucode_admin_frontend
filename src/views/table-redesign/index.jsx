@@ -392,7 +392,7 @@ export const DynamicTable = ({
       style={
         isPaginationPositionSticky
           ? { display: "flex", flexDirection: "column", height: "100%" }
-          : {}
+          : { height: "100%" }
       }
     >
       <div
@@ -422,7 +422,7 @@ export const DynamicTable = ({
                 formVisible={formVisible}
                 onSelectAll={(checked) =>
                   setSelectedObjectsForDelete(
-                    checked ? (isRelationTable ? fields : data) : []
+                    checked ? (isRelationTable ? fields : data) : [],
                   )
                 }
               />
@@ -554,7 +554,7 @@ export const DynamicTable = ({
                       firstRowWidth={45}
                     />
                   );
-                }
+                },
               )
             )}
 
@@ -694,7 +694,7 @@ export const DynamicTable = ({
               {generateLangaugeText(
                 tableLan,
                 i18n?.language,
-                "Delete all selected"
+                "Delete all selected",
               ) || "Delete all selected"}
             </Button>
           </RectangleIconButton>

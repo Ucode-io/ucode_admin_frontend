@@ -8,17 +8,16 @@ export const queryGenerator = (groupField, filters = {}, lang) => {
     };
 
   const filterValue = filters[groupField.slug];
-  const computedFilters = filterValue ? {[groupField.slug]: filterValue} : {};
+  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {};
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
-          label: el?.label ?? el.value,
-          value: el?.value,
+          label: el?.[`label_${lang}`] ?? el?.label ?? el.value,
+          value: el?.slug || el?.value,
           slug: groupField?.slug,
-          ...el,
         })),
     };
   }

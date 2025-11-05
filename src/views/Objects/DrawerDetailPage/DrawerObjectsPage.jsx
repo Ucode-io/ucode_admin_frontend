@@ -125,7 +125,6 @@ function DrawerObjectsPage({
   const views = useMemo(() => {
     return !isRelationView ? menuViews : relationViews;
   }, [menuViews, relationViews, isRelationView, viewsList?.length]);
-  console.log({ viewsList, viewsPath });
 
   const currentView = viewsPath?.find(
     (item) => item?.is_relation_view && item?.id === viewId,

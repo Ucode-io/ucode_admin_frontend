@@ -364,6 +364,8 @@ const TableView = ({
       ? parseInt(searchText)
       : searchText;
 
+  const filteringSlug = filters?.[tab?.slug] || [];
+
   const {
     data: { tableData, pageCount, dataCount } = {
       tableData: [],
@@ -388,6 +390,7 @@ const TableView = ({
         paginiation,
         orderBy,
       },
+      filters,
     ],
 
     queryFn: () => {
@@ -403,7 +406,7 @@ const TableView = ({
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
                 ?.type === "MULTISELECT"
-              ? [`${tab?.value}`]
+              ? [`${tab?.value}`, ...filteringSlug]
               : tab?.value
             : "",
         },
@@ -685,6 +688,7 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
+          isPaginationPositionSticky
           {...props}
         />
 

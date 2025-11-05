@@ -28,6 +28,7 @@ import {generateGUID} from "../../../../utils/generateID";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import IconGeneratorIconjs from "../../../../components/IconPicker/IconGeneratorIconjs";
+import { useTranslation } from "react-i18next";
 
 const filter = createFilterOptions();
 
@@ -77,8 +78,8 @@ const HFMultipleAutocomplete = ({
         ...rules,
       }}
       render={({
-        field: {onChange: onFormChange, value},
-        fieldState: {error},
+        field: { onChange: onFormChange, value },
+        fieldState: { error },
       }) => {
         return (
           <AutoCompleteElement
@@ -108,7 +109,8 @@ const HFMultipleAutocomplete = ({
             newUi={newUi}
           />
         );
-      }}></Controller>
+      }}
+    ></Controller>
   );
 };
 
@@ -131,6 +133,7 @@ const AutoCompleteElement = ({
   isNewTableView,
   updateObject = () => {},
 }) => {
+  const { i18n } = useTranslation();
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
 
@@ -209,9 +212,10 @@ const AutoCompleteElement = ({
         width: "330px",
         paddingLeft: "4px",
         overflow: "hidden",
-        ...(value?.length > 2 ? {minHeight: "30px"} : {height: "34px"}),
-      }}>
-      <FormControl style={{width}}>
+        ...(value?.length > 2 ? { minHeight: "30px" } : { height: "34px" }),
+      }}
+    >
+      <FormControl style={{ width }}>
         <InputLabel size="small">{label}</InputLabel>
         <Autocomplete
           multiple
@@ -220,7 +224,7 @@ const AutoCompleteElement = ({
           options={localOptions}
           popupIcon={
             isBlackBg ? (
-              <ArrowDropDownIcon style={{color: "#fff"}} />
+              <ArrowDropDownIcon style={{ color: "#fff" }} />
             ) : (
               <ArrowDropDownIcon />
             )
@@ -265,22 +269,23 @@ const AutoCompleteElement = ({
                     cursor: disabled ? "not-allowed" : "text",
                     height:
                       isNewTableView && computedValue?.length > 0
-                        ? {height: 0}
+                        ? { height: 0 }
                         : "auto",
                   },
                   ...params.inputProps,
                 },
                 endAdornment: Boolean(
-                  appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
+                  appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled,
                 ) && (
                   <Tooltip
                     title="This field is disabled for this role!"
                     style={{
                       position: "absolute",
                       right: 0,
-                    }}>
+                    }}
+                  >
                     <InputAdornment position="start">
-                      <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+                      <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
                     </InputAdornment>
                   </Tooltip>
                 ),
@@ -299,9 +304,10 @@ const AutoCompleteElement = ({
                   className={styles.multipleAutocompleteTags}
                   style={
                     hasColor
-                      ? {color: el?.color, background: `${el?.color}30`}
+                      ? { color: el?.color, background: `${el?.color}30` }
                       : {}
-                  }>
+                  }
+                >
                   {hasIcon &&
                     (el?.icon?.includes(":") ? (
                       <IconGeneratorIconjs icon={el?.icon} size={18} />
@@ -317,16 +323,16 @@ const AutoCompleteElement = ({
                       textOverflow: "ellipsis",
                       borderRadius: "6px",
                       fontSize: "13px",
-                      overflow: "hidden",
-                    }}>
-                    {el?.label ?? el?.value}
+                    }}
+                  >
+                    {el?.[`label_${i18n?.language}`] ?? el?.value}
                   </p>
                   {field?.attributes?.disabled === false && editPermission && (
                     <Close
                       fontSize="10"
-                      style={{cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
-                        getTagProps({index})?.onDelete();
+                        getTagProps({ index })?.onDelete();
                       }}
                     />
                   )}

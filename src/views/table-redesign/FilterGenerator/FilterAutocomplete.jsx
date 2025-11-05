@@ -41,10 +41,27 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
-    if (value?.includes(option.value)) {
-      onChange(value.filter((item) => item !== option.value));
+    if (field.type === FIELD_TYPES.MULTISELECT) {
+      // Keep this for backward compatibility
+      if (option?.slug) {
+        if (value?.includes(option.slug)) {
+          onChange(value.filter((item) => item !== option.slug));
+        } else {
+          onChange([...value, option.slug]);
+        }
+      } else {
+        if (value?.includes(option.value)) {
+          onChange(value.filter((item) => item !== option.value));
+        } else {
+          onChange([...value, option.value]);
+        }
+      }
     } else {
-      onChange([...value, option.value]);
+      if (value?.includes(option.value)) {
+        onChange(value.filter((item) => item !== option.value));
+      } else {
+        onChange([...value, option.value]);
+      }
     }
   };
 
@@ -56,13 +73,11 @@ const FilterAutoComplete = ({
   const isChecked = (option) => {
     const computedSlugs = options.map((item) => item.slug);
     const computedValues = options.map((item) => item.value);
-
-    if (
-      field.type === FIELD_TYPES.MULTISELECT ||
-      field.type === FIELD_TYPES.STATUS
-    ) {
-      return computedSlugs.includes(option.slug);
-    } else return computedValues.includes(option.value);
+    if (field.type === FIELD_TYPES.STATUS) {
+      return value.includes(option.value);
+    } else if (field.type === FIELD_TYPES.MULTISELECT) {
+      return value.includes(option.slug) || value.includes(option.value);
+    } else return value.includes(option.value);
   };
 
   return (

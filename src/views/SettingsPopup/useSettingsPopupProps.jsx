@@ -278,7 +278,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
     },
   ];
 
-  if (!isDefaultAdmin || !showBilling) {
+  if (!isDefaultAdmin && !showBilling) {
     accountTabs.splice(1, 1);
   }
 

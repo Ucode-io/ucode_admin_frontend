@@ -3,22 +3,22 @@ import constructorFieldService, {
   useFieldSearchUpdateMutation,
 } from "@/services/constructorFieldService";
 import constructorViewService from "@/services/constructorViewService";
-import {filterActions} from "@/store/filter/filter.slice";
-import {quickFiltersActions} from "@/store/filter/quick_filter";
-import {mainActions} from "@/store/main/main.slice";
-import {viewsActions} from "@/store/views/view.slice";
+import { filterActions } from "@/store/filter/filter.slice";
+import { quickFiltersActions } from "@/store/filter/quick_filter";
+import { mainActions } from "@/store/main/main.slice";
+import { viewsActions } from "@/store/views/view.slice";
 import chakraUITheme from "@/theme/chakraUITheme";
 import {
   getSearchText,
   openDB,
   saveOrUpdateSearchText,
 } from "@/utils/indexedDb.jsx";
-import {queryGenerator} from "@/utils/queryGenerator";
+import { queryGenerator } from "@/utils/queryGenerator";
 import AgGridTableView from "@/views/Objects/AgGridTableView";
 import GroupTableView from "@/views/Objects/TableView/GroupTableView";
 import style from "@/views/Objects/style.module.scss";
-import {getColumnIcon} from "@/views/table-redesign/icons";
-import {ArrowBackIcon, ChevronRightIcon} from "@chakra-ui/icons";
+import { getColumnIcon } from "@/views/table-redesign/icons";
+import { ArrowBackIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import {
   Box,
@@ -38,8 +38,8 @@ import {
 } from "@chakra-ui/react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
-import {Backdrop, CircularProgress} from "@mui/material";
-import {addDays, endOfMonth, startOfMonth} from "date-fns";
+import { Backdrop, CircularProgress } from "@mui/material";
+import { addDays, endOfMonth, startOfMonth } from "date-fns";
 import React, {
   Suspense,
   lazy,
@@ -49,47 +49,47 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {default as InlineSVG, default as SVG} from "react-inlinesvg";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { default as InlineSVG, default as SVG } from "react-inlinesvg";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import useDebounce from "../../hooks/useDebounce";
 import useFilters from "../../hooks/useFilters";
-import {useGetLang} from "../../hooks/useGetLang";
+import { useGetLang } from "../../hooks/useGetLang";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 import { ViewProvider } from "../../providers/ViewProvider";
 import constructorRelationService from "../../services/constructorRelationService";
 import constructorTableService, {
   useTableByIdQuery,
 } from "../../services/constructorTableService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
-import {groupFieldActions} from "../../store/groupField/groupField.slice";
-import {VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
-import {generateGUID} from "../../utils/generateID";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {listToMap} from "../../utils/listToMap";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "../../store/groupField/groupField.slice";
+import { VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import { generateGUID } from "../../utils/generateID";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { listToMap } from "../../utils/listToMap";
+import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
 import AggridTreeView from "../Objects/AgGridTableView/AggridTreeView";
-import {updateObject} from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
+import { updateObject } from "../Objects/AgGridTableView/Functions/AggridDefaultComponents";
 import ViewOptions from "../Objects/ModalDetailPage/ViewOptions";
-import {ViewCreatePopup} from "../Objects/components/ViewCreatePopup";
-import {FilterButton} from "./FilterButton";
-import {Filter} from "./FilterGenerator";
-import {LayoutPopup} from "./LayoutPopup";
+import { ViewCreatePopup } from "../Objects/components/ViewCreatePopup";
+import { FilterButton } from "./FilterButton";
+import { Filter } from "./FilterGenerator";
+import { LayoutPopup } from "./LayoutPopup";
 import MoreViewsComponent from "./MoreViewsComponent";
-import {ScreenOptions} from "./ScreenOptions";
+import { ScreenOptions } from "./ScreenOptions";
 import DrawerTableView from "./drawer-table-view";
 import TableView from "./table-view";
 import TableViewOld from "./table-view-old";
@@ -1841,7 +1841,7 @@ const FilterPopover = ({
 }) => {
   const ref = useRef();
   const [search, setSearch] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Popover>
@@ -1856,7 +1856,7 @@ const FilterPopover = ({
               generateLangaugeText(
                 tableLan,
                 i18n?.language,
-                "Seaarch by filled name"
+                "Seaarch by filled name",
               ) || "Search by filled name"
             }
             value={search}
@@ -1883,12 +1883,12 @@ const FiltersList = ({
   tableLan,
   tableSlug,
 }) => {
-  const {new_list} = useSelector((state) => state.filter);
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
   const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, view?.id);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
   useEffect(() => {
@@ -1899,7 +1899,7 @@ const FiltersList = ({
           viewId: view?.id,
           name: "specialities_id",
           value: [`${queryParameters.get("specialities")}`],
-        })
+        }),
       );
     }
   }, [queryParameters]);
@@ -1915,8 +1915,8 @@ const FiltersList = ({
             (fast) =>
               fast.is_checked &&
               !view?.attributes?.quick_filters?.find(
-                (quick) => quick?.id === fast.id
-              )
+                (quick) => quick?.id === fast.id,
+              ),
           )
           ?.map((fast) => fast),
       ]
@@ -1938,7 +1938,7 @@ const FiltersList = ({
         viewId: view.id,
         name: name,
         value,
-      })
+      }),
     );
   };
 
@@ -1963,13 +1963,15 @@ const FiltersList = ({
       gap="6px"
       borderBottom="1px solid #EAECF0"
       flexWrap="wrap"
-      id="filterHeight">
+      id="filterHeight"
+    >
       <FilterPopover
         tableLan={tableLan}
         view={view}
         visibleColumns={visibleColumns}
         refetchViews={refetchViews}
-        tableSlug={tableSlug}>
+        tableSlug={tableSlug}
+      >
         <Flex
           alignItems="center"
           columnGap="4px"
@@ -1979,7 +1981,8 @@ const FiltersList = ({
           py="1px"
           px="8px"
           cursor="pointer"
-          _hover={{bg: "#f3f3f3"}}>
+          _hover={{ bg: "#f3f3f3" }}
+        >
           <InlineSVG
             src="/img/plus-icon.svg"
             width={14}
@@ -2019,13 +2022,13 @@ const FiltersSwitch = ({
   const queryClient = useQueryClient();
   // const {tableSlug} = useParams();
   // const tableSlug = view?.table_slug;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const [queryParameters] = useSearchParams();
 
   const columnsIds = visibleColumns?.map((item) => item?.id);
   const quickFiltersIds = view?.attributes?.quick_filters?.map(
-    (item) => item?.id
+    (item) => item?.id,
   );
 
   const getLabel = (column) =>
@@ -2037,7 +2040,7 @@ const FiltersSwitch = ({
         search
           ? columnsIds?.includes(checkedField?.id) &&
             getLabel(checkedField)?.toLowerCase().includes(search.toLowerCase())
-          : columnsIds?.includes(checkedField?.id)
+          : columnsIds?.includes(checkedField?.id),
       ) ?? []
     );
   }, [view, search]);
@@ -2048,14 +2051,14 @@ const FiltersSwitch = ({
       view?.attributes?.quick_filters?.length === undefined
         ? search
           ? visibleColumns?.filter((column) =>
-              getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+              getLabel(column)?.toLowerCase().includes(search.toLowerCase()),
             )
           : visibleColumns
         : visibleColumns?.filter((column) =>
             search
               ? !quickFiltersIds?.includes(column?.id) &&
                 getLabel(column)?.toLowerCase().includes(search.toLowerCase())
-              : !quickFiltersIds?.includes(column?.id)
+              : !quickFiltersIds?.includes(column?.id),
           )) ?? []
     );
   }, [view, search]);
@@ -2082,7 +2085,7 @@ const FiltersSwitch = ({
 
     await mutation.mutateAsync({
       ...view,
-      attributes: {...view?.attributes, quick_filters: result},
+      attributes: { ...view?.attributes, quick_filters: result },
     });
     if (view?.attributes?.quick_filters?.length === 0) {
       dispatch(mainActions.setTableViewFiltersOpen(true));
@@ -2102,7 +2105,7 @@ const FiltersSwitch = ({
             viewId: view?.id,
             name: "specialities_id",
             value: [`${queryParameters.get("specialities")}`],
-          })
+          }),
         )
       : dispatch(
           filterActions.setFilter({
@@ -2110,14 +2113,14 @@ const FiltersSwitch = ({
             viewId: view?.id,
             name: "specialities_id",
             value: [`${queryParameters.get("specialities")}`],
-          })
+          }),
         );
 
     updateView(
       checked
         ? [...quickFilters, column]
         : quickFilters.filter((c) => c.id !== column.id),
-      checked
+      checked,
     );
   };
 
@@ -2131,9 +2134,10 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"
@@ -2151,9 +2155,10 @@ const FiltersSwitch = ({
           columnGap="8px"
           alignItems="center"
           borderRadius={6}
-          _hover={{bg: "#EAECF0"}}
-          cursor="pointer">
-          {column?.type && getColumnIcon({column})}
+          _hover={{ bg: "#EAECF0" }}
+          cursor="pointer"
+        >
+          {column?.type && getColumnIcon({ column })}
           {getLabel(column)}
           <Switch
             ml="auto"

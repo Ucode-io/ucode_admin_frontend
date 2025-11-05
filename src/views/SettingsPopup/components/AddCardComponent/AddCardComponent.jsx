@@ -1,19 +1,26 @@
 import cls from "./styles.module.scss";
 import {
   Box,
-  Card,
-  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
   Typography,
   Button as MuiButton,
+  Radio,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  CircularProgress,
+  Paper,
 } from "@mui/material";
 import { useAddCardComponent } from "./useAddCardComponent";
 import { Button } from "../Button";
-import { AddIcon } from "@chakra-ui/icons";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import HFCardField from "../../../../components/FormElements/HFCardField";
 import OTPInput from "react-otp-input";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -29,7 +36,7 @@ import request from "@/utils/request";
 
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISH_KEY;
 
-function SetupForm() {
+function SetupForm({ onSwitchToUzcard }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -60,7 +67,32 @@ function SetupForm() {
     <Box mt={2}>
       <form onSubmit={handleSubmit}>
         <PaymentElement />
-        <Box mt={2} display="flex" justifyContent="flex-end">
+        <Box
+          mt={2}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography
+            onClick={onSwitchToUzcard}
+            sx={{
+              fontSize: "14px",
+              fontWeight: 500,
+              color: "#2563eb",
+              cursor: "pointer",
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              "&:hover": {
+                textDecoration: "underline",
+                opacity: 0.9,
+              },
+            }}
+          >
+            <CreditCardIcon sx={{ fontSize: 16 }} />
+            Add uzcard or humo
+          </Typography>
           <Button disabled={!stripe || loading} primary>
             {loading ? "Saving..." : "Save card"}
           </Button>
@@ -79,6 +111,7 @@ export const AddCardComponent = ({
   setVerifyCard = () => {},
   handleSubmit = () => {},
   onSubmit = () => {},
+  loading = false,
 }) => {
   const {
     selectedCard,
@@ -95,7 +128,8 @@ export const AddCardComponent = ({
   } = useAddCardComponent({ watch, setVerifyCard });
 
   const [clientSecret, setClientSecret] = useState(null);
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(1);
+  const [amount, setAmount] = useState("");
 
   const handleTabChange = (index) => {
     setTabIndex(index);
@@ -119,118 +153,349 @@ export const AddCardComponent = ({
   }, [tabIndex]);
 
   return (
-    <Box sx={{ maxWidth: "100%", textAlign: "center" }}>
-      <Grid container sx={{ height: "240px", overflow: "auto" }}>
-        {cards?.map((card, index) => (
-          <Grid item key={index}>
-            {console.log({ card })}
-            <Card
-              sx={{
-                margin: "10px",
-                width: 160,
-                height: 80,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 1,
-                boxShadow:
-                  selectedCard === index
-                    ? "0px 4px 10px rgba(0, 0, 0, 0.2)"
-                    : "0px 2px 5px rgba(0,0,0,0.1)",
-                backgroundColor: selectedCard === index ? "#1976d2" : "#f8f9fa",
-                color: selectedCard === index ? "#fff" : "#000",
-                cursor: "pointer",
-                transition: "0.3s",
-              }}
-              onClick={() => handleCardSelect(index, card)}
-            >
-              <CardContent sx={{ textAlign: "justify", position: "relative" }}>
-                <Typography fontSize={"14px"} fontWeight="bold">
-                  {card.pan}
-                </Typography>
-                <Typography sx={{ fontSize: "12px" }} fontWeight="bold">
-                  {card?.expire}
-                </Typography>
+    <Box sx={{ maxWidth: "100%", p: 3 }}>
+      <Typography
+        sx={{
+          fontWeight: 600,
+          color: "#101828",
+          fontSize: "20px",
+          marginBottom: "20px",
+        }}
+      >
+        Top up ballance
+      </Typography>
 
-                <Box
-                  sx={{ position: "absolute", right: "0px", bottom: "10px" }}
-                >
-                  {card?.type === "VISA" ? (
-                    <img
-                      className={cls.cardIcon}
-                      src="/img/visa.svg"
-                      alt="VISA"
-                      width={40}
-                    />
-                  ) : (
-                    <img
-                      className={cls.cardIcon}
-                      src="/img/uzc.svg"
-                      alt="uzcard"
-                      width={40}
-                    />
-                  )}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-        <Grid xs={3}>
-          <MuiButton
-            variant="outlined"
-            fullWidth
-            sx={{
-              width: "120px",
-              marginTop: "10px",
-              marginLeft: "10px",
-              height: "80px",
-              fontSize: "14px",
-              fontWeight: "bold",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 1,
-            }}
-            onClick={() => setOpenDialog(true)}
-          >
-            <AddIcon sx={{ fontSize: 16 }} />
-            Add Card
-          </MuiButton>
-        </Grid>
-      </Grid>
+      <TextField
+        fullWidth
+        placeholder="Write amount..."
+        variant="outlined"
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        sx={{
+          mb: 3,
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            fontSize: "16px",
+            "& fieldset": {
+              borderColor: "#EAECF0",
+            },
+            "&:hover fieldset": {
+              borderColor: "#D0D5DD",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#2563eb",
+            },
+          },
+        }}
+      />
 
       <Box
         sx={{
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
+          mb: "12px",
+        }}
+      >
+        <Typography
+          sx={{ fontSize: "16px", fontWeight: 400, color: "#667085" }}
+        >
+          Choose card for top up
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: "#2563eb",
+            cursor: "pointer",
+            "&:hover": {
+              opacity: 0.8,
+            },
+          }}
+          onClick={() => setOpenDialog(true)}
+        >
+          <img src="/img/addCard.svg" alt="" />
+          <Typography
+            sx={{ fontSize: "14px", fontWeight: 600, color: "#007AFF" }}
+          >
+            Add card
+          </Typography>
+        </Box>
+      </Box>
+
+      <TableContainer
+        component={Paper}
+        sx={{
+          borderRadius: "8px",
+          mb: 3,
+          maxHeight: "300px",
+        }}
+        className="scrollbarNone"
+      >
+        <Table
+          sx={{
+            position: "relative",
+            borderTop: "0px",
+            border: "1px solid #dbe0e4",
+            borderRadius: "8px",
+          }}
+          stickyHeader
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell
+                sx={{
+                  background: "#fff",
+                  border: "none",
+                  borderBottom: "1px solid #dbe0e4",
+                  borderTopLeftRadius: "8px",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  boxShadow: "none !important",
+                  padding: "8px 15px",
+                  width: "60px",
+                  background: "#F9FAFB",
+                  borderBottomLeftRadius: "0px !important",
+                }}
+              />
+              <TableCell
+                sx={{
+                  background: "#fff",
+                  border: "none",
+                  borderBottom: "1px solid #dbe0e4",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  boxShadow: "none !important",
+                  padding: "8px",
+                  background: "#F9FAFB",
+                  color: "#475467",
+                  width: "200px",
+                }}
+              >
+                Type
+              </TableCell>
+              <TableCell
+                sx={{
+                  background: "#fff",
+                  border: "none",
+                  borderBottom: "1px solid #dbe0e4",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  boxShadow: "none !important",
+                  padding: "8px",
+                  background: "#F9FAFB",
+                  color: "#475467",
+                  width: "250px",
+                }}
+              >
+                Card number
+              </TableCell>
+              <TableCell
+                sx={{
+                  background: "#fff",
+                  border: "none",
+                  borderBottom: "1px solid #dbe0e4",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  boxShadow: "none !important",
+                  padding: "8px",
+                  background: "#F9FAFB",
+                  color: "#475467",
+                  width: "165px",
+                }}
+              >
+                Expiry date
+              </TableCell>
+              <TableCell
+                sx={{
+                  border: "none",
+                  borderBottom: "1px solid #dbe0e4",
+                  borderTopRightRadius: "8px",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  boxShadow: "none !important",
+                  padding: "8px 15px",
+                  width: "140px",
+                  borderBottomRightRadius: "0px !important",
+                  background: "#F9FAFB",
+                  color: "#475467",
+                }}
+              />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {cards?.map((card, index) => (
+              <TableRow
+                key={index}
+                sx={{
+                  "& .MuiTableCell-root": {
+                    borderBottom: "1px solid #EAECF0",
+                    ":first-of-type": {
+                      paddingLeft: "15px",
+                    },
+                    ":last-of-type": {
+                      paddingRight: "15px",
+                    },
+                  },
+                }}
+                onClick={() => handleCardSelect(index, card)}
+              >
+                <TableCell sx={{ fontSize: "14px", padding: "8px 8px" }}>
+                  <Radio
+                    checked={selectedCard === index}
+                    onChange={() => handleCardSelect(index, card)}
+                    sx={{
+                      padding: 0,
+                      "& .MuiSvgIcon-root": {
+                        fontSize: 20,
+                      },
+                    }}
+                  />
+                </TableCell>
+                <TableCell sx={{ fontSize: "14px", padding: "8px 8px" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                    }}
+                  >
+                    {card?.type === "VISA" ? (
+                      <img
+                        src="/img/visa.svg"
+                        alt="VISA"
+                        width={40}
+                        height={24}
+                      />
+                    ) : card?.type === "HUMO" ? (
+                      <img
+                        src="/img/humo.svg"
+                        alt="HUMO"
+                        width={40}
+                        height={24}
+                      />
+                    ) : card?.type === "UZCARD" ? (
+                      <img
+                        src="/img/uzc.svg"
+                        alt="UZCARD"
+                        width={40}
+                        height={24}
+                      />
+                    ) : (
+                      <img
+                        src="/img/mastercard.svg"
+                        alt="Mastercard"
+                        width={40}
+                        height={24}
+                      />
+                    )}
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        color: "#101828",
+                      }}
+                    >
+                      {card?.type || "Card"}
+                    </Typography>
+                  </Box>
+                </TableCell>
+                <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
+                  <Typography
+                    sx={{ fontSize: "14px", fontWeight: 400, color: "#475467" }}
+                  >
+                    {card.pan}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
+                  <Typography
+                    sx={{ fontSize: "14px", fontWeight: 400, color: "#475467" }}
+                  >
+                    {card?.expire}
+                  </Typography>
+                </TableCell>
+                <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      color: "#000",
+                      cursor: "pointer",
+                      "&:hover": {
+                        color: "#ef4444",
+                      },
+                    }}
+                  >
+                    Delete
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Box
+        sx={{
+          display: "flex",
           justifyContent: "flex-end",
         }}
       >
-        {card?.verify && (
-          <Button
-            onClick={() => {
-              setVerifyCard(true);
-              reset(card);
-            }}
-            primary
-          >
-            Topup balance
-          </Button>
-        )}
+        <MuiButton
+          disabled={!amount || !card?.verify || loading}
+          onClick={() => {
+            setVerifyCard(true);
+            reset({ ...card, amount });
+          }}
+          sx={{
+            backgroundColor: "#2563eb",
+            color: "white",
+
+            padding: "10px 24px",
+            fontSize: "14px",
+            fontWeight: 500,
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "#1d4ed8",
+            },
+            "&:disabled": {
+              backgroundColor: "#94a3b8",
+              color: "white",
+            },
+          }}
+        >
+          {loading ? (
+            <CircularProgress size={20} style={{ color: "#fff" }} />
+          ) : (
+            "Add balance"
+          )}
+        </MuiButton>
       </Box>
 
       <Dialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="xs"
+        onClose={() => {
+          setOpenDialog(false);
+          setVerifyCard(false);
+          setTabIndex(1);
+          isFirstRequestStripe.current = true;
+        }}
+        maxWidth="sm"
         fullWidth
       >
-        <DialogTitle sx={{ marginBottom: "20px" }}>Add a New Card</DialogTitle>
+        <DialogTitle
+          sx={{ fontWeight: 600, fontSize: "20px", paddingBottom: "16px" }}
+        >
+          Add card
+        </DialogTitle>
         <DialogContent sx={{ padding: "10px 20px" }}>
           {!verifyCard ? (
-            <Tabs tabIndex={tabIndex} onSelect={handleTabChange}>
-              <TabList className={cls.tabs}>
+            <Tabs selectedIndex={tabIndex} onSelect={handleTabChange}>
+              <TabList className={cls.tabs} style={{ display: "none" }}>
                 <Tab className={cls.tab} selectedClassName={cls.active}>
                   Card
                 </Tab>
@@ -263,11 +528,9 @@ export const AddCardComponent = ({
                 {!clientSecret ? (
                   "Loading..."
                 ) : (
-                  <Box>
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                      <SetupForm />
-                    </Elements>
-                  </Box>
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <SetupForm onSwitchToUzcard={() => setTabIndex(0)} />
+                  </Elements>
                 )}
               </TabPanel>
             </Tabs>
@@ -308,6 +571,7 @@ export const AddCardComponent = ({
               onClick={() => {
                 setVerifyCard(false);
                 setOpenDialog(false);
+                setTabIndex(1);
               }}
             >
               Cancel

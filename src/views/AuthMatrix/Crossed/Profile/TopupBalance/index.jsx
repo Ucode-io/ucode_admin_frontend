@@ -12,14 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import billingService from "../../../../../services/billingService";
-import {AddIcon} from "@chakra-ui/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import HFCardField from "../../../../../components/FormElements/HFCardField";
 import OtpInput from "react-otp-input";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
-import {useState} from "react";
-import {showAlert} from "../../../../../store/alert/alert.thunk";
-import {useDispatch} from "react-redux";
-import {useQuery} from "react-query";
+import { useState } from "react";
+import { showAlert } from "../../../../../store/alert/alert.thunk";
+import { useDispatch } from "react-redux";
+import { useQuery } from "react-query";
 
 const TopUpBalance = ({
   watch,
@@ -43,7 +43,8 @@ const TopUpBalance = ({
         position: "absolute",
         transform: "translate(-50%, 50%)",
       }}
-      className="PlatformModal">
+      className="PlatformModal"
+    >
       <Box>
         <div className="modal-header silver-bottom-border">
           <Typography variant="h4">Top Up Balance</Typography>
@@ -94,7 +95,7 @@ const AddCardComponent = ({
     },
     {
       select: (res) => res?.project_cards ?? [],
-    }
+    },
   );
 
   const handleCardSelect = (index, card) => {
@@ -134,8 +135,8 @@ const AddCardComponent = ({
   };
 
   return (
-    <Box sx={{maxWidth: "100%", textAlign: "center"}}>
-      <Grid container sx={{height: "240px", overflow: "auto"}}>
+    <Box sx={{ maxWidth: "100%", textAlign: "center" }}>
+      <Grid container sx={{ height: "240px", overflow: "auto" }}>
         {cards?.map((card, index) => (
           <Grid item key={index}>
             <Card
@@ -157,16 +158,19 @@ const AddCardComponent = ({
                 cursor: "pointer",
                 transition: "0.3s",
               }}
-              onClick={() => handleCardSelect(index, card)}>
-              <CardContent sx={{textAlign: "justify", position: "relative"}}>
+              onClick={() => handleCardSelect(index, card)}
+            >
+              <CardContent sx={{ textAlign: "justify", position: "relative" }}>
                 <Typography fontSize={"14px"} fontWeight="bold">
                   {card.pan}
                 </Typography>
-                <Typography sx={{fontSize: "12px"}} fontWeight="bold">
+                <Typography sx={{ fontSize: "12px" }} fontWeight="bold">
                   {card?.expire}
                 </Typography>
 
-                <Box sx={{position: "absolute", right: "10px", bottom: "10px"}}>
+                <Box
+                  sx={{ position: "absolute", right: "10px", bottom: "10px" }}
+                >
                   <img src="/img/uzc.svg" alt="uzcard" />
                 </Box>
               </CardContent>
@@ -189,8 +193,9 @@ const AddCardComponent = ({
               justifyContent: "center",
               gap: 1,
             }}
-            onClick={() => setOpenDialog(true)}>
-            <AddIcon sx={{fontSize: 16}} />
+            onClick={() => setOpenDialog(true)}
+          >
+            <AddIcon sx={{ fontSize: 16 }} />
             Add Card
           </Button>
         </Grid>
@@ -201,7 +206,8 @@ const AddCardComponent = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
-        }}>
+        }}
+      >
         {card?.verify && (
           <Button
             variant="contained"
@@ -214,7 +220,8 @@ const AddCardComponent = ({
             onClick={() => {
               setVerifyCard(true);
               reset(card);
-            }}>
+            }}
+          >
             Topup balance
           </Button>
         )}
@@ -224,12 +231,13 @@ const AddCardComponent = ({
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         maxWidth="xs"
-        fullWidth>
-        <DialogTitle sx={{marginBottom: "20px"}}>Add a New Card</DialogTitle>
-        <DialogContent sx={{padding: "10px 20px"}}>
+        fullWidth
+      >
+        <DialogTitle sx={{ marginBottom: "20px" }}>Add a New Card</DialogTitle>
+        <DialogContent sx={{ padding: "10px 20px" }}>
           {!verifyCard ? (
             <Box>
-              <Box sx={{marginTop: "10px"}}>
+              <Box sx={{ marginTop: "10px" }}>
                 <HFCardField
                   format="#### #### #### ####"
                   name="card_number"
@@ -237,7 +245,7 @@ const AddCardComponent = ({
                   control={control}
                 />
               </Box>
-              <Box sx={{marginTop: "15px"}}>
+              <Box sx={{ marginTop: "15px" }}>
                 <HFCardField
                   control={control}
                   name="expire"
@@ -254,12 +262,13 @@ const AddCardComponent = ({
                 alignItems: "center",
                 justifyContent: "center",
                 marginTop: "24px",
-              }}>
+              }}
+            >
               <OtpInput
                 value={otpVal}
                 onChange={getOtpVal}
                 numInputs={6}
-                renderSeparator={<span style={{width: "12px"}}></span>}
+                renderSeparator={<span style={{ width: "12px" }}></span>}
                 renderInput={(props) => <input {...props} />}
                 inputStyle={{
                   border: "1px solid #D0D5DD",
@@ -282,7 +291,8 @@ const AddCardComponent = ({
             onClick={() => {
               setVerifyCard(false);
               setOpenDialog(false);
-            }}>
+            }}
+          >
             Cancel
           </Button>
           {verifyCard ? (
@@ -295,7 +305,8 @@ const AddCardComponent = ({
                 Boolean(!watch("card_number")) || Boolean(!watch("expire"))
               }
               variant="contained"
-              onClick={verifyCardNumber}>
+              onClick={verifyCardNumber}
+            >
               Add Card
             </Button>
           )}
@@ -305,7 +316,7 @@ const AddCardComponent = ({
   );
 };
 
-const TopUpBalanceComponent = ({control, loading = false}) => {
+const TopUpBalanceComponent = ({ control, loading = false }) => {
   return (
     <Box>
       <HFNumberField
@@ -321,11 +332,12 @@ const TopUpBalanceComponent = ({control, loading = false}) => {
         loading={loading}
         disabled={loading}
         type="submit"
-        sx={{marginTop: "24px", fontSize: "12px"}}
+        sx={{ marginTop: "24px", fontSize: "12px" }}
         variant="contained"
-        fullWidth>
+        fullWidth
+      >
         {loading ? (
-          <CircularProgress size={25} style={{color: "#fff"}} />
+          <CircularProgress size={25} style={{ color: "#fff" }} />
         ) : (
           "Add balance"
         )}

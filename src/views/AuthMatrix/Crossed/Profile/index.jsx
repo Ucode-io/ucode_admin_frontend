@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
-import {useForm} from "react-hook-form";
-import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
@@ -13,17 +13,17 @@ import authService from "../../../../services/auth/authService";
 import userService from "../../../../services/auth/userService";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import {Box, Button, Typography} from "@mui/material";
-import {showAlert} from "../../../../store/alert/alert.thunk";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Box, Button, Typography } from "@mui/material";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import BillingComponent from "./BillingComponent";
 import AddIcon from "@mui/icons-material/Add";
 import BillingTariffs from "./BillingTariffs";
-import {generateLangaugeText} from "../../../../utils/generateLanguageText";
-import {useTranslation} from "react-i18next";
+import { generateLangaugeText } from "../../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
 
 const UsersForm = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const isUserInfo = useSelector((state) => state?.auth?.userInfo);
@@ -65,7 +65,7 @@ const UsersForm = () => {
             newPassword,
             clientType?.id,
             projectId,
-            envId?.environmentId
+            envId?.environmentId,
           );
         } else {
           delete requestData.confirm_password;
@@ -73,7 +73,7 @@ const UsersForm = () => {
       });
   };
 
-  const {control, handleSubmit, reset, watch} = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       name: "",
       email: "",
@@ -90,7 +90,7 @@ const UsersForm = () => {
     newPassword,
     clientTypeId,
     projectId,
-    envId
+    envId,
   ) => {
     authService
       .resetUserPasswordV2({
@@ -140,7 +140,7 @@ const UsersForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Tabs selectedIndex={selectedTab} onSelect={setSelectedTab}>
           <Header
-            styles={{height: "50px"}}
+            styles={{ height: "50px" }}
             title={t("profile")}
             backButtonLink={-1}
             extra={
@@ -162,12 +162,14 @@ const UsersForm = () => {
                     height: "30px",
                     display: "flex",
                     gap: "5px",
-                  }}>
+                  }}
+                >
                   <AddIcon />
                   <Typography variant="h6">Top Up</Typography>
                 </Button>
               )
-            }>
+            }
+          >
             <TabList
               style={{
                 border: "none",
@@ -176,10 +178,11 @@ const UsersForm = () => {
                 alignItems: "center",
                 marginBottom: "0",
                 overflow: "hidden",
-              }}>
-              <Tab style={{border: "none"}}>Profile</Tab>
-              <Tab style={{border: "none"}}>Billing</Tab>
-              <Tab style={{border: "none"}}>Tariffs</Tab>
+              }}
+            >
+              <Tab style={{ border: "none" }}>Profile</Tab>
+              <Tab style={{ border: "none" }}>Billing</Tab>
+              <Tab style={{ border: "none" }}>Tariffs</Tab>
             </TabList>
           </Header>
 
@@ -187,7 +190,8 @@ const UsersForm = () => {
             <FormCard
               // title={generateLangaugeText() ||"Main info"}
               title={t("main.info")}
-              className="UsersForm p-2">
+              className="UsersForm p-2"
+            >
               <div>
                 <HFAvatarUpload control={control} name="photo_url" />
               </div>
@@ -261,7 +265,10 @@ const UsersForm = () => {
                   />
                 </FRow>
 
-                <FRow style={{position: "relative"}} label={t("new.password")}>
+                <FRow
+                  style={{ position: "relative" }}
+                  label={t("new.password")}
+                >
                   <HFTextField
                     placeholder={t("new.password")}
                     fullWidth
@@ -277,14 +284,16 @@ const UsersForm = () => {
                       right: "15px",
                       bottom: "5px",
                       cursor: "pointer",
-                    }}>
+                    }}
+                  >
                     {inputType ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </Box>
                 </FRow>
 
                 <FRow
-                  style={{position: "relative"}}
-                  label={t("confirm.password")}>
+                  style={{ position: "relative" }}
+                  label={t("confirm.password")}
+                >
                   <HFTextField
                     placeholder={t("confirm.password")}
                     fullWidth
@@ -303,7 +312,8 @@ const UsersForm = () => {
                       right: "15px",
                       bottom: "5px",
                       cursor: "pointer",
-                    }}>
+                    }}
+                  >
                     {passwordType ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </Box>
                 </FRow>

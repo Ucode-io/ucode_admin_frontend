@@ -445,6 +445,10 @@ export const NewUiViewsWithGroups = ({
     },
   });
 
+  const { pathname } = useLocation();
+
+  const urlQuery = new URLSearchParams(window.location.search);
+
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
@@ -452,7 +456,24 @@ export const NewUiViewsWithGroups = ({
           `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
         );
       } else {
-        dispatch(detailDrawerActions.openDrawer());
+        if (!relationView) {
+          dispatch(detailDrawerActions.openDrawer());
+        }
+        if (relationView) {
+          navigateToForm(
+            tableSlug,
+            "CREATE",
+            {},
+            {
+              [`${tableSlug}_id`]: view.menu_id,
+              tableSlug,
+              // navigateUrl: `${pathname}?${urlQuery.get("v") ? `v=${urlQuery.get("v")}` : ``}${urlQuery.get("p") ? `&p=${urlQuery.get("p")}` : ``}`,
+              navigateUrl: `/${menuId || appId}`,
+            },
+            menuId,
+          );
+          dispatch(detailDrawerActions.closeDrawer());
+        }
       }
       setSelectedRow(null);
     } else {
@@ -1350,7 +1371,7 @@ export const NewUiViewsWithGroups = ({
             direction={"ltr"}
             defaultIndex={0}
             style={{
-              height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
+              height: "100%",
             }}
           >
             {tabs?.length > 0 &&

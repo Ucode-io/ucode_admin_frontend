@@ -609,8 +609,12 @@ const DrawerTableView = ({
   }, [localStorage.getItem("detailPage")]);
 
   return (
-    <MaterialUIProvider>
-      <div id="wrapper_drag" className={styles.wrapper}>
+    <MaterialUIProvider style={{ height: "100%" }}>
+      <div
+        id="wrapper_drag"
+        className={styles.wrapper}
+        style={{ height: "100%" }}
+      >
         <DynamicTable
           relationView={relationView}
           projectInfo={projectInfo}
@@ -677,7 +681,8 @@ const DrawerTableView = ({
           open={drawerState}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <FieldSettings
             closeSettingsBlock={() => setDrawerState(null)}
             isTableView={true}
@@ -696,7 +701,8 @@ const DrawerTableView = ({
           open={drawerStateField}
           anchor="right"
           onClose={() => setDrawerState(null)}
-          orientation="horizontal">
+          orientation="horizontal"
+        >
           <RelationSettings
             relation={drawerStateField}
             closeSettingsBlock={() => setDrawerStateField(null)}

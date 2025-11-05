@@ -21,11 +21,12 @@ export default function useTabRouter() {
   ) => {
     const isNewRouter = localStorage.getItem("new_router") === "true"
 
-
     if (type === "CREATE") {
       const id = generateID();
 
-      const link = `/main/${appId}/object/${tableSlug}/create/${id}?menuId=${menuId}&itemId=${itemId}`;
+      const link = isNewRouter
+        ? `/${menuId}/detail/create`
+        : `/main/${appId}/object/${tableSlug}/create/${id}?menuId=${menuId}&itemId=${itemId}`;
 
       const newTab = {
         id,
@@ -34,11 +35,11 @@ export default function useTabRouter() {
       };
 
       dispatch(tabRouterActions.addTab(newTab));
-      navigate(link, {state});
+      navigate(link, { state });
       return;
     }
 
-    if(isNewRouter) {
+    if (isNewRouter) {
       const link = `/${menuId}/detail/${menuId}/${tableSlug}/${row.guid}?menuId=${menuId}&itemId=${itemId}`;
 
       const tab = tabs.find((tab) => tab.link === link);
@@ -57,7 +58,6 @@ export default function useTabRouter() {
 
       dispatch(tabRouterActions.addTab(newTab));
       navigate(link);
-
     } else {
       const link = `/main/${appId}/object/${tableSlug}/${row.guid}?menuId=${menuId}&itemId=${itemId}`;
 

@@ -8,9 +8,9 @@ const MaterialUIProvider = ({children, ...props}) => {
   const theme = "light"
 
   return (
-    <div className={theme === "dark" ? 'night-mode' : ''} {...props}>
-      <ThemeConfig >
-        <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale} >
+    <div className={theme === "dark" ? "night-mode" : ""} {...props}>
+      <ThemeConfig>
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
           {children}
         </LocalizationProvider>
       </ThemeConfig>

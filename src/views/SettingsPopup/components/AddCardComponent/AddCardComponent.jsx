@@ -20,7 +20,6 @@ import {
 } from "@mui/material";
 import { useAddCardComponent } from "./useAddCardComponent";
 import { Button } from "../Button";
-import AddIcon from "@mui/icons-material/Add";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import HFCardField from "../../../../components/FormElements/HFCardField";
 import OTPInput from "react-otp-input";

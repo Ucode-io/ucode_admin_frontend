@@ -6,6 +6,8 @@ import { TopUpBalance } from "../../components/TopUpBalance";
 import { useSearchParams } from "react-router-dom";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 import AddIcon from "@mui/icons-material/Add";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export const Billing = () => {
   const {
@@ -22,6 +24,17 @@ export const Billing = () => {
     reset,
     dispatch,
   } = useBillingProps();
+  const [currency, setCurrency] = useState(null);
+
+  const getCurrency = () => {
+    axios.get(`https://cbu.uz/uz/arkhiv-kursov-valyut/json/`).then((res) => {
+      setCurrency(res.data?.find((item) => item.Ccy === "USD"));
+    });
+  };
+  console.log("currencycurrencycurrency", currency);
+  useEffect(() => {
+    getCurrency();
+  }, []);
 
   return (
     <>
@@ -169,8 +182,13 @@ export const Billing = () => {
                     color: "#101828",
                   }}
                 >
-                  {numberWithSpaces(data?.price * 12927.17 || 0)}{" "}
-                  {data?.currency?.toLowerCase() || "uzs"}
+                  {numberWithSpaces(
+                    Math.ceil(
+                      data?.price * (Number(currency?.Rate ?? 12927.17) || 0) ||
+                        0,
+                    ),
+                  )}
+                  {data?.currency?.toLowerCase() || " uzs"}
                 </Typography>
               </Box>
 

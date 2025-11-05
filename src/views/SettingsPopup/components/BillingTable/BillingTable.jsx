@@ -75,7 +75,12 @@ export const BillingTable = () => {
                   sx={{
                     "& .MuiTableCell-root": {
                       borderBottom: "1px solid #EAECF0",
-                      background: isOdd(index + 1) ? "#F9FAFB" : "#fff",
+                      background:
+                        row?.payment_status?.toLowerCase() === "cancelled"
+                          ? "#ffefee"
+                          : isOdd(index + 1)
+                            ? "#F9FAFB"
+                            : "#fff",
                       ":first-of-type": {
                         paddingLeft: "15px",
                       },

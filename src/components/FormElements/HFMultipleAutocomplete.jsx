@@ -204,7 +204,7 @@ const AutoCompleteElement = ({
       onFormChange(
         values?.map(
           (el) =>
-            el?.slug ?? el?.[`label_${i18n.language}`] ?? el?.label ?? el.value,
+            el?.slug ?? el.value ?? el?.[`label_${i18n.language}`] ?? el?.label,
         ),
       );
     else {
@@ -212,9 +212,9 @@ const AutoCompleteElement = ({
 
       const value =
         valueObj?.slug ??
+        valueObj?.value ??
         valueObj?.[`label_${i18n.language}`] ??
-        valueObj?.label ??
-        valueObj?.value;
+        valueObj?.label;
       onFormChange([value] ?? []);
     }
   };

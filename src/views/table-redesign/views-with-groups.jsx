@@ -448,9 +448,15 @@ export const NewUiViewsWithGroups = ({
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
       if (view?.attributes?.url_object) {
-        navigate(
-          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
-        );
+        if (new_router) {
+          navigate(
+            `/${menuId}/page/${view?.attributes?.url_object}?create=true`,
+          );
+        } else {
+          navigate(
+            `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
+          );
+        }
       } else {
         if (!relationView) {
           dispatch(detailDrawerActions.openDrawer());

@@ -450,6 +450,7 @@ export const AddCardComponent = ({
           onClick={() => {
             setVerifyCard(true);
             reset({ ...card, amount });
+            setOpenDialog(true);
           }}
           sx={{
             backgroundColor: "#2563eb",

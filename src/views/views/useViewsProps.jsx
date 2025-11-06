@@ -26,7 +26,7 @@ import { useMenuGetByIdQuery } from "@/services/menuService";
 import { Table } from "./modules/Table";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { useGetLayout } from "@/services/layoutService/layout.service";
-import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerContants";
+import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerConstants";
 import { Section } from "./modules/Section";
 
 export const useViewsProps = ({ isRelationView }) => {

@@ -605,27 +605,31 @@ function AgGridTableView(props) {
       sx={{
         height: `calc(100vh - ${calculatedHeight + 85}px)`,
         overflow: "scroll",
-      }}>
+      }}
+    >
       <div className={style.gridTable}>
         <div
           className="ag-theme-quartz"
           style={{
             display: "flex",
             width: "100%",
-          }}>
+          }}
+        >
           <Box
             sx={{
               width: "100%",
               background: "#fff",
               height: `calc(100vh - ${calculatedHeight + 85}px)`,
-            }}>
+            }}
+          >
             {Boolean(tabs?.length) && (
               <Box
                 sx={{
                   display: "flex",
                   padding: "10px 0 0 20px",
                   borderBottom: "1px solid #eee",
-                }}>
+                }}
+              >
                 {tabs?.map((item) => (
                   <Button
                     key={item.value}
@@ -638,7 +642,8 @@ function AgGridTableView(props) {
                       groupTab?.value === item?.value
                         ? style.tabGroupBtnActive
                         : style.tabGroupBtn
-                    }>
+                    }
+                  >
                     {item?.label}
                   </Button>
                 ))}
@@ -708,7 +713,7 @@ function AgGridTableView(props) {
       />
 
       {Boolean(!relationView && open && projectInfo?.new_layout) &&
-      selectedViewType === "SidePeek" ? (
+      (selectedViewType === "SidePeek" || selectedViewType === "FullPage") ? (
         Boolean(new_router) ? (
           <DrawerDetailPage
             view={view}

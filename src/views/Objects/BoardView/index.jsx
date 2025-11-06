@@ -191,7 +191,7 @@ const BoardView = ({
                       <span
                         className={clsx(styles.boardSubGroupBtnInner, {
                           [styles.selected]: openedGroups.includes(
-                            subGroup?.name
+                            subGroup?.name,
                           ),
                         })}
                       >
@@ -304,7 +304,7 @@ const BoardView = ({
       )}
       <MaterialUIProvider>
         {Boolean(!relationView && open && projectInfo?.new_layout) &&
-        selectedViewType === "SidePeek" ? (
+        (selectedViewType === "SidePeek" || selectedViewType === "FullPage") ? (
           new_router ? (
             <DrawerDetailPage
               view={view}

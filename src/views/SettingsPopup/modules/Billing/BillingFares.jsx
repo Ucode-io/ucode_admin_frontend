@@ -3,12 +3,12 @@ import {
   AttachMoney,
   HourglassBottom,
 } from "@mui/icons-material";
-import {Box, Card, CardContent, Grid, Modal, Typography} from "@mui/material";
-import {useBillingProps} from "./useBillingProps";
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {BillingTable} from "../../components/BillingTable";
-import {TopUpBalance} from "../../components/TopUpBalance";
-import {Fares} from "../Fares";
+import { Box, Card, CardContent, Grid, Modal, Typography } from "@mui/material";
+import { useBillingProps } from "./useBillingProps";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { BillingTable } from "../../components/BillingTable";
+import { TopUpBalance } from "../../components/TopUpBalance";
+import { Fares } from "../Fares";
 
 export const BillingFares = () => {
   const {
@@ -23,6 +23,7 @@ export const BillingFares = () => {
     onSubmit,
     loading,
     reset,
+    setValue,
   } = useBillingProps();
 
   return (

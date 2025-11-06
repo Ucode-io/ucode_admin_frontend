@@ -2,8 +2,8 @@ import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import {Box, Button, Modal, Popover, Typography} from "@mui/material";
-import {useRef, useState} from "react";
+import { Box, Button, Modal, Popover, Typography } from "@mui/material";
+import { useCallback, useRef, useState } from "react";
 import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -13,6 +13,7 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import useDownloader from "../../hooks/useDownloader";
+import Cropper from "react-easy-crop";
 
 const style = {
   position: "absolute",
@@ -38,26 +39,33 @@ const ImageUpload = ({
   tabIndex,
   field,
   drawerDetail = false,
+  canCrop = true,
 }) => {
-  const {download} = useDownloader();
+  const { download } = useDownloader();
+
   const inputRef = useRef(null);
-  const [previewVisible, setPreviewVisible] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [degree, setDegree] = useState(0);
+
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
-  const splitVal = value?.split("#")?.[1];
+
   const [openFullImg, setOpenFullImg] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const splitVal = value?.split("#")?.[1];
+
   const handleOpenImg = () => setOpenFullImg(true);
   const handleCloseImg = () => setOpenFullImg(false);
 
+  const [imageSrc, setImageSrc] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
-  const imageClickHandler = (index) => {
-    setPreviewVisible(true);
-    window.open(value, "_blank");
-  };
 
   const inputChangeHandler = (e) => {
     setLoading(true);
@@ -77,6 +85,98 @@ const ImageUpload = ({
         handleClose();
       })
       .finally(() => setLoading(false));
+  };
+
+  const inputChangeCropHandler = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setSelectedFile(file);
+
+    const reader = new FileReader();
+    reader.onload = () => setImageSrc(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleUploadImage = (e) => {
+    if (canCrop) inputChangeCropHandler(e);
+    else inputChangeHandler(e);
+  };
+
+  const onCropComplete = useCallback((_, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const getCroppedImg = useCallback(
+    async (imageSrc, crop, outputType = "image/jpeg") => {
+      const image = await createImage(imageSrc);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = crop.width;
+      canvas.height = crop.height;
+
+      ctx.drawImage(
+        image,
+        crop.x,
+        crop.y,
+        crop.width,
+        crop.height,
+        0,
+        0,
+        crop.width,
+        crop.height,
+      );
+
+      return new Promise((resolve) => {
+        canvas.toBlob(
+          (blob) => {
+            resolve(blob);
+          },
+          outputType,
+          0.92,
+        );
+      });
+    },
+    [],
+  );
+
+  const uploadCropped = async () => {
+    try {
+      setLoading(true);
+
+      const originalFileType = selectedFile?.type || "image/jpeg";
+      const supportedFormats = ["image/jpeg", "image/png", "image/webp"];
+      const outputType = supportedFormats.includes(originalFileType)
+        ? originalFileType
+        : "image/png";
+
+      const croppedBlob = await getCroppedImg(
+        imageSrc,
+        croppedAreaPixels,
+        outputType,
+      );
+
+      const baseName = selectedFile?.name?.replace(/\.[^/.]+$/, "") || "image";
+      const ext = outputType.split("/")[1];
+      const croppedFileName = `${baseName}_cropped.${ext}`;
+
+      const data = new FormData();
+      data.append("file", croppedBlob, croppedFileName);
+
+      const res = await fileService.folderUpload(data, {
+        folder_name: field?.attributes?.path,
+        format: field?.attributes?.format,
+        ratio: field?.attributes?.ratio,
+      });
+
+      onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
+      handleClose();
+    } finally {
+      setLoading(false);
+      setImageSrc(null);
+    }
   };
 
   const rotateImg = () => {
@@ -129,16 +229,18 @@ const ImageUpload = ({
   return (
     <div
       className={`Gallery ${className}`}
-      style={{cursor: disabled ? "not-allowed" : "pointer"}}>
+      style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+    >
       {value && (
         <>
           <div
-            style={{padding: drawerDetail ? "0 10px" : 0}}
+            style={{ padding: drawerDetail ? "0 10px" : 0 }}
             id="photo"
             className="uploadedImage"
             aria-describedby={id}
             // onClick={handleClick}>
-            onClick={() => handleOpenImg()}>
+            onClick={() => handleOpenImg()}
+          >
             <div className="img">
               <img
                 src={value}
@@ -155,7 +257,8 @@ const ImageUpload = ({
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}>
+              }}
+            >
               {value.split("#")[0].split("_")[1] ?? ""}
             </Typography>
           </div>
@@ -168,7 +271,8 @@ const ImageUpload = ({
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "left",
-            }}>
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -176,7 +280,8 @@ const ImageUpload = ({
                 gap: "10px",
                 padding: "10px",
                 backgroundColor: "#212B36",
-              }}>
+              }}
+            >
               <Button
                 sx={{
                   display: "flex",
@@ -185,7 +290,8 @@ const ImageUpload = ({
                   justifyContent: "flex-start",
                   color: "#fff",
                 }}
-                onClick={() => handleOpenImg()}>
+                onClick={() => handleOpenImg()}
+              >
                 <OpenInFullIcon />
                 Show Full Image
               </Button>
@@ -198,8 +304,9 @@ const ImageUpload = ({
                   justifyContent: "flex-start",
                   color: "#fff",
                 }}
-                onClick={closeButtonHandler}>
-                <DeleteIcon style={{width: "17px", height: "17px"}} />
+                onClick={closeButtonHandler}
+              >
+                <DeleteIcon style={{ width: "17px", height: "17px" }} />
                 Remove Image
               </Button>
 
@@ -215,7 +322,8 @@ const ImageUpload = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   inputRef.current.click();
-                }}>
+                }}
+              >
                 <ChangeCircleIcon />
                 Change Image
               </Button>
@@ -231,7 +339,7 @@ const ImageUpload = ({
               ref={inputRef}
               tabIndex={tabIndex}
               autoFocus={tabIndex === 1}
-              onChange={inputChangeHandler}
+              onChange={handleUploadImage}
               disabled={disabled}
             />
           </Popover>
@@ -251,7 +359,8 @@ const ImageUpload = ({
                   outline: "none",
                   boxShadow: "none",
                 },
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   border: "0px solid #fff",
@@ -261,11 +370,12 @@ const ImageUpload = ({
                   justifyContent: "center",
                   flexDirection: "column",
                 }}
-                aria-describedby={id}>
+                aria-describedby={id}
+              >
                 <img
                   onClick={(e) => e.stopPropagation()}
                   src={value}
-                  style={{transform: `scale(${imgScale})`}}
+                  style={{ transform: `scale(${imgScale})` }}
                   className="uploadedImage"
                   alt=""
                 />
@@ -273,7 +383,8 @@ const ImageUpload = ({
                   sx={{
                     fontSize: "10px",
                     color: "#747474",
-                  }}>
+                  }}
+                >
                   {value?.split?.("_")?.[1] ?? ""}
                 </Typography>
               </Box>
@@ -284,8 +395,9 @@ const ImageUpload = ({
                   right: "-300px",
                   top: "-50px",
                   color: "white",
-                }}>
-                <ClearIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ClearIcon style={{ width: "30px", height: "30px" }} />
               </Button>
 
               <Button
@@ -298,8 +410,9 @@ const ImageUpload = ({
                   right: "-10px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
-                <ZoomInIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ZoomInIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={(e) => {
@@ -311,8 +424,9 @@ const ImageUpload = ({
                   right: "-70px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
-                <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <ZoomOutIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={(e) => {
@@ -324,9 +438,10 @@ const ImageUpload = ({
                   right: "-130px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
+                }}
+              >
                 <Rotate90DegreesCcwIcon
-                  style={{width: "30px", height: "30px"}}
+                  style={{ width: "30px", height: "30px" }}
                 />
               </Button>
 
@@ -340,8 +455,9 @@ const ImageUpload = ({
                   right: "-200px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
-                <DownloadIcon style={{width: "30px", height: "30px"}} />
+                }}
+              >
+                <DownloadIcon style={{ width: "30px", height: "30px" }} />
               </Button>
               <Button
                 onClick={(e) => {
@@ -353,10 +469,11 @@ const ImageUpload = ({
                   right: "-300px",
                   bottom: "-30px",
                   color: "#eee",
-                }}>
+                }}
+              >
                 <MoreHorizIcon
                   htmlColor="#fff"
-                  style={{width: "30px", height: "30px"}}
+                  style={{ width: "30px", height: "30px" }}
                 />
               </Button>
             </Box>
@@ -377,7 +494,8 @@ const ImageUpload = ({
               minWidth: 40,
               width: 40,
               height: 27,
-            }}>
+            }}
+          >
             <input
               id="img_upload"
               type="file"
@@ -385,20 +503,80 @@ const ImageUpload = ({
               ref={inputRef}
               tabIndex={tabIndex}
               autoFocus={tabIndex === 1}
-              onChange={inputChangeHandler}
+              onChange={handleUploadImage}
               disabled={disabled}
               accept=".jpg, .jpeg, .png, .gif, .bmp, .tiff, .tif, .heif, .heic, .webp, .jp2, .j2k, .avif, .dds, .exr, .ico, .pcx, .ras, .svg"
             />
             <img
               src="/img/newUpload.svg"
               alt="Upload"
-              style={{width: 22, height: 22}}
+              style={{ width: 22, height: 22 }}
             />
           </Button>
         )}
       </Box>
+      <Modal center open={!!imageSrc} onClose={() => setImageSrc(null)}>
+        <Box
+          mx="auto"
+          mt={4}
+          p="16px"
+          pb="36px"
+          position="relative"
+          width="600px"
+          height="400px"
+          bgcolor="#fff"
+          borderRadius="10px"
+          overflow="hidden"
+        >
+          <Cropper
+            image={imageSrc}
+            crop={crop}
+            zoom={zoom}
+            aspect={field?.attributes?.ratio || 1}
+            onCropChange={setCrop}
+            onZoomChange={setZoom}
+            onCropComplete={onCropComplete}
+          />
+          <Box
+            width="100%"
+            height="36px"
+            padding="6px 10px"
+            position="absolute"
+            gap={2}
+            bottom="0"
+            left="0"
+            display="flex"
+            justifyContent="flex-end"
+            bgcolor="#fff"
+          >
+            <Button
+              onClick={() => setImageSrc(null)}
+              sx={{ color: "#ee4d4d", border: "1px solid #ee4d4d" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={uploadCropped}
+              disabled={loading}
+              sx={{ color: "#007AFF", border: "1px solid #007AFF" }}
+            >
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 };
+
+function createImage(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve(image));
+    image.addEventListener("error", (error) => reject(error));
+    image.setAttribute("crossOrigin", "anonymous");
+    image.src = url;
+  });
+}
 
 export default ImageUpload;

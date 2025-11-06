@@ -42,6 +42,7 @@ import {
   FileExportIcon,
   TrashIcon,
 } from "../../../utils/constants/icons";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 export const ColumnsVisibility = ({
   relationView = false,
@@ -92,7 +93,7 @@ export const ColumnsVisibility = ({
       return !view?.columns?.includes(
         field?.type === "LOOKUP" || field?.type === "LOOKUPS"
           ? field.relation_id
-          : field.id
+          : field.id,
       );
     }) ?? [];
 
@@ -103,7 +104,7 @@ export const ColumnsVisibility = ({
   const renderFields = visibleFields?.filter((column) =>
     search === ""
       ? true
-      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+      : getLabel(column)?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const onChange = (column, checked) => {
@@ -147,7 +148,7 @@ export const ColumnsVisibility = ({
         ? allColumns?.map((column) =>
             column?.type === "LOOKUP" || column?.type === "LOOKUPS"
               ? column.relation_id
-              : column.id
+              : column.id,
           )
         : [],
     });
@@ -167,7 +168,7 @@ export const ColumnsVisibility = ({
         columns: computedResult?.map((item) =>
           item?.type === "LOOKUP" || item?.type === "LOOKUPS"
             ? item?.relation_id
-            : item?.id
+            : item?.id,
         ),
       });
     }
@@ -191,7 +192,7 @@ export const ColumnsVisibility = ({
             {generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Visible columns"
+              "Visible columns",
             ) || "Visible columns"}
           </Box>
         </Button>
@@ -205,7 +206,7 @@ export const ColumnsVisibility = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Seaarch by filled name"
+              "Seaarch by filled name",
             ) || "Search by filled name"
           }
           value={search}
@@ -273,20 +274,20 @@ export const ColumnsVisibility = ({
                           column,
                           !(view?.type === "TIMELINE"
                             ? view?.attributes?.visible_field?.includes(
-                                column?.slug
+                                column?.slug,
                               )
                             : view?.columns?.includes(
                                 column?.type === "LOOKUP" ||
                                   column?.type === "LOOKUPS"
                                   ? column?.relation_id
-                                  : column?.id
-                              ))
+                                  : column?.id,
+                              )),
                         )
                       }
                     >
                       {view?.type === "TIMELINE" ? (
                         view?.attributes?.visible_field?.includes(
-                          column?.slug
+                          column?.slug,
                         ) ? (
                           <EyeIcon />
                         ) : (
@@ -296,7 +297,7 @@ export const ColumnsVisibility = ({
                           column?.type === "LOOKUP" ||
                             column?.type === "LOOKUPS"
                             ? column?.relation_id
-                            : column?.id
+                            : column?.id,
                         ) ? (
                         <EyeIcon />
                       ) : (
@@ -363,14 +364,14 @@ export const ColumnsVisibility = ({
                       column,
                       !(view?.type === "TIMELINE"
                         ? view?.attributes?.visible_field?.includes(
-                            column?.slug
+                            column?.slug,
                           )
                         : view?.columns?.includes(
                             column?.type === "LOOKUP" ||
                               column?.type === "LOOKUPS"
                               ? column?.relation_id
-                              : column?.id
-                          ))
+                              : column?.id,
+                          )),
                     )
                   }
                 >
@@ -383,7 +384,7 @@ export const ColumnsVisibility = ({
                   ) : view?.columns?.includes(
                       column?.type === "LOOKUP" || column?.type === "LOOKUPS"
                         ? column?.relation_id
-                        : column?.id
+                        : column?.id,
                     ) ? (
                     <EyeIcon />
                   ) : (
@@ -439,7 +440,7 @@ export const Group = ({
     return !view?.attributes?.group_by_columns?.includes(
       field?.type === "LOOKUP" || field?.type === "LOOKUPS"
         ? field.relation_id
-        : field.id
+        : field.id,
     );
   });
 
@@ -450,12 +451,24 @@ export const Group = ({
     (column) =>
       search === ""
         ? column
-        : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+        : getLabel(column)?.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const relationTypes = [FIELD_TYPES.LOOKUP, FIELD_TYPES.LOOKUPS];
+
   const onChange = (column, checked) => {
+    // const cols = [];
+    // view?.columns?.forEach((item) => {
+    //   if (!cols.includes(item)) cols.push(item);
+    // });
+    // mutation.mutate({
+    //   ...view,
+    //   columns: cols,
+    // });
     const columns = view?.attributes?.group_by_columns ?? [];
-    const id = column.id;
+    const id = relationTypes.includes(column?.type)
+      ? column.relation_id
+      : column.id;
 
     mutation.mutate({
       ...view,
@@ -492,7 +505,7 @@ export const Group = ({
             generateLangaugeText(
               tableLan,
               i18n?.language,
-              "Seaarch by filled name"
+              "Seaarch by filled name",
             ) || "Search by filled name"
           }
           value={search}
@@ -518,7 +531,9 @@ export const Group = ({
               ml="auto"
               onChange={(ev) => onChange(column, ev.target.checked)}
               isChecked={view?.attributes?.group_by_columns?.includes(
-                column?.id
+                relationTypes.includes(column.type)
+                  ? column?.relation_id
+                  : column?.id,
               )}
             />
           </Flex>

@@ -82,6 +82,10 @@ import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
 import TemplateSelection from "../../layouts/MainLayout/TemplateMenu/TemplateSelection";
 import { SettingsIcon, TranslateIcon } from "../../utils/constants/icons";
 import { useGetLang } from "@/hooks/useGetLang";
+import {
+  SIDEBAR_CLOSED_WIDTH,
+  SIDEBAR_OPENED_WIDTH,
+} from "@/utils/constants/main";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -465,7 +469,7 @@ const LayoutSidebar = ({
       <Flex
         id="layoutSidebar"
         position="relative"
-        w={sidebarIsOpen ? 240 : 52}
+        w={sidebarIsOpen ? SIDEBAR_OPENED_WIDTH : SIDEBAR_CLOSED_WIDTH}
         flexDirection="column"
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
@@ -660,7 +664,7 @@ const LayoutSidebar = ({
                       {generateLangaugeText(
                         menuLanguages,
                         i18n?.language,
-                        "Create"
+                        "Create",
                       ) || "Create"}
                     </Box>
                   </Flex>
@@ -696,7 +700,7 @@ const LayoutSidebar = ({
                         ? undefined
                         : () =>
                             dispatch(
-                              mainActions.setSidebarHighlightedAction(null)
+                              mainActions.setSidebarHighlightedAction(null),
                             )
                     }
                   >
@@ -726,13 +730,13 @@ const LayoutSidebar = ({
                             fill="none"
                             viewBox="0 0 16 16"
                           >
-                            <g fill="#fff" clip-path="url(#a)">
+                            <g fill="#fff" clipPath="url(#a)">
                               <circle
                                 cx="5"
                                 cy="9"
                                 r="3.4"
                                 stroke="rgba(55, 53, 47, 0.85)"
-                                stroke-width="1.2"
+                                strokeWidth="1.2"
                               />
                               <mask id="b">
                                 <rect width="8" height="8" x="5" y="2" rx="1" />
@@ -743,13 +747,13 @@ const LayoutSidebar = ({
                                 x="5"
                                 y="2"
                                 stroke="rgba(55, 53, 47, 0.85)"
-                                stroke-width="2.4"
+                                strokeWidth="2.4"
                                 mask="url(#b)"
                                 rx="1"
                               />
                               <path
                                 stroke="rgba(55, 53, 47, 0.85)"
-                                stroke-width="1.2"
+                                strokeWidth="1.2"
                                 d="M9.413 7.35a.1.1 0 0 1 .174 0l3.55 6.15a.1.1 0 0 1-.086.15H5.949a.1.1 0 0 1-.087-.15l3.551-6.15Z"
                               />
                             </g>
@@ -765,7 +769,7 @@ const LayoutSidebar = ({
                             {generateLangaugeText(
                               menuLanguages,
                               i18n?.language,
-                              "Import Template"
+                              "Import Template",
                             ) || "Import Template"}
                           </span>
                         ) : null}
@@ -800,7 +804,7 @@ const LayoutSidebar = ({
                         ? undefined
                         : () =>
                             dispatch(
-                              mainActions.setSidebarHighlightedAction(null)
+                              mainActions.setSidebarHighlightedAction(null),
                             )
                     }
                   >

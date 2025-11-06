@@ -29,22 +29,22 @@ export const ScreenOptions = ({
 
   const handleClose = (option) => {
     localStorage.setItem("detailPage", option?.icon);
-    if (location?.state?.fullPage) {
-      navigate(-1);
-      setLayoutType("SidePeek");
-    }
-    if (option?.icon === "FullPage") {
-      setLayoutType("SimpleLayout");
-      navigate(`/${menuId}/detail?p=${selectedRow?.guid}`, {
-        state: {
-          viewId: view?.id,
-          table_slug: view?.table_slug,
-          projectInfo: projectInfo,
-          selectedRow: selectedRow,
-          fullPage: true,
-        },
-      });
-    }
+    // if (location?.state?.fullPage) {
+    //   navigate(-1);
+    //   setLayoutType("SidePeek");
+    // }
+    // if (option?.icon === "FullPage") {
+    //   setLayoutType("SimpleLayout");
+    //   navigate(`/${menuId}/detail?p=${selectedRow?.guid}`, {
+    //     state: {
+    //       viewId: view?.id,
+    //       table_slug: view?.table_slug,
+    //       projectInfo: projectInfo,
+    //       selectedRow: selectedRow,
+    //       fullPage: true,
+    //     },
+    //   });
+    // }
 
     if (option) setSelectedViewType(option?.icon);
     setAnchorEl(null);

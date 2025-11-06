@@ -693,7 +693,7 @@ const TableView = ({
         />
 
         {Boolean(open && projectInfo?.new_layout) &&
-        selectedViewType === "SidePeek" ? (
+        (selectedViewType === "SidePeek" || selectedViewType === "FullPage") ? (
           new_router ? (
             <DrawerDetailPage
               view={view}

@@ -1,5 +1,8 @@
 import { useViewContext } from "@/providers/ViewProvider";
-import { DRAWER_LAYOUT_TYPES, DRAWER_VIEW_TYPES } from "@/utils/constants/drawerContants";
+import {
+  DRAWER_LAYOUT_TYPES,
+  DRAWER_VIEW_TYPES,
+} from "@/utils/constants/drawerConstants";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 

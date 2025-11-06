@@ -135,7 +135,7 @@ const AutoCompleteElement = ({
 }) => {
   const { i18n } = useTranslation();
   const [dialogState, setDialogState] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
 
   const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
@@ -230,7 +230,9 @@ const AutoCompleteElement = ({
             )
           }
           disableCloseOnSelect
-          getOptionLabel={(option) => option?.label ?? option?.value}
+          getOptionLabel={(option) =>
+            option?.[`label_${i18n.language}`] ?? option?.value
+          }
           isOptionEqualToValue={(option, value) =>
             option?.value === value?.value
           }

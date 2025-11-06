@@ -151,7 +151,7 @@ export const AddCardComponent = ({
         });
     }
   }, [tabIndex]);
-
+  console.log("cardcard", card);
   return (
     <Box sx={{ maxWidth: "100%", p: 3 }}>
       <Typography
@@ -447,14 +447,15 @@ export const AddCardComponent = ({
       >
         <MuiButton
           disabled={!amount || !card?.verify || loading}
-          onClick={() => {
-            setVerifyCard(true);
-            reset({ ...card, amount });
-          }}
+          onClick={handleSubmit(() => {
+            onSubmit({
+              amount: Number(amount),
+              card_id: card?.id,
+            });
+          })}
           sx={{
             backgroundColor: "#2563eb",
             color: "white",
-
             padding: "10px 24px",
             fontSize: "14px",
             fontWeight: 500,

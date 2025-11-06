@@ -31,7 +31,7 @@ export const Billing = () => {
       setCurrency(res.data?.find((item) => item.Ccy === "USD"));
     });
   };
-  console.log("currencycurrencycurrency", currency);
+
   useEffect(() => {
     getCurrency();
   }, []);

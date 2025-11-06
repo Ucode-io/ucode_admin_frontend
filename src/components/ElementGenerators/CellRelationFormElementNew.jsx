@@ -6,7 +6,7 @@ import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import Select, { components } from "react-select";
 import useDebounce from "@/hooks/useDebounce";
@@ -250,52 +250,58 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
+  const queryClient = useQueryClient();
+
+  const queryFn = () => {
+    if (!field?.table_slug) return null;
+
+    const requestData = {
+      ...autoFiltersValue,
+      additional_request: {
+        additional_field: "guid",
+      },
+      view_fields: field?.view_fields?.map((f) => f.slug),
+      search: debouncedValue.trim(),
+      limit: 10,
+      offset: pageToOffset(page, 10),
+      with_relations: false,
+    };
+
+    if (value) {
+      const additionalValues = [value];
+      requestData.additional_request.additional_values =
+        additionalValues?.flat();
+    }
+
+    return constructorObjectService.getListV2(
+      field?.table_slug,
+      {
+        data: requestData,
+      },
+      {
+        language_setting: i18n?.language,
+      },
+    );
+  };
+
   const { data: optionsFromLocale, refetch } = useQuery(
     [
       "GET_OBJECT_LIST",
+      page,
       debouncedValue,
       autoFiltersValue,
       value,
-      page,
       field?.table_slug,
     ],
-    () => {
-      if (!field?.table_slug) return null;
-
-      const requestData = {
-        ...autoFiltersValue,
-        additional_request: {
-          additional_field: "guid",
-        },
-        view_fields: field?.view_fields?.map((f) => f.slug),
-        search: debouncedValue.trim(),
-        limit: 10,
-        offset: pageToOffset(page, 10),
-        with_relations: false,
-      };
-
-      if (value) {
-        const additionalValues = [value];
-        requestData.additional_request.additional_values =
-          additionalValues?.flat();
-      }
-
-      return constructorObjectService.getListV2(
-        field?.table_slug,
-        {
-          data: requestData,
-        },
-        {
-          language_setting: i18n?.language,
-        },
-      );
-    },
+    queryFn,
     {
       // enabled:
       //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
       //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
       //   newColumn,
       enabled: false,
+      keepPreviousData: true,
+      staleTime: 5000,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -375,7 +381,18 @@ const AutoCompleteElement = ({
   };
 
   function loadMoreItems() {
-    if (count >= optionsFromLocale?.count) return;
+    if (count <= computedOptions?.length) return;
+    queryClient.prefetchQuery(
+      [
+        "GET_OBJECT_LIST",
+        page + 1,
+        debouncedValue,
+        autoFiltersValue,
+        value,
+        field?.table_slug,
+      ],
+      queryFn,
+    );
     setPage((prevPage) => prevPage + 1);
   }
 

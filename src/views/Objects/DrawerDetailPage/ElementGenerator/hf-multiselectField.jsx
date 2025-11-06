@@ -68,8 +68,6 @@ const HFMultipleAutocomplete = ({
   const hasIcon = field.attributes?.has_icon;
   const isMultiSelect = field.attributes?.is_multiselect;
 
-  console.log({ options });
-
   return (
     <Controller
       control={control}

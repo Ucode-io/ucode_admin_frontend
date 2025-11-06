@@ -15,6 +15,10 @@ import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {sortSections} from "../../../utils/sectionsOrderNumber";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "./DrawerObjectsPage";
+import {
+  SIDEBAR_CLOSED_WIDTH,
+  SIDEBAR_OPENED_WIDTH,
+} from "@/utils/constants/main";
 
 function DrawerDetailPage({
   view,
@@ -46,6 +50,10 @@ function DrawerDetailPage({
   const [loader, setLoader] = useState(true);
   const [sections, setSections] = useState([]);
   const [data, setData] = useState({});
+
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen,
+  );
 
   const isUserId = useSelector((state) => state?.auth?.userId);
 
@@ -361,27 +369,32 @@ function DrawerDetailPage({
     }
   };
 
+  const size = selectedViewType === "FullPage" ? "full" : "xs";
+
   useEffect(() => {
     if (drawerRef.current) {
-      drawerRef.current.style.width = `${drawerWidth ?? 1050}px`;
+      drawerRef.current.style.width =
+        size === "full" ? "100%" : `${drawerWidth ?? 1050}px`;
       drawerRef.current.closest(".chakra-portal").style.position = "relative";
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
   }, [drawerRef.current]);
 
   return (
-    <Drawer isOpen={open} placement="right" onClose={handleClose}>
+    <Drawer isOpen={open} placement="right" onClose={handleClose} size={size}>
       <DrawerContent
         ref={drawerRef}
         bg="white"
         position="relative"
         overflow={"hidden"}
-        boxShadow="0px 0px 16px 1px rgba(15, 15, 15, 0.04),
-               0px 12px 16px rgba(15, 15, 15, 0.15),
-               0px 9px 24px rgba(15, 15, 15, 0.06)"
+        boxShadow={
+          size === "full"
+            ? "none"
+            : "0px 0px 16px 1px rgba(15, 15, 15, 0.04), 0px 12px 16px rgba(15, 15, 15, 0.15), 0px 9px 24px rgba(15, 15, 15, 0.06)"
+        }
         style={{
-          width: `${drawerWidth}px`,
-          maxWidth: "90vw",
+          width: size === "full" ? "100%" : `${drawerWidth}px`,
+          maxWidth: `calc(100vw - ${sidebarIsOpen ? SIDEBAR_OPENED_WIDTH : SIDEBAR_CLOSED_WIDTH}px)`,
           transition: "width 0.1s ease",
           overflow: "hidden",
           background: "#fff",

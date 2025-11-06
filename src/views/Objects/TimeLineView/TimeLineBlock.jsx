@@ -490,7 +490,7 @@ export default function TimeLineBlock({
       </div>
 
       {Boolean(open && projectInfo?.new_layout && !relationView) &&
-      selectedViewType === "SidePeek" ? (
+      (selectedViewType === "SidePeek" || selectedViewType === "FullPage") ? (
         new_router ? (
           <DrawerDetailPage
             view={view}

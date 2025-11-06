@@ -1,0 +1,2 @@
+export const SIDEBAR_OPENED_WIDTH = 240;
+export const SIDEBAR_CLOSED_WIDTH = 52;

@@ -53,15 +53,22 @@ function HFStatusField({
               fullWidth
               renderValue={(selected) => {
                 const isArray = Array.isArray(selected);
+                console.log({ selected, att: field?.attributes });
                 const selectedOption =
                   field?.attributes?.todo?.options?.find(
-                    (el) => el.value === (isArray ? selected[0] : selected),
+                    (el) =>
+                      (el?.value || el?.label) ===
+                      (isArray ? selected[0] : selected),
                   ) ||
                   field?.attributes?.progress?.options?.find(
-                    (el) => el.value === (isArray ? selected[0] : selected),
+                    (el) =>
+                      (el?.value || el?.label) ===
+                      (isArray ? selected[0] : selected),
                   ) ||
                   field?.attributes?.complete?.options?.find(
-                    (el) => el.value === (isArray ? selected[0] : selected),
+                    (el) =>
+                      (el?.value || el?.label) ===
+                      (isArray ? selected[0] : selected),
                   );
 
                 return (
@@ -97,8 +104,8 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.value}
-                  value={el?.value}
+                  key={el?.value || el?.label}
+                  value={el?.value || el?.label}
                 >
                   {el?.[`label_${i18n?.language}`] || el?.label}
                 </MenuItem>
@@ -115,8 +122,8 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.value}
-                  value={el?.value}
+                  key={el?.value || el?.label}
+                  value={el?.value || el?.label}
                 >
                   {el?.[`label_${i18n?.language}`] || el?.label}
                 </MenuItem>
@@ -133,8 +140,8 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.value}
-                  value={el?.value}
+                  key={el?.value || el?.label}
+                  value={el?.value || el?.label}
                 >
                   {el?.[`label_${i18n?.language}`] || el?.label}
                 </MenuItem>

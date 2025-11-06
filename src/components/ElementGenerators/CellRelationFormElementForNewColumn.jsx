@@ -243,7 +243,7 @@ const AutoCompleteElement = ({
 
   const queryClient = useQueryClient();
 
-  const queryFn = () => {
+  const queryFn = (pageProp) => {
     if (!field?.table_slug) return null;
 
     const requestData = {
@@ -255,7 +255,7 @@ const AutoCompleteElement = ({
       view_fields: field?.view_fields?.map((f) => f.slug),
       search: debouncedValue.trim(),
       limit: 10,
-      offset: pageToOffset(page, 10),
+      offset: pageToOffset(pageProp || page, 10),
     };
 
     if (value || itemId) {
@@ -464,7 +464,7 @@ const AutoCompleteElement = ({
         field?.table_slug,
         value,
       ],
-      queryFn,
+      () => queryFn(page + 1),
     );
     setPage((prevPage) => prevPage + 1);
   }

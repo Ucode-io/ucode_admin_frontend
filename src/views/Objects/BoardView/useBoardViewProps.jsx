@@ -58,9 +58,7 @@ export const useBoardViewProps = ({
   const [groups, setGroups] = useState([]);
   const [subGroups, setSubGroups] = useState([]);
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+    localStorage?.getItem("detailPage"),
   );
 
   const [boardData, setBoardData] = useState({});

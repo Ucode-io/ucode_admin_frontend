@@ -93,9 +93,7 @@ export const useTableProps = ({ tab }) => {
 
   const [combinedTableData, setCombinedTableData] = useState([]);
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage"),
+    localStorage?.getItem("detailPage"),
   );
 
   // const menuId = menuid ?? searchParams.get("menuId");

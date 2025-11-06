@@ -258,9 +258,7 @@ export default function TimeLineBlock({
   const [selectedRow, setSelectedRow] = useState("");
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+    localStorage?.getItem("detailPage"),
   );
 
   // const {data: projectInfo} = useProjectGetByIdQuery({projectId});

@@ -252,9 +252,8 @@ const AutoCompleteElement = ({
 
   const queryClient = useQueryClient();
 
-  const queryFn = () => {
+  const queryFn = (pageProp) => {
     if (!field?.table_slug) return null;
-
     const requestData = {
       ...autoFiltersValue,
       additional_request: {
@@ -263,7 +262,7 @@ const AutoCompleteElement = ({
       view_fields: field?.view_fields?.map((f) => f.slug),
       search: debouncedValue.trim(),
       limit: 10,
-      offset: pageToOffset(page, 10),
+      offset: pageToOffset(pageProp || page, 10),
       with_relations: false,
     };
 
@@ -300,8 +299,6 @@ const AutoCompleteElement = ({
       //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
       //   newColumn,
       enabled: false,
-      keepPreviousData: true,
-      staleTime: 5000,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -381,7 +378,11 @@ const AutoCompleteElement = ({
   };
 
   function loadMoreItems() {
-    if (count <= computedOptions?.length) return;
+    if (
+      count <= computedOptions?.length ||
+      Object.keys(autoFiltersValue)?.length
+    )
+      return;
     queryClient.prefetchQuery(
       [
         "GET_OBJECT_LIST",
@@ -391,7 +392,7 @@ const AutoCompleteElement = ({
         value,
         field?.table_slug,
       ],
-      queryFn,
+      () => queryFn(page + 1),
     );
     setPage((prevPage) => prevPage + 1);
   }

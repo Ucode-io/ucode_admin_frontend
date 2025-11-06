@@ -20,7 +20,7 @@ export const useBillingProps = () => {
   const [addBalance, setAddBalance] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit, watch, reset } = useForm();
+  const { control, handleSubmit, watch, reset, setValue } = useForm();
 
   const handClickBalance = () => setAddBalance(true);
   const handCloseBalance = () => {
@@ -50,7 +50,7 @@ export const useBillingProps = () => {
     {
       enabled: Boolean(project?.fare_id),
       onSuccess: (res) => res?.data,
-    }
+    },
   );
 
   const { data: transactions, refetch } = useQuery(
@@ -61,13 +61,14 @@ export const useBillingProps = () => {
     {
       enabled: Boolean(project?.fare_id),
       select: (res) => res?.transactions ?? [],
-    }
+    },
   );
 
   const onSubmit = (values) => {
+    console.log("valuesvaluesvalues", values);
     setLoading(true);
     const data = {
-      project_card_id: watch("id"),
+      project_card_id: values?.card_id,
       amount: values?.amount,
     };
 
@@ -101,5 +102,6 @@ export const useBillingProps = () => {
     loading,
     reset,
     dispatch,
+    setValue,
   };
 };

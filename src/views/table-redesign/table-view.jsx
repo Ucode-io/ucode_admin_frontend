@@ -687,6 +687,7 @@ const TableView = ({
           isResizeble={true}
           navigateToForm={navigateToForm}
           menuItem={menuItem}
+          isPaginationPositionSticky
           {...props}
         />
 

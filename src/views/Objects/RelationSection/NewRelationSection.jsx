@@ -316,7 +316,7 @@ const NewRelationSection = ({
               ...tab?.attributes,
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {
@@ -326,7 +326,7 @@ const NewRelationSection = ({
 
     layoutService.update(currentUpdatedLayout, tableSlug);
   };
-  console.log("datadata", data);
+
   return (
     <>
       {selectedManyToManyRelation && (

@@ -33,17 +33,17 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 
 const ObjectsFormPage = ({
   tableSlugFromProps,
-  handleClose,
+  handleClose = () => {},
   modal = false,
   selectedRow,
   dateInfo,
 }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {navigateToForm} = useTabRouter();
+  const { navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(false);
@@ -60,10 +60,14 @@ const ObjectsFormPage = ({
   const projectId = store.getState().company.projectId;
   const [menuItem, setMenuItem] = useState(null);
 
-  const {menuId, tableSlug: tableSlugFromParam, id: idFromParam} = useParams();
+  const {
+    menuId,
+    tableSlug: tableSlugFromParam,
+    id: idFromParam,
+  } = useParams();
   const itemId = searchParams.get("p") ?? idFromParam;
 
-  const tableSlug = tableSlugFromParam ?? state?.table_slug;
+  const tableSlug = tableSlugFromParam ?? state?.table_slug ?? state?.tableSlug;
 
   const microPath = `/main/${itemId}/page/4d262256-b290-42a3-9147-049fb5b2acaa?menuID=${menuId}&id=${itemId}&slug=${state?.tableSlug}`;
   const microPathCloseMonth = `/main/${itemId}/page/1b9bf29d-99ca-4f4d-a9b8-98e2d311e351?menuID=${menuId}&id=${itemId}`;
@@ -79,11 +83,11 @@ const ObjectsFormPage = ({
   }, [itemId, selectedRow, menuId, state, idFromParam]);
 
   const isInvite = menu.invite;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const lang = useGetLang("Table");
 
-  const {deleteTab} = useTabRouter();
-  const {pathname} = useLocation();
+  const { deleteTab } = useTabRouter();
+  const { pathname } = useLocation();
 
   const {
     handleSubmit,
@@ -92,7 +96,7 @@ const ObjectsFormPage = ({
     setValue: setFormValue,
     watch,
     getValues,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       ...state,
@@ -111,7 +115,7 @@ const ObjectsFormPage = ({
     const getFormData = id && constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{data = {}}, layoutData] = await Promise.all([
+      const [{ data = {} }, layoutData] = await Promise.all([
         getFormData,
         getLayoutData,
       ]);
@@ -121,7 +125,7 @@ const ObjectsFormPage = ({
         tabs: layoutData?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
+            tab?.type === "section",
         ),
       });
       setSections(sortSections(sections));
@@ -142,7 +146,7 @@ const ObjectsFormPage = ({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
 
       if (!selectedTab?.relation_id) {
@@ -170,7 +174,7 @@ const ObjectsFormPage = ({
         tabs: layoutData?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
+            tab?.type === "section",
         ),
       });
       setSections(sortSections(sections));
@@ -187,7 +191,7 @@ const ObjectsFormPage = ({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
     } catch (error) {
       console.error(error);
@@ -202,7 +206,7 @@ const ObjectsFormPage = ({
     delete data?.merchant_ids;
     setBtnLoader(true);
     constructorObjectService
-      .update(tableSlug, {data})
+      .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         queryClient.refetchQueries(
@@ -211,7 +215,7 @@ const ObjectsFormPage = ({
           {
             table_slug: tableSlug,
             user_id: isUserId,
-          }
+          },
         );
         dispatch(showAlert("Successfully updated", "success"));
         if (modal) {
@@ -247,7 +251,7 @@ const ObjectsFormPage = ({
           tableSlug,
           {
             table_slug: tableSlug,
-          }
+          },
         );
         queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
           table_slug: tableSlug,
@@ -261,11 +265,11 @@ const ObjectsFormPage = ({
             tableSlug,
             {
               table_slug: tableSlug,
-            }
+            },
           );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
-          navigate(-1);
+          navigate(state?.navigateUrl || -1);
           handleClose();
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
@@ -284,7 +288,7 @@ const ObjectsFormPage = ({
     }
   };
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -301,13 +305,13 @@ const ObjectsFormPage = ({
 
   const clickHandler = () => {
     deleteTab(pathname);
-    navigate(-1);
+    navigate(state?.navigateUrl ? state?.navigateUrl : -1);
   };
-  console.log("datadatadata", data);
+
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
-        <FormPageBackButton />
+        <FormPageBackButton url={state?.navigateUrl || -1} />
 
         <div className={styles.subTitle}></div>
 
@@ -352,10 +356,11 @@ const ObjectsFormPage = ({
                     localStorage.setItem("idFromParams", itemId);
                     localStorage.setItem(
                       "tableSlugFromParam",
-                      selectedView?.table_slug
+                      selectedView?.table_slug,
                     );
                     navigate(microPath);
-                  }}>
+                  }}
+                >
                   Пополнить баланс
                 </PrimaryButton>
               )}
@@ -369,17 +374,19 @@ const ObjectsFormPage = ({
                       localStorage.setItem("idFromParams", itemId);
                       localStorage.setItem(
                         "tableSlugFromParam",
-                        tableSlugFromParam
+                        tableSlugFromParam,
                       );
                       navigate(microPathCloseMonth);
-                    }}>
+                    }}
+                  >
                     Закрытия месяца
                   </PrimaryButton>
                 </>
               )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
-              color="error">
+              color="error"
+            >
               {generateLangaugeText(lang, i18n.language, "Close") || "Close"}
             </SecondaryButton>
             <FormCustomActionButton
@@ -393,8 +400,9 @@ const ObjectsFormPage = ({
                 loader={btnLoader}
                 id="submit"
                 onClick={handleSubmit(onSubmit, (err) =>
-                  console.log("ERR", err)
-                )}>
+                  console.log("ERR", err),
+                )}
+              >
                 <Save />
                 {generateLangaugeText(lang, i18n.language, "Save") || "Save"}
               </PrimaryButton>

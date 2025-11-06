@@ -452,12 +452,45 @@ export const NewUiViewsWithGroups = ({
           `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
         );
       } else {
-        dispatch(detailDrawerActions.openDrawer());
+        if (!relationView) {
+          dispatch(detailDrawerActions.openDrawer());
+        }
+        if (relationView) {
+          navigateToForm(
+            tableSlug,
+            "CREATE",
+            {},
+            {
+              [`${tableSlug}_id`]: view.menu_id,
+              tableSlug,
+              // navigateUrl: `${pathname}?${urlQuery.get("v") ? `v=${urlQuery.get("v")}` : ``}${urlQuery.get("p") ? `&p=${urlQuery.get("p")}` : ``}`,
+              navigateUrl: `/${menuId || appId}`,
+            },
+            menuId,
+          );
+          handleViewClick(views?.[0]);
+        }
       }
       setSelectedRow(null);
     } else {
       if (layoutType === "PopupLayout") {
-        dispatch(detailDrawerActions.openDrawer());
+        if (relationView) {
+          navigateToForm(
+            tableSlug,
+            "CREATE",
+            {},
+            {
+              [`${tableSlug}_id`]: view.menu_id,
+              tableSlug,
+              // navigateUrl: `${pathname}?${urlQuery.get("v") ? `v=${urlQuery.get("v")}` : ``}${urlQuery.get("p") ? `&p=${urlQuery.get("p")}` : ``}`,
+              navigateUrl: `/${menuId || appId}`,
+            },
+            menuId,
+          );
+          handleViewClick(views?.[0]);
+        } else {
+          dispatch(detailDrawerActions.openDrawer());
+        }
         setSelectedRow(null);
       } else {
         navigateToForm(tableSlug, "CREATE", {}, { id }, menuId);
@@ -1350,7 +1383,7 @@ export const NewUiViewsWithGroups = ({
             direction={"ltr"}
             defaultIndex={0}
             style={{
-              height: view?.type === VIEW_TYPES_MAP.BOARD ? "100%" : "auto",
+              height: "100%",
             }}
           >
             {tabs?.length > 0 &&

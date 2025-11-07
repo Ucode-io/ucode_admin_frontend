@@ -158,29 +158,26 @@ const AutoCompleteElement = ({
         return (
           value?.map((el) =>
             localOptions?.find((option) => {
-              return (
-                option.slug === el || option.value === el || option.label === el
-              );
+              if (option.slug) return option.slug === el;
+              if (option.value) return option.value === el;
+              return option.label === el;
             }),
           ) ?? []
         );
       } else {
         return localOptions?.find((item) => {
-          return (
-            item?.slug === value ||
-            item?.value === value ||
-            item?.label === value
-          );
+          if (item?.slug) return item?.slug === value;
+          if (item?.value) return item?.value === value;
+          if (item?.label) return item?.label === value;
         });
       }
     else {
       return [
-        localOptions?.find(
-          (option) =>
-            option.value === value[0] ||
-            option.slug === value[0] ||
-            option.label === value[0],
-        ),
+        localOptions?.find((option) => {
+          if (option.slug) return option.slug === value[0];
+          if (option.value) return option.value === value[0];
+          if (option.label) return option.label === value[0];
+        }),
       ];
     }
   }, [value, localOptions, isMultiSelect]);

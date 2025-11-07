@@ -19,13 +19,13 @@ export const StatusFieldSettings = ({
   optionName,
   watch = () => {},
   setActiveId = () => {},
-  isMultiLanguage,
+  isStatusFormat,
 }) => {
   const languages = useSelector((state) => state.languages.list);
   return (
     <Box className={cls.card}>
       <Box>
-        {isMultiLanguage ? (
+        {isStatusFormat ? (
           <Box>
             <TextFieldWithMultiLanguage
               control={control}

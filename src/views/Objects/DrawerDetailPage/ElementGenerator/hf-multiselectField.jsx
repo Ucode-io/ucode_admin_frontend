@@ -29,6 +29,7 @@ import constructorFieldService from "../../../../services/constructorFieldServic
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import IconGeneratorIconjs from "../../../../components/IconPicker/IconGeneratorIconjs";
 import { useTranslation } from "react-i18next";
+import { OptionsDropdown } from "@mantine/core";
 
 const filter = createFilterOptions();
 
@@ -145,6 +146,7 @@ const AutoCompleteElement = ({
   const handleClose = () => {
     setDialogState(null);
   };
+
   const [localOptions, setLocalOptions] = useState(options ?? []);
 
   const computedValue = useMemo(() => {
@@ -155,29 +157,26 @@ const AutoCompleteElement = ({
         return (
           value?.map((el) =>
             localOptions?.find((option) => {
-              return (
-                option.slug === el || option.value === el || option.label === el
-              );
+              if (option.slug) return option.slug === el;
+              if (option.value) return option.value === el;
+              return option.label === el;
             }),
           ) ?? []
         );
       } else {
         return localOptions?.find((item) => {
-          return (
-            item?.slug === value ||
-            item?.value === value ||
-            item?.label === value
-          );
+          if (item?.slug) return item?.slug === value;
+          if (item?.value) return item?.value === value;
+          if (item?.label) return item?.label === value;
         });
       }
     else {
       return [
-        localOptions?.find(
-          (option) =>
-            option.value === value[0] ||
-            option.slug === value[0] ||
-            option.label === value[0],
-        ),
+        localOptions?.find((option) => {
+          if (option.slug) return option.slug === value[0];
+          if (option.value) return option.value === value[0];
+          if (option.label) return option.label === value[0];
+        }),
       ];
     }
   }, [value, localOptions, isMultiSelect]);
@@ -198,10 +197,15 @@ const AutoCompleteElement = ({
       return;
     }
     if (isMultiSelect) {
-      onFormChange(values?.map((el) => el.value));
+      onFormChange(values?.map((el) => el?.slug ?? el.value));
       updateObject();
     } else {
-      onFormChange([values[values?.length - 1]?.value] ?? []);
+      onFormChange(
+        [values[values?.length - 1]?.slug] ?? [
+            values[values?.length - 1]?.value,
+          ] ??
+          [],
+      );
       updateObject();
     }
   };
@@ -233,15 +237,19 @@ const AutoCompleteElement = ({
           getOptionLabel={(option) =>
             option?.[`label_${i18n.language}`] ?? option?.value
           }
-          isOptionEqualToValue={(option, value) =>
-            option?.value === value?.value
-          }
+          isOptionEqualToValue={(option, value) => {
+            if (option?.slug || value?.slug) {
+              return option?.slug === value?.slug;
+            }
+            return option?.value === value?.value;
+          }}
           onChange={changeHandler}
           filterOptions={(options, params) => {
             const filtered = filter(options, params);
             if (params.inputValue !== "" && field?.attributes?.creatable) {
               filtered.push({
                 value: "NEW",
+                slug: "NEW",
                 inputValue: params.inputValue,
                 label: `Add "${params.inputValue}"`,
               });

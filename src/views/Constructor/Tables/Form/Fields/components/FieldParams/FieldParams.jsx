@@ -430,7 +430,7 @@ export const FieldParams = ({
                                 watch={watch}
                                 setActiveId={setActiveId}
                                 group="Todo"
-                                isMultiLanguage
+                                isStatusFormat
                                 languages={languages}
                               />
                             }
@@ -513,7 +513,7 @@ export const FieldParams = ({
                                 watch={watch}
                                 setActiveId={setActiveId}
                                 group="Progress"
-                                isMultiLanguage
+                                isStatusFormat
                                 languages={languages}
                               />
                             }
@@ -596,7 +596,7 @@ export const FieldParams = ({
                                 watch={watch}
                                 setActiveId={setActiveId}
                                 group="Complete"
-                                isMultiLanguage
+                                isStatusFormat
                                 languages={languages}
                               />
                             }

@@ -127,9 +127,7 @@ const TableView = ({
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage"),
+    localStorage?.getItem("detailPage"),
   );
 
   const mainForm = useForm({

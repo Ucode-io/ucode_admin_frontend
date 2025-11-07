@@ -57,7 +57,7 @@ const RelationField = ({
           required: required || isRequired ? "This field is required!" : "",
         }}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Box position="relative" zIndex={9999}>
+          <Box>
             <AutoCompleteElement
               value={isMulti ? value : Array.isArray(value) ? value[0] : value}
               setValue={onChange}
@@ -166,7 +166,11 @@ const AutoCompleteElement = ({
     menu: (provided) => ({
       ...provided,
       borderRadius: "4px",
-      zIndex: 10,
+      zIndex: 9999,
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 9999,
     }),
   };
 
@@ -492,16 +496,16 @@ const AutoCompleteElement = ({
 
   function loadMoreItems() {
     if (optionsFromLocale?.count <= computedOptions?.length) return;
-    queryClient.prefetchQuery(
-      [
-        "GET_OBJECT_LIST",
-        page + 1,
-        tableSlug,
-        debouncedValue,
-        autoFiltersValue,
-      ],
-      queryFn,
-    );
+    // queryClient.prefetchQuery(
+    //   [
+    //     "GET_OBJECT_LIST",
+    //     page + 1,
+    //     tableSlug,
+    //     debouncedValue,
+    //     autoFiltersValue,
+    //   ],
+    //   () => queryFn(page + 1),
+    // );
     setPage((prevPage) => prevPage + 1);
   }
 
@@ -582,8 +586,6 @@ const AutoCompleteElement = ({
           cursor: disabled ? "not-allowed" : "pointer",
           border: errors?.[field?.slug] ? "1px solid red" : "none",
           borderRadius: "4px",
-          position: "relative",
-          zIndex: 999,
         }}
       >
         <Select

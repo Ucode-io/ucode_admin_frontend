@@ -158,9 +158,7 @@ export const useCalendarTemplateProps = () => {
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+    localStorage?.getItem("detailPage"),
   );
 
   const {

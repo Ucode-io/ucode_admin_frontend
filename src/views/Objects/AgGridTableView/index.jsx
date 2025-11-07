@@ -140,9 +140,7 @@ function AgGridTableView(props) {
   const [groupTab, setGroupTab] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+    localStorage?.getItem("detailPage"),
   );
 
   const new_router = localStorage.getItem("new_router") === "true";

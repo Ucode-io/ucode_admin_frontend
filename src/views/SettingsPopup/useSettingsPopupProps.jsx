@@ -73,13 +73,13 @@ export const useSettingsPopupProps = ({ onClose }) => {
   const dispatch = useDispatch();
 
   const globalPermissions = useSelector(
-    (state) => state?.permissions?.globalPermissions
+    (state) => state?.permissions?.globalPermissions,
   );
   const userInfo = useSelector((state) => state?.auth?.userInfo);
   const activeTab = useSelector((state) => state.settingsModal.activeTab);
   const tab = useSelector((state) => state.settingsModal.tab);
   const activeChildId = useSelector(
-    (state) => state.settingsModal.activeChildId
+    (state) => state.settingsModal.activeChildId,
   );
 
   const showSettings = globalPermissions?.settings_button;
@@ -283,7 +283,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
   }
 
   if (!showSettings) {
-    accountTabs.splice(1, 2);
+    // accountTabs.splice(1, 2);
     tabs.splice(1);
   }
 

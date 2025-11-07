@@ -800,10 +800,10 @@ export const NewUiViewsWithGroups = ({
                   colorScheme="gray"
                   onClick={() => {
                     handleClose("close");
-                    if (location?.state?.fullPage) {
-                      navigate(-1);
-                      setLayoutType("SidePeek");
-                    }
+                    // if (location?.state?.fullPage) {
+                    //   navigate(-1);
+                    //   setLayoutType("SidePeek");
+                    // }
                   }}
                   size="sm"
                 />

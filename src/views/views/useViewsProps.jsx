@@ -72,9 +72,7 @@ export const useViewsProps = ({ isRelationView }) => {
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage"),
+    localStorage?.getItem("detailPage"),
   );
 
   // For TIMELINE view

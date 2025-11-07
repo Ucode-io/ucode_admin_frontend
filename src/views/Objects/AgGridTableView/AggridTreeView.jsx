@@ -150,9 +150,7 @@ function AggridTreeView(props) {
   const [drawerState, setDrawerState] = useState(null);
   const [fieldData, setFieldData] = useState(null);
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage") === "FullPage"
-      ? "SidePeek"
-      : localStorage?.getItem("detailPage")
+    localStorage?.getItem("detailPage"),
   );
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const languages = useSelector((state) => state.languages.list);

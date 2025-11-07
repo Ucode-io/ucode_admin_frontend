@@ -231,7 +231,7 @@ const GroupCellElementGenerator = ({ field = {}, row, view, index }) => {
   // ) : (
   //   typeof value === 'object' ? JSON.stringify(value) :
   // )
-
+  console.log(field.type);
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;

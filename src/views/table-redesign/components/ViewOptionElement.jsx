@@ -470,6 +470,8 @@ export const Group = ({
       ? column.relation_id
       : column.id;
 
+    console.log({ id });
+
     mutation.mutate({
       ...view,
       attributes: {
@@ -479,6 +481,14 @@ export const Group = ({
           : columns.filter((c) => c !== id),
       },
     });
+  };
+
+  const isChecked = (column) => {
+    if (relationTypes.includes(column.type)) {
+      return view?.attributes?.group_by_columns?.includes(column?.relation_id);
+    } else {
+      return view?.attributes?.group_by_columns?.includes(column?.id);
+    }
   };
 
   return (
@@ -530,11 +540,7 @@ export const Group = ({
             <Switch
               ml="auto"
               onChange={(ev) => onChange(column, ev.target.checked)}
-              isChecked={view?.attributes?.group_by_columns?.includes(
-                relationTypes.includes(column.type)
-                  ? column?.relation_id
-                  : column?.id,
-              )}
+              isChecked={isChecked(column)}
             />
           </Flex>
         ))}

@@ -53,7 +53,6 @@ function HFStatusField({
               fullWidth
               renderValue={(selected) => {
                 const isArray = Array.isArray(selected);
-                console.log({ selected, att: field?.attributes });
                 const selectedOption =
                   field?.attributes?.todo?.options?.find(
                     (el) =>

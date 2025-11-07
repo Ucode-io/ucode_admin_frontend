@@ -130,7 +130,6 @@ function DrawerObjectsPage({
     (item) => item?.is_relation_view && item?.id === viewId,
   );
 
-
   const {
     data: {
       fieldsMap,

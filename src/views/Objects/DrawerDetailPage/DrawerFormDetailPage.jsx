@@ -44,7 +44,7 @@ function DrawerFormDetailPage({
   const auth = store.getState().auth;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const languages = useSelector((state) => state.languages.list)?.map(
-    (el) => el.slug
+    (el) => el.slug,
   );
 
   const query = new URLSearchParams(window.location.search);
@@ -58,7 +58,7 @@ function DrawerFormDetailPage({
   };
 
   const [sections, setSections] = useState(
-    data?.tabs?.[selectedTabIndex]?.sections || []
+    data?.tabs?.[selectedTabIndex]?.sections || [],
   );
 
   useEffect(() => {
@@ -71,7 +71,7 @@ function DrawerFormDetailPage({
     const newSections = [...sections];
     newSections[secIndex].fields = applyDrag(
       newSections[secIndex].fields,
-      dropResult
+      dropResult,
     );
 
     setSections(newSections);
@@ -88,7 +88,7 @@ function DrawerFormDetailPage({
               ...tab?.attributes,
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {
@@ -103,17 +103,17 @@ function DrawerFormDetailPage({
     if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
       rootForm.setValue(
         selectedRow?.FROM_DATE_SLUG,
-        selectedRow?.[selectedRow?.FROM_DATE_SLUG]
+        selectedRow?.[selectedRow?.FROM_DATE_SLUG],
       );
       rootForm.setValue(
         selectedRow?.TO_DATE_SLUG,
-        selectedRow?.[selectedRow?.TO_DATE_SLUG]
+        selectedRow?.[selectedRow?.TO_DATE_SLUG],
       );
     }
 
     rootForm.setValue(
       "attributes.layout_heading",
-      selectedTab?.attributes?.layout_heading
+      selectedTab?.attributes?.layout_heading,
     );
   }, [selectedRow]);
 
@@ -124,12 +124,12 @@ function DrawerFormDetailPage({
       ...section,
       fields: section?.fields?.filter(
         (el) =>
-          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id
+          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id,
       ),
     }));
 
     setSections((prevSections) =>
-      isEqual(prevSections, updatedSections) ? prevSections : updatedSections
+      isEqual(prevSections, updatedSections) ? prevSections : updatedSections,
     );
   }, [data, rootForm.watch("attributes.layout_heading")]);
 
@@ -159,7 +159,7 @@ function DrawerFormDetailPage({
       field?.enable_multilanguage || field?.enable_multi_language
         ? field?.enable_multilanguage || field?.enable_multi_language
         : (field?.attributes?.enable_multilanguage ||
-            field?.attributes?.enable_multi_language) === true
+            field?.attributes?.enable_multi_language) === true,
     );
   }, [selectedTab]);
 
@@ -193,12 +193,9 @@ function DrawerFormDetailPage({
     if (Boolean(!itemId)) return;
     const computedData = rootForm.watch();
     delete computedData.invite;
-
     constructorObjectService
       .update(tableSlug, { data: { ...computedData, guid: itemId } })
-      .then((res) => {
-        queryClient.refetchQueries("GET_OBJECTS_LIST");
-      })
+      .then(() => queryClient.refetchQueries("GET_OBJECTS_LIST"))
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {});
   };

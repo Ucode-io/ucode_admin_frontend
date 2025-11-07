@@ -3,7 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { Box, Button, Modal, Popover, Typography } from "@mui/material";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import fileService from "../../services/fileService";
 import "./Gallery/style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -13,7 +13,8 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import useDownloader from "../../hooks/useDownloader";
-import Cropper from "react-easy-crop";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 const style = {
   position: "absolute",
@@ -30,6 +31,22 @@ const style = {
   height: "85vh",
 };
 
+const cropModalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  display: "flex",
+  flexDirection: "column",
+  gap: 2,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  borderRadius: "10px",
+  p: 2,
+  overflow: "hidden",
+};
+
 const ImageUpload = ({
   value,
   onChange,
@@ -44,6 +61,8 @@ const ImageUpload = ({
   const { download } = useDownloader();
 
   const inputRef = useRef(null);
+  const imageRef = useRef(null);
+  const previewCanvasRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [degree, setDegree] = useState(0);
@@ -52,7 +71,6 @@ const ImageUpload = ({
   const [anchorEl, setAnchorEl] = useState(null);
 
   const [openFullImg, setOpenFullImg] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
 
   const splitVal = value?.split("#")?.[1];
 
@@ -61,8 +79,7 @@ const ImageUpload = ({
 
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [completedCrop, setCompletedCrop] = useState(null);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -87,85 +104,113 @@ const ImageUpload = ({
       .finally(() => setLoading(false));
   };
 
-  const inputChangeCropHandler = async (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    setSelectedFile(file);
-
-    const reader = new FileReader();
-    reader.onload = () => setImageSrc(reader.result);
-    reader.readAsDataURL(file);
-  };
-
   const handleUploadImage = (e) => {
-    if (canCrop) inputChangeCropHandler(e);
+    if (canCrop) onSelectFile(e);
     else inputChangeHandler(e);
   };
 
-  const onCropComplete = useCallback((_, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const onSelectFile = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => setImageSrc(reader.result));
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
 
-  const getCroppedImg = useCallback(
-    async (imageSrc, crop, outputType = "image/jpeg") => {
-      const image = await createImage(imageSrc);
-      const canvas = document.createElement("canvas");
+  // когда картинка загрузилась — сохраняем ref и делаем crop по центру
+  const onImageLoad = (e) => {
+    const { width, height } = e.currentTarget;
+    setCrop(
+      centerCrop(
+        makeAspectCrop({ unit: "%", width: 90 }, 1, width, height),
+        width,
+        height,
+      ),
+    );
+  };
+
+  // делаем Canvas preview
+  const onCropComplete = (crop) => {
+    const canvas = document.createElement("canvas");
+    setCompletedCrop(crop);
+
+    if (!crop?.width || !crop?.height) {
+      if (imageRef.current) {
+        const image = imageRef.current;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+
+        ctx.drawImage(image, 0, 0);
+
+        previewCanvasRef.current = canvas;
+      }
+      return;
+    }
+
+    if (crop.width && crop.height && imageRef.current) {
+      const image = imageRef.current;
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
       const ctx = canvas.getContext("2d");
+      const pixelRatio = window.devicePixelRatio;
 
-      canvas.width = crop.width;
-      canvas.height = crop.height;
+      canvas.width = crop.width * pixelRatio;
+      canvas.height = crop.height * pixelRatio;
+
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      ctx.imageSmoothingQuality = "high";
 
       ctx.drawImage(
         image,
-        crop.x,
-        crop.y,
-        crop.width,
-        crop.height,
+        crop.x * scaleX,
+        crop.y * scaleY,
+        crop.width * scaleX,
+        crop.height * scaleY,
         0,
         0,
         crop.width,
         crop.height,
       );
+      previewCanvasRef.current = canvas;
+    }
+  };
 
+  // экспортируем вырезанное изображение
+  const getCroppedBlob = () => {
+    if (previewCanvasRef.current) {
       return new Promise((resolve) => {
-        canvas.toBlob(
+        previewCanvasRef.current.toBlob(
           (blob) => {
             resolve(blob);
           },
-          outputType,
-          0.92,
+          "image/jpeg",
+          0.95,
         );
       });
-    },
-    [],
-  );
+    } else {
+      return new Promise((resolve) => {
+        imageRef.current.toBlob(
+          (blob) => {
+            resolve(blob);
+          },
+          "image/jpeg",
+          0.95,
+        );
+      });
+    }
+  };
 
+  // пример: загрузка вырезанного
   const uploadCropped = async () => {
     try {
-      setLoading(true);
+      const blob = await getCroppedBlob();
+      const formData = new FormData();
+      formData.append("file", blob, "cropped.jpg");
 
-      const originalFileType = selectedFile?.type || "image/jpeg";
-      const supportedFormats = ["image/jpeg", "image/png", "image/webp"];
-      const outputType = supportedFormats.includes(originalFileType)
-        ? originalFileType
-        : "image/png";
-
-      const croppedBlob = await getCroppedImg(
-        imageSrc,
-        croppedAreaPixels,
-        outputType,
-      );
-
-      const baseName = selectedFile?.name?.replace(/\.[^/.]+$/, "") || "image";
-      const ext = outputType.split("/")[1];
-      const croppedFileName = `${baseName}_cropped.${ext}`;
-
-      const data = new FormData();
-      data.append("file", croppedBlob, croppedFileName);
-
-      const res = await fileService.folderUpload(data, {
+      const res = await fileService.folderUpload(formData, {
         folder_name: field?.attributes?.path,
         format: field?.attributes?.format,
         ratio: field?.attributes?.ratio,
@@ -173,6 +218,8 @@ const ImageUpload = ({
 
       onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
       handleClose();
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
       setImageSrc(null);
@@ -187,11 +234,11 @@ const ImageUpload = ({
     }
   };
 
-  const deleteImage = (id) => {
+  const deleteImage = () => {
     onChange(null);
   };
 
-  const closeButtonHandler = (e) => {
+  const closeButtonHandler = () => {
     deleteImage();
   };
 
@@ -515,40 +562,31 @@ const ImageUpload = ({
           </Button>
         )}
       </Box>
-      <Modal center open={!!imageSrc} onClose={() => setImageSrc(null)}>
-        <Box
-          mx="auto"
-          mt={4}
-          p="16px"
-          pb="36px"
-          position="relative"
-          width="600px"
-          height="400px"
-          bgcolor="#fff"
-          borderRadius="10px"
-          overflow="hidden"
-        >
-          <Cropper
-            image={imageSrc}
-            crop={crop}
-            zoom={zoom}
-            aspect={field?.attributes?.ratio || 1}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
-          <Box
-            width="100%"
-            height="36px"
-            padding="6px 10px"
-            position="absolute"
-            gap={2}
-            bottom="0"
-            left="0"
-            display="flex"
-            justifyContent="flex-end"
-            bgcolor="#fff"
-          >
+      <Modal open={!!imageSrc} onClose={() => setImageSrc(null)}>
+        <Box sx={cropModalStyle}>
+          <Box display={"flex"}>
+            <ReactCrop
+              crop={crop}
+              onChange={setCrop}
+              aspect={false}
+              onComplete={onCropComplete}
+              // aspect={field?.attributes?.ratio || 1}
+              // onZoomChange={setZoom}
+              // onCropComplete={onCropComplete}
+            >
+              <img
+                src={imageSrc}
+                ref={imageRef}
+                alt="Crop"
+                style={{ width: "100%" }}
+                onLoad={onImageLoad}
+              />
+            </ReactCrop>
+            {/* <div style={{ marginTop: 20 }}>
+              <canvas ref={previewCanvasRef} style={{ maxWidth: "100%" }} />
+            </div> */}
+          </Box>
+          <Box display="flex" gap="10px" ml="auto">
             <Button
               onClick={() => setImageSrc(null)}
               sx={{ color: "#ee4d4d", border: "1px solid #ee4d4d" }}
@@ -568,15 +606,5 @@ const ImageUpload = ({
     </div>
   );
 };
-
-function createImage(url) {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener("load", () => resolve(image));
-    image.addEventListener("error", (error) => reject(error));
-    image.setAttribute("crossOrigin", "anonymous");
-    image.src = url;
-  });
-}
 
 export default ImageUpload;

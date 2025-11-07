@@ -22,12 +22,15 @@ import VisibleColumnsButtonRelationSection from "./VisibleColumnsButtonRelationS
 import styles from "./style.module.scss";
 import {useDispatch, useSelector} from "react-redux";
 
+import { default as SVG } from "react-inlinesvg";
+
 import ExcelDownloadButton from "../components/ExcelButtons/ExcelDownloadButton";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import {relationTabActions} from "../../../store/relationTab/relationTab.slice";
+import { relationTabActions } from "../../../store/relationTab/relationTab.slice";
 import FullpagePeekMaininfo from "../FullpagePeekMaininfo";
 import layoutService from "../../../services/layoutService";
 import constructorViewService from "../../../services/constructorViewService";
+import { viewIcons } from "@/utils/constants/viewTypes";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -50,16 +53,16 @@ const NewRelationSection = ({
   id,
   tableSlug,
 }) => {
-  const {menuId} = useParams();
+  const { menuId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
-    {}
+    {},
   );
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [jwtObjects, setJwtObjects] = useState([]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -71,7 +74,7 @@ const NewRelationSection = ({
   const dispatch = useDispatch();
   const tables = useSelector((state) => state?.auth?.tables);
   const tabSelected = useSelector((state) =>
-    state?.relationTab?.tabs?.find((item) => item?.slug === tableSlug)
+    state?.relationTab?.tabs?.find((item) => item?.slug === tableSlug),
   );
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -84,8 +87,8 @@ const NewRelationSection = ({
     setAnchorEl(null);
   };
 
-  const {data: views} = useQuery(
-    ["GET_OBJECT_LIST", menuId],
+  const { data: views } = useQuery(
+    ["GET_OBJECT_LIST_VIEWS", menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
     },
@@ -97,7 +100,7 @@ const NewRelationSection = ({
       onSuccess: (data) => {
         setSelectedView(data?.find((el) => el?.id === viewId));
       },
-    }
+    },
   );
 
   const filteredRelations = useMemo(() => {
@@ -133,7 +136,7 @@ const NewRelationSection = ({
     }
   }, [queryTab, tabSelected, selectedTab, setSelectedTabIndex]);
 
-  const {fields, remove, append, update} = useFieldArray({
+  const { fields, remove, append, update } = useFieldArray({
     control,
     name: "multi",
   });
@@ -212,13 +215,13 @@ const NewRelationSection = ({
           },
           {
             language_setting: i18n?.language,
-          }
+          },
         )
         .then((res) => {
           setJwtObjects(
             res?.data?.fields?.filter(
-              (item) => item?.attributes?.object_id_from_jwt === true
-            )
+              (item) => item?.attributes?.object_id_from_jwt === true,
+            ),
           );
         })
         .catch((a) => console.log("error", a));
@@ -238,7 +241,7 @@ const NewRelationSection = ({
         return {
           [`${item?.[0]?.table_slug}_id`]: item?.[0]?.object_id,
         };
-      })
+      }),
     );
   }, [jwtObjects, tables]);
 
@@ -259,7 +262,7 @@ const NewRelationSection = ({
   };
 
   const {
-    data: {fieldsMap} = {
+    data: { fieldsMap } = {
       views: [],
       fieldsMap: {},
       visibleColumns: [],
@@ -273,17 +276,17 @@ const NewRelationSection = ({
         {
           data: {},
         },
-        params
+        params,
       );
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           fieldsMap: listToMap(data?.fields),
         };
       },
       enabled: !!relatedTableSlug,
-    }
+    },
   );
 
   const computedVisibleFields = useMemo(() => {
@@ -362,7 +365,7 @@ const NewRelationSection = ({
                           relationTabActions.addTab({
                             slug: tableSlug,
                             tabIndex: index,
-                          })
+                          }),
                         );
                         setSelectedIndex(index);
                         onSelect(el);
@@ -374,6 +377,16 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
+                        <div>
+                          <SVG
+                            src={`/img/${viewIcons[el.view_type]}`}
+                            color={
+                              selectedTabIndex === index ? "#175CD3" : "#475467"
+                            }
+                            width={18}
+                            height={18}
+                          />
+                        </div>
                         {el?.type === "relation"
                           ? el?.label ||
                             el?.relation?.attributes?.[
@@ -455,7 +468,7 @@ const NewRelationSection = ({
                     <>
                       {Boolean(
                         localStorage.getItem("newLayout") === "true" &&
-                          localStorage.getItem("newLayout") !== "undefined"
+                          localStorage.getItem("newLayout") !== "undefined",
                       ) ? (
                         <FullpagePeekMaininfo
                           updateCurrentLayout={updateCurrentLayout}

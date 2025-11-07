@@ -1317,7 +1317,7 @@ export const NewUiViewsWithGroups = ({
 
             {view?.type !== "SECTION" && (
               <>
-                {view?.type !== VIEW_TYPES_MAP.WEBSITE && (
+                {view?.type !== VIEW_TYPES_MAP.WEBSITE && !relationView && (
                   <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                     <Button
                       minW={"auto"}

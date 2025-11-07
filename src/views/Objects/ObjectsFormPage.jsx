@@ -41,6 +41,9 @@ const ObjectsFormPage = ({
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
 
+  const navigateUrl = state?.navigateUrl;
+  delete state?.navigateUrl;
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { navigateToForm } = useTabRouter();
@@ -55,6 +58,8 @@ const ObjectsFormPage = ({
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
   const [selectedView, setSelectedView] = useState();
+
+  const new_router = localStorage.getItem("new_router") === "true";
 
   const [searchParams, setSearchParams] = useSearchParams();
   const projectId = store.getState().company.projectId;
@@ -99,7 +104,6 @@ const ObjectsFormPage = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      ...state,
       ...dateInfo,
       invite: isInvite ? menuItem?.data?.table?.is_login_table : false,
     },
@@ -122,11 +126,17 @@ const ObjectsFormPage = ({
 
       setData({
         ...layoutData,
-        tabs: layoutData?.tabs?.filter(
-          (tab) =>
-            tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section",
-        ),
+        tabs: layoutData?.tabs?.filter((tab) => {
+          console.log("tab", tab);
+          if (new_router) {
+            return tab?.type === "section";
+          } else {
+            return (
+              tab?.relation?.permission?.view_permission === true ||
+              tab?.type === "section"
+            );
+          }
+        }),
       });
       setSections(sortSections(sections));
       setSummary(layoutData.summary_fields ?? []);
@@ -171,11 +181,16 @@ const ObjectsFormPage = ({
 
       setData({
         ...layoutData,
-        tabs: layoutData?.tabs?.filter(
-          (tab) =>
-            tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section",
-        ),
+        tabs: layoutData?.tabs?.filter((tab) => {
+          if (new_router) {
+            return tab?.type === "section";
+          } else {
+            return (
+              tab?.relation?.permission?.view_permission === true ||
+              tab?.type === "section"
+            );
+          }
+        }),
       });
       setSections(sortSections(sections));
       const relations =
@@ -269,7 +284,7 @@ const ObjectsFormPage = ({
           );
           queryClient.refetchQueries(["GET_OBJECT_LIST_ALL"]);
         } else {
-          navigate(state?.navigateUrl || -1);
+          navigate(navigateUrl || -1);
           handleClose();
           if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
         }
@@ -305,13 +320,13 @@ const ObjectsFormPage = ({
 
   const clickHandler = () => {
     deleteTab(pathname);
-    navigate(state?.navigateUrl ? state?.navigateUrl : -1);
+    navigate(navigateUrl ? navigateUrl : -1);
   };
 
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
-        <FormPageBackButton url={state?.navigateUrl || -1} />
+        <FormPageBackButton url={navigateUrl || -1} />
 
         <div className={styles.subTitle}></div>
 

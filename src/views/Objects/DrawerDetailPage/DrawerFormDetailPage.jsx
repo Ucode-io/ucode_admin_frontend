@@ -32,6 +32,7 @@ function DrawerFormDetailPage({
   projectInfo,
   rootForm,
   updateLayout = () => {},
+  refetchObjectList = () => {},
 }) {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -195,7 +196,10 @@ function DrawerFormDetailPage({
     delete computedData.invite;
     constructorObjectService
       .update(tableSlug, { data: { ...computedData, guid: itemId } })
-      .then(() => queryClient.refetchQueries("GET_OBJECTS_LIST"))
+      .then(() => {
+        refetchObjectList();
+        //  queryClient.refetchQueries(["GET_OBJECTS_LIST"]))
+      })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {});
   };

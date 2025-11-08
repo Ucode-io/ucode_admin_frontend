@@ -38,6 +38,7 @@ function DrawerObjectsPage({
   updateLayout = () => {},
   setSelectedView = () => {},
   setSelectedViewType = () => {},
+  refetchObjectList = () => {},
 }) {
   const { view } = useViewContext();
   const { state } = useLocation();
@@ -241,6 +242,7 @@ function DrawerObjectsPage({
                 dateInfo={dateInfo}
                 updateLayout={updateLayout}
                 setFullScreen={setFullScreen}
+                refetchObjectList={refetchObjectList}
                 fullScreen={fullScreen}
                 refetchViews={
                   !isRelationView ? refetchMenuViews : refetchRelationViews

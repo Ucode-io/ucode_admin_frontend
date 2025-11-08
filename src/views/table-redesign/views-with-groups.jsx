@@ -152,6 +152,7 @@ export const NewUiViewsWithGroups = ({
   handleMouseDown = () => {},
   setSelectedViewType = () => {},
   refetchRelationViews = () => {},
+  refetchObjectList = () => {},
 }) => {
   const location = useLocation();
   const {
@@ -1463,6 +1464,7 @@ export const NewUiViewsWithGroups = ({
                       handleMouseDown={handleMouseDown}
                       navigateToEditPage={navigateToEditPage}
                       setSelectedViewType={setSelectedViewType}
+                      refetchObjectList={refetchObjectList}
                     />
                   </Suspense>
                 </form>

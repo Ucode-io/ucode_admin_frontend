@@ -31,6 +31,7 @@ function DrawerDetailPage({
   defaultValue,
   selectedViewType,
   setFullScreen = () => {},
+  refetch: refetchObjectList,
   setSelectedViewType = () => {},
   modal,
 }) {
@@ -423,6 +424,7 @@ function DrawerDetailPage({
             updateLayout={updateLayout}
             selectedViewType={selectedViewType}
             setSelectedViewType={setSelectedViewType}
+            refetchObjectList={refetchObjectList}
           />
         </Box>
         <Box

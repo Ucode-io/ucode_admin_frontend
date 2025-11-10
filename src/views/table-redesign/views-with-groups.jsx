@@ -448,21 +448,38 @@ export const NewUiViewsWithGroups = ({
 
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
-      if (view?.attributes?.url_object?.url) {
-        const urlParams = view?.attributes?.url_object?.params;
+      if (view?.attributes?.url_object) {
+        const isOldUrlVariant =
+          typeof view?.attributes?.url_object === "string";
 
-        const params = new URLSearchParams(
-          Object.fromEntries(urlParams.map((item) => [item.key, item.value])),
-        ).toString();
-
-        if (new_router) {
-          navigate(
-            `/${menuId}/page/${view?.attributes?.url_object?.url}?create=true&${params}`,
-          );
+        if (isOldUrlVariant) {
+          if (new_router) {
+            navigate(
+              `/${menuId}/page/${view?.attributes?.url_object}?create=true`,
+            );
+          } else {
+            navigate(
+              `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
+            );
+          }
         } else {
-          navigate(
-            `/main/${appId}/page/${view?.attributes?.url_object?.url}?create=true&${params}`,
-          );
+          const urlParams = view?.attributes?.url_object?.params;
+
+          const params = new URLSearchParams(
+            Object.fromEntries(
+              urlParams?.map((item) => [item.key, item.value]),
+            ),
+          ).toString();
+
+          if (new_router) {
+            navigate(
+              `/${menuId}/page/${view?.attributes?.url_object?.url}?create=true&${params}`,
+            );
+          } else {
+            navigate(
+              `/main/${appId}/page/${view?.attributes?.url_object?.url}?create=true&${params}`,
+            );
+          }
         }
       } else {
         if (!relationView) {

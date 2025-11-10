@@ -430,7 +430,7 @@ const TableView = ({
           return !checkdublicate?.find((el) => el.guid === item.guid);
         }) ?? [];
       setCombinedTableData((prev) => [...prev, ...result]);
-      setIsLoading(false);
+      // setIsLoading(false);
     },
   });
 
@@ -494,12 +494,10 @@ const TableView = ({
       updateQueryWithoutRerender("p", row?.guid);
     } else {
       if (new_router) {
-        console.log("2");
         updateQueryWithoutRerender("p", row?.guid);
         if (view?.attributes?.url_object) {
           navigateToDetailPage(row);
         } else if (projectInfo?.new_layout) {
-          console.log("4");
           setSelectedRow(row);
           dispatch(detailDrawerActions.openDrawer());
         } else {

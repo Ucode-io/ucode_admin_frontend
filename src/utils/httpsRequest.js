@@ -5,6 +5,9 @@ import authService from "../services/auth/authService";
 import {authActions} from "../store/auth/auth.slice";
 import {handleError} from "./errorHandler";
 export const baseURL = `${import.meta.env.VITE_BASE_URL}`;
+const urls = import.meta.env;
+
+console.log({ urls });
 
 const httpsRequest = axios.create({
   baseURL,

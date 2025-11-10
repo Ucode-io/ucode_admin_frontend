@@ -16,7 +16,6 @@ export const FIELD_TYPES = {
   PROGRAMMING_LANGUAGE: "PROGRAMMING_LANGUAGE",
   SWITCH: "SWITCH",
   PHOTO: "PHOTO",
-  VIDEO: "VIDEO",
   PHONE: "PHONE",
   MULTI_IMAGE: "MULTI_IMAGE",
   CUSTOM_IMAGE: "CUSTOM_IMAGE",
@@ -32,6 +31,7 @@ export const FIELD_TYPES = {
   INCREMENT_ID: "INCREMENT_ID",
   DATE_TIME_WITHOUT_TIME_ZONE: "DATE_TIME_WITHOUT_TIME_ZONE",
   UUID: "UUID",
+  VIDEO: "VIDEO",
   BUTTON: "BUTTON",
 };
 
@@ -1063,7 +1063,6 @@ export const relationFieldButtons = [
     value: "AUTO_FILTER",
   },
 ];
-
 
 const formulaFormats = [
   {

@@ -1,33 +1,30 @@
 import {Add} from "@mui/icons-material";
-import { useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { CTableCell, CTableRow } from "../../../../../components/CTable";
+import {useMemo, useRef, useState} from "react";
+import {useFieldArray} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {CTableCell, CTableRow} from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import constructorRelationService from "../../../../../services/constructorRelationService";
-import { generateGUID } from "../../../../../utils/generateID";
+import {generateGUID} from "../../../../../utils/generateID";
 import styles from "../Fields/style.module.scss";
-import { Box, Drawer } from "@mui/material";
+import {Box, Drawer} from "@mui/material";
 import RelationSettings from "./RelationSettings";
 import TableRowButton from "../../../../../components/TableRowButton";
-import { RelationPopover } from "./components/RelationPopover";
+import {RelationPopover} from "./components/RelationPopover";
 
 const Relations = ({mainForm, getRelationFields, tableLan}) => {
-
+  const [anchorEl, setAnchorEl] = useState(null);
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const [drawerState, setDrawerState] = useState(null);
   const [loader, setLoader] = useState(false);
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const { tableSlug } = useParams();
-  const { fields: relations } = useFieldArray({
+  const {tableSlug} = useParams();
+  const {fields: relations} = useFieldArray({
     control: mainForm.control,
     name: "relations",
     keyName: "key",
   });
-  const { id } = useParams();
+  const {id} = useParams();
 
   const handleClose = () => {
     setAnchorEl(null);

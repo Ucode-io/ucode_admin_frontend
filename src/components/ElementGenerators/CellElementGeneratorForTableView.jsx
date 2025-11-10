@@ -164,6 +164,7 @@ const CellElementGeneratorForTableView = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          index={index}
           rules={{
             pattern: {
               value: new RegExp(field?.attributes?.validation),

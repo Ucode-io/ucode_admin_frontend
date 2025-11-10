@@ -381,7 +381,10 @@ export const DynamicTable = ({
     isWarningActive,
   ]);
 
-  const showSkeleton = loader;
+  const [isLoading, setIsLoading] = useState(false);
+  console.log({isLoading})
+
+  const showSkeleton = loader || isLoading;
 
   return (
     <div
@@ -557,6 +560,8 @@ export const DynamicTable = ({
 
             {addNewRow && (
               <AddDataColumn
+                setIsLoading={setIsLoading}
+                isLoading={isLoading}
                 rows={isRelationTable ? fields : data}
                 columns={columns}
                 isRelationTable={isRelationTable}
@@ -582,6 +587,7 @@ export const DynamicTable = ({
                 tableSlugProp={tableSlugProp}
                 relationView={relationView}
                 fieldsMap={fieldsMap}
+                addNewRow={addNewRow}
               />
             )}
 
@@ -726,9 +732,9 @@ const IndexTh = ({ items, selectedItems, onSelectAll }) => {
         <Checkbox
           style={{ width: 10, height: 10 }}
           checked={items?.length === selectedItems?.length}
-          indeterminate={
-            selectedItems?.length > 0 && items?.length !== selectedItems?.length
-          }
+          // indeterminate={
+          //   selectedItems?.length > 0 && items?.length !== selectedItems?.length
+          // }
           onChange={(_, checked) => onSelectAll(checked)}
         />
       )}

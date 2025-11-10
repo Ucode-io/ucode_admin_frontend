@@ -22,6 +22,9 @@ import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
 import { useDispatch, useSelector } from "react-redux";
+import { Close } from "@mui/icons-material";
+import clsx from "clsx";
+import { CustomSingleValue } from "./components/CustomSingleValue";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
@@ -196,29 +199,61 @@ const AutoCompleteElement = ({
       width: "100%",
       display: "flex",
       alignItems: "center",
+      boxShadow: "none",
       border: "0px solid #fff",
       outline: "none",
       minHeight: newUi ? "25px" : undefined,
       height: newUi ? "25px" : undefined,
     }),
-    input: (provided) => ({
-      ...provided,
-      width: "100%",
-      border: "none",
-    }),
+    input: (provided, state) => {
+      return {
+        ...provided,
+        // position: "absolute",
+        // left: "0",
+        // height: "100%",
+        width: "100%",
+        border: "none",
+        // backgroundColor: "rgba(242, 241, 238, 0.6)",
+      };
+    },
     placeholder: (provided) => ({
       ...provided,
       display: "flex",
     }),
     option: (provided, state) => ({
       ...provided,
-      background: state.isSelected ? "#007AFF" : provided.background,
-      color: state.isSelected ? "#fff" : provided.color,
+      background: "#fff",
+      color: provided.color === "hsl(0, 0%, 100%)" ? "#222" : provided.color,
       cursor: "pointer",
+      height: "28px",
+      fontSize: "12px",
+      lineHeigh: "20px",
+      fontWeight: "400",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "0",
+      paddingLeft: "8px",
+      paddingRight: "8px",
+      borderRadius: "6px",
+      "&:hover": {
+        backgroundColor: "rgba(242, 241, 238, 0.6)",
+      },
     }),
     menu: (provided) => ({
       ...provided,
+      width: "calc(100% + 10px)",
+      left: "-5px",
+      top: "-3px",
       zIndex: 9999,
+      borderRadius: "6px",
+      borderTopRightRadius: "0px",
+      borderTopLeftRadius: "0px",
+      // boxShadow: "rgba(55, 53, 47, 0.16) 0px -1px inset",
+      padding: "4px",
+      height: "auto",
+      boxShadow:
+        "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
     }),
     menuPortal: (base) => ({
       ...base,
@@ -539,7 +574,9 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{ p: 1 }}>Create new object</Typography>
+            <p className={styles.noOptionText}>
+              Select an option or create one
+            </p>
           </Popover>
         </span>
       )}
@@ -553,6 +590,7 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        className={styles.select}
         id="relation-lookup"
         inputValue={inputValue}
         onInputChange={(newInputValue, { action }) => {
@@ -573,6 +611,7 @@ const AutoCompleteElement = ({
         components={{
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
+          ClearIndicator: null,
         }}
         onChange={(newValue) => {
           changeHandler(newValue);
@@ -580,9 +619,9 @@ const AutoCompleteElement = ({
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+            className={styles.noOptionText}
           >
-            Create new
+            + Create one
           </span>
         )}
         menuShouldScrollIntoView

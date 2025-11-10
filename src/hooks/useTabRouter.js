@@ -1,6 +1,6 @@
 import {useAliveController} from "react-activation";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {tabRouterActions} from "../store/tabRouter/tabRouter.slice";
 import {generateGUID, generateID} from "../utils/generateID";
 

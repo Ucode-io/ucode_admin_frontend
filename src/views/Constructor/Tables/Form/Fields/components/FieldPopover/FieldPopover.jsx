@@ -1,5 +1,5 @@
-import { Box, Popover } from "@mui/material"
-import { FieldParams } from "../FieldParams";
+import {Box, Popover} from "@mui/material";
+import {FieldParams} from "../FieldParams";
 import { useFieldPopoverProps } from "./useFieldPopoverProps";
 import { AdvancedSettings } from "../../../components/AdvancedSettings";
 import { NButton } from "../../../../../../../components/NButton";

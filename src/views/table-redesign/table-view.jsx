@@ -430,6 +430,7 @@ const TableView = ({
           return !checkdublicate?.find((el) => el.guid === item.guid);
         }) ?? [];
       setCombinedTableData((prev) => [...prev, ...result]);
+      setIsLoading(false);
     },
   });
 

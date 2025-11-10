@@ -9,7 +9,7 @@ import {Box, Dialog} from "@mui/material";
 import classes from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import ForgotPassword from "./ForgotPassword";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import LoginCompaniesList from "./LoginCompaniesList";
 import PhoneOtpInput from "./PhoneLogin/PhoneOtpInput";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
@@ -48,15 +48,12 @@ const LoginFormDesign = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-
   const [open, setOpen] = useState(false);
   const [isUserId, setIsUserId] = useState();
-  const recaptchaVerifierRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [googleAuth, setGoogleAuth] = useState(null);
   const [codeAppValue, setCodeAppValue] = useState({});
-  const [firebaseToken, setFireBaseToken] = useState("");
   const [connectionCheck, setConnectionCheck] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState();
   const { control, handleSubmit, watch, setValue } = useForm();
@@ -180,19 +177,8 @@ const LoginFormDesign = ({
           sms_id: codeAppValue?.sms_id,
           type: "phone",
         });
-      } else if (values?.firebase) {
-        getCompany({
-          ...values,
-          session_info: firebaseToken,
-          type: "phone",
-          service_type: "firebase",
-        });
       } else {
-        if (!values?.phone?.includes("+998")) {
-          getSendCodeApp({ ...values, type: "PHONE", firebase: true });
-        } else {
-          getSendCodeApp({ ...values, type: "PHONE" });
-        }
+        getSendCodeApp({...values, type: "PHONE"});
       }
     }
     if (selectedTabIndex === 2) {
@@ -210,7 +196,6 @@ const LoginFormDesign = ({
 
   const getCompany = (values) => {
     setGoogleAuth(values);
-    delete values.firebase;
     const data = {
       password: values?.password ? values?.password : "",
       username: values?.username ? values?.password : "",
@@ -252,49 +237,20 @@ const LoginFormDesign = ({
       });
   };
 
-  const sendVerificationCode = async (values) => {
-    const recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container",
-      {
-        size: "invisible",
-        callback: (response) => {
-          console.log("response", response);
-        },
-        "expired-callback": () => {},
-      }
-    );
-
-    await recaptchaVerifier.render();
-
-    const result = await signInWithPhoneNumber(
-      auth,
-      values?.phone,
-      recaptchaVerifier
-    );
-
-    setFireBaseToken(result?.verificationId);
-    setFormType("FIREBASEOTP");
-  };
-
   const getSendCodeApp = (values) => {
-    if (!values?.firebase) {
-      authService
-        .sendCodeApp({
-          recipient: values?.phone ?? values?.email,
-          text: "You otp code is",
-          type: values?.type,
-        })
-        .then((res) => {
-          setCodeAppValue(res);
-          setFormType("OTP");
-        })
-        .catch((err) => {
-          console.log("eerrrrrrr", err);
-        });
-    } else {
-      sendVerificationCode(values);
-    }
+    authService
+      .sendCodeApp({
+        recipient: values?.phone ?? values?.email,
+        text: "You otp code is",
+        type: values?.type,
+      })
+      .then((res) => {
+        setCodeAppValue(res);
+        setFormType("OTP");
+      })
+      .catch((err) => {
+        console.log("eerrrrrrr", err);
+      });
   };
 
   const checkConnections = useMemo(() => {
@@ -327,8 +283,6 @@ const LoginFormDesign = ({
         getFormValue?.project_id &&
         getFormValue?.environment_id
       ) {
-        onSubmitDialog(data);
-      } else if (getFormValue?.firebase) {
         onSubmitDialog(data);
       } else if (googleAuth?.type === "google" && googleAuth?.google_token) {
         onSubmitDialog(data);
@@ -536,170 +490,157 @@ const LoginFormDesign = ({
   }, [connectionCheck, getFormValue?.tables]);
 
   return (
-    <>
-      <div id="recaptcha-container"></div>
-      <Box sx={{ height: "350px" }}>
-        {Boolean(
-          formType !== "REGISTER" &&
-            formType !== "OTP" &&
-            formType !== "FORGOT_PASSWORD" &&
-            formType !== "EMAIL_OTP"
-        ) && (
-          <>
-            <h1 className={classes.title}>
-              {index === 0 ? t("enter.to.system") : t("register.form")}
-            </h1>
-            <p className={classes.subtitle}>
-              {index === 0
-                ? t("fill.in.your.login.info")
-                : t("register.form.desc")}
-            </p>
-          </>
-        )}
-        {formType === "RESET_PASSWORD" ? (
-          <RecoverPassword control={control} setFormType={setFormType} />
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-            <Tabs
-              selected={selectedTabIndex}
-              direction={"ltr"}
-              onSelect={(index) => setSelectedTabIndex(index)}
-            >
-              {formType === "OTP" ? (
-                <PhoneOtpInput
-                  watch={watch}
-                  control={control}
-                  loading={loading}
-                  setFormType={setFormType}
-                  setCodeAppValue={setCodeAppValue}
-                  setValue={setValue}
-                />
-              ) : formType === "FIREBASEOTP" ? (
-                <FireBaseOtp
-                  watch={watch}
-                  control={control}
-                  loading={loading}
-                  setFormType={setFormType}
-                  setCodeAppValue={setCodeAppValue}
-                  setValue={setValue}
-                />
-              ) : formType === "FORGOT_PASSWORD" || formType === "EMAIL_OTP" ? (
-                <ForgotPassword setFormType={setFormType} />
-              ) : formType !== "REGISTER" ? (
-                <div style={{ padding: "0 20px", marginTop: "20px" }}>
-                  <TabList>
-                    <Tab
-                      onClick={() => setFormType("LOGIN")}
-                      style={{ padding: "10px 8px 10px 8px" }}
-                    >
-                      {t("login")}
-                    </Tab>
-                    <Tab
-                      onClick={() => setFormType("phone")}
-                      style={{ padding: "10px 12px 10px 12px" }}
-                    >
-                      {t("phone")}
-                    </Tab>
-                    <Tab
-                      onClick={() => setFormType("email")}
-                      style={{ padding: "10px 12px 10px 12px" }}
-                    >
-                      {t("email.address")}
-                    </Tab>
-                  </TabList>
+    <Box sx={{height: "100%"}}>
+      {Boolean(
+        formType !== "REGISTER" &&
+          formType !== "OTP" &&
+          formType !== "FORGOT_PASSWORD" &&
+          formType !== "EMAIL_OTP"
+      ) && (
+        <>
+          <h1 className={classes.title}>
+            {index === 0 ? t("enter.to.system") : t("register.form")}
+          </h1>
+          <p className={classes.subtitle}>
+            {index === 0
+              ? t("fill.in.your.login.info")
+              : t("register.form.desc")}
+          </p>
+        </>
+      )}
+      {formType === "RESET_PASSWORD" ? (
+        <RecoverPassword control={control} setFormType={setFormType} />
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+          <Tabs
+            style={{height: "100%"}}
+            selected={selectedTabIndex}
+            direction={"ltr"}
+            onSelect={(index) => setSelectedTabIndex(index)}>
+            {formType === "OTP" ? (
+              <PhoneOtpInput
+                watch={watch}
+                control={control}
+                loading={loading}
+                setFormType={setFormType}
+                setCodeAppValue={setCodeAppValue}
+                setValue={setValue}
+              />
+            ) : formType === "FORGOT_PASSWORD" || formType === "EMAIL_OTP" ? (
+              <ForgotPassword setFormType={setFormType} />
+            ) : formType !== "REGISTER" ? (
+              <div
+                style={{
+                  height: "100%",
+                  padding: "0 20px",
+                  marginTop: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}>
+                <TabList>
+                  <Tab
+                    onClick={() => setFormType("LOGIN")}
+                    style={{padding: "10px 8px 10px 8px"}}>
+                    {t("login")}
+                  </Tab>
+                  <Tab
+                    onClick={() => setFormType("phone")}
+                    style={{padding: "10px 12px 10px 12px"}}>
+                    {t("phone")}
+                  </Tab>
+                  <Tab
+                    onClick={() => setFormType("email")}
+                    style={{padding: "10px 12px 10px 12px"}}>
+                    {t("email.address")}
+                  </Tab>
+                </TabList>
 
-                  <div
-                    className={classes.formArea}
-                    style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
-                  >
-                    <TabPanel>
-                      <LoginTab
-                        loading={loading}
-                        setFormType={setFormType}
-                        control={control}
-                        getCompany={getCompany}
-                      />
-                    </TabPanel>
-                    <TabPanel>
-                      <PhoneLogin
-                        codeAppValue={codeAppValue}
-                        control={control}
-                        loading={loading}
-                        setFormType={setFormType}
-                      />
-                    </TabPanel>
-                    <TabPanel>
-                      <EmailAuth setFormType={setFormType} control={control} />
-                    </TabPanel>
-                    <TabPanel>
-                      <EspLogin setFormType={setFormType} control={control} />
-                    </TabPanel>
-                  </div>
+                <div className={classes.formArea} style={{marginTop: "10px"}}>
+                  <TabPanel style={{height: "calc(100% - 50px)"}}>
+                    <LoginTab
+                      loading={loading}
+                      setFormType={setFormType}
+                      control={control}
+                      getCompany={getCompany}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <PhoneLogin
+                      codeAppValue={codeAppValue}
+                      control={control}
+                      loading={loading}
+                      setFormType={setFormType}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <EmailAuth setFormType={setFormType} control={control} />
+                  </TabPanel>
+                  <TabPanel>
+                    <EspLogin setFormType={setFormType} control={control} />
+                  </TabPanel>
                 </div>
-              ) : (
-                <RegisterFormPageDesign
-                  setFormType={setFormType}
-                  formType={formType}
-                />
-              )}
-            </Tabs>
-          </form>
-        )}
+              </div>
+            ) : (
+              <RegisterFormPageDesign
+                setFormType={setFormType}
+                formType={formType}
+              />
+            )}
+          </Tabs>
+        </form>
+      )}
 
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          PaperProps={{
-            style: {
-              padding: "30px",
-              width: "550px",
-              maxHeight: "70vh",
-              borderRadius: "12px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-            },
-          }}
-          BackdropProps={{
-            style: {
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              backdropFilter: "blur(5px)",
-            },
-          }}
-        >
-          <LoginCompaniesList
-            computedProjects={computedProjects}
-            computedCompanies={computedCompanies}
-            computedEnvironments={computedEnvironments}
-            computedClientTypes={computedClientTypes}
-            computedConnections={computedConnections}
-            selectedCollection={selectedCollection}
-            companies={companies}
-            loading={loading}
-            control={control}
-            watch={watch}
-            setValue={setValue}
-            handleSubmit={handleSubmit(onSubmitDialog)}
-            setSelectedCollection={setSelectedCollection}
-          />
-        </Dialog>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          style: {
+            padding: "30px",
+            width: "550px",
+            maxHeight: "70vh",
+            borderRadius: "12px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(5px)",
+          },
+        }}>
+        <LoginCompaniesList
+          computedProjects={computedProjects}
+          computedCompanies={computedCompanies}
+          computedEnvironments={computedEnvironments}
+          computedClientTypes={computedClientTypes}
+          computedConnections={computedConnections}
+          selectedCollection={selectedCollection}
+          companies={companies}
+          loading={loading}
+          control={control}
+          watch={watch}
+          setValue={setValue}
+          handleSubmit={handleSubmit(onSubmitDialog)}
+          setSelectedCollection={setSelectedCollection}
+        />
+      </Dialog>
 
-        {formType === "RESET_PASSWORD" && (
-          <SecondaryButton
-            size="large"
-            style={{ marginTop: "20px" }}
-            type="button"
-            onClick={() => {
-              formType === "RESET_PASSWORD"
-                ? setFormType("LOGIN")
-                : setFormType("RESET_PASSWORD");
-            }}
-          >
-            Back to login
-          </SecondaryButton>
-        )}
-      </Box>
-    </>
+      {formType === "RESET_PASSWORD" && (
+        <SecondaryButton
+          size="large"
+          style={{marginTop: "20px"}}
+          type="button"
+          onClick={() => {
+            formType === "RESET_PASSWORD"
+              ? setFormType("LOGIN")
+              : setFormType("RESET_PASSWORD");
+          }}>
+          Back to login
+        </SecondaryButton>
+      )}
+    </Box>
   );
 };
 
